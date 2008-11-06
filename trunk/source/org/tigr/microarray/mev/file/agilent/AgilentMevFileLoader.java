@@ -474,9 +474,9 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
     }
     
     public String getFilePath() {
-        if(this.amflp.getMevSelectedListModel().getSize() <1)
+        if(amflp.pathTextField == null)
             return null;
-        return ((File)(amflp.getMevSelectedListModel().getElementAt(0))).getAbsolutePath();
+        return amflp.pathTextField.getText();
     }
     
     public void openDataPath() {

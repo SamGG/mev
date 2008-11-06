@@ -18,7 +18,6 @@ package org.tigr.microarray.mev.file;
  * $State: Exp $
  */
 
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,14 +34,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
-
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,41 +46,31 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
+
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
-import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
-import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
-
 import org.tigr.microarray.util.FileLoaderUtility;
-
 
 public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 
-
-	
     private GBA gba;
     private DFCI_CoreFileLoaderPanel aflp;
 
     private boolean loadEnabled = false;
-    private File refChipFile;// = new File(".", "Data/");
-    private String mode = "";
     private File [] files;
     private int affyDataType = IData.DATA_TYPE_AFFY_ABS;
     
@@ -96,7 +81,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
      **/
     private Hashtable _tempAnno=new Hashtable();
     private MultipleArrayViewer mav;
-    private File selectedAnnoFile;
     protected MevAnnotation mevAnno=new MevAnnotation();
     private String annotationFileName;
     
@@ -122,10 +106,9 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     	processFileList(path, v);
     }
     
-    public Vector loadExpressionFiles() throws IOException {
+    public Vector<ISlideData> loadExpressionFiles() throws IOException {
 
         Object[] affymetrixFiles = aflp.getAffymetrixSelectedListModel().toArray();
-        Object[] refFiles = aflp.getRefSelectedListModel().toArray();
         String [] fieldNames = new String[3];
         fieldNames[0] = "Affy_ID";
         fieldNames[1] = "Detection";
@@ -135,12 +118,9 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         files = new File[affymetrixFiles.length];
         for(int j = 0; j < affymetrixFiles.length ; j++) {
         	File file=new File(this.aflp.pathTextField.getText(),((File) affymetrixFiles[j]).getName());
-           // files[j] = (File)affymetrixFiles[j];
         	 files[j] = file;
         
         }
-        
-        
         
         /*Loop added by Sarita to check if Annotation has been loaded
         
@@ -148,17 +128,14 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
          * irrespective of whether annotation was loaded or not
          * 
          */
-        if(this.mav.getData().isAnnotationLoaded()) {
-//        	_tempAnno = loadAffyAnno(new File(getAnnotationFileName()));
-
-            //EH testing chip annotation change
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFileName()));
+        if(isAnnotationSelected()) {
+        	mav.getData().setAnnotationLoaded(true);
+        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
         	_tempAnno = afr.getAffyAnnotation();
         	chipAnno = afr.getAffyChipAnnotation();    
-        	
         }
+
         
-     
         /**
          * TODO
          * Raktim - Annotation Demo Only. 
@@ -167,23 +144,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         if(PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0){
         	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-       
-        
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
-        } catch(Exception e){
-        	e.printStackTrace();
-        }
-
-        
-        
-        
-
+          
         if(aflp.absoluteRadioButton.isSelected()){
             data = loadAffyAbsolute(files);
             this.affyDataType = IData.DATA_TYPE_AFFY_ABS;
@@ -207,7 +168,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             }
         }
         data[0].getSlideMetaData().setFieldNames(fieldNames);
-        Vector carrier = new Vector();
+        Vector<ISlideData> carrier = new Vector<ISlideData>();
         if(data != null){
             TMEV.setDataType(TMEV.DATA_TYPE_AFFY);
             for(int i = 0; i < data.length; i++)
@@ -221,7 +182,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         File [] dataFiles = new File[files.length];
         for(int i = 0; i < files.length; i++) {
         	dataFiles[i] =new File(this.aflp.pathTextField.getText(),((File) files[i]).getName()); ;
-        	//dataFiles[i] = (File)files[i];
         }
         return dataFiles;
     }
@@ -229,12 +189,10 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     // Affy_ID:Detection:Description
 
     public ISlideData loadExpressionFile(File currentFile) throws IOException {
-
         return null;
     }
 
     public Vector loadReferenceFile(File currentFile) throws IOException {
-
         return new Vector();
     }
 
@@ -348,13 +306,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
        if (files.length < 1) {
            return null;
        }
-
-       // each element is an ongoing total of the signal for that probeset
-       //float totalOfSignals = 0;
-       //float[] mean_signal = new float[files.length];
-
-       //float big_mean = 0;
-
        ISlideData[] slideData = new ISlideData[files.length];
        int countOfLines = 0;
        int numOfProbesets = 0;
@@ -413,7 +364,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         if (files.length < 1) {
             return null;
         }
-
         ISlideData[] slideData = new ISlideData[files.length];
         int countOfLines = 0;
         int numOfProbesets = 0;
@@ -475,7 +425,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         
         int[] rows = new int[] {0, 1, 0};
         int[] columns = new int[] {0, 1, 0};
-        float cy3, cy5;
         
         //Comments added by Sarita: 
         //"moreFields" contains the annotation present in the data file.
@@ -567,11 +516,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
              */ 
             String cloneName = moreFields[0];
            if(_tempAnno.size()!=0) {
-        	   
-        	           	   
         	   if(((MevAnnotation)_tempAnno.get(cloneName))!=null) {
         		   MevAnnotation mevAnno = (MevAnnotation)_tempAnno.get(cloneName);
-
         		   slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields, mevAnno);
         	   } else {
         		   /**
@@ -584,11 +530,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         		    */
         		   MevAnnotation mevAnno = new MevAnnotation();
         		   mevAnno.setCloneID(cloneName);
-//	EH testing chip annotation changes
-//        		   mevAnno.setViewer(this.mav);
-        		   slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-
-
+        		   slideDataElement = new AffySlideDataElement(String.valueOf(row+1), rows, columns, intensities, moreFields, mevAnno);
         	   }
            }
             /* Added by Sarita
@@ -599,12 +541,9 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
              */
             
            else {
-            slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields);
+        	   slideDataElement = new AffySlideDataElement(String.valueOf(curpos), rows, columns, intensities, moreFields);
             }
             
-
-           
-
             slideDataElement.setDetection(detection);
             slideDataElement.setPvalue(new Float(moreFields[2]).floatValue());
             slideData.addSlideDataElement(slideDataElement);
@@ -621,9 +560,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 
     private ISlideData loadAffyFloatSlideData(final File file, final int countOfLines, ISlideMetaData slideMetaData) throws IOException {
 
-        //final int coordinatePairCount = TMEV.getCoordinatePairCount()*2;
-      
-    	final int intensityCount = 2; //TMEV.getIntensityCount();
         int numTokens = 0;
         String[] headfields=new String[4];
         headfields[0]="Probe Set Name";
@@ -701,14 +637,14 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         return slideData;
     }
 
-    public float get_Median( ArrayList float_array ) {
+    public float get_Median( ArrayList<Float> float_array ) {
 
         Collections.sort(float_array);
 
         Float median;
 
         if (float_array.size() == 1){
-            return ( (Float) float_array.get(0)).floatValue();
+            return (float_array.get(0)).floatValue();
         }
 
         int center = float_array.size() / 2;
@@ -753,7 +689,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     public void markLoadEnabled(boolean state) {
         loadEnabled = state;
         setLoadEnabled(loadEnabled);
-        // checkLoadEnable();
     }
 
     public JPanel getFileLoaderPanel() {
@@ -783,16 +718,15 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     }
 
     public String getFilePath() {
-        if(this.aflp.getAffymetrixSelectedListModel().getSize() <1)
+        if(aflp.pathTextField == null)
             return null;
-        return ((File)(aflp.getAffymetrixSelectedListModel().getElementAt(0))).getAbsolutePath();
+        return aflp.pathTextField.getText();
     }
     
     public void openDataPath() {
-      //  this.aflp.openDataPath();
     }
-    
-    
+       
+
     public String getAnnotationFileName() {
     	return this.annotationFileName;
     }
@@ -800,24 +734,18 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
     public void setAnnotationFileName(String name) {
     	this.annotationFileName=name;
     }
-    
-    
-    
 /*
  * 
  * DFCI_CoreFileLoader: 
  * @author: Sarita Nair
  * 
- * 
- 
+ *
  */
-
     private class DFCI_CoreFileLoaderPanel extends JPanel {
 
     	 FileTreePane fileTreePane;
     	 JPanel selectionPanel;
      	JPanel fileLoaderPanel;
-
      	
      	/**
      	 * affymetrixSelectionPanel contains three panels which are
@@ -914,15 +842,11 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
      	JLabel selectReference;
      	JButton  browseButton2;
      	
-     	
-     	
      	/**
      	 * buttonPanel contains the three radio buttons namely, Absolute,
      	 * Absolute/Mean and Reference. buttonPanel lies within affymetrixSelectionPanel
      	 */
-     	
      	  JPanel buttonPanel;
-     	  
      	  
      	/**
      	 * Absolute, Reference and Absolute/Mean radio button
@@ -932,9 +856,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
        	JRadioButton referenceRadioButton;
         JRadioButton absoluteRadioButton;
      
-     	
-     	
-     	
      	/**
      	 * refListPanel allows listing the available reference files and the user selected
      	 * reference files.  User can select/de select  multiple files
@@ -989,23 +910,18 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
      	JButton refAddAllButton;
      	JButton refRemoveButton;
      	JButton refRemoveAllButton;
-     
-     
 
      	/**
      	 * Annotation Panel lets user choose additional annotations from
      	 * Resourcerer. This feature is currently available only for Affymetrix files.
      	 */
      	JPanel annotationPanel;
-     	JLabel getAnnotation,  customAnnotation;
-     	JButton connectButton, browseButton3;
-     	JTextField annFileListTextField;
-     
-    	 
-
+     	AnnotationDownloadHandler adh;
+     	
 		public DFCI_CoreFileLoaderPanel() {
 
 			setLayout(new GridBagLayout());
+			adh = new AnnotationDownloadHandler(superLoader);
 			
 			selectFilePanel = new JPanel();
 			selectFilePanel.setLayout(new GridBagLayout());
@@ -1017,27 +933,14 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			browseButton1.setPreferredSize(new Dimension(100, 30));
 			browseButton1.addActionListener(new EventHandler());
 			
-			
-			
 			pathTextField = new JTextField();
 			pathTextField.setEditable(false);
 			pathTextField.setForeground(Color.black);
 			pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
 			
-			
-			/*
-			 * This code was commented out to try an inset value of 2, instead of 5.
-			 * The aim is to reduce the size of the main frame. I wanted to make sure that
-			 * the GUI remains unchanged on reducing the frame size
-			 gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 *///
-			
 			gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
 			
 			affymetrixSelectionPanel = new JPanel();
 			affymetrixSelectionPanel.setLayout(new GridBagLayout());
@@ -1074,17 +977,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 			affymetrixButtonPanel = new JPanel();
 			affymetrixButtonPanel.setLayout(new GridBagLayout());
-			
-			/*	gba.add(affymetrixButtonPanel, affymetrixAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixButtonPanel, affymetrixAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixButtonPanel, affymetrixRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixButtonPanel, affymetrixRemoveAllButton, 0, 3, 1, 1, 0, 0,
-			 GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 */
-			
+
 			gba.add(affymetrixButtonPanel, affymetrixAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(affymetrixButtonPanel, affymetrixAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
@@ -1093,7 +986,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(affymetrixButtonPanel, affymetrixRemoveAllButton, 0, 3, 1, 1, 0, 0,
 					GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
 			
 			// Medians vs. Integrate intensities
 			absoluteRadioButton = new JRadioButton("Absolute",true);
@@ -1104,8 +996,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 			referenceRadioButton = new JRadioButton("Reference (Select reference files below)");
 			referenceRadioButton.setFocusPainted(false);
-			
-			
 			
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(absoluteRadioButton);
@@ -1118,39 +1008,12 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new GridBagLayout());
 			
-			/*	 gba.add(buttonPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-			 gba.add(buttonPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 50, 0, 5), 0, 0);
-			 gba.add(buttonPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-			 */	
 			gba.add(buttonPanel, absoluteRadioButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 50, 0, 2), 0, 0);
 			gba.add(buttonPanel, referenceRadioButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 50, 0, 2), 0, 0);
 			gba.add(buttonPanel, absMeanRadioButton, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 0, 2), 0, 0);
 			
-			
-			
 			affymetrixListPanel = new JPanel();
 			affymetrixListPanel.setLayout(new GridBagLayout());
-			
-			/*	gba.add(affymetrixListPanel, affymetrixAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixListPanel, affymetrixAvailableScrollPane, 0, 1, 1, 4, 5, 1,
-			 GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-			 new Insets(0, 0, 0, 0), 0, 0);
-			 gba.add(affymetrixListPanel, affymetrixButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixListPanel, affymetrixSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixListPanel, affymetrixSelectedScrollPane, 2, 1, 1, 4, 5, 1,
-			 GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 
-			 gba.add(affymetrixSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1,
-			 GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixSelectionPanel, buttonPanel, 0, 1, 1, 1, 1, 1, GBA.B,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(affymetrixSelectionPanel, affymetrixListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 */
 			
 			gba.add(affymetrixListPanel, affymetrixAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1174,52 +1037,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 			
 			// Added by Sarita
-			annotationPanel = new JPanel();
-			annotationPanel.setLayout(new GridBagLayout());
-			annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
-			"Annotation"));
-			
-			
-			getAnnotation=new JLabel("Retrieve  Annotation  from  Resourcerer");
-			
-			
-			connectButton = new JButton("Connect");
-			connectButton.setSize(new Dimension(100, 30));
-			connectButton.setPreferredSize(new Dimension(100, 30));
-			connectButton.addActionListener(new EventHandler());
-			
-			
-			customAnnotation=new JLabel("Upload annotation");
-			
-			annFileListTextField=new JTextField();
-			annFileListTextField.setEditable(false);
-			annFileListTextField.setForeground(Color.black);
-			annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-			
-			browseButton3 = new JButton("Browse");
-			browseButton3.setSize(new Dimension(100, 30));
-			browseButton3.setPreferredSize(new Dimension(100, 30));
-			browseButton3.addActionListener(new EventHandler());
-			
-			/*	gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 
-			 
-			 gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-			 gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(annotationPanel, browseButton3, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-			 */
-			gba.add(annotationPanel, getAnnotation, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(annotationPanel, connectButton, 1, 0, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
-			
-			gba.add(annotationPanel, customAnnotation, 0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2,2,2,2),0,0);
-			gba.add(annotationPanel, annFileListTextField, 1, 1, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(annotationPanel, browseButton3, 2, 1, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 10, 2), 0, 0);
-			
-			
-			
-			
+			annotationPanel = adh.getAnnotationLoaderPanel(gba);
+
 			refPanel = new JPanel();
 			refPanel.setLayout(new GridBagLayout());
 			
@@ -1228,7 +1047,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			refFileListTextField.setForeground(Color.black);
 			refFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
 			
-			
 			browseButton2 = new JButton("Browse");
 			browseButton2.addActionListener(new EventHandler());
 			browseButton2.setSize(new Dimension(100, 30));
@@ -1236,19 +1054,9 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 			selectReference = new JLabel("Select folder containing the Reference file");
 			
-			
-			
-			/*	gba.add(refPanel, selectReference, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refPanel, refFileListTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 */
-			
 			gba.add(refPanel, selectReference, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(refPanel, refFileListTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(refPanel, browseButton2, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
-			
-			
 			
 			additionalReqPanel = new JPanel();
 			additionalReqPanel.setLayout(new GridBagLayout());
@@ -1274,8 +1082,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 			Dimension buttonSize = new Dimension(100, 20);
 			
-			Dimension largestAnnButtonSize = refRemoveAllButton
-			.getPreferredSize();
 			refAddButton.setPreferredSize(buttonSize);
 			refAddAllButton.setPreferredSize(buttonSize);
 			refRemoveButton.setPreferredSize(buttonSize);
@@ -1294,16 +1100,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			refButtonPanel = new JPanel();
 			refButtonPanel.setLayout(new GridBagLayout());
 			
-			/*	gba.add(refButtonPanel, refAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refButtonPanel, refAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refButtonPanel, refRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refButtonPanel, refRemoveAllButton, 0, 3, 1, 1, 0, 0,
-			 GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 */
-			
 			gba.add(refButtonPanel, refAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(refButtonPanel, refAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
@@ -1313,46 +1109,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			gba.add(refButtonPanel, refRemoveAllButton, 0, 3, 1, 1, 0, 0,
 					GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
-			
-			
 			refListPanel = new JPanel();
 			refListPanel.setLayout(new GridBagLayout());
-			
-			/*	gba.add(refListPanel, refAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refListPanel, refSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refListPanel, refAvailableScrollPane, 0, 1, 1, 4, 5, 1,
-			 GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-			 new Insets(0, 0, 0, 0), 0, 0);
-			 gba.add(refListPanel, refButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(refListPanel, refSelectedScrollPane, 2, 1, 1, 4, 5, 1,
-			 GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 
-			 // Added by Sarita
-			  
-			  gba.add(additionalReqPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-			  GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			  gba.add(additionalReqPanel, refPanel, 0, 2, 1, 1, 1, 1,
-			  GBA.B, GBA.C, new Insets(5, 0, 5, 0), 0, 0);
-			  gba.add(additionalReqPanel, refListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
-			  GBA.C, new Insets(5, 5, 0, 5), 0, 0);
-			  
-			  
-			  gba.add(selectionPanel, additionalReqPanel, 0, 7, 2, 2, 1, 1, GBA.B,
-			  GBA.C, new Insets(0, 5, 0, 5), 0, 0);
-			  
-			  
-			  gba.add(selectionPanel, affymetrixSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
-			  GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			  gba.add(selectionPanel, annotationPanel, 0, 3, 2, 3, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			  gba.add(selectionPanel, additionalReqPanel, 0, 6, 2, 2, 1, 1, GBA.B,
-			  GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			  */
-			
-			
 			
 			gba.add(refListPanel, refAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1376,10 +1134,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			gba.add(additionalReqPanel, refListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
 					GBA.C, new Insets(2, 2, 0, 2), 0, 0);
 			
-			
 			gba.add(selectionPanel, additionalReqPanel, 0, 7, 2, 2, 1, 1, GBA.B,
 					GBA.C, new Insets(0, 2, 0, 2), 0, 0);
-			
 			
 			gba.add(selectionPanel, affymetrixSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -1387,35 +1143,23 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			gba.add(selectionPanel, additionalReqPanel, 0, 6, 2, 2, 1, 1, GBA.B,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
-			
 			fileLoaderPanel = new JPanel();
 			fileLoaderPanel.setLayout(new GridBagLayout());
-			
-			/*gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-			 GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			 */
 			
 			gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
 		}
 
-		
 		/**
 		 * @onDataFileBrowse
 		 * 
-		 * 
-		 * 
-		 *
 		 */
-      
 		public void onDataFileBrowse() {
 			FileLoaderUtility fileLoad = new FileLoaderUtility();
 			Vector retrievedFileNames = new Vector();
-			JFileChooser fileChooser = new JFileChooser(
-					SuperExpressionFileLoader.DATA_PATH);
+			
+			JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int retVal = fileChooser.showOpenDialog(DFCI_CoreFileLoaderPanel.this);
 			
@@ -1435,10 +1179,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 					.accept((File) fileName);
 					
 					if (acceptFile) {
-						
-					/*	Object addItem = fileName;
-						((DefaultListModel) affymetrixAvailableList.getModel())
-						.addElement(addItem);*/
 						String Name=fileChooser.getName((File) fileName);
 						((DefaultListModel) affymetrixAvailableList.getModel())
         				.addElement(new File(Name));
@@ -1450,117 +1190,51 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 			
 		}
 		
-		
-		/*
-		 * @onAnnotationFileBrowse
-		 */
-		   
-		public void onAnnotationFileBrowse() {
+		public void onRefFileBrowse() {
 			FileLoaderUtility fileLoad = new FileLoaderUtility();
-			File selectedFile;
+			Vector retrievedFileNames = new Vector();
 			JFileChooser fileChooser = new JFileChooser(
-					SuperExpressionFileLoader.ANNOTATION_PATH);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			int retVal = fileChooser.showOpenDialog(DFCI_CoreFileLoaderPanel.this);
-			
+					SuperExpressionFileLoader.DATA_PATH);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int retVal = fileChooser
+					.showOpenDialog(DFCI_CoreFileLoaderPanel.this);
+
 			if (retVal == JFileChooser.APPROVE_OPTION) {
-				
-				selectedFile = fileChooser.getSelectedFile();
-				setAnnotationFileName(selectedFile.getAbsolutePath());
-				annFileListTextField.setText(selectedFile.getAbsolutePath());
-				mav.getData().setAnnotationLoaded(true);
-				
+				((DefaultListModel) refAvailableList.getModel()).clear();
+				((DefaultListModel) refSelectedList.getModel()).clear();
+
+				File selectedFile = fileChooser.getSelectedFile();
+				String path = selectedFile.getAbsolutePath();
+				refFileListTextField.setText(path);
+				retrievedFileNames = fileLoad.getFileNameList(selectedFile
+						.getAbsolutePath());
+
+				for (int i = 0; i < retrievedFileNames.size(); i++) {
+					Object fileName = retrievedFileNames.get(i);
+					boolean acceptFile = getFileFilter()
+							.accept((File) fileName);
+
+					if (acceptFile) {
+						String Name = fileChooser.getName((File) fileName);
+						((DefaultListModel) refAvailableList.getModel())
+								.addElement(new File(Name));
+					}
+				}
 			}
-			
 		}
-		
-		    /**
-		     * @onConnect
-		     * This function is used to connect to Resourcerer and download
-		     * the requested annotation. This function uses the class
-		     * "AnnotationDialog" to achieve this. The setAnnotationLoaded()
-		     * function in IData is set to true, if annotation is loaded. 
-		     * 
-		     *
-		     */    
-		        
-		        public void onConnect() {
-		        	AnnotationDialog annDialog=new AnnotationDialog(new JFrame());
-		        	if(annDialog.showModal()==JOptionPane.OK_OPTION) {
-		        	setAnnotationFileName(annDialog.getAnnotationFileName());
-		            mav.getData().setAnnotationLoaded(true);
-		        }else
-		        		mav.getData().setAnnotationLoaded(false);
-		        
-		            } 
-		        
-		   
-		   
-		   
-	        
-		        public void onRefFileBrowse() {
-		        	FileLoaderUtility fileLoad = new FileLoaderUtility();
-		        	Vector retrievedFileNames = new Vector();
-		        	JFileChooser fileChooser = new JFileChooser(
-		        			SuperExpressionFileLoader.DATA_PATH);
-		        	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		        	int retVal = fileChooser.showOpenDialog(DFCI_CoreFileLoaderPanel.this);
-		        	
-		        	if (retVal == JFileChooser.APPROVE_OPTION) {
-		        		((DefaultListModel) refAvailableList.getModel()).clear();
-		        		((DefaultListModel) refSelectedList.getModel()).clear();
-		        		
-		        		
-		        		File selectedFile = fileChooser.getSelectedFile();
-		        		String path = selectedFile.getAbsolutePath();
-		        		refFileListTextField.setText(path);
-		        		retrievedFileNames = fileLoad.getFileNameList(selectedFile
-		        				.getAbsolutePath());
-		        		
-		        		for (int i = 0; i < retrievedFileNames.size(); i++) {
-		        			Object fileName = retrievedFileNames.get(i);
-		        			boolean acceptFile = getFileFilter()
-		        			.accept((File) fileName);
-		        			
-		        			if (acceptFile) {
-		        				
-		        				/*Object addItem = fileName;
-		        				((DefaultListModel) refAvailableList.getModel())
-		        				.addElement(addItem);*/
-		        				String Name=fileChooser.getName((File) fileName);
-		        				((DefaultListModel) refAvailableList.getModel())
-		        				.addElement(new File(Name));
-		        				
-		        			}
-		        		}
-		        		
-		        	}
-		        	
-		        }
-		        
-		        
-		        
-		        
-		
-		
-		
-		
-		
-		
+
 		public void setPath(String path) {
             pathTextField.setText(path);
         }
         
         public void openDataPath(){
-         //  this.fileTreePane.openDataPath();
         }
         
         public void validateLists() {
-
-            // Currently, a minimum of one Affymetrix file must be selected to enable loading.
+            // Currently, a minimum of one Affymetrix file must be selected to
+			// enable loading.
             // If the reference option is selected, a minimum of one Affymetrix file must also
             // be chosen as a reference.
-
             if (((DefaultListModel) affymetrixSelectedList.getModel()).size() > 0) {
                 if (referenceRadioButton.isSelected()) {
                     if (((DefaultListModel) refSelectedList.getModel()).size() > 0) {
@@ -1576,8 +1250,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             }
         }
 
-        
-        
         public void onAffymetrixAdd() {
             int[] chosenIndices = affymetrixAvailableList.getSelectedIndices();
             Object[] chosenObjects = new Object[chosenIndices.length];
@@ -1589,7 +1261,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
                 Object addItem = ((DefaultListModel) affymetrixAvailableList.getModel()).getElementAt(chosenIndices[i]);
                 chosenObjects[i] = addItem;
             }
-
             for (int i = 0; i < chosenIndices.length; i++) {
                 ((DefaultListModel) affymetrixSelectedList.getModel()).addElement(chosenObjects[i]);
             }
@@ -1597,8 +1268,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onAffymetrixAddAll() {
             int elementCount = ((DefaultListModel) affymetrixAvailableList.getModel()).size();
             for (int i = 0; i < elementCount; i++) {
@@ -1609,8 +1278,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onAffymetrixRemove() {
             int[] chosenIndices = affymetrixSelectedList.getSelectedIndices();
 
@@ -1622,8 +1289,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onAffymetrixRemoveAll() {
             // Designed with copy-then-add functionality in mind
             ((DefaultListModel) affymetrixSelectedList.getModel()).removeAllElements();
@@ -1631,8 +1296,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onRefAdd() {
             int[] chosenIndices = refAvailableList.getSelectedIndices();
             Object[] chosenObjects = new Object[chosenIndices.length];
@@ -1652,8 +1315,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onRefAddAll() {
             int elementCount = ((DefaultListModel) refAvailableList.getModel()).size();
             for (int i = 0; i < elementCount; i++) {
@@ -1664,8 +1325,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
-        
         public void onRefRemove() {
             int[] chosenIndices = refSelectedList.getSelectedIndices();
 
@@ -1677,7 +1336,6 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
             validateLists();
         }
 
-        
         public void onRefRemoveAll() {
             // Designed with copy-then-add functionality in mind
             ((DefaultListModel) refSelectedList.getModel()).removeAllElements();
@@ -1735,12 +1393,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
                     onDataFileBrowse();
                 } else if (source == browseButton2) {
                     onRefFileBrowse();
-                } else if (source == browseButton3) {
-                    onAnnotationFileBrowse();
-                } else if (source == connectButton) {
-                    onConnect();
                 }  
-                
                 else if (source instanceof JRadioButton){
                     aflp.validateLists();  //check state
                 }
@@ -1762,10 +1415,11 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
         }
     }
 
-
-
 	@Override
 	public String getAnnotationFilePath() {
-		return this.aflp.annFileListTextField.getText();
+		return this.aflp.adh.annFileListTextField.getText();
+	}
+	public boolean isAnnotationSelected() {
+		return this.aflp.adh.isAnnotationSelected();
 	}
 }

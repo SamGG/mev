@@ -539,7 +539,9 @@ public class MevFileLoader extends ExpressionFileLoader {
 	}
 
 	public String getFilePath() {
-		return new File(this.mflp.pathTextField.getText(), ((File) (mflp.getMevSelectedListModel().toArray())[0]).getName()).getPath();
+        if(mflp.pathTextField == null)
+            return null;
+        return mflp.pathTextField.getText();
 	}
 
 	public void openDataPath() {
@@ -553,8 +555,6 @@ public class MevFileLoader extends ExpressionFileLoader {
 	private class MevFileLoaderPanel extends JPanel {
 
 		FileTreePane fileTreePane;
-
-		
 
 		JPanel mevSelectionPanel;
 

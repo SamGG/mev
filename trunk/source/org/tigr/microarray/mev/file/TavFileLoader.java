@@ -464,9 +464,9 @@ public class TavFileLoader extends ExpressionFileLoader {
     }
     
     public String getFilePath() {
-        if(this.tflp.getTavSelectedListModel().getSize() <1)
+        if(this.tflp.pathTextField == null)
             return null;
-        return ((File)(tflp.getTavSelectedListModel().getElementAt(0))).getAbsolutePath();
+        return this.tflp.pathTextField.getText();
     }
     
     public void openDataPath() {

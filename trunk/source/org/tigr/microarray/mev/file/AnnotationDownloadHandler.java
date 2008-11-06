@@ -30,8 +30,6 @@ public class AnnotationDownloadHandler {
 
 	JComboBox arrayListBox;
 
-	String annotationFilename;
-
 	boolean annotationSelected = false;
 
 	boolean isEnabled = true;
@@ -66,7 +64,7 @@ public class AnnotationDownloadHandler {
 	}
 
 	public String getAnnFilePath() {
-		return annotationFilename;
+		return annFileListTextField.getText();
 	}
 
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
@@ -207,7 +205,7 @@ public class AnnotationDownloadHandler {
 					.getSelectedItem().toString());
 			// mav.getData().setAnnotationLoaded(true);
 			this.annotationSelected = true;
-			annotationFilename = f.getAbsolutePath();
+//			annotationFilename = f.getAbsolutePath();
 			// setAnnotationFileName(f.getAbsolutePath());
 			annFileListTextField.setText(f.getAbsolutePath());
 			connectButton.setText("Selected");
@@ -234,10 +232,8 @@ public class AnnotationDownloadHandler {
 
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			selectedFile = fileChooser.getSelectedFile();
-			annotationFilename = selectedFile.getAbsolutePath();
 			annFileListTextField.setText(selectedFile.getAbsolutePath());
-			this.annotationSelected = true;// mav.getData().setAnnotationLoaded(true);
-
+			this.annotationSelected = true;
 		}
 	}
 
