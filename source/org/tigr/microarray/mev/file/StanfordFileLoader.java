@@ -185,7 +185,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			String extension=(annoFile.getName()).substring((annoFile.getName()).lastIndexOf('.')+1, annoFile.getName().length());
 			
 			if(annoFile.getName().endsWith("annot.csv")){
-				System.out.println("Ends with annot.csv");
+				//System.out.println("Ends with annot.csv");
 				AffymetrixAnnotationParser aafp = AffymetrixAnnotationParser.createAnnotationFileParser(new File(getAnnotationFilePath()));
 				_tempAnno = aafp.getAffyAnnotation();
 				//chipAnno = aafp.getAffyChipAnnotation();
