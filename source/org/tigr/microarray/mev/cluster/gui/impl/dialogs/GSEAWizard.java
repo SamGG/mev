@@ -42,7 +42,7 @@ public abstract class GSEAWizard extends GSEADialog {
 	/**
 	 * Current step in the process
 	 */
-	protected int currentStepIndex = 1;
+	protected int currentStepIndex = 0;
 	/**
 	 * Total number of steps
 	 */
@@ -188,16 +188,6 @@ public abstract class GSEAWizard extends GSEADialog {
      */
 	protected boolean nextStep() {
 		
-		/*if(currentStepIndex==1){
-			if(algData.getParams().getString("annotation-file").equals("")){
-				JOptionPane.showMessageDialog(null, "Annotation file needs to be loaded", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			
-			if(algData.getParams().getString("gene-set-file").equals("")){
-				JOptionPane.showMessageDialog(null, "Gene set file needs to be loaded", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}*/
-		
 		
 		//this method calls the abstract method to prepare the next panel
 		JPanel nextPanel = (JPanel)prepareAndDeliverNextParameterPanel(algData, currentStepIndex);
@@ -210,10 +200,11 @@ public abstract class GSEAWizard extends GSEADialog {
 		//setVisible(false);
 		
 		//advance the index
+		
 		currentStepIndex++;
 		
 		//advance the highlighted step in the process display panel
-		processPanel.setHighlight(currentStepIndex-1);
+		processPanel.setHighlight(currentStepIndex);
 				
 		//post the next panel...
 		Component comp = mainPanel.getComponentAt(mainPanel.getWidth()-5, 5);
@@ -225,7 +216,7 @@ public abstract class GSEAWizard extends GSEADialog {
 			wButtonPanel.setNextText("Execute");
 		}
 		
-		if(currentStepIndex > 1) {
+		if(currentStepIndex >=1) {
 			wButtonPanel.setEnableBackButton(true);		
 		}
 
@@ -250,7 +241,7 @@ public abstract class GSEAWizard extends GSEADialog {
 		IWizardParameterPanel prevPanel = prepareAndDeliverPreviousParameterPanel(algData, currentStepIndex);
 		
 		//advance the index
-		currentStepIndex--;
+		currentStepIndex=currentStepIndex-1;
 		
 		//advance the highlighted step in the process display panel
 		processPanel.setHighlight(currentStepIndex);
@@ -275,65 +266,7 @@ public abstract class GSEAWizard extends GSEADialog {
 	}
 	
 	
-	/*public void fillAlgsParam(String command) {
-		System.out.println("fillArgsParams");
-		if(command.equalsIgnoreCase("run-gsea")) {
-			this.algData.addParam("mode", GSEAConstants.RUN_GSEA);
-		}else if (command.equalsIgnoreCase("antialiasing")) {
-			this.algData.addParam("mode", GSEAConstants.ANTIALIASING);
-		}
-	}
-	/**
-	 * 
-	 * @author sarita
-	 *
-	 *
-	
-	private class ProcessDisplayPanel extends JPanel {
-
-		/**
-		 * @param args
-		 * 
-		 * 
-		 *
 		
-		private JRadioButton runGSEA;
-		private JRadioButton antialiasing;
-		private GBA gba=new GBA();
-		
-		
-		public ProcessDisplayPanel() {
-			super();			
-			constructPanel();
-		}
-
-		/**
-		 * Builds the process panel
-		 *
-		private void constructPanel() {
-			this.setBorder(null);
-			setLayout(new GridBagLayout());
-			runGSEA = new JRadioButton("Run GSEA");
-			runGSEA.setFocusPainted(false);
-			runGSEA.setActionCommand("run-gsea");
-			runGSEA.addActionListener(new Listener());
-			runGSEA.setBackground(new Color(233,230,212));
-			
-			antialiasing = new JRadioButton("Antialiasing");
-			antialiasing.setFocusPainted(false);
-			antialiasing.setActionCommand("antialiasing");
-			antialiasing.addActionListener(new Listener());
-			antialiasing.setBackground(new Color(233,230,212));
-			
-			gba.add(this, runGSEA, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
-					new Insets(10, 5, 70, 5), 0, 0);
-			gba.add(this, antialiasing, 0, 3, 1, 1, 1, 0, GBA.H,
-					GBA.C, new Insets(20, 5, 0, 5), 0, 0);
-		
-			
-		}
-	}*/
-	
 	
 	private class ProcessDisplayPanel extends JPanel {
 

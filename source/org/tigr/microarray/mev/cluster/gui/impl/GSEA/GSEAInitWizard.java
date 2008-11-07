@@ -42,10 +42,6 @@ public class GSEAInitWizard extends GSEAWizard {
 		super(parent, title, modal, algData,  stepTitles, stepCount, initPanel);
 		
 		this.idata=idata;
-		//stepsPanel = new StepsPanel();
-		//super.setInitialPanel(stepsPanel);
-		//currentPanel = stepsPanel;
-		
 		//dataPanel = new GSEADataPanel(idata,algData, this);--commented for testing to see what haeepns on passing parent
 		dataPanel = new GSEADataPanel(idata,algData, parent, clusterRepository, irm);
 		currentPanel = dataPanel;
@@ -72,7 +68,7 @@ public class GSEAInitWizard extends GSEAWizard {
 		currentPanel.populateAlgorithmData();
 		
 	
-		if(currentStepIndex == 1) {
+		if(currentStepIndex == 0) {
 			
 			
 				nextPanel = parameterPanel;
@@ -81,7 +77,7 @@ public class GSEAInitWizard extends GSEAWizard {
 				pack();
 				currentPanel = nextPanel;			
 		}
-		if(currentStepIndex == 2){
+		if(currentStepIndex == 1){
 			super.result=JOptionPane.OK_OPTION;
 		}
 		
@@ -104,10 +100,8 @@ public class GSEAInitWizard extends GSEAWizard {
 		//current panel should capture
 		currentPanel.clearValuesFromAlgorithmData();
 		
-		//get mode selection
-		//String mode = currAlgData.getParams().getString("nonpar-mode");
 		
-		 if(currentStepIndex == 2) {
+		 if(currentStepIndex == 1) {
 				prevPanel = dataPanel;
 				currentPanel = prevPanel;
 		} 
@@ -120,12 +114,6 @@ public class GSEAInitWizard extends GSEAWizard {
 		if(!super.nextStep())
 			dispose();
 		
-		//adjust the size of the panel to the screen resolution
-		//if(currentPanel == groupSelectionPanel) {
-		//	groupSelectionPanel.adjustSizeToResolution();
-		//}
-
-//		pack();
 
 		return true;
 	}

@@ -80,6 +80,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	  	private javax.swing.JButton browseButton2;
 	    private javax.swing.JLabel uploadGeneSetLabel;
 	    private javax.swing.JTextField geneSetTextField;
+	    private javax.swing.JLabel genesetPanelEmptyLabel;
 	    
 	    private AlgorithmData algData;
 	    private IData idata;
@@ -166,6 +167,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    	genesetPanel = new javax.swing.JPanel();
 	    	downloadGenesetLabel=new javax.swing.JLabel();
 	    	downloadStatusLabel=new javax.swing.JLabel();
+	    	genesetPanelEmptyLabel=new javax.swing.JLabel();
 	    	
 	    	DownloadButton= new javax.swing.JButton();
 	     	DownloadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -235,10 +237,12 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	            
 			
 	    	gba.add(genesetPanel, downloadStatusLabel, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+	    
 	    	gba.add(genesetPanel, downloadGenesetLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(genesetPanel, DownloadButton, 1, 1, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    			
-			
+	    	gba.add(genesetPanel, genesetPanelEmptyLabel, 1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    		gba.add(genesetPanel, DownloadButton, 2, 1, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+    	
+    		
 			gba.add(genesetPanel, uploadGeneSetLabel, 0, 3, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
     		gba.add(genesetPanel, geneSetTextField, 1, 3, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(genesetPanel, browseButton2, 2, 3, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
