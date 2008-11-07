@@ -188,10 +188,10 @@ import org.tigr.microarray.util.FileLoaderUtility;
 
 	    	//Group assignment panel
 	    	groupAssignmentPanel.setLayout(new GridBagLayout());
-	    	groupAssignmentPanel.setBorder(new TitledBorder(new EtchedBorder(), "Phenotype Assignment"));
+	    	groupAssignmentPanel.setBorder(new TitledBorder(new EtchedBorder(), "Phenotype/Class Assignment"));
 	    	
 	        	
-   	    	factorLabel.setText("Assign phenotype labels to your samples");
+   	    	factorLabel.setText("Assign phenotype/Class labels to your samples");
    	    	groupAssignment.setText("Assign");
    	    
    	    	
