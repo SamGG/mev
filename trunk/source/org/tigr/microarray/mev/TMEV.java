@@ -421,6 +421,8 @@ public class TMEV {
     }
     public static String getSettingForOption(String option, String defaultValue) {
 	    try {
+		    if(!props.containsKey(option))
+			    return defaultValue;
 		    return (String) props.get(option);
 	    } catch (NullPointerException npe) {
 		    return defaultValue;

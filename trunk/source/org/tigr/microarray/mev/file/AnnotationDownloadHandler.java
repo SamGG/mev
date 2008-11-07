@@ -161,7 +161,7 @@ public class AnnotationDownloadHandler {
 
 	public void setEnabled(boolean isEnabled) {
 		connectButton.setEnabled(isEnabled);
-		browseButton.setEnabled(isEnabled);
+//		browseButton.setEnabled(isEnabled);
 		organismListBox.setEnabled(isEnabled);
 		arrayListBox.setEnabled(isEnabled);
 		this.isEnabled = isEnabled;
