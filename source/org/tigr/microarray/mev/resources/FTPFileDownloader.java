@@ -38,24 +38,19 @@ public class FTPFileDownloader extends FileDownloader {
 	
 
 	@Override
-	public boolean connect()  {
+	public boolean connect() throws IOException {
+		progress = new RMProgress(new Frame(), "Connecting to Host", new DownloadProgressListener());
+		progress.init(SftpProgressMonitor.GET, "Connecting to " + hostURL, "??", 0);
+		progress.setIndeterminate(true);
+		progress.show();
+		
+		ftp = new FtpBean();
 		try {
-			progress = new RMProgress(new Frame(), "Connecting to Host", new DownloadProgressListener());
-			progress.init(SftpProgressMonitor.GET, "Connecting to " + hostURL, "??", 0);
-			progress.setIndeterminate(true);
-			progress.show();
-			
-			ftp = new FtpBean();
 			ftp.ftpConnect(hostURL.getHost(), "anonymous");
-			
-			progress.dispose();
-			
 		} catch (FtpException ftpe) {
-			ftpe.printStackTrace();
-			return false;
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			return false;
+			throw new IOException(ftpe);
+		} finally {
+			progress.dispose();
 		}
 		return true;
 	}
@@ -195,6 +190,8 @@ public class FTPFileDownloader extends FileDownloader {
 		} catch (FtpException ftpe) {
 			SupportFileAccessError sfae = new SupportFileAccessError("File not found", ftpe);
 			throw sfae;
+		} finally {
+			progress.dispose();
 		}
 		return newFile;
 	}

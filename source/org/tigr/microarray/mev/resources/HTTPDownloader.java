@@ -32,15 +32,15 @@ public class HTTPDownloader extends FileDownloader {
 	}
 
 	@Override
-	public boolean connect() {
+	public boolean connect() throws IOException{
 		try {
 //			RMProgress monitor = progress;
 			conn = hostURL.openConnection();
 			conn.setConnectTimeout(10000);
 			conn.setReadTimeout(10000);
 			return true;
-		} catch (IOException ioe) {
-			return false;
+		} finally {
+			//progress.dispose();
 		}
 	}
 
