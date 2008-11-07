@@ -677,13 +677,9 @@ public class SuperExpressionFileLoader {
 	 */
 
 	private ISlideData[] toISlideDataArray(Vector<ISlideData> dataVector) {
-		//TODO after bugfix 11/05/08, replace method with one-liner.
 //		return dataVector.toArray(new ISlideData[dataVector.size()]);
 		if (dataVector == null || dataVector.size() < 1) {
-			System.out.println("datavector is null");
 			return null;
-		} else {
-			System.out.println("datavector is not null");
 		}
 		ISlideData[] data = new ISlideData[dataVector.size()];
 
@@ -742,14 +738,6 @@ public class SuperExpressionFileLoader {
 				data = selectedFileLoader.loadExpressionFiles();
 				chipAnnotation = selectedFileLoader.getChipAnnotation();
 				dataType = selectedFileLoader.getDataType();
-				//TODO
-				System.out.println("data type: " + dataType);
-				try {
-					System.out.println("annotation: " + data.get(0).getSlideMetaData().toSlideDataElement(0).getElementAnnotation().getCloneID());
-				} catch (NullPointerException npe) {
-					System.out.println("no annotation loaded");
-				}
-				System.out.println("expression: " + data.get(0).getSlideMetaData().toSlideDataElement(0).getIntensity(0));
 				selectedFileLoader.dispose();
 				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {

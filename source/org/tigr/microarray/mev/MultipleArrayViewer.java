@@ -509,7 +509,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	   }
 	   try {
 		   
-		    this.menubar.setUseDoubleGradient(new Boolean(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_DOUBLE)));  
+		    this.menubar.setUseDoubleGradient(new Boolean(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_DOUBLE, "true")));  
 	       
 	        Color positiveColor = new Color(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_POSITIVE)));
 	        Color negativeColor = new Color(new Integer(TMEV.getSettingForOption(TMEV.COLOR_SCHEME_NEGATIVE)));
