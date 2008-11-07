@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -164,7 +165,11 @@ public class FileResourceManager implements IResourceManager {
 			        setAskToGetOnline(dialog.askAgain());
 			}
 			if(isAllowedOnline()) {
-				downloadedFileMap = getUpdatesIfAvailable(new Vector<ISupportFileDefinition>(defs), defsToCachedFiles);
+				try {
+					downloadedFileMap = getUpdatesIfAvailable(new Vector<ISupportFileDefinition>(defs), defsToCachedFiles);
+				} catch (SupportFileAccessError sfae) {
+					//TODO suppress and return existing file?
+				}
 			}
 		} 
 		
@@ -216,7 +221,14 @@ public class FileResourceManager implements IResourceManager {
 
 			FileDownloader fd = FileDownloader.getInstance(thishost);
 
-			if(fd.connect()) {
+			boolean connected = false;
+			try {
+				connected = fd.connect();
+			} catch (IOException ioe) {
+				//connection failed, 
+				connected = false;
+			}
+			if(connected) {
 				Vector<ISupportFileDefinition> filesForThisHost = hostsHash.get(thishost);
 				for(int i=0; i<filesForThisHost.size(); i++) {
 					Date cachedDateForThisDef;

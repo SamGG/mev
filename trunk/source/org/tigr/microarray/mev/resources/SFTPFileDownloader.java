@@ -49,9 +49,9 @@ public class SFTPFileDownloader extends FileDownloader {
 	}
 
 	@Override
-	public boolean connect() {
+	public boolean connect() throws IOException {
 		try {
-			user = "eleanora";
+			user = "test";
 			//TODO write dialog to request username
 			host = hostURL.getHost();
 			port = 22;
@@ -68,6 +68,8 @@ public class SFTPFileDownloader extends FileDownloader {
 			return true;
 		} catch (JSchException jse) {
 			return false;
+		} finally {
+			//progress.dispose();
 		}
 	}
 	@Override

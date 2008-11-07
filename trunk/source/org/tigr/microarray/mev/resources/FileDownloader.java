@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -39,7 +40,7 @@ public abstract class FileDownloader {
 		return null;
 	}
 
-	public abstract boolean connect();
+	public abstract boolean connect() throws IOException;
 	public abstract void disconnect();
 	public abstract Date getLastModifiedDate(String path);
 	public abstract File getTempFile(String path) throws SupportFileAccessError;
