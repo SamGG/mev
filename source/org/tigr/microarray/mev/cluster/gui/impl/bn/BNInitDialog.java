@@ -1277,7 +1277,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			String _loc = TMEV.getSettingForOption(BNConstants.BN_LM_LOC_PROP);
 			if(_loc == null)
 				_loc = TMEV.getDataPath();
-			if(_loc.isEmpty() || _loc.equals(""))
+			if(_loc.equals("") || _loc.equals(""))
 				_loc = TMEV.getDataPath();
 			defaultFileBaseLocation = new JTextField(new File(_loc).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);

@@ -180,10 +180,10 @@ public class BNDownloadManager {
 			String cytoLibDir = TMEV.getSettingForOption("cytoscape_lib_dir").trim();
 			String keggServer = TMEV.getSettingForOption("kegg_server").trim();
 			String keggDir = TMEV.getSettingForOption("kegg_dir").trim();
-			if(cytoURL.isEmpty() || cytoURL == null 
-					|| cytoLibDir.isEmpty() || cytoLibDir == null 
-					|| keggServer.isEmpty() || keggServer == null
-					|| keggDir.isEmpty() || keggDir == null) {
+			if(cytoURL.equals("") || cytoURL == null 
+					|| cytoLibDir.equals("") || cytoLibDir == null 
+					|| keggServer.equals("") || keggServer == null
+					|| keggDir.equals("") || keggDir == null) {
 				JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Previously cached info not avaialble", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				repHash.put("cytoscape_webstart", cytoURL);
@@ -226,10 +226,10 @@ public class BNDownloadManager {
 			String cytoLibDir = TMEV.getSettingForOption("cytoscape_lib_dir").trim();
 			String keggServer = TMEV.getSettingForOption("kegg_server").trim();
 			String keggDir = TMEV.getSettingForOption("kegg_dir").trim();
-			if(cytoURL.isEmpty() || cytoURL == null 
-					|| cytoLibDir.isEmpty() || cytoLibDir == null 
-					|| keggServer.isEmpty() || keggServer == null
-					|| keggDir.isEmpty() || keggDir == null) {
+			if(cytoURL.equals("") || cytoURL == null 
+					|| cytoLibDir.equals("") || cytoLibDir == null 
+					|| keggServer.equals("") || keggServer == null
+					|| keggDir.equals("") || keggDir == null) {
 				JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Previously cached info not avaialble", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				repHash.put("cytoscape_webstart", cytoURL);

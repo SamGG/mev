@@ -289,7 +289,7 @@ public class FromWekaToSif {
 			
 		String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 		if(_tmp != null) {
-			if(!_tmp.isEmpty()) {
+			if(!_tmp.equals("")) {
 				xgmmlContent += _tmp;
 			}
 		}
@@ -421,7 +421,7 @@ public class FromWekaToSif {
 			}
 			String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 			if(_tmp != null) {
-				if(!_tmp.isEmpty()) {
+				if(!_tmp.equals("")) {
 					xgmmlContent += _tmp;
 				}
 			}
