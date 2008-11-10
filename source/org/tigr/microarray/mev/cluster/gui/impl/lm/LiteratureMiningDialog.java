@@ -1238,7 +1238,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 						} 
 					}
 
-					//Chnage species name to match KEGG file prefix
+					//Change species name to match KEGG file prefix
 					if(kegg_sp.equalsIgnoreCase("Human"))
 						kegg_sp="hsa";
 					else if (kegg_sp.equalsIgnoreCase("Mouse"))
