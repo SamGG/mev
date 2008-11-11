@@ -104,7 +104,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	     * 
 	     * 
 	     * */
-	//    public GSEADataPanel(IData idata,AlgorithmData algData, JDialog parent) {//commented for testing
+	
 	    public GSEADataPanel(IData idata,AlgorithmData algData, JFrame parent, ClusterRepository clusterRepository, IResourceManager irm) {
 	    	
 		    this.parentFrame = parent;
@@ -337,6 +337,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 				}
 			}else if(source==browseButton2){
 				geneSetTextField.setText(selectedFile.getAbsolutePath());
+				downloadStatusLabel.setText("Gene set file uploaded");
 			}
 		}
 
@@ -456,7 +457,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
 			
 			if(supportfilesHash.size()>0){
-				File genesetFile=supportfilesHash.get(mdef);
+				File genesetFile=supportfilesHash.get(supportfiles.nextElement());
+				System.out.println("Gene set file path is:"+genesetFile.getAbsolutePath());
 				geneSetTextField.setText(genesetFile.getAbsolutePath());
 				downloadStatusLabel.setText("Gene set file download was successful");
 				downloadStatusLabel.setForeground(Color.RED);
