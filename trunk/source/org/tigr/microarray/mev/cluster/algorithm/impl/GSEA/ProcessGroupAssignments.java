@@ -1,9 +1,12 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -134,7 +137,7 @@ public class ProcessGroupAssignments {
 		int matColStart=1;
 		int matColEnd=1;
 		int unassigned=((Vector)getUnassignedColumns()).size();
-		/*Printingthe factor assignments
+		/*Printingthe factor assignments*
 		System.out.println("The factor assignments are:");
 		for(int i=0; i<factorAssignments.length; i++){
 			for(int j=0; j<factorAssignments[i].length; j++){
@@ -152,7 +155,7 @@ public class ProcessGroupAssignments {
 		//unassigned to one of the factors; The function removes those samples before computing the FloatMatrix.
 		//So, the rows of the resulting matrix will always be (number of samples-unassigned).
 		factor_matrix=new FloatMatrix(nSamples-unassigned,cols);
-
+		
 		//Setting values of the "Intercept Column". This is the first column of the factor matrix and all rows will always be equal to 1
 		for(int i=0; i<factor_matrix.getRowDimension(); i++){
 			factor_matrix.set(i, 0, 1);
@@ -212,7 +215,32 @@ public class ProcessGroupAssignments {
 
 		}//End of factornames for loop
 
-
+		/*****************Testing factor matrix******************************
+		File factorMatrix;
+		try {
+			factorMatrix = new File("C:/Users/sarita/Desktop/GSEA-TestData/factorMatrix_JAVA.txt");
+			 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(factorMatrix)));
+			 int tcount=0;
+			 while(tcount<factor_matrix.getRowDimension()){
+				 for(int j=0; j<factor_matrix.getColumnDimension(); j++){
+				
+				 pw.write(Float.toString(factor_matrix.get(tcount, j)));
+				 pw.write('\t');
+				}
+				 pw.write('\n');
+				 tcount=tcount+1;
+			 }
+			 
+			 
+			 pw.close();
+			 
+			 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+	
+	
 
 		return factor_matrix;
 	}
