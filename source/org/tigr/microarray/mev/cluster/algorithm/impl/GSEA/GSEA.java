@@ -84,7 +84,7 @@ public class GSEA extends AbstractAlgorithm {
 		/*************For testing ONLY. Needs >1 factor*************/
 		FloatMatrix coefficients=data.getGeneMatrix("lmPerGene-coefficients");
 		
-	/*	 File lmPerGeneCoefficients;
+		/* File lmPerGeneCoefficients;
 			try {
 				lmPerGeneCoefficients = new File("C:/Users/sarita/Desktop/GSEA-TestData/lmPG_JAVA.txt");
 				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(lmPerGeneCoefficients)));
@@ -237,8 +237,6 @@ public class GSEA extends AbstractAlgorithm {
 	 */
 	
 	public void lmPerGene(AlgorithmData aData, FloatMatrix factor_matrix, boolean removeNA) throws IOException{
-		//	public void lmPerGene(AlgorithmData aData, FloatMatrix factor_matrix, boolean removeNA, FloatMatrix geneexpression) throws IOException{//Use this for testing
-		//FloatMatrix gene_expression=geneexpression;//--use this for testing
 		
 		String[]factorNames=aData.getStringArray("factor-names");
 		FloatMatrix gene_expression=aData.getGeneMatrix("gene-data-matrix"); 
@@ -343,12 +341,13 @@ public class GSEA extends AbstractAlgorithm {
 	/*************Testing xx ends****************************************************/
 
 		 
-	//	System.out.println("lmPerGene: dim (xx)"+xx.getRowDimension()+xx.getColumnDimension());
+	
 		//In the R function, they use solve(a) and since the second argument is not provided, solve returns teh inverse of a.
 		//so, in R, if you say solve(a); the second argument b is considered to be an identity matrix. Trying to replicate that
 		//FloatMatrix xxInv=xx.inverse();
 		
 		identity=new FloatMatrix(xx.getRowDimension(),xx.getColumnDimension());
+		
 	    identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
 		xxInv=xx.solve(identity);
 		
@@ -1090,7 +1089,7 @@ public class GSEA extends AbstractAlgorithm {
 
 				
 			}
-			System.out.println("permMat size before GSNomalize:"+permMat.getRowDimension()+":"+permMat.getColumnDimension());
+	//		System.out.println("permMat size before GSNomalize:"+permMat.getRowDimension()+":"+permMat.getColumnDimension());
 			
 			
 			
@@ -1357,30 +1356,32 @@ public class GSEA extends AbstractAlgorithm {
 		Hashtable origOrder=new Hashtable();
 		Hashtable permOrder=new Hashtable();
 		Hashtable resultHash=new Hashtable();
+		
+		//Number of factors equal to one
+		//Hashtable origOrder had key="samplenumber" and value="classification". In case of one factor,
+		//origOrder has key=samplenumber and value="one-factor-class" for all samples
+		if(factorNames.length==1){
+			
+			int[]factorAssignment=factorAssignments[0];
+			Vector assign=new Vector();
+			
+			
+			for(int i=0; i<num_Samples; i++){
+				assign.add(i);
+				origOrder.put(i,"one-factor-class");
+			}
+			
+			
+			
+			permOrder.put("one-factor-class", assign);
+
+		}
+
 
 		//Loops over the number of samples in the data
 		for(int index=0; index<num_Samples; index++){
 			
-			//Number of factors equal to one
-			//Usually the hashtable origOrder had key="samplenumber" and value="classification". In case of one factor,
-			//we just take the original factor assignments and permute them. So classification of all samples remains the same
-			//"one-factor-class". So, origOrder in this case has key="one-factor-class" and value=factorAssignment
-			if(factorNames.length==1){
-				
-				int[]factorAssignment=factorAssignments[0];
-				Vector assign=new Vector();
-				
-				
-				for(int i=0; i<factorAssignment.length; i++){
-					assign.add(i, factorAssignment[i]);
-				}
-				
-				
-				origOrder.put("one-factor-class", factorAssignment);
-				permOrder.put("one-factor-class", assign);
-
-			}
-
+		
 			//Number of factors is 3. so we will permute the factor labels of factors 2 and 3. The assumption is that
 			//the first factor is the main factor.
 			if(factorNames.length>=2){
@@ -1417,19 +1418,7 @@ public class GSEA extends AbstractAlgorithm {
 			
 		}
 		
-		
-		/*Permute the factor labels----oRIGINAL CODE, Commented for testing
-		Enumeration keys=permOrder.keys();
-		while(keys.hasMoreElements()){
-			String key=(String)keys.nextElement();
-			Vector temp=new Vector(); 
-			temp=getPermutedValues((Vector)permOrder.get(key));
-			System.out.println();
-			
-			permOrder.remove(key);
-			permOrder.put(key, temp);
-		}
-*/
+	
 		//System.out.println("number of keys in permOrder:"+permOrder.size());
 		Enumeration keys=permOrder.keys();
 		
@@ -1439,7 +1428,19 @@ public class GSEA extends AbstractAlgorithm {
 			Vector value=(Vector)permOrder.get(key);
 			
 			ArrayList permutedArray=new ArrayList(value.size());
+		//	System.out.println("size of permuted array before permutation is:"+permutedArray.size());
 			permutedArray=(ArrayList)getPermutedValues(value);
+			//System.out.println("size of permuted array after permutation is:"+permutedArray.size());
+			/*printing the permuted array*/
+			/*System.out.println("Here is the permuted array...");
+			for(int i=0; i<permutedArray.size(); i++){
+				System.out.print(permutedArray.get(i));
+				System.out.print('\t');
+			}
+			System.out.println();/**/
+			
+			
+			
 			//TODO: Generate the int[][]permuted factor array here.
 			/*****Added for testing******/
 		
@@ -1458,13 +1459,13 @@ public class GSEA extends AbstractAlgorithm {
 		
 		permOrder.clear();
 		
-		/*printing the permuted sample order
-		System.out.println("Here is the permuted sample order");
-		for(int i=0; i<permutedArray.size(); i++){
-			System.out.print(((Integer)permutedArray.get(i)).intValue());
+		/*printing the permuted sample order*
+		System.out.println("Here is the permuted sample assignment...");
+		for(int i=0; i<permutedSampleAssignment.length; i++){
+			System.out.print(permutedSampleAssignment[i]);
 			System.out.print('\t');
 		}
-		System.out.println();*/
+		System.out.println();/**/
 		
 		resultHash.put("original-order", origOrder);
 		resultHash.put("permuted-order", permutedSampleAssignment);
@@ -1478,31 +1479,27 @@ public class GSEA extends AbstractAlgorithm {
 	//this will return an arrya of permuted sample numbers. The classification will be maintained
 	public ArrayList getPermutedValues(Vector values){
 		
-		//System.out.println("getPermutedValues");
 		ArrayList permutedValidArray = new ArrayList(values.size());
 		
 		
 		for (int i = 0; i < values.size(); i++) {
+			//System.out.println("original Values:"+((Integer)values.get(i)).intValue());
 			permutedValidArray.add(i, ((Integer)values.get(i)).intValue());
 		}
 
 		int aStart=0;
 		int aEnd=values.size()-1;
 		
-	//	for (int i = 0; i<permutedValidArray.size(); i++) {
+	
 		 for (int i = permutedValidArray.size(); i > 1; i--) {
 			
 			    int randomNumber =  aRandom.nextInt(i - 1);
 			//    System.out.println("random number is:"+randomNumber);
 			    int temp = ((Integer)permutedValidArray.get(randomNumber)).intValue();
-				permutedValidArray.add(randomNumber,  permutedValidArray.get(i-1));
-				permutedValidArray.add(i-1, temp);
+				permutedValidArray.set(randomNumber,  permutedValidArray.get(i-1));
+				permutedValidArray.set(i-1, temp);
 			
-			  /* int randVal = 
-	            int temp = permutedValidArray[randVal];
-	            permutedValidArray[randVal] = permutedValidArray[i - 1];
-	            permutedValidArray[i - 1] = temp;*/
-		
+			 
 		}  
 		
 		return permutedValidArray;
@@ -1521,26 +1518,10 @@ public class GSEA extends AbstractAlgorithm {
 		int[][]permutedFactorAssignments=new int[factorNames.length][num_samples];
 		int sample;
 		
-		//There is just one factor	
-		//When there is just one factor, just take the original factor assignments, permute them and use them. No need
-		//to worry about the number of levels of that factor.
-		if(factorNames.length==1){
+		
 
-						
-			int[] permutedsampleAssignment=permOrder;
-			
-			for(int index=0; index<num_samples; index++){
-				permutedFactorAssignments[0][index]= permutedsampleAssignment[index];
-
-			}
-
-
-		}
-
-
-
-		// Number of factors greater than or equal to 2
-		if(factorNames.length>=2){
+		// Number of factors greater than or equal to 1
+		if(factorNames.length>=1){
 			rowVector=factorAssignments[0];
 			for(int index=1; index<factorNames.length; index++){
 				permutedFactorAssignments[index]=factorAssignments[index];
