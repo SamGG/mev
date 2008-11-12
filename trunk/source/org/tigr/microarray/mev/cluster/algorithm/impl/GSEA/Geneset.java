@@ -1,11 +1,16 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
 
-import java.util.HashMap;
 import java.util.Vector;
 
+/**
+ * 
+ * @author Sarita Nair
+ *
+ */
+
 public class Geneset implements IGeneSet{
-	
-	
+
+
 	public String geneSetName;
 	public Vector geneSetNames;
 	//Unique list of genes across the gene sets
@@ -13,22 +18,8 @@ public class Geneset implements IGeneSet{
 	//Would be useful to have as a Vector because, in the .gmt format files it is difficult to predetermine the
 	//number of genes (rows) per gene set
 	public Vector geneSetElements;
-	
-	/**
-	 * DO NOT think this constructor is required. The geneSetElements get set in the vector anyway.
-	 * no need to have a seperate contsructor.
-	 * @param rows
-	 * @deprecated use the null argument constructor
-	 * @param cols
-	 *
-	public Geneset(int rows, int cols){
-		this.geneSetElements=new Vector();
-		this.rows=rows;
-		this.cols=cols;
-		this.genes=new Vector();
-		this.geneSetNames=new Vector();
-	}*/
-	
+
+
 	/**
 	 * Helpful when you do not have the gene set size in advance. One instance is where 
 	 * you are trying to remove the gene sets from the original set which do not have any 
@@ -40,13 +31,13 @@ public class Geneset implements IGeneSet{
 		this.genes=new Vector();
 		this.geneSetNames=new Vector();
 	}
-	
-	
+
+
 	/**
 	 * getAllGenesets returns a vector containing the names of all gene sets
 	 * @return Vector
 	 */
-	
+
 	public Vector getAllGenesetNames() {
 		return geneSetNames;
 	}
@@ -60,23 +51,23 @@ public class Geneset implements IGeneSet{
 	public Vector getGenesinGeneset() {
 		return genes;
 	}
-	
-	
+
+
 	public String getGSEAConstant() {
 		return GSEAConstant;
 	}
 
-	
+
 	public void setGSEAConstant(String temp) {
 		GSEAConstant.concat(temp);
 		GSEAConstant.trim();
-		
+
 	}
 
-	
+
 	public void setAllGenesetNames(Vector genesets) {
 		this.geneSetNames=genesets;
-		
+
 	}
 
 	/**
@@ -86,42 +77,42 @@ public class Geneset implements IGeneSet{
 	 */
 	public void setGenesinGeneset(String gene) {
 		this.genes.add(gene);
-		
+
 	}
 
-	
+
 	public IGeneSetElement getGeneSetElement(int index) {
 		return (IGeneSetElement)this.geneSetElements.get(index);
 	}
 
-	
+
 	public String getGeneSetName(int index) {
 		return (String)this.geneSetNames.get(index);
 	}
 
-	
+
 	public void setGeneSetElement(IGeneSetElement element, int index) {
 		this.geneSetElements.add(index, element);
-		
+
 	}
-	
+
 	public Vector getGenesetElements(){
 		return this.geneSetElements;
 	}
-	
-	
-	
+
+
+
 	public void setGeneSetName(String name) {
 		this.geneSetName=name;
-	
+
 	}
-	
-	
 
-	
-	
 
-	
-	
+
+
+
+
+
+
 
 }

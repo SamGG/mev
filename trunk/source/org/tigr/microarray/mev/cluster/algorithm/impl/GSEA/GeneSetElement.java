@@ -2,6 +2,11 @@ package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
 
 import org.tigr.microarray.mev.cluster.gui.IGeneSet;
 
+/**
+ * @author Sarita Nair
+ *
+ */
+
 public class GeneSetElement implements IGeneSetElement{
 
 	
