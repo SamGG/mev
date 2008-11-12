@@ -1048,11 +1048,11 @@ public class EASEInitDialog extends AlgorithmDialog {
 				arrayListBox = new JComboBox();
 				arrayListBox.addItem("No species listed");
 				arrayListBox.setEnabled(false);
+				
+				getEaseSupportFileButton.setEnabled(false);
 			} else {
 				
 				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
-//				organismListBox.addActionListener(listener);
-//				organismListBox.setActionCommand("organism-selected-command");
 	
 				try {
 					organismListBox.setSelectedItem(speciesName);
