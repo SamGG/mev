@@ -3,7 +3,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
 import java.util.Vector;
 
 /**
- * @author sarita
+ * @author Sarita Nair
  * GeneData class is meant to store the "processed" expression data
  * One of the steps in GSEA is to collapse probes to genes. If there
  * are multiple probes mapping to a gene, the expression data corresponding to

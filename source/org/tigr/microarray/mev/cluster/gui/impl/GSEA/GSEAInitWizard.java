@@ -35,7 +35,6 @@ public class GSEAInitWizard extends GSEAWizard {
 	 * @param algData <code>AlgorithmData</code> to encapsulate parameters
 	 * @param clusterRepository TODO
 	 * @param steps String array of process steps.  Convention is sentence case and end all steps with a . to help delimit.
-	 * @param mavIndex The index of the current MultipleArrayViewer
 	 * @param stepComponents initial JPanel to display
 	 */
 	public GSEAInitWizard(IData idata, JFrame parent, String title, boolean modal, AlgorithmData algData, String[] stepTitles, int stepCount, JPanel initPanel, ClusterRepository clusterRepository, IResourceManager irm) {
