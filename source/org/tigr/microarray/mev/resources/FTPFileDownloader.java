@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
+import java.awt.Dialog.ModalityType;
 
 import org.tigr.microarray.mev.resources.FileDownloader.DownloadProgressListener;
 
@@ -31,6 +32,7 @@ import ftp.FtpListResult;
 
 public class FTPFileDownloader extends FileDownloader {
 	FtpBean ftp = null;
+	boolean disposeProgress= false;
 	
 	public FTPFileDownloader(URL host) {
 		super(host);
@@ -39,10 +41,37 @@ public class FTPFileDownloader extends FileDownloader {
 
 	@Override
 	public boolean connect() throws IOException {
-		progress = new RMProgress(new Frame(), "Connecting to Host", new DownloadProgressListener());
-		progress.init(SftpProgressMonitor.GET, "Connecting to " + hostURL, "??", 0);
-		progress.setIndeterminate(true);
-		progress.show();
+		
+		Thread thread = new Thread(new Runnable(){
+			public void run(){
+				try{
+				Thread.sleep(1500);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				if (disposeProgress){
+					return;
+				}
+				progress = new RMProgress(new Frame(), "Connecting to Host", new DownloadProgressListener());
+				
+					
+				progress.setModal(true);
+				progress.setIndeterminate(true);
+				progress.setAlwaysOnTop(true);
+				progress.setIndeterminantString("Connecting...");
+				progress.setFocusable(true);
+				progress.init(SftpProgressMonitor.GET, "Connecting to " + hostURL, "??", 0);
+				while(true){
+					if (disposeProgress){
+						progress.dispose();
+						return;
+					}
+				}
+			}
+		});
+
+		thread.setPriority(Thread.MAX_PRIORITY);
+		thread.start();
 		
 		ftp = new FtpBean();
 		try {
@@ -50,7 +79,9 @@ public class FTPFileDownloader extends FileDownloader {
 		} catch (FtpException ftpe) {
 			throw new IOException(ftpe);
 		} finally {
-			progress.dispose();
+			disposeProgress=true;
+			if (progress!=null)
+				progress.dispose();
 		}
 		return true;
 	}
@@ -160,7 +191,7 @@ public class FTPFileDownloader extends FileDownloader {
 		File newFile = null;
 		try {
 			int overallLength = getSize(path);
-			
+
 			progress = new RMProgress(new Frame(), "Downloading " + url.getPath(), new DownloadProgressListener());
 			progress.init(SftpProgressMonitor.GET, url.toString(), "??", new Long(overallLength).longValue());
 			
@@ -191,6 +222,7 @@ public class FTPFileDownloader extends FileDownloader {
 			SupportFileAccessError sfae = new SupportFileAccessError("File not found", ftpe);
 			throw sfae;
 		} finally {
+			disposeProgress=true;
 			progress.dispose();
 		}
 		return newFile;
@@ -232,6 +264,7 @@ public class FTPFileDownloader extends FileDownloader {
 			ioe.printStackTrace();
 			return null;
 		} finally {
+			disposeProgress=true;
 			if(progress != null) {
 				progress.end();
 				progress.dispose();

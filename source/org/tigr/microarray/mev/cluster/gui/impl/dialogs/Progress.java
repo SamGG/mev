@@ -93,7 +93,9 @@ public class Progress extends JDialog {
     public void setValue(int value) {
         progress.setValue(value);
     }
-    
+    public void setIndeterminantString(String string){
+    	progress.setString(string);
+    }
     /**
      * Sets description.
      */
