@@ -561,7 +561,19 @@ import org.tigr.microarray.util.FileLoaderUtility;
     			onConnect(); 
 				
     		}else if (source == DownloadButton){
-    			onGeneSetDownload();
+    			Thread thread = new Thread(new Runnable(){
+    				public void run() {
+                    	try {	        
+                    		
+                			onGeneSetDownload();
+                    	} catch (Exception ioe){
+                            ioe.printStackTrace();
+                        }
+                    }
+    			});
+
+    			thread.setPriority(Thread.MIN_PRIORITY);
+    			thread.start();
     		}
 			
 		}

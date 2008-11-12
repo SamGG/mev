@@ -55,7 +55,7 @@ public class RMProgress extends Progress implements SftpProgressMonitor, FtpObse
 		try {
 			if (max == -1) {
 				setIndeterminate(true);
-				show();
+				//show();
 			}
 			setTitle(title);
 			setUnits(new Long(max).intValue());
