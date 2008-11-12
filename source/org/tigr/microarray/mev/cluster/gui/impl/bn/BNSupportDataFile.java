@@ -11,7 +11,7 @@ public class BNSupportDataFile extends ISupportFileDefinition {
 		private static String fileRoot;
 		private String species;
 		private String array;
-		private boolean singleFile = false;
+		private boolean singleFile = true;
 		private boolean unzipFile = true;
 		
 		public BNSupportDataFile(String species, String array) {
@@ -21,12 +21,12 @@ public class BNSupportDataFile extends ISupportFileDefinition {
 		} 
 		@Override
 		public URL getURL() throws MalformedURLException {
-			return new URL(fileRoot + species + BNConstants.SEP + array + "_BN.zip");
+			return new URL(fileRoot + species + "/" + array + "_BN.zip");
 		}
 
 		@Override
 		public String getUniqueName() {
-			return array + "_BN.zip";
+			return array + "_BN";
 		}
 		
 		public void setIsSingleFile(boolean flg) {

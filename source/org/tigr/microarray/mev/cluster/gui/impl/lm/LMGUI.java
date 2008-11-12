@@ -9,7 +9,10 @@
  * @author Raktim
  */
 package org.tigr.microarray.mev.cluster.gui.impl.lm;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -25,12 +28,18 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.BNSupportDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.CytoscapeWebstart;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.LMBNViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.RunWekaProgressPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 public class LMGUI implements IClusterGUI {
 	public static final int GENE_CLUSTER = 0;
@@ -44,6 +53,11 @@ public class LMGUI implements IClusterGUI {
 	Vector<String> networkFiles = new Vector<String>();
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	
+	//RM attributes
+	String species = null;
+	String chip = null;
+	BNSupportDataFile bnSuppFileHandle;
+	
 	public DefaultMutableTreeNode execute(IFramework frame) throws AlgorithmException {
 		this.framework = frame;
 		done = false;
@@ -53,7 +67,58 @@ public class LMGUI implements IClusterGUI {
 		data = framework.getData();
 		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-		final LiteratureMiningDialog dialog = new LiteratureMiningDialog(framework, repository, framework.getData().getFieldNames());
+		//RM stuff from EASE to make
+		//String easeFileLocation = null;
+		String chipType = null;
+		String species = null;
+		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
+
+		BNSupportDataFile bnSuppFileHandle = null;
+
+		
+		if (framework.getData().isAnnotationLoaded()) {
+			chipType = framework.getData().getChipAnnotation().getChipType();
+			species = framework.getData().getChipAnnotation().getSpeciesName();
+			bnSuppFileHandle = new BNSupportDataFile(species, chipType);
+			defs.add(bnSuppFileHandle);
+
+		}
+		
+		Hashtable<String, Vector<String>> speciestoarrays = null;
+		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		defs.add(aafd);
+	        
+	        //EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
+	        //defs.add(eiudf);
+	        
+	        try {
+	        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
+	        	
+	        	//File impliesFile = supportFiles.get(eiudf);
+		        //algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
+		        //algorithmData.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
+		        
+		        File speciesarraymapping = supportFiles.get(aafd);
+		        try {
+		        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
+		        } catch (IOException ioe) {
+		        	speciestoarrays = null;
+		        }
+		        //TODO Change path
+		        if(bnSuppFileHandle != null || framework.getData().isAnnotationLoaded()) {
+		        	//easeFileLocation = supportFiles.get(bnSuppFileHandle).getAbsolutePath();
+		        } else {
+		        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
+		        }
+	        } catch (SupportFileAccessError sfae) {
+	        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
+	        }
+		//
+		final LiteratureMiningDialog dialog = new LiteratureMiningDialog(framework, repository, framework.getData().getFieldNames(), 
+				framework.getResourceManager(),
+        		species, 
+        		chipType, 
+        		speciestoarrays);
 		if(dialog.showModal() != JOptionPane.OK_OPTION)
 			return null;
 		
