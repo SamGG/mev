@@ -15,6 +15,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,8 +27,10 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.RepositoryInitializationError;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
@@ -48,7 +51,7 @@ public class AnnotationDownloadHandler {
 	 */
 	JPanel annotationPanel;
 
-	JLabel getAnnotation, customAnnotation;
+	JLabel getAnnotation, /*customAnnotation,*/ statusLabel;
 
 	JButton connectButton, browseButton;
 
@@ -92,10 +95,13 @@ public class AnnotationDownloadHandler {
 
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
 
+		
 		annotationPanel = new JPanel();
 		annotationPanel.setLayout(new GridBagLayout());
-		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
+		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Load Annotation Data"));
 
+		statusLabel = new JLabel("Choose an array and Organism and select Download");
+		
 		getAnnotation = new JLabel("Retrieve  Annotation  from  Resourcerer");
 
 		connectButton = new JButton("Connect");
@@ -103,7 +109,8 @@ public class AnnotationDownloadHandler {
 		connectButton.setPreferredSize(new Dimension(100, 30));
 		connectButton.addActionListener(new EventListener());
 
-		customAnnotation = new JLabel("Selected File:");
+		statusLabel = new JLabel("Choose an array and Organism and select Download");
+//		customAnnotation = new JLabel("Selected File:");
 
 		annFileListTextField = new JTextField("No annotation selected.");
 		annFileListTextField.setEditable(false);
@@ -117,6 +124,7 @@ public class AnnotationDownloadHandler {
 
 		chooseOrg = new JLabel("Choose Organism");
 		chooseArray = new JLabel("Choose Array");
+		
 
 		if (annotationLists != null && annotationLists.size() > 0) {
 			arrayListBox = new JComboBox();
@@ -151,18 +159,20 @@ public class AnnotationDownloadHandler {
 			chooseArray.setEnabled(false);
 		}
 
-		gba.add(annotationPanel, chooseOrg, 			0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, chooseArray, 			0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+//		gba.add(annotationPanel, statusLabel,			0, 0, 0, 0, 0, 0, GBA.H, GBA.W, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, chooseOrg, 			0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, chooseArray, 			0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-		gba.add(annotationPanel, organismListBox, 		1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, arrayListBox, 			1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, organismListBox, 		1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, arrayListBox, 			1, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-		gba.add(annotationPanel, getAnnotation, 			3, 0, 2, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, connectButton, 			3, 1, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 0), 0, 0);
+		gba.add(annotationPanel, getAnnotation, 			3, 1, 2, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, connectButton, 			3, 2, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 0), 0, 0);
 
-		gba.add(annotationPanel, customAnnotation, 		0, 2, 3, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, annFileListTextField, 	0, 3, 2, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, browseButton, 			2, 3, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 10, 0), 0, 0);
+//		gba.add(annotationPanel, customAnnotation, 		0, 3, 3, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, statusLabel,	 		0, 3, 3, 1, 3, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, annFileListTextField, 	0, 4, 2, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, browseButton, 			2, 4, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 10, 0), 0, 0);
 		
 		checkForAnnotationFile();
 		return annotationPanel;
@@ -198,12 +208,14 @@ public class AnnotationDownloadHandler {
 			if (irm.fileIsInRepository(def)) {
 				connectButton.setText("Select This");
 				getAnnotation.setText("MeV has this file");
+				statusLabel.setText("This file already stored locally. Click the Select button to use it.");
 			} else {
 				connectButton.setText("Download");
 				getAnnotation.setText("Click to download.");
+				statusLabel.setText("This file is not stored locally. Click the Download button to get it from the internet.");
 			}
 		} else {
-			
+			statusLabel.setText("It is not possible to select an annotation file at this time.");
 		}
 
 	}
@@ -226,12 +238,15 @@ public class AnnotationDownloadHandler {
 			getAdditionalSupportFiles(organismListBox
 					.getSelectedItem().toString(), arrayListBox
 					.getSelectedItem().toString());
+
+			statusLabel.setText("This annotation file is selected and ready to use.");
 			return true;
 		} catch (SupportFileAccessError sfae) {
 			annotationSelected = false;
 			getAnnotation.setText("Failure");
 			connectButton.setText("Select this");
 			connectButton.setEnabled(true);
+			statusLabel.setText("There was a problem downloading this file.");
 			sfae.printStackTrace();
 			return false;
 		}
@@ -248,6 +263,7 @@ public class AnnotationDownloadHandler {
 			selectedFile = fileChooser.getSelectedFile();
 			annFileListTextField.setText(selectedFile.getAbsolutePath());
 			this.annotationSelected = true;
+			statusLabel.setText("This file is selected and ready to use.");
 		}
 		return retVal;
 	}
@@ -287,5 +303,35 @@ public class AnnotationDownloadHandler {
 				checkForAnnotationFile();
 			}
 		}
+	}
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("Testing Annotation Download Handler");
+		IResourceManager irm;
+
+	    	GBA gba = new GBA();
+	    	frame.setLayout(new GridBagLayout());
+	    	frame.setSize(600, 300);
+	    	
+		try {
+			irm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
+			irm.setAskToGetOnline(false);
+		} catch (RepositoryInitializationError rie) {
+			rie.printStackTrace();
+			return;
+		}
+		try {
+			File taxonfile = irm.getSupportFile(new AvailableAnnotationsFileDefinition(), true);
+			AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+			Hashtable<String, Vector<String>> speciestoarrays = aafd.parseAnnotationListFile(taxonfile);
+			AnnotationDownloadHandler adh = new AnnotationDownloadHandler(irm, speciestoarrays, "Human", "affy_HG-U133A");
+			JPanel annotationPanel = adh.getAnnotationLoaderPanel(gba);
+			frame.add(annotationPanel);
+		} catch (SupportFileAccessError sfae) {
+//			fail("Couldn't get species/array mappings from repository.");
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+//			fail("Couldn't get annotation file.");
+		}
+		frame.setVisible(true);
 	}
 }

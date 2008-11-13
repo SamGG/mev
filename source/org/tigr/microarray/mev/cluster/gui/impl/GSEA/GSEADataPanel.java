@@ -234,8 +234,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	public void initialize( String annPath, boolean isAnnLoaded, String info) {
 		if(isAnnLoaded) {
 			adh.onClickAnnDownload();
-			adh.setDownloadEnabled(false);
-			adh.setBrowseEnabled(false);
+//			adh.setDownloadEnabled(false);
+//			adh.setBrowseEnabled(false);
 		}
 		
 	}
@@ -481,8 +481,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 				thread.start();
 			} else if (event.getActionCommand().equals(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
 				processAnnotationFile();
-				adh.setDownloadEnabled(false);
-				adh.setBrowseEnabled(false);
+//				adh.setDownloadEnabled(false);
+//				adh.setBrowseEnabled(false);
 			}
 		}
 	}
