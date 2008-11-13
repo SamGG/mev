@@ -88,16 +88,10 @@ public class LMGUI implements IClusterGUI {
 		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
 		defs.add(aafd);
 	        
-	        //EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
-	        //defs.add(eiudf);
 	        
 	        try {
 	        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
 	        	
-	        	//File impliesFile = supportFiles.get(eiudf);
-		        //algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
-		        //algorithmData.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
-		        
 		        File speciesarraymapping = supportFiles.get(aafd);
 		        try {
 		        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
