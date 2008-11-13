@@ -234,7 +234,7 @@ public interface IFramework {
 
 	public File getSupportFile(ISupportFileDefinition def, boolean getOnline) throws SupportFileAccessError;
 
-	public File[] getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError;
+	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError;
 
 	public boolean hasSupportFile(ISupportFileDefinition def);
 

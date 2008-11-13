@@ -516,7 +516,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		public StanfordFileLoaderPanel() {
 			super();
 			
-			adh = new AnnotationDownloadHandler(superLoader);
+			adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
 			
 			eventListener = new EventListener();
 			setLayout(new GridBagLayout());
@@ -687,11 +687,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 				} else if (source == twoColorArray) {
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
-					adh.setEnabled(!twoColorArray.isSelected());
+					adh.setDownloadEnabled(!twoColorArray.isSelected());
 				} else if (source == singleColorArray) {
 					dataType = IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
-					adh.setEnabled(singleColorArray.isSelected());
+					adh.setDownloadEnabled(singleColorArray.isSelected());
 				}
 			}
 		}

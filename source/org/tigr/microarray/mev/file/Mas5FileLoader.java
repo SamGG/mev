@@ -516,7 +516,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         public Mas5FileLoaderPanel() {                
         	eventListener = new EventListener();
             setLayout(new GridBagLayout());
-            adh = new AnnotationDownloadHandler(superLoader);
+            adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
             
        
             

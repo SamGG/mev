@@ -34,8 +34,10 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
+import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.resources.GseaMultiSuppFileDefinition;
@@ -64,13 +66,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		private javax.swing.JLabel assignmentSuccessfulLabel;
 			
 		//Annotation panel
+		private AnnotationDownloadHandler adh;
 		private javax.swing.JPanel annotationPanel;
-		private javax.swing.JTextField annotationTextField;
-		private javax.swing.JLabel annotationLabel;
-		private javax.swing.JLabel uploadAnnotationLabel;
-		private javax.swing.JButton connectButton;
-	  	private javax.swing.JButton annotationButton;
-	  	private javax.swing.JLabel infoLabel;
 	  
 	  	//Gene set panel
 	  	private javax.swing.JLabel downloadGenesetLabel;
@@ -94,7 +91,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    protected int[] factorAAssignments, factorBAssignments, factorCAssignments;
 	    protected JFrame parentFrame;
 	    protected ClusterRepository clusterRepository;
-	    private IResourceManager irm;
+	    private IFramework framework;
 	    
 	    
 	    /** Creates new form DataPanel 
@@ -105,13 +102,13 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	     * 
 	     * */
 	
-	    public GSEADataPanel(IData idata,AlgorithmData algData, JFrame parent, ClusterRepository clusterRepository, IResourceManager irm) {
+	    public GSEADataPanel(IData idata,AlgorithmData algData, JFrame parent, ClusterRepository clusterRepository, IFramework framework) {
 	    	
 		    this.parentFrame = parent;
-	    	this.idata=idata;
+		    this.idata=idata;
 			this.algData = algData;
 			this.clusterRepository=clusterRepository;
-			this.irm=irm;
+			this.framework=framework;
 			
 	        initComponents();
 	        initialize("./data/Annotation/"+this.idata.getChipAnnotation().getChipType()+".txt",idata.isAnnotationLoaded(),
@@ -128,6 +125,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    	setLayout(new GridBagLayout());
 	    	
 	    	JPanel fileLoaderPanel;
+	    	adh = new AnnotationDownloadHandler(framework);
+	    	adh.addListener(new Listener());
 	    	
 	    	// Group Assignment panel
 	    	groupAssignmentPanel = new javax.swing.JPanel();
@@ -135,33 +134,13 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    	emptyLabel=new javax.swing.JLabel();
 	    	assignmentSuccessfulLabel=new javax.swing.JLabel();
 	    	
-	    	
 	    	groupAssignment = new javax.swing.JButton();
 	       	groupAssignment.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 			groupAssignment.setPreferredSize(new Dimension(90, 30));
 	    	groupAssignment.addActionListener(new Listener());
 	   
 	    	//Annotation panel
-	       	annotationPanel = new javax.swing.JPanel();
-	       	annotationLabel = new javax.swing.JLabel();
-	    	infoLabel=new javax.swing.JLabel();
-	       	
-	       	
-	    	connectButton = new javax.swing.JButton();
-	       	connectButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-			connectButton.setPreferredSize(new Dimension(90, 30));
-			connectButton.addActionListener(new Listener());
-			
-	    	uploadAnnotationLabel = new javax.swing.JLabel();
-	    	annotationTextField = new javax.swing.JTextField();
-	    	annotationTextField.setEditable(false);
-	    	annotationButton = new javax.swing.JButton();
-	       	annotationButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-			annotationButton.setPreferredSize(new Dimension(90, 30));
-			annotationButton.addActionListener(new Listener());
-	    	
-	    	
-	    	
+	    	annotationPanel = adh.getAnnotationLoaderPanel(gba);
 
 	    	//Gene set panel
 	    	genesetPanel = new javax.swing.JPanel();
@@ -201,29 +180,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
    	    	gba.add(groupAssignmentPanel, assignmentSuccessfulLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 	       	
    	    		    	
-	    	//Annotation panel layout
-			annotationPanel.setLayout(new GridBagLayout());
 	    	annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Annotation"));
-	    	annotationLabel.setText("Retrieve annotation from Resourcerer"); 
-	    
-	    	
-	    	connectButton.setText("Connect"); 
-	    	uploadAnnotationLabel.setText("OR Upload Annotation");
-	    
-	    	
-	    	annotationButton.setText("Browse"); 
-	    	
-	    	gba.add(annotationPanel, infoLabel, 0, 0, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-	    	gba.add(annotationPanel, annotationLabel, 0, 1, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, connectButton, 1, 1, GBA.RELATIVE, 1, 0, 0,GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    	    		
-    		gba.add(annotationPanel, uploadAnnotationLabel, 0, 3, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5,5,5,5),0,0);
-    		gba.add(annotationPanel, annotationTextField, 1, 3, 1, 0, 1, 0, GBA.H,	GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-    		gba.add(annotationPanel, annotationButton, 2, 3, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 10, 5), 0, 0);
-	    	
-	    	
-	     	
-	    	
+
 
 	       //Gene set panel layout
     		genesetPanel.setLayout(new GridBagLayout());
@@ -274,14 +232,10 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	 */
 	    
 	public void initialize( String annPath, boolean isAnnLoaded, String info) {
-		
-	
 		if(isAnnLoaded) {
-			this.annotationTextField.setText(annPath);
-			this.annotationButton.setEnabled(false);
-			this.connectButton.setEnabled(false);
-			this.infoLabel.setText("You have already loaded annotations, so please continue with the remaining parameter selection..");
-			this.infoLabel.setForeground(Color.RED);
+			adh.onClickAnnDownload();
+			adh.setDownloadEnabled(false);
+			adh.setBrowseEnabled(false);
 		}
 		
 	}
@@ -306,8 +260,8 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	
 	public void populateAlgorithmData() {
 		
-		if(annotationTextField.getText()!=null) {
-		algData.addParam("annotation-file", annotationTextField.getText());
+		if(adh.isAnnotationSelected()) {
+			algData.addParam("annotation-file", adh.getAnnFilePath());
 		}
 		if(geneSetTextField.getText()!=null) {
 		algData.addParam("gene-set-file",geneSetTextField.getText() );
@@ -328,14 +282,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		selectedFile = fileChooser.getSelectedFile();
 
 		if(retVal==JFileChooser.APPROVE_OPTION){
-			if(source==annotationButton){
-				
-				if(retVal==JOptionPane.OK_OPTION){
-					annotationTextField.setText(selectedFile.getAbsolutePath());
-					setAnnotationFile(selectedFile);
-					processAnnotationFile();
-				}
-			}else if(source==browseButton2){
+			if(source==browseButton2){
 				geneSetTextField.setText(selectedFile.getAbsolutePath());
 				downloadStatusLabel.setText("Gene set file uploaded");
 			}
@@ -453,7 +400,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		IMultiSupportFileDefinition mdef = new GseaMultiSuppFileDefinition();
 		try {
 			
-			Hashtable<ISupportFileDefinition, File> supportfilesHash = irm.getMultipleSupportFiles(mdef);
+			Hashtable<ISupportFileDefinition, File> supportfilesHash = framework.getMultipleSupportFiles(mdef);
 			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
 			
 			if(supportfilesHash.size()>0){
@@ -471,33 +418,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	 public void onConnect() {
-     	if(this.idata.getDataType()==IData.DATA_TYPE_AFFY_ABS) {
-     		AnnotationDialog annDialog = new AnnotationDialog(new JFrame());
-    		if (annDialog.showModal() == JOptionPane.OK_OPTION) {
-    			File selectedFile = new File(annDialog.getAnnotationFileName());
-    			setAnnotationFile(selectedFile);
-    			annotationTextField.setText(annDialog.getAnnotationFileName());
-    			processAnnotationFile();
-    			
 
-    		}
-
-     	}
-     	}
-     
-	 private void setAnnotationFile(File selectedFile) {
-		this.selectedFile=selectedFile;
-		
-	}
 
 	/**
 		 * processAnnotationFile() function 
@@ -541,41 +462,39 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	
 	
 	private File getAnnotationFile() {
-		return this.selectedFile;
+		return new File(this.adh.getAnnFilePath());
 	}
 
 
 
 
-	private class Listener implements ActionListener{
-		public void actionPerformed(ActionEvent event){
+	private class Listener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
 			Object source = event.getSource();
-			if (source == annotationButton) { 
+			if (source == browseButton2) {
 				onButtonClick(source);
-			} else if (source == browseButton2) {
-				onButtonClick(source);
-			} else if(source == groupAssignment){
+			} else if (source == groupAssignment) {
 				getGroupAssignment();
-				
-			} else if (source==connectButton){
-    			onConnect(); 
-				
-    		}else if (source == DownloadButton){
-    			Thread thread = new Thread(new Runnable(){
-    				public void run() {
-                    	try {	        
-                    		
-                			onGeneSetDownload();
-                    	} catch (Exception ioe){
-                            ioe.printStackTrace();
-                        }
-                    }
-    			});
 
-    			thread.setPriority(Thread.MIN_PRIORITY);
-    			thread.start();
-    		}
-			
+			} else if (source == DownloadButton) {
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						try {
+
+							onGeneSetDownload();
+						} catch (Exception ioe) {
+							ioe.printStackTrace();
+						}
+					}
+				});
+
+				thread.setPriority(Thread.MIN_PRIORITY);
+				thread.start();
+			} else if (event.getActionCommand().equals(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
+
+				adh.setDownloadEnabled(false);
+				adh.setBrowseEnabled(false);
+			}
 		}
 	}
 
