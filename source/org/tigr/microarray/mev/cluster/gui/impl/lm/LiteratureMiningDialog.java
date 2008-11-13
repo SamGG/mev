@@ -27,6 +27,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -63,6 +64,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNDownloadManager;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNSupportDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNUpdateManager;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
@@ -1069,7 +1071,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			cngFilesButton.setActionCommand("select-file-base-command");
 			cngFilesButton.addActionListener(listener);
 			cngFilesButton.setToolTipText("<html>Select the directory where LM  files reside.</html>");
-			JLabel fileLocation = new JLabel("File(s) Location:");
+			//JLabel fileLocation = new JLabel("File(s) Location:");
 			
 			String _loc = TMEV.getSettingForOption(BNConstants.BN_LM_LOC_PROP);
 			if(_loc == null || _loc.equals(""))
@@ -1086,7 +1088,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			
 			chooseOrg = new JLabel("Organism");
 			chooseArray = new JLabel("Array Platform");
-			browseLabel = new JLabel("or Browse for another Ease data file system:");
+			browseLabel = new JLabel("or Browse for another BN file(s) location:");
 			statusLabel = new JLabel("Click to download");
 			
 			if(speciestoarrays == null || speciestoarrays.size() == 0) {
@@ -1100,9 +1102,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			} else {
 				
 				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
-//				organismListBox.addActionListener(listener);
-//				organismListBox.setActionCommand("organism-selected-command");
-	
+
 				try {
 					organismListBox.setSelectedItem(speciesName);
 				} catch (NullPointerException npe) {/* Leave as default */}
@@ -1130,6 +1130,18 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
 			add(defaultFileBaseLocation, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
 			add(cngFilesButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+			
+			try {
+				boolean b = resourceManager.fileIsInRepository(new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				if(b) {
+					getBNSupportFileButton.setText("Select This");
+				} else {
+					getBNSupportFileButton.setText("Download");
+				}
+			} catch (NullPointerException npe) {
+				getBNSupportFileButton.setText("Download");
+			}
+			updateSelection();
 			//
 			//add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 			//add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
@@ -1181,7 +1193,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			String selectedOrganism = organismListBox.getSelectedItem().toString();
 			String selectedArray = arrayListBox.getSelectedItem().toString();
 			if(selectedOrganism != null && selectedArray != null) {
-				if(resourceManager.fileIsInRepository(new EASESupportDataFile(selectedOrganism, selectedArray))) {
+				if(resourceManager.fileIsInRepository(new BNSupportDataFile(selectedOrganism, selectedArray))) {
 					statusLabel.setText("Click to Select");
 					getBNSupportFileButton.setText("Select");
 				} else {
@@ -1220,7 +1232,21 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 					System.out.println("bnSuppFile.isSingleFile(): " + bnSuppFile.isSingleFile());
 				}
 				File f = resourceManager.getSupportFile(bnSuppFile, true);
-				defaultFileBaseLocation.setText(f.getAbsolutePath());
+				System.out.println("FTP & unzipping Complete: " + f.getAbsolutePath());
+				//TODO Remove hard coded path
+				String srcDirPath = f.getAbsolutePath() + BNConstants.SEP + bnSuppFile.getUniqueName();
+				File srcDir = new File(srcDirPath);
+				String dstDirPath = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + bnSuppFile.getUniqueName();
+				File dstDir = new File(dstDirPath);
+				//Copy files to data directory
+				try {
+					Useful.copyDirectory(srcDir, dstDir);
+				} catch (IOException ioe){
+					ioe.printStackTrace();
+				}
+				//End Copying Files
+				defaultFileBaseLocation.setText(dstDir.getAbsolutePath());
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
 				getBNSupportFileButton.setText("Select This");
 				statusLabel.setText("Selected");
 				getBNSupportFileButton.setEnabled(false);
@@ -1547,6 +1573,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			dispose();
 		}
 	}
+	
 	public static void main(String [] args) {
 		String [] labels = new String [3];
 		labels[0] = "TC#";
