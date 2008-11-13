@@ -431,27 +431,16 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		 */
 		public void processAnnotationFile() {
 			try {
-				
-			//	System.out.println("processAnnotationFile");
 				String[] dataFieldNames = this.idata.getFieldNames();
-				//System.out.println("Annotation file path:"+getAnnotationFile().getAbsolutePath());
-				//System.out.println("dataFieldName:"+dataFieldNames[0]);
 				
-				File annotationFile=new File(getAnnotationFile().getAbsolutePath());
-				AnnotationFileReader reader=AnnotationFileReader.createAnnotationFileReader(annotationFile);
-				Hashtable annoHash=reader.getAffyAnnotation();
-			//	System.out.println("size of annohash:"+annoHash.size());
+				AnnotationFileReader reader=AnnotationFileReader.createAnnotationFileReader(getAnnotationFile());
 				GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(
 					new JFrame(), dataFieldNames, MevAnnotation.getFieldNames());
 
 				if (importDialog.showModal() == JOptionPane.OK_OPTION) {
-
-					String[] newFields = MevAnnotation.getFieldNames();
 					((MultipleArrayData)this.idata).addResourcererGeneAnnotation(importDialog
 							.getDataAnnotationKey(), reader.getAffyAnnotation());
-
 				}
-
 			} catch (Exception e) {
 
 			}
@@ -491,7 +480,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 				thread.setPriority(Thread.MIN_PRIORITY);
 				thread.start();
 			} else if (event.getActionCommand().equals(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
-
+				processAnnotationFile();
 				adh.setDownloadEnabled(false);
 				adh.setBrowseEnabled(false);
 			}
