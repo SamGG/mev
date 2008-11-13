@@ -756,7 +756,8 @@ public class ClusterRepository extends Vector {
         boolean [] matches;
         Experiment experiment = framework.getData().getExperiment();
         if(this.isGeneClusterRepository()) {
-            dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, genelist);
+                dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getAllFilledAnnotationFields(), true, genelist);
+//                dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, genelist);
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 key = dialog.getFieldName();
                 ids = dialog.getList();
