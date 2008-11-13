@@ -11,7 +11,7 @@ public class BNSupportDataFile extends ISupportFileDefinition {
 		private static String fileRoot;
 		private String species;
 		private String array;
-		private boolean singleFile = true;
+		private boolean singleFile = false; //if the zip contains > 1 file
 		private boolean unzipFile = true;
 		
 		public BNSupportDataFile(String species, String array) {

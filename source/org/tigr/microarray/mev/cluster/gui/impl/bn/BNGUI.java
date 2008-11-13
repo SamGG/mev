@@ -11,7 +11,10 @@
  * @author Raktim
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -30,6 +33,9 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 import org.tigr.microarray.mev.cluster.gui.impl.lm.LMGUI;
+import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 public class BNGUI implements IClusterGUI {
 	public static final int GENE_CLUSTER = 0;
@@ -52,9 +58,49 @@ public class BNGUI implements IClusterGUI {
 		Experiment exp = data.getExperiment();
 		//exp.getGeneIndexMappedToData(row);
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-		 
+		// RM stuff from EASE to make
+		// String easeFileLocation = null;
+		String chipType = null;
+		String species = null;
+		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
+
+		BNSupportDataFile bnSuppFileHandle = null;
+		
+		if (framework.getData().isAnnotationLoaded()) {
+			chipType = framework.getData().getChipAnnotation().getChipType();
+			species = framework.getData().getChipAnnotation().getSpeciesName();
+			bnSuppFileHandle = new BNSupportDataFile(species, chipType);
+			defs.add(bnSuppFileHandle);
+		}
+		
+		Hashtable<String, Vector<String>> speciestoarrays = null;
+		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		defs.add(aafd);
+        try {
+        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
+        	
+	        File speciesarraymapping = supportFiles.get(aafd);
+	        try {
+	        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
+	        } catch (IOException ioe) {
+	        	speciestoarrays = null;
+	        }
+	        //TODO Change path
+	        if(bnSuppFileHandle != null || framework.getData().isAnnotationLoaded()) {
+	        	//easeFileLocation = supportFiles.get(bnSuppFileHandle).getAbsolutePath();
+	        } else {
+	        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
+	        }
+        } catch (SupportFileAccessError sfae) {
+        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
+        }
+		//
 		//final BNInitDialog dialog = new BNInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
-		final BNInitDialog dialog = new BNInitDialog(framework, repository, framework.getData().getFieldNames());
+		final BNInitDialog dialog = new BNInitDialog(framework, repository, framework.getData().getFieldNames(),
+				framework.getResourceManager(),
+        		species, 
+        		chipType, 
+        		speciestoarrays);
 		if(dialog.showModal() != JOptionPane.OK_OPTION)
 			return null;
 		if(dialog.isNone()){
