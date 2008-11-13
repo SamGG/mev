@@ -1021,7 +1021,7 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
     	public AffymetrixFileLoaderPanel() {
 
     		setLayout(new GridBagLayout());
-    		adh = new AnnotationDownloadHandler(superLoader);
+    		adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
     		
     		selectionPanel = new JPanel();
     		selectionPanel.setLayout(new GridBagLayout());

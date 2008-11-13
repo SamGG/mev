@@ -406,8 +406,8 @@ public class FileResourceManager implements IResourceManager {
 			ShowThrowableDialog.show(new Frame(), "Malformed url in requested file", true, 0, sfae);
 			throw sfae;
 		} catch (IOException ioe) {
-			 SupportFileAccessError sfae = new SupportFileAccessError("Malformed url in requested file", ioe);
-			ShowThrowableDialog.show(new Frame(), "Malformed url in requested file", true, 0, sfae);
+			 SupportFileAccessError sfae = new SupportFileAccessError(ioe);
+			ShowThrowableDialog.show(new Frame(), ioe.getMessage(), true, 0, sfae);
 			throw sfae;
 		}
 	}

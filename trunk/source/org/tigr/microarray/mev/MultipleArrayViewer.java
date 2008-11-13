@@ -3790,15 +3790,25 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 				mainframe.validate();
             }
         }
-       sortedValues=initSortedValues(data.getExperiment().getMatrix()); 
-       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
-         	this.menubar.setMinRatioScale(0f);
-         	this.menubar.setMidRatioValue(getMedian());
-         	this.menubar.setMaxRatioScale(getMaxScale());    	
-        	//EH  added so the data are considered affy data whenever they are scaled as
-         	//affy data. 
-         	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
-         }
+        try {
+	       sortedValues=initSortedValues(data.getExperiment().getMatrix()); 
+	       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+	         	this.menubar.setMinRatioScale(0f);
+	         	this.menubar.setMidRatioValue(getMedian());
+	         	this.menubar.setMaxRatioScale(getMaxScale());    	
+	        	//EH  added so the data are considered affy data whenever they are scaled as
+	         	//affy data. 
+	         	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
+	         }
+        } catch (OutOfMemoryError oome) {
+        	//
+        	       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+        	         	this.menubar.setMinRatioScale(0f);
+        	         	this.menubar.setMidRatioValue(1000);
+        	         	this.menubar.setMaxRatioScale(500);    	
+        	         	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
+        	       }
+        }
 
         // pcahan - convoluted but it works
         if ( (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) &&
@@ -5993,10 +6003,10 @@ private void appendResourcererGeneAnnotation() {
 		else 
 			throw new SupportFileAccessError("ResourceManager is not available");
 	}
-	public File[] getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
 		if(isResourceManagerAvailable()) {
-			Collection<File> temp = TMEV.getResourceManager().getMultipleSupportFiles(def).values();
-			return temp.toArray(new File[temp.size()]);
+			return TMEV.getResourceManager().getMultipleSupportFiles(def);
+//			return temp.toArray(new File[temp.size()]);
 		}
 		throw new SupportFileAccessError("ResourceManager is not available");
 	}	
@@ -6019,14 +6029,16 @@ private void appendResourcererGeneAnnotation() {
 		return TMEV.getResourceManager().getSupportFiles(defs, getOnline);
 	}
 }
-    
+    	public IResourceManager getResourceManager() {
+    		return TMEV.getResourceManager();
+    	}
 	public File getSupportFile(ISupportFileDefinition def) throws SupportFileAccessError {
 		return framework.getSupportFile(def, true);
 	}
 	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs) throws SupportFileAccessError {
 		return framework.getSupportFiles(defs, true);
 	}
-	public File[] getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
 		return framework.getMultipleSupportFiles(def);
 	}
 	public boolean hasSupportFile(ISupportFileDefinition def) {

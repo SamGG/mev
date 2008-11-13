@@ -65,6 +65,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
@@ -122,7 +123,6 @@ public class SuperExpressionFileLoader {
 	protected Hashtable<String, Vector<String>> annotationLists; 
 	protected String defaultSpeciesName;
 	protected String defaultArrayName;
-	
 
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer, File file, FileType fileType, String arrayType) {
 		this(viewer);
@@ -802,14 +802,4 @@ public class SuperExpressionFileLoader {
 		return defaultArrayName;
 	}
 
-	/**
-	 * Downloads additional support files (besides the annotation files) that may be needed by the user for their data.
-	 * @param organismName
-	 * @param arrayName
-	 */
-	public void getAdditionalSupportFiles(String organismName, String arrayName) throws SupportFileAccessError {
-		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
-		defs.add(new EASESupportDataFile(organismName, arrayName));
-		viewer.getSupportFiles(defs);
-	}
 }

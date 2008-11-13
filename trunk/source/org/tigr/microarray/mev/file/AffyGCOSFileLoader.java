@@ -599,7 +599,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         public AffyGCOSFileLoaderPanel() {                
                 setLayout(new GridBagLayout());
                 
-                adh = new AnnotationDownloadHandler(superLoader);
+                adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
                 
                 eventListener=new EventListener();
                 fileNameTextField = new JTextField();
@@ -646,7 +646,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 
                 
                 annotationPanel = adh.getAnnotationLoaderPanel(gba);
-                adh.setEnabled(true);
+                adh.setDownloadEnabled(true);
                 
         		additionalRequirementPanel = new JPanel();
                 additionalRequirementPanel.setLayout(new GridBagLayout());

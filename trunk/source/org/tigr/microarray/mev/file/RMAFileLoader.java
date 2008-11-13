@@ -532,7 +532,7 @@ public class RMAFileLoader extends ExpressionFileLoader {
             
     	  eventListener=new EventListener();
             setLayout(new GridBagLayout());
-      	  adh = new AnnotationDownloadHandler(superLoader);
+      	  adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
 
             fileNameTextField = new JTextField();
             fileNameTextField.setEditable(false);

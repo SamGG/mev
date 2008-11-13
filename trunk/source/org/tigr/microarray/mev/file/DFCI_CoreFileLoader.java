@@ -921,7 +921,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 		public DFCI_CoreFileLoaderPanel() {
 
 			setLayout(new GridBagLayout());
-			adh = new AnnotationDownloadHandler(superLoader);
+			adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
 			
 			selectFilePanel = new JPanel();
 			selectFilePanel.setLayout(new GridBagLayout());
