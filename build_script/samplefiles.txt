@@ -12,18 +12,6 @@ Annotation/kingdom_species_cloneset_list.txt
 # Note this directory contains an empty folder 'kegg' 
 # where kegg interaction data is downloaded
 BN_files/kegg
-BN_files/affy_HG-U133_Plus_2_BN/symArtsPubmed.txt
-BN_files/affy_HG-U133_Plus_2_BN/symArtsGeneDb.txt
-BN_files/affy_HG-U133_Plus_2_BN/res.txt
-BN_files/affy_HG-U133_Plus_2_BN/gbGO.txt
-BN_files/affy_HG-U133_Plus_2_BN/all_ppi.txt
-BN_files/affy_HG-U133_Plus_2_BN/affyID_accession.txt
-BN_files/affy_Mouse430_2_BN/symArtsPubmed.txt
-BN_files/affy_Mouse430_2_BN/symArtsGeneDb.txt
-BN_files/affy_Mouse430_2_BN/res.txt
-BN_files/affy_Mouse430_2_BN/gbGO.txt
-BN_files/affy_Mouse430_2_BN/all_ppi.txt
-BN_files/affy_Mouse430_2_BN/affyID_accession.txt
 
 
 # CGH datafiles
