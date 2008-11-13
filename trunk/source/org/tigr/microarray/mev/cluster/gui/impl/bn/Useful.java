@@ -20,12 +20,15 @@ package org.tigr.microarray.mev.cluster.gui.impl.bn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -893,6 +896,40 @@ public class Useful {
 			e.printStackTrace();
 		}
 	}
+	
+	// Copies all files under srcDir to dstDir.
+    // If dstDir does not exist, it will be created.
+    public static void copyDirectory(File srcDir, File dstDir) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!dstDir.exists()) {
+                dstDir.mkdir();
+            }
+    
+            String[] children = srcDir.list();
+            for (int i=0; i<children.length; i++) {
+                copyDirectory(new File(srcDir, children[i]),  new File(dstDir, children[i]));
+            }
+        } else {
+            copyFile(srcDir, dstDir);
+        }
+    }
+    
+    // Copies src file to dst file.
+    // If the dst file does not exist, it is created
+    private static void copyFile(File src, File dst) throws IOException {
+    	if(dst.exists()) return;
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+    
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
 }
 
 

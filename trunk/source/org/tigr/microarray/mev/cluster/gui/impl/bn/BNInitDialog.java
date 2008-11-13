@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.BorderFactory;
@@ -63,6 +64,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
  * @author eleanora
@@ -94,18 +99,31 @@ public class BNInitDialog extends AlgorithmDialog {
 	boolean useArc = true;
 	File fileDir = null;
 	String kegg_sp = null;
-
+    // RM specific attributes
+	protected String arrayName, speciesName;
+    protected Hashtable<String, Vector<String>> speciestoarrays;
+    protected IResourceManager resourceManager;
+    protected boolean useLoadedAnnotationFile = false;
+    File annotationFile;
+    
 	/** Creates a new instance of BNInitDialog
 	 * @param parent Parent Frame
 	 * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
 	 * @param annotationLabels Annotation types
 	 */
 	//public BNInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
-	public BNInitDialog(IFramework frame, ClusterRepository repository, String [] annotationLabels) {
+	public BNInitDialog(IFramework frame, ClusterRepository repository, String [] annotationLabels, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
 		//super(parent, "BN: Bayes Network Analysis", true);
 		super(frame.getFrame(), "BN: Bayes Network Analysis", true);
 		this.parent = frame.getFrame(); //parent;
 		this.framework = frame;
+		
+		// RM related
+		this.speciesName = speciesName;
+        this.arrayName = arrayName;
+        this.resourceManager = rm;
+        this.speciestoarrays = speciestoarrays;
+        
 		font = new Font("Dialog", Font.BOLD, 12);
 		listener = new EventListener();
 		addWindowListener(listener);
@@ -1249,7 +1267,11 @@ public class BNInitDialog extends AlgorithmDialog {
 
 	private class ConfigPanel extends ParameterPanel {
 		JTextField defaultFileBaseLocation;
-
+		JComboBox organismListBox;
+		JComboBox arrayListBox;
+		JLabel chooseOrg, chooseArray, browseLabel, statusLabel;
+		JButton getBNSupportFileButton;
+		
 		public ConfigPanel() {
 			super("Location of Support File(s)");
 			setLayout(new GridBagLayout());
@@ -1259,18 +1281,6 @@ public class BNInitDialog extends AlgorithmDialog {
 			cngFilesButton.addActionListener(listener);
 			cngFilesButton.setToolTipText("<html>Select the directory where BN  files reside.</html>");
 
-			//JButton updateFilesButton = new JButton("Update BN File System");
-			//updateFilesButton.setActionCommand("update-files-command");
-			//updateFilesButton.setFocusPainted(false);
-			//updateFilesButton.addActionListener(listener);
-			//updateFilesButton.setToolTipText("<html>Downloads BN annotation files<br>for a selected species and array type.</html>");
-
-
-			//JButton browseFileBaseButton = new JButton("Select BN File System");
-			//browseFileBaseButton.setActionCommand("select-file-base-command");
-			//browseFileBaseButton.setFocusPainted(false);
-			//browseFileBaseButton.addActionListener(listener);
-			//browseFileBaseButton.setToolTipText("<html>Helps select the BN annotation file system<br>that corresponds the current species and array type.</html>");
 			JLabel fileLocation = new JLabel("File(s) Location:");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
@@ -1281,11 +1291,73 @@ public class BNInitDialog extends AlgorithmDialog {
 				_loc = TMEV.getDataPath();
 			defaultFileBaseLocation = new JTextField(new File(_loc).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);
+			
+			//Borrowed from EASE for RM
+			getBNSupportFileButton = new JButton("Download");
+			getBNSupportFileButton.setActionCommand("download-support-file-command");
+			getBNSupportFileButton.addActionListener(listener);
+			getBNSupportFileButton.setToolTipText("<html>Downloads BN support files<br>for a selected species and array type.</html>");
+			
+			chooseOrg = new JLabel("Organism");
+			chooseArray = new JLabel("Array Platform");
+			browseLabel = new JLabel("or Browse for another Ease data file system:");
+			statusLabel = new JLabel("Click to download");
+			
+			if(speciestoarrays == null || speciestoarrays.size() == 0) {
+				organismListBox = new JComboBox();
+				organismListBox.addItem("No organisms listed");
+				organismListBox.setEnabled(false);
+				
+				arrayListBox = new JComboBox();
+				arrayListBox.addItem("No species listed");
+				arrayListBox.setEnabled(false);
+			} else {
+				
+				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
 
-			add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
-			add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));            
-			//add(updateFilesButton, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,2,0), 0, 0));  
-			add(cngFilesButton, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+				try {
+					organismListBox.setSelectedItem(speciesName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+				
+				try {
+					arrayListBox.setSelectedItem(arrayName);
+				} catch (NullPointerException npe) {/* Leave as default */}
+				
+				arrayListBox.setEnabled(true); 
+
+			}
+			
+			arrayListBox.addActionListener(listener);
+			arrayListBox.setActionCommand("array-selected-command");
+			organismListBox.addActionListener(listener);
+			organismListBox.setActionCommand("organism-selected-command");
+			
+			add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			add(statusLabel, 				new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20),0, 0));
+			add(getBNSupportFileButton, 	new GridBagConstraints(4, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
+			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
+			add(defaultFileBaseLocation, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
+			add(cngFilesButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+			
+			try {
+				boolean b = resourceManager.fileIsInRepository(new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				if(b) {
+					getBNSupportFileButton.setText("Select This");
+				} else {
+					getBNSupportFileButton.setText("Download");
+				}
+			} catch (NullPointerException npe) {
+				getBNSupportFileButton.setText("Download");
+			}
+			updateSelection();
+			//
+			//add(fileLocation, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
+			//add(defaultFileBaseLocation,  new GridBagConstraints(1,0,1,1,2,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));  
+			//add(cngFilesButton, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 
 		}
 
@@ -1324,6 +1396,88 @@ public class BNInitDialog extends AlgorithmDialog {
 			//System.out.println("getBaseFileLocation() called");
 			return defaultFileBaseLocation.getText();
 		}
+		
+		//RM hanlder functions
+		public void selectSpecies() {
+			arrayListBox.removeAllItems();
+			Vector<String> arraysForThisSpecies = speciestoarrays.get(organismListBox.getSelectedItem());
+			for (int i = 0; i < arraysForThisSpecies.size(); i++) {
+				arrayListBox.addItem(arraysForThisSpecies.elementAt(i));
+			}
+		}
+		public void updateSelection() {
+			if(arrayListBox.getSelectedItem() == null) {
+				return;
+			}
+			String selectedOrganism = organismListBox.getSelectedItem().toString();
+			String selectedArray = arrayListBox.getSelectedItem().toString();
+			if(selectedOrganism != null && selectedArray != null) {
+				if(resourceManager.fileIsInRepository(new BNSupportDataFile(selectedOrganism, selectedArray))) {
+					statusLabel.setText("Click to Select");
+					getBNSupportFileButton.setText("Select");
+				} else {
+					statusLabel.setText("Click to Download");
+					getBNSupportFileButton.setText("Download");
+				}
+				getBNSupportFileButton.setEnabled(true);
+			        try {
+			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
+			        	annotationFile = resourceManager.getSupportFile(def, false);
+			        } catch (SupportFileAccessError sfae) {
+			        	//disable population from file button
+			        	useLoadedAnnotationFile = false;
+				        //popPanel.fileButton.setSelected(true);
+				        //popPanel.preloadedAnnotationButton.setSelected(false);
+				        //popPanel.preloadedAnnotationButton.setEnabled(false);
+			        }
+			} else {
+				getBNSupportFileButton.setEnabled(false);
+			}
+		}
+
+		private void onDownloadSupportFile() {
+			try {
+				BNSupportDataFile bnSuppFile = new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString());
+				if(bnSuppFile == null) {
+					System.out.println("BNSuppFile obj is null");
+				} else {
+					System.out.println("bnSuppFile.isSingleFile(): " + bnSuppFile.isSingleFile());
+					System.out.println("bnSuppFile.getUniqueName(): " + bnSuppFile.getUniqueName());
+					try {
+						System.out.println("bnSuppFile.getURL(): " + bnSuppFile.getURL().toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					System.out.println("bnSuppFile.isSingleFile(): " + bnSuppFile.isSingleFile());
+				}
+				File f = resourceManager.getSupportFile(bnSuppFile, true);
+				System.out.println("FTP & unzipping Complete: " + f.getAbsolutePath());
+				//TODO Remove hard coded path
+				String srcDirPath = f.getAbsolutePath() + BNConstants.SEP + bnSuppFile.getUniqueName();
+				File srcDir = new File(srcDirPath);
+				String dstDirPath = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + bnSuppFile.getUniqueName();
+				File dstDir = new File(dstDirPath);
+				//Copy files to data directory
+				try {
+					Useful.copyDirectory(srcDir, dstDir);
+				} catch (IOException ioe){
+					ioe.printStackTrace();
+				}
+				//End Copying Files
+				defaultFileBaseLocation.setText(dstDir.getAbsolutePath());
+				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
+				getBNSupportFileButton.setText("Select This");
+				statusLabel.setText("Selected");
+				getBNSupportFileButton.setEnabled(false);
+			} catch (SupportFileAccessError sfae) {
+				statusLabel.setText("Failure");
+				sfae.printStackTrace();
+			} catch (NullPointerException npe) {
+				statusLabel.setText("Failure");
+				npe.printStackTrace();
+				System.out.println("LMDialog.onDownloadSupportFile() - NullPointerException");
+			}
+		}		
 	}
 
 	/**
@@ -1669,6 +1823,14 @@ public class BNInitDialog extends AlgorithmDialog {
 					hw.setVisible(false);
 					hw.dispose();
 				}
+			// RM related handlers
+			} else if (command.equals("organism-selected-command")) {
+				configPanel.selectSpecies();
+				configPanel.updateSelection();
+			} else if (command.equals("array-selected-command")) {
+				configPanel.updateSelection();
+			} else if (command.equals("download-support-file-command")) {
+				configPanel.onDownloadSupportFile();
 			}
 		}
 
