@@ -41,7 +41,6 @@ public class GSEAInitWizard extends GSEAWizard {
 		super(parent, title, modal, algData,  stepTitles, stepCount, initPanel);
 		
 		this.idata=idata;
-		//dataPanel = new GSEADataPanel(idata,algData, this);--commented for testing to see what haeepns on passing parent
 		dataPanel = new GSEADataPanel(idata,algData, parent, clusterRepository, framework);
 		currentPanel = dataPanel;
 		super.setInitialPanel(dataPanel);

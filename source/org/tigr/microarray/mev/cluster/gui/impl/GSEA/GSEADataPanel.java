@@ -285,6 +285,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			if(source==browseButton2){
 				geneSetTextField.setText(selectedFile.getAbsolutePath());
 				downloadStatusLabel.setText("Gene set file uploaded");
+				downloadStatusLabel.setForeground(Color.RED);
 			}
 		}
 
@@ -405,7 +406,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			
 			if(supportfilesHash.size()>0){
 				File genesetFile=supportfilesHash.get(supportfiles.nextElement());
-				System.out.println("Gene set file path is:"+genesetFile.getAbsolutePath());
+				//System.out.println("Gene set file path is:"+genesetFile.getAbsolutePath());
 				geneSetTextField.setText(genesetFile.getAbsolutePath());
 				downloadStatusLabel.setText("Gene set file download was successful");
 				downloadStatusLabel.setForeground(Color.RED);
@@ -442,7 +443,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 							.getDataAnnotationKey(), reader.getAffyAnnotation());
 				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 			this.idata.setAnnotationLoaded(true);
 		}
