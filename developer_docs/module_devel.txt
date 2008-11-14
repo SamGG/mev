@@ -1,0 +1,74 @@
+Module Creation
+
+Algorithm:
+source\org\tigr\microarray\mev\cluster\algorithm\impl\**.java
+
+GUI files:
+source\org\tigr\microarray\mev\cluster\gui\impl
+(included are all GUI components for the module, e.g. expression viewers, tables, init dialogs and **GUI.java)
+
+Parameters info:
+source\org\tigr\microarray\mev\cluster\gui\impl\dialogs\dialogHelpUtil\dialogHelpPages\**_parameters.html
+
+Add key to 
+source\org\tigr\microarray\mev\cluster\gui\impl\dialogs\dialogHelpUtil\HelpWindow.java
+
+
+build_script:
+	1.) Change Module Selection Properties by adding:
+	    <property name="**" value="y"/>
+
+	2.) Add algorithm dependency by adding algorithm name to:
+		<target name="algorithm-modules"
+		depends=
+	and
+		<target name="modules-only"
+		depends=
+	-note: With new toolbar layout, target order is no longer essential for correct categorizing of modules.
+
+	3.) Add build target for algorithm: 
+		(example)
+    <target name="**" depends="**-GUI" if="**">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="**.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="**" value="org.tigr.microarray.mev.cluster.algorithm.impl.**"/>
+        </propertyfile>
+    </target>
+
+
+	4.) Add build target for GUI
+		(example)
+	<target name="**-GUI">
+		<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/**" destdir="${dest.dir}">
+			<classpath refid="module.build.class.path"/>
+ 	</javac>
+ 	<propertyfile file="${gui.properties.file}">
+ 	  <entry key="gui.names" value="**:" operation="+"/>
+ 	    <entry key="**.name" value="**"/>
+  	    <entry key="**.class" value="org.tigr.microarray.mev.cluster.gui.impl.**.**GUI"/>
+	  <entry key="**.category" value="${STATISTICS}"/> 
+	  <entry key="**.smallIcon" value="analysis16.gif"/>
+	    <entry key="**.largeIcon" value="**_button.gif"/>
+	    <entry key="**.tooltip" value="Example Algorithm"/>
+	  </propertyfile>
+	</target>
+
+Add icon button gif to
+source\org\tigr\microarray\mev\cluster\gui\impl\images
+and
+source\org\tigr\images
+
+button icon is a gif 32 pixels x 32 pixels
