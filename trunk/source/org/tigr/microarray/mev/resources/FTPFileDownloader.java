@@ -11,7 +11,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -20,9 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
-import java.awt.Dialog.ModalityType;
 
-import org.tigr.microarray.mev.resources.FileDownloader.DownloadProgressListener;
 
 import com.jcraft.jsch.SftpProgressMonitor;
 
@@ -32,7 +29,11 @@ import ftp.FtpListResult;
 
 public class FTPFileDownloader extends FileDownloader {
 	FtpBean ftp = null;
-	boolean disposeProgress= false;
+	boolean disposeProgress1= false;
+	boolean disposeProgress2= false;
+	boolean disposeProgress3= false;
+	int overallLength;
+	URL url;
 	
 	public FTPFileDownloader(URL host) {
 		super(host);
@@ -41,15 +42,16 @@ public class FTPFileDownloader extends FileDownloader {
 
 	@Override
 	public boolean connect() throws IOException {
-		
+
 		Thread thread = new Thread(new Runnable(){
 			public void run(){
 				try{
-				Thread.sleep(1500);
+					Thread.sleep(500);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
-				if (disposeProgress){
+				if (disposeProgress1){
+					disposeProgress1=false;
 					return;
 				}
 				progress = new RMProgress(new Frame(), "Connecting to Host", new DownloadProgressListener());
@@ -61,12 +63,7 @@ public class FTPFileDownloader extends FileDownloader {
 				progress.setIndeterminantString("Connecting...");
 				progress.setFocusable(true);
 				progress.init(SftpProgressMonitor.GET, "Connecting to " + hostURL, "??", 0);
-				while(true){
-					if (disposeProgress){
-						progress.dispose();
-						return;
-					}
-				}
+
 			}
 		});
 
@@ -76,12 +73,20 @@ public class FTPFileDownloader extends FileDownloader {
 		ftp = new FtpBean();
 		try {
 			ftp.ftpConnect(hostURL.getHost(), "anonymous");
+			if(progress!=null){
+				if(progress.wasCancelled)  {
+					IOException sfae = new IOException("Connection was cancelled by user.");
+					throw sfae;
+				}
+			}
 		} catch (FtpException ftpe) {
 			throw new IOException(ftpe);
 		} finally {
-			disposeProgress=true;
-			if (progress!=null)
+			disposeProgress1=true;
+			if (progress!=null){
 				progress.dispose();
+				disposeProgress1=false;
+			}
 		}
 		return true;
 	}
@@ -182,7 +187,8 @@ public class FTPFileDownloader extends FileDownloader {
 
 	@Override
 	public File getTempFile(String path) throws SupportFileAccessError {
-		URL url = null;
+		disposeProgress2=false;
+		url = null;
 		try {
 			url = new URL(hostURL + path);
 		} catch (MalformedURLException mue) {
@@ -190,12 +196,38 @@ public class FTPFileDownloader extends FileDownloader {
 		}
 		File newFile = null;
 		try {
-			int overallLength = getSize(path);
+			overallLength = getSize(path);
 
-			progress = new RMProgress(new Frame(), "Downloading " + url.getPath(), new DownloadProgressListener());
-			progress.init(SftpProgressMonitor.GET, url.toString(), "??", new Long(overallLength).longValue());
 			
-	
+			
+			
+			
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					try {
+						try{
+							Thread.sleep(500);
+						}catch(Exception e){
+								e.printStackTrace();
+						}
+						if (disposeProgress2){
+							return;
+						}
+						progress = new RMProgress(new Frame(), "Downloading " + url.getPath(), new DownloadProgressListener());
+						progress.setModal(true);
+						progress.setAlwaysOnTop(true);
+						progress.init(SftpProgressMonitor.GET, url.toString(), "??", new Long(overallLength).longValue());
+
+					} catch (Exception ioe) {
+						ioe.printStackTrace();
+					}
+				}
+			});
+
+			thread.setPriority(Thread.MAX_PRIORITY);
+			thread.start();
+
+			
 			BufferedOutputStream bos = null;
 			newFile = File.createTempFile("mev_resource", "");
 			bos = new BufferedOutputStream(new FileOutputStream(newFile));
@@ -208,12 +240,12 @@ public class FTPFileDownloader extends FileDownloader {
 			
 			bos.flush();
 			
-			progress.end();
-			
-			if(progress.wasCancelled)  {
-				SupportFileAccessError sfae = new SupportFileAccessError("Connection was cancelled by user.");
-				sfae.setCancelledConnection(true);
-				throw sfae;
+			if(progress!=null){
+				if(progress.wasCancelled)  {
+					SupportFileAccessError sfae = new SupportFileAccessError("Connection was cancelled by user.");
+					sfae.setCancelledConnection(true);
+					throw sfae;
+				}
 			}
 		} catch (IOException ioe) {
 			SupportFileAccessError sfae = new SupportFileAccessError("File not found", ioe);
@@ -222,8 +254,9 @@ public class FTPFileDownloader extends FileDownloader {
 			SupportFileAccessError sfae = new SupportFileAccessError("File not found", ftpe);
 			throw sfae;
 		} finally {
-			disposeProgress=true;
-			progress.dispose();
+			disposeProgress2=true;
+			if (progress!=null)
+				progress.dispose();
 		}
 		return newFile;
 	}
@@ -264,7 +297,7 @@ public class FTPFileDownloader extends FileDownloader {
 			ioe.printStackTrace();
 			return null;
 		} finally {
-			disposeProgress=true;
+			//disposeProgress=true;
 			if(progress != null) {
 				progress.end();
 				progress.dispose();

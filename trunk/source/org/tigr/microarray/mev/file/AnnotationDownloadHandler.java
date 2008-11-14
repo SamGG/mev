@@ -230,6 +230,8 @@ public class AnnotationDownloadHandler {
 					.getSelectedItem().toString(), arrayListBox
 					.getSelectedItem().toString());
 			File f = irm.getSupportFile(rafd, true);
+			if (f==null)
+				return false;
 			this.annotationSelected = true;
 			annFileListTextField.setText(f.getAbsolutePath());
 			connectButton.setText("Selected");
@@ -292,10 +294,23 @@ public class AnnotationDownloadHandler {
 					additionalListener.actionPerformed(new ActionEvent(browseButton, 0, GOT_ANNOTATION_FILE));
 				}
 			} else if (source == connectButton) {
-				boolean success = onClickAnnDownload();
-				if(additionalListener != null && success ) {
-					additionalListener.actionPerformed(new ActionEvent(connectButton, 0, GOT_ANNOTATION_FILE));
-				}
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						try {
+							boolean success = onClickAnnDownload();
+							if(additionalListener != null && success ) {
+								additionalListener.actionPerformed(new ActionEvent(connectButton, 0, GOT_ANNOTATION_FILE));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+				});
+
+				thread.setPriority(Thread.MIN_PRIORITY);
+				thread.start();
+				
 			} else if (source.equals(organismListBox)) {
 				updateLabel((String) organismListBox.getSelectedItem());
 				checkForAnnotationFile();
