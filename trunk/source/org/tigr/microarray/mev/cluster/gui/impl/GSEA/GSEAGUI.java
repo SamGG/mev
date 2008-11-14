@@ -207,12 +207,12 @@ public class GSEAGUI implements IClusterGUI {
 			gsea = framework.getAlgorithmFactory().getAlgorithm("GSEA");
 			gsea.addAlgorithmListener(listener);
 			logger.append("Algorithm execution begins... \n");
-			AlgorithmData result = gsea.execute(algData);//--commented for testing viewer	
+			AlgorithmData result = gsea.execute(algData);	
 			logger.append("Algorithm excecution ends...\n");
 			logger.dispose();
 			
 			//resultNode = createResultNode(null, algData, idata, null, experiment);
-			resultNode = createResultNode(null, result, idata, null, experiment);//--commented for Testing
+			resultNode = createResultNode(result, idata,gseaExperiment);//--commented for Testing
 				
 		
 		}
@@ -267,26 +267,26 @@ public class GSEAGUI implements IClusterGUI {
    }
 	
 	
-   private DefaultMutableTreeNode createResultNode(String mode, AlgorithmData result, IData idata, int [][] clusters, Experiment experiment) {
+   private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
 		DefaultMutableTreeNode node = null;
 		
 		//if(mode.equals(NonparConstants.MODE_WILCOXON_MANN_WHITNEY)) {
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
-			addTableViews(mode, node, result, experiment, idata, clusters);
+			addTableViews(node, result, experiment, idata);
 			//Does not seem to do it's job...shows wierd expression values
-			addExpressionImages(node,  result, clusters, this.gseaExperiment);
+			addExpressionImages(node,  result, experiment);
 			
 		//} 		
 		return node;
 	}
 	
 
-   private void addExpressionImages(DefaultMutableTreeNode root,  AlgorithmData result, int [][] clusters, GSEAExperiment experiment) {
+   private void addExpressionImages(DefaultMutableTreeNode root,  AlgorithmData result, GSEAExperiment experiment) {
 
 		GSEAExperimentViewer viewer;	
 			
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-		viewer = new GSEAExperimentViewer(experiment, clusters);
+		viewer = new GSEAExperimentViewer(experiment);
 	    DefaultMutableTreeNode viewerNode = new DefaultMutableTreeNode(new LeafInfo("Gene Matrix", viewer, new Integer(0)));
 		node.add(viewerNode);			
 		 		
@@ -301,7 +301,7 @@ public class GSEAGUI implements IClusterGUI {
    
    
    
-   private void addTableViews(String mode, DefaultMutableTreeNode root, AlgorithmData result, Experiment experiment, IData data, int [][] clusters) {
+   private void addTableViews(DefaultMutableTreeNode root, AlgorithmData result, GSEAExperiment experiment, IData data) {
    	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
    	GSEATableViewer tabViewer;
    	String[][]pVals =(String[][]) result.getObjectMatrix("geneset-pvals");
@@ -309,7 +309,7 @@ public class GSEAGUI implements IClusterGUI {
    	
    	
    //DISPLAY SIGNIFICANT GENE SETS
-   	tabViewer = new GSEATableViewer(headernames,pVals);
+   	tabViewer = new GSEATableViewer(headernames,pVals, root,experiment);
    	node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Gene Sets", tabViewer, new Integer(0))));
    
    //Display Excluded Gene sets
