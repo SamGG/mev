@@ -6256,6 +6256,7 @@ private void appendResourcererGeneAnnotation() {
 	 */
 	public void handleMatrix(String sourceGoose, DataMatrix matrix) throws RemoteException {
 		//Load broadcast data if there is no data already loaded into this MAV.
+
 		if(data.getFeaturesCount() <= 0) {
 			data.setGaggleOrganismName(matrix.getSpecies());
 			
@@ -6279,7 +6280,6 @@ private void appendResourcererGeneAnnotation() {
 			slideDataArray[0].setSlideFileName ("Broadcast via Gaggle from " + sourceGoose + " " + matrix.getShortName ());
 			for (int i=1; i < experimentCount; i++) {
 				slideDataArray [i] = new FloatSlideData (slideDataArray[0].getSlideMetaData(), matrix.getRowCount ());
-				//System.out.println (i + " new FloatSlideData (" + matrix.getRowCount () + ")");
 				slideDataArray [i].setSlideFileName ("Broadcast via Gaggle from " + sourceGoose + " " + matrix.getShortName ());
 			} // for i
 	
@@ -6287,11 +6287,10 @@ private void appendResourcererGeneAnnotation() {
 			String [] fieldNames = new String [1];
 			fieldNames [0] = matrix.getRowTitlesTitle ();
 			
-			//System.out.println ("fieldNames [0]: " + fieldNames[0]);
+			if(fieldNames == null || fieldNames[0] == null)
+				fieldNames = new String[] {"untitled annotation"};
 			slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
-			//System.out.println("test");
 			for (int i=0; i < experimentCount; i++) {
-				//System.out.println("setting slidedataname " + matrix.getColumnTitles()[i]);
 				slideDataArray[i].setSlideDataName (matrix.getColumnTitles()[i]);
 			}
 			// ----------------------------------
@@ -6320,7 +6319,6 @@ private void appendResourcererGeneAnnotation() {
 				slideDataArray[0].addSlideDataElement (sde);
 	
 				for (int i=0; i < slideDataArray.length; i++) {
-					//System.out.println ("   i: " + i + "  row: " + row + "  col: " + column);
 					cy3 = 1f;  //set cy3 to a default value of 1.
 					cy5 = (new Double (matrixData [r][i])).floatValue ();
 					slideDataArray[i].setIntensities (r, cy3, cy5);
@@ -6328,8 +6326,6 @@ private void appendResourcererGeneAnnotation() {
 						minval = cy5;
 					if(cy5 > maxval)
 						maxval = cy5;
-					//System.out.println ("slideDataArray [" + i + "].setIntensities (" +
-			        //                r + ", " + cy3 + ", " + cy5);
 				} // for i
 			} // for r
 			IChipAnnotation chipAnno = new MevChipAnnotation();
