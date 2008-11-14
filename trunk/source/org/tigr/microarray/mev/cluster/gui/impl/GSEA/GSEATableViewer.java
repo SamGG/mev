@@ -159,7 +159,9 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
     
     /**
-     *  Handles storage of clusters from selected line.
+     *  Handles the storage of selected rows from the 
+     *  table.  
+     *  
      */
     protected void onStoreSelectedRows(){
         int [] tableIndices = table.getSelectedRows();

@@ -442,8 +442,7 @@ public class InfoDisplay extends ActionInfoDialog  {
          * to ensure that annotation has been loaded. If so, the Spot Information box displays
          * all the available annotation for that spot present in the MevAnnotation object.
          * 
-         * If Annotation has not been loaded, then the information in "ExtraFields" is displayed.
-         * "Extra Fields" has a subset of information present in MevAnnnotation.
+         * If there is annotation already present in the data file, that is also displayed
          * 
          * 
          * 
@@ -471,10 +470,14 @@ public class InfoDisplay extends ActionInfoDialog  {
 
 
 
-        else {
         if(fieldNames != null && fieldNames.length > 0){
-
-        	message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
+        	
+        	//Need to have the header "Gene Annotation" only once. This is to avoid duplication of the 
+        	//header, in case there is annotation in the file and the user also loaded Resourcerer annotation.
+        	//
+        	
+        	if(!data.isAnnotationLoaded())
+        		message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
         	for (int i = 0; i < fieldNames.length; i++) {                
 
         		//pcahan change to call getDetection on the element rather than the field  
@@ -489,7 +492,7 @@ public class InfoDisplay extends ActionInfoDialog  {
         	}
 
         }
-        }
+      //  }
 
         //spot specific information
         SpotInformationData spotData = this.slideData.getSpotInformationData();
