@@ -441,6 +441,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 				if (importDialog.showModal() == JOptionPane.OK_OPTION) {
 					((MultipleArrayData)this.idata).addResourcererGeneAnnotation(importDialog
 							.getDataAnnotationKey(), reader.getAffyAnnotation());
+					this.idata.setChipAnnotation(reader.getAffyChipAnnotation());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
