@@ -85,14 +85,8 @@ public class BNGUI implements IClusterGUI {
 	        } catch (IOException ioe) {
 	        	speciestoarrays = null;
 	        }
-	        //TODO Change path
-	        if(bnSuppFileHandle != null || framework.getData().isAnnotationLoaded()) {
-	        	//easeFileLocation = supportFiles.get(bnSuppFileHandle).getAbsolutePath();
-	        } else {
-	        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
-	        }
         } catch (SupportFileAccessError sfae) {
-        	//easeFileLocation = "./data/ease" + BNConstants.SEP + "ease_" + chipType;
+
         }
 		//
 		//final BNInitDialog dialog = new BNInitDialog(framework.getFrame(), repository, framework.getData().getFieldNames());
