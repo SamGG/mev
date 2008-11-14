@@ -32,8 +32,6 @@ public class GSEATableViewer extends TableViewer implements Serializable {
 	private static final String SAVE_GSEA_TABLE_COMMAND = "save-gsea-table-command";
 	private static final String SAVE_PVALUES_TABLE_COMMAND ="save_pvalues_table_command";
 	private static final String STORE_CLUSTER_COMMAND="store_cluster_command";
-	//private static final String LAUNCH_EXPRESSION_GRAPH_COMMAND = "launch-expression-graph-command";
-	//protected static final String LAUNCH_CENTROID_GRAPH_COMMAND = "launch-centroid-graph-command";
 	protected static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
 	
 	protected DefaultMutableTreeNode gseaRoot;
@@ -48,10 +46,9 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     protected Object[][] data;
     
     
-    public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment, int[][] clusters) {
+    public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment) {
         super(headerNames, data);
         this.headerNames = headerNames;
-        this.clusterAnalysis = clusterAnalysis;
         this.data = data;
         
         setNumerical(0, true);
@@ -71,7 +68,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
    
 	
 	
-    /** Creats the context menu
+    /** Creates the context menu
      * @return  */
     protected JPopupMenu createPopupMenu(){
         Listener listener = new Listener();
@@ -83,6 +80,15 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         item.setActionCommand(STORE_CLUSTER_COMMAND);
         item.addActionListener(listener);
         menu.add(item);
+        
+        menu.addSeparator();
+      
+        
+        item = new JMenuItem("Save pValues Table");
+        item.setActionCommand(SAVE_PVALUES_TABLE_COMMAND);
+        item.addActionListener(listener);
+        menu.add(item);
+      
         
         JMenu launchMenu = new JMenu("Open Viewer");
         
@@ -103,14 +109,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         
         menu.add(launchMenu);
         
-        menu.addSeparator();
-        
-        item = new JMenuItem("Save pValues Table");
-        item.setActionCommand(SAVE_PVALUES_TABLE_COMMAND);
-        item.addActionListener(listener);
-        menu.add(item);
-           
-                
+                 
         return menu;
     }
     
@@ -159,22 +158,44 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     }
     
     
-    /** Handles sotrage of clusters from selected line.
+    /**
+     *  Handles storage of clusters from selected line.
      */
-    protected void onStoreCluster(){
+    protected void onStoreSelectedRows(){
         int [] tableIndices = table.getSelectedRows();
         if(tableIndices == null || tableIndices.length == 0)
             return;
+        
         //convert to possibly sorted table indices
         for(int i = 0; i < tableIndices.length; i++)
             tableIndices[i] = ((DefaultViewerTableModel) model).getRow( tableIndices[i] );
         
-        int [] geneIndices = getGeneIndices(tableIndices);
-        geneIndices = mapExperimentIndicesToGeneData(geneIndices);
-        //storing as sub-cluster allows storing various sets of indices as separate clusters from
-        //the same viewer.
-        framework.storeSubCluster(geneIndices, experiment, ClusterRepository.GENE_CLUSTER);
-    }
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
+        String fileName = "";
+        if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+            File file = chooser.getSelectedFile();
+            fileName = file.getName();
+            try{
+                PrintWriter pw = new PrintWriter(new FileOutputStream(file));
+                int rows = tableIndices.length;
+                int cols = table.getColumnCount();
+                
+                for(int row = 0; row < rows ; row++){
+                    for(int col = 0; col < cols; col++){
+                        pw.print(((String)(table.getValueAt(tableIndices[row], col))) + "\t");
+                    }
+                    pw.print("\n");
+                }
+                pw.flush();
+                pw.close();
+            } catch ( IOException ioe) {
+                ioe.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(this, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
+            }
+            
+        }
+    
+     }
     
     
     /** Saves the ease table to file
@@ -256,11 +277,9 @@ public class GSEATableViewer extends TableViewer implements Serializable {
             String command = ae.getActionCommand();
             if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
                 onOpenViewer("expression image");
-            } /*else if(command.equals(LAUNCH_CENTROID_GRAPH_COMMAND)){
-                onOpenViewer("centroid graph");
-            } else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
-                onOpenViewer("expression graph");
-            } */else if(command.equals(SAVE_PVALUES_TABLE_COMMAND)){
+            } else if(command.equals(STORE_CLUSTER_COMMAND)){
+            	onStoreSelectedRows();
+            } else if(command.equals(SAVE_PVALUES_TABLE_COMMAND)){
                 onSavepValuesTable();
             }
         }

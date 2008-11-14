@@ -14,8 +14,8 @@ public class GSEAExperimentViewer extends ExperimentViewer{
      * Constructs a <code>GSEAExperimentViewer</code> with specified
      * experiment and clusters.
      */
-    public GSEAExperimentViewer(GSEAExperiment experiment, int[][] clusters) {
-        super(experiment, clusters);
+    public GSEAExperimentViewer(GSEAExperiment experiment) {
+        super(experiment, null);
     	this.auxData = auxData;
     	this.auxTitles = auxTitles;
     }
