@@ -58,6 +58,7 @@ public class ListImportDialog extends AlgorithmDialog {
     private boolean bin = false;
     private JTextField lowerField;
     private JTextField upperField;
+    private int importType=0;
  
     
     /** Creates a new instance of GeneListImportDialog */
@@ -115,6 +116,7 @@ public class ListImportDialog extends AlgorithmDialog {
     /** Creates a new instance of binned GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto, boolean bin) {
         super(parent, geneList ? "Gene List Import Dialog" : "Sample List Import Dialog", true);
+        importType =2;
         this.bin =bin;
         annFields = new Vector<String>();
         for(int i = 0; i < fieldNames.length; i++){
@@ -181,6 +183,7 @@ public class ListImportDialog extends AlgorithmDialog {
     /** Creates a new instance of GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto) {
         super(parent, geneList ? "Automatic Gene List Import Dialog" : "Automatic Sample List Import Dialog", true);
+        importType =1;
         annFields = new Vector();
         for(int i = 0; i < fieldNames.length; i++){
             annFields.addElement(fieldNames[i]);
@@ -331,6 +334,10 @@ public class ListImportDialog extends AlgorithmDialog {
             }
             else if (command.equals("info-command")){
                 HelpWindow hw = new HelpWindow(ListImportDialog.this, "List Import Dialog");
+                if (importType==1)
+                	hw = new HelpWindow(ListImportDialog.this, "Auto Import Dialog");
+                if (importType==2)
+                	hw = new HelpWindow(ListImportDialog.this, "Binned Import Dialog");
                 result = JOptionPane.CANCEL_OPTION;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
