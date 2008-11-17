@@ -924,8 +924,8 @@ public class RPInitBox extends AlgorithmDialog {
             GridBagConstraints constraints = new GridBagConstraints();
             this.setBackground(Color.white);
             this.setLayout(gridbag);
-            upButton = new JRadioButton("Up-Regulated", false);
-            downButton = new JRadioButton("Down-Regulated", true);
+            upButton = new JRadioButton("Up-Regulated", true);
+            downButton = new JRadioButton("Down-Regulated", false);
             bothButton = new JRadioButton("Both", false);
             upButton.setBackground(Color.white);
             downButton.setBackground(Color.white);
