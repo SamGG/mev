@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
 import org.tigr.microarray.mev.file.FileType;
 
 /**
@@ -799,8 +800,9 @@ public class FileResourceManager implements IResourceManager {
 		
 		//Test creation of support file definitions
 		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
-		defs.add(new ResourcererAnnotationFileDefinition("C.elegans", "affy_Celegans"));
+//		defs.add(new ResourcererAnnotationFileDefinition("C.elegans", "affy_Celegans"));
 //		defs.add(new SupportFileUrlsPropertiesDefinition());
+		defs.add(new EASEImpliesAndURLDataFile());
 //		defs.add(new ExpressionDataSupportDataFile("http://www.tm4.org/webstart/mev/TDMS_format_sample.txt", false, FileType.STANFORD));
 //		defs.add(new ResourcererAnnotationFileDefinition("Human", "APPLERA_ABI1700"));
 //		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
@@ -826,7 +828,7 @@ public class FileResourceManager implements IResourceManager {
 		while(e.hasMoreElements()) {
 			ISupportFileDefinition thisDef = e.nextElement();
 			if(thisDef == null)  {
-				System.out.println("null value");
+				System.out.println("null support definition");
 			} else {
 				File f = results.get(thisDef);
 				if (f == null)
@@ -849,7 +851,7 @@ public class FileResourceManager implements IResourceManager {
 					if(f != null)
 						System.out.println(f.getAbsolutePath());
 					else 
-						System.out.println("Latest version not found.");
+						System.out.println("File not found in repository.");
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 					return;
@@ -865,24 +867,24 @@ public class FileResourceManager implements IResourceManager {
 		}
 		
 		//MultiSupportFile testing code. 
-		IMultiSupportFileDefinition mdef = new GseaMultiSuppFileDefinition();
-		try {
-			Hashtable<ISupportFileDefinition, File> supportfilesHash = frm.getMultipleSupportFiles(mdef);
-			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
-			System.out.println("FileResourceManager.getMultipleSupportFiles returned " + supportfilesHash.size() + " entries.");
-			while(supportfiles.hasMoreElements()) {
-				ISupportFileDefinition thisDef = supportfiles.nextElement();
-				//Must check for null - ResourceManager fails quietly if one of the files can't be found, and doesn't populate the 
-				//hashtable. 
-				if(supportfilesHash.containsKey(thisDef) && supportfilesHash.get(thisDef)!= null) {
-					System.out.println("got file " + supportfilesHash.get(thisDef).getAbsolutePath() + " for definition " + thisDef.getUniqueName());
-				} else {
-					System.out.println("Didn't get file for definition " + thisDef.getUniqueName());
-				}
-			}
-		} catch(SupportFileAccessError sfae) {
-			sfae.printStackTrace();
-		}
+//		IMultiSupportFileDefinition mdef = new GseaMultiSuppFileDefinition();
+//		try {
+//			Hashtable<ISupportFileDefinition, File> supportfilesHash = frm.getMultipleSupportFiles(mdef);
+//			Enumeration<ISupportFileDefinition> supportfiles = supportfilesHash.keys();
+//			System.out.println("FileResourceManager.getMultipleSupportFiles returned " + supportfilesHash.size() + " entries.");
+//			while(supportfiles.hasMoreElements()) {
+//				ISupportFileDefinition thisDef = supportfiles.nextElement();
+//				//Must check for null - ResourceManager fails quietly if one of the files can't be found, and doesn't populate the 
+//				//hashtable. 
+//				if(supportfilesHash.containsKey(thisDef) && supportfilesHash.get(thisDef)!= null) {
+//					System.out.println("got file " + supportfilesHash.get(thisDef).getAbsolutePath() + " for definition " + thisDef.getUniqueName());
+//				} else {
+//					System.out.println("Didn't get file for definition " + thisDef.getUniqueName());
+//				}
+//			}
+//		} catch(SupportFileAccessError sfae) {
+//			sfae.printStackTrace();
+//		}
 		
 		System.out.println("FileResourceManager finished.");
 		System.exit(0);

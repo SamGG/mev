@@ -14,7 +14,7 @@ public class EASEImpliesAndURLDataFile extends ISupportFileDefinition {
 	} 
 	@Override
 	public URL getURL() throws MalformedURLException {
-		return new URL(easeFileRoot + getUniqueName());
+		return new URL(easeFileRoot + getUniqueName() + ".zip");
 	}
 
 	@Override
@@ -41,6 +41,8 @@ public class EASEImpliesAndURLDataFile extends ISupportFileDefinition {
 		return true;
 	}
 	public String getImpliesLocation(File f) {
+		if(f == null)
+			return null;
 		return new File(f, "Implies").getAbsolutePath();
 	}	
 	public String getTagsLocation(File f) {
