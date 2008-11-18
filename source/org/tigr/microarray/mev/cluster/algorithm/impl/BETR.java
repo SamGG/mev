@@ -43,11 +43,8 @@ public class BETR extends AbstractAlgorithm{
     public static final int FALSE_NUM = 12;
     public static final int FALSE_PROP = 13;  
     
-    private static int progress;
-/*    private int function;
-    private float factor;
-    private boolean absolute, calculateAdjFDRPVals;*/
-    private static FloatMatrix expMatrix;
+    private int progress;
+    private FloatMatrix expMatrix;
     private boolean stop = false;
     private int[] timeAssignments;
     private int[] conditionAssignments;
@@ -56,10 +53,7 @@ public class BETR extends AbstractAlgorithm{
     private int[] errorGenesArray;
 
     private int numGenes, numExps, numTimePoints;
-    //private float alpha, falseProp;
-    private boolean  drawSigTreesOnly;//usePerms,;
-  //  private int numPerms, falseNum;
-  //  private int correctionMethod;    
+    private boolean  drawSigTreesOnly;
     private int hcl_function;
     private boolean hcl_absolute;
     private boolean hcl_genes_ordered;  
@@ -68,34 +62,14 @@ public class BETR extends AbstractAlgorithm{
     private int dataDesign;
     
     
-    
-  //  private int k; // # of clusters
-    
-  //  private float  falseProp;   
-    //int[] groupAssignments; 
-  //  private double[] origPVals;
-    
     float currentP = 0.0f;
-    //float currentF = 0.0f;
     int currentIndex = 0; 
     double constant;
     
     
-  /*  Vector fValuesVector = new Vector();
-    Vector rawPValuesVector = new Vector();
-    Vector adjPValuesVector = new Vector();
-    //Vector pValuesVector = new Vector(); 
-    Vector dfNumVector = new Vector();
-    Vector dfDenomVector = new Vector();
-    Vector ssGroupsVector = new Vector();
-    Vector ssErrorVector = new Vector();
-    private boolean[] isSig;
     
     
-    private boolean useFastFDRApprox = true;*/
-    
-    
-    private static AlgorithmEvent event;
+    private AlgorithmEvent event;
     /**
      * This method should interrupt the calculation.
      */
@@ -128,8 +102,7 @@ public class BETR extends AbstractAlgorithm{
         numTimePoints = map.getInt("numTimePoints");
         if (dataDesign==1)
         	numTimePoints--;
-        numGenes1= expMatrix.getRowDimension();
-        numGenes= numGenes1;
+        numGenes= expMatrix.getRowDimension();
         numExps = expMatrix.getColumnDimension();
         alpha = map.getFloat("alpha-value");
     	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
@@ -216,13 +189,7 @@ public class BETR extends AbstractAlgorithm{
     	
     	
     	FloatMatrix means =getMeans(sigGenesArrays);        
-    	System.out.println("siggenes");
-    	for (int i=0; i<1; i++){
-        	for (int j=0; j<sigGenesArrays[i].length; j++){
-        		System.out.print(sigGenesArrays[i][j]+ "   ");
-        	}
-        	System.out.println(" **");
-        }
+    	
     	
     	FloatMatrix variances = getVariances(sigGenesArrays, means); 
     	Cluster result_cluster = new Cluster();
@@ -1525,106 +1492,34 @@ public class BETR extends AbstractAlgorithm{
 	/**
 	 * @param args
 	 */
-	private static int numTreatReps = 3;// = number of treatment replicates;
-	private static int numConReps = 3;// = number of control replicates;
-	private static int numGenes1; //number of genes		
-	private static float p = (float).05;// p-value.	
-	private static float alpha;// significance level.
+	private int numTreatReps = 3;// = number of treatment replicates;
+	private int numConReps = 3;// = number of control replicates;
+	//private static int numGenes; //number of genes		
+	private float p = (float).05;// p-value.	
+	private float alpha;// significance level.
 	private float[] I;
 	//-Initialize two 3-Dimensional float arrays of length n (number of genes), width and height k (number of time-points).
-	private static FloatMatrix[] varianceError;// is the error variance.
-	private static FloatMatrix[] varianceMean;// is the mean variance.
-	private static FloatMatrix[] Shmg;
-	private static FloatMatrix[] Sheg;
- 	private static Experiment XTreat = new Experiment(null, null, null);
- 	private static Experiment XControl = new Experiment(null, null, null);
- 	private static Experiment XTreatAverage = new Experiment(null, null, null);
- 	private static Experiment XControlAverage = new Experiment(null, null, null);
- 	private static Experiment Y = new Experiment(null, null, null);
+	private FloatMatrix[] varianceError;// is the error variance.
+	private FloatMatrix[] varianceMean;// is the mean variance.
+	private FloatMatrix[] Shmg;
+	private FloatMatrix[] Sheg;
+ 	private Experiment XTreat = new Experiment(null, null, null);
+ 	private Experiment XControl = new Experiment(null, null, null);
+ 	private Experiment XTreatAverage = new Experiment(null, null, null);
+ 	private Experiment XControlAverage = new Experiment(null, null, null);
+ 	private Experiment Y = new Experiment(null, null, null);
  	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		FloatMatrix a, b, c, d, varsM, varsY;
-		float aa, bb, cc,dd, ab, ac, ad, bc,bd,cd;
-		bb=.9346125f;
-		aa=.06862506f;
-		cc=.834962f;
-		dd=.06513383f;
-		ab=-.0497811470f;
-		bc=.818980040f;
-		bd=.022040663f;
-		ac=-.046962418f;
-		ad=-.000632187f;
-		cd=.020613318f;
-		
-		float ya, yb, yc, yd;
-		yb=-.98876286f;
-		ya=.06222725f;
-		yc=-.9279957f;
-		yd=-.025420189f;
-		
-		float[][]vars =  {	{aa,ab,ac,ad},
-							{ab,bb,bc,bd},
-							{ac,bc,cc,cd},
-							{ad,bd,cd,dd}};
-		float[][]yvars = {	{ya},{yb},{yc},{yd}	};
-				
-		float[][]adata = {	{.9346125f		,.818980040f	,-.0497811470f	,.022040663f},
-							{-.049781147f	,-.046962418f	,.06862506f		,-.000632187f},
-							{.81898004f		,.834962f		,-.0469624180f	,.020613318f},
-							{.022040663f	,.020613318f	,-.0006328187f	,.06513383f}};
-
-		float[][]bdata = {	{-.98876286f},
-							{-.9279957f},
-							{.06222725f},
-							{-.025420189f},	};
-
-		float[][]cdata = {	{.9346125f		,-.0497811470f	,.818980040f	,.022040663f},
-							{-.049781147f	,.06862506f		,-.046962418f	,-.000632187f},
-							{.81898004f		,-.0469624180f	,.834962f		,.020613318f},
-							{.022040663f	,-.0006328187f	,.020613318f	,.06513383f}};
-		
-		float[][]ddata = {	{-.98876286f},
-							{.06222725f},
-							{-.9279957f},
-							{-.025420189f},	};
-		
-		a = new FloatMatrix(adata);
-		b = new FloatMatrix(bdata);
-
-		c = new FloatMatrix(cdata);
-		d = new FloatMatrix(ddata);
-		varsM = new FloatMatrix(vars);
-		varsY = new FloatMatrix(yvars);
-		System.out.println(multivariateNormalFunction(a,b));
-		System.out.println(multivariateNormalFunction(c,d));
-		System.out.println(multivariateNormalFunction(varsM,varsY));
-		
-		//initializeExperimentsLocal();
-		//runAlg();
-	}
-	public static void initializeExperimentsLocal(){
-
-		System.out.println("Initializing...");
-		XTreat.fillMatrix(makeXTExperimentMatrix());
-		XTreatAverage.fillMatrix(makeXTAExperimentMatrix());
-		XControl.fillMatrix(makeXCExperimentMatrix());
-		XControlAverage.fillMatrix(makeXCAExperimentMatrix());
-		//Y.fillMatrix(makeYExperimentMatrix());
-	}
+	
 	public void initializeExperiments(){
-		System.out.println("Initializing...");
 		//System.out.println("n = " +n);
 		//for (int i=0; i<conditionsMatrix[0].length;i++){
 		//	System.out.println("conditionsMatrix[0][i] = "+conditionsMatrix[0][i]);
 		//}
 		if (dataDesign==1){
 		
-			FloatMatrix XTreatAve=new FloatMatrix(numGenes1, numTimePoints);
+			FloatMatrix XTreatAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){  //i=1 to skip t0.
-				for (int j=0; j<numGenes1; j++){
+				for (int j=0; j<numGenes; j++){
 					float s=0;
 					float value;;
 					int totals=0;
@@ -1640,9 +1535,9 @@ public class BETR extends AbstractAlgorithm{
 					XTreatAve.set(j, i, (float)s/totals);
 				}
 			}
-			FloatMatrix XControlAve=new FloatMatrix(numGenes1, numTimePoints);
+			FloatMatrix XControlAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){
-				for (int j=0; j<numGenes1; j++){
+				for (int j=0; j<numGenes; j++){
 					float s=0;
 					float value;
 					int totals=0;
@@ -1663,9 +1558,9 @@ public class BETR extends AbstractAlgorithm{
 			Y.fillMatrix(XTreatAve.minus(XControlAve));
 		}
 		if (dataDesign==3){
-			FloatMatrix XTreatAve=new FloatMatrix(numGenes1, numTimePoints);
+			FloatMatrix XTreatAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){
-				for (int j=0; j<numGenes1; j++){
+				for (int j=0; j<numGenes; j++){
 					float s=0;
 					float value;
 					int totals=0;
@@ -1685,12 +1580,12 @@ public class BETR extends AbstractAlgorithm{
 			
 		}
 		if (dataDesign==2){
-			XTreat.fillMatrix(expMatrix.getMatrix(0, numGenes1-1, conditionsMatrix[0]));
-			XControl.fillMatrix(expMatrix.getMatrix(0, numGenes1-1, conditionsMatrix[1]));
+			XTreat.fillMatrix(expMatrix.getMatrix(0, numGenes-1, conditionsMatrix[0]));
+			XControl.fillMatrix(expMatrix.getMatrix(0, numGenes-1, conditionsMatrix[1]));
 		
-			FloatMatrix XTreatAve=new FloatMatrix(numGenes1, numTimePoints);
+			FloatMatrix XTreatAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){
-				for (int j=0; j<numGenes1; j++){
+				for (int j=0; j<numGenes; j++){
 					float s=0;
 					int totals=0;
 					float value;
@@ -1708,9 +1603,9 @@ public class BETR extends AbstractAlgorithm{
 					XTreatAve.set(j, i, (float)s/totals);
 				}
 			}
-			FloatMatrix XControlAve=new FloatMatrix(numGenes1, numTimePoints);
+			FloatMatrix XControlAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){
-				for (int j=0; j<numGenes1; j++){
+				for (int j=0; j<numGenes; j++){
 					float s=0;
 					float value;
 					int totals=0;
@@ -1732,40 +1627,7 @@ public class BETR extends AbstractAlgorithm{
 		}
 	}
 	public void runAlg(){
-		System.out.println("Running algorithm...");
-	/*	System.out.println("XTreat");
-		for (int i=0; i<XTreat.getNumberOfGenes(); i++){
-			for (int j=0; j<XTreat.getNumberOfSamples(); j++){
-				System.out.print(XTreat.get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}
-		System.out.println("XControl");
-		for (int i=0; i<XControl.getNumberOfGenes(); i++){
-			for (int j=0; j<XControl.getNumberOfSamples(); j++){
-				System.out.print(XControl.get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}
-
-		System.out.println("XTreatAverage");
-		for (int i=0; i<XTreatAverage.getNumberOfGenes(); i++){
-			for (int j=0; j<XTreatAverage.getNumberOfSamples(); j++){
-				System.out.print(XTreatAverage.get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}
-		System.out.println("Y");
-		for (int i=0; i<Y.getNumberOfGenes(); i++){
-			for (int j=0; j<Y.getNumberOfSamples(); j++){
-				System.out.print(Y.get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}*/
+		
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue(10);
@@ -1773,12 +1635,12 @@ public class BETR extends AbstractAlgorithm{
 
 	 	//-Estimate Variance components:
 	 	float seg = 0; 
-	 	varianceError = new FloatMatrix[numGenes1];
-	 	varianceMean = new FloatMatrix[numGenes1];
-	 	Sheg = new FloatMatrix[numGenes1];
-	 	Shmg = new FloatMatrix[numGenes1];
+	 	varianceError = new FloatMatrix[numGenes];
+	 	varianceMean = new FloatMatrix[numGenes];
+	 	Sheg = new FloatMatrix[numGenes];
+	 	Shmg = new FloatMatrix[numGenes];
 
-	 	for (int i=0; i<numGenes1; i++) {
+	 	for (int i=0; i<numGenes; i++) {
 	 		varianceError[i] = new FloatMatrix(numTimePoints,numTimePoints);
 	 		varianceMean[i] = new FloatMatrix(numTimePoints,numTimePoints);
 	 		for (int ii=0; ii<numTimePoints+1; ii++) {
@@ -1812,7 +1674,6 @@ public class BETR extends AbstractAlgorithm{
 	 				}
 	 			}
 	 		}
-	 		//System.out.println("dataDesign = " + dataDesign + " numTimePoints = " +numTimePoints + " columns = "+varianceMean[0].getColumnDimension());
 	 		for (int ii=0; ii<numTimePoints; ii++) {
 	 			for (int iii=0; iii<numTimePoints; iii++) { 
 	 				varianceMean[i].set(ii, iii, Y.get(i,ii)*Y.get(i,iii));
@@ -1831,7 +1692,6 @@ public class BETR extends AbstractAlgorithm{
 	 			seg = seg/(numTimePoints*((numTreatReps-1)));
 	 		}
 	 		if (seg==0){
-	 			System.out.println("Bad Data, no variance for gene " + i);
 	 		    JOptionPane.showMessageDialog(null, "Invalid Data!", "Error", JOptionPane.WARNING_MESSAGE);
                 stop = true;
 	 		}
@@ -1841,22 +1701,6 @@ public class BETR extends AbstractAlgorithm{
 	 		seg = 0f;
 	 	}
 
-		System.out.println("Sm");
-		for (int i=0; i<varianceMean[0].getRowDimension(); i++){
-			for (int j=0; j<varianceMean[0].getColumnDimension(); j++){
-				System.out.print(varianceMean[0].get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}
-	 		
-		System.out.println("Se");	
-		for (int i=0; i<varianceError[0].getColumnDimension();i++){
-			for (int j=0; j<varianceError[0].getRowDimension();j++){
-				System.out.print(varianceError[0].get(i, j)+ " ");
-			}
-			System.out.println("  varianceError[0]");
-		}
 
  		//Estimate gene-specific variance components, ~Seg.
 		//Find SBar:
@@ -1864,10 +1708,10 @@ public class BETR extends AbstractAlgorithm{
 		float sume = 0;
 		for(int ii=0; ii<numTimePoints; ii++){
 			for(int iii=0; iii<numTimePoints; iii++){
-				for(int i=0; i<numGenes1; i++){
+				for(int i=0; i<numGenes; i++){
 					sume = sume + varianceError[i].get(ii,iii);
 				} 
-				SeBar.set(ii,iii, sume/(float)numGenes1);	
+				SeBar.set(ii,iii, sume/(float)numGenes);	
 				sume = 0f;
 			}
 		}
@@ -1879,7 +1723,7 @@ public class BETR extends AbstractAlgorithm{
 		float s0;
 		float totalmti=0f;
 		float ebar=0f;
-		float[] eg = new float[numGenes1];
+		float[] eg = new float[numGenes];
 		float dg=0f;
 		if (dataDesign==1)
 			dg= (float)(  (numTreatReps-1)*(numTimePoints+1));
@@ -1889,40 +1733,27 @@ public class BETR extends AbstractAlgorithm{
 			dg= (float)(  (numTreatReps-1)* numTimePoints);
 		
 		//time intensive loop
-		System.out.println("dg = "+dg);
-		for (int i=0; i<numGenes1; i++){
+		for (int i=0; i<numGenes; i++){
 			eg[i] = (float)( Math.log(varianceError[i].get(0, 0)) - diGamma(dg/2) + Math.log(dg/2) );
-			//System.out.println("["+i+"] = "+varianceError[i].get(0, 0) + " diGamma(dg/2)="+diGamma(dg/2)+ " Math.log(dg/2)="+Math.log(dg/2));
-			
-			if (Float.isNaN(eg[i]))
-				System.out.println("NaN varianceError["+i+"].get(0, 0) = "+varianceError[i].get(0, 0) + " diGamma(dg/2)="+diGamma(dg/2)+ " Math.log(dg/2)="+Math.log(dg/2));
 			
 		} 
-		System.out.println("ebar init = "+ebar);
-		for (int i=0;i<numGenes1; i++){
+		for (int i=0;i<numGenes; i++){
 			ebar = ebar+eg[i];
-			//System.out.print(" ebar"+i+"="+ebar + " eg[i]=" +eg[i]);
 		}
 		
 
-		System.out.println("ebar1 = "+ebar);
-		ebar=ebar/(float)numGenes1;
-		System.out.println("ebar = "+ebar);
-		System.out.println("n = "+numGenes1);
+		ebar=ebar/(float)numGenes;
+		
 		//VERY time intensive loop
-		for (int i=0;i<numGenes1; i++){
-			totalmti=totalmti+((float)Math.pow(eg[i]-ebar, 2)*numGenes1/(float)(numGenes1-1))-triGamma(dg/2);
+		for (int i=0;i<numGenes; i++){
+			totalmti=totalmti+((float)Math.pow(eg[i]-ebar, 2)*numGenes/(float)(numGenes-1))-triGamma(dg/2);
 		}
 
 		
-		System.out.println("evar" + (float)totalmti/numGenes1);
-		d0=2*trigammaInverse((float)totalmti/numGenes1);
-		System.out.println("d0 = " +d0);
+		d0=2*trigammaInverse((float)totalmti/numGenes);
 		s0 = (float)Math.exp(ebar + diGamma(d0/2)- Math.log(d0/2));
-		System.out.println("s0 = "+s0);
-		System.out.println("dg = " +dg);
-		float[] segtilde = new float[numGenes1];
-		for (int i=0; i<numGenes1; i++){
+		float[] segtilde = new float[numGenes];
+		for (int i=0; i<numGenes; i++){
 			segtilde[i]=(float)((d0*s0)+dg*varianceError[i].get(0, 0))/(d0+dg);
 		
 		}
@@ -1931,25 +1762,16 @@ public class BETR extends AbstractAlgorithm{
     	fireValueChanged(event);
 		
 
-		for (int i=0; i<numGenes1; i++){
+		for (int i=0; i<numGenes; i++){
 			Sheg[i] = new FloatMatrix(numTimePoints, numTimePoints);
 			for (int j = 0; j<numTimePoints; j++){
 				Sheg[i].set(j, j, segtilde[i]);
 			}
-			//System.out.println("seg~"+segtilde[i]);
 		}
 		
 		for (int t=0; t<numTimePoints; t++){
 			totalnue = totalnue+d0; 
 		}
-//		float nue = totalnue/numTimePoints;
-//		FloatMatrix lambdae;
-//		float tempnue = Math.max(nue, numTimePoints+6);
-//		lambdae = SeBar.times((tempnue-numTimePoints-1)/tempnue);
-//		FloatMatrix[] Sheg = new FloatMatrix[n];
-//		for (int i=0; i<n; i++){
-//			Sheg[i] = (varianceError[i].times((float)(timepointsT+timepointsC-2)).plus(lambdae.times(nue)).times(1/(float)(timepointsT+timepointsC-2)+nue));
-//		}
 		 	//Estimate gene-specific variance components diagonal matrix ~seg with d0 and s0(page 8).
 		 		//from previous step, we have the values for d0 and s0.
 		 		//float ~seg = (d0*s0^2 + dg*sg^2)/(d0 + dg);
@@ -1957,20 +1779,15 @@ public class BETR extends AbstractAlgorithm{
 		
 		 	//Estimate gene-specific multivariate normal density for the null hypothesis
 		 	//	store values in float array of length n.
-	 	float[] f0mvnd = new float[numGenes1];
-	 	for (int i=0; i<numGenes1; i++) {
+	 	float[] f0mvnd = new float[numGenes];
+	 	for (int i=0; i<numGenes; i++) {
 	 		FloatMatrix Yg = new FloatMatrix(numTimePoints,1);
 	 		for (int yi = 0; yi<numTimePoints; yi++){
 	 			Yg.set(yi,0, Y.get(i, yi));
 	 		}
-			for (int q=0; q<varianceError[i].getColumnDimension();q++){
-				for (int j=0; j<varianceError[i].getRowDimension();j++){
-					//System.out.print(varianceError[i].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps)).get(q, j)+ " ");
-				}
-				//System.out.println("  varianceError");
-			}
+			
 			f0mvnd[i] = multivariateNormalFunction(Sheg[i].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps)), Yg);
-			//System.out.println("f0mvnd["+i+"] = "+ f0mvnd[i]);
+			
 	 	}
 	 		
 	 		
@@ -1987,10 +1804,6 @@ public class BETR extends AbstractAlgorithm{
  		while (true){
 			updateProgressBar();
 	    	fireValueChanged(event);
- 			System.out.println();
- 			System.out.println("=========================Main Shrinkage Loop====================================");
- 			System.out.println("==============================Iteration "+iteration + "=======================================");
- 			System.out.println();
  			iteration++;
  			//determine which genes are currently labeled as differentially expressed.
  			//Should be defined as integer array, ArrayList<Integer>,(or boolean array)of gene IDs, diffGenes[]. 
@@ -2039,7 +1852,7 @@ public class BETR extends AbstractAlgorithm{
 				for (int i=0;i<diffGenes.size(); i++){
 					ebarm = ebarm+egm[i];
 				}
-				ebarm=ebarm/(float)numGenes1;
+				ebarm=ebarm/(float)numGenes;
 			
 				
 				
@@ -2048,7 +1861,6 @@ public class BETR extends AbstractAlgorithm{
 				}
 					
 				d0t[k]=2*trigammaInverse((float)totalmtim/diffGenes.size());
-				System.out.println("d0t["+k+"] = "+d0t[k]);
  			}
 			
 			
@@ -2062,67 +1874,22 @@ public class BETR extends AbstractAlgorithm{
 			FloatMatrix lambda;
 			float tempnu = Math.max(nu, numTimePoints+6);
 			lambda = SBar.times((tempnu-numTimePoints-1)/tempnu);
-/*			for (int i=0; i<lambda.getColumnDimension(); i++){
-				for (int j=0; j<lambda.getColumnDimension(); j++){
-					System.out.print(SBar.get(i, j)+" ");
-				}
-				System.out.println(" SBar");
-			}
-*/			
+
+		
 			//Estimate gene-specific variance components:
 			//System.out.println("nu="+ nu);
-			for (int i=0; i<numGenes1; i++){
+			for (int i=0; i<numGenes; i++){
 				Shmg[i] = (varianceMean[i].plus(lambda.times(nu)).times((float)1/(1+nu)));
 			}
  			//f1(Yg) = (1/(Math.pow((2*Math.pi),numTimePoints/2)*Math.sqrt(determinant of (Shmg + (numConReps+numTreatReps)/(numConReps*numTreatReps))varianceError[gene])))*Math.exp((-1/2)Yg.transpose*(~Smg+(numConReps+numTreatReps)/(numConReps*numTreatReps))VarianceError[gene].invert*Yg);
  			//store values in float array of length n.
- 			float[] f1mvnd = new float[numGenes1];
+ 			float[] f1mvnd = new float[numGenes];
  			FloatMatrix Yg = new FloatMatrix(numTimePoints, 1);
- 			for (int i=0; i<numGenes1; i++) {
+ 			for (int i=0; i<numGenes; i++) {
 	 			//FloatMatrix Yg = new FloatMatrix(numTimePoints, 1);
 	 			for (int yi = 0; yi<numTimePoints; yi++){
 	 				Yg.set(yi, 0, Y.get(i, yi));
 	 			}
-	 			/*
-	 			for (int x=0; x<varianceMean[i].getColumnDimension();x++){
-	 				for (int j=0; j<varianceMean[i].getRowDimension();j++){
-	 					System.out.print(varianceMean[i].get(x, j));
-	 					System.out.print(Shmg[i].get(x, j) + " ");
-	 					
-	 					System.out.print(Shmg[i].plus(varianceMean[i].times((numConReps+numTreatReps)/(numConReps*numTreatReps))).get(x, j)+ " ");
-	 				}
-	 				System.out.println("  premnf");
-	 			}
- 				System.out.println("  ");
-	 			for (int x=0; x<varianceMean[i].getColumnDimension();x++){
-	 				for (int j=0; j<varianceMean[i].getRowDimension();j++){
-	 					System.out.print(varianceMean[i].get(x, j));
-	 					System.out.print(varianceMean[i].get(x, j) + " ");
-	 					
-	 					System.out.print(Shmg[i].plus(varianceMean[i].times((numConReps+numTreatReps)/(numConReps*numTreatReps))).get(x, j)+ " ");
-	 				}
-	 				System.out.println("  premnf2");
-	 			}*/
-	 			if (i==0){
-	 				System.out.println("i=0");
-	 				for (int x=0; x< Sheg[0].getRowDimension(); x++){
-	 	 		 		for (int j=0; j< Sheg[0].getColumnDimension(); j++){
-	 	 		 			System.out.print(Sheg[0].get(x, j)+ "  ");
-	 	 		 		}
-	 	 		 		System.out.println("  Sheg[0] BETR");
-	 	 		 	}
-
-	 	 		 	for (int x=0; x< Shmg[0].getRowDimension(); x++){
-	 	 		 		for (int j=0; j< Shmg[0].getColumnDimension(); j++){
-	 	 		 			System.out.print(Shmg[0].get(x, j)+ "  ");
-	 	 		 		}
-	 	 		 		System.out.println("  Shmg[0] BETR");
-	 	 		 	}
-	 	 		 	
-	 	 		 	System.out.println("end!");
-	 			}
-	 			
-	 			
  				f1mvnd[i] = multivariateNormalFunction(Shmg[i].plus(Sheg[i].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps))), Yg);
  			
  			
@@ -2130,40 +1897,13 @@ public class BETR extends AbstractAlgorithm{
  			for (int yi = 0; yi<numTimePoints; yi++){
  				Yg.set(yi, 0, Y.get(0, yi));
  			}
- 			System.out.println(f1mvnd[0]+ " : "+ multivariateNormalFunction(Shmg[0].plus(Sheg[0].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps))), Yg));
- 			for (int i=0; i< Sheg[0].getRowDimension(); i++){
- 		 		for (int j=0; j< Sheg[0].getColumnDimension(); j++){
- 		 			System.out.print(Sheg[0].get(i, j)+ "  ");
- 		 		}
- 		 		System.out.println("  Sheg[0] BETR");
- 		 	}
- 		 	for (int i=0; i< Shmg[0].getRowDimension(); i++){
- 		 		for (int j=0; j< Shmg[0].getColumnDimension(); j++){
- 		 			System.out.print(Shmg[0].get(i, j)+ "  ");
- 		 		}
- 		 		System.out.println("  Shmg[0] BETR");
- 		 	}
- 		 	
- 			for (int i=0; i< Shmg[0].plus(Sheg[0].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps))).getRowDimension(); i++){
- 		 		for (int j=0; j< Shmg[0].plus(Sheg[0].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps))).getColumnDimension(); j++){
- 		 			System.out.print(Shmg[0].plus(Sheg[0].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps))).get(i, j)+ "  ");
- 		 		}
- 		 		System.out.println("  Shmg[0].plus(Sheg[0].times((float)(numConReps+numTreatReps)/(numConReps*numTreatReps)))");
- 		 	}
- 		 	
- 		 	for (int i=0; i< Yg.getRowDimension(); i++){
- 		 		for (int j=0; j< Yg.getColumnDimension(); j++){
- 		 			System.out.print(Yg.get(i, j)+ "  ");
- 		 		}
- 		 		System.out.println("  Yg BETR");
- 		 	}
  			
+ 		 	
  			//Determine next group of differentially expressed genes-
- 			I = new float[numGenes1];// = probability of differential expression.
+ 			I = new float[numGenes];// = probability of differential expression.
  			
- 			for (int i=0; i<numGenes1; i++) {
+ 			for (int i=0; i<numGenes; i++) {
  				I[i] = f1mvnd[i]*p/(f0mvnd[i]*(1-p)+f1mvnd[i]*p);
- 				System.out.println("1-I["+i+"] = " +(1-I[i])+"      f1mvnd[i] = "+f1mvnd[i]+"   f0mvnd[i] = "+f0mvnd[i]);
  			}
  			//Re-evaluate diffGenes.
  			
@@ -2171,7 +1911,7 @@ public class BETR extends AbstractAlgorithm{
  			nonDiffGenes.clear();
  			errorGenes.clear();
 
- 			for (int i=0; i<numGenes1; i++) {
+ 			for (int i=0; i<numGenes; i++) {
  				if (1-I[i]<alpha){
  					diffGenes.add(i);
  				}else{
@@ -2181,11 +1921,6 @@ public class BETR extends AbstractAlgorithm{
  						nonDiffGenes.add(i);
  					}
  				}
- 			}
- 			for (int i=0; i< diffGenes.size(); i++){
- 				if (diffGenesOld.size()>i)
- 					System.out.print("oldGenes is " + diffGenesOld.get(i));
- 				System.out.println(" - diffgenes is " + diffGenes.get(i));
  			}
  			boolean sameresult=false;
  			if (diffGenes.size()==diffGenesOld.size()){
@@ -2200,16 +1935,13 @@ public class BETR extends AbstractAlgorithm{
 	 				
 	 			}
  			}
- 			System.out.println("same result = " + sameresult);
  			if (sameresult){
- 				System.out.println("break command");
  				break;
  			}
  			if (stop)
  				break;
  			
  			diffGenesOld.clear();
- 			System.out.println("setting up oldgenesarraylist...   diffGenes.size() = "+diffGenes.size());
  			for (int i=0; i<diffGenes.size(); i++) {
  					diffGenesOld.add(diffGenes.get(i));
  			}
@@ -2232,31 +1964,16 @@ public class BETR extends AbstractAlgorithm{
  		}
  		
  		
- 	/*	System.out.println("Final Shmg[0]");
-		for (int i=0; i<Shmg[0].getRowDimension(); i++){
-			for (int j=0; j<Shmg[0].getColumnDimension(); j++){
-				System.out.print(Shmg[0].get(i, j)+"   ");
-				
-			}
-			System.out.println("");
-		}*/
  		
 	}
-	public static void updateProgressBar(){
+	public void updateProgressBar(){
 
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue((100*progress)/(progress+7));
 	}
-	public static float multivariateNormalFunction(FloatMatrix coMat, FloatMatrix Yg){
-		/*for (int i=0; i<coMat.getColumnDimension();i++){
-			for (int j=0; j<coMat.getRowDimension();j++){
-				System.out.print(coMat.get(i, j)+ " ");
-			}
-			System.out.println("  mnf");
-		}
-		System.out.println("coMat.m="+coMat.m);
-		System.out.println("Yg.m="+Yg.m+ " Yg.n="+Yg.n);*/
+	public float multivariateNormalFunction(FloatMatrix coMat, FloatMatrix Yg){
+		
 		
 		return (float)((1/(Math.pow((2*Math.PI),Yg.getRowDimension()/2))  *  Math.pow(coMat.det(),-.5))
 		*Math.exp((Yg.transpose().times(
@@ -2416,7 +2133,7 @@ public class BETR extends AbstractAlgorithm{
         return ret;
     }
 
-    public static float trigammaInverse(float x) {
+    public float trigammaInverse(float x) {
         if (Float.isNaN(x)) 
             return Float.NaN;
         float y = 0.5f + 1/x;
