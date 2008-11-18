@@ -619,12 +619,12 @@ public class Manager {//A class to keep track of viewers
 				}
             }else if( source == documentMenuItem ) {	//added wwang
             	try {
-					BrowserLauncher.openURL( "http://www.tm4.org/documentation/MeV_Manual_4_2.pdf" );
+					BrowserLauncher.openURL( "http://www.tm4.org/documentation/MeV_Manual_4_3.pdf" );
 				} catch( IOException e ) {
 					e.printStackTrace();
 					//BrowserLauncher doesn't work on this system, display dialog
 					JOptionPane.showMessageDialog( frame, 
-							"Go to http://www.tm4.org/documentation/MeV_Manual_4_2.pdf",
+							"Go to http://www.tm4.org/documentation/MeV_Manual_4_3.pdf",
 							"Input Error", JOptionPane.ERROR_MESSAGE );
 				}
             
