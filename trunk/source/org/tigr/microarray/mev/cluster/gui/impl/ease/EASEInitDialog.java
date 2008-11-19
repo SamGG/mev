@@ -65,6 +65,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -1104,9 +1105,11 @@ public class EASEInitDialog extends AlgorithmDialog {
 				getEaseSupportFileButton.setEnabled(false);
 			} catch (SupportFileAccessError sfae) {
 				statusLabel.setText("Failure");
+				ShowThrowableDialog.show(parent, "Unable to download EASE files", true, ShowThrowableDialog.ERROR, sfae, sfae.getMessage());
 				sfae.printStackTrace();
 			} catch (NullPointerException npe) {
 				statusLabel.setText("Failure");
+				ShowThrowableDialog.show(parent, "Unable to download EASE files", true, ShowThrowableDialog.ERROR, npe, "Unable to download EASE files at this time. ");
 			}
 		}
 		
