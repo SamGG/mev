@@ -98,7 +98,7 @@ public class ClusterTableViewer implements IViewer {
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.clusters = clusters;  
-        this.fieldNames = data.getFieldNames();
+        this.fieldNames = data.getAllFilledAnnotationFields();
         this.auxTitles = auxTitles;
         if(this.auxTitles == null) {
         	this.auxTitles = new String[0];
@@ -454,7 +454,11 @@ public class ClusterTableViewer implements IViewer {
             } else if(!hasAnnotation){
             	return new Integer(row+1);
             } else if (col < fieldNames.length + 1) {
-                return data.getElementAttribute(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), col - 1);
+        	    String[] tempAnnList = data.getElementAnnotation(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), fieldNames[col-1]);
+        	    String concatAnns = tempAnnList[0];
+        	    for(int i=1; i<tempAnnList.length; i++)
+        		    concatAnns += "///" + tempAnnList[i];
+        	    return concatAnns;
             } else {
                 return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
             }
