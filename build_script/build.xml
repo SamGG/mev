@@ -22,6 +22,7 @@
 	<property name="java.target.version" value="1.5"/>
 	<property name="version" value="4_3"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
+	<property file="ant.properties"/>
 
 
 
@@ -1924,7 +1925,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		    addproperty="pwd"
 		  />
 		<signjar 
-		    alias="tm4group" keystore="C:\Documents and Settings\eleanora.BCB\.keystore"
+		    alias="tm4group" keystore="${keystore-location}"
 		    storepass="${pwd}">
 		  
 		    <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
