@@ -131,16 +131,16 @@ public class BETRInitBox extends AlgorithmDialog {
         //gridbag.setConstraints(pPanel, constraints);
         consolidatedPane.add("P-Value/False Discovery Parameters", pPanel);
         
-        hclOpsPanel = new HCLoptionPanel();
+        //hclOpsPanel = new HCLoptionPanel();
         //buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
         //gridbag.setConstraints(hclOpsPanel, constraints);
-        consolidatedPane.add("Hierarchical Clusters", hclOpsPanel);  
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
-        gridbag.setConstraints(consolidatedPane, constraints);
+        //consolidatedPane.add("Hierarchical Clusters", hclOpsPanel);  
+        //buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+        //gridbag.setConstraints(consolidatedPane, constraints);
         //pane.add(consolidatedPane);   
         
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
-        gridbag.setConstraints(hclOpsPanel, constraints);
+        //buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
+        //gridbag.setConstraints(hclOpsPanel, constraints);
         //mPanel.add(hclOpsPanel, constraints);
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
