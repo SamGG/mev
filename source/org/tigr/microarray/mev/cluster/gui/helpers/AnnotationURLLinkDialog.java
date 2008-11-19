@@ -253,10 +253,10 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
     }  
     
     private void populateFields() {
-        Vector annotFieldsVector = new Vector();
-        Vector urlKeysVector = new Vector();
-        Vector urlTemplateVector = new Vector();
-        Vector urlDescriptionVector = new Vector();
+//        Vector annotFieldsVector = new Vector();
+        Vector<String> urlKeysVector = new Vector<String>();
+        Vector<String> urlTemplateVector = new Vector<String>();
+        Vector<String> urlDescriptionVector = new Vector<String>();
         try {
             FileReader fr = new FileReader(file);
             BufferedReader buff = new BufferedReader(fr);
@@ -278,7 +278,7 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
                 urlDescriptions[i] = (String)(urlDescriptionVector.get(i));
             }
             urlTypesBox = new JComboBox(urlDescriptions);
-            annotationFieldsBox = new JComboBox(data.getFieldNames());
+            annotationFieldsBox = new JComboBox(data.getAllFilledAnnotationFields());
             urlTemplates = new String[urlTemplateVector.size()];
             urlKeys = new String[urlKeysVector.size()];
             
@@ -306,6 +306,7 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
             String urlToUse = getCurrentURL();
             //System.out.println("url To use = " + urlToUse);
             //BrowserLauncher.openURL(urlTemplates[fieldIndex]);
+                        
             BrowserLauncher.openURL(urlToUse);
         } catch (IOException ie) {
             JOptionPane.showMessageDialog(new JFrame(), ie.toString(),"Error", JOptionPane.ERROR_MESSAGE);
@@ -315,28 +316,20 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
     }
     
     private String getCurrentURL() {
-        int fieldIndex = annotationFieldsBox.getSelectedIndex(); 
+        String selectedFieldName = (String)annotationFieldsBox.getSelectedItem(); 
         int urlTemplateIndex = urlTypesBox.getSelectedIndex();   
         String currentURLTemplate = urlTemplates[urlTemplateIndex];
         String currentURLKey = urlKeys[urlTemplateIndex];
         String urlToUse = "";
         //NOTE: In the following statement, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs        
-        String currentAnnotationString = data.getElementAttribute(row, fieldIndex); 
-        //System.out.println("currentAnnotationString = " + currentAnnotationString);
+        String[] currentAnnotationString = data.getElementAnnotation(row, selectedFieldName);
 
-        if (currentURLKey.equals("UniGene")) {
-            String[] splitAnnotation = currentAnnotationString.split("\\.");
-            /*
-            for (int i = 0; i < splitAnnotation.length; i++) {
-                System.out.print("splitAnnotation[" + i + "] = " + splitAnnotation[i]);
-            }
-             */
-            String s1 = currentURLTemplate.replaceAll("FIELD1", splitAnnotation[1]);
-            urlToUse = s1.replaceAll("FIELD2", splitAnnotation[0]);
-        } else {            
-            urlToUse = currentURLTemplate.replaceAll("FIELD1", currentAnnotationString);
+        String annotationQueryString = currentAnnotationString[0];
+        for(int i=1; i<currentAnnotationString.length; i++) {
+        	//"or" is not always going to be the right choice. Should probably be refactored out 
+        	annotationQueryString += " or " + currentAnnotationString[i];
         }
-        //System.out.println("url To use = " + urlToUse);   
+        urlToUse = currentURLTemplate.replaceAll("FIELD1", annotationQueryString);
         return urlToUse;
     }
     

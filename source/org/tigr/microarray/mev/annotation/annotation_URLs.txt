@@ -1,10 +1,9 @@
-GB#	http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=search&db=nucleotide&doptcmdl=genbank&term=FIELD1	GenBank Accession Number
-TC#	http://www.tigr.org/tigr-scripts/tgi/tc_report.pl?tc=FIELD1&species=Mouse	TIGR Gene Indices - Mouse
-THC#	http://www.tigr.org/tigr-scripts/tgi/tc_report.pl?tc=FIELD1&species=Human	TIGR Gene Indices - Human
-LocusLink	http://www.ncbi.nlm.nih.gov/LocusLink/list.cgi?ID=FIELD1&V=1	NCBI LocusLink
-UniGene	http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?CID=FIELD1&ORG=FIELD2	NCBI UniGene
-GO	http://www.ebi.ac.uk/ego/QuickGO?mode=display&entry=FIELD1	Gene Ontology Terms (EBI)
+GB#	http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&cmd=search&term=FIELD1	GenBank Accession Number
+TC#	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=mouse&tc=FIELD1	TIGR Gene Indices - Mouse
+THC#	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=human&tc=FIELD1	TIGR Gene Indices - Human
+LocusLink	http://www.ncbi.nlm.nih.gov/sites/entrez?db=protein&cmd=search&term=FIELD1	NCBI LocusLink
+UniGene	http://www.ncbi.nlm.nih.gov/sites/entrez?db=unigene&cmd=search&term=FIELD1	NCBI UniGene
+GO	http://www.ebi.ac.uk/ego/GTerm?id=FIELD1	Gene Ontology Terms (EBI)
 KEGG	http://www.genome.ad.jp/dbget-bin/show_pathway?FIELD1	KEGG
 GenMAPP	http://www.genmapp.org/MAPPSet-FIELD1	GenMAPP
 Pfam	http://pfam.wustl.edu/cgi-bin/getdesc?acc=FIELD1	Pfam(St. Louis)
-Locus	http://cmr.jcvi.org/tigr-scripts/CMR/shared/GenePage.cgi?locus=FIELD1	CMR Gene Page
