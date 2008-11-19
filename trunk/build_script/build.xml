@@ -514,6 +514,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm"/>
 		<mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/algorithm/impl"/>
 		<touch file="${alg.properties.file}"/>
+    	<chmod file="${alg.properties.file}" perm="700"/>
+
     </target>
 
 
@@ -1801,7 +1803,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
-	<target name="build_package" depends="clean, build-all">
+	<target name="build-package" depends="clean, build-all">
 
 	
 		<echo message="Please be sure that all user documentation to be included in the package
@@ -1830,7 +1832,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		/>
 		
 		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}/${mev_version.dir}" />
-		<copy file="${home.dir}/tmev.bat" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
 			
@@ -1847,7 +1849,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/lib/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
 			<include name="${mev_version.dir}/Artistic_License.pdf"/>
-			<include name="${mev_version.dir}/tmev.bat"/>
+			<include name="${mev_version.dir}/TMEV.bat"/>
 			<exclude name=".svn"/>
 		</zip>	
 		<zip destfile="${package.dir}/MeV_${version}_linux.zip"
@@ -1880,7 +1882,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		</move>
 		<delete dir="${package.dir}/${mev_version.dir}/lib"/>
 		<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
-		<delete file="${package.dir}/${mev_version.dir}/tmev.bat"/>
+		<delete file="${package.dir}/${mev_version.dir}/TMEV.bat"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
 		
 		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
