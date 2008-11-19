@@ -187,7 +187,9 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("BETR");
             algorithm.addAlgorithmListener(listener);
             
-            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress = new Progress(framework.getFrame(), "Running BETR Analysis", listener);
+            this.progress.setIndeterminate(true);
+            this.progress.setIndeterminantString("Finding Significant Genes");
             this.progress.show();
             
             AlgorithmData data = new AlgorithmData();
@@ -561,7 +563,9 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("BETR");
             algorithm.addAlgorithmListener(listener);
             
-            this.progress = new Progress(framework.getFrame(), "Finding significant genes", listener);
+            this.progress = new Progress(framework.getFrame(), "Running BETR Analysis", listener);
+            this.progress.setIndeterminate(true);
+            this.progress.setIndeterminantString("Finding Significant Genes");
             this.progress.show();
             
             long start = System.currentTimeMillis();

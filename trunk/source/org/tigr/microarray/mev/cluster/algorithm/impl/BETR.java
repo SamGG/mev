@@ -128,7 +128,7 @@ public class BETR extends AbstractAlgorithm{
 
     	progress=0;
     	event = null;
-    	event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Finding Significant Genes...");
+    	event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Initializing...");
     	// set progress limit
     	fireValueChanged(event);
     	event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -1802,6 +1802,7 @@ public class BETR extends AbstractAlgorithm{
  		ArrayList<Integer> diffGenesOld = new ArrayList<Integer>();
  		int iteration = 1;
  		while (true){
+ 			event.setDescription("Running Shrinkage Loop. Iteration #"+iteration);
 			updateProgressBar();
 	    	fireValueChanged(event);
  			iteration++;
