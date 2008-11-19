@@ -131,20 +131,18 @@ public class EASEInitDialog extends AlgorithmDialog {
      * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
      * @param annotationLabels Annotation types
      */
-    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
+    public EASEInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels, String defaultFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays, boolean isAnnotationLoaded) {
             super(parent, "EASE: EASE Annotation Analysis", true);
         this.parent = parent;
         this.speciesName = speciesName;
         this.arrayName = arrayName;
         this.resourceManager = rm;
         this.speciestoarrays = speciestoarrays;
+        this.useLoadedAnnotationFile = isAnnotationLoaded;
 
-        
         if(defaultFileLocation == null) {
-        	this.useLoadedAnnotationFile = false;
         	defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
         } else {
-        	this.useLoadedAnnotationFile = true;
             defaultFileBaseLocation = defaultFileLocation;
         }
         if(defaultFileBaseLocation == null || ! new File(defaultFileBaseLocation).canRead()) {
@@ -485,7 +483,8 @@ public class EASEInitDialog extends AlgorithmDialog {
 		if (useLoadedAnnotationFile) {
 			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
 		} else {
-			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
+			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", false);
+			preloadedAnnotationButton.setEnabled(false);
 		}
 		preloadedAnnotationButton.setBackground(Color.white);
 		preloadedAnnotationButton.setFocusPainted(false);
@@ -1053,16 +1052,26 @@ public class EASEInitDialog extends AlgorithmDialog {
 				getEaseSupportFileButton.setEnabled(false);
 			} else {
 				
-				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
+				if(speciestoarrays.size() > 0) {
+					organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
 	
-				try {
-					organismListBox.setSelectedItem(speciesName);
-				} catch (NullPointerException npe) {/* Leave as default */}
-				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
-				
-				try {
-					arrayListBox.setSelectedItem(arrayName);
-				} catch (NullPointerException npe) {/* Leave as default */}
+					try {
+						organismListBox.setSelectedItem(speciesName);
+					} catch (NullPointerException npe) {
+						organismListBox.setSelectedIndex(0);
+					}
+					
+					if (organismListBox.getSelectedItem() == null) {
+						arrayListBox = new JComboBox();
+					} else {
+						arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+					}
+					try {
+						arrayListBox.setSelectedItem(arrayName);
+					} catch (NullPointerException npe) {
+						arrayListBox.setSelectedIndex(0);
+					}
+				}
 				
 				arrayListBox.setEnabled(true); 
 
@@ -1339,7 +1348,11 @@ public class EASEInitDialog extends AlgorithmDialog {
 			
 			
 			//EASEInitDialog eid = new EASEInitDialog(new JFrame(), labels);
-			EASEInitDialog eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays);
+			EASEInitDialog eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays, false);
+
+			eid.showModal();
+			
+			eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays, true);
 
 			eid.showModal();
 		} catch (RepositoryInitializationError rie) {

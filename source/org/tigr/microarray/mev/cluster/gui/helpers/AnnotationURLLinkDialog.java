@@ -79,6 +79,8 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         grid1.setConstraints(annotationFieldsBox, constraints);
         topPanel.add(annotationFieldsBox);
+        if(annotationFields.length > 0)
+        	annotationFieldsBox.setSelectedIndex(0);
         
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.white);
@@ -90,6 +92,8 @@ public class AnnotationURLLinkDialog extends AlgorithmDialog {
         buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
         grid2.setConstraints(urlTypesBox, constraints);
         bottomPanel.add(urlTypesBox);        
+        if(urlTypes.length >0) 
+        	urlTypesBox.setSelectedIndex(0);
         
         constraints.fill = GridBagConstraints.BOTH;
         
