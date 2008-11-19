@@ -177,7 +177,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         		framework.getResourceManager(),
         		species, 
         		chipType, 
-        		speciestoarrays);
+        		speciestoarrays,
+        		framework.getData().isAnnotationLoaded());
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
@@ -228,7 +229,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String [] populationKeys;
         if(isClusterAnalysis && dialog.isPreloadedAnnotationSelected()) {
             try {
-        		populationKeys = loadGeneIDs(dialog.getAnnotationFile());
+        	populationKeys = loadGeneIDs(dialog.getAnnotationFile());
             } catch (IOException ioe) {
                 //Bad file format
                 ShowThrowableDialog.show(framework.getFrame(), "Error loading population file.", ioe);
