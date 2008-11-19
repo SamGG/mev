@@ -1373,7 +1373,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
                 return;
             }
             //mouse on heat map
-            if (isLegalPosition(row, column)&& (column < (experiment.getNumberOfSamples() -1))) {
+            if (isLegalPosition(row, column)&& (column < experiment.getNumberOfSamples())) {
                 drawRectAt(g, row, column, Color.white);
                 if (isShowRects)
                 	drawClusterRectsAt(g, row, column, Color.gray);
