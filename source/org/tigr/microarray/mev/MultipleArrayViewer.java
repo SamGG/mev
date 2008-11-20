@@ -2736,9 +2736,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             dataSourcePath += path[i].toString();
             dataSourcePath += " : ";
         }
+
         
         msg += path[path.length-1]+"</td></tr>";
         dataSourcePath += path[path.length-1];
+        
+
+        msg += "<tr><td><b>Date Loaded:</b></td><td>";
+//        dataSourcePath += "Date Loaded: ";
+      Date date = new Date(System.currentTimeMillis());
+      DateFormat format = DateFormat.getDateTimeInstance();
+      format.setTimeZone(TimeZone.getDefault());
+      msg += format.format(date);
+      String dateStamp = "Date Loaded: " + format.format(date);
         
         if(clusterType == Cluster.GENE_CLUSTER) {
             numGenes = clusterSize;
@@ -2760,6 +2770,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         String historyString = "Data Source Selection\n";
         historyString +=        "=====================\n";
         historyString += dataSourcePath + "\n";
+        historyString += dateStamp + "\n";
         historyString += "Number of Genes: "+String.valueOf(numGenes)+"\n";
         historyString += "Number of Samples: "+String.valueOf(numSamples);
         addHistory(historyString);
@@ -3894,12 +3905,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, file, fileType, arrayType);
 
         //Add time node to the analysis node
-        Date date = new Date(System.currentTimeMillis());
-        DateFormat format = DateFormat.getDateTimeInstance();
-        format.setTimeZone(TimeZone.getDefault());
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
-        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+//        Date date = new Date(System.currentTimeMillis());
+//        DateFormat format = DateFormat.getDateTimeInstance();
+//        format.setTimeZone(TimeZone.getDefault());
+//        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+//        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+//        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
     }
 
     /**
@@ -3909,12 +3920,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);
         
         //Add time node to the analysis node
-        Date date = new Date(System.currentTimeMillis());
-        DateFormat format = DateFormat.getDateTimeInstance();
-        format.setTimeZone(TimeZone.getDefault());
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
-        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());        
+//        Date date = new Date(System.currentTimeMillis());
+//        DateFormat format = DateFormat.getDateTimeInstance();
+//        format.setTimeZone(TimeZone.getDefault());
+//        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
+//        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
+//        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());        
     }
     
     /**
