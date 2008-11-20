@@ -32,6 +32,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.GSEA.ProcessDisplayPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 
 import org.tigr.microarray.mev.file.GBA;
@@ -495,7 +496,16 @@ public abstract class GSEAWizard extends GSEADialog {
 			} else if(command.equals("back-command")) {
 				prevStep();
 			}else if(command.endsWith("info-command")){
-				
+				HelpWindow hw = new HelpWindow(GSEAWizard.this, "GSEA Help Dialog");
+                if(hw.getWindowContent()){
+                    hw.setSize(600,600);
+                    hw.setLocation();
+                    hw.setVisible(true);
+                }
+                else {
+                    hw.setVisible(false);
+                    hw.dispose();
+                }
 			}
 		}
 		

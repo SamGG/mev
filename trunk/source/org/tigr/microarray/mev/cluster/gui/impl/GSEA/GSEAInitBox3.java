@@ -71,10 +71,6 @@ public class GSEAInitBox3 extends AlgorithmDialog {
     ClusterSelector[] clusterSelector;
     
     
-/*    public GSEAInitBox3(JFrame parentFrame, boolean modality, int num_factors, Vector exptNames, String[] factorNames, int[] numFactorLevels) {
-    	this(parentFrame, modality, num_factors, exptNames, factorNames, numFactorLevels, null);
-    	    	
-    }*/
     public GSEAInitBox3(JFrame parentFrame, boolean modality, int num_factors, Vector exptNames, String[] factorNames, int[] numFactorLevels, ClusterRepository repository) {
         super(parentFrame, "GSEA - Initialization", modality);
         this.exptNames = exptNames;

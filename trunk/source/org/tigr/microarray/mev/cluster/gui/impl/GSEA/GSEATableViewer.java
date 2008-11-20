@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -23,6 +24,9 @@ import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.helpers.AnnotationURLLinkDialog;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.helpers.GSEAURLLinkDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer.DefaultViewerTableModel;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -32,7 +36,10 @@ public class GSEATableViewer extends TableViewer implements Serializable {
 	private static final String SAVE_GSEA_TABLE_COMMAND = "save-gsea-table-command";
 	private static final String SAVE_PVALUES_TABLE_COMMAND ="save_pvalues_table_command";
 	private static final String STORE_CLUSTER_COMMAND="store_cluster_command";
-	protected static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
+	protected static final String LINK_TO_URL_COMMAND = "link-to-url-command";
+	protected static final String CLEAR_ALL_COMMAND = "clear-all-cmd";
+	protected static final String SELECT_ALL_COMMAND = "select-all-cmd";
+	 
 	
 	protected DefaultMutableTreeNode gseaRoot;
     protected JPopupMenu menu;
@@ -42,20 +49,26 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     protected String [] headerNames;
     protected boolean clusterAnalysis;
     protected boolean haveAccessionNumbers;
-    protected JMenuItem launchMenuItem;
+    private JMenuItem urlMenuItem;
     protected Object[][] data;
+    int xColumn;
     
     
     public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment) {
         super(headerNames, data);
         this.headerNames = headerNames;
         this.data = data;
-        
+        xColumn=-1;
         setNumerical(0, true);
         gseaRoot = analysisNode;
         menu = createPopupMenu();
         this.experiment = experiment;
         this.clusters = clusters;
+        
+      //  table.setCellSelectionEnabled(true);
+        table.setRowSelectionAllowed(true);
+        //table.setColumnSelectionAllowed(true);
+        
         table.addMouseListener(new Listener());
         if(table.getRowCount() > 0)
             table.getSelectionModel().setSelectionInterval(0,0);
@@ -89,25 +102,27 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         item.addActionListener(listener);
         menu.add(item);
       
+        menu.addSeparator();
         
-        JMenu launchMenu = new JMenu("Open Viewer");
-        
-        item = new JMenuItem("Expression Image");
-        item.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
+        item = new JMenuItem("Select all rows...", GUIFactory.getIcon("TableViewerResult.gif"));
+        item.setActionCommand(SELECT_ALL_COMMAND);
         item.addActionListener(listener);
-        launchMenu.add(item);
+        menu.add(item);
+               
+        menu.addSeparator();
         
-     /*   item = new JMenuItem("Centroid Graph");
-        item.setActionCommand(LAUNCH_CENTROID_GRAPH_COMMAND);
+        item = new JMenuItem("Clear all selections...", GUIFactory.getIcon("TableViewerResult.gif"));
+        item.setActionCommand(CLEAR_ALL_COMMAND);
         item.addActionListener(listener);
-        launchMenu.add(item);
+        menu.add(item);
         
-        item = new JMenuItem("Expression Graph");
-        item.setActionCommand(LAUNCH_EXPRESSION_GRAPH_COMMAND);
-        item.addActionListener(listener);
-        launchMenu.add(item);*/
+        menu.addSeparator();
         
-        menu.add(launchMenu);
+        urlMenuItem = new JMenuItem("Link to URL");
+        urlMenuItem.setActionCommand(LINK_TO_URL_COMMAND);
+        urlMenuItem.addActionListener(listener);
+        menu.add(urlMenuItem);
+        
         
                  
         return menu;
@@ -132,30 +147,21 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         }
     }
     
-    /** Handles opening cluster viewers.
-     */
-    protected void onOpenViewer(String viewerType){
-        int index = getSelectedRow();
-        
-        if(index == -1 || gseaRoot == null)
-            return;
-        
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)gseaRoot.getChildAt(1);
-        if(node.getChildCount() < index)
-            return;
-        node = (DefaultMutableTreeNode)(node.getChildAt(index));
-        
-        if(viewerType.equals("expression image")){
-            node = (DefaultMutableTreeNode)(node.getChildAt(0));
-        } /*else if(viewerType.equals("centroid graph")){
-            node = (DefaultMutableTreeNode)(node.getChildAt(1));
-        } else if(viewerType.equals("expression graph")){
-            node = (DefaultMutableTreeNode)(node.getChildAt(2));
-        }*/
-        
-        if(framework != null)
-            framework.setTreeNode(node);
+    private void linkToURL2() {
+    	  JFrame frame = (JFrame)(JOptionPane.getFrameForComponent(table));   
+    	  System.out.println("Column selection allowed:"+table.getColumnSelectionAllowed());
+    	  xColumn=table.getSelectedColumn();
+    	  System.out.println("Selected column is:"+xColumn);
+          String colName = table.getColumnName(xColumn);
+          String Annotation=(String)table.getValueAt(table.getSelectedRow(), xColumn);
+          System.out.println("Annotation:"+Annotation);
+          File file = TMEV.getConfigurationFile("annotation_URLs.txt");
+          
+          GSEAURLLinkDialog adialog=new GSEAURLLinkDialog(frame, false, Annotation, table.getSelectedRow(), colName,file); 
+          adialog.setVisible(true);
+    	
     }
+   
     
     
     /**
@@ -260,7 +266,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         if(row < 0)
             return;
         //know that accessions exist
-        this.launchMenuItem.setEnabled( this.table.getValueAt(row, 1) != null && !this.table.getValueAt(row, 1).equals(" ") );
+     //   this.launchMenuItem.setEnabled( this.table.getValueAt(row, 1) != null && !this.table.getValueAt(row, 1).equals(" ") );
     }
     
     /**
@@ -277,27 +283,34 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         
         public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
-            if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
-                onOpenViewer("expression image");
+            if(command.equals(LINK_TO_URL_COMMAND)){
+              linkToURL2();
             } else if(command.equals(STORE_CLUSTER_COMMAND)){
             	onStoreSelectedRows();
             } else if(command.equals(SAVE_PVALUES_TABLE_COMMAND)){
                 onSavepValuesTable();
+            }else if(command.equals(CLEAR_ALL_COMMAND)){
+            	table.clearSelection();
+            }else if(command.equals(SELECT_ALL_COMMAND)){
+            	table.selectAll();
             }
         }
         
         public void mousePressed(MouseEvent me){
             if(me.isPopupTrigger()){
-                if(launchMenuItem != null)
-                    validateMenuOptions();
-                menu.show(me.getComponent(), me.getX(), me.getY());
+            	
+            	 if (table.getSelectedRowCount() != 1) {
+                     urlMenuItem.setEnabled(false);
+                 } else {
+               	
+                     urlMenuItem.setEnabled(true);
+                 }
+     	    menu.show(me.getComponent(), me.getX(), me.getY());
             }
         }
         
         public void mouseReleased(MouseEvent me){
             if(me.isPopupTrigger()){
-                if(launchMenuItem != null)
-                    validateMenuOptions();
                 menu.show(me.getComponent(), me.getX(), me.getY());
             }
         }
