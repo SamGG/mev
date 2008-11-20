@@ -63,7 +63,7 @@ public class LMGUI implements IClusterGUI {
 		done = false;
 		cancelRun = false; 
 		prior = true;
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode( "LM" );
+		//DefaultMutableTreeNode root = new DefaultMutableTreeNode( "LM" );
 		data = framework.getData();
 		Experiment exp = data.getExperiment();
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
@@ -75,19 +75,29 @@ public class LMGUI implements IClusterGUI {
 
 		BNSupportDataFile bnSuppFileHandle = null;
 
-		
 		if (framework.getData().isAnnotationLoaded()) {
 			chipType = framework.getData().getChipAnnotation().getChipType();
 			species = framework.getData().getChipAnnotation().getSpeciesName();
 			bnSuppFileHandle = new BNSupportDataFile(species, chipType);
 			defs.add(bnSuppFileHandle);
 
+		} else if (chipType == null || species == null)  {
+			JOptionPane.showMessageDialog(
+					framework.getFrame(), 
+					"Organism and/or Array information unavailable",
+					"Aborting execution...", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} else {
+			JOptionPane.showMessageDialog(
+					framework.getFrame(), 
+					"Annotation unavailable",
+					"Aborting execution...", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		
 		Hashtable<String, Vector<String>> speciestoarrays = null;
 		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
 		defs.add(aafd);
-	        
 	        
 	        try {
 	        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);

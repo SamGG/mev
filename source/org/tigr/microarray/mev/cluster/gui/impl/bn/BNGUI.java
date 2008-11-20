@@ -71,6 +71,18 @@ public class BNGUI implements IClusterGUI {
 			species = framework.getData().getChipAnnotation().getSpeciesName();
 			bnSuppFileHandle = new BNSupportDataFile(species, chipType);
 			defs.add(bnSuppFileHandle);
+		} else if (chipType == null || species == null)  {
+			JOptionPane.showMessageDialog(
+					framework.getFrame(), 
+					"Organism and/or Array information unavailable",
+					"Aborting execution...", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} else {
+			JOptionPane.showMessageDialog(
+					framework.getFrame(), 
+					"Annotation unavailable",
+					"Aborting execution...", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		
 		Hashtable<String, Vector<String>> speciestoarrays = null;

@@ -123,6 +123,9 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
         this.resourceManager = rm;
         this.speciestoarrays = speciestoarrays;
         
+        //System.out.println("speciesName " + speciesName);
+        //System.out.println("arrayName " + arrayName);
+        
 		font = new Font("Dialog", Font.BOLD, 12);
 		listener = new EventListener();
 		addWindowListener(listener);
@@ -680,6 +683,8 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 			useGoButton = new JRadioButton("Use GO Terms to direct edges"); 
 			useGoButton.setHorizontalAlignment(JRadioButton.CENTER);
 			useGoButton.setBackground(Color.white);
+			// GO Functionality is not working currently
+			useGoButton.setEnabled(false);
 			useDFSButton = new JRadioButton("Use Depth-First Search to direct edges",true);           	
 			useDFSButton.setHorizontalAlignment(JRadioButton.CENTER);
 			useDFSButton.setBackground(Color.white);
@@ -1105,15 +1110,27 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 
 				try {
 					organismListBox.setSelectedItem(speciesName);
-				} catch (NullPointerException npe) {/* Leave as default */}
+				} catch (NullPointerException npe) {
+					// Show Error Dialog & return
+					JOptionPane.showMessageDialog(
+							parent, 
+							"Organism information unavailable",
+							"Aborting execution", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
 				
 				try {
 					arrayListBox.setSelectedItem(arrayName);
-				} catch (NullPointerException npe) {/* Leave as default */}
-				
+				} catch (NullPointerException npe) {
+					// Show Error Dialog & return
+					JOptionPane.showMessageDialog(
+							parent, 
+							"Organism information unavailable",
+							"Aborting execution", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				arrayListBox.setEnabled(true); 
-
 			}
 			
 			arrayListBox.addActionListener(listener);
