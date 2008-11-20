@@ -455,6 +455,9 @@ public class HelpWindow extends JDialog {
         	
         	if(key.equals("Java Out of Memory Error"))
         		return "hcl_out_of_memory_help.html";
+        	if(key.equals("GSEA Help Dialog")){
+        		return "GSEA_Help.html";
+        	}
 		else {
 			return null;
 		}

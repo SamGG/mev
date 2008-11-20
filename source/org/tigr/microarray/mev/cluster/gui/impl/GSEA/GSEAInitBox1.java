@@ -104,11 +104,15 @@ public class GSEAInitBox1 extends AlgorithmDialog{
 	                    }
 	                    //If number of factors is zero, no need to go to the next screen
 	                    if ((Integer.parseInt(getNumberofFactors()) == 0 )) {
-	                         dispose();
-	                        //return;
+	                    	  JOptionPane.showMessageDialog(null, "You must have atleast one factor", "Error", JOptionPane.ERROR_MESSAGE); 
+	                    	//okPressed = false;
+	                         //dispose();
+	                        return;
+	                    }else{
+	                    	okPressed = true;
 	                    }
 	                    
-	                    okPressed = true;
+	                  //  okPressed = true;
 	                    dispose();
 	                } catch (NumberFormatException nfe) {
 	                    JOptionPane.showMessageDialog(null, "Invalid number of factors", "Error", JOptionPane.ERROR_MESSAGE);

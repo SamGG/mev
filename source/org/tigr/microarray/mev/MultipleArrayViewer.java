@@ -3962,7 +3962,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * Perform a search for elements based on keys
      */
     private void search() {
-        SearchDialog dialog = new SearchDialog(this.getFrame(), this.data.getFieldNames(), this.data.getSlideNameKeyArray());
+    	SearchDialog dialog;
+    	//Populates the search dialog with fields from the annotation model and the expression data, if annotation has
+    	//been loaded.
+    	if(data.isAnnotationLoaded())
+    		 dialog= new SearchDialog(this.getFrame(), this.data.getAllFilledAnnotationFields(), this.data.getSlideNameKeyArray());
+    	//Populates the search dialog with the fields from the expression data.
+    	else
+    		 dialog = new SearchDialog(this.getFrame(), this.data.getFieldNames(), this.data.getSlideNameKeyArray());
         if( dialog.showModal() == JOptionPane.OK_OPTION) {
             AlgorithmData searchParameters = dialog.getSearchCriteria();
             

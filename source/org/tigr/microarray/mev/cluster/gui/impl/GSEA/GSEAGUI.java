@@ -127,7 +127,7 @@ public class GSEAGUI implements IClusterGUI {
 			
 			gseaExperiment=ptg.returnGSEAExperiment();
 			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
-			System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
+			//System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
 			
 			//Second step is to read the Gene Set file itself. Once this is done, the gene sets will have to be further
 			//processed to remove the genes, which are present in the gene set but NOT in GeneData (expressiondata). 
@@ -305,7 +305,7 @@ public class GSEAGUI implements IClusterGUI {
    	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
    	GSEATableViewer tabViewer;
    	String[][]pVals =(String[][]) result.getObjectMatrix("geneset-pvals");
-   	String[]headernames={"Gene Set", "Lower-pValues", "Upper-pValues"};
+   	String[]headernames={"Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
    	
    	
    //DISPLAY SIGNIFICANT GENE SETS

@@ -298,16 +298,13 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		Experiment experiment=this.idata.getExperiment();
 		int number_of_samples=experiment.getNumberOfSamples();
 		
-	//	GSEAInitBox1 gBox1 = new GSEAInitBox1(parentFrame, null,true);
+	
 		GSEAInitBox1 gBox1 = new GSEAInitBox1(new JFrame(), null,true);
 		GSEAInitBox2 gBox2=null;
 		GSEAInitBox3 gBox3=null;
 		gBox1.setVisible(true);
 		int[][]assignments=null;
 
-		//if(gBox2.isOkPressed()){
-			
-		//}
 		
 		
 		if(gBox1.isOkPressed()){
@@ -329,7 +326,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 				factorNames[1]=gBox2.getFactorBName();
 
 
-			}else{
+			}else {
 				factorNames=new String[1];
 				factorNames[0]=gBox2.getFactorAName();
 

@@ -2886,7 +2886,6 @@ public class MultipleArrayData implements IData {
         Vector indexVector = new Vector();
         
         int [] indices;
-        
        
         
         Hashtable keys = new Hashtable();
@@ -2894,7 +2893,148 @@ public class MultipleArrayData implements IData {
         if(getFeaturesCount() < 1 || getFeaturesSize() < 1)
             return new int[0]; //empty result
         
-        if(geneSearch) {
+        
+        if(geneSearch && this.isAnnotationLoaded()){
+        	 fullFieldNames = this.getAllFilledAnnotationFields();
+             
+             for(int i = 0; i < fields.length; i++) {
+                 for(int j = 0; j < fullFieldNames.length; j++) {
+                     if(fields[i].equals(fullFieldNames[j])) {
+                         fieldIndices.addElement(fullFieldNames[j] );
+                         break;
+                     }
+                 }        
+             } 
+     
+             n = getFeaturesSize();
+             ISlideDataElement sde;
+             ISlideData slide = this.getFeature(0);
+             int annotIndex;
+             String[]annotation;
+             String fieldName;
+             for(int i = 0; i < n; i++) {
+                 hit = false;
+                 for(int j = 0; j < fieldIndices.size(); j++) {
+                     fieldName = (String)fieldIndices.elementAt(j);
+                     annotation = getElementAnnotation(i, fieldName);
+                     
+                     if(fullTerm) {
+                         if(caseSens) {
+                             if(annotation[0].equals(searchTerm)) {
+                                 hit = true;
+                               //  break;
+                             }
+                         } else {
+                             if(annotation[0].equalsIgnoreCase(searchTerm)) {
+                                 hit = true;
+                               break;
+                             }                            
+                         }
+                         
+                     } else {  //able to look within a term
+                        
+                         if(caseSens) {                                                              
+                             if(annotation[0].indexOf(searchTerm) != -1) {
+                                 hit = true;
+                                 break;
+                             }                  
+                         } else {
+                             if((annotation[0].toUpperCase()).indexOf(upperSearchString) != -1) {
+                                 hit = true;
+                                break;
+                             } 
+                             
+                         }                           
+                          
+                     }
+                     
+           
+                     
+                 }
+                 if(hit == true) {
+                     indexVector.addElement(new Integer(i));
+                 }
+             }//End of for loop
+           
+             //Loop to take care of the condition when there is already annotation present in the data 
+             //AND user has loaded extra annotations
+             if(this.getFieldNames().length!=0){
+            	 fieldIndices.clear();
+            	 fullFieldNames = this.getFieldNames();
+
+            	 for(int i = 0; i < fields.length; i++) {
+            		 for(int j = 0; j < fullFieldNames.length; j++) {
+            			 if(fields[i].equals(fullFieldNames[j])) {
+            				 fieldIndices.addElement(new Integer(j));
+            				 break;
+            			 }
+            		 }        
+            	 } 
+
+            	 n = getFeaturesSize();
+
+            	 slide = this.getFeature(0);
+
+            	 for(int i = 0; i < n; i++) {
+            		 hit = false;
+            		 for(int j = 0; j < fieldIndices.size(); j++) {
+            			 annotIndex = ((Integer)fieldIndices.elementAt(j)).intValue();
+            			 annot = getElementAttribute(i, annotIndex);
+
+            			 if(fullTerm) {
+            				 if(caseSens) {
+            					 if(annot.equals(searchTerm)) {
+            						 hit = true;
+            						 //  break;
+            					 }
+            				 } else {
+            					 if(annot.equalsIgnoreCase(searchTerm)) {
+            						 hit = true;
+            						 break;
+            					 }                            
+            				 }
+
+            			 } else {  //able to look within a term
+
+            				 if(caseSens) {                                                              
+            					 if(annot.indexOf(searchTerm) != -1) {
+            						 hit = true;
+            						 break;
+            					 }                  
+            				 } else {
+            					 if((annot.toUpperCase()).indexOf(upperSearchString) != -1) {
+            						 hit = true;
+            						 break;
+            					 } 
+
+            				 }                           
+
+            			 }
+
+
+
+            		 }
+            		 if(hit == true) {
+            			 indexVector.addElement(new Integer(i));
+            		 }
+            	 }
+
+             }
+
+
+             //End of adding
+             indices = new int[indexVector.size()];
+  
+             for(int i = 0; i < indices.length; i++) {
+                 indices[i] = ((Integer)(indexVector.elementAt(i))).intValue();
+             }
+  
+        	
+        }
+        
+        
+        //Annotations NOT loaded. Just using ones in the expression data
+        if(geneSearch && !this.isAnnotationLoaded()) {
         
             fullFieldNames = this.getFieldNames();
                     

@@ -63,6 +63,8 @@ public class GSEA extends AbstractAlgorithm {
 		try{
 			
 		factorNames=data.getStringArray("factor-names");
+		
+		if(!factorNames[0].equalsIgnoreCase("ZERO-FACTORS")){
 		int num_of_samples=data.getGeneMatrix("gene-data-matrix").getColumnDimension();
 		numFactorLevels=data.getIntArray("factor-levels");
 		allFactorAssignments=data.getIntMatrix("factor-assignments");
@@ -206,6 +208,12 @@ public class GSEA extends AbstractAlgorithm {
 		//Add the result from gsealmPerm (string array[][]) to algorithmdata here. will be useful while creating viewer in GSEAGUI
 		//addObjectMatrix("geneset-pvals");
 		
+		
+		}//End if ZERO FACTOR if loop
+		
+		else{
+			System.out.println("Zero Fcator condition");
+		}
 		
 		
 		}catch(Exception e){
