@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -73,6 +74,7 @@ public class SelectMultiFilesDialog extends AlgorithmDialog {
 		filelisttable.setColumnSelectionAllowed(false);
 		filelisttable.setCellSelectionEnabled(false);
 		filelisttable.setRowSelectionAllowed(true);
+		filelisttable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		filelisttable.setDragEnabled(false);
 		
 		addContent(tablePanel);
