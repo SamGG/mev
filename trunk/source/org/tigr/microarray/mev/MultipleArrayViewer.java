@@ -3883,12 +3883,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         return fullKeyVector;
     }
     
+    public void setDataLoadersEnabled(boolean enabled) {
+	    menubar.setDataLoadersEnabled(enabled);
+	    fireMenuChanged();
+    }
     /**
      *  Loads data using <code>SuperExpressionFileLoader</code> and specified file.
      */
     public void loadData(File file, FileType fileType, String arrayType){
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, file, fileType, arrayType);
-		
+
         //Add time node to the analysis node
         Date date = new Date(System.currentTimeMillis());
         DateFormat format = DateFormat.getDateTimeInstance();
