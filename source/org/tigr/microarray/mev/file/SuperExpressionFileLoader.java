@@ -482,7 +482,6 @@ public class SuperExpressionFileLoader {
 		gba.add(mainFrame.getContentPane(), fileLoaderPanel, 0, 1, 1, 3, 1, 1, GBA.B, GBA.C);
 		gba.add(mainFrame.getContentPane(), buttonPanel, 0, 4, 1, 1, 1, 0, GBA.H, GBA.C);
 		
-		mainFrame.setAlwaysOnTop(true);
 		mainFrame.setSize(800, 680);
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
