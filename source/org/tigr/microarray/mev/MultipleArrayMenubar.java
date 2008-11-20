@@ -56,7 +56,11 @@ public class MultipleArrayMenubar extends JMenuBar {
     private ActionListener listener;
     private boolean affyNormAdded = false;
     private ButtonGroup experimentLabelGroup;
-	/**
+
+    JMenu fileMenu;
+    JMenuItem loadDataMenuItem, loadAnalysisItem;
+
+    /**
      * Raktim
      * CGH Specific Menus
      */
@@ -71,7 +75,8 @@ public class MultipleArrayMenubar extends JMenuBar {
     ButtonGroup targetGooseNameGroup, showtargetGooseNameGroup;
    
     private ActionManager actionManager;
-    
+
+
     /**
      * Constructs a <code>MultipleArrayMenubar</code> using specified
      * action maneger.
@@ -80,10 +85,12 @@ public class MultipleArrayMenubar extends JMenuBar {
     public MultipleArrayMenubar(ActionManager manager) {
         listener = manager.getListener();
         actionManager = manager;
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ACTION)));
+        fileMenu = new JMenu("File");
+        loadDataMenuItem = createJMenuItem(manager.getAction(ActionManager.LOAD_ACTION));
+        fileMenu.add(loadDataMenuItem);
         fileMenu.addSeparator();
-        fileMenu.add(createJMenuItem(manager.getAction(ActionManager.LOAD_ANALYSIS_ACTION)));
+        loadAnalysisItem = createJMenuItem(manager.getAction(ActionManager.LOAD_ANALYSIS_ACTION));
+        fileMenu.add(loadAnalysisItem);
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_ACTION)));
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.SAVE_ANALYSIS_AS_ACTION)));
@@ -364,7 +371,12 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.setDistanceFunction(origDistanceMenu.getDistanceFunction());
         //now have the full menu, minus probably the full sort and label menu
     }
-    
+        
+    public void setDataLoadersEnabled(boolean enabled) {
+	    loadDataMenuItem.setEnabled(enabled);
+	    loadAnalysisItem.setEnabled(enabled);
+    }
+
     public void synchronizeSettings(MultipleArrayMenubar origMenuBar) {
         
         //first synchronize the distance menu

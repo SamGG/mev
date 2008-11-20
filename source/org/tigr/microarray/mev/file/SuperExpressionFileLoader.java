@@ -27,6 +27,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -413,6 +416,19 @@ public class SuperExpressionFileLoader {
 		eventListener = new EventListener();
 
 		mainFrame = new JFrame("Expression File Loader");
+		
+		mainFrame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				viewer.setDataLoadersEnabled(true);
+			}
+			public void windowClosed(WindowEvent e) {
+				viewer.setDataLoadersEnabled(true);
+			}
+			public void windowOpened(WindowEvent e) {
+				viewer.setDataLoadersEnabled(false);
+			}
+		});
+		
 		mainFrame.getContentPane().setLayout(new GridBagLayout());
 
 		menuBar = new JMenuBar();
@@ -500,15 +516,6 @@ public class SuperExpressionFileLoader {
 		selectedFileLoader.openDataPath();
 	}
 
-	// TODO EH testing whether this method is even necessary
-/*	public void initializeDataPath() {
-		DATA_PATH = TMEV.getDataPath();
-	}
-
-	// TODO EH testing whether this method is even necessary
-	public void initializeAnnotationPath() {
-		ANNOTATION_PATH = TMEV.getSettingForOption("current-annotation-path");
-	}*/
 
 	public void setLoadEnabled(boolean state) {
 		loadButton.setEnabled(state);
