@@ -326,13 +326,14 @@ public class SlideData implements ISlideData, ISlideMetaData {
      * Returns a ratio of specified values.
      */
     public final float getRatio(float numerator, float denominator, int logState) {
-
+    	
+    	
         if(dataType == IData.DATA_TYPE_RATIO_ONLY)
             return numerator;
 
         float ratio;
         if(denominator < 0 || numerator < 0)
-            return Float.NaN;
+            return numerator;
         if (isNonZero) {
             if (denominator == 0 && numerator == 0) {
                 return Float.NaN;
