@@ -61,8 +61,8 @@ public class TableViewer extends JPanel implements IViewer {
     protected IFramework framework;
     private int exptID = 0;
     
-    Object[][] data;
-    String[] headerNames;
+    protected Object[][] data;
+    protected String[] headerNames;
     
     /** Creates a new instance of TableViewer */
     public TableViewer() { }
