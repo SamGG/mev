@@ -1852,6 +1852,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/TMEV.bat"/>
 			<exclude name=".svn"/>
 		</zip>	
+    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
 		<zip destfile="${package.dir}/MeV_${version}_linux.zip"
 			basedir="${package.dir}"
 			>
