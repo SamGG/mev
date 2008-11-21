@@ -1,7 +1,7 @@
 GB#	http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&cmd=search&term=FIELD1	GenBank Accession Number
 TC#	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=mouse&tc=FIELD1	TIGR Gene Indices - Mouse
 THC#	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=human&tc=FIELD1	TIGR Gene Indices - Human
-LocusLink	http://www.ncbi.nlm.nih.gov/sites/entrez?db=protein&cmd=search&term=FIELD1	NCBI LocusLink
+LocusLink	http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=search&term=FIELD1	NCBI LocusLink
 UniGene	http://www.ncbi.nlm.nih.gov/sites/entrez?db=unigene&cmd=search&term=FIELD1	NCBI UniGene
 GO	http://www.ebi.ac.uk/ego/GTerm?id=FIELD1	Gene Ontology Terms (EBI)
 KEGG	http://www.genome.ad.jp/dbget-bin/show_pathway?FIELD1	KEGG
