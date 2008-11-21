@@ -46,18 +46,18 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
     protected GSEAExperiment experiment;
     protected int [][] clusters;
-    protected String [] headerNames;
+   // protected String [] headerNames;
     protected boolean clusterAnalysis;
     protected boolean haveAccessionNumbers;
     private JMenuItem urlMenuItem;
-    protected Object[][] data;
+    //protected Object[][] data;
     int xColumn;
     
     
     public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment) {
         super(headerNames, data);
-        this.headerNames = headerNames;
-        this.data = data;
+       // this.headerNames = headerNames;
+        //this.data = data;
         xColumn=-1;
         setNumerical(0, true);
         gseaRoot = analysisNode;
@@ -80,6 +80,20 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     }
    
 	
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{headerNames, data});
+    }
+   
+    /**
+     * @inheritDoc
+     *
+    public Expression getExpression(){
+    	return new Expression(this, this.getClass(), "new", 
+    			new Object[]{this.headerNames, this.data, this.gseaRoot, this.experiment, this.clusters, this.haveAccessionNumbers, this.clusterAnalysis});
+    } */ 
+  
+    
 	
     /** Creates the context menu
      * @return  */
@@ -269,13 +283,6 @@ public class GSEATableViewer extends TableViewer implements Serializable {
      //   this.launchMenuItem.setEnabled( this.table.getValueAt(row, 1) != null && !this.table.getValueAt(row, 1).equals(" ") );
     }
     
-    /**
-     * @inheritDoc
-     */
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.headerNames, this.data, this.gseaRoot, this.experiment, this.clusters, this.haveAccessionNumbers, this.clusterAnalysis});
-    }  
     
     /** Handles events
      */
