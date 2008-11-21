@@ -80,7 +80,7 @@ public class TableViewer extends JPanel implements IViewer {
         table.getTableHeader().addMouseListener(new TableHeaderMouseListener());
         
         pane = new JScrollPane(table);
-      
+        pane.setHorizontalScrollBarPolicy(pane.HORIZONTAL_SCROLLBAR_ALWAYS);
         this.setLayout(new GridBagLayout());
         add(pane, new GridBagConstraints(0,0,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
     }

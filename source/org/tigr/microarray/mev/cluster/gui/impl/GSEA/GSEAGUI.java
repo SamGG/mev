@@ -61,7 +61,10 @@ public class GSEAGUI implements IClusterGUI {
 	    private IData idata;
 	    private Logger logger;
 	    protected Listener listener;
-	  
+	    protected String[][]geneToProbeMapping;
+	    //max_columns decides the number of columns to display in the
+	    //table viewer
+	    int max_columns;
 	    
 	   
 
@@ -127,7 +130,7 @@ public class GSEAGUI implements IClusterGUI {
 			
 			gseaExperiment=ptg.returnGSEAExperiment();
 			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
-			//System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
+			System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
 			
 			//Second step is to read the Gene Set file itself. Once this is done, the gene sets will have to be further
 			//processed to remove the genes, which are present in the gene set but NOT in GeneData (expressiondata). 
@@ -172,25 +175,6 @@ public class GSEAGUI implements IClusterGUI {
 			algData.addVector("excluded-gene-sets", rgset.getExcludedGeneSets());
 			
 			
-		/*	System.out.println("Amat in GSEAGUI:"+amat.getRowDimension()+":"+amat.getColumnDimension());
-			for(int i=0; i<amat.getRowDimension();i++){
-				System.out.print("Gene set Name:"+geneset[0].getAllGenesetNames().get(i));
-				System.out.print('\t');
-				for(int j=0; j<amat.getColumnDimension(); j++){
-					System.out.print(amat.get(i,j));
-					System.out.print('\t');
-				}
-				System.out.println();
-			}*/
-			
-			
-			
-			
-			
-			
-			//System.out.println("excluded-gene-set size:"+algData.getVector("excluded-gene-sets").size());
-			//Add to algorithmdata, the genes removed from gene sets
-			//Both these would be displayed in the viewer
 			
 			/****
 			 * I think i may need to add a function to probetoGene that returns GSEAExperiment.
@@ -211,8 +195,15 @@ public class GSEAGUI implements IClusterGUI {
 			logger.append("Algorithm excecution ends...\n");
 			logger.dispose();
 			
-			//resultNode = createResultNode(null, algData, idata, null, experiment);
-			resultNode = createResultNode(result, idata,gseaExperiment);//--commented for Testing
+		
+		//String array containing Gene to Probe mapping, which will be used in the table viewers	
+			geneToProbeMapping=gData[0].getProbetoGeneMapping(gData);
+		
+			//Decides the number of columns in the table viewer. 
+			//The reason being one Gene may map to one probe and another to ten. 
+			 
+			this.max_columns=gData[0].get_max_num_probes_mapping_to_gene();
+			resultNode = createResultNode(result, idata, null);//--commented for Testing
 				
 		
 		}
@@ -270,11 +261,11 @@ public class GSEAGUI implements IClusterGUI {
    private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
 		DefaultMutableTreeNode node = null;
 		
-		//if(mode.equals(NonparConstants.MODE_WILCOXON_MANN_WHITNEY)) {
+		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
 			addTableViews(node, result, experiment, idata);
 			//Does not seem to do it's job...shows wierd expression values
-			addExpressionImages(node,  result, experiment);
+		//	addExpressionImages(node,  result, experiment);
 			
 		//} 		
 		return node;
@@ -300,7 +291,6 @@ public class GSEAGUI implements IClusterGUI {
    
    
    
-   
    private void addTableViews(DefaultMutableTreeNode root, AlgorithmData result, GSEAExperiment experiment, IData data) {
    	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
    	GSEATableViewer tabViewer;
@@ -308,7 +298,7 @@ public class GSEAGUI implements IClusterGUI {
    	String[]headernames={"Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
    	
    	
-   //DISPLAY SIGNIFICANT GENE SETS
+   //Display Significant Gene Sets
    	tabViewer = new GSEATableViewer(headernames,pVals, root,experiment);
    	node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Gene Sets", tabViewer, new Integer(0))));
    
@@ -322,14 +312,22 @@ public class GSEAGUI implements IClusterGUI {
    			//System.out.println("Excluded gene set name:"+(String)temp.get(i));
    		
    	}
-    String[]header={"Excluded Gene Sets"};  	
-  	tabViewer = new GSEATableViewer(header,_dummy);
+    String[]header1={"Excluded Gene Sets"};  	
+  	tabViewer = new GSEATableViewer(header1,_dummy);
    	node.add(new DefaultMutableTreeNode(new LeafInfo("Excluded Gene Sets", tabViewer, new Integer(0))));
  
    	
    	
-  //Display Genes excluded from gene sets
+  //Display Collapse Probe to Gene collapse data
+    String[]header2=new String[max_columns+1];
+    header2[0]="Gene";
+   	for(int i=0; i<max_columns; i++){
+   		header2[i+1]="Probes";
+   	}
    	
+   	
+    tabViewer=new GSEATableViewer(header2,geneToProbeMapping, root, experiment);
+    node.add(new DefaultMutableTreeNode(new LeafInfo("Probe to Gene Mapping", tabViewer, new Integer(0))));
    	
    	
    	root.add(node);
@@ -346,7 +344,7 @@ public class GSEAGUI implements IClusterGUI {
 	
 	public String checkFileNameExtension(String fileName){
 		String extension=fileName.substring(fileName.lastIndexOf('.')+1, fileName.length());
-		System.out.println("Extension:"+extension);	
+		//System.out.println("Extension:"+extension);	
 		return extension;
 	}
 	

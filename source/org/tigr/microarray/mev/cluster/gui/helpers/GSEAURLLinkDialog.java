@@ -46,9 +46,7 @@ public class GSEAURLLinkDialog extends AlgorithmDialog{
 	   
     public GSEAURLLinkDialog(JFrame parent, boolean modal, String annotationKey, int row, String colName, File file) {
     	 super(parent, "Link annotation to URL", modal);
-    	 System.out.println("annotation key:"+annotationKey);
-     	System.out.println("colNames:"+colName);
-     	
+   	
     	 this.file = file;
          this.row = row;
          this.colName=colName;
@@ -188,7 +186,7 @@ public class GSEAURLLinkDialog extends AlgorithmDialog{
         
         try {
             String urlToUse = getCurrentURL(annotationKey);
-            System.out.println("url To use = " + urlToUse);
+            //System.out.println("url To use = " + urlToUse);
             BrowserLauncher.openURL(urlToUse);
         } catch (IOException ie) {
             JOptionPane.showMessageDialog(new JFrame(), ie.toString(),"Error", JOptionPane.ERROR_MESSAGE);
@@ -208,7 +206,7 @@ public class GSEAURLLinkDialog extends AlgorithmDialog{
         String urlToUse = "";
         //NOTE: In the following statement, the argument "row" is what's obtained AFTER applying getGeneIndexMappedToSelectedRows(); i.e., use as is; no need to re-map for cutoffs        
         String currentAnnotationString = annKey; 
-        System.out.println("currentAnnotationString = " + currentAnnotationString);
+      //  System.out.println("currentAnnotationString = " + currentAnnotationString);
 
         if (currentURLKey.equals("UniGene")) {
             String[] splitAnnotation = currentAnnotationString.split("\\.");
@@ -218,7 +216,7 @@ public class GSEAURLLinkDialog extends AlgorithmDialog{
         } else {            
             urlToUse = currentURLTemplate.replaceAll("FIELD1", currentAnnotationString);
         }
-       System.out.println("url To use = " + urlToUse);   
+      // System.out.println("url To use = " + urlToUse);   
         return urlToUse;
     }
 
