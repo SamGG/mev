@@ -149,12 +149,12 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
     private void linkToURL2() {
     	  JFrame frame = (JFrame)(JOptionPane.getFrameForComponent(table));   
-    	  System.out.println("Column selection allowed:"+table.getColumnSelectionAllowed());
+    	  //System.out.println("Column selection allowed:"+table.getColumnSelectionAllowed());
     	  xColumn=table.getSelectedColumn();
-    	  System.out.println("Selected column is:"+xColumn);
+    	 // System.out.println("Selected column is:"+xColumn);
           String colName = table.getColumnName(xColumn);
           String Annotation=(String)table.getValueAt(table.getSelectedRow(), xColumn);
-          System.out.println("Annotation:"+Annotation);
+          //System.out.println("Annotation:"+Annotation);
           File file = TMEV.getConfigurationFile("annotation_URLs.txt");
           
           GSEAURLLinkDialog adialog=new GSEAURLLinkDialog(frame, false, Annotation, table.getSelectedRow(), colName,file); 
@@ -302,7 +302,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
             	 if (table.getSelectedRowCount() != 1) {
                      urlMenuItem.setEnabled(false);
                  } else {
-               	
+                	             	
                      urlMenuItem.setEnabled(true);
                  }
      	    menu.show(me.getComponent(), me.getX(), me.getY());

@@ -175,6 +175,9 @@ public class ProbetoGene {
 					// matches >1gene
 					// break;
 					found = true;
+					if(gde.getProbeID().size()>gdata[0].get_max_num_probes_mapping_to_gene()){
+						gdata[0].set_max_num_probes_mapping_to_gene(gde.getProbeID().size());
+					}
 
 				}
 				// If probeID does not match current geneData entry, remain in

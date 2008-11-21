@@ -17,10 +17,13 @@ import java.util.Vector;
 
 public class GeneData implements IGeneData{
 	
-	protected int row;
-	protected int col;
-	protected Vector geneDataElement;
-	protected String slideName;
+	private int row;
+	private int col;
+	private Vector geneDataElement;
+	private String slideName;
+	
+	//This is useful when trying to display all the probes mapping to a gene using tableviewer.
+	private int max_num_of_probes_mappingtoGene=0;
 	
 	public GeneData(int rows, int cols){
 		this.col=cols;
@@ -83,4 +86,47 @@ public class GeneData implements IGeneData{
 		return this.geneDataElement;
 	}
 
+	/**
+	 * getProbetoGeneMapping outputs a 2-d String array
+	 * with the first column containing the gene identifier and the subsequent columns containing 
+	 * probe identifiers.
+	 * @param gData
+	 * @return
+	 */
+	public String[][]getProbetoGeneMapping(GeneData[]gData){
+		int maxprobe=0;
+		String[][]gDataArray=new String[gData[0].getAllGeneDataElement().size()][];
+
+		for(int gene=0; gene<gData[0].getAllGeneDataElement().size(); gene++){
+			GeneDataElement gde = (GeneDataElement) gData[0].getGeneDataElement(gene);
+			gDataArray[gene]=new String[gde.getProbeID().size()+1];
+			gDataArray[gene][0]=gde.getGeneIdentifier();
+			//System.out.print(gDataArray[gene][0]);
+			//System.out.print('\t');
+			Vector pVector=gde.getProbeID();
+			if(pVector.size()>maxprobe){
+				maxprobe=pVector.size();
+			}
+
+			for(int probes=0; probes<pVector.size(); probes++){
+				gDataArray[gene][probes+1]=(String)pVector.get(probes);
+				//System.out.print(gDataArray[gene][probes+1]);
+				//System.out.print('\t');
+
+			}
+			//	System.out.println();
+			pVector=null;
+		}
+
+		return gDataArray;
+	}
+
+	public void set_max_num_probes_mapping_to_gene(int max){
+		this.max_num_of_probes_mappingtoGene=max;
+	}
+	
+	public int get_max_num_probes_mapping_to_gene(){
+		return this.max_num_of_probes_mappingtoGene;
+	}
+	
 }
