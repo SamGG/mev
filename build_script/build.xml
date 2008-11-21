@@ -1880,13 +1880,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<exclude name=".svn"/>
 			</fileset>
 		</move>
+    	<chmod file="${package.dir}/${mev_version.dir}/MeV.app/Contents/MacOS/JavaApplicationStub" perm="744"/>
 		<delete dir="${package.dir}/${mev_version.dir}/lib"/>
 		<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
 		<delete file="${package.dir}/${mev_version.dir}/TMEV.bat"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
-		
+		<!-- 	
 		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
-		<!-- 
+	 -->
 			<zip destfile="${package.dir}/MeV_${version}_mac.zip"
 				basedir="${package.dir}"
 				encoding="UTF-8"
@@ -1894,7 +1895,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<include name="${mev_version.dir}/**"/>
 				<exclude name=".svn"/>
 			</zip>
-		 -->
+		
 		
 		<!-- Build WebStart distribution -->
 	</target>
