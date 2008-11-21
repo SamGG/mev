@@ -411,13 +411,13 @@ public class FloatSlideData implements ISlideData {
      */
     public final float getRatio(int index, int logState) {
         if(normalizedState == ISlideData.NO_NORMALIZATION) {
-            //if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
                 return trueCY5[index];
-            //return getRatio(trueCY5[index], trueCY3[index], logState);
+            return getRatio(trueCY5[index], trueCY3[index], logState);
         } else {
-            //if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
                 return currentCY5[index];
-            //return getRatio(currentCY5[index], currentCY3[index], logState);
+            return getRatio(currentCY5[index], currentCY3[index], logState);
         }
     }
     
@@ -439,7 +439,7 @@ public class FloatSlideData implements ISlideData {
     public static final float getRatio(float numerator, float denominator, int logState) {
         float ratio;
         if(denominator < 0 || numerator < 0)
-            return Float.NaN;
+            return numerator;
         if (isNonZero) {
             if (denominator == 0 && numerator == 0) {
                 return Float.NaN;
