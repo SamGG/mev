@@ -176,7 +176,7 @@ public class GSEAGUI implements IClusterGUI {
 			
 			
 			/****
-			 * I think i may need to add a function to probetoGene that returns GSEAExperiment.
+			 *@TO Do:  I think i may need to add a function to probetoGene that returns GSEAExperiment.
 			 * No way of passing it around otherwise. ?
 			 */
 			

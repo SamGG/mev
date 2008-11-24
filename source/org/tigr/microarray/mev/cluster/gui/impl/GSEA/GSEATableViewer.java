@@ -46,18 +46,15 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
     protected GSEAExperiment experiment;
     protected int [][] clusters;
-   // protected String [] headerNames;
     protected boolean clusterAnalysis;
     protected boolean haveAccessionNumbers;
     private JMenuItem urlMenuItem;
-    //protected Object[][] data;
     int xColumn;
     
     
     public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment) {
         super(headerNames, data);
-       // this.headerNames = headerNames;
-        //this.data = data;
+   
         xColumn=-1;
         setNumerical(0, true);
         gseaRoot = analysisNode;
@@ -65,10 +62,8 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         this.experiment = experiment;
         this.clusters = clusters;
         
-      //  table.setCellSelectionEnabled(true);
         table.setRowSelectionAllowed(true);
-        //table.setColumnSelectionAllowed(true);
-        
+              
         table.addMouseListener(new Listener());
         if(table.getRowCount() > 0)
             table.getSelectionModel().setSelectionInterval(0,0);
@@ -85,16 +80,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     			new Object[]{headerNames, data});
     }
    
-    /**
-     * @inheritDoc
-     *
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.headerNames, this.data, this.gseaRoot, this.experiment, this.clusters, this.haveAccessionNumbers, this.clusterAnalysis});
-    } */ 
-  
-    
-	
+   
     /** Creates the context menu
      * @return  */
     protected JPopupMenu createPopupMenu(){

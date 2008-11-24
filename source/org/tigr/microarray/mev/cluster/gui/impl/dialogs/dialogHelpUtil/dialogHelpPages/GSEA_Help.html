@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>MeV: GSEA Documentation</title>
+		<link type="text/css" rel="stylesheet" href="../../tm4online.css"></link>
+		<link rel="icon" href="../../tm4.ico"></link>
+	</head>
+	<body>
+ 		<div id="frame">
+			<div id="contentheader">
+				<a href="http://www.tm4.org/"><img src="../../banner_logo.png" alt=""/></a><img src="../../banner_montage.png" alt=""/> 
+			</div>
+			<div id="contentleft">
+			</div>
+			
+			<div id="contentcenter">
+			<h1>What is GSEA?</h1>
+				<p>
+				<b>Gene Set Enrichment Analysis (GSEA)</b> is a computational method that determines whether an a priori defined set of genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes).
+				<br />
+				Reference: <a href="http://www.broad.mit.edu/gsea/">http://www.broad.mit.edu/gsea/</a>
+				</p> 
+			<h1>Why GSEA?</h1>
+				<p>
+				Traditional statistics use adjusted P-values with some arbitrary cutoff, treating genes with slightly different P-values as different entities.  Also, small differences in mRNA abundance are often not detected, nor are large changes in just a few genes.
+				</p>
+				<p>
+				GSEA remedies this by using all the genes in your expression data for the analysis.  GSEA also compiles per-gene statistics across genes within a gene set, allowing for the detection of small changes in many genes or large changes in few genes.
+				</p>
+				<p>
+				The GSEA algorithm implemented in MeV v4.3 is based on Zhen Jiang and Robert Gentleman's 2007 Bioinformatics paper <i>(Jiang, Z., Gentleman, R., (2007). Bioinformatics. 2007 Feb 1; 23(3):306-13. Extensions to gene set enrichment analysis)</i>.
+				</p>
+			<h1>Brief Description of the GSEA Algorithm</h1>
+				<p>The GSEA algorithm can be roughly divided in to three steps:
+				</p>
+				<ul>
+					<li>1. 	Calculate the per gene statistic. This is done by fitting a linear model to all the genes, separately and simultaneously.</li>
+					<li>2.	Calculate the gene set statistic.</li>
+					<li>3.	Estimate significance by:
+						<ul>
+							<li>Permuting factor/phenotype/class labels</li>
+							<li>Compute the per gene statistic for every permutation</li>
+							<li>Compute the gene set statistic for every permutation</li>
+							<li>Calculate and report Unadjusted p-values</li>
+						</ul>
+					</li>
+				</ul> 
+			<h1>How to Run GSEA</h1>
+				<p>
+				GSEA uses a set of parameter input dialogs that open sequentially to provide input options that correspond to each step of the process.  The first step in the processes is the selection of all the requisite data and supplementary files.
+				</p>
+				<img src="gsea1.jpg">
+				<p>
+				The “Phenotype/Class Assignment” panel as the name suggests lets you assign phenotype/class labels to your samples. On clicking the “Assign” button, a dialog box pops up asking you the number of factors.
+				</p>
+				<img src="gsea2.jpg">
+				<p>
+				For example, if sex is the phenotype (factors) that influences your data the most, enter 1 in the textbox provided.
+				</p>
+				<br />
+				
+				<p>
+				The next step in assigning phenotypes would be to specify the level of each phenotye/factor.
+				</p>
+				<img src="gsea3.jpg">
+				<p>
+				In the example above, MALE and FEMALE are the two levels of the phenotype “SEX.” So, enter 2 in the textbox provided.
+				</p>
+				<br />
+				<p>
+				The final step in assigning phenotype labels to your samples would be to assign which sample corresponds to what level
+				</p>
+				<img src="gsea4.jpg">
+				<p>
+				Going by our example, Group1 and Group2 symbolize MALE and FEMALE. <br />
+ 				</p>
+ 				<p>
+ 				You can save these grouping using the “Save settings” button. To load saved groupings, use the “Load settings” button. Reset button will clear all your choices. Once you are done, hit OK.
+				</p>
+				<p>
+				This is what you will see once the phenotype assignment is completed.
+				</p>
+				<img src="gsea5.jpg">
+				<p>
+				The “Geneset” panel allows you to load the gene set of your choice. You can either load an existing geneset (using the Browse button) OR download one from the MIT FTP site.
+				</p>
+				<p>
+				On clicking “Download” button, MeV automatically attempts to connect to <a href="ftp://gseaftp.broad.mit.edu/pub/gsea/">ftp://gseaftp.broad.mit.edu/pub/gsea/</a> and fetches a list of available files. A progress bar indicates the status of the download. Download can be canceled at any point.
+				</p>
+				<img src="gsea6.jpg">
+				<p>
+				The dialog box which comes up after MeV gets connected to the MIT FTP site looks like this:
+				</p>
+				<img src="gsea7.jpg">
+				<p>
+				A description of the files is available at: <a href="http://www.broad.mit.edu/gsea/msigdb/index.jsp">http://www.broad.mit.edu/gsea/msigdb/index.jsp</a>.  
+				Choose the file that you want and hit OK.  The image below is what you will see if you successfully downloaded the geneset file.
+				</p>
+				<p>
+				Choose the file that you want and hit OK.  The image below is what you will see if you successfully downloaded the geneset file.
+				</p>
+				<img src="gsea8.jpg">
+				<p>
+				The “Annotation” panel lets you upload annotations. Annotations are a MUST for running GSEA. Details on how to load annotations is described in the MeV Manual.
+				</p>
+				<p>
+				The next step in running GSEA is to assign parameters. On hitting the Next button, you will see something like this:
+				</p>
+				<img src="gsea9.jpg">
+				<p>
+				The GUI is pretty self explanatory, but here is some better clarification about the available methods for collapsing probes to genes.
+				</p>
+				Sample Probe Values:
+				<table border = "1">
+					<tr>
+						<td></td>
+						<td>Sample1</td>
+						<td>Sample2</td>
+						<td>Sample3</td>
+						<td>St. Dev</td>
+					</tr>
+					<tr>
+						<td>Probe_1</td>
+						<td>10</td>
+						<td>20</td>
+						<td>30</td>
+						<td>3</td>
+					</tr>
+					<tr>
+						<td>Probe_2</td>
+						<td>20</td>
+						<td>5</td>
+						<td>10</td>
+						<td>4</td>
+					</tr>
+					<tr>
+						<td>Probe_3</td>
+						<td>20</td>
+						<td>15</td>
+						<td>10</td>
+						<td>2</td>
+					</tr>
+				</table>
+				<p>
+				For a probe with missing values, using Maximum Probe, the substituted values for Samples 1-3 would be 20, 20, 30. Using Median Probe, the values would be 20, 10, 15.  With Standard Deviation, the Maximum is used, so the values would be 20, 5, 10.  NOTE: SD will be calculated by MeV on the fly. You do not have to do anything. This is just an example.
+				</p>
+				<br />
+				<p>
+				The last step is to hit the "Execute" button.
+				</p>
+				<p>
+				The output from the algorithm is two sets of p values: “Lower p values” and “Upper p values” for the gene sets. Lower p values are the probability of seeing a test statistic lower than the observed one. Upper p values are the probability of seeing a test statistic higher than the observed one.
+				</p>
+				<img src="gsea10.jpg">
+				<p>
+				This is the result screen that you would see on clicking: Table Viewer -> “Significant Genes”. Another piece of information that MeV would provide you is the list of gene sets which have been excluded from the analysis because they do not meet the minimum genes per gene set criteria. This is determined by adding up the number of genes per gene set which are also present in the expression data.
+				</p>
+				<h1>Useful links</h1>
+				<p>
+				A description of the gene set files, provided by MIT is available at: <a href="http://www.broad.mit.edu/gsea/msigdb/index.jsp">http://www.broad.mit.edu/gsea/msigdb/index.jsp</a>.  
+				</p>
+			
+				<br clear="all" /><!-- without this little <br /> NS6 and IE5PC do not stretch the frame div down to encopass the content DIVs -->
+			</div>
+		<!--#include virtual="../../google_analytics.txt" --> 
+	</body>
+</html>

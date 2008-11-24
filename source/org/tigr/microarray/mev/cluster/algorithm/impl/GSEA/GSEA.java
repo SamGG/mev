@@ -71,11 +71,9 @@ public class GSEA extends AbstractAlgorithm {
 		int num_perms=Integer.parseInt(data.getParams().getString("permutations"));
 		
 		
-		//Do this only if there are more than 0 factors
-		/**
-		 * TO DO: Add a for loop to calculate the group assignment, if 
-		 * number of factors>1. ProcessGroupAssignment would fail otherwise
-		 */
+		//Do this only if there are more than 0 factors.
+		//As of now, DO NOT allow zero factors condition. MeV shows an error when use puts in zero in 
+		//the init box
 		ProcessGroupAssignments pg= new  ProcessGroupAssignments(factorNames, numFactorLevels, allFactorAssignments, true, num_of_samples);
 		pg.findUnassignedSamples(factorNames, numFactorLevels, allFactorAssignments);
 		data.addVector("unassigned-samples", pg.getUnassignedColumns());
@@ -83,123 +81,18 @@ public class GSEA extends AbstractAlgorithm {
 		
 		
 		lmPerGene(data, factor_matrix, true);
-		/*************For testing ONLY. Needs >1 factor*************/
+	
 		FloatMatrix coefficients=data.getGeneMatrix("lmPerGene-coefficients");
-		
-		/* File lmPerGeneCoefficients;
-			try {
-				lmPerGeneCoefficients = new File("C:/Users/sarita/Desktop/GSEA-TestData/lmPG_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(lmPerGeneCoefficients)));
-				 int tcount=0;
-				 while(tcount<coefficients.getRowDimension()){
-					 for(int j=0; j<coefficients.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(coefficients.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-		
-		
 		
 		
 		
 		FloatMatrix coefVar=data.getGeneMatrix("lmPerGene-coefvar");
 		FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
 		
-		
-		
-	/*	 File lmPerGeneCoef_intermediate;
-			try {
-				lmPerGeneCoef_intermediate = new File("C:/Users/sarita/Desktop/GSEA-TestData/lmPGcoefintermediate_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(lmPerGeneCoef_intermediate)));
-				 int tcount=0;
-				 while(tcount<coef_intermediate.getRowDimension()){
-					 for(int j=0; j<coef_intermediate.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(coef_intermediate.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-		
-		
-		
 				
 		//Extract the portion that contains the main factor coefVars
 		FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
-	/*	 File lmPerGeneCoefVar_intermediate;
-			try {
-				lmPerGeneCoefVar_intermediate = new File("C:/Users/sarita/Desktop/GSEA-TestData/lmPGcoefVarintermediate_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(lmPerGeneCoefVar_intermediate)));
-				 int tcount=0;
-				 while(tcount<coefVar_intermediate.getRowDimension()){
-					 for(int j=0; j<coefVar_intermediate.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(coefVar_intermediate.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-		 File lmPerGeneCoefvar;
-			try {
-				lmPerGeneCoefvar = new File("C:/Users/sarita/Desktop/GSEA-TestData/lmPG_coefvarJAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(lmPerGeneCoefvar)));
-				 int tcount=0;
-				 while(tcount<coefVar.getRowDimension()){
-					 for(int j=0; j<coefVar.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(coefVar.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-				
-		/*************For testing ONLY. Needs >1 factor***ENDS**********/
-		//System.out.println("lmPerGene done");
-        String[][]resultMatrix=gsealmPerm(num_perms, data, true);//--commented for testing
+	    String[][]resultMatrix=gsealmPerm(num_perms, data, true);//--commented for testing
 		  
        data.addObjectMatrix("geneset-pvals", resultMatrix);//commented for testing
 		
@@ -281,75 +174,11 @@ public class GSEA extends AbstractAlgorithm {
 			nSamp=eSet.getColumnDimension();
 		}
 
-		/*****************Testing factor matrix******************************
-		File factorMatrix;
-		try {
-			factorMatrix = new File("C:/Users/sarita/Desktop/GSEA-TestData/factorMatrix_JAVA.txt");
-			 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(factorMatrix)));
-			 int tcount=0;
-			 while(tcount<x.getRowDimension()){
-				 for(int j=0; j<x.getColumnDimension(); j++){
-				
-				 pw.write(Float.toString(x.get(tcount, j)));
-				 pw.write('\t');
-				}
-				 pw.write('\n');
-				 tcount=tcount+1;
-			 }
-			 
-			 
-			 pw.close();
-			 
-			 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-	
-	
-		
-		
-		/*****************Testing factor matrix ends*************************/
-	
-
 
 		 xTranspose=x.transpose();
 
 		 xx=xTranspose.times(x);
-		 /****************For testing only*********************************
-			 * This would generate a file containing the xx Matrix
-			 *
-			 File xxMatrixFile;
-				try {
-					xxMatrixFile = new File("C:/Users/sarita/Desktop/GSEA-TestData/xxMatrix_JAVA.txt");
-					 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(xxMatrixFile)));
-					 int tcount=0;
-					 while(tcount<xx.getRowDimension()){
-						 for(int j=0; j<xx.getColumnDimension(); j++){
-						
-						 pw.write(Float.toString(xx.get(tcount, j)));
-						 pw.write('\t');
-						}
-						 pw.write('\n');
-						 tcount=tcount+1;
-					 }
-					 
-					 
-					 pw.close();
-					 
-					 
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-			
-			
-	/*************Testing xx ends****************************************************/
-
-		 
-	
+		
 		//In the R function, they use solve(a) and since the second argument is not provided, solve returns teh inverse of a.
 		//so, in R, if you say solve(a); the second argument b is considered to be an identity matrix. Trying to replicate that
 		//FloatMatrix xxInv=xx.inverse();
@@ -358,43 +187,7 @@ public class GSEA extends AbstractAlgorithm {
 		
 	    identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
 		xxInv=xx.solve(identity);
-		
-		 /****************For testing only*********************************
-		 * This would generate a file containing the xxInv Matrix
-		 *
-		 File xxInvMatrixFile;
-			try {
-				xxInvMatrixFile = new File("C:/Users/sarita/Desktop/GSEA-TestData/xxInvMatrix_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(xxInvMatrixFile)));
-				 int tcount=0;
-				 while(tcount<xxInv.getRowDimension()){
-					 for(int j=0; j<xxInv.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(xxInv.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-		
-/*************Testing xx ends****************************************************/
-
-
-		
-		
-		
-		
+			
 		
 		
 		
@@ -432,44 +225,7 @@ public class GSEA extends AbstractAlgorithm {
 		aData.addGeneMatrix("lmPerGene-coefficients", beta);
 		aData.addGeneMatrix("lmPerGene-coefvar", coefvar);
 		
-		/****************For testing only*********************************
-		 * This would generate a file containing the Hat Matrix
-		 *
-		 File hatMatrixFile;
-			try {
-				hatMatrixFile = new File("C:/Users/sarita/Desktop/GSEA-TestData/hatMatrix_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(hatMatrixFile)));
-				 int tcount=0;
-				 while(tcount<hMat.getRowDimension()){
-					 for(int j=0; j<hMat.getColumnDimension(); j++){
-					
-					 pw.write(Float.toString(hMat.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*****************************************************************/
-		
+				
 	}
 
 	
@@ -812,42 +568,7 @@ public class GSEA extends AbstractAlgorithm {
 			
 			outM=incidence.times(dataSet);//Check with Asaf if this is right?--It is right
 			
-			/****************For testing only*********************************
-			 * This would generate a file containing the outm Matrix
-			 *
-			 File outmMatrixFile;
-				try {
-					outmMatrixFile = new File("C:/Users/sarita/Desktop/GSEA-TestData/outMatrix_JAVA.txt");
-					 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(outmMatrixFile)));
-					 int tcount=0;
-					 while(tcount<outM.getRowDimension()){
-						 for(int j=0; j<outM.getColumnDimension(); j++){
-						
-						 pw.write(Float.toString(outM.get(tcount, j)));
-						 pw.write('\t');
-						}
-						 pw.write('\n');
-						 tcount=tcount+1;
-					 }
-					 
-					 
-					 pw.close();
-					 
-					 
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-			
-			
-	/*************Testing xx ends****************************************************/
-
-
-			
-			
-			
-			
+					
 			MatrixFunctions MatrixFunc=new MatrixFunctions();
 			rowSums=MatrixFunc.getRowSums(incidence);
 			
@@ -967,67 +688,12 @@ public class GSEA extends AbstractAlgorithm {
 			//Divide the coef_intermediate matrix with sqrtCoefVar matrix
 			FloatMatrix result=coef_intermediate.arrayRightDivide(sqrtCoefVar);
 			
-		/*	File resultFile;
-			try {
-				resultFile= new File("C:/Users/sarita/Desktop/GSEA-TestData/result_JAVA.txt");
-				 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(resultFile)));
-				 int tcount=0;
-				 while(tcount<result.getRowDimension()){
-					 for(int j=0; j<result.getColumnDimension(); j++){
 					
-					 pw.write(Float.toString(result.get(tcount, j)));
-					 pw.write('\t');
-					}
-					 pw.write('\n');
-					 tcount=tcount+1;
-				 }
-				 
-				 
-				 pw.close();
-				 
-				 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-		
-		
-
-			
 			//I have passed the transpose of the result matrix here. The reason being that in the result matrix, the genes are in the
 			//columns, and each row corresponds to (intercept, mainfactor, otherfactors if present)
 			observedStats=GSNormalize(result.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 					GSEAConstants.SQRT, false, null);
-			
-			 
-		/*	 File observedStatsFile;
-				try {
-					observedStatsFile= new File("C:/Users/sarita/Desktop/GSEA-TestData/observedStats_JAVA.txt");
-					 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(observedStatsFile)));
-					 int tcount=0;
-					 while(tcount<observedStats.getRowDimension()){
-						 for(int j=0; j<observedStats.getColumnDimension(); j++){
-						
-						 pw.write(Float.toString(observedStats.get(tcount, j)));
-						 pw.write('\t');
-						}
-						 pw.write('\n');
-						 tcount=tcount+1;
-					 }
-					 
-					 
-					 pw.close();
-					 
-					 
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
-			
-			
-			
-			
-
+		
 		}else{
 			 observedStats=GSNormalize(coefficients.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 					GSEAConstants.IDENTITY_FUNCTION, false, null);
@@ -1116,23 +782,6 @@ public class GSEA extends AbstractAlgorithm {
 			//permutation matrix with rows equal to the number of genes and columns equal to number of permutations
 			FloatMatrix permMat=new FloatMatrix(adata.getGeneMatrix("gene-data-matrix").getRowDimension(), num_perms); 
 			
-			/*Original code---temporarily commented********************************
-			Vector permCols=new Vector();
-			
-			//Generate a vector permCols with each element 
-			for(int i=0;i<amat.getColumnDimension(); i++){
-				permCols.add(i, i);
-			}
-			//Permute the column labels of Association matrix
-			permCols=getPermutedValues(permCols);
-			
-			//Generate Association matrxi with the permuted columns
-			
-			for(int j=0;j<permCols.size();j++){
-				int colNum=((Integer)permCols.get(j)).intValue();
-				permutedAmat.setMatrix(0, permutedAmat.getRowDimension(), j, j, amat.getMatrix(0, amat.getRowDimension(), colNum, colNum));
-				
-			}*******************original code ends******/
 			
 			//For testing#########################################
 			Vector permCols=new Vector();
@@ -1170,33 +819,6 @@ public class GSEA extends AbstractAlgorithm {
 		 */
 		
 		Vector geneSetNames=(Vector)adata.getVector("gene-set-names");
-		File permsMatrixFile;
-	/*	try {
-			permsMatrixFile= new File("C:/Users/sarita/Desktop/GSEA-TestData/permS_JAVA.txt");
-			 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(permsMatrixFile)));
-			 int tcount=0;
-			 while(tcount<perms.getRowDimension()){
-				 pw.write((String)geneSetNames.get(tcount));
-				 pw.write('\t');
-				 for(int j=0; j<perms.getColumnDimension(); j++){
-				
-				 pw.write(Float.toString(perms.get(tcount, j)));
-				 pw.write('\t');
-				}
-				 pw.write('\n');
-				 tcount=tcount+1;
-			 }
-			 
-			 
-			 pw.close();
-			 
-			 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-	
-	
 			
 		String[][]resultMatrix=pValFromPermMat(observedStats, perms, geneSetNames);
 	
@@ -1233,16 +855,6 @@ public class GSEA extends AbstractAlgorithm {
 		FloatMatrix pVals=new FloatMatrix(permMat.getRowDimension(),2, Float.valueOf("NaN"));
 		
 		
-	/*	System.out.println("Printing pVals matrix");
-		for(int i=0; i<pVals.getRowDimension(); i++){
-			for(int j=0; j<pVals.getColumnDimension(); j++){
-				System.out.print(pVals.get(i, j));
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
-		System.out.println("Printing pVals matrix ENDS");*/
-		
 		//tempObs has dimensions equal to permMat
 		FloatMatrix tempObs=new FloatMatrix(permMat.getRowDimension(), permMat.getColumnDimension());
 
@@ -1253,15 +865,6 @@ public class GSEA extends AbstractAlgorithm {
 			tempObs.setMatrix(0, tempObs.getRowDimension()-1, i, i, obsStats);
 		}
 
-	/*	System.out.println("Printing TEMPoBS matrix STARTS");
-		for(int i=0; i<tempObs.getRowDimension(); i++){
-			for(int j=0; j<tempObs.getColumnDimension(); j++){
-				System.out.print(tempObs.get(i, j));
-				System.out.print("\t");
-			}
-			System.out.println();
-		}
-		System.out.println("Printing tempObs matrix ENDS");*/
 		//Dimensions of tempObs are equal to that of perms
 		/**
 		 * This loop does the following:
@@ -1299,20 +902,6 @@ public class GSEA extends AbstractAlgorithm {
 		
 		
 		
-		
-		/*Printing lower and upper row sums
-		System.out.println("printing upper and lower rowsums begins.....");
-		System.out.println("nCols:"+nCols);
-		for(int i=0; i<lower_rowSums.length; i++){
-			
-			System.out.print(lower_rowSums[i]);
-			System.out.print("\t");
-			System.out.print(upper_rowSums[i]);
-			System.out.println();
-			
-			
-		}
-		System.out.println("printing upper and lower rowsums ENDSs.....");*/
 		
 		
 		
@@ -1439,17 +1028,8 @@ public class GSEA extends AbstractAlgorithm {
 		//	System.out.println("size of permuted array before permutation is:"+permutedArray.size());
 			permutedArray=(ArrayList)getPermutedValues(value);
 			//System.out.println("size of permuted array after permutation is:"+permutedArray.size());
-			/*printing the permuted array*/
-			/*System.out.println("Here is the permuted array...");
-			for(int i=0; i<permutedArray.size(); i++){
-				System.out.print(permutedArray.get(i));
-				System.out.print('\t');
-			}
-			System.out.println();/**/
 			
-			
-			
-			//TODO: Generate the int[][]permuted factor array here.
+		
 			/*****Added for testing******/
 		
 			
@@ -1467,14 +1047,7 @@ public class GSEA extends AbstractAlgorithm {
 		
 		permOrder.clear();
 		
-		/*printing the permuted sample order*
-		System.out.println("Here is the permuted sample assignment...");
-		for(int i=0; i<permutedSampleAssignment.length; i++){
-			System.out.print(permutedSampleAssignment[i]);
-			System.out.print('\t');
-		}
-		System.out.println();/**/
-		
+			
 		resultHash.put("original-order", origOrder);
 		resultHash.put("permuted-order", permutedSampleAssignment);
 		
@@ -1483,8 +1056,7 @@ public class GSEA extends AbstractAlgorithm {
 	}
 
 	
-	//FOR TESTING, MAY REPLACE EXISTING FUNCTION, IF WORKS
-	//this will return an arrya of permuted sample numbers. The classification will be maintained
+	
 	public ArrayList getPermutedValues(Vector values){
 		
 		ArrayList permutedValidArray = new ArrayList(values.size());
