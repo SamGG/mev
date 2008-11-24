@@ -90,10 +90,9 @@ public class ProcessGroupAssignments {
 	}
 
 	/**
-	 * generateFactorMatrix is modeled after the R function "model.matrix".
-	 * This generates a matrix with 
-	 * Rows = Number of samples
-	 * Columns = Intercept + Levels of factor1 -1 + Levels of factor2 -1 + ...
+	 * generateFactorMatrix is modeled after the R function "model.matrix". This
+	 * generates a matrix with Rows = Number of samples Columns = Intercept +
+	 * Levels of factor1 -1 + Levels of factor2 -1 + ...
 	 * 
 	 * @param factorNames
 	 * @param factorLevels
@@ -127,8 +126,8 @@ public class ProcessGroupAssignments {
 		for (int i = 0; i < factorNames.length; i++) {
 			int tempcolStart = 0;
 			int tempRowStart = 0;
-			// MeV assigns numbers to factor levels. 
-			//Level==0 is for unassigned samples
+			// MeV assigns numbers to factor levels.
+			// Level==0 is for unassigned samples
 			// The first level of any factor is always considered to be the
 			// intercept, hence level starts with 2
 			int factorlevel = 2;
@@ -193,9 +192,7 @@ public class ProcessGroupAssignments {
 		int[] factorLevels = { 3, 2 };
 		int[][] factorAssignments = { { 3, 1, 2, 1, 2, 3 },
 				{ 1, 2, 1, 2, 2, 0 } };
-		// factorAssignments[0]={3,1,2,1,2,3};
-		// factorAssignments[1]={1,2,1,2,2,3};
-
+		
 		ProcessGroupAssignments pg = new ProcessGroupAssignments(new String[] {
 				"FactorA", "FactorB" }, new int[] { 3, 3 }, factorAssignments,
 				true, 6);
@@ -211,30 +208,7 @@ public class ProcessGroupAssignments {
 			System.out.println();
 		}
 
-		/*
-		 * JFileChooser fileChooser = new JFileChooser(
-		 * SuperExpressionFileLoader.DATA_PATH);
-		 * fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); int retVal =
-		 * fileChooser.showOpenDialog(null); File selectedFile;
-		 * 
-		 * if (retVal == JFileChooser.APPROVE_OPTION) { try{ selectedFile =
-		 * fileChooser.getSelectedFile(); ProcessGroupAssignments rf=new
-		 * ProcessGroupAssignments(selectedFile, true,10 ); //Vector
-		 * p=rf.parseFactorFile(); //FloatMatrix fm=rf.generateFactorMatrix(p,
-		 * true);
-		 * 
-		 * 
-		 * //fm.print(4, 0);
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * }catch(Exception e){ e.printStackTrace(); }
-		 * 
-		 *  }
-		 */
-
+		
 	}
 
 }

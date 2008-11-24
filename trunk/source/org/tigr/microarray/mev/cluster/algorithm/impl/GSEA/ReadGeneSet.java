@@ -296,34 +296,7 @@ public class ReadGeneSet {
 		}
 		bread.close();
 
-		/******************Fore testing gene sets object**********************
-    	try {
-
-    		File genesets_JAVAFile = new File("C:/Users/sarita/Desktop/GSEA-TestData/Genesets_JAVA.txt");
-    		Vector genesetNames=set[0].getAllGenesetNames();
-
-    		PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(genesets_JAVAFile)));
-        	for(int k=0; k<genesetNames.size(); k++){
-        		String set_Name=(String)genesetNames.get(k);
-    			pw.write(set_Name);
-    			pw.write('\t');
-    			for(int j=0; j<set[k].getGenesinGeneset().size(); j++){
-
-    				pw.write((String)set[k].getGenesinGeneset().get(j));
-    				pw.write('\t');
-    			}
-    			pw.write('\n');
-    		}
-        		pw.close();
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-
-
-    	/****************Testing ENDS*******************************/
-
-
+	
 		return set;
 	}
 

@@ -1,5 +1,10 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.ISlideDataElement;
@@ -279,90 +284,7 @@ public class ProbetoGene {
 			gene_data = gdata;
 		}// End of ELSE
 
-		/** ********************* testing BEGINS******************************* */
-		/***********************************************************************
-		 * For testing Write out GeneData to a file File will conatin gene
-		 * identifier followed by tab delimited expression vales(after
-		 * max/median or sd )has been applied
-		 * 
-		 * 
-		 * 
-		 * File GeneDataFile; try { GeneDataFile = new
-		 * File("C:/Users/sarita/Desktop/GSEA-TestData/GeneData.txt");
-		 * PrintWriter pw = new PrintWriter(new BufferedWriter(new
-		 * FileWriter(GeneDataFile))); int tcount=0; while(tcount<unique_genes_in_data.size()){
-		 * gde=(GeneDataElement)gdata[0].getGeneDataElement(tcount); String
-		 * id=gde.getGeneIdentifier(); pw.write(id); pw.write('\t');
-		 * 
-		 * for(int i=0; i<data.getFeaturesCount(); i++){ float
-		 * _temp=gdata[i].getGeneDataElement(tcount).getCurrentIntensity();
-		 * pw.write(Float.toString(_temp)); pw.write('\t'); } pw.write('\n');
-		 * tcount=tcount+1;
-		 *  }
-		 * 
-		 * 
-		 * pw.close();
-		 * 
-		 *  } catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 * 
-		 * 
-		 * 
-		 * /***********************For testing ends
-		 **********************************************************************/
-		/***********************************************************************
-		 * For testing******** File expMatrixFile; try { expMatrixFile = new
-		 * File("C:/Users/sarita/Desktop/GSEA-TestData/JavaMatrix_after_MEDIAN.txt");
-		 * PrintWriter pw = new PrintWriter(new BufferedWriter(new
-		 * FileWriter(expMatrixFile))); int tcount=0; while(tcount<geneDataMatrix.getRowDimension()){
-		 * 
-		 * gde=(GeneDataElement)gene_data[0].getGeneDataElement(tcount); String
-		 * id=gde.getGeneIdentifier();
-		 * 
-		 * 
-		 * pw.write(id); pw.write('\t');
-		 * 
-		 * for(int i=0; i<geneDataMatrix.getColumnDimension(); i++){
-		 * pw.write(((Float)geneDataMatrix.get(tcount, i)).toString());
-		 * pw.write('\t'); } pw.write('\n'); tcount=tcount+1;
-		 *  }
-		 * 
-		 * 
-		 * pw.close();
-		 * 
-		 *  } catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } /**********For testing
-		 **********************************************************************/
-
-		/***********************************************************************
-		 * For testing******** Writes out the true intensity of the probes which
-		 * MeV recorded. Format: Gene ID \t expr(probe1)\t exprs(probe2) Gene
-		 * ID2 \t exprs(probe3)\t
-		 * 
-		 * 
-		 * 
-		 * 
-		 * *** File GeneDataFile; try { GeneDataFile = new
-		 * File("C:/Users/sarita/Desktop/GSEA-TestData/GeneDataMatrix.txt");
-		 * PrintWriter pw = new PrintWriter(new BufferedWriter(new
-		 * FileWriter(GeneDataFile))); int tcount=0; while(tcount<geneDataMatrix.getRowDimension()){
-		 * gde=(GeneDataElement)gene_data[0].getGeneDataElement(tcount); String
-		 * id=gde.getGeneIdentifier(); pw.write(id); pw.write('\t');
-		 * 
-		 * for(int i=0; i<10; i++){
-		 * gde=(GeneDataElement)gene_data[i].getGeneDataElement(tcount); Vector
-		 * intensity=gde.getTrueIntensity(); for(int k=0; k<intensity.size();
-		 * k++){ pw.write(((Float)intensity.get(k)).toString()); pw.write('\t'); }
-		 * pw.write("||"); pw.write('\t'); } pw.write('\n'); tcount=tcount+1;
-		 *  }
-		 * 
-		 * 
-		 * pw.close();
-		 * 
-		 *  } catch (IOException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } /**********For testing
-		 **********************************************************************/
-
+	
 		gseaExperiment = new GSEAExperiment(geneDataMatrix, createColumns(data
 				.getFeaturesCount()));
 		this.aData.addGeneMatrix("gene-data-matrix", geneDataMatrix);
