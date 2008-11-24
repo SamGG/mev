@@ -119,18 +119,17 @@ public class TEASEInitDialog extends AlgorithmDialog{
      * @param annotationLabels Annotation types
      */
     public TEASEInitDialog(Frame parent, String [] annotationLabels, String globalMetricName, 
-    		boolean globalAbsoluteDistance, boolean showDistancePanel, File defaultEaseFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
+    		boolean globalAbsoluteDistance, boolean showDistancePanel, File defaultEaseFileLocation, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays, boolean isAnnotationLoaded) {
         super(parent, "TEASE: TEASE Annotation Analysis", true);
         this.speciesName = speciesName;
         this.arrayName = arrayName;
         this.resourceManager = rm;
         this.speciestoarrays = speciestoarrays;
+        this.useLoadedAnnotationFile = isAnnotationLoaded;
         
         if(defaultEaseFileLocation == null) {
-        	this.useLoadedAnnotationFile = false;
         	defaultEaseFileLocation = new File(TMEV.getSettingForOption(TEASEGUI.LAST_TEASE_FILE_LOCATION));
         } else {
-        	this.useLoadedAnnotationFile = true;
             this.defaultEaseFileLocation = defaultEaseFileLocation;
         }
         if(defaultEaseFileLocation == null || !defaultEaseFileLocation.canRead()) {
@@ -521,7 +520,8 @@ public class TEASEInitDialog extends AlgorithmDialog{
             if(useLoadedAnnotationFile) {
             	preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
             } else {
-                preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", true);
+                preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", false);
+                preloadedAnnotationButton.setEnabled(false);
             }
             preloadedAnnotationButton.setBackground(Color.white);
             preloadedAnnotationButton.setFocusPainted(false);
@@ -1293,18 +1293,27 @@ public class TEASEInitDialog extends AlgorithmDialog{
 				arrayListBox.addItem("No species listed");
 				arrayListBox.setEnabled(false);
 			} else {
-				
-				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
+				if(speciestoarrays.size() > 0) {
+					organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
 	
-				try {
-					organismListBox.setSelectedItem(speciesName);
-				} catch (NullPointerException npe) {/* Leave as default */}
-				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
-				
-				try {
-					arrayListBox.setSelectedItem(arrayName);
-				} catch (NullPointerException npe) {/* Leave as default */}
-				
+					try {
+						organismListBox.setSelectedItem(speciesName);
+					} catch (NullPointerException npe) {
+						organismListBox.setSelectedIndex(0);
+					}
+					
+					if (organismListBox.getSelectedItem() == null) {
+						arrayListBox = new JComboBox();
+					} else {
+						arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+					}
+					try {
+						arrayListBox.setSelectedItem(arrayName);
+					} catch (NullPointerException npe) {
+						arrayListBox.setSelectedIndex(0);
+					}
+				}
+
 				arrayListBox.setEnabled(true); 
 
 			}
@@ -1339,7 +1348,9 @@ public class TEASEInitDialog extends AlgorithmDialog{
 
 		private void onDownloadSupportFile() {
 			try {
-				File f = resourceManager.getSupportFile(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()), true);
+				String species = organismListBox.getSelectedItem().toString();
+				String array = arrayListBox.getSelectedItem().toString();
+				File f = resourceManager.getSupportFile(new EASESupportDataFile(species, array), true);
 				supportFileLocationField.setText(f.getAbsolutePath());
 				getEaseSupportFileButton.setText("Select This");
 				statusLabel.setText("Selected");
@@ -1500,6 +1511,13 @@ public class TEASEInitDialog extends AlgorithmDialog{
                 alphaPanel.validateTrimOptions();
             } else if (command.equals("select-file-base-command")) {
                 configPanel.browseForSupportFiles();
+            } else if (command.equals("organism-selected-command")) {
+		configPanel.selectSpecies();
+		configPanel.updateSelection();
+		} else if (command.equals("array-selected-command")) {
+			configPanel.updateSelection();
+		} else if (command.equals("download-support-file-command")) {
+			configPanel.onDownloadSupportFile();
             } else if (command.equals("ok-command")) {
                 result = JOptionPane.OK_OPTION;
                 if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
