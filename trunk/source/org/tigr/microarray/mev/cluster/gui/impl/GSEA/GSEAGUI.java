@@ -158,8 +158,7 @@ public class GSEAGUI implements IClusterGUI {
 				
 			FloatMatrix amat=rgset.createAssociationMatrix(gene_set, genesInExpressionData, min_genes);
 			algData.addGeneMatrix("association-matrix", amat);
-				
-			
+					
 			
 			//System.out.println("size of excluded gene set is:"+rgset.getExcludedGeneSets().size());
 			Geneset[]geneset=new Geneset[gene_set.length-rgset.getExcludedGeneSets().size()];
@@ -284,9 +283,6 @@ public class GSEAGUI implements IClusterGUI {
 		root.add(node);
 	}
 
-   
-   
-   
    
    
    

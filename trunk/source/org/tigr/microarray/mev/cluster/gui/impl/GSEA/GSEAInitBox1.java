@@ -108,11 +108,11 @@ public class GSEAInitBox1 extends AlgorithmDialog{
 	                    	//okPressed = false;
 	                         //dispose();
 	                        return;
-	                    }else{
-	                    	okPressed = true;
-	                    }
+	                    }//else{
+	                    	//okPressed = true;
+	                    //}
 	                    
-	                  //  okPressed = true;
+	                    okPressed = true;
 	                    dispose();
 	                } catch (NumberFormatException nfe) {
 	                    JOptionPane.showMessageDialog(null, "Invalid number of factors", "Error", JOptionPane.ERROR_MESSAGE);
