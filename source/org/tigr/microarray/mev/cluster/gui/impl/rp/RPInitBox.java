@@ -241,7 +241,7 @@ public class RPInitBox extends AlgorithmDialog {
 	                            clusterSelectorCondition= new ClusterSelector(repository,1, "Samples");
 	                            //clusterSelectorTime= new ClusterSelector(repository,numTimePoints, "Time");
 	                            if (repository!=null){
-	                            	clusterSelectorCondition.setClusterType("Condition");
+	                            	clusterSelectorCondition.setClusterType("Experiment");
 	                            	//clusterSelectorTime.setClusterType("Time Points");
 	                    		}
 	                            JPanel clusterSelectorPanel = new JPanel();
@@ -265,7 +265,7 @@ public class RPInitBox extends AlgorithmDialog {
 	                            
 	                            tabbedmulg.add("Button Selection", mulgPanel);
 	                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
-	                            tabbedmulg.setSelectedIndex(1);
+	                            tabbedmulg.setSelectedIndex(0);//set to always be button selection
 	                            if (repository==null||repository.isEmpty())
 	                            	tabbedmulg.setSelectedIndex(0);
 	                            buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
@@ -429,7 +429,7 @@ public class RPInitBox extends AlgorithmDialog {
             JRadioButton[] notInTimeGroupRadioButtons;
             JRadioButton[][] exptConditionRadioButtons;
             MultiGroupExperimentsPanel(Vector<String> exptNames, int numTimePoints, int conditions) {
-                this.setBorder(new TitledBorder(new EtchedBorder(), "Time/Condition Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+                this.setBorder(new TitledBorder(new EtchedBorder(), "Experiment Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
 
                // JPanel panel1 = new JPanel();
