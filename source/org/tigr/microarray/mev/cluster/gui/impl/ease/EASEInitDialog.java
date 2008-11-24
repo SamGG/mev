@@ -1107,7 +1107,9 @@ public class EASEInitDialog extends AlgorithmDialog {
 
 		private void onDownloadSupportFile() {
 			try {
-				File f = resourceManager.getSupportFile(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()), true);
+				String species = organismListBox.getSelectedItem().toString();
+				String array = arrayListBox.getSelectedItem().toString();
+				File f = resourceManager.getSupportFile(new EASESupportDataFile(species, array), true);
 				supportFileLocationField.setText(f.getAbsolutePath());
 				getEaseSupportFileButton.setText("Select This");
 				statusLabel.setText("Selected");

@@ -239,7 +239,7 @@ public class TEASEGUI implements IClusterGUI {
         		framework.getResourceManager(),
         		speciesName, 
         		chipType, 
-        		speciestoarrays);
+        		speciestoarrays, framework.getData().isAnnotationLoaded());
         
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
