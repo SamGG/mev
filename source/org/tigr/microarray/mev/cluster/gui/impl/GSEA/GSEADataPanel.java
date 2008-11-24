@@ -64,6 +64,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		private javax.swing.JButton groupAssignment;
 		private javax.swing.JLabel emptyLabel;
 		private javax.swing.JLabel assignmentSuccessfulLabel;
+		
 			
 		//Annotation panel
 		private AnnotationDownloadHandler adh;
@@ -92,6 +93,11 @@ import org.tigr.microarray.util.FileLoaderUtility;
 	    protected JFrame parentFrame;
 	    protected ClusterRepository clusterRepository;
 	    private IFramework framework;
+		private GSEAInitBox1 gBox1 = null;
+		private GSEAInitBox2 gBox2=null;
+		private GSEAInitBox3 gBox3=null;
+	
+	
 	    
 	    
 	    /** Creates new form DataPanel 
@@ -110,7 +116,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			this.clusterRepository=clusterRepository;
 			this.framework=framework;
 			
-	        initComponents();
+		    initComponents();
 	        initialize("./data/Annotation/"+this.idata.getChipAnnotation().getChipType()+".txt",idata.isAnnotationLoaded(),
 	        		"<html> You have already loaded annotations, so please continue with selecting the rest of the parameters</html>");
 	    }
@@ -299,15 +305,11 @@ import org.tigr.microarray.util.FileLoaderUtility;
 		int number_of_samples=experiment.getNumberOfSamples();
 		
 	
-		GSEAInitBox1 gBox1 = new GSEAInitBox1(new JFrame(), null,true);
-		GSEAInitBox2 gBox2=null;
-		GSEAInitBox3 gBox3=null;
-		gBox1.setVisible(true);
 		int[][]assignments=null;
-
-		
+	
 		
 		if(gBox1.isOkPressed()){
+			
 			gBox2 = new GSEAInitBox2(new JFrame(), true,Integer.parseInt(gBox1.getNumberofFactors()));
 			gBox2.setVisible(true);
 
@@ -388,7 +390,7 @@ import org.tigr.microarray.util.FileLoaderUtility;
 
 /**
  * Downloads gene set files from the MIT ftp site.
- * @TO DO: The delay in getting the supportfile dialog box is way too long. No intermittent msg and hence confusing
+ * 
  * 
  * 
  */
@@ -462,7 +464,11 @@ import org.tigr.microarray.util.FileLoaderUtility;
 			if (source == browseButton2) {
 				onButtonClick(source);
 			} else if (source == groupAssignment) {
-				getGroupAssignment();
+				gBox1=new GSEAInitBox1(new JFrame(), null,true);
+				gBox1.setVisible(true);
+				if(gBox1.isOkPressed()){
+					getGroupAssignment();
+				}
 
 			} else if (source == DownloadButton) {
 				Thread thread = new Thread(new Runnable() {

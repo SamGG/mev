@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAConstants;
@@ -712,6 +713,14 @@ public class ReadGeneSet {
 			}
 			index=index+1;
 		}
+		
+		if(_tempgeneset.size()==rowSize){
+			String eMsg="<html> None of the genes in the gene set that you supplied, match the genes in the expression data. <br>"+
+					"<html> One of the things to check for would be if the expression data and gene set contain genes from the <br>"+
+					"<html>same organism. Sorry, you cannot proceed with the analysis </br></html>";
+			JOptionPane.showMessageDialog(new JFrame(),eMsg , "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
 		//aMatrix may have lesser rows, depending on whether all gene sets have minimum number of genes as user specified.
 		aMatrix=new FloatMatrix(rowSize-_tempgeneset.size(), colSize);
 		index=0;
