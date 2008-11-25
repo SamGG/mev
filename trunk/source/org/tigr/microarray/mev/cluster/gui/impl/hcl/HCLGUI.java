@@ -95,7 +95,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             }
             AlgorithmData samples_result = null;
             if (dialog.isClusterExperiments()) {
-                progress.setTitle("Clustering by Examples");
+                progress.setTitle("Clustering by Samples");
                 data.addParam("calculate-genes", String.valueOf(false));
                 data.addParam("optimize-sample-ordering", String.valueOf(false));
                 if (dialog.isSampleOrdering()){
