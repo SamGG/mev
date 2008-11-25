@@ -1184,7 +1184,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 							JOptionPane.ERROR_MESSAGE);
 					defaultFileBaseLocation.grabFocus();
 					defaultFileBaseLocation.selectAll();
-					defaultFileBaseLocation.setCaretPosition(0);
+					//defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
@@ -1344,6 +1344,18 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 		    	
 				// Validate if selected options have supporting file(s)
 				String fileBase = configPanel.getBaseFileLocation();
+				
+				if(fileBase.contains(" ")){
+					JOptionPane.showMessageDialog(parent, 
+							"Spaces are not allowed in Path. \n Selected a different location", 
+							"BN Initialization: Illegal Char in Path", 
+							JOptionPane.ERROR_MESSAGE);
+					configPanel.defaultFileBaseLocation.grabFocus();
+					configPanel.defaultFileBaseLocation.selectAll();
+					//configPanel.defaultFileBaseLocation.setCaretPosition(0);
+					return;
+				}
+				
 				if(isLit()){
 					//Check if Lit File(s) exist
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {
