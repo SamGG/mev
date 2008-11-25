@@ -323,8 +323,9 @@ public class CentroidViewer extends JPanel implements IViewer {
         if(useDoubleGradient) {
         	maximum = value < midValue ? this.minValue : this.maxValue;
 			colorIndex = (int) (255 * (value-midValue) / (maximum - midValue));
+			if(colorIndex<0)
+				colorIndex=-colorIndex;
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			colorIndex = colorIndex < 0   ? 0 : colorIndex;
 			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
