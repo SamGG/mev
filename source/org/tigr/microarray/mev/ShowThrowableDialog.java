@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import javax.swing.AbstractButton;
@@ -37,6 +38,8 @@ import javax.swing.JToggleButton;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 public class ShowThrowableDialog extends JDialog {
 
@@ -238,7 +241,11 @@ public class ShowThrowableDialog extends JDialog {
      * @param args
      */
     public static void main(String[] args) {
-    	ShowThrowableDialog.show(new JFrame(), "Test ShowThrowableDialog", new Exception("First line is really really really really really really really really really really really really really really really really really really really really really really really really really long."));
+	    IOException ioe = new IOException();
+	    SupportFileAccessError sfae = new SupportFileAccessError("testing, testing", ioe);
+	    	ShowThrowableDialog.show(new JFrame(), "Test ShowThrowableDialog", new Exception("First line is really really really really really really really really really really really really really really really really really really really really really really really really really long."));
+	    	ShowThrowableDialog.show(new JFrame(), "Test ShowThrowableDialog", sfae);
+	    	ShowThrowableDialog.show(new JFrame(), "Test ShowThrowableDialog", true, 1, sfae, "friendlymessage");
     	System.exit(0);
     }
 }

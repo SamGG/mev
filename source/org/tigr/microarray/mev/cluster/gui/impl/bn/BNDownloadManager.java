@@ -468,6 +468,7 @@ public class BNDownloadManager {
 	private class ProgressListener extends DialogListener implements WindowListener, FtpObserver {
 		private int maxProgress = 0;
 		private int currProgress = 0;
+		private boolean isStopped = false;
 
 		public void setMax(int max) {
 			maxProgress = 0;
@@ -481,11 +482,13 @@ public class BNDownloadManager {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if (command.equals("cancel-command")) {                
+				isStopped = true;
 				progress.dispose();                
 			}
 		}
 
 		public void windowClosing(WindowEvent e) {
+			isStopped = true;
 			progress.dispose();
 		}
 		/* (non-Javadoc)
@@ -506,6 +509,9 @@ public class BNDownloadManager {
 			if( progress != null)
 				progress.setValue(bytes);			
 		}        
+		public boolean isStopped() {
+			return isStopped;
+		}
 	}
 
 

@@ -48,6 +48,9 @@ public abstract class FileDownloader {
 	public void destroy() {
 		disconnect();
 	}
+	public boolean wasCancelled() {
+		return progress.wasCancelled;
+	}
 	/**
 	 * The class to listen to the dialog.
 	 */
@@ -55,22 +58,17 @@ public abstract class FileDownloader {
 
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
-//			System.out.println("command: " + command);
-//			new Exception().printStackTrace();
 
 			if (command.equals("cancel-command")) {
 				progress.wasCancelled = true;
-				System.out.println("Cancelling...");
+//				System.out.println("FileDownloader$DownloadProgressListener Cancelling...");
 				result = JOptionPane.CANCEL_OPTION;
 				progress.dispose();
-//				thisFrame.dispose();
 			}
 			if (command.equals("window-close-command")) {
 				progress.wasCancelled = true;
-				System.out.println("Cancelling...");
 				result = JOptionPane.CANCEL_OPTION;
 				progress.dispose();
-//				thisFrame.dispose();
 			}
 		}
 
@@ -79,7 +77,6 @@ public abstract class FileDownloader {
 			result = JOptionPane.CANCEL_OPTION;
 			System.out.println("closing window");
 			progress.dispose();
-//			thisFrame.dispose();
 		}
 	}
 }
