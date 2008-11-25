@@ -137,7 +137,8 @@ public class BNGUI implements IClusterGUI {
 				throw new Exception("Error in mapping Unique identifiers to Accession");
 			}
 		} catch(Exception e) {
-			JOptionPane.showMessageDialog(framework.getFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
+			//JOptionPane.showMessageDialog(framework.getFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 			LMGUI.done = false;
 			pgPanel.dispose();
 			return null;

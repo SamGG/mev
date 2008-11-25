@@ -551,6 +551,10 @@ public class Useful {
 			// TODO Raktim - Associate AffyID with Acc Ids ?
 			for (int i = 0; i < accList.length; i++) {
 				accList[i] = (String)accHash.get((String)probeId[i].trim());
+				if (accList[i] == null) {
+					System.out.println((String)probeId[i].trim() + " could not be mapped");
+					throw new Exception((String)probeId[i].trim() + " could not be mapped");
+				}
 				// Also Stores probe IDs and cluster indices assoc for creating gaggle Network
 				// E.g.:- NM_23456 to 1-Afy_X1234 where 1 is the probe index
 				probeIndexAssocHash.put(accList[i], new Integer(rows[i]).toString()+"-"+probeId[i]);
@@ -573,7 +577,7 @@ public class Useful {
 			System.out.println("Error Useful.converter()");
 			throw e;
 		} catch (Exception e) {
-			System.out.println("Error Useful.converter()");
+			//System.out.println("Error Useful.converter()");
 			throw e;
 		}
 	}

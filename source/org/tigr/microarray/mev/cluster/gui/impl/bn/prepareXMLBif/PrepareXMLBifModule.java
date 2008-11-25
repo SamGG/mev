@@ -176,8 +176,8 @@ public class PrepareXMLBifModule {
 			String gbGOsFileName = path+props.getProperty(BNConstants.GB_GO_FILE_NAME, null); //"gbGOsFileName"
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 			long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
-			System.out.println("test()" + namesFileName);
-			System.out.println("test()" + sifFileName);
+			System.out.println("test(): namesFileName " + namesFileName);
+			System.out.println("test(): sifFileName " + sifFileName);
 			Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			if(useGO){

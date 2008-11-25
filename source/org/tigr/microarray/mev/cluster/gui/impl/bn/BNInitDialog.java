@@ -1376,6 +1376,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
 				String dir = chooser.getSelectedFile().getAbsolutePath().trim();
+				
 				if(dir.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
 							"Spaces are not allowed in Path. \n Selected a different location", 
@@ -1383,9 +1384,10 @@ public class BNInitDialog extends AlgorithmDialog {
 							JOptionPane.ERROR_MESSAGE);
 					defaultFileBaseLocation.grabFocus();
 					defaultFileBaseLocation.selectAll();
-					defaultFileBaseLocation.setCaretPosition(0);
+					//defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
+				
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
 				//TMEV.setDataPath(defaultFileBaseLocation.getText());
 				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
@@ -1555,6 +1557,18 @@ public class BNInitDialog extends AlgorithmDialog {
 				
 				// Validate if selected options have supporting file(s)
 				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
+				
+				if(fileBase.contains(" ")){
+					JOptionPane.showMessageDialog(parent, 
+							"Spaces are not allowed in Path. \n Selected a different location", 
+							"BN Initialization: Illegal Char in Path", 
+							JOptionPane.ERROR_MESSAGE);
+					configPanel.defaultFileBaseLocation.grabFocus();
+					configPanel.defaultFileBaseLocation.selectAll();
+					//configPanel.defaultFileBaseLocation.setCaretPosition(0);
+					return;
+				}
+				
 				if(isLit()){
 					//Check if Lit File(s) exist
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {
@@ -1693,7 +1707,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						tabbedPane.setSelectedIndex(0);
 						popPanel.popField.grabFocus();
 						popPanel.popField.selectAll();
-						popPanel.popField.setCaretPosition(0);
+						//popPanel.popField.setCaretPosition(0);
 						return;
 					}
 				}
