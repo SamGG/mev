@@ -1,4 +1,4 @@
-<project name="mev" default="build-all" basedir="./">
+<project name="mev_11_11" default="build-all" basedir="./">
     
     <description>
        
@@ -1210,7 +1210,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<entry key="gui.names" value="GSEA:" operation="+"/>
 	            <entry key="GSEA.name" value="GSEA"/>
 	            <entry key="GSEA.class" value="org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAGUI"/>
-		  	<entry key="GSEA.category" value="${STATISTICS}"/> 
+		  	<entry key="GSEA.category" value="${META_ANALYSIS}"/> 
 		  	<entry key="GSEA.smallIcon" value="analysis16.gif"/>
 	            <entry key="GSEA.largeIcon" value="gsealogo.jpg"/>
 	            <entry key="GSEA.tooltip" value="Gene set enrichment analysis"/>
