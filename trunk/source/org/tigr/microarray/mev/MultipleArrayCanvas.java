@@ -419,8 +419,9 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         if(useDoubleGradient) {
         	maximum = value < midRatio ? this.minRatio : this.maxRatio;
 			colorIndex = (int) (255 * (value-midRatio) /  (maximum - midRatio));
+			if(colorIndex<0)
+				colorIndex=-colorIndex;
 			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			colorIndex = colorIndex < 0   ? 0 : colorIndex;
 			rgb = value < midRatio ? negColorImage.getRGB(255 - colorIndex, 0)
 					: posColorImage.getRGB(colorIndex, 0);
         } else {
