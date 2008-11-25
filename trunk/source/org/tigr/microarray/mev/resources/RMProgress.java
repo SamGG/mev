@@ -37,7 +37,6 @@ public class RMProgress extends Progress implements SftpProgressMonitor, FtpObse
 		setValue(new Long(this.count).intValue());
 		update(getGraphics());
 		if (wasCancelled) {
-			System.out.println("Cancelling...");
 			return false;
 		}
 		return true;
@@ -76,5 +75,8 @@ public class RMProgress extends Progress implements SftpProgressMonitor, FtpObse
 	
 	public void byteWrite(int arg0) {
 		count(new Long(arg0));
+	}
+	public boolean isStopped() {
+		return wasCancelled;
 	}
 }

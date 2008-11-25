@@ -103,7 +103,10 @@ public class FileResourceManager implements IResourceManager {
 	public File getSupportFile(ISupportFileDefinition def, boolean getOnline) throws SupportFileAccessError {
 		Vector<ISupportFileDefinition> v = new Vector<ISupportFileDefinition>();
 		v.add(def);
-		return getSupportFiles(v, getOnline).get(def);
+		File f = getSupportFiles(v, getOnline).get(def);
+		if(f == null)
+			throw new SupportFileAccessError("Unable to download support file.");
+		return f;
 	}
 	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError {
 		boolean getOnlineFlag = getOnline;
@@ -247,6 +250,9 @@ public class FileResourceManager implements IResourceManager {
 						Date lastModifiedDate = fd.getLastModifiedDate(thisDefURL.getPath());
 						if(cachedDateForThisDef == null || roundedCompare(cachedDateForThisDef, lastModifiedDate)) {
 							File f = fd.getTempFile(thisDefURL.getPath());
+							if(fd.wasCancelled()) {
+								f = null;
+							}
 							if(f != null && f.exists()) {
 								File finalFile = validateAndCopyToRepository(f, thisDef, lastModifiedDate);
 								if (finalFile != null)

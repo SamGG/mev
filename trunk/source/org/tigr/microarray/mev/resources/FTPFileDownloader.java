@@ -75,8 +75,7 @@ public class FTPFileDownloader extends FileDownloader {
 			ftp.ftpConnect(hostURL.getHost(), "anonymous");
 			if(progress!=null){
 				if(progress.wasCancelled)  {
-					IOException sfae = new IOException("Connection was cancelled by user.");
-					throw sfae;
+					return false;
 				}
 			}
 		} catch (FtpException ftpe) {
@@ -197,31 +196,29 @@ public class FTPFileDownloader extends FileDownloader {
 		File newFile = null;
 		try {
 			overallLength = getSize(path);
-
-			
-			
-			
+			progress = new RMProgress(new Frame(), "Downloading " + url.getPath(), new DownloadProgressListener());
 			
 			Thread thread = new Thread(new Runnable() {
 				public void run() {
 					try {
 						try{
 							Thread.sleep(500);
-						}catch(Exception e){
+						} catch(Exception e) {
 								e.printStackTrace();
 						}
 						if (disposeProgress2){
 							return;
 						}
-						progress = new RMProgress(new Frame(), "Downloading " + url.getPath(), new DownloadProgressListener());
 						progress.setModal(true);
 						progress.setAlwaysOnTop(true);
 						progress.init(SftpProgressMonitor.GET, url.toString(), "??", new Long(overallLength).longValue());
 
 					} catch (Exception ioe) {
-						ioe.printStackTrace();
+//						ioe.printStackTrace();
+						
 					}
 				}
+				
 			});
 
 			thread.setPriority(Thread.MAX_PRIORITY);
