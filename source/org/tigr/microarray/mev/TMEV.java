@@ -45,6 +45,7 @@ import org.tigr.microarray.mev.resources.ExpressionDataSupportDataFile;
 import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.util.ConfMap;
 import org.tigr.util.StringSplitter;
 import org.tigr.util.awt.ImageScreen;
@@ -198,10 +199,11 @@ public class TMEV {
                 manager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());              
             }
 
-			if(so.getDataFile() != null && so.getFileType() != null) {
-				boolean isMultifile = so.getFileType().isMultifile();
+		if(so.getDataFile() != null && so.getFileType() != null) {
+			boolean isMultifile = so.getFileType().isMultifile();
 
-				ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
+			ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
+			try {
 				File file = resourceManager.getSupportFile(def, true);
 	
 				if (file != null) {
@@ -212,9 +214,14 @@ public class TMEV {
 							"Empty Download", JOptionPane.INFORMATION_MESSAGE);
 					Manager.createNewMultipleArrayViewer();
 				}
-			} else {
-            Manager.createNewMultipleArrayViewer();
+			} catch (SupportFileAccessError sfae) {
+				ShowThrowableDialog.show(new JFrame(), "Error downloading data file", false, 0, sfae, "Unable to download the requested data file. Please check your internet connection and try again.");
+
+			            Manager.createNewMultipleArrayViewer();
 			}
+		} else {
+			Manager.createNewMultipleArrayViewer();
+		}
 
 		} catch (Exception e) {
 			ShowThrowableDialog.show(new JFrame(), "Error downloading file", false, e);
