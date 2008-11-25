@@ -1239,7 +1239,20 @@ public class EASEInitDialog extends AlgorithmDialog {
 			} else if (command.equals("array-selected-command")) {
 				configPanel.updateSelection();
 			} else if (command.equals("download-support-file-command")) {
-				configPanel.onDownloadSupportFile();
+				Thread thread = new Thread(new Runnable() {
+					public void run() {
+						try {
+							configPanel.onDownloadSupportFile();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+				});
+
+				thread.setPriority(Thread.MIN_PRIORITY);
+				thread.start();
+				
 			} else if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
 				if (isClusterModeSelected() && popPanel.fileButton.isSelected()) {
