@@ -552,8 +552,8 @@ public class Useful {
 			for (int i = 0; i < accList.length; i++) {
 				accList[i] = (String)accHash.get((String)probeId[i].trim());
 				if (accList[i] == null) {
-					System.out.println((String)probeId[i].trim() + " could not be mapped");
-					throw new Exception((String)probeId[i].trim() + " could not be mapped");
+					System.out.println("UID " + (String)probeId[i].trim() + " could not be mapped");
+					throw new Exception("UID " + (String)probeId[i].trim() + " could not be mapped");
 				}
 				// Also Stores probe IDs and cluster indices assoc for creating gaggle Network
 				// E.g.:- NM_23456 to 1-Afy_X1234 where 1 is the probe index
