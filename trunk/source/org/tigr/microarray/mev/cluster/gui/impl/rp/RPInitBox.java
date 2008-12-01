@@ -52,7 +52,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JSeparator;
 
-import org.tigr.microarray.mev.cluster.gui.impl.BETR.BETRInitBox;
+import org.tigr.microarray.mev.cluster.gui.impl.betr.BETRInitBox;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;

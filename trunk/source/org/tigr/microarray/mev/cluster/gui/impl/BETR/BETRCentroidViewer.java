@@ -12,7 +12,7 @@
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.BETR;
+package org.tigr.microarray.mev.cluster.gui.impl.betr;
 
 import java.awt.Frame;
 import java.beans.Expression;

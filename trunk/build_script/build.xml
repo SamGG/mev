@@ -1,4 +1,4 @@
-<project name="mev_11_11" default="build-all" basedir="./">
+<project name="mev" default="build-all" basedir="./">
     
     <description>
        
@@ -1239,13 +1239,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
     <target name="BETR-GUI">
-        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/BETR" destdir="${dest.dir}">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/betr" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
 		<entry key="gui.names" value="BETR:" operation="+"/>
             <entry key="BETR.name" value="BETR"/>
-            <entry key="BETR.class" value="org.tigr.microarray.mev.cluster.gui.impl.BETR.BETRGUI"/>
+            <entry key="BETR.class" value="org.tigr.microarray.mev.cluster.gui.impl.betr.BETRGUI"/>
 	  	<entry key="BETR.category" value="${STATISTICS}"/> 
 	  	<entry key="BETR.smallIcon" value="analysis16.gif"/>
             <entry key="BETR.largeIcon" value="BETR_button.gif"/>
@@ -1886,9 +1886,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
 		<delete file="${package.dir}/${mev_version.dir}/TMEV.bat"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
-		<!-- 	
+			
 		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
-	 -->
+		<!-- 
 			<zip destfile="${package.dir}/MeV_${version}_mac.zip"
 				basedir="${package.dir}"
 				encoding="UTF-8"
@@ -1896,7 +1896,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<include name="${mev_version.dir}/**"/>
 				<exclude name=".svn"/>
 			</zip>
-		
+		-->
 		
 		<!-- Build WebStart distribution -->
 	</target>
