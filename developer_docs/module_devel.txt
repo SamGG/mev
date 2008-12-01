@@ -1,4 +1,5 @@
 Module Creation
+Each module generally has a long name (eg, One-way Anova) and a shorter acronym, (OWA). The module is generally referred to by this short acronym, and the acronym is used as the algorithm class name and its package name. Generally, the class name for the main Algorithm implementation should be all caps, (OWA.java) whereas the packages should be lowercase (org.tigr.microarray.mev.cluster.algorithm.impl.owa.* and org.tigr.microarray.mev.cluster.gui.owa.*)
 
 Algorithm:
 source\org\tigr\microarray\mev\cluster\algorithm\impl\**.java
@@ -72,3 +73,13 @@ and
 source\org\tigr\images
 
 button icon is a gif 32 pixels x 32 pixels
+
+State-saving
+
+If the module uses only the standard viewers to display its results, no state-saving work need be done. If the module includes custom viewers, however, please consult the state-saving documentation for information on how to ensure that the new viewer will save and load completely.
+
+Documentation
+
+There should be a section of the MeV user manual for each module. It should describe what the module does and how to use it. Include plenty of screenshots. 
+
+If there is a paper reference for the module, add it to the MeV manual in the References section at the end and in the manual section devoted to the module. Also add the reference to the MeV page on the TM4 website. Also write a short description of the module to be included in the release notes when the new module is released with MeV.  
