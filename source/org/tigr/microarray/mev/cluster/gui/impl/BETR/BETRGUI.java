@@ -11,7 +11,7 @@
  * $Author: eleanorahowe $
  * $State: Exp $
  */
-package org.tigr.microarray.mev.cluster.gui.impl.BETR;
+package org.tigr.microarray.mev.cluster.gui.impl.betr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
