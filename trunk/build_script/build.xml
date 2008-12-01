@@ -1212,7 +1212,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	            <entry key="GSEA.class" value="org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAGUI"/>
 		  	<entry key="GSEA.category" value="${META_ANALYSIS}"/> 
 		  	<entry key="GSEA.smallIcon" value="analysis16.gif"/>
-	            <entry key="GSEA.largeIcon" value="gsealogo.jpg"/>
+	            <entry key="GSEA.largeIcon" value="gsealogo.gif"/>
 	            <entry key="GSEA.tooltip" value="Gene set enrichment analysis"/>
 	        </propertyfile>
 	    </target>
