@@ -84,7 +84,6 @@ public class RPExperimentViewer extends ExperimentViewer {
 	 */
 	public Expression getExpression(){
 
-        System.out.println("on the right track 1");
 		Object[] parentExpressionArgs = super.getExpression().getArguments();
 		Object[] temp2 = new Object[parentExpressionArgs.length + 9];
 		int i=0;
@@ -101,7 +100,6 @@ public class RPExperimentViewer extends ExperimentViewer {
 		temp2[++i] = dfNumValues;
 		temp2[++i] = dfDenomValues;
 
-        System.out.println("on the right track 2");
 		return new Expression(this, this.getClass(), "new", temp2);
 	}
 
