@@ -1,55 +1,32 @@
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Hashtable;
 import java.util.Vector;
 
-
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.GeneAnnotationImportDialog;
-import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
-import org.tigr.microarray.mev.annotation.AnnotationFileReader;
-import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.GeneData;
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.GeneSetElement;
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.Geneset;
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.ProbetoGene;
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.ReadGeneSet;
-
-import org.tigr.microarray.mev.cluster.algorithm.impl.GSEA.ProcessGroupAssignments;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneData;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.Geneset;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ProbetoGene;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ReadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-
-
-import org.tigr.microarray.mev.cluster.gui.impl.nonpar.NonparConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.nonpar.NonparExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.util.MatrixFunctions;
-
 import org.tigr.util.FloatMatrix;
 
 public class GSEAGUI implements IClusterGUI {
@@ -130,7 +107,7 @@ public class GSEAGUI implements IClusterGUI {
 			
 			gseaExperiment=ptg.returnGSEAExperiment();
 			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
-			System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
+//			System.out.println("Number of unique genes in data set:"+genesInExpressionData.size());
 			
 			//Second step is to read the Gene Set file itself. Once this is done, the gene sets will have to be further
 			//processed to remove the genes, which are present in the gene set but NOT in GeneData (expressiondata). 

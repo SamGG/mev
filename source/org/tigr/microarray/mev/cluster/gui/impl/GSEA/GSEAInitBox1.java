@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAInitBox2.EventListener;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAInitBox2.EventListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 public class GSEAInitBox1 extends AlgorithmDialog{
 	 

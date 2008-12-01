@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
+package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +12,7 @@ import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
 import org.tigr.util.FloatMatrix;
 
 /**

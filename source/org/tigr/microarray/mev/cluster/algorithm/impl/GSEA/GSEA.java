@@ -1,6 +1,6 @@
 
 
-package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
+package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,10 +22,7 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAInitBox2;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAInitBox1;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAInitBox3;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.util.MatrixFunctions;
 import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.util.FloatMatrix;
@@ -217,7 +214,7 @@ public class GSEA extends AbstractAlgorithm {
 
 		int[]margin={2};
 		//	varbeta=apply(varbeta, margin, varr, GSEAConstants.APPLY_DEFAULT );
-		FloatMatrix temp=apply(varbeta, margin, varr, GSEAConstants.APPLY_DEFAULT );
+		FloatMatrix temp=apply(varbeta, margin, varr, org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.APPLY_DEFAULT );
 		//FloatMatrix coefvar=varbeta.transpose();
 		FloatMatrix coefvar=temp.transpose();
 		//Add to AlgorithmData
@@ -434,7 +431,7 @@ public class GSEA extends AbstractAlgorithm {
 		
 		FloatMatrix tempMatrix=new FloatMatrix(matrix.getRowDimension(), matrix.getColumnDimension());
 		if(margin.length==1&&margin[0] ==2){
-			if(function.equalsIgnoreCase(GSEAConstants.APPLY_DEFAULT)){
+			if(function.equalsIgnoreCase(org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.APPLY_DEFAULT)){
 				for(int col=0;col<matrix.getColumnDimension();col++){
 					for(int row=0;row<matrix.getRowDimension();row++){
 						float temp=(matrix.get(row, col))*varr[row];
@@ -506,7 +503,7 @@ public class GSEA extends AbstractAlgorithm {
 				 * DIVIDE is the default function as of now. If we need to accomodate any other function (eg minus,sqrt etc)
 				 * add a constant to GSEAConstants and implement the function here.
 				 */
-				if(function.equalsIgnoreCase(GSEAConstants.DIVIDE_FUNCTION)){
+				if(function.equalsIgnoreCase(org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.DIVIDE_FUNCTION)){
 					float val1=matrix.get(row, col);
 					float val2=((Float)stats.get(row)).floatValue();
 					val1=val1/val2;
@@ -557,7 +554,7 @@ public class GSEA extends AbstractAlgorithm {
 		}
 		
 		//Default GSEA implementation
-		if(GSEAfun.equalsIgnoreCase(GSEAConstants.CROSS_PROD)&&func1.equalsIgnoreCase(GSEAConstants.DIVIDE_FUNCTION)
+		if(GSEAfun.equalsIgnoreCase(org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.CROSS_PROD)&&func1.equalsIgnoreCase(GSEAConstants.DIVIDE_FUNCTION)
 				&& func2.equalsIgnoreCase(GSEAConstants.SQRT)){
 			rowSums=new Vector();
 			sqrtVector=new Vector();
