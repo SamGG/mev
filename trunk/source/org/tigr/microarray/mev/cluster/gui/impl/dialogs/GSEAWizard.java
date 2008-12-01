@@ -30,8 +30,8 @@ import javax.swing.text.Highlighter;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEAConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.ProcessDisplayPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.ProcessDisplayPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 

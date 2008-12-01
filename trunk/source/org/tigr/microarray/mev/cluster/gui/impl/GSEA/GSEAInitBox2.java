@@ -8,7 +8,7 @@ All rights reserved.
  * Created on February 11, 2004, 12:20 PM
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.Color;
 import java.awt.Dimension;

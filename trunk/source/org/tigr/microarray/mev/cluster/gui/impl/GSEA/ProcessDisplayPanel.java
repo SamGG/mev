@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.Color;
 import java.awt.GradientPaint;

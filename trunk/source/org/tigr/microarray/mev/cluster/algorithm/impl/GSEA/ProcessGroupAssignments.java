@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.algorithm.impl.GSEA;
+package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
 import java.util.Hashtable;
 import java.util.Vector;

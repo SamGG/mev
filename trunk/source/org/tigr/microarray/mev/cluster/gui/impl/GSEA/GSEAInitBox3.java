@@ -8,7 +8,7 @@ All rights reserved.
  * Created on February 12, 2004, 4:15 PM
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -77,7 +77,7 @@ public class GSEAInitBox3 extends AlgorithmDialog {
         this.factorNames = factorNames;
         this.numFactorLevels = numFactorLevels;
         clusterSelector = new ClusterSelector[num_factors];
-        System.out.println("repository null? "+repository.isEmpty());
+//        System.out.println("repository null? "+repository.isEmpty());
         for (int i=0; i<num_factors; i++){
         	clusterSelector[i]=new ClusterSelector(repository, numFactorLevels[i]);
         }

@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;

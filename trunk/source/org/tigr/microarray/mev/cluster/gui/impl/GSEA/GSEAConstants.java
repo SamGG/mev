@@ -1,4 +1,4 @@
-package org.tigr.microarray.mev.cluster.gui.impl.GSEA;
+package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 public class GSEAConstants {
 	

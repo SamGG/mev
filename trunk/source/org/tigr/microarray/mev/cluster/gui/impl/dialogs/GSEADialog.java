@@ -42,7 +42,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.GSEA.GSEADataPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEADataPanel;
 
 public class GSEADialog extends JDialog {
     
