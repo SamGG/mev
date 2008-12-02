@@ -144,15 +144,16 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 		// Gene set panel
 		genesetPanel = new javax.swing.JPanel();
-		downloadGenesetLabel = new javax.swing.JLabel();
 		downloadStatusLabel = new javax.swing.JLabel();
+		//Commented till the BROAD Licensing problem gets solved
+	/*	downloadGenesetLabel = new javax.swing.JLabel();
 		genesetPanelEmptyLabel = new javax.swing.JLabel();
 
 		DownloadButton = new javax.swing.JButton();
 		DownloadButton.setBorder(BorderFactory
 				.createBevelBorder(BevelBorder.RAISED));
 		DownloadButton.setPreferredSize(new Dimension(90, 30));
-		DownloadButton.addActionListener(new Listener());
+		DownloadButton.addActionListener(new Listener());*/
 
 		geneSetTextField = new javax.swing.JTextField();
 		geneSetTextField.setEditable(false);
@@ -187,21 +188,22 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 		// Gene set panel layout
 		genesetPanel.setLayout(new GridBagLayout());
 		genesetPanel.setBorder(new TitledBorder(new EtchedBorder(), "Geneset"));
-		downloadGenesetLabel
+		//Commented till the BROAD Licensing problem is solved
+		/*downloadGenesetLabel
 				.setText("Download gene sets from the Broad-MIT FTP site");
-		DownloadButton.setText("Download");
+		DownloadButton.setText("Download");*/
 		uploadGeneSetLabel.setText("Upload Geneset");
 		browseButton2.setText("Browse");
 
 		gba.add(genesetPanel, downloadStatusLabel, 0, 0, 2, 1, 0, 0, GBA.H,
 				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-		gba.add(genesetPanel, downloadGenesetLabel, 0, 1, 2, 1, 0, 0, GBA.H,
+	/*	gba.add(genesetPanel, downloadGenesetLabel, 0, 1, 2, 1, 0, 0, GBA.H,
 				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		gba.add(genesetPanel, genesetPanelEmptyLabel, 1, 1, 1, 1, 0, 0, GBA.H,
 				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		gba.add(genesetPanel, DownloadButton, 2, 1, GBA.RELATIVE, 1, 0, 0,
-				GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+				GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);*/
 
 		gba.add(genesetPanel, uploadGeneSetLabel, 0, 3, 1, 1, 0, 0, GBA.H,
 				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
@@ -377,7 +379,7 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 	 * 
 	 * 
 	 * 
-	 */
+	 *
 
 	public void onGeneSetDownload() {
 
@@ -406,7 +408,7 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 			sfae.printStackTrace();
 		}
 
-	}
+	}*/
 
 	/**
 	 * processAnnotationFile() function 
@@ -456,7 +458,7 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 					getGroupAssignment();
 				}
 
-			} else if (source == DownloadButton) {
+			}/* else if (source == DownloadButton) {
 				Thread thread = new Thread(new Runnable() {
 					public void run() {
 						try {
@@ -470,7 +472,7 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 				thread.setPriority(Thread.MIN_PRIORITY);
 				thread.start();
-			} else if (event.getActionCommand().equals(
+			}*/ else if (event.getActionCommand().equals(
 					AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
 				processAnnotationFile();
 				//				adh.setDownloadEnabled(false);
