@@ -60,6 +60,7 @@ import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AffymetrixAnnotationParser;
 import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
@@ -173,10 +174,23 @@ public class Mas5FileLoader extends ExpressionFileLoader {
          * 
          */
         if(isAnnotationSelected()) {
+        	
         	this.mav.getData().setAnnotationLoaded(true);
-        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
-        	_tempAnno = afr.getAffyAnnotation();
-        	chipAnno = afr.getAffyChipAnnotation();    
+			File annoFile=new File(getAnnotationFilePath());
+			String extension=(annoFile.getName()).substring((annoFile.getName()).lastIndexOf('.')+1, annoFile.getName().length());
+			
+			if(annoFile.getName().endsWith("annot.csv")){
+				//System.out.println("Ends with annot.csv");
+				AffymetrixAnnotationParser aafp = AffymetrixAnnotationParser.createAnnotationFileParser(new File(getAnnotationFilePath()));
+				_tempAnno = aafp.getAffyAnnotation();
+				//chipAnno = aafp.getAffyChipAnnotation();
+			}
+				
+			if(extension.equalsIgnoreCase("txt")){
+			AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
+			_tempAnno = afr.getAffyAnnotation();
+			chipAnno = afr.getAffyChipAnnotation();
+			}    
         }
         
      
