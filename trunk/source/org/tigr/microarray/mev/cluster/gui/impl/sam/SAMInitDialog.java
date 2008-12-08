@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -53,6 +54,9 @@ import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -66,6 +70,9 @@ public class SAMInitDialog extends AlgorithmDialog {
  
     ImageIcon forwardImage, backImage; 
     JTabbedPane tabPane;
+    JTabbedPane unpairedTab;
+    JTabbedPane oneClassTab;
+    JTextField oneClassClusterMean;
     GroupExperimentsPanel gPanel;
     TwoClassPairedMainPanel tcpmPanel;
     MultiClassPanel mPanel;
@@ -77,7 +84,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     OKCancelPanel oPanel;
     final int fileLoadMin=20;
     boolean okPressed = false, allUniquePermsUsed = false;
-    Vector exptNames;
+    Vector<String> exptNames;
     int numGenes, numUniquePerms;
     HCLSigOnlyPanel hclOpsPanel;
     boolean lotsOfSamples = false;
@@ -93,15 +100,22 @@ public class SAMInitDialog extends AlgorithmDialog {
     public static final int MULTI_CLASS = 6;
     public static final int CENSORED_SURVIVAL = 7;
     public static final int ONE_CLASS = 8;    
+    public static final int BUTTON_SELECTION = 9;
+    public static final int CLUSTER_SELECTION = 10;
+    protected ClusterSelector unpairedSelector;
+    protected ClusterSelector oneClassSelector;
+    protected ClusterSelector multiClassSelector;
+    protected ClusterRepository repository;
     
     /** Creates new SAMInitDialog */
-    public SAMInitDialog(JFrame parentFrame, boolean modality, Vector exptNames, int numGenes) {
+    public SAMInitDialog(JFrame parentFrame, boolean modality, Vector<String> exptNames, int numGenes, ClusterRepository repository) {
         
         super(parentFrame, "SAM Initialization", modality);
         //this.parentFrame = parentFrame;
         this.exptNames = exptNames;
         this.numGenes = numGenes;
         this.numUniquePerms = 0;
+        this.repository = repository;
         setBounds(0, 0, 700, 800);
         setBackground(Color.white);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -122,17 +136,50 @@ public class SAMInitDialog extends AlgorithmDialog {
         javax.swing.UIManager.put("TabbedPane.selected", Color.white);
         tabPane = new JTabbedPane();
         gPanel = new GroupExperimentsPanel(exptNames);
+        unpairedSelector = new ClusterSelector(repository, 2);
+        unpairedTab = new JTabbedPane();
+        unpairedTab.add("Button Selection", gPanel);
+        unpairedTab.add("Cluster Selection",unpairedSelector);
         
-        tabPane.add("Two-class unpaired", gPanel);
+        
+        tabPane.add("Two-class unpaired", unpairedTab);
         tcpmPanel = new TwoClassPairedMainPanel();
+
+        
+        
         tabPane.add("Two-class paired", tcpmPanel);
         mPanel = new MultiClassPanel(/*exptNames*/);
         tabPane.add("Multi-class", mPanel);
         
         csPanel = new CensoredSurvivalPanel(exptNames);
         tabPane.add("Censored survival", csPanel);
+        
+        
+        JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
+        JPanel oneClassPanel = new JPanel();
+        oneClassPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        oneClassClusterMean = new JTextField("0", 7);
+        oneClassClusterMean.setSize(15, oneClassClusterMean.getHeight());
+        oneClassSelector = new ClusterSelector(repository, 1);
+        oneClassPanel.add(meanLabel,c);
+        c.gridx = 1;
+        oneClassPanel.add(oneClassClusterMean,c);
+        c.weighty =1;
+        c.weightx = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.anchor = GridBagConstraints.PAGE_END;
+        oneClassPanel.add(oneClassSelector,c);
         oneCPanel = new OneClassPanel();
-        tabPane.add("One-Class", oneCPanel);
+        oneClassTab = new JTabbedPane();
+        oneClassTab.add("Button Selection", oneCPanel);
+        oneClassTab.add("Cluster Selection", oneClassPanel);
+        tabPane.add("One-Class", oneClassTab);
    
         buildConstraints(constraints, 0, 0, 1, 1, 100, 75);
         
@@ -200,7 +247,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         JRadioButton[] groupARadioButtons, groupBRadioButtons, neitherGroupRadioButtons;
         JLabel lotsOfSamplesWarningLabel;
      
-       GroupExperimentsPanel(Vector exptNames) {
+       GroupExperimentsPanel(Vector<String> exptNames) {
             this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
             JPanel panel1 = new JPanel();
@@ -352,7 +399,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             //System.out.println(line);
                             StringSplitter st = new StringSplitter('\t');
                             st.init(line);
-                            Vector groupsVector = new Vector();
+                            Vector<Integer> groupsVector = new Vector<Integer>();
                             while (st.hasMoreTokens()) {
                                 String current = st.nextToken();
                                 groupsVector.add(new Integer(current));
@@ -432,7 +479,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         int numPanels = 0;
         JLabel lotsOfSamplesWarningLabel;
         
-        CensoredSurvivalPanel(Vector exptNames) {
+        CensoredSurvivalPanel(Vector<String> exptNames) {
             this.setBorder(new TitledBorder(new EtchedBorder(), "Time / State Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
             setBackground(Color.white);
            // JPanel panel1 = new JPanel();
@@ -597,7 +644,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             FileReader file = new FileReader(fc.getSelectedFile());
                             BufferedReader buff = new BufferedReader(file);
                             String currentLine;
-                            Vector inputVector = new Vector();
+                            Vector<String> inputVector = new Vector<String>();
                             //System.out.println(line);
                             //StringSplitter st = new StringSplitter('\t');
                             while((currentLine = buff.readLine()) != null) {
@@ -754,7 +801,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         
         private double[] getCurrentSettings(String currentLine) {
             double[] currentSettings;
-            Vector currentVector = new Vector();
+            Vector<Double> currentVector = new Vector<Double>();
             StringSplitter st = new StringSplitter('\t');
             st.init(currentLine);
             
@@ -906,7 +953,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                             //System.out.println(line);
                             StringSplitter st = new StringSplitter('\t');
                             st.init(line);  
-                            Vector includeExptsVector = new Vector();
+                            Vector<Integer> includeExptsVector = new Vector<Integer>();
                             while (st.hasMoreTokens()) {
                                 String current = st.nextToken();
                                 includeExptsVector.add(new Integer(current));
@@ -1121,7 +1168,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         DefaultListModel pairedListModel;
         boolean currentAFilled, currentBFilled;
         int currentAExpt, currentBExpt;
-        Vector pairedAExpts, pairedBExpts;
+        Vector<Integer> pairedAExpts, pairedBExpts;
       
         public TwoClassPairedPanel() {
             currentAExpt = -1;
@@ -1129,8 +1176,8 @@ public class SAMInitDialog extends AlgorithmDialog {
             int numPanels = 0;
             currentAFilled = false;
             currentBFilled = false;
-            pairedAExpts = new Vector();
-            pairedBExpts = new Vector();
+            pairedAExpts = new Vector<Integer>();
+            pairedBExpts = new Vector<Integer>();
             constraints = new GridBagConstraints();
             gridbag = new GridBagLayout();
             //this.setBackground(Color.white);
@@ -1445,6 +1492,7 @@ public class SAMInitDialog extends AlgorithmDialog {
         GridBagConstraints constraints;
         GridBagLayout gridbag;
         JPanel dummyPanel;
+        JTabbedPane multiClassTab;
         MultiGroupExperimentsPanel mulgPanel;
         int numGroups;
         //Vector exptNames;				
@@ -1466,15 +1514,22 @@ public class SAMInitDialog extends AlgorithmDialog {
                     try {
                         numGroups = Integer.parseInt(ngPanel.numGroupsField.getText());
                         if (numGroups <= 2) {
-                            JOptionPane.showMessageDialog(null, "Please enter a positive integer >= 2!", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Please enter a positive integer > 2!", "Error", JOptionPane.ERROR_MESSAGE);
                         } else {
+                        	multiClassTab = new JTabbedPane();
                             mulgPanel = new MultiGroupExperimentsPanel(exptNames, numGroups);
-                            buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
-                            constraints.fill = GridBagConstraints.BOTH;
-                            gridbag.setConstraints(mulgPanel, constraints);
+                            
                             //dummyButton.setVisible(true);
                             MultiClassPanel.this.remove(dummyPanel);
-                            MultiClassPanel.this.add(mulgPanel);
+                            multiClassTab.add("Button Selection", mulgPanel);
+                            multiClassSelector = new ClusterSelector(repository, numGroups);
+                            buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
+                            constraints.fill = GridBagConstraints.BOTH;
+                            gridbag.setConstraints(multiClassTab, constraints);
+                            multiClassTab.add("Cluster Selection", multiClassSelector);
+                            
+                            MultiClassPanel.this.add(multiClassTab);
+                            //MultiClassPanel.this.add(mulgPanel);
                             //MultiClassPanel.this.add(dummyButton);
                             MultiClassPanel.this.validate();
                             ngPanel.okButton.setEnabled(false);
@@ -1579,7 +1634,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             JRadioButton[] notInGroupRadioButtons;
             int numPanels = 0;
             JLabel lotsOfSamplesWarningLabel;
-            MultiGroupExperimentsPanel(Vector exptNames, int numGroups) {
+            MultiGroupExperimentsPanel(Vector<String> exptNames, int numGroups) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Group Assignments"));
                 setBackground(Color.white);
                // JPanel panel1 = new JPanel();
@@ -1762,7 +1817,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                                 //System.out.println(line);
                                 StringSplitter st = new StringSplitter('\t');
                                 st.init(line);
-                                Vector groupsVector = new Vector();
+                                Vector<Integer> groupsVector = new Vector<Integer>();
                                 while (st.hasMoreTokens()) {
                                     String current = st.nextToken();
                                     groupsVector.add(new Integer(current));
@@ -2121,13 +2176,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                             JOptionPane.showMessageDialog(null, "Number of permutations must be > 0", "Error", JOptionPane.WARNING_MESSAGE);
                         } */else {
                             try {
-                                int numCombs = 0;
-                                //if (!useAllCombs()) {
-                                numCombs = getUserNumCombs();
+                                getUserNumCombs();
                                 //}
-                                int numNeibs = 0;
+                                
                                 if (useKNearest()) {
-                                    numNeibs = getNumNeighbors();
+                                    getNumNeighbors();
                                 }
                                 okPressed = true;
                                 dispose();
@@ -2177,13 +2230,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                         
                         if (!tooFew) {
                             try {
-                                int numCombs = 0;
-                                //if (!useAllCombs()) {
-                                numCombs = getUserNumCombs();
+                                getUserNumCombs();
                                 //}
-                                int numNeibs = 0;
+                                
                                 if (useKNearest()) {
-                                    numNeibs = getNumNeighbors();
+                                    getNumNeighbors();
                                 }
                                 okPressed = true;
                                 dispose();
@@ -2208,13 +2259,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                                     previousTime = d;
                                 }
                             }
-                            int numCombs = 0;
-                            //if (!useAllCombs()) {
-                            numCombs = getUserNumCombs();
+                            getUserNumCombs();
                             //}
-                            int numNeibs = 0;
+                            
                             if (useKNearest()) {
-                                numNeibs = getNumNeighbors();
+                                getNumNeighbors();
                             }
                             if (selectedCounter < 2) {
                                 JOptionPane.showMessageDialog(null, "At least 2 samples must be selected!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2260,7 +2309,20 @@ public class SAMInitDialog extends AlgorithmDialog {
             this.add(cancelButton);
         }
     }
-    
+    public int getTestDesign() {
+    	int testDesign = SAMInitDialog.BUTTON_SELECTION;
+    	if (tabPane.getSelectedIndex() == 0) {
+            if (unpairedTab.getSelectedIndex()==1)
+            	testDesign = SAMInitDialog.CLUSTER_SELECTION;
+    	}else if (tabPane.getSelectedIndex() == 2) {
+            if (mPanel.multiClassTab.getSelectedIndex()==1)
+            	testDesign = SAMInitDialog.CLUSTER_SELECTION;
+    	}else if (tabPane.getSelectedIndex() == 4) {
+            if (oneClassTab.getSelectedIndex()==1)
+            	testDesign = SAMInitDialog.CLUSTER_SELECTION;
+    	}
+    	return testDesign;
+    }
     
     public int getStudyDesign() {
         int studyDesign = TWO_CLASS_UNPAIRED;
@@ -2281,34 +2343,127 @@ public class SAMInitDialog extends AlgorithmDialog {
     public int[] getGroupAssignments() {
         int[] groupAssignments = new int[exptNames.size()];
         if (getStudyDesign() == TWO_CLASS_UNPAIRED) {
-            for (int i = 0; i < exptNames.size(); i++) {
-                if (gPanel.groupARadioButtons[i].isSelected()) {
-                    groupAssignments[i] = GROUP_A;
-                } else if (gPanel.groupBRadioButtons[i].isSelected()) {
-                    groupAssignments[i] = GROUP_B;
-                } else {
-                    groupAssignments[i] = NEITHER_GROUP;
-                }
-            }
+        	if (getTestDesign()==CLUSTER_SELECTION){
+        		groupAssignments = getUnpairedClusterGroupAssignments();
+        	}else{
+	            for (int i = 0; i < exptNames.size(); i++) {
+	                if (gPanel.groupARadioButtons[i].isSelected()) {
+	                    groupAssignments[i] = GROUP_A;
+	                } else if (gPanel.groupBRadioButtons[i].isSelected()) {
+	                    groupAssignments[i] = GROUP_B;
+	                } else {
+	                    groupAssignments[i] = NEITHER_GROUP;
+	                }
+	            }
+        	}
         } else if (getStudyDesign() == MULTI_CLASS) { //  THAT "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
-            for (int i = 0; i < exptNames.size(); i++) {
-                if (mPanel.mulgPanel.notInGroupRadioButtons[i].isSelected()) {
-                    groupAssignments[i] = 0;
-                } else {
-                    for (int j = 0; j < mPanel.mulgPanel.exptGroupRadioButtons.length; j++) {
-                        if (mPanel.mulgPanel.exptGroupRadioButtons[j][i].isSelected()) {
-                            groupAssignments[i] = j + 1;
-                            break;
-                        }
-                    }
-                }
+        	if (getTestDesign()==CLUSTER_SELECTION){
+        		groupAssignments = getMultiGroupClusterAssignments();
+            }else{
+	        	for (int i = 0; i < exptNames.size(); i++) {
+	                if (mPanel.mulgPanel.notInGroupRadioButtons[i].isSelected()) {
+	                    groupAssignments[i] = 0;
+	                } else {
+	                    for (int j = 0; j < mPanel.mulgPanel.exptGroupRadioButtons.length; j++) {
+	                        if (mPanel.mulgPanel.exptGroupRadioButtons[j][i].isSelected()) {
+	                            groupAssignments[i] = j + 1;
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
             }
         } else if (getStudyDesign() == ONE_CLASS) {
-            return getOneClassAssignments();
+        	if (getTestDesign()==CLUSTER_SELECTION){
+        		return getOneClassClusterAssignments();
+        	}else{
+        		return getOneClassAssignments();
+        	}
         }
         
         return groupAssignments;
     }
+    
+    
+    
+    
+    
+    
+    
+    public int[] getUnpairedClusterGroupAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList<Integer> groupAsamps = unpairedSelector.getGroupSamples("Group "+1);
+    	ArrayList<Integer> groupBsamps = unpairedSelector.getGroupSamples("Group "+2);
+    	int toWhich = 0;
+    	boolean chosen = false;
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = NEITHER_GROUP;
+    		if (groupAsamps.contains(i)){
+    			groupAssignments[i] = GROUP_A;
+    			doubleAssigned = true;
+    		} 
+    		if (groupBsamps.contains(i)){
+    			groupAssignments[i] = GROUP_B;
+    			if (doubleAssigned){
+    				if (!chosen){
+	    		        Object[] optionst = { "GROUP 1", "GROUP 2", "NEITHER", "CANCEL" };
+	    				int option = JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Which group should these samples be added to?", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				
+	    		        if (option==0) groupAssignments[i] = GROUP_A;
+	    		        if (option==1) groupAssignments[i] = GROUP_B;
+	    		        if (option==2) groupAssignments[i] = NEITHER_GROUP;
+	    		        if (option==3) return null;
+	    		        toWhich=groupAssignments[i];
+	    		        chosen = true;
+    				} else {
+    					groupAssignments[i]=toWhich;
+    				}
+    			}
+    		}
+        }
+    	return groupAssignments;
+    }
+    
+    public int[] getMultiGroupClusterAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
+    	for (int i=0; i<mPanel.numGroups; i++){
+    		int j = i+1;
+    		arraylistArray[i] = multiClassSelector.getGroupSamples("Group "+j);
+    		
+    	}
+    	for (int i=0; i<arraylistArray[0].size();i++){
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<mPanel.numGroups;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
+    
+    
     
     public int[] getOneClassAssignments() {
         int[] oneClassAssignments = new int[oneCPanel.includeExpts.length];
@@ -2322,9 +2477,27 @@ public class SAMInitDialog extends AlgorithmDialog {
         }
         
         return oneClassAssignments;
-    }    
+    }
+    public int[] getOneClassClusterAssignments(){
+    	ArrayList<Integer> groupAsamps = oneClassSelector.getGroupSamples("Group "+1);
+    	int[] groupAssignments = new int[exptNames.size()];
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		groupAssignments[i] = 0;
+    		if (groupAsamps.contains(i)){
+    			groupAssignments[i] = 1;
+    		} 
+    	}
+    	
+    	return groupAssignments;
+    }
+    
+    
+    
     
     public double getOneClassMean() {
+    	if (getTestDesign()==CLUSTER_SELECTION){
+    		return Double.parseDouble(oneClassClusterMean.getText());
+    	}
         return Double.parseDouble(oneCPanel.meanField.getText());
     }    
     
@@ -2334,7 +2507,12 @@ public class SAMInitDialog extends AlgorithmDialog {
     
     public int getNumValidOneClassExpts() {
         int validNum = 0;
-        int[] oca = getOneClassAssignments();
+        int[] oca;
+        if (getTestDesign()==BUTTON_SELECTION){
+        	oca = getOneClassAssignments();
+        }else{
+        	oca = getOneClassClusterAssignments();
+        }
         
         for (int i =0; i < oca.length; i++) {
             if (oca[i] == 1) {
@@ -2406,11 +2584,11 @@ public class SAMInitDialog extends AlgorithmDialog {
         return censored;
     }
     
-    public Vector getPairedAExpts() {
+    public Vector<Integer> getPairedAExpts() {
         return tcpmPanel.tcpPanel.pairedAExpts;
     }
     
-    public Vector getPairedBExpts() {
+    public Vector<Integer> getPairedBExpts() {
         return tcpmPanel.tcpPanel.pairedBExpts;
     }
     
@@ -2423,17 +2601,17 @@ public class SAMInitDialog extends AlgorithmDialog {
         }
     }
     
-    private int getNumCombs(int n, int k) { // nCk
-        
-        /*
-        System.out.println("n = " + n);
-        System.out.println("k = " + k);
-        System.out.println("Numerator: factorial(n) = " + factorial(n));
-        System.out.println("factorial(k) = " + factorial(k));
-        System.out.println("factorial(n-k) = " + factorial(n-k));
-         */
-        return Math.round(factorial(n)/(factorial(k)*factorial(n-k)));
-    }
+//    private int getNumCombs(int n, int k) { // nCk
+//        
+//        /*
+//        System.out.println("n = " + n);
+//        System.out.println("k = " + k);
+//        System.out.println("Numerator: factorial(n) = " + factorial(n));
+//        System.out.println("factorial(k) = " + factorial(k));
+//        System.out.println("factorial(n-k) = " + factorial(n-k));
+//         */
+//        return Math.round(factorial(n)/(factorial(k)*factorial(n-k)));
+//    }
     
     public int getNumNeighbors() {
         String s = iPanel.numNeighborsField.getText();
@@ -2517,6 +2695,10 @@ public class SAMInitDialog extends AlgorithmDialog {
         public void actionPerformed(ActionEvent ae){
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
+            	if ((getTestDesign()==CLUSTER_SELECTION)&&(repository.isEmpty())){
+            		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
+            		return;
+            	}
                 try {
                     if (sqPanel.s0EntryButton.isSelected()) {
                         double d = Double.parseDouble(sqPanel.s0EntryField.getText());
@@ -2531,13 +2713,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                 }
                 
                 try {
-                    int numCombs = 0;
-                    //if (!useAllCombs()) {
-                    numCombs = getUserNumCombs();
+                    getUserNumCombs();
                     //}
-                    int numNeibs = 0;
+                    
                     if (useKNearest()) {
-                        numNeibs = getNumNeighbors();
+                        getNumNeighbors();
                     }                  
                     
                 } catch (NumberFormatException nfe) {
@@ -2546,7 +2726,13 @@ public class SAMInitDialog extends AlgorithmDialog {
                 }
                 if (getStudyDesign() == SAMInitDialog.TWO_CLASS_UNPAIRED) {
                     // if (evt.getSource() == okButton) {
-                    int[] grpAssignments = getGroupAssignments();
+                    int[] grpAssignments;
+                	if (getTestDesign()==SAMInitDialog.BUTTON_SELECTION){
+                		grpAssignments = getGroupAssignments();
+                	}else{
+                		grpAssignments = getUnpairedClusterGroupAssignments();
+                	}
+                	
                     int grpACounter = 0;
                     int grpBCounter = 0;
                     for (int i = 0; i < grpAssignments.length; i++) {
@@ -2569,9 +2755,9 @@ public class SAMInitDialog extends AlgorithmDialog {
                                 //if (!useAllCombs()) {
                                 numCombs = getUserNumCombs();
                                 //}
-                                int numNeibs = 0;
+                                
                                 if (useKNearest()) {
-                                    numNeibs = getNumNeighbors();
+                                    getNumNeighbors();
                                 }
                                  
                                 if ((grpACounter + grpBCounter) <= 20) {
@@ -2646,13 +2832,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                     
                     if (!tooFew) {
                         try {
-                            int numCombs = 0;
-                            //if (!useAllCombs()) {
-                            numCombs = getUserNumCombs();
+                            getUserNumCombs();
                             //}
-                            int numNeibs = 0;
+                            
                             if (useKNearest()) {
-                                numNeibs = getNumNeighbors();
+                                getNumNeighbors();
                             }
                             okPressed = true;
                             javax.swing.UIManager.put("TabbedPane.selected", Color.lightGray);
@@ -2684,9 +2868,9 @@ public class SAMInitDialog extends AlgorithmDialog {
                         //if (!useAllCombs()) {
                         numCombs = getUserNumCombs();
                         //}
-                        int numNeibs = 0;
+                        
                         if (useKNearest()) {
-                            numNeibs = getNumNeighbors();
+                            getNumNeighbors();
                         }
                         if (selectedCounter < 2) {
                             JOptionPane.showMessageDialog(null, "At least 2 samples must be selected!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2708,7 +2892,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                     }
                 } else if (getStudyDesign() == SAMInitDialog.ONE_CLASS) {
                     try {
-                        double ocm = getOneClassMean();
+                        getOneClassMean();
                         if (getNumValidOneClassExpts() < 2) {
                             JOptionPane.showMessageDialog(null, "At least 2 samples must be selected for one-class test!", "Error", JOptionPane.ERROR_MESSAGE);                            
                         } else {
@@ -2752,7 +2936,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                 if(help.getWindowContent()){
                     help.setSize(500,650);
                     help.setLocation();
-                    help.show();
+                    help.setVisible(true);
                     return;
                 }
             }
@@ -2768,11 +2952,11 @@ public class SAMInitDialog extends AlgorithmDialog {
     public static void main(String[] args) {
         
         JFrame dummyFrame = new JFrame();
-        Vector dummyVect = new Vector();
+        Vector<String> dummyVect = new Vector<String>();
         for (int i = 0; i < 100; i++) {
             dummyVect.add("Expt " + i);
         }
-        SAMInitDialog sDialog = new SAMInitDialog(dummyFrame, true, dummyVect, 5);
+        SAMInitDialog sDialog = new SAMInitDialog(dummyFrame, true, dummyVect, 5, null);
         sDialog.setVisible(true);
         System.exit(0);
         
