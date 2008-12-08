@@ -180,6 +180,9 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableSearchDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -3872,7 +3875,29 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         if(features.length > 0)
             addHistory(features[0].getSize()+" genes loaded.");
+
+        DefaultMutableTreeNode experViewer = new DefaultMutableTreeNode();
+        experViewer.setUserObject(new LeafInfo("Expression Image", new ExperimentViewer(framework)));
+        
+        CentroidViewer centroidViewer = new CentroidViewer(framework);
+        
+        IViewer tabViewer = new ClusterTableViewer(framework);
+        
+        
+        
+        mainViewerNode.add(experViewer);
+        mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VARIANCES_MODE))));
+        mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VALUES_MODE))));
+        mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Table Views", tabViewer, new Integer(0))));
+        //int[] rows = {1,2};
+        //tree.setSelectionRows(rows);
+        tree.setSelectionRow(1);
+        tree.updateUI();
+        tree.repaint();
     }
+    
+    
+    
     
     
     

@@ -83,8 +83,13 @@ public class ClusterTableViewer implements IViewer {
     private JMenuItem urlMenuItem;
     private int exptID = 0;
     
-
-
+    /** DJS Main View Table Constructor
+     * 
+     */
+    public ClusterTableViewer(IFramework framework){
+    	this(framework.getData().getExperiment(),defGenesOrder(framework.getData().getExperiment().getNumberOfGenes()), framework.getData());
+    }
+    
     public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
         this(experiment, clusters, data, new String[0], new Object[0][0]);
     }
@@ -160,6 +165,15 @@ public class ClusterTableViewer implements IViewer {
 	this.popup = createJPopupMenu(listener);
         clusterTable.addMouseListener(listener);
     }    
+    
+    //DJS creates clusters if parameter is null.  For Main View Table.
+    private static int[][] defGenesOrder(int size) {
+        int[][] order = new int[1][size];
+        for (int i=0; i<order[0].length; i++) {
+            order[0][i] = i;
+        }
+        return order;
+    }
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
