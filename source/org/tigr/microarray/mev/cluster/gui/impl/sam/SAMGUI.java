@@ -177,7 +177,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 
             } else {
                 usePreviousGraph = false;
-                sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes);
+                sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
                 sDialog.setVisible(true);
                 
                 if (!sDialog.isOkPressed()) {
@@ -212,7 +212,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                     oneClassMean = (float)(sDialog.getOneClassMean());
                     SAMState.oneClassMean = (double)oneClassMean;
                 }
+                
                 groupAssignments = sDialog.getGroupAssignments();
+                
                 SAMState.groupAssignments = groupAssignments;
                 //boolean useAllCombs = sDialog.useAllCombs();
                 //if (!useAllCombs) {
@@ -250,7 +252,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
         } else { //if (SAMState.firstRun)
             usePreviousGraph = false;
-            sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes);
+            sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
             sDialog.setVisible(true);
             
             if (!sDialog.isOkPressed()) {
@@ -286,6 +288,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 SAMState.oneClassMean = (double)oneClassMean;
             }
             groupAssignments = sDialog.getGroupAssignments();
+            
             SAMState.groupAssignments = groupAssignments;
             //boolean useAllCombs = sDialog.useAllCombs();
             //if (!useAllCombs) {
@@ -1133,7 +1136,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         //Always launch as first run
         
         usePreviousGraph = false;
-        sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes);
+        sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
         sDialog.setVisible(true);
         
         if (!sDialog.isOkPressed()) {
@@ -1181,6 +1184,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             SAMState.oneClassMean = (double)oneClassMean;
         }
         groupAssignments = sDialog.getGroupAssignments();
+        
         SAMState.groupAssignments = groupAssignments;
         //boolean useAllCombs = sDialog.useAllCombs();
         //if (!useAllCombs) {
