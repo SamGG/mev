@@ -674,6 +674,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(dataFilterIcon);
                 } else if(text.equals("Original Data")){
                     setIcon(mainViewIcon);
+                } else if(text.equals("Experiment Viewer")){
+                    setIcon(mainViewIcon);
                 } /* CGH Icons */ else if(text.equals("Chromosome Views")){
                     setIcon(chrViewIcon);
                 } else if(text.equals("Chromosome 1") | text.equals("Chromosome 2") | text.equals("Chromosome 3")

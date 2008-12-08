@@ -155,8 +155,15 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public ExperimentViewer(Experiment experiment, int[][] clusters) {
         this(experiment, clusters, true);
+        
     }
-    
+    /**
+     * Creates a Main View for original data once loaded
+     * @param framework
+     */
+    public ExperimentViewer(IFramework framework){
+    	this(framework.getData().getExperiment(), null);
+    }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
      * experiment, clusters and draw annotations attribute.
@@ -188,9 +195,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
      * @param drawAnnotations true if this viewer must draw annotations.
      */
     public ExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
-        if (experiment == null) {
-            throw new IllegalArgumentException("experiment == null");
-        }
+//        if (experiment == null) {
+//            throw new IllegalArgumentException("experiment == null");
+//        }
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
@@ -1467,6 +1474,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
             if (!isLegalPosition(startRow, startColumn)) {
                 return;
             }
+            if (event.isShiftDown())
+            	return;
             inDrag = true;
 
             dragColumn = startColumn;
@@ -1630,10 +1639,12 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	    
 	    public void mouseReleased(MouseEvent event) {
 	        maybeShowPopup(event);
+	        repaint();
 	    }
 	    
 	    public void mousePressed(MouseEvent event) {
 	        maybeShowPopup(event);
+	        repaint();
 	    }
 	    
 	    private void maybeShowPopup(MouseEvent e) {

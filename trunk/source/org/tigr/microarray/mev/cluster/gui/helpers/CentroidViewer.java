@@ -43,6 +43,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
+import org.tigr.util.FloatMatrix;
 
 
 public class CentroidViewer extends JPanel implements IViewer {
@@ -174,6 +175,88 @@ public class CentroidViewer extends JPanel implements IViewer {
     	PopupListener listener = new PopupListener();
     	this.popup = createJPopupMenu(listener);
     	getContentComponent().addMouseListener(listener);
+    }
+    
+    /**
+     * Constructs a <code>CentroidViewer</code> for specified
+     * experiment and clusters.
+     *
+     * @param experiment the data of an experiment.
+     */
+    public CentroidViewer(IFramework framework) {
+        this(framework.getData().getExperiment(), defGenesOrder(framework.getData().getExperiment().getNumberOfGenes()));
+        this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+    }
+    
+    //DJS creates clusters if parameter is null.  For Main View Centroid.
+    private static int[][] defGenesOrder(int size) {
+        int[][] order = new int[1][size];
+        for (int i=0; i<order[0].length; i++) {
+            order[0][i] = i;
+        }
+        return order;
+    }
+    
+    private FloatMatrix getMeans(int[][] clusters) {
+    	FloatMatrix means = new FloatMatrix(clusters.length, experiment.getNumberOfSamples());
+    	FloatMatrix mean;
+    	for (int i=0; i<clusters.length; i++) {
+    	    mean = getMean(clusters[i]);
+    	    means.A[i] = mean.A[0];
+    	}
+    	return means;
+        }
+    private FloatMatrix getMean(int[] cluster) {
+    	FloatMatrix mean = new FloatMatrix(1, experiment.getNumberOfSamples());
+    	float currentMean;
+    	int n = cluster.length;
+    	int denom = 0;
+    	float value;
+    	for (int i=0; i<experiment.getNumberOfSamples(); i++) {
+    	    currentMean = 0f;
+    	    denom = 0;
+    	    for (int j=0; j<n; j++) {
+    		value = experiment.get(((Integer) cluster[j]).intValue(), i);
+    		if (!Float.isNaN(value)) {
+    		    currentMean += value;
+    		    denom++;
+    		}
+    	    }
+    	    mean.set(0, i, currentMean/(float)denom);
+    	}
+
+    	return mean;
+    }
+    private FloatMatrix getVariances(int[][] clusters, FloatMatrix means) {
+    	final int rows = means.getRowDimension();
+    	final int columns = means.getColumnDimension();
+    	FloatMatrix variances = new FloatMatrix(rows, columns);
+    	for (int row=0; row<rows; row++) {
+    	    for (int column=0; column<columns; column++) {
+    		variances.set(row, column, getSampleVariance(clusters[row], column, means.get(row, column)));
+    	    }
+    	}
+    	return variances;
+    }
+    int validN;
+    private float getSampleVariance(int[] cluster, int column, float mean) {
+    	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
+    	
+    }  
+    private float getSampleNormalizedSum(int[] cluster, int column, float mean) {
+    	final int size = cluster.length;
+    	float sum = 0f;
+    	float value;
+    	validN = 0;
+    	for (int i=0; i<size; i++) {
+    	    value = experiment.get(((Integer) cluster[i]).intValue(), column);
+    	    if (!Float.isNaN(value)) {
+    		sum += Math.pow(value-mean, 2);
+    		validN++;
+    	    }
+    	}
+    	return sum;
     }
     
     //EH begin state-saving additions
@@ -528,6 +611,7 @@ public class CentroidViewer extends JPanel implements IViewer {
             // draw variances
             g.setColor(bColor);
             for (int i=0; i<numberOfSamples; i++) {
+            	
                 if(Float.isNaN(this.means[this.clusterIndex][i]) || Float.isNaN(this.variances[this.clusterIndex][i]) || (this.variances[this.clusterIndex][i] < 0.0f)) {
                     continue;
                 }

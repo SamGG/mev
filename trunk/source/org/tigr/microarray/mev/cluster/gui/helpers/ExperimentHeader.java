@@ -25,9 +25,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -36,8 +33,6 @@ import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
-import org.tigr.microarray.mev.cluster.clusterUtil.*;
 
 /**
  * This class is used to render header of an experiment.
@@ -50,7 +45,6 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     private static final int COLOR_BAR_HEIGHT = 15;
     private Experiment experiment;
     private IData data;
-    private IViewer iviewer;
     private int[] samplesOrder;
     private int[][] clusters;
     private static ArrayList<Color> storedGeneColors;
@@ -79,15 +73,22 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     public boolean clickedCell = false;
     private boolean isDrag = false;
     private boolean headerDrag = false;
+    private boolean isSampleDrag = false;
+    private boolean isShift = false;
+    private boolean isShiftMove = false;
 
-    private int headerDragColumn = 0;
+    private int sampleDragColumn = 0;
 	private int headerDragRow = 0;
     private int dragColumn = 0;
 	private int dragRow = 0;
 
     private int startColumn = 0;
+    private int startShift = 0;
+    private int endShift = 0;
     private int startRow = 0;
     private int labelLength = 0;
+    private int startShiftMove = 0;
+    private int endShiftMove = 0;
 
 	public boolean clusterViewerClicked = false;
 	public int clusterViewerClickedColumn = 0;
@@ -628,6 +629,25 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         		g.drawRect(insets.left, this.getHeight()-COLOR_BAR_HEIGHT*(this.compactedColorBarHeight - headerDragRow)-3, elementWidth*experiment.getNumberOfSamples(), COLOR_BAR_HEIGHT);
         	
         }
+        if (isSampleDrag){
+        	g.setColor(Color.blue);
+        	g.drawRect(this.sampleDragColumn*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+                 	
+        }
+        if (isShift){
+        	g.setColor(new Color(175,175,175,100));
+        	if (startShift<endShift)
+        		g.fillRect(startShift*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth*(endShift-startShift+1)), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+        	if (startShift>endShift)
+        		g.fillRect(endShift*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth*(startShift-endShift+1)), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+        	if (startShift==endShift)
+        		g.fillRect(startShift*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+        }
+        if (isShiftMove){
+        	g.setColor(Color.blue);
+        	int move = startShiftMove-endShiftMove;
+        	g.drawRect((Math.min(startShift, endShift)-move)*elementWidth + insets.left, getSize().height - (COLOR_BAR_HEIGHT*(storedSampleColors.size()) + maxSampleLabelLength + 7) , (elementWidth*(Math.abs(endShift-startShift)+1)), (COLOR_BAR_HEIGHT)*storedSampleColors.size()+maxSampleLabelLength+4 + 10);
+        }
     }  
     
     private void drawHorizontalRect(int row, Color color){
@@ -648,6 +668,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         
         public void mouseClicked(MouseEvent event) {
             if (SwingUtilities.isRightMouseButton(event)) {
+            	isShiftMove=false;
+            	isSampleDrag = false;
                 return;
             }
             int column = findColumn(event.getX());
@@ -722,47 +744,129 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         public void mouseDragged(MouseEvent event) {
         	repaint();
             if (SwingUtilities.isRightMouseButton(event)) {
+            	isShiftMove=false;
+            	isSampleDrag = false;
                 return;
             }
+            if(event.isShiftDown())
+            	return;
             int column = findColumn(event.getX());
             int row = findRow(event.getY());
+            if (column==-1){
+            	isShiftMove=false;
+            	return;
+            }
+            if (isShift){
+        		isShiftMove=true;
+            	endShiftMove = column;
+            	if (startShiftMove-endShiftMove>Math.min(startShift, endShift))
+            		endShiftMove = startShiftMove-Math.min(startShift, endShift);
+            	if (endShiftMove-startShiftMove>experiment.getNumberOfSamples()-Math.max(startShift, endShift)-1)
+            		endShiftMove = startShiftMove+experiment.getNumberOfSamples()-Math.max(startShift, endShift)-1;
+            	return;
+            }
+            sampleDragColumn = column;
+        	isSampleDrag = true;
             if (!isLegalPosition(row, column)) {
             	headerDrag = false;
                 return;
             }
             if (!headerDrag)
             	return;
-            headerDragColumn = column;
             headerDragRow = row;
         	if (column<experiment.getNumberOfSamples()){
-        		//Graphics g = getGraphics();
-        		//g.drawRect((experiment.getNumberOfSamples())*elementSize.width + insets.left +5-1, row*elementSize.height-1, (elementSize.width)*(colorWidth)+annotationWidth +8, elementSize.height+1);
-        		//if (isCompact) return;
-        		//g.setColor(Color.blue);
-        		//g.drawRect(column*elementSize.width + insets.left +5-1, -1, (elementSize.width), elementSize.height*getCluster().length+1);
-            	//header.drawClusterHeaderRectsAt(column, Color.blue, true);
+        		
         	} else{
         		headerDrag = false;
+        		isSampleDrag = false;
         	}
         }
         /** Called when the mouse has been pressed. */
         public void mousePressed(MouseEvent event) {
             if (SwingUtilities.isRightMouseButton(event)) {
+            	isShiftMove=false;
+            	isSampleDrag = false;
                 return;
             }
 
             startColumn = findColumn(event.getX());
+            sampleDragColumn = startColumn;
             startRow = findRow(event.getY());
+            if(event.isShiftDown()){
+            	if (!isShift)
+            		startShift = startColumn;
+            	endShift = startColumn;
+            	isShift=true;
+            }else{
+            	if (isShift&&(startColumn>=Math.min(startShift,endShift)&&startColumn<=Math.max(startShift,endShift))){
+            		startShiftMove = startColumn;
+            	}else{
+            		isShift = false;
+            		isShiftMove = false;
+            	}
+            }
             if (!isLegalPosition(startRow, startColumn)) {
                 return;
             }
             headerDrag = true;
-            headerDragColumn = startColumn;
             headerDragRow = startRow;
         }
         
         /** Called when the mouse has been released. */
         public void mouseReleased(MouseEvent event) {
+        	 if (SwingUtilities.isRightMouseButton(event)) {
+             	isShiftMove=false;
+             	isSampleDrag = false;
+                 return;
+             }
+
+	        int endColumn = findColumn(event.getX());
+	        
+	        if (isShiftMove){
+	        	int lowerShift=Math.min(endShift,startShift);
+	        	int upperShift=Math.max(endShift,startShift);;
+	        	int numMovedSamples=upperShift-lowerShift+1;
+	        	int numSpacesMoved=endShiftMove-startShiftMove;
+	        	int[] samplesMoved = new int[numMovedSamples];
+	        	for (int i=0; i<samplesMoved.length; i++){
+	        		samplesMoved[i]=samplesOrder[lowerShift+i];
+	        	}
+	        	ArrayList<Integer> tempSamplesOrder = new ArrayList<Integer>();
+	        	for (int i=0; i<samplesOrder.length; i++){
+	        		tempSamplesOrder.add(samplesOrder[i]);
+	        	}
+	        	for (int i=0; i<numMovedSamples; i++){
+	        		tempSamplesOrder.remove(lowerShift);
+	        	}
+	        	for (int i=0; i<numMovedSamples; i++){
+	        		tempSamplesOrder.add(lowerShift+numSpacesMoved+i, samplesMoved[i]);
+	        	}
+	        	for (int i=0; i<samplesOrder.length; i++){
+	        		samplesOrder[i]=tempSamplesOrder.get(i);
+	        	}
+	        	isShiftMove = false;
+	        	isShift = false;
+	        	return;
+	        }
+	        
+	        if (endColumn>startColumn){
+	        	int startSample = samplesOrder[startColumn];
+	        	for (int i=0; i<endColumn-startColumn; i++){
+	        		samplesOrder[startColumn+i]=samplesOrder[startColumn+i+1];
+	        	}
+	        	samplesOrder[endColumn]=startSample;
+	      		repaint();
+	        }
+	        if (endColumn<startColumn){
+	        	int startSample = samplesOrder[startColumn];
+	        	for (int i=0; i<startColumn-endColumn; i++){
+	        		samplesOrder[startColumn-i]=samplesOrder[startColumn-(i+1)];
+	        	}
+	        	samplesOrder[endColumn]=startSample;
+	      		repaint();
+	        }
+        	isSampleDrag = false;
+	        
 	        if (!headerDrag)
 	        	return;
         	headerDrag = false;
