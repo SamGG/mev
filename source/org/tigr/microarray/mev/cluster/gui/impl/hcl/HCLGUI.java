@@ -212,7 +212,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             }
             AlgorithmData samples_result = null;
             if (clusterExperiments) {
-                progress.setTitle("Clustering by Examples");
+                progress.setTitle("Clustering by Samples");
                 algData.addParam("calculate-genes", String.valueOf(false));
                 samples_result = algorithm.execute(algData);
                 validate(samples_result);
