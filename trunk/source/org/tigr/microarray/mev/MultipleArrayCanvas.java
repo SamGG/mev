@@ -118,7 +118,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     private JRadioButtonMenuItem overlayItem;
     private JCheckBoxMenuItem absoluteColorCheckBoxItem;   
     private JLabel emptyMacLabel;
-    private String emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file. Use the Utilities menu to connect to the Gaggle network";      
+    private String  emptyMacLabelText = "";
+
 
     public MultipleArrayCanvas() {
         
@@ -142,6 +143,11 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         this.header.setNegativeAndPositiveColorImages(this.negColorImage, this.posColorImage);
         popup = createPopupMenu(listener);
+        if(framework.isGaggleConnected()) {
+    	    emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file, or broadcast a matrix from the Gaggle network.";     
+    	} else {
+	    emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file. Use the Utilities menu to connect to the Gaggle network";     
+        }	    
         emptyMacLabel = new JLabel(emptyMacLabelText);
         add(emptyMacLabel);
     }
