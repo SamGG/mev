@@ -58,7 +58,6 @@ public class BNGUI implements IClusterGUI {
 		Experiment exp = data.getExperiment();
 		//exp.getGeneIndexMappedToData(row);
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-		// RM stuff from EASE to make
 		// String easeFileLocation = null;
 		String chipType = null;
 		String species = null;
@@ -193,13 +192,7 @@ public class BNGUI implements IClusterGUI {
 			pgPanel.dispose();
 			return null;
 		}
-		//} else {
-		//return null;
-		//}
-		//}
-		//});
-		//thread.start();
-
+		
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework,false,dialog.getSelectedCluster(),(new Integer(dialog.getNumberBin())).toString(),dialog.getNumberClass(),dialog.numParents(),dialog.getAlgorithm(),dialog.getScoreType(),dialog.useArcRev(), dialog.isBootstrapping(), dialog.getNumIterations(), dialog.getConfThreshold(), dialog.getKFolds(), dialog.getBaseFileLocation(), probeIndexAssocHash);
 		bnEditor.showModal(true);
 
@@ -214,7 +207,7 @@ public class BNGUI implements IClusterGUI {
 		if(BNGUI.cancelRun)
 			return null;
 		
-		//Raktim - Added to record the Weka output for Observed BN analysis
+		//Added to record the Weka output for Observed BN analysis
 		wekaOutputViewer = new HistoryViewer();
 		String wekaResult = bnEditor.getWekaEvalString();
 		wekaOutputViewer.addHistory(wekaResult);
@@ -350,9 +343,9 @@ public class BNGUI implements IClusterGUI {
 		}
 		return -1;
 	}
-	// TODO Raktim - What is the bif file for ?
+	// The bif file is for Weka
 	public void prepareXMLBifFile(String path){
-		PrepareXMLBifModule getModule = new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
+		PrepareXMLBifModule getModule = new PrepareXMLBifModule();
 		PrepareXMLBifModule.test(path +
 				BNConstants.SEP +
 				BNConstants.TMP_DIR +

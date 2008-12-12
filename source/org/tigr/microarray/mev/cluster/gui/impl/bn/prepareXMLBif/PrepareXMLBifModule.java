@@ -217,6 +217,56 @@ public class PrepareXMLBifModule {
 			nde.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Function to create XMLBifFile for Weka for a fixed network to lean CPTs
+	 * @param propsFileName
+	 */
+	public static void createXMLBifFromSif(String propsFileName, ArrayList fixedNetworkInter) throws IOException, NullArgumentException, NotDAGException{	
+		String path = BNConstants.getBaseFileLocation();
+		System.out.println("PrepareXMLBifModule path: " + path);
+		path = path+BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
+		try {
+			Properties props = new Properties();
+			props.load(new FileInputStream(propsFileName));
+						
+			String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
+			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
+			
+			System.out.println("test(): namesFileName " + namesFileName);
+			System.out.println("test(): sifFileName " + sifFileName);
+			Useful.checkFile(sifFileName);
+			Useful.checkFile(namesFileName);
+			
+			String outXMLBifFileName = path+props.getProperty(BNConstants.OUT_XML_BIF_FILE_NAME,BNConstants.OUT_XML_BIF_FILE);
+			ArrayList inter = UsefulInteractions.readInteractions(sifFileName);
+			//System.out.println("Reading Weights before creating DAG");
+			System.out.println("Num. of interaction to be considered: " + inter.size());
+			ArrayList names = Useful.readNamesFromFile(namesFileName);
+			ArrayList newInter = null;
+			//We may not need to create the DAG. The DAG is already there, we just populate the 
+			//ArrayList with the interactions
+			newInter = getDAGFromUndirectedGraph(inter);
+			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
+			SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);
+			pw.close();
+		}
+		catch(IOException ioe){
+			//System.out.println(ioe);
+			//ioe.printStackTrace();
+			throw ioe;
+		}
+		catch(NullArgumentException nae){
+			//System.out.println(nae);
+			//nae.printStackTrace();
+			throw nae;
+		}
+		catch(NotDAGException nde){
+			//System.out.println(nde);
+			//nde.printStackTrace();
+			throw nde;
+		}
+	}
 
 	/**
 	 * The <code>usage</code> method displays the usage.
