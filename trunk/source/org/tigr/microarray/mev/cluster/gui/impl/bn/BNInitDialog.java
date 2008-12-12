@@ -99,13 +99,13 @@ public class BNInitDialog extends AlgorithmDialog {
 	boolean useArc = true;
 	File fileDir = null;
 	String kegg_sp = null;
-    // RM specific attributes
+	// RM specific attributes
 	protected String arrayName, speciesName;
-    protected Hashtable<String, Vector<String>> speciestoarrays;
-    protected IResourceManager resourceManager;
-    protected boolean useLoadedAnnotationFile = false;
-    File annotationFile;
-    
+	protected Hashtable<String, Vector<String>> speciestoarrays;
+	protected IResourceManager resourceManager;
+	protected boolean useLoadedAnnotationFile = false;
+	File annotationFile;
+
 	/** Creates a new instance of BNInitDialog
 	 * @param parent Parent Frame
 	 * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
@@ -117,13 +117,13 @@ public class BNInitDialog extends AlgorithmDialog {
 		super(frame.getFrame(), "BN: Bayes Network Analysis", true);
 		this.parent = frame.getFrame(); //parent;
 		this.framework = frame;
-		
+
 		// RM related
 		this.speciesName = speciesName;
-        this.arrayName = arrayName;
-        this.resourceManager = rm;
-        this.speciestoarrays = speciestoarrays;
-        
+		this.arrayName = arrayName;
+		this.resourceManager = rm;
+		this.speciestoarrays = speciestoarrays;
+
 		font = new Font("Dialog", Font.BOLD, 12);
 		listener = new EventListener();
 		addWindowListener(listener);
@@ -1271,7 +1271,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		JComboBox arrayListBox;
 		JLabel chooseOrg, chooseArray, browseLabel, statusLabel;
 		JButton getBNSupportFileButton;
-		
+
 		public ConfigPanel() {
 			super("Location of Support File(s)");
 			setLayout(new GridBagLayout());
@@ -1291,48 +1291,48 @@ public class BNInitDialog extends AlgorithmDialog {
 				_loc = TMEV.getDataPath();
 			defaultFileBaseLocation = new JTextField(new File(_loc).getAbsolutePath());
 			defaultFileBaseLocation.setEditable(true);
-			
+
 			//Borrowed from EASE for RM
 			getBNSupportFileButton = new JButton("Download");
 			getBNSupportFileButton.setActionCommand("download-support-file-command");
 			getBNSupportFileButton.addActionListener(listener);
 			getBNSupportFileButton.setToolTipText("<html>Downloads BN support files<br>for a selected species and array type.</html>");
-			
+
 			chooseOrg = new JLabel("Organism");
 			chooseArray = new JLabel("Array Platform");
 			browseLabel = new JLabel("or Browse for another Ease data file system:");
 			statusLabel = new JLabel("Click to download");
-			
+
 			if(speciestoarrays == null || speciestoarrays.size() == 0) {
 				organismListBox = new JComboBox();
 				organismListBox.addItem("No organisms listed");
 				organismListBox.setEnabled(false);
-				
+
 				arrayListBox = new JComboBox();
 				arrayListBox.addItem("No species listed");
 				arrayListBox.setEnabled(false);
 			} else {
-				
+
 				organismListBox = new JComboBox(new Vector<String>(speciestoarrays.keySet()));
 
 				try {
 					organismListBox.setSelectedItem(speciesName);
 				} catch (NullPointerException npe) {/* Leave as default */}
 				arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
-				
+
 				try {
 					arrayListBox.setSelectedItem(arrayName);
 				} catch (NullPointerException npe) {/* Leave as default */}
-				
+
 				arrayListBox.setEnabled(true); 
 
 			}
-			
+
 			arrayListBox.addActionListener(listener);
 			arrayListBox.setActionCommand("array-selected-command");
 			organismListBox.addActionListener(listener);
 			organismListBox.setActionCommand("organism-selected-command");
-			
+
 			add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
 			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
 			add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
@@ -1342,7 +1342,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
 			add(defaultFileBaseLocation, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
 			add(cngFilesButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
-			
+
 			try {
 				boolean b = resourceManager.fileIsInRepository(new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
 				if(b) {
@@ -1376,7 +1376,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
 				String dir = chooser.getSelectedFile().getAbsolutePath().trim();
-				
+
 				if(dir.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
 							"Spaces are not allowed in Path. \n Selected a different location", 
@@ -1387,7 +1387,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					//defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
-				
+
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
 				//TMEV.setDataPath(defaultFileBaseLocation.getText());
 				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
@@ -1398,7 +1398,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			//System.out.println("getBaseFileLocation() called");
 			return defaultFileBaseLocation.getText();
 		}
-		
+
 		//RM hanlder functions
 		public void selectSpecies() {
 			arrayListBox.removeAllItems();
@@ -1422,16 +1422,16 @@ public class BNInitDialog extends AlgorithmDialog {
 					getBNSupportFileButton.setText("Download");
 				}
 				getBNSupportFileButton.setEnabled(true);
-			        try {
-			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
-			        	annotationFile = resourceManager.getSupportFile(def, false);
-			        } catch (SupportFileAccessError sfae) {
-			        	//disable population from file button
-			        	useLoadedAnnotationFile = false;
-				        //popPanel.fileButton.setSelected(true);
-				        //popPanel.preloadedAnnotationButton.setSelected(false);
-				        //popPanel.preloadedAnnotationButton.setEnabled(false);
-			        }
+				try {
+					ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
+					annotationFile = resourceManager.getSupportFile(def, false);
+				} catch (SupportFileAccessError sfae) {
+					//disable population from file button
+					useLoadedAnnotationFile = false;
+					//popPanel.fileButton.setSelected(true);
+					//popPanel.preloadedAnnotationButton.setSelected(false);
+					//popPanel.preloadedAnnotationButton.setEnabled(false);
+				}
 			} else {
 				getBNSupportFileButton.setEnabled(false);
 			}
@@ -1538,26 +1538,26 @@ public class BNInitDialog extends AlgorithmDialog {
 				System.out.println("BN Dlg. OK Cmd");
 				//Check to see if user is connected to internet
 				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
-		    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
-		    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
-		    	
-		    	if(codeBase == null || libDir == null) {
-		    		JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
-		    		return;
-		    	}
-				
-		    	BNConstants.setCodeBaseLocation(codeBase);
-		    	BNConstants.setLibDirLocation(libDir);
-		    	
+				String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+				String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+
+				if(codeBase == null || libDir == null) {
+					JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
+				BNConstants.setCodeBaseLocation(codeBase);
+				BNConstants.setLibDirLocation(libDir);
+
 				//Check if cluster size exceeds max genes allowed
 				if(getSelectedCluster().getSize() > BNConstants.MAX_GENES) {
 					JOptionPane.showMessageDialog(parent, "Cluster size exceeds max gene limit of " + BNConstants.MAX_GENES + ". Please select or create a different one.", "Error!", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				// Validate if selected options have supporting file(s)
 				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
-				
+
 				if(fileBase.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
 							"Spaces are not allowed in Path. \n Selected a different location", 
@@ -1568,7 +1568,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					//configPanel.defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
-				
+
 				if(isLit()){
 					//Check if Lit File(s) exist
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {
@@ -1837,7 +1837,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					hw.setVisible(false);
 					hw.dispose();
 				}
-			// RM related handlers
+				// RM related handlers
 			} else if (command.equals("organism-selected-command")) {
 				configPanel.selectSpecies();
 				configPanel.updateSelection();

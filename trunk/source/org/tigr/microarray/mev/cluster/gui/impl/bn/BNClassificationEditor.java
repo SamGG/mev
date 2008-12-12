@@ -738,7 +738,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 
 	/**
 	 * Given a list of edges and its count in a hashtable along with a cut-off
-	 * this return a list of edges that exceeds the cut-off over a n iterations
+	 * this return a list of edges that exceeds the cut-off over n iterations
 	 * @param edges
 	 * @param thresh
 	 * @param itr
