@@ -3318,9 +3318,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	Cluster cluster;
     	Color clusterColor = null;
     	String clusterID = ((LeafInfo) clusterNode.getUserObject()).toString();
-    	DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode) path
-    	.getPathComponent(2);
-    	String algorithmName = (String) algorithmNode.getUserObject();
+    	DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode) path.getPathComponent(2);
+    	String algorithmName = (String) algorithmNode.getUserObject().toString();
     	if (clusterType == ClusterRepository.GENE_CLUSTER) {
     		if (this.geneClusterRepository == null) {
     			this.geneClusterRepository = new ClusterRepository(data
@@ -3407,7 +3406,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         Color clusterColor = null;
         String clusterID = ((LeafInfo)clusterNode.getUserObject()).toString();
         DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode)path.getPathComponent(2);
-        String algorithmName = (String)algorithmNode.getUserObject();
+        String algorithmName = (String)algorithmNode.getUserObject().toString();
         if(clusterType == ClusterRepository.GENE_CLUSTER){
             if(this.geneClusterRepository == null){
                 this.geneClusterRepository = new ClusterRepository(data.getFeaturesSize(), framework, true);
