@@ -26,10 +26,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -105,7 +108,7 @@ public class RPInitBox extends AlgorithmDialog {
         
         JPanel pane = new JPanel();
         pane.setLayout(gridbag);
-        this.okButton.setEnabled(false);
+        this.okButton.setEnabled(true);
           
         mPanel = new MultiClassPanel();
 
@@ -194,7 +197,6 @@ public class RPInitBox extends AlgorithmDialog {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		NumTimePointsPanel ngPanel;
         GridBagConstraints constraints;
         GridBagLayout gridbag;
         JPanel dummyPanel;
@@ -212,36 +214,18 @@ public class RPInitBox extends AlgorithmDialog {
             this.setBackground(Color.white);
             //this.exptNames = exptNames;
             this.setLayout(gridbag);
-            ngPanel = new NumTimePointsPanel();
-
             buildConstraints(constraints, 0, 0, 1, 1, 100, 10);
             constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(ngPanel, constraints);
-            
-//            step2Button.addActionListener(new ActionListener(){
-//                public void actionPerformed(ActionEvent evt) {
-                    ngPanel.okPressed = true;
                     okReady = true;
                     try {
-                    	alpha = Float.parseFloat(ngPanel.alphaField.getText());
-                        //numTimePoints = Integer.parseInt(ngPanel.numTimePointsField.getText());
-                        if (alpha>1||alpha<0){
-                        	JOptionPane.showMessageDialog(null, "alpha must be between 0 and 1!", "Error", JOptionPane.ERROR_MESSAGE);
-                            
-                        }else{
-	                            mulgPanel = new MultiGroupExperimentsPanel(exptNames, 1, ngPanel.getExperimentDesign());
+	                            mulgPanel = new MultiGroupExperimentsPanel(exptNames, 1);
 	                            
 	                            
-	                            //JButton dummyButton  = new JButton("dummyButton");
-	                            //dummyButton.setVisible(true);
-	                            //MultiClassPanel.this.remove(dummyPanel);
 	                            tabbedmulg = new JTabbedPane();
 	                            
 	                            clusterSelectorCondition= new ClusterSelector(repository,1, "Samples");
-	                            //clusterSelectorTime= new ClusterSelector(repository,numTimePoints, "Time");
 	                            if (repository!=null){
 	                            	clusterSelectorCondition.setClusterType("Experiment");
-	                            	//clusterSelectorTime.setClusterType("Time Points");
 	                    		}
 	                            JPanel clusterSelectorPanel = new JPanel();
 	                            clusterSelectorPanel.setLayout(new GridBagLayout());
@@ -254,8 +238,7 @@ public class RPInitBox extends AlgorithmDialog {
 	                            c.gridy = 1;
 	                            c.gridwidth = 1;
 	                            c.anchor = GridBagConstraints.PAGE_END;
-	                            if (ngPanel.getExperimentDesign()==2)
-	                            	clusterSelectorPanel.add(clusterSelectorCondition, c);
+	                            clusterSelectorPanel.add(clusterSelectorCondition, c);
 	                            c.gridx = 1;
 	                            //clusterSelectorPanel.add(clusterSelectorTime, c);
 	                            
@@ -271,26 +254,12 @@ public class RPInitBox extends AlgorithmDialog {
 	                            constraints.fill = GridBagConstraints.BOTH;
 	                            gridbag.setConstraints(tabbedmulg, constraints);
 	                            MultiClassPanel.this.add(tabbedmulg);
-	                            //MultiClassPanel.this.add(dummyButton);
 	                            MultiClassPanel.this.validate();
-	                            step2Button.setEnabled(false);
-	                            enableOK();
-	                            ngPanel.numTimePointsField.setEnabled(false);
-	                            ngPanel.alphaField.setEnabled(false);
-	                            ngPanel.oneCondition.setEnabled(false);
-	                            ngPanel.twoConditions.setEnabled(false);
-	                            ngPanel.pairedData.setEnabled(false);
-	                            step2Button.setVisible(false);
-	                        }
+	                        
                         
-                        //MultiClassPanel.this.repaint();
-                        //dispose();
                     } catch (NumberFormatException nfe) {
                         JOptionPane.showMessageDialog(null, "Please enter a value greater than 0 and less than 1!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-//                }
-//            });
-            //this.add(ngPanel);
 
             hclOpsPanel = new HCLSigOnlyPanel();
             hclOpsPanel.setBorder(null);//.setBorder( BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
@@ -311,139 +280,22 @@ public class RPInitBox extends AlgorithmDialog {
             this.add(dummyPanel);
         }
         
-        
-        class NumTimePointsPanel extends JPanel {
-            JTextField numTimePointsField;
-            JTextField alphaField;
-            //JButton okButton;
-            boolean okPressed = false;
 
-            JRadioButton oneCondition;
-            JRadioButton twoConditions;
-            JRadioButton pairedData;
-            public NumTimePointsPanel() {
-                setBackground(Color.white);
-                GridBagLayout gridbag = new GridBagLayout();
-                GridBagConstraints constraints = new GridBagConstraints();
-                
-                //JPanel pane = new JPanel();
-                this.setLayout(gridbag);
-                
-                JLabel dataTypeLabel = new JLabel("Type of data to run:   ");
-                buildConstraints(constraints, 0, 0, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(dataTypeLabel, constraints);
-                this.add(dataTypeLabel);
-                
-                oneCondition=new JRadioButton("1 Condition", false);
-                twoConditions=new JRadioButton("2 Conditions", true);
-                pairedData=new JRadioButton("Paired Data", false);
-                oneCondition.setBackground(Color.white);
-                oneCondition.setBorder(null);
-                twoConditions.setBackground(Color.white);
-                twoConditions.setBorder(null);
-                pairedData.setBackground(Color.white);
-                pairedData.setBorder(null);
-                ButtonGroup dataType = new ButtonGroup();
-                dataType.add(oneCondition);
-                dataType.add(twoConditions);
-                dataType.add(pairedData);
-                buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(twoConditions, constraints);
-                this.add(twoConditions);
-                buildConstraints(constraints, 1, 1, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(oneCondition, constraints);
-                this.add(oneCondition);
-                buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(pairedData, constraints);
-                this.add(pairedData);
-                
-                JLabel numTimePointsLabel = new JLabel("Number of time-points: ");
-                buildConstraints(constraints, 0, 3, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(numTimePointsLabel, constraints);
-                this.add(numTimePointsLabel);
-                
-                numTimePointsField = new JTextField("4", 7);
-                numTimePointsField.setMinimumSize(new Dimension(numTimePointsField.getSize().height, 30));
-                constraints.anchor = GridBagConstraints.WEST;
-                buildConstraints(constraints, 1, 3, 1, 1, 30, 0);
-                gridbag.setConstraints(numTimePointsField, constraints);
-                this.add(numTimePointsField);
-                
-                JLabel alphaLabel = new JLabel("Significance level: alpha = ");
-                buildConstraints(constraints, 0, 4, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(alphaLabel, constraints);
-                this.add(alphaLabel);
-                
-                alphaField = new JTextField(".05", 7);
-                constraints.anchor = GridBagConstraints.WEST;
-                buildConstraints(constraints, 1, 4, 1, 1, 30, 0);
-                gridbag.setConstraints(alphaField, constraints);
-                this.add(alphaField);
-                
-                //step2Button = new JButton("OK");
-                //buildConstraints(constraints, 2, 4, 2, 1, 40, 0);
-                //gridbag.setConstraints(step2Button, constraints);
- 
-                //this.add(okButton);
-                
-            }
-            
-            public int getExperimentDesign(){
-            	if (oneCondition.isSelected())
-            		return 1;
-            	if (twoConditions.isSelected())
-            		return 2;
-            	if (pairedData.isSelected())
-            		return 3;
-            	return 0;
-            }
-            
-            public void setVisible(boolean visible) {
-                //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                setLocation((MultiClassPanel.this.getWidth() - getSize().width)/2, (MultiClassPanel.this.getHeight() - getSize().height)/2);
-                
-                super.setVisible(visible);
-                
-                if (visible) {
-                    //bPanel.okButton.requestFocus(); //UNCOMMMENT THIS LATER
-                }
-            }
-            
-            public boolean isOkPressed() {
-                return okPressed;
-            }
-            
-        }
         
         class MultiGroupExperimentsPanel extends JPanel {
             int numPanels = 0;
             JLabel[] expLabels;
             JCheckBox[] exptCheckBoxes;
-            JRadioButton[] notInTimeGroupRadioButtons;
-            JRadioButton[][] exptConditionRadioButtons;
-            MultiGroupExperimentsPanel(Vector<String> exptNames, int numTimePoints, int conditions) {
+            MultiGroupExperimentsPanel(Vector<String> exptNames, int numTimePoints) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Experiment Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
 
                // JPanel panel1 = new JPanel();
                 expLabels = new JLabel[exptNames.size()];
                 exptCheckBoxes = new JCheckBox[exptNames.size()];
-                if (conditions==2)
-                    exptConditionRadioButtons = new JRadioButton[2][exptNames.size()];
                 	
                 numPanels = exptNames.size()/512 + 1;
                 
-                //groupARadioButtons = new JRadioButton[exptNames.size()];
-                //groupBRadioButtons = new JRadioButton[exptNames.size()];
-                notInTimeGroupRadioButtons = new JRadioButton[exptNames.size()];
-                ButtonGroup chooseTime[] = new ButtonGroup[exptNames.size()];
-                ButtonGroup chooseCondition[] = new ButtonGroup[exptNames.size()];
                 
                 GridBagLayout gridbag = new GridBagLayout();
                 GridBagLayout gridbag2 = new GridBagLayout();
@@ -462,66 +314,28 @@ public class RPInitBox extends AlgorithmDialog {
                 for (int i = 0; i < exptNames.size(); i++) {
                     String s1 = (String)(exptNames.get(i));
                     expLabels[i] = new JLabel(s1);
-                    chooseTime[i] = new ButtonGroup();
-                    chooseCondition[i] = new ButtonGroup();
                     for (int j = 0; j < numTimePoints; j++) {
                         exptCheckBoxes[i] = new JCheckBox("",true);
-                        //chooseTime[i].add(exptTimeRadioButtons[i]);
                     }
                     
                     
-                    //set current panel
-                    currPanel = i / 512;
                     
-                    notInTimeGroupRadioButtons[i] = new JRadioButton("Unassigned", true);
-                    chooseTime[i].add(notInTimeGroupRadioButtons[i]);
-                    int twoCondRoom = 0;
-                    if (conditions==2){
-                    	exptConditionRadioButtons[0][i]=new JRadioButton("Condition 1",true);
-	                    chooseCondition[i].add(exptConditionRadioButtons[0][i]);
-	                    exptConditionRadioButtons[1][i]=new JRadioButton("Condition 2           |  ",true);
-	                    chooseCondition[i].add(exptConditionRadioButtons[1][i]);
+                    
 	                    	
-                    	twoCondRoom = 3;
-	                    buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
-	                    gridbag.setConstraints(exptConditionRadioButtons[0][i], constraints);
-	                    //panels[currPanel].add(exptConditionRadioButtons[0][i]);
-	                    buildConstraints(constraints, 1, i%512, 1, 1, 100, 100);
-	                    gridbag.setConstraints(exptConditionRadioButtons[1][i], constraints);
-	                    //panels[currPanel].add(exptConditionRadioButtons[1][i]);
-                    
-	                    JSeparator sep = new JSeparator(JSeparator.VERTICAL);
-	                    sep.setSize(22, 22);
-	                    buildConstraints(constraints, 2, i%512, 1, 1, 100, 100);
-	                    gridbag.setConstraints(sep, constraints);
-	                    
-	                    //panels[currPanel].add(sep);
-	                    panels[currPanel].setBorder(BorderFactory.createEmptyBorder(
-	                    		2, //top
-	                    		0,     //left
-	                    		2, //bottom
-	                    		0));   //right
-	                    panels[currPanel].add(sep);
-                    }
                     
                     
-                    buildConstraints(constraints, twoCondRoom, i%512, 1, 1, 100, 100);
+                    
+                    
+                    buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
                         //constraints.fill = GridBagConstraints.BOTH;
                         gridbag.setConstraints(exptCheckBoxes[i], constraints);
                         panels[currPanel].add(exptCheckBoxes[i]);
                         // panel1.add(exptGroupRadioButtons[j][i]);
                     
-                    
-                    buildConstraints(constraints, (numTimePoints + 1+twoCondRoom), i%512, 1, 1, 100, 100);
-                    //constraints.fill = GridBagConstraints.BOTH;
-                    gridbag.setConstraints(notInTimeGroupRadioButtons[i], constraints);
-                    
-                    
-                    //panel1.add(notInGroupRadioButtons[i]);
-                    //panels[currPanel].add(notInTimeGroupRadioButtons[i]);                    
-                    
+                              
                     
                 }
+                
                 
                 int maxLabelWidth = 0;
                 
@@ -575,17 +389,6 @@ public class RPInitBox extends AlgorithmDialog {
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
                 
-                //JLabel label1 = new JLabel("Note: Each time-point MUST each contain more than one sample.");
-                //if (ngPanel.getExperimentDesign()==2){
-                //	label1 = new JLabel ("Note: Each time-point MUST each contain more than one sample for both conditions.");
-                //}
-                //label1.setHorizontalAlignment(JLabel.CENTER);
-                //buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-                //constraints.anchor = GridBagConstraints.EAST;
-                //constraints.fill = GridBagConstraints.BOTH;
-                //gridbag2.setConstraints(label1, constraints);
-                //this.add(label1);
-                
                 JPanel panel2 = new JPanel();
                 GridBagLayout gridbag3 = new GridBagLayout();
                 panel2.setLayout(gridbag3);
@@ -601,16 +404,9 @@ public class RPInitBox extends AlgorithmDialog {
                 resetButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
                 
                 
-                final int finNum = exptNames.size();
                 
                 resetButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
-                        for (int i = 0; i < finNum; i++) {
-                        	notInTimeGroupRadioButtons[i].setSelected(true);
-                        	if (ngPanel.getExperimentDesign()==2){
-                        		exptConditionRadioButtons[0][i].setSelected(true);
-                        	}
-                        }
                     }
                 });
                 
@@ -619,55 +415,7 @@ public class RPInitBox extends AlgorithmDialog {
                 
                 saveButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
-                        int returnVal = fc.showSaveDialog(MultiGroupExperimentsPanel.this);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            try {
-                                PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                                int[] timeAssgn=null;
-                                if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-                                	//timeAssgn=getClusterTimeAssignments();
-                                }
-                                if (getTestDesign()==RPInitBox.BUTTON_SELECTION){
-                                	//timeAssgn=getTimeAssignments();
-                                } 
-                                for (int i = 0; i < timeAssgn.length; i++) {
-                                    out.print(timeAssgn[i]);
-                                    if (i < timeAssgn.length - 1) {
-                                        out.print("\n");
-                                    }
-                                }
-                                
-                                if (ngPanel.getExperimentDesign()==2){
-                                	out.print("\n");
-                                	out.println("cond");
-                                	int[] condAssgn=null;
-                                    if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-                                    	condAssgn=getClusterConditionAssignments();
-                                    }
-                                	if (getTestDesign()==RPInitBox.BUTTON_SELECTION){
-                                    	condAssgn=getInGroupAssignments();
-                                    } 
-                                    for (int i = 0; i < condAssgn.length; i++) {
-                                        out.print(condAssgn[i]);
-                                        if (i < condAssgn.length - 1) {
-                                            out.print("\n");
-                                        }
-                                    }
-                                }
-                                
-                                out.println();
-                                
-                                out.flush();
-                                out.close();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            //this is where a real application would save the file.
-                            //log.append("Saving: " + file.getName() + "." + newline);
-                        } else {
-                            //log.append("Save command cancelled by user." + newline);
-                        }
+                       saveAssignments();
                     }
                 });
                 
@@ -676,71 +424,7 @@ public class RPInitBox extends AlgorithmDialog {
                 
                 loadButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
-                        int returnVal = fc.showOpenDialog(MultiGroupExperimentsPanel.this);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            try {
-                                FileReader file = new FileReader(fc.getSelectedFile());
-                                BufferedReader buff = new BufferedReader(file);
-                               // String line = buff.readLine();
-                               // StringSplitter st = new StringSplitter('\t');
-                                //st.init(line);
-                                Vector<Integer> timesVector = new Vector<Integer>();
-                                Vector<Integer> condVector = new Vector<Integer>();
-                                String current;
-                                while ((current = buff.readLine()) != null) {
-                                    //current = st.nextToken();
-                                	if (current.equalsIgnoreCase("cond"))
-                                		break;
-                                    timesVector.add(new Integer(current));
-                                }
-                                while ((current = buff.readLine()) != null) {
-                                    //current = st.nextToken();
-                                	if (current.equalsIgnoreCase("cond"))
-                                		break;
-                                    condVector.add(new Integer(current));
-                                }
-                                buff.close();
-                                int[] timeAssgn=null;
-                                if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-                                	//timeAssgn=getClusterTimeAssignments();
-                                }
-                                if (getTestDesign()==RPInitBox.BUTTON_SELECTION){
-                                	//timeAssgn=getTimeAssignments();
-                                } 
-                                if (timesVector.size() != timeAssgn.length) {
-                                    JOptionPane.showMessageDialog(mPanel, "Incompatible file! Unequal samples", "Error", JOptionPane.WARNING_MESSAGE);
-                                } else {
-                                    for (int i = 0; i < timesVector.size(); i++) {
-                                        int currentTime = ((Integer)timesVector.get(i)).intValue();
-                                        if (currentTime != 0) {
-                                            exptCheckBoxes[i].setSelected(true);
-                                        } else {
-                                            notInTimeGroupRadioButtons[i].setSelected(true);
-                                        }
-                                    }
-                                    if (ngPanel.getExperimentDesign()==2){
-                                    	for (int i = 0; i < condVector.size(); i++) {
-                                            int currentTime = ((Integer)condVector.get(i)).intValue();
-                                            if (currentTime != 0) {
-                                                exptConditionRadioButtons[currentTime - 1][i].setSelected(true);
-                                            } else {
-                                                //notInGroupRadioButtons[i].setSelected(true);
-                                            }
-                                        }
-                                    }
-                                    
-                                }
-                            } catch (Exception e) {
-                                JOptionPane.showMessageDialog(mPanel, "Incompatible file error!", "Error", JOptionPane.WARNING_MESSAGE);
-                                
-                                e.printStackTrace();
-                            }
-                            
-                            //this is where a real application would save the file.
-                            //log.append("Saving: " + file.getName() + "." + newline);
-                        } else {
-                            //log.append("Save command cancelled by user." + newline);
-                        }
+                    	loadAssignments();
                     }
                 });
                 //
@@ -782,138 +466,218 @@ public class RPInitBox extends AlgorithmDialog {
              */
             protected void reset(){
                 for (int i = 0; i < exptNames.size(); i++) {
-                	notInTimeGroupRadioButtons[i].setSelected(true);
-                	exptConditionRadioButtons[0][i].setSelected(true);
                 }
             }
+            /**
+        	 * Saves the assignments to file.
+        	 * 
+        	 * Comments include title, user, save date
+        	 * Design information includes factor a and b labels and the level names for each factor
+        	 * A header row is followed by sample index, sample name (primary, field index = 0),
+        	 * them factor A assignment (text label) then factor B assignment (text label)
+        	 */
+        	private void saveAssignments() {
+        		
+        		File file;		
+        		JFileChooser fileChooser = new JFileChooser("./data");	
+        		
+        		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        			file = fileChooser.getSelectedFile();			
+        			try {
+        				PrintWriter pw = new PrintWriter(new FileWriter(file));
+        				
+        				//comment row
+        				Date currDate = new Date(System.currentTimeMillis());			
+        				String dateString = currDate.toString();;
+        				String userName = System.getProperty("user.name");
+        				
+        				pw.println("# Assignment File");
+        				pw.println("# User: "+userName+" Save Date: "+dateString);
+        				pw.println("#");
+        				
+        				//save group names..?
+        				
+        				//print out the group names (skip the 'exclude' group
+//        				for(int i = 0; i < groups.length-1; i++) {
+//        					pw.print("Group "+String.valueOf(i+1)+" Label:\t");
+//        					pw.println(this.groups[i]);
+//        				}
+        				pw.print("Group 1 Label:\t");
+    					pw.println("true");
+    					pw.print("Group 2 Label:\t");
+    					pw.println("false");
+        								
+        				pw.println("#");
+        				
+        				pw.println("Sample Index\tSample Name\tGroup Assignment");
+
+        				for(int sample = 0; sample < exptNames.size(); sample++) {
+        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+        					pw.print(exptNames.get(sample)+"\t");
+        					pw.println(((JCheckBox)(exptCheckBoxes[sample])).isSelected());
+        					
+        				}			
+        				pw.flush();
+        				pw.close();			
+        			} catch (FileNotFoundException fnfe) {
+        				fnfe.printStackTrace();
+        			} catch (IOException ioe) {
+        				ioe.printStackTrace();
+        			}
+        		}
+        	}
+        	
+        	
+        	/**
+        	 * Loads file based assignments
+        	 */
+        	private void loadAssignments() {
+        		/**
+        		 * consider the following verifcations and policies
+        		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
+        		 *-each loaded file name should match a corresponding name in the assignment file, 1:1
+        		 *		-if names don't match, throw warning and inform that assignments are based on loaded order
+        		 *		 rather than a sample name
+        		 *-the number of levels of factor A and factor B specified previously when defining the design
+        		 *should match the number of levels in the assignment file, if not warning and quit
+        		 *-if the level names match the level names entered then the level names will be used to make assignments
+        		 *if not, then there will be a warning and the level index will be used.
+        		 *-make sure that each level label pairs to a particular level index, this is a format 
+        		 *-Note that all design labels in the assignment file will override existing labels
+        		 *this means updating the data structures in this class, and updating AlgorithmData to set appropriate fields
+        		 ***AlgorithmData modification requires a fixed vocab. for parameter names to be changed
+        		 *these fields are (factorAName, factorBName, factorANames (level names) and factorANames (level names)
+        		 *Wow, that was easy :)
+        		 */
+        		
+        		File file;		
+        		JFileChooser fileChooser = new JFileChooser("./data");
+        		
+        		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        		
+        			file = fileChooser.getSelectedFile();
+        			
+        		try {						
+        			//first grab the data and close the file
+        			BufferedReader br = new BufferedReader(new FileReader(file));
+        			Vector<String> data = new Vector<String>();
+        			String line;
+        			while( (line = br.readLine()) != null)
+        				data.add(line.trim());
+        			
+        			br.close();
+        				
+        			//build structures to capture the data for assingment information and for *validation
+        			
+        			//factor names
+        			Vector<String> groupNames = new Vector<String>();
+        			
+        			Vector<Integer> sampleIndices = new Vector<Integer>();
+        			Vector<String> sampleNames = new Vector<String>();
+        			Vector<String> groupAssignments = new Vector<String>();			
+        			
+        			//parse the data in to these structures
+        			String [] lineArray;
+        			//String status = "OK";
+        			for(int row = 0; row < data.size(); row++) {
+        				line = (String)(data.get(row));
+
+        				//if not a comment line, and not the header line
+        				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+        					
+        					lineArray = line.split("\t");
+        					
+        					//pick up group names
+        					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+        						groupNames.add(lineArray[1]);
+        						continue;
+        					}
+
+        					//non-comment line, non-header line and not a group label line
+        					
+        					try {
+        						Integer.parseInt(lineArray[0]);
+        					} catch ( NumberFormatException nfe) {
+        						//if not parsable continue
+        						continue;
+        					}
+        					
+        					sampleIndices.add(new Integer(lineArray[0]));
+        					sampleNames.add(lineArray[1]);
+        					groupAssignments.add(lineArray[2]);							
+        				}				
+        			}
+        			
+        			//we have the data parsed, now validate, assign current data
+
+
+        			if( exptNames.size() != sampleNames.size()) {
+        				//status = "number-of-samples-mismatch";
+        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+        				//warn and prompt to continue but omit assignments for those not represented				
+
+        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+        						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
+        						                                   	"Assingments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+        				
+        				return;
+        			}
+        	
+        			//check the number of groups... account for 'excluded' by using +1
+        			if(groupNames.size()!=2) {
+        				//status = "number-of-groups-mismatch";
+        				
+        				JOptionPane.showMessageDialog(this, "<html>Error -- number of groups designated in assignment file ("+String.valueOf(groupNames.size())+")<br>" +
+                                "does not follow the include/exclude format required.<br>" +
+                                	"Assingments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+
+        				return;
+        			}
+        			
+        			Vector<String> currSampleVector = new Vector<String>();
+        			for(int i = 0; i < exptNames.size(); i++)
+        				currSampleVector.add(exptNames.get(i));
+        			
+        			//set all to excluded
+        			
+        			
+        			
+        			int fileSampleIndex = 0;
+        			int groupIndex = 0;
+        			String groupName;
+        			
+        			for(int sample = 0; sample < exptNames.size(); sample++) {
+        				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
+        				groupName = (String)(groupAssignments.get(fileSampleIndex));
+        				
+        				groupIndex = groupNames.indexOf(groupName);
+        				
+//        				button = (exptCheckBoxes[sample]);
+        				//first set the current group names
+        				//button.setStateNames(groups);
+        				//set state
+        				if(groupIndex ==0)
+        					exptCheckBoxes[sample].setSelected(true);
+        				else
+        					exptCheckBoxes[sample].setSelected(false);  //set to last state... excluded
+        			}
+        			
+        			repaint();			
+        			//need to clear assignments, clear assignment booleans in sample list and re-init
+        			//maybe a specialized inti for the sample list panel.
+        		} catch (Exception e) {
+        			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+        		}
+        	}
+        	}
+        	
+            
+            
         }
         protected void reset(){
-        	if (ngPanel.okPressed)
-        		mulgPanel.reset();
         }
     }
     
-//    class PermOrFDistPanel extends JPanel {
-//        JRadioButton tDistButton, permutButton; // randomGroupsButton, allCombsButton;
-//        
-//        //, alphaInputField;
-//        //JButton permParamButton;
-//        
-//        PermOrFDistPanel() {
-//            // this.setBorder(new TitledBorder(new EtchedBorder(), "P-Value parameters"));
-//            this.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "Permutations or F-distribution", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
-//            this.setBackground(Color.white);
-//            GridBagLayout gridbag = new GridBagLayout();
-//            GridBagConstraints constraints = new GridBagConstraints();
-//            //constraints.anchor = GridBagConstraints.WEST;
-//            //constraints.fill = GridBagConstraints.BOTH;
-//            this.setLayout(gridbag);
-//            
-//            //permParamButton = new JButton("Permutation parameters");
-//            //permParamButton.setEnabled(false);
-//            
-//            ButtonGroup chooseP = new ButtonGroup();
-//            
-//            tDistButton = new JRadioButton("p-values based on F-distribution", true);
-//            tDistButton.setFocusPainted(false);
-//            tDistButton.setForeground(UIManager.getColor("Label.foreground"));
-//            tDistButton.setBackground(Color.white);
-//            
-//            numPermsLabel = new JLabel("Enter number of permutations");
-//            numPermsLabel.setEnabled(false);
-//            
-//            timesField = new JTextField("1000", 7);
-//            timesField.setEnabled(false);
-//            timesField.setBackground(Color.darkGray);
-//            
-//            tDistButton.addActionListener(new ActionListener() {
-//                public void actionPerformed(ActionEvent evt) {
-//                    numPermsLabel.setEnabled(false);
-//                    timesField.setEnabled(false);
-//                    timesField.setBackground(Color.darkGray); 
-//                    if (pPanel.maxTButton.isSelected() || pPanel.falseNumButton.isSelected() || pPanel.falsePropButton.isSelected()) {
-//                        pPanel.justAlphaButton.setSelected(true);
-//                    }
-//                    pPanel.maxTButton.setEnabled(false);                    
-//                    pPanel.falseNumButton.setEnabled(false);
-//                    pPanel.falsePropButton.setEnabled(false);
-//                    pPanel.falseNumField.setEnabled(false);
-//                    pPanel.falsePropField.setEnabled(false);                    
-//                    //pAdjPanel.minPButton.setEnabled(false);
-//                }
-//            });
-//            
-//            chooseP.add(tDistButton);
-//            
-//            permutButton = new JRadioButton("p-values based on permutation:  ", false);
-//            permutButton.setFocusPainted(false);
-//            permutButton.setForeground(UIManager.getColor("Label.foreground"));
-//            permutButton.setBackground(Color.white);
-//            
-//            permutButton.addActionListener(new ActionListener() {
-//                public void actionPerformed(ActionEvent evt) {
-//                    numPermsLabel.setEnabled(true);
-//                    timesField.setEnabled(true);
-//                    timesField.setBackground(Color.white);                  
-//                    pPanel.maxTButton.setEnabled(true);  //UNCOMMENT THIS WHEN MAXT METHOD HAS BEEN IMPLEMEMTED
-//                    //pAdjPanel.minPButton.setEnabled(true);  //UNCOMMENT THIS WHEN MINP METHOD HAS BEEN DEBUGGED    
-//                    pPanel.falseNumButton.setEnabled(true);
-//                    pPanel.falsePropButton.setEnabled(true);
-//                    pPanel.falseNumField.setEnabled(true);
-//                    pPanel.falsePropField.setEnabled(true);
-//                }                
-//            });
-//            
-//            chooseP.add(permutButton);
-//            
-//            
-//            //constraints.anchor = GridBagConstraints.CENTER;
-//            
-//            //numCombsLabel = new JLabel("                                       ");
-//            //numCombsLabel.setOpaque(false);
-//            /*
-//            constraints.fill = GridBagConstraints.BOTH;
-//            buildConstraints(constraints, 1, 2, 1, 1, 0, 0);
-//            gridbag.setConstraints(numCombsLabel, constraints);
-//            this.add(numCombsLabel);
-//             */
-//            
-//            
-//            buildConstraints(constraints, 0, 0, 3, 1, 100, 50);
-//            //constraints.fill = GridBagConstraints.BOTH;
-//            constraints.anchor = GridBagConstraints.WEST;
-//            gridbag.setConstraints(tDistButton, constraints);
-//            this.add(tDistButton);
-//            
-//            buildConstraints(constraints, 0, 1, 1, 1, 30, 50);
-//            constraints.anchor = GridBagConstraints.WEST;
-//            gridbag.setConstraints(permutButton, constraints);
-//            this.add(permutButton);
-//            
-//            //JLabel numPermsLabel = new JLabel("Enter number of permutations");
-//            //numPermsLabel.setEnabled(false);
-//            buildConstraints(constraints, 1, 1, 1, 1, 30, 0);
-//            gridbag.setConstraints(numPermsLabel, constraints);
-//            this.add(numPermsLabel);
-//            
-//            buildConstraints(constraints, 2, 1, 1, 1, 40, 0);
-//            gridbag.setConstraints(timesField, constraints);
-//            this.add(timesField);
-//            /*
-//            JLabel alphaLabel = new JLabel("Enter critical p-value");
-//            buildConstraints(constraints, 0, 2, 2, 1, 60, 40);
-//            //constraints.anchor = GridBagConstraints.EAST;
-//            gridbag.setConstraints(alphaLabel, constraints);
-//            this.add(alphaLabel);
-//            
-//            alphaInputField = new JTextField("0.01", 7);
-//            buildConstraints(constraints, 1, 2, 1, 1, 40, 0);
-//            constraints.anchor = GridBagConstraints.WEST;
-//            gridbag.setConstraints(alphaInputField, constraints);
-//            this.add(alphaInputField);
-//             */
-//        }
-//    }
     
     class UpDownPanel extends JPanel {
     	JRadioButton upButton, downButton, bothButton;
@@ -1093,57 +857,54 @@ public class RPInitBox extends AlgorithmDialog {
             		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
             	}
-                boolean tooFew = false;
-                if (!tooFew) {
-                    try {               
-                        if (pPanel.falseNumButton.isSelected()) {
-                            if (!validateFalseNum()) {
-                                okPressed = false;
-                                return;
-                            }
+                try {               
+                    if (pPanel.falseNumButton.isSelected()) {
+                        if (!validateFalseNum()) {
+                            okPressed = false;
+                            return;
                         }
-                        if (pPanel.falsePropButton.isSelected()) {
-                            if (!validateFalseProp()) {
-                                okPressed = false;
-                                return;
-                            }
-                        }                     
-                        //HERE, CHECK OTHER INPUTS: P-VALUE VALIDITY - 4/25/03
-                        double d = Double.parseDouble(pPanel.pValueInputField.getText());
-                        /*
-                        if (usePerms()) {
-                            int p = getNumPerms();
-                        }
-                         */
-                        int[] inGroupAssignments;
-                        if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-                        	inGroupAssignments=getClusterConditionAssignments();
-                        }else{
-                        	inGroupAssignments=getInGroupAssignments();
-                        }
-                        int inNum = 0;
-                        while(true){
-                        	
-                        	if (inGroupAssignments[inNum]==1)
-                        		break;
-                        	inNum++;
-                        	if (inNum==inGroupAssignments.length){
-                        		JOptionPane.showMessageDialog(null, "No samples have been assigned to the analysis.", "Error!", JOptionPane.ERROR_MESSAGE);
-                        		okPressed = false;
-                        		return;
-                        	}
-                        }
-                        if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
-                            JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);                            
-                        } else {
-                            okPressed = true;
-                            dispose();
-                        }
-                    } catch (NumberFormatException nfe) {
-                        JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);
                     }
-
+                    if (pPanel.falsePropButton.isSelected()) {
+                        if (!validateFalseProp()) {
+                            okPressed = false;
+                            return;
+                        }
+                    }                     
+                    double d = Double.parseDouble(pPanel.pValueInputField.getText());
+                    /*
+                    if (usePerms()) {
+                        int p = getNumPerms();
+                    }
+                     */
+                    int[] inGroupAssignments;
+                    if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
+                    	inGroupAssignments=getClusterInGroupAssignments();
+                    }else{
+                    	inGroupAssignments=getInGroupAssignments();
+                    }
+                    int inNum = 0;
+                    while(true){
+                    	
+                    	if (inGroupAssignments[inNum]==1)
+                    		break;
+                    	inNum++;
+                    	if (inNum==inGroupAssignments.length){
+                    		JOptionPane.showMessageDialog(null, "No samples have been assigned to the analysis.", "Error!", JOptionPane.ERROR_MESSAGE);
+                    		okPressed = false;
+                    		return;
+                    	}
+                    }
+                    if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
+                        JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);                            
+                    } else {
+                        okPressed = true;
+                        dispose();
+                    }
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
+
+                
             } else if (command.equals("reset-command")) {
                 mPanel.reset();
                 pPanel.reset();
@@ -1169,111 +930,22 @@ public class RPInitBox extends AlgorithmDialog {
         
     }
     
-//    public int[] getTimeAssignments() {
-//        int[] timeAssignments = new int[exptNames.size()];
-//        
-//        for (int i = 0; i < exptNames.size(); i++) {
-//            if (mPanel.mulgPanel.notInTimeGroupRadioButtons[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
-//                timeAssignments[i] = 0;
-//            } else {
-//                for (int j = 0; j < mPanel.mulgPanel.exptTimeRadioButtons.length; j++) {
-//                    if (mPanel.mulgPanel.exptTimeRadioButtons[i].isSelected()) {
-//                        timeAssignments[i] = j + 1;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        return timeAssignments;
-//    }   
-//    public int[][] getTimeMatrix(){
-//    	int[] timeAssignments;
-//    	if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-//    		//timeAssignments = getClusterTimeAssignments();
-//    	}else{
-//    		timeAssignments = getTimeAssignments();
-//    	}
-//    	int[] numEachTime = new int[getNumTimePoints()];
-//    	//System.out.println("getNumTimePoints() = "+getNumTimePoints());
-//    	//System.out.println("getTimeMatrix- timeAssignments.length = "+timeAssignments.length);
-//    	for (int i=0; i< timeAssignments.length; i++){
-//    		//System.out.println("timeAssignments[i]-1 = "+ (timeAssignments[i]-1));
-//    		//System.out.println("numEachTime[timeAssignments[i]-1] = "+numEachTime[timeAssignments[i]-1]);
-//    		if (timeAssignments[i]!=0)
-//    			numEachTime[timeAssignments[i]-1]++;
-//    	}
- //   	int[][]timeMatrix=new int[getNumTimePoints()][];
-//    	for (int i=0; i<getNumTimePoints(); i++){
-//    		timeMatrix[i]=new int[numEachTime[i]];
-//    	}
-//    	int[]nextEntry=new int[getNumTimePoints()];
-//    	for (int i=0; i< timeAssignments.length; i++){
-//    		if (timeAssignments[i]!=0){
-//	    		timeMatrix[timeAssignments[i]-1][nextEntry[timeAssignments[i]-1]] = i;
-//	    		nextEntry[timeAssignments[i]-1]++;
-//    		}
-//    	}
-//    	return timeMatrix;
-//    }
     
-    public int[][] getConditionsMatrix(){
-    	int[] conditionAssignments;
-    	if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-    		conditionAssignments = getClusterConditionAssignments();
-    	}else{
-    		conditionAssignments = getInGroupAssignments();
-    	}
-    	
-    	
-    	
-    	int[] numEachTime = new int[2];
-    	for (int i=0; i< conditionAssignments.length; i++){
-    		if (conditionAssignments[i]!=0)
-    		numEachTime[conditionAssignments[i]-1]=numEachTime[conditionAssignments[i]-1]+1;
-    	}
-    	int[][]conditionMatrix = null;
-    	if (getDataDesign()==2){
-	    	conditionMatrix=new int[2][];
-	    	for (int i=0; i<2; i++){
-	    		conditionMatrix[i]=new int[numEachTime[i]];
-	    	}
-	    	int[]nextEntry=new int[2];
-	    	for (int i=0; i< conditionAssignments.length; i++){
-	    		if (conditionAssignments[i]!=0){
-	    			conditionMatrix[conditionAssignments[i]-1][nextEntry[conditionAssignments[i]-1]] = i;
-	    			nextEntry[conditionAssignments[i]-1]++;
-	    		}
-	    	}
-    	}else if (getDataDesign()==1){
-    		conditionMatrix = null;
-    	}else{
-	    	conditionMatrix=null;
-    	}
-    	return conditionMatrix;
-    }
+
     
     public int[] getInGroupAssignments() {
-        int[] conditionAssignments = new int[exptNames.size()];
+        int[] inGroupAssignments = new int[exptNames.size()];
         
         for (int i = 0; i < exptNames.size(); i++) {
             if (mPanel.mulgPanel.exptCheckBoxes[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
-                conditionAssignments[i] = 1;
+                inGroupAssignments[i] = 1;
             } else {
-                conditionAssignments[i] = 0;
+                inGroupAssignments[i] = 0;
             }
         }
-        return conditionAssignments;
+        return inGroupAssignments;
     }  
-    public int getDataDesign() {
-    	int design = -1;
-    	if (mPanel.ngPanel.oneCondition.isSelected())
-    		design = 1;
-    	if (mPanel.ngPanel.twoConditions.isSelected())
-    		design = 2;
-    	if (mPanel.ngPanel.pairedData.isSelected())
-    		design = 3;
-    	return design;
-    }
+   
     
     public int getTestDesign() {
         int design = -1;
@@ -1285,7 +957,7 @@ public class RPInitBox extends AlgorithmDialog {
         return design;
     }
     
-    public int[] getClusterConditionAssignments(){
+    public int[] getClusterInGroupAssignments(){
     	boolean doubleAssigned;
     	int[]groupAssignments = new int[exptNames.size()];
     	ArrayList[] arraylistArray = new ArrayList[2];
@@ -1332,9 +1004,6 @@ public class RPInitBox extends AlgorithmDialog {
         return Float.parseFloat(pPanel.pValueInputField.getText());
     }
     
-    public float getAlpha() {
-    	return Float.parseFloat(mPanel.ngPanel.alphaField.getText());
-    }
     
     public int getFalseNum() {
         return Integer.parseInt(pPanel.falseNumField.getText());
