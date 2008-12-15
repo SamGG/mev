@@ -599,8 +599,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         graphViewer.setMeans(result.getMatrix("means").A);
         graphViewer.setVariances(result.getMatrix("variances").A);
         DefaultMutableTreeNode clusterNode;//, annotNode, popNode;
+        int accindex = 1;
+        if(this.haveAccessionNumbers) {
+        	accindex=1;
+        } else {
+        	accindex=2;
+        }
         for (int i=0; i<this.clusters.length; i++) {
-            clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1));
+            clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1) + ": " + resultMatrix[i][accindex+2]);
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
