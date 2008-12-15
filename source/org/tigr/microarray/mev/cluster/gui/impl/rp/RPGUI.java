@@ -123,12 +123,11 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         //double alpha = RPDialog.getPValue();
 //        float alpha = RPDialog.getAlpha();
         float alpha = RPDialog.getPValue();
-        dataDesign = RPDialog.getDataDesign();
         //numTimePoints = RPDialog.getNumTimePoints();
         upDown = RPDialog.upDownPanel.getUpDown();
 
         if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-        	inGroupAssignments=RPDialog.getClusterConditionAssignments();
+        	inGroupAssignments=RPDialog.getClusterInGroupAssignments();
         }
         if (RPDialog.getTestDesign()==RPInitBox.BUTTON_SELECTION){
         	inGroupAssignments=RPDialog.getInGroupAssignments();
@@ -197,15 +196,11 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("dataDesign", String.valueOf(dataDesign));
-            //data.addIntArray("time_assignments", timeAssignments);
             data.addIntArray("group_assignments", inGroupAssignments);
-            //data.addIntMatrix("time-matrix", RPDialog.getTimeMatrix());
-            data.addIntMatrix("conditions-matrix", RPDialog.getConditionsMatrix());
             data.addParam("usePerms", String.valueOf(usePerms));
             data.addParam("numPerms", String.valueOf(numPerms));
             data.addParam("alpha", String.valueOf(alpha));
             data.addParam("correction-method", String.valueOf(correctionMethod));
-            //data.addParam("numTimePoints", String.valueOf(numTimePoints));
             data.addParam("alpha-value", String.valueOf(RPDialog.mPanel.alpha));
             data.addParam("UpOrDown", String.valueOf(upDown));
             if (correctionMethod == RPInitBox.FALSE_NUM) {
@@ -422,11 +417,9 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         //numTimePoints = RPDialog.getNumTimePoints();
 
         if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-        	//timeAssignments =RPDialog.getClusterTimeAssignments();
-        	inGroupAssignments=RPDialog.getClusterConditionAssignments();
+        	inGroupAssignments=RPDialog.getClusterInGroupAssignments();
         }
         if (RPDialog.getTestDesign()==RPInitBox.BUTTON_SELECTION){
-        	//timeAssignments=RPDialog.getTimeAssignments();
         	inGroupAssignments=RPDialog.getInGroupAssignments();
         }
         boolean usePerms = RPDialog.usePerms();     
