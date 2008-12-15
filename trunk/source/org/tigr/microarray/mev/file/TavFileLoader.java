@@ -26,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -36,6 +38,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -69,7 +72,14 @@ public class TavFileLoader extends ExpressionFileLoader {
     private ISlideMetaData meta;
     private boolean fillMissingSpots = false;
     private static final int BUFFER_SIZE = 1024*128;
-
+    private String[] fieldNames = new String[0];
+	int coordinatePairCount = 3;
+	int intensityCount =2;
+	int headerRowCount =1;
+	int headerColumnCount;
+	int uniqueIDIndex;
+	int nameIndex;
+	boolean indicesAdjusted = true;
 
     public TavFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
@@ -92,10 +102,10 @@ public class TavFileLoader extends ExpressionFileLoader {
     	return IData.DATA_TYPE_TWO_INTENSITY;
     }
     
-    public Vector loadExpressionFiles() throws IOException {
+    public Vector<ISlideData> loadExpressionFiles() throws IOException {
         
         Object [] tavFiles = tflp.getTavSelectedListModel().toArray();
-        Vector data = new Vector(tavFiles.length); 
+        Vector<ISlideData> data = new Vector<ISlideData>(tavFiles.length); 
         ISlideData slideData;
         
         if(tavFiles.length < 1)
@@ -104,7 +114,6 @@ public class TavFileLoader extends ExpressionFileLoader {
         setFilesCount(tavFiles.length);
         
         File ffile=new File(this.tflp.pathTextField.getText(),((File)tavFiles[0]).getName());
-    //   int countOfLines = getCountOfLines((File)tavFiles[0]);--original code commented by Sarita
         int countOfLines = getCountOfLines(ffile);
       
         for (int i = 0; i < tavFiles.length; i++) {
@@ -121,24 +130,22 @@ public class TavFileLoader extends ExpressionFileLoader {
                 setLinesCount(countOfLines);
                 if (meta == null) {
                     if(fillMissingSpots) {
-                       // slideData = loadSlideDataFillAllSpots((File)tavFiles[i]);
                     	 slideData = loadSlideDataFillAllSpots(file);
                     }
                     else {
-                       // slideData = loadSlideData((File)tavFiles[i]);
                     	slideData = loadSlideData(file);
                     }
                     meta = slideData.getSlideMetaData();
                 } else {
-                  //  slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
                 	  slideData = loadFloatSlideData(file, countOfLines, meta);
                 }
             } else {
-              //  slideData = loadFloatSlideData((File)tavFiles[i], countOfLines, meta);
             	slideData = loadFloatSlideData(file, countOfLines, meta);
             }
             data.add(slideData);            
         }
+        data.get(0).getSlideMetaData().clearFieldNames();
+        data.get(0).getSlideMetaData().appendFieldNames(fieldNames);
         return data;
     }
     
@@ -160,23 +167,20 @@ public class TavFileLoader extends ExpressionFileLoader {
         String currentLine;
         
         //Adjusts index values to make it consistent
-        if (TMEV.indicesAdjusted() == false) {
-            TMEV.setUniqueIDIndex(TMEV.getUniqueIDIndex() - 9);
-            TMEV.setNameIndex(TMEV.getNameIndex() - 9);
-            TMEV.setIndicesAdjusted(true);
+        if (indicesAdjusted == false) {
+            uniqueIDIndex = uniqueIDIndex - 9;
+            nameIndex = nameIndex - 9;
+            indicesAdjusted = true;
         }
         
         int maxRows = 0, maxColumns = 0;
         String avoidNullString;
-        int p, q;
-        int coordinatePairCount = 3; //TMEV.getCoordinatePairCount();
-        int intensityCount = 2; //TMEV.getIntensityCount();
-        final int preSpotRows = 0; //TMEV.getHeaderRowCount();
+        int preSpotRows = headerRowCount;
         
         int[] rows = new int[coordinatePairCount];
         int[] columns = new int[coordinatePairCount];
         float[] intensities = new float[intensityCount];
-        Vector moreFields = new Vector();
+        Vector<String> moreFields = new Vector<String>();
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -214,29 +218,17 @@ public class TavFileLoader extends ExpressionFileLoader {
             }
             moreFields.clear();
             
-            //EH fieldnames are saved to SlideData rather than TMEV
             while(ss.hasMoreTokens()) {
                 avoidNullString = ss.nextToken();
                 if (avoidNullString.equals("null")) moreFields.add("");
                 else moreFields.add(avoidNullString);
             }
-            /*
-            for (int j = 0; j < TMEV.getFieldNames().length; j++) {
-                if (ss.hasMoreTokens()) {
-                    avoidNullString = ss.nextToken();
-                    if (avoidNullString.equals("null")) moreFields[j] = "";
-                    else moreFields[j] = avoidNullString;
-                } else {
-                    moreFields[j] = "";
-                }
-            }
-            */
+
             String[] allFields = new String[moreFields.size()];
             for(int i=0; i<moreFields.size(); i++) {
             	allFields[i] = (String)moreFields.get(i);
             }
             slideDataElement = new SlideDataElement(String.valueOf(curpos),rows, columns, intensities, allFields);
-            //EH end fieldnames loading change
             
             slideData.addSlideDataElement(slideDataElement);
         }
@@ -251,15 +243,14 @@ public class TavFileLoader extends ExpressionFileLoader {
      * Loads a microarray float values from the specified file.
      */
     private ISlideData loadFloatSlideData(final File file, final int countOfLines, ISlideMetaData slideMetaData) throws IOException {
-        final int coordinatePairCount = 6;//TMEV.getCoordinatePairCount()*2;
-        final int intensityCount = 2;//TMEV.getIntensityCount();
-        final int preSpotRows = 0; //TMEV.getHeaderRowCount();
+        final int doubleCoordinatePairCount = coordinatePairCount*2;
+        final int preSpotRows = headerRowCount;
 
         //Adjusts index values to make it consistent
-        if (TMEV.indicesAdjusted() == false) {
-            TMEV.setUniqueIDIndex(TMEV.getUniqueIDIndex() - 9);
-            TMEV.setNameIndex(TMEV.getNameIndex() - 9);
-            TMEV.setIndicesAdjusted(true);
+        if (indicesAdjusted == false) {
+            uniqueIDIndex = uniqueIDIndex - 9;
+            nameIndex = nameIndex - 9;
+            indicesAdjusted = true;
         }
         
         FloatSlideData slideData = new FloatSlideData(slideMetaData);
@@ -279,7 +270,7 @@ public class TavFileLoader extends ExpressionFileLoader {
             }
             setFileProgress(index);
             ss.init(currentLine);
-            ss.passTokens(coordinatePairCount);
+            ss.passTokens(doubleCoordinatePairCount);
             for (int j = 0; j < intensityCount; j++) {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
@@ -304,27 +295,22 @@ public class TavFileLoader extends ExpressionFileLoader {
         
         //FL
         //Adjusts index values to make it consistent
-        if (TMEV.indicesAdjusted() == false) {
-            TMEV.setUniqueIDIndex(TMEV.getUniqueIDIndex() - 9);
-            TMEV.setNameIndex(TMEV.getNameIndex() - 9);
-            TMEV.setIndicesAdjusted(true);
+        if (indicesAdjusted == false) {
+            uniqueIDIndex = uniqueIDIndex - 9;
+            nameIndex = nameIndex - 9;
+            indicesAdjusted = true;
         }
         
         int maxRows = 0, maxColumns = 0;
         String avoidNullString;
-        int p, q;
-        int coordinatePairCount = TMEV.getCoordinatePairCount();
-        int intensityCount = TMEV.getIntensityCount();
-        final int preSpotRows = TMEV.getHeaderRowCount();
+        final int preSpotRows = headerRowCount;
         
         int[] rows = new int[coordinatePairCount];
         int[] columns = new int[coordinatePairCount];
         
         float[] intensities = new float[intensityCount];
         
-        //EH fieldnames saved to SlideData rather than TMEV
-        //String[] moreFields = new String[TMEV.getFieldNames().length];
-        Vector moreFields = new Vector();
+        Vector<String> moreFields = new Vector<String>();
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         StringSplitter ss = new StringSplitter((char)0x09);
@@ -365,7 +351,6 @@ public class TavFileLoader extends ExpressionFileLoader {
                 intensities[j] = ss.nextFloatToken(0.0f);
             }
             
-            //EH loading fieldnames for additional annotation
             while(ss.hasMoreTokens()) {
                 avoidNullString = ss.nextToken();
                 if (avoidNullString.equals("null")) moreFields.add("");
@@ -375,17 +360,6 @@ public class TavFileLoader extends ExpressionFileLoader {
             for(int i=0; i<moreFields.size(); i++) {
             	allFields[i] = (String)moreFields.get(i);
             }
-            /*
-            for (int j = 0; j < TMEV.getFieldNames().length; j++) {
-                if (ss.hasMoreTokens()) {
-                    avoidNullString = ss.nextToken();
-                    if (avoidNullString.equals("null")) moreFields[j] = "";
-                    else moreFields[j] = avoidNullString;
-                } else {
-                    moreFields[j] = "";
-                }
-            }
-            */
             realData[rows[0]-1][columns[0]-1] = true;
             slideDataElement = new SlideDataElement(String.valueOf(curpos), rows, columns, intensities, allFields);
             slideData.addSlideDataElement(slideDataElement);
@@ -393,11 +367,7 @@ public class TavFileLoader extends ExpressionFileLoader {
         reader.close();
         intensities[0] = 0.0f;
         intensities[1] = 0.0f;
- /*       //EH
-        String [] dummyString = new String[TMEV.getFieldNames().length];
-        for(int i = 0; i < dummyString.length; i++)
-            dummyString[i] = "";
-*/        
+  
         for(int i = 0; i < maxRows ; i++){
             for(int j = 0; j < maxColumns; j++){
                 if(!realData[i][j]){
@@ -542,19 +512,6 @@ public class TavFileLoader extends ExpressionFileLoader {
     		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
     		gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-    	      
-			
-			
-			
-			/*gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 0, 1,
-					1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			*/
-			
-			//
 
 			tavSelectionPanel = new JPanel();
 			tavSelectionPanel.setLayout(new GridBagLayout());
@@ -707,9 +664,6 @@ public class TavFileLoader extends ExpressionFileLoader {
 
 				if(acceptFile) {
 					String Name=fileChooser.getName((File) fileName);
-				/*	Object addItem = fileName;
-					((DefaultListModel) tavAvailableList.getModel())
-					.addElement(addItem);*/
 					((DefaultListModel) tavAvailableList.getModel())
 					.addElement(new File(Name));
 					
@@ -719,15 +673,6 @@ public class TavFileLoader extends ExpressionFileLoader {
 		}
 		    
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     public void setPath(String path) {
@@ -763,7 +708,7 @@ public class TavFileLoader extends ExpressionFileLoader {
             } else if (tabbedPaneTarget == manualPanel) {
                 markLoadEnabled(true);
                 return;
-            } else { // tabbedPaneTarget == genericPanel
+            } else { 
                 markLoadEnabled(true);
                 return;
             }
@@ -824,45 +769,6 @@ public class TavFileLoader extends ExpressionFileLoader {
             return (DefaultListModel) tavSelectedList.getModel();
         }
         
-        public void processPreferencesFile(File target) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(target));
-                
-                String currentLine;
-                StringSplitter ss;
-                while ((currentLine = br.readLine()) != null) {
-                    currentLine.trim();
-                    if (!(currentLine.startsWith("//") || (currentLine.length() == 0))) {
-                        if (currentLine.startsWith("Additional Fields")) {
-                            ss = new StringSplitter('\t');
-                            ss.init(currentLine);
-                            ss.nextToken();
-                            String fieldsString = ss.nextToken();
-                            
-                            ss = new StringSplitter(':');
-                            ss.init(fieldsString);
-                            String [] fieldNames = new String[ss.countTokens()+1];
-
-                            int cnt = 0;
-                            while (ss.hasMoreTokens()) {
-                                fieldNames[cnt] = ss.nextToken();
-                                cnt++;
-                            }
-                            //TODO this is a problem - can't set field names 
-                            //for tav files because SlideData isn't accessible
-//                            TMEV.setFieldNames(fieldNames);
-                            preferencesTextField.setText(target.getPath());
-                        }
-                    }
-                }
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                return;
-            }
-            
-            validateLists();
-        }
-        
         public void selectPreferencesFile() {
             
             JFileChooser jfc = new JFileChooser(TMEV.getFile("preferences/"));
@@ -882,10 +788,16 @@ public class TavFileLoader extends ExpressionFileLoader {
             };
             jfc.setFileFilter(ff);
             int activityCode = jfc.showDialog(this, "Select");
+
             
             if (activityCode == JFileChooser.APPROVE_OPTION) {
                 File target = jfc.getSelectedFile();
-                processPreferencesFile(target);
+                if(readPreferencesFile(target)) {
+                	preferencesTextField.setText(target.getPath());
+                	validateLists();
+                } else {
+                	JOptionPane.showMessageDialog(this, "An invalid preferences file was selected. ", "Invalid Preferences File", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
         
@@ -933,6 +845,83 @@ public class TavFileLoader extends ExpressionFileLoader {
             public void nodeCollapsed(FileTreePaneEvent event) {}
             public void nodeExpanded(FileTreePaneEvent event) {}
         }
+	public boolean readPreferencesFile(File inputFile) {
+		Hashtable<String, String> tavPreferencesProperties = new Hashtable<String, String>();
+		BufferedReader reader = null;
+		boolean returnValue = true;
+
+		try {
+			reader = new BufferedReader(new FileReader(inputFile));
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			returnValue = false;
+		}
+		StringTokenizer ss;
+		try {
+			String currentLine, key;
+			indicesAdjusted = false;
+
+			while ((currentLine = reader.readLine()) != null) {
+				currentLine.trim();
+				if (!(currentLine.startsWith("//") || (currentLine.length() == 0))) {
+					ss = new StringTokenizer(currentLine, "\t");
+					key = ss.nextToken();
+					if (ss.hasMoreTokens()) {
+						tavPreferencesProperties.put(key, ss.nextToken());
+					} else {
+						tavPreferencesProperties.put(key, new String(""));
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			String elementInfo = tavPreferencesProperties.get("Element Info");
+			if(elementInfo != null) {
+				ss = new StringTokenizer(elementInfo, ":");
+				coordinatePairCount = Integer.parseInt(ss.nextToken());
+				intensityCount = Integer.parseInt(ss.nextToken());
+			}
+			
+			String headerInfo = tavPreferencesProperties.get("Headers");
+			if(headerInfo != null) {
+				ss = new StringTokenizer(headerInfo, ":");
+				headerRowCount = Integer.parseInt(ss.nextToken());
+				headerColumnCount = Integer.parseInt(ss.nextToken());
+			}
+			
+			String uniqueIDString = tavPreferencesProperties.get("Unique ID");
+			if(uniqueIDString != null)
+				uniqueIDIndex = Integer.parseInt(uniqueIDString);
+
+			String nameString = tavPreferencesProperties.get("Spot Name");
+			if(nameString != null)
+				nameIndex = Integer.parseInt(nameString);
+
+			String dbs = tavPreferencesProperties.get("Database Names");
+			if(dbs != null) {
+				ss = new StringTokenizer(dbs, ":");
+			}			
+
+			String additionalFields = tavPreferencesProperties.get("Additional Fields");
+			if(additionalFields != null) {
+				ss = new StringTokenizer(additionalFields, ":");
+				if (ss.countTokens() > 0) {
+					fieldNames = new String[ss.countTokens()];
+					for (int i = 0; ss.hasMoreTokens(); i++) {
+						fieldNames[i] = ss.nextToken();
+					}
+				} else
+					fieldNames = new String[0];
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			returnValue = false;
+		}
+		return returnValue;
+	}
     }
 
 	@Override
@@ -940,4 +929,5 @@ public class TavFileLoader extends ExpressionFileLoader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
