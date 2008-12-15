@@ -23,8 +23,7 @@
 	<property name="version" value="4_3"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
 	
-	<!-- properties file containing machine-specific properties, such as the location of the jarsigning keystore -->
-	<loadproperties srcFile="local.properties"/>
+
 
 
 
@@ -1903,7 +1902,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<!-- Build WebStart distribution -->
 	</target>
 	
-	<target name="webstart-package">
+	<target name="webstart-package">	
+		<!-- properties file containing machine-specific properties, such as the location of the jarsigning keystore -->
+		<loadproperties srcFile="local.properties"/>
 		<mkdir dir="${home.dir}/webstart"/>
 		<copy todir="${package.dir}/webstart/mev/lib">
 			<fileset dir="${home.dir}/lib"	includes="*.jar"/>
