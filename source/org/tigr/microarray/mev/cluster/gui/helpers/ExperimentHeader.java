@@ -667,12 +667,12 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         private int oldColumn = -1;
         
         public void mouseClicked(MouseEvent event) {
-            if (SwingUtilities.isRightMouseButton(event)) {
+            int column = findColumn(event.getX());
+            if (SwingUtilities.isRightMouseButton(event)||column==-1) {
             	isShiftMove=false;
             	isSampleDrag = false;
                 return;
             }
-            int column = findColumn(event.getX());
             int row = findRow(event.getY());
             if (!isLegalPosition(row, column)) {
                 return;
@@ -748,12 +748,15 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
             	isSampleDrag = false;
                 return;
             }
-            if(event.isShiftDown())
+            if(event.isShiftDown()){
+            	isSampleDrag = false;
             	return;
+            }
             int column = findColumn(event.getX());
             int row = findRow(event.getY());
             if (column==-1){
             	isShiftMove=false;
+            	isSampleDrag = false;
             	return;
             }
             if (isShift){
@@ -783,13 +786,13 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         }
         /** Called when the mouse has been pressed. */
         public void mousePressed(MouseEvent event) {
-            if (SwingUtilities.isRightMouseButton(event)) {
+            startColumn = findColumn(event.getX());
+            if (SwingUtilities.isRightMouseButton(event)||startColumn==-1) {
             	isShiftMove=false;
             	isSampleDrag = false;
                 return;
             }
 
-            startColumn = findColumn(event.getX());
             sampleDragColumn = startColumn;
             startRow = findRow(event.getY());
             if(event.isShiftDown()){
@@ -814,14 +817,14 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         
         /** Called when the mouse has been released. */
         public void mouseReleased(MouseEvent event) {
-        	 if (SwingUtilities.isRightMouseButton(event)) {
+        	 
+	        int endColumn = findColumn(event.getX());
+	        
+	        if (SwingUtilities.isRightMouseButton(event)||endColumn==-1) {
              	isShiftMove=false;
              	isSampleDrag = false;
                  return;
-             }
-
-	        int endColumn = findColumn(event.getX());
-	        
+            }
 	        if (isShiftMove){
 	        	int lowerShift=Math.min(endShift,startShift);
 	        	int upperShift=Math.max(endShift,startShift);;
@@ -848,22 +851,23 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        	isShift = false;
 	        	return;
 	        }
-	        
-	        if (endColumn>startColumn){
-	        	int startSample = samplesOrder[startColumn];
-	        	for (int i=0; i<endColumn-startColumn; i++){
-	        		samplesOrder[startColumn+i]=samplesOrder[startColumn+i+1];
-	        	}
-	        	samplesOrder[endColumn]=startSample;
-	      		repaint();
-	        }
-	        if (endColumn<startColumn){
-	        	int startSample = samplesOrder[startColumn];
-	        	for (int i=0; i<startColumn-endColumn; i++){
-	        		samplesOrder[startColumn-i]=samplesOrder[startColumn-(i+1)];
-	        	}
-	        	samplesOrder[endColumn]=startSample;
-	      		repaint();
+	        if (isSampleDrag){
+		        if (endColumn>startColumn){
+		        	int startSample = samplesOrder[startColumn];
+		        	for (int i=0; i<endColumn-startColumn; i++){
+		        		samplesOrder[startColumn+i]=samplesOrder[startColumn+i+1];
+		        	}
+		        	samplesOrder[endColumn]=startSample;
+		      		repaint();
+		        }
+		        if (endColumn<startColumn){
+		        	int startSample = samplesOrder[startColumn];
+		        	for (int i=0; i<startColumn-endColumn; i++){
+		        		samplesOrder[startColumn-i]=samplesOrder[startColumn-(i+1)];
+		        	}
+		        	samplesOrder[endColumn]=startSample;
+		      		repaint();
+		        }
 	        }
         	isSampleDrag = false;
 	        
