@@ -6,22 +6,13 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.resources;
 
-import java.awt.Frame;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InterruptedIOException;
+import java.awt.*;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
-
-import org.tigr.microarray.mev.resources.FileDownloader.DownloadProgressListener;
-
-import com.jcraft.jsch.SftpProgressMonitor;
 
 
 public class HTTPDownloader extends FileDownloader {
@@ -37,7 +28,7 @@ public class HTTPDownloader extends FileDownloader {
 //			RMProgress monitor = progress;
 			conn = hostURL.openConnection();
 			conn.setConnectTimeout(10000);
-			conn.setReadTimeout(10000);
+			conn.setReadTimeout(100000);
 			return true;
 		} finally {
 			//progress.dispose();
@@ -81,7 +72,7 @@ public class HTTPDownloader extends FileDownloader {
 			fileURL = new URL(hostURL, path);
 			URLConnection conn1 = fileURL.openConnection();
 			conn1.setConnectTimeout(10000);
-			conn1.setReadTimeout(10000);
+			conn1.setReadTimeout(100000);
 			
 			File tempFile = File.createTempFile("mev_resource", "");
 			tempFile.deleteOnExit();

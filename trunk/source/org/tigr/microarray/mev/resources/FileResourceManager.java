@@ -249,7 +249,11 @@ public class FileResourceManager implements IResourceManager {
 						thisDefURL = thisDef.getURL();
 						Date lastModifiedDate = fd.getLastModifiedDate(thisDefURL.getPath());
 						if(cachedDateForThisDef == null || roundedCompare(cachedDateForThisDef, lastModifiedDate)) {
-							File f = fd.getTempFile(thisDefURL.getPath());
+							String path = thisDefURL.getPath();
+							String query = thisDefURL.getQuery();
+							if (query != null && query.length() > 0)
+ 								path += "?" + query;
+	 						File f = fd.getTempFile(path);
 							if(fd.wasCancelled()) {
 								f = null;
 							}
@@ -810,9 +814,9 @@ public class FileResourceManager implements IResourceManager {
 //		defs.add(new SupportFileUrlsPropertiesDefinition());
 		defs.add(new EASEImpliesAndURLDataFile());
 //		defs.add(new ExpressionDataSupportDataFile("http://www.tm4.org/webstart/mev/TDMS_format_sample.txt", false, FileType.STANFORD));
-//		defs.add(new ResourcererAnnotationFileDefinition("Human", "APPLERA_ABI1700"));
-//		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
-//		defs.add(new ResourcererAnnotationFileDefinition("Rat", "Agilent_RatOligo"));
+		defs.add(new ResourcererAnnotationFileDefinition("Human", "APPLERA_ABI1700"));
+		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
+		defs.add(new ResourcererAnnotationFileDefinition("Rat", "Agilent_RatOligo"));
 //		defs.add(new EASESupportDataFile("Human", "APPLERA_ABI1700"));
 //		defs.add(new GseaSupportDataFile("c1.all.v2.5.symbols.gmt"));
 //		defs.add(new GseaSupportDataFile("c2.v2.symbols.gmt"));
