@@ -71,14 +71,15 @@ public class TEASEInfoBox extends JLabel{
 		this.upperBound = param.getDouble("upper-boundary");
 		this.lowerBound = param.getDouble("lower-boundary");
 
-		//System.out.println("matrix is null: " + (matrix == null));
-//		System.out.println(matrix.length);
-//		System.out.println("matrix[1] is null: " + (matrix[1] == null));
-		if (matrix != null) {
-			if (Double.valueOf(matrix[1][matrix[1].length - 1]).doubleValue() <= 1.1) 
-				this.isCluster = true;
-			else 
+		if (matrix != null && matrix.length > 1) {
+			if(matrix[1] != null) {
+				if (Double.valueOf(matrix[1][matrix[1].length - 1]).doubleValue() <= 1.1) 
+					this.isCluster = true;
+				else 
+					this.isCluster = false;
+			} else {
 				this.isCluster = false;
+			}
 		}
 		setColor();
 	}
@@ -131,7 +132,7 @@ public class TEASEInfoBox extends JLabel{
 					this.color = new Color(255, 20, 0);
 				else if (score > upperLog)
 					this.color = new Color(0, 20, 255);
-				else if (score < upperLog && score > middle) {
+				else if (score <= upperLog && score > middle) {
 					distance = (int)(((upperLog - score)/(upperLog-middle)) * 255);
 					this.color = new Color(distance, 20, 255);
 				}
