@@ -29,6 +29,7 @@ public class BNConstants {
 	public final static String PUBMED_DB_FILE = "symArtsPubmed.txt";
 	public final static String OUT_INTERACTION_FILE = "outInteractions.txt";
 	public final static String OUT_XML_BIF_FILE = "out_bif.xml";
+	public final static String OUT_XML_BIF_FILE_FINAL = "out_bif_final.xml";
 	
 	/**
 	 * Ouput File Names
@@ -81,6 +82,7 @@ public class BNConstants {
 	public final static String NAMES_FILE_NAME = "namesFileName";
 	public final static String DISTRIBUTION_FRM_WEIGHTS = "distributionFromWeights";
 	public final static String OUT_XML_BIF_FILE_NAME = "outXMLBifFileName";
+	public final static String OUT_XML_BIF_FILE_FINAL_NAME = ""; //TODO
     public final static String SIF_FILE_NAME = "sifFileName";
     
     public final static String KEGG_SPECIES = "kegg_sp";

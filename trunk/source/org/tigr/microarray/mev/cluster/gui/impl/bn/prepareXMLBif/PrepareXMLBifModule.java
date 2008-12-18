@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Vector;
+
 import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
@@ -221,34 +223,36 @@ public class PrepareXMLBifModule {
 	/**
 	 * Function to create XMLBifFile for Weka for a fixed network to lean CPTs
 	 * @param propsFileName
+	 * @throws Exception 
 	 */
-	public static void createXMLBifFromSif(String propsFileName, ArrayList fixedNetworkInter) throws IOException, NullArgumentException, NotDAGException{	
+	public static void createXMLBifFromList(String propsFileName, Vector fixedNetworkInter) throws Exception{	
 		String path = BNConstants.getBaseFileLocation();
 		System.out.println("PrepareXMLBifModule path: " + path);
 		path = path+BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
 		try {
 			Properties props = new Properties();
 			props.load(new FileInputStream(propsFileName));
-						
-			String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
+			
+			//TODO May not need sif file, as interactions are already loaded in ArrayList
+			//String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 			
 			System.out.println("test(): namesFileName " + namesFileName);
-			System.out.println("test(): sifFileName " + sifFileName);
-			Useful.checkFile(sifFileName);
+			//System.out.println("test(): sifFileName " + sifFileName);
+			//Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			
-			String outXMLBifFileName = path+props.getProperty(BNConstants.OUT_XML_BIF_FILE_NAME,BNConstants.OUT_XML_BIF_FILE);
-			ArrayList inter = UsefulInteractions.readInteractions(sifFileName);
+			String outXMLBifFileName = path + props.getProperty(BNConstants.OUT_XML_BIF_FILE_FINAL_NAME,BNConstants.OUT_XML_BIF_FILE_FINAL);
+			ArrayList inter = UsefulInteractions.readInteractions(fixedNetworkInter);
 			//System.out.println("Reading Weights before creating DAG");
 			System.out.println("Num. of interaction to be considered: " + inter.size());
 			ArrayList names = Useful.readNamesFromFile(namesFileName);
-			ArrayList newInter = null;
-			//We may not need to create the DAG. The DAG is already there, we just populate the 
+			//TODO We may not need to create the DAG. The DAG is already there, we just populate the 
 			//ArrayList with the interactions
-			newInter = getDAGFromUndirectedGraph(inter);
+			//ArrayList newInter = null;
+			//newInter = getDAGFromUndirectedGraph(inter);
 			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
-			SifToXMLBif.createXMLBifGivenSifFile(newInter, names, pw, props);
+			SifToXMLBif.createXMLBifGivenSifFile(inter, names, pw, props);
 			pw.close();
 		}
 		catch(IOException ioe){
@@ -265,6 +269,9 @@ public class PrepareXMLBifModule {
 			//System.out.println(nde);
 			//nde.printStackTrace();
 			throw nde;
+		}
+		catch (Exception ex) {
+			throw ex;
 		}
 	}
 

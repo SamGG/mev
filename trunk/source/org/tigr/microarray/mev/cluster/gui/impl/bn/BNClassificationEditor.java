@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -60,12 +61,15 @@ import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 import org.tigr.util.StringSplitter;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.BayesNet;
 import weka.estimators.Estimator;
 import weka.gui.GUIChooser;
+import weka.classifiers.bayes.net.search.SearchAlgorithm;
+import weka.classifiers.bayes.net.estimate.BayesNetEstimator;
 /**
  *
  */
@@ -514,7 +518,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
                                 bnNet.setSearchAlgorithm(srchAlgo);
                                 //Set Estimator
                                 BayesNetEstimator bnEst = new BayesNetEstimator();
-                                String estimatorArgs = "weka.classifiers.bayes.net.estimate.BMAEstimator A 0.5";
+                                String estimatorArgs = "weka.classifiers.bayes.net.estimate.SimpleEstimator A 0.5";
                                 bnEst.setOptions(estimatorArgs.split(" "));
                                 bnNet.setEstimator(bnEst);
                                 //Run CLassifer
@@ -598,7 +602,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				PrintWriter pw = new PrintWriter(fos, true);
 				//FromWekaToSif.fromWekaToSif(evalStrs[i], pw);	
 				//No* need to convert to xgmml as these files are just used to select
-				//a netwrok from the bootstrap netwoek for a threshold.
+				//a netwrok from the bootstrap network for a threshold.
 				FromWekaToSif.fromWekaToSif(evalStrs[i], pw, false);
 			}
 		} catch (Exception e){
@@ -674,7 +678,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	 */
 	protected void onUpdateNetwork() {
 		try {
-			// For lookup during gaggle broadcast
+			//To track last created network from bootstrap data statrs with null
+			Vector<String> interactionsPrefinal = null;
+			// For lookup during gaggle broadcast and for creating final list of edges
+			interactionsPrefinal = interactionsfinal;
 			interactionsfinal = new Vector<String>();
 			// To Remove edges below threshold
 			float confThres = Float.parseFloat(confThreshField.getText().trim());
@@ -719,13 +726,52 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				// Do stuff to store the final thresh and the file name
 				finalBootFile = _bootNetFile;
 				networkFiles.add(finalBootFile);
-
+				
 				//TODO - Is it possible to just take a network and 
 				//Create weka instance to evaluate probabilities
 				//Create Weka Instance Object
 				//Evalute model
 				//Extract probabilities from Estimator class
 				//}
+				if(interactionsfinal.size() == 0) {
+					JOptionPane.showMessageDialog(this, "No valid network for selected threshold\n Will try to use last selected threshold.", "Warning", JOptionPane.INFORMATION_MESSAGE);
+					if(interactionsPrefinal != null) {
+						if(interactionsPrefinal.size() > 0) {
+							JOptionPane.showMessageDialog(this, "Last network not avaialble. Aborting.", "Warning", JOptionPane.INFORMATION_MESSAGE);
+							return;
+						}
+					} else {
+						JOptionPane.showMessageDialog(this, "Last network not avaialble. Aborting.", "Warning", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+				}
+				String propsFile = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.XML_BIF_MODULE_FILE;
+				PrepareXMLBifModule.createXMLBifFromList(propsFile, interactionsfinal);
+				String bifFileFinal = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_XML_BIF_FILE_FINAL;
+				BayesNet bnNet = new BayesNet();
+				//Dataset
+				String outarff = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP + "outExpression.arff";
+				//Specify Data set K for kfold validation in weka
+                String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
+                //Specify Fixed Netwrok Classifier
+                modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
+                //Specify Fixed Netwrok Bif File
+                modelArgs += bifFileFinal;
+                //Specify Weka Estimator with inital alpha
+                modelArgs += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+                //Run Weka Model
+                Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
+                Estimator myEstm [][] = bnNet.getDistributions();
+				bnNet.estimateCPTs();
+				//Write The network with CPts in BIF File format
+				//System.out.println(bnNet.toXMLBIF03());
+				String outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FixedNetWithCPT.xml";
+				FileOutputStream fos = new FileOutputStream(outCPTBifXML);
+				PrintWriter pw = new PrintWriter(fos, true);
+				pw.print(bnNet.toXMLBIF03());
+				pw.close();
+				fos.close();
+				JOptionPane.showMessageDialog(this, "BIF File with CPTs, written here:\n" + outCPTBifXML, "CPTs File", JOptionPane.PLAIN_MESSAGE);
 			} else {
 				//Just create interactions, if not final
 				interactionsfinal = createInteractions(edgesTable, confThres, numIterations);

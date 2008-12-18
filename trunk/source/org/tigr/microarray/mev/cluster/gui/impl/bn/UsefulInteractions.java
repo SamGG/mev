@@ -24,8 +24,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -74,6 +77,41 @@ public class UsefulInteractions {
 			System.out.println(ioe);
 		}
 		return null;
+	}
+	
+	/**
+	 * To Craete SimpleGeneEdge Objects from string encoded edges
+	 * @param edges
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArrayList readInteractions(Vector edges) throws Exception {
+		//Useful.checkFile(fileName);
+		try {
+			ArrayList inter = new ArrayList();
+			String s = null;
+			String[] tokens = null;
+			Enumeration enumerate = edges.elements();
+			while(enumerate.hasMoreElements()){
+				s = (String)enumerate.nextElement();
+				System.out.println("readInteractions from Vector: " + s);
+				String splitOn = " pd ";
+				if (s.contains(" pp ")) splitOn = " pp ";
+				if (s.contains(" pd ")) splitOn = " pd ";
+				if (s.contains(" - ")) splitOn = " - "; 
+				tokens = s.split(splitOn);
+				if(tokens.length == 2){
+					//System.out.println(tokens[0]);	
+					inter.add(new SimpleGeneEdge(tokens[0], tokens[1]));
+					//inter.add(new SimpleGeneEdge(tokens[1], tokens[0]));
+				}
+			}
+			return inter;
+		}
+		catch(Exception ioe){
+			//System.out.println(ioe);
+			throw ioe;
+		}
 	}
 	/**
 	 * The <code>readInteractionsWithWeights</code> method takes in a String corresponding to the name of the file
