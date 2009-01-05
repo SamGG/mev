@@ -26,11 +26,13 @@ import java.util.Vector;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JTextField;
@@ -56,9 +58,10 @@ public class ListImportDialog extends AlgorithmDialog {
     private List otherList;
     private int result = JOptionPane.CANCEL_OPTION;
     private boolean bin = false;
-    private JTextField lowerField;
-    private JTextField upperField;
+    private ArrayList<JTextField> lowerFieldArray = new ArrayList<JTextField>();
+    private ArrayList<JTextField> upperFieldArray = new ArrayList<JTextField>();;
     private int importType=0;
+    private int binnedClusterCount=0;
  
     
     /** Creates a new instance of GeneListImportDialog */
@@ -112,7 +115,9 @@ public class ListImportDialog extends AlgorithmDialog {
         setActionListeners(new Listener());
         pack();
     }    
-    
+
+    ParameterPanel binParamPanel;
+    JButton addOne;
     /** Creates a new instance of binned GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto, boolean bin) {
         super(parent, geneList ? "Gene List Import Dialog" : "Sample List Import Dialog", true);
@@ -124,33 +129,20 @@ public class ListImportDialog extends AlgorithmDialog {
         }
         checkBoxes = new JCheckBox[annFields.size()];
         JComboBox comboBox = new JComboBox();
-        ParameterPanel paramPanel;
         if(geneList)
-            paramPanel = new ParameterPanel("Gene List Import Parameters");
+            binParamPanel = new ParameterPanel("Gene List Import Parameters");
         else
-            paramPanel = new ParameterPanel("Sample List Import Parameters");
+            binParamPanel = new ParameterPanel("Sample List Import Parameters");
         
-        paramPanel.setLayout(new GridBagLayout());
-        
+        binParamPanel.setLayout(new GridBagLayout());
+        listBox = new JComboBox(annFields);
         JLabel listLabel;
         if(geneList)
             listLabel = new JLabel("Gene ID Type:");        
         else
-            listLabel = new JLabel("Sample ID Type:");      
-        JLabel lowerLimit = new JLabel("Lower Limit: ");
-        JLabel upperLimit = new JLabel("Upper Limit: ");
-        lowerField = new JTextField("");
-        upperField = new JTextField("");
-        lowerField.setSize(50, 20);
-        lowerField.setMinimumSize(new Dimension(20,10));
-        listBox = new JComboBox(annFields);
-        pane = new JTextPane();
-        pane.setPreferredSize(new Dimension(125, 200));
-        
-        JScrollPane scroll = new JScrollPane(pane);
-        scroll.getViewport().setViewSize(new Dimension(125, 200));
-        scroll.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-        
+            listLabel = new JLabel("Sample ID Type:"); 
+        binParamPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+ 
         
         if(annFields.size() > 0)
             listBox.setSelectedIndex(0);
@@ -166,19 +158,42 @@ public class ListImportDialog extends AlgorithmDialog {
         	theList.add(fieldNames[i]);
         }
 
-        paramPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
-        paramPanel.add(listBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
+        binParamPanel.add(listBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
+        addAnotherCluster();
 
-        paramPanel.add(lowerLimit, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
-        paramPanel.add(upperLimit, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
-        
-        paramPanel.add(lowerField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
-        paramPanel.add(upperField, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
-        
-        addContent(paramPanel);
+       
+
         setActionListeners(new Listener());
         pack();
     }    
+    private void addAnotherCluster(){
+        binnedClusterCount++;
+    	JPanel fieldsPanel = new JPanel();     
+        JLabel lowerLimit = new JLabel("Lower Limit: ");
+        JLabel upperLimit = new JLabel("Upper Limit: ");
+        JTextField lowerField = new JTextField("");
+        JTextField upperField = new JTextField("");
+        lowerField.setSize(50, 20);
+        lowerField.setMinimumSize(new Dimension(20,10));
+        lowerField.setPreferredSize(new Dimension(50,20));
+        fieldsPanel.setOpaque(false);
+        fieldsPanel.setLayout(new GridBagLayout());
+        fieldsPanel.add(lowerLimit, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,10,10,10), 0,0));
+        fieldsPanel.add(upperLimit, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,10,10,10), 0,0));
+        fieldsPanel.add(lowerField, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,10,10,10), 0,0));
+        fieldsPanel.add(upperField, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,10,10,10), 0,0));
+        fieldsPanel.setBorder(BorderFactory.createTitledBorder("Cluster "+binnedClusterCount));
+        lowerFieldArray.add(lowerField);
+        upperFieldArray.add(upperField);
+        binParamPanel.add(fieldsPanel, new GridBagConstraints(1,binnedClusterCount,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        if (addOne!=null)
+        	binParamPanel.remove(addOne);
+        addOne = new JButton("Add another cluster");
+        addOne.addActionListener(new AddClusterListener());
+        binParamPanel.add(addOne, new GridBagConstraints(1,binnedClusterCount+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
+        addContent(binParamPanel);
+        pack();
+    }
     
     /** Creates a new instance of GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto) {
@@ -295,13 +310,28 @@ public class ListImportDialog extends AlgorithmDialog {
         return outputList;
     }
     
-    public float getLowerLimit(){
-    	return Float.parseFloat(this.lowerField.getText());
+    public float[] getLowerLimit(){
+    	float[] lf = new float[lowerFieldArray.size()];
+    	for (int i=0; i<lf.length; i++){
+    		lf[i]=Float.parseFloat(this.lowerFieldArray.get(i).getText());
+    	}
+    	return lf;
     }
-    public float getUpperLimit(){
-    	return Float.parseFloat(this.upperField.getText());
+    public float[] getUpperLimit(){
+    	float[] uf = new float[upperFieldArray.size()];
+    	for (int i=0; i<uf.length; i++){
+    		uf[i]=Float.parseFloat(this.upperFieldArray.get(i).getText());
+    	}
+    	return uf;
     }
-    
+    /**
+     * The class to listen to add cluster button.
+     */
+    private class AddClusterListener extends DialogListener {
+        public void actionPerformed(ActionEvent e) {
+        	addAnotherCluster();
+        }
+    }
         /**
      * The class to listen to the dialog and check boxes items events.
      */
@@ -312,9 +342,11 @@ public class ListImportDialog extends AlgorithmDialog {
             if (command.equals("ok-command")) {
             	if (bin){
             		try{
-            			if (Float.parseFloat(upperField.getText()) < Float.parseFloat(lowerField.getText())){
-            				JOptionPane.showMessageDialog(null, "Upper limit must be greater than lower limit.", "Error", JOptionPane.ERROR_MESSAGE);
-            				return;
+            			for(int i=0; i<lowerFieldArray.size(); i++){
+	            			if (Float.parseFloat(upperFieldArray.get(i).getText()) < Float.parseFloat(lowerFieldArray.get(i).getText())){
+	            				JOptionPane.showMessageDialog(null, "Upper limit for Cluster "+(i+1)+" must be greater than lower limit.", "Error", JOptionPane.ERROR_MESSAGE);
+	            				return;
+	            			}
             			}
             		}catch (NumberFormatException nfe) {
             			JOptionPane.showMessageDialog(null, "Please enter numerical values for the upper and lower limits.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -378,7 +410,10 @@ public class ListImportDialog extends AlgorithmDialog {
     	String[] qwe ={"qwe","werhjkhjkhjk"};
     	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, true, false, true);
     	if(lid.showModal() == JOptionPane.OK_OPTION) {
-    		System.out.println("done");
+    		for (int i=0; i< lid.getUpperLimit().length;i++){
+    			
+    			System.out.println(lid.getUpperLimit()[i]);
+    		}
     	}
     }
     

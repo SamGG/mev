@@ -912,39 +912,41 @@ public class ClusterRepository extends Vector {
         	dialog = new ListImportDialog(framework.getFrame(), slideNames, false, true, true);
             
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
-                key = dialog.getFieldName();
-                
-            	allIndices = experiment.getColumnIndicesCopy();
-	            annList = new String[experiment.getNumberOfSamples()];
-	            framework.getData().setSampleLabelKey(key);
-	            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
-	            matches = new boolean[annList.length];
-	            for(int i = 0; i < allIndices.length; i++) {
-	                annList[i] = framework.getData().getFullSampleName(i);
-	                if (!noRepeatsLabelList.contains(annList[i]))
-	                	noRepeatsLabelList.add(annList[i]);
-	            }
-	            	newIndices = getBinnedIndices(experiment, key, dialog.getLowerLimit(), dialog.getUpperLimit(), matches, false);
-                    int[] selectedIndices = newIndices;
-                    if(selectedIndices == null || selectedIndices.length < 1) {
-                    	JOptionPane.showMessageDialog(framework.getFrame(), "No samples within the given limits were found.", "No Samples Found", JOptionPane.INFORMATION_MESSAGE);
-                        return null;
-                    }                        
-                    
-                    String clusterLabel = Float.toString(dialog.getLowerLimit()) + "-"+Float.toString(dialog.getUpperLimit());
-                    while (true){
+            	for (int clusterCount=0; clusterCount<dialog.getLowerLimit().length; clusterCount++){
+	                key = dialog.getFieldName();
+	                
+	            	allIndices = experiment.getColumnIndicesCopy();
+		            annList = new String[experiment.getNumberOfSamples()];
+		            framework.getData().setSampleLabelKey(key);
+		            ArrayList<String> noRepeatsLabelList = new ArrayList<String>();
+		            matches = new boolean[annList.length];
+		            for(int i = 0; i < allIndices.length; i++) {
+		                annList[i] = framework.getData().getFullSampleName(i);
+		                if (!noRepeatsLabelList.contains(annList[i]))
+		                	noRepeatsLabelList.add(annList[i]);
+		            }
+	            	newIndices = getBinnedIndices(experiment, key, dialog.getLowerLimit()[clusterCount], dialog.getUpperLimit()[clusterCount], matches, false);
+	                int[] selectedIndices = newIndices;
+	                if(selectedIndices == null || selectedIndices.length < 1) {
+	                	JOptionPane.showMessageDialog(framework.getFrame(), "No samples within the given limits for 'Cluster "+(clusterCount+1)+"' were found.", "No Samples Found", JOptionPane.INFORMATION_MESSAGE);
+	                    continue;
+	                }                        
+	                
+	                String clusterLabel = Float.toString(dialog.getLowerLimit()[clusterCount]) + "-"+Float.toString(dialog.getUpperLimit()[clusterCount]);
+	                while (true){
 	                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List", key + " - " + clusterLabel, null, getNextDefaultColor());
 	                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
-	                        return null;
+	                        break;
 	                    }
 	                    if (clusterColors.contains(clusterDialog.getColor())){
 	            	        Object[] optionst = { "OK", "CANCEL" };
 	            	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
 	                    		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 	                    		null, optionst, optionst[0]);
-	            	        if (option==JOptionPane.CANCEL_OPTION) return null;
+	            	        if (option==JOptionPane.CANCEL_OPTION) 
+	            	        	break;
 	            	        if (option==JOptionPane.OK_OPTION)
-	                	        	continue;
+	                	        continue;
 	            	        return null;
 	                    }
 	                    clusterColors.add(clusterDialog.getColor());
@@ -957,56 +959,62 @@ public class ClusterRepository extends Vector {
 	                    
 	                    addCluster(list, cluster);
 	                    clusterArray.add(cluster);
-	                    return clusterArray;
-                    }
-        	}
+	                    break;
+	                }
+	        	}
+            	return clusterArray;
+            }
         }else{
             	dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, true, true);
                 
                 if(dialog.showModal() == JOptionPane.OK_OPTION) {
 
-		            key = dialog.getFieldName();
-	
-		            allIndices = experiment.getRowMappingArrayCopy();
-		            annList = new String[experiment.getNumberOfGenes()];
-		            annList = framework.getData().getAnnotationList(key, allIndices);
-		            matches = new boolean[annList.length];
-	            	newIndices = getBinnedIndices(experiment, key, dialog.getLowerLimit(), dialog.getUpperLimit(), matches, true);
-                    int[] selectedIndices = newIndices;
-                    if(selectedIndices == null || selectedIndices.length < 1) {
-                    	JOptionPane.showMessageDialog(framework.getFrame(), "No genes within the given limits were found.", "No Samples Found", JOptionPane.INFORMATION_MESSAGE);
-                        return null;
-                    }  
-	                
-	                String clusterLabel = Float.toString(dialog.getLowerLimit()) + "-"+Float.toString(dialog.getUpperLimit());
-	                while (true){
-	                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List", key + " - " + clusterLabel, null, getNextDefaultColor());
-	                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
-	                        return null;
-	                    }
-	                    if (clusterColors.contains(clusterDialog.getColor())){
-	            	        Object[] optionst = { "OK", "CANCEL" };
-	            	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
-	                    		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
-	                    		null, optionst, optionst[0]);
-	            	        if (option==JOptionPane.CANCEL_OPTION) return null;
-	            	        if (option==JOptionPane.OK_OPTION)
-	                	        	continue;
-	                    return null;
-	                    }
-	                    clusterColors.add(clusterDialog.getColor());
-	                    ClusterList list = getClusterOperationsList();
-	                    Color clusterColor = clusterDialog.getColor();
-	                    clusterLabel = clusterDialog.getLabel();
-	                    String clusterDescription = clusterDialog.getDescription();
-	                    this.clusterSerialCounter++;
-	                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-	                    
-	                    addCluster(list, cluster);
-	                    clusterArray.add(cluster);
-	                    return clusterArray;
-	                }
-            	}
+                	for (int clusterCount=0; clusterCount<dialog.getLowerLimit().length; clusterCount++){
+			            key = dialog.getFieldName();
+		
+			            allIndices = experiment.getRowMappingArrayCopy();
+			            annList = new String[experiment.getNumberOfGenes()];
+			            annList = framework.getData().getAnnotationList(key, allIndices);
+			            matches = new boolean[annList.length];
+		            	newIndices = getBinnedIndices(experiment, key, dialog.getLowerLimit()[clusterCount], dialog.getUpperLimit()[clusterCount], matches, true);
+	                    int[] selectedIndices = newIndices;
+	                    if(selectedIndices == null || selectedIndices.length < 1) {
+	                    	JOptionPane.showMessageDialog(framework.getFrame(), "No genes within the given limits for 'Cluster "+(clusterCount+1)+"' were found.", "No Samples Found", JOptionPane.INFORMATION_MESSAGE);
+	                        continue;
+	                    }  
+		                
+		                String clusterLabel = Float.toString(dialog.getLowerLimit()[clusterCount]) + "-"+Float.toString(dialog.getUpperLimit()[clusterCount]);
+		                while (true){
+		                    ClusterAttributesDialog clusterDialog = new ClusterAttributesDialog("Store Cluster Attributes", "List Import", "Gene List", key + " - " + clusterLabel, null, getNextDefaultColor());
+		                    if(clusterDialog.showModal() != JOptionPane.OK_OPTION){
+		                        break;
+		                    }
+		                    if (clusterColors.contains(clusterDialog.getColor())){
+		            	        Object[] optionst = { "OK", "CANCEL" };
+		            	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
+		                    		JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+		                    		null, optionst, optionst[0]);
+		            	        if (option==JOptionPane.CANCEL_OPTION) 
+		            	        	break;
+		            	        if (option==JOptionPane.OK_OPTION)
+		                	        continue;
+		            	        return null;
+		                    }
+		                    clusterColors.add(clusterDialog.getColor());
+		                    ClusterList list = getClusterOperationsList();
+		                    Color clusterColor = clusterDialog.getColor();
+		                    clusterLabel = clusterDialog.getLabel();
+		                    String clusterDescription = clusterDialog.getDescription();
+		                    this.clusterSerialCounter++;
+		                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+		                    
+		                    addCluster(list, cluster);
+		                    clusterArray.add(cluster);
+		                    break;
+		                }
+	            	}
+		            return clusterArray;
+                }
             }
         return clusterArray;
     }
@@ -1336,10 +1344,6 @@ public class ClusterRepository extends Vector {
         if(geneIndices) {
             allIndices = experiment.getRowMappingArrayCopy();
             annList = framework.getData().getAnnotationList(key, allIndices);
-            //Vector idVector = new Vector(annList.length);
-//            for(int i = 0 ; i < ids.length; i++) {
-//                idVector.addElement(ids[i]);
-//            }
             for(int i = 0; i < annList.length; i++) {
             	try{
             		if (Float.parseFloat(annList[i])>= lowerLimit && Float.parseFloat(annList[i])<= upperLimit){
@@ -1347,17 +1351,8 @@ public class ClusterRepository extends Vector {
             		}
             		
             	} catch (Exception e){
-            		
+            		//e.printStackTrace();  just ignore stacktrace if format is incorrect
             	}
-//                if(idVector.contains(annList[i])) {
-//                    indicesVector.addElement(new Integer(allIndices[i]));
-//                    
-//                    for(int j = 0; j < idVector.size(); j++) {
-//                        if(annList[i].equals((String)(idVector.elementAt(j))))
-//                            matches[j] = true;
-//                    }
-//                    
-//                }
             }
             indices = new int[indicesVector.size()];
             for(int i = 0; i < indices.length; i++) {
@@ -1369,10 +1364,6 @@ public class ClusterRepository extends Vector {
             annList = new String[experiment.getNumberOfSamples()];
             data.setSampleLabelKey(key);
             
-//            Vector idVector = new Vector(annList.length);
-//            for(int i = 0; i < ids.length; i++) {
-//                idVector.addElement(ids[i]);
-//            }
             
             for(int i = 0; i < allIndices.length; i++) {
                 annList[i] = data.getFullSampleName(i);
@@ -1386,6 +1377,7 @@ public class ClusterRepository extends Vector {
             		
             	} catch (Exception e){
             		
+            		//e.printStackTrace();  just ignore stacktrace if format is incorrect
             	}
             	
 //                if(idVector.contains(annList[i])) {
