@@ -4110,7 +4110,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     private void onBinImportList(int clusterType) {
         ClusterRepository cr = getClusterRepository(clusterType);
         
-        ArrayList clusterArray = cr.binCreateClusters();
+        ArrayList<Cluster> clusterArray = cr.binCreateClusters();
         if (clusterArray == null)
         	return;
         for (int i = 0; i< clusterArray.size(); i++){
