@@ -441,7 +441,7 @@ public class ReadGeneSet {
 		Vector geneSetElement;
 		Vector geneSetNames=gset[0].getAllGenesetNames();
 		int setIndex=0;
-		/*	System.out.println("Printing original gene set");
+	/*	System.out.println("Printing original gene set");
     	for(int i=0; i<gset.length; i++){
     		System.out.print("Gene set name:"+gset[i].geneSetName);
     		System.out.print('\t');
@@ -510,7 +510,7 @@ public class ReadGeneSet {
 
 		}
 
-		/*	System.out.println("Printing gene sets after removing unwanted genes");
+	/*		System.out.println("Printing gene sets after removing unwanted genes");
     	for(int i=0; i<newGeneSet.length; i++){
     		System.out.print(newGeneSet[i].geneSetName+":");
     		System.out.print('\t');

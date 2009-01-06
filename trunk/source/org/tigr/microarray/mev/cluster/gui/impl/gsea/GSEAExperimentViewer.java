@@ -8,9 +8,10 @@ public class GSEAExperimentViewer extends ExperimentViewer{
 	
 	private String [] auxTitles;
 	private String [][] auxData;
-
+	
 	
 	 /**
+	  * TO DO: Delete this, if not needed
      * Constructs a <code>GSEAExperimentViewer</code> with specified
      * experiment and clusters.
      */
@@ -20,7 +21,15 @@ public class GSEAExperimentViewer extends ExperimentViewer{
     	this.auxTitles = auxTitles;
     }
    
-	
+    /**
+     * 
+     * @param experiment
+     * @param clusters
+     * Constructs a GSEA Experiment with given clusters and experiment
+     */
+    public GSEAExperimentViewer(Experiment experiment, int[][]clusters){
+    	super(experiment, clusters);
+    }
 	
 	
 	
