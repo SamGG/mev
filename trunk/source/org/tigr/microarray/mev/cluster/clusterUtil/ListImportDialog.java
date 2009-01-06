@@ -24,6 +24,7 @@ import java.awt.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -118,6 +119,7 @@ public class ListImportDialog extends AlgorithmDialog {
 
     ParameterPanel binParamPanel;
     JButton addOne;
+    ArrayList<Integer> removedClusters = new ArrayList<Integer>();
     /** Creates a new instance of binned GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto, boolean bin) {
         super(parent, geneList ? "Gene List Import Dialog" : "Sample List Import Dialog", true);
@@ -185,14 +187,34 @@ public class ListImportDialog extends AlgorithmDialog {
         fieldsPanel.setBorder(BorderFactory.createTitledBorder("Cluster "+binnedClusterCount));
         lowerFieldArray.add(lowerField);
         upperFieldArray.add(upperField);
-        binParamPanel.add(fieldsPanel, new GridBagConstraints(1,binnedClusterCount,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
+        binParamPanel.add(fieldsPanel, new GridBagConstraints(0,binnedClusterCount,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0)); 
+        JButton remBut = new JButton("X");
+        remBut.setActionCommand(String.valueOf(binnedClusterCount));
+        remBut.addActionListener(new RemoveClusterListener());
+        if (binnedClusterCount>1)
+        	binParamPanel.add(remBut, new GridBagConstraints(2,binnedClusterCount,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10,0,0,0), 0,0)); 
         if (addOne!=null)
         	binParamPanel.remove(addOne);
         addOne = new JButton("Add another cluster");
         addOne.addActionListener(new AddClusterListener());
-        binParamPanel.add(addOne, new GridBagConstraints(1,binnedClusterCount+1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
+        binParamPanel.add(addOne, new GridBagConstraints(0,binnedClusterCount+1,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
         addContent(binParamPanel);
         pack();
+        
+    }
+    private void removeCluster(int cluster){
+    	int count=0;
+    	for (int i=0; i<removedClusters.size(); i++){
+    		if (removedClusters.get(i)<cluster)
+    			count++;
+    	}
+    	binParamPanel.remove(2*(cluster-count));
+    	binParamPanel.remove(2*(cluster-count)-1);
+    	removedClusters.add(cluster);
+//    	this.lowerFieldArray.remove(lowerFieldArray.size()-count-1);
+//    	this.upperFieldArray.remove(upperFieldArray.size()-count-1);
+    	pack();
+    	
     }
     
     /** Creates a new instance of GeneListImportDialog */
@@ -311,16 +333,24 @@ public class ListImportDialog extends AlgorithmDialog {
     }
     
     public float[] getLowerLimit(){
-    	float[] lf = new float[lowerFieldArray.size()];
-    	for (int i=0; i<lf.length; i++){
-    		lf[i]=Float.parseFloat(this.lowerFieldArray.get(i).getText());
+    	float[] lf = new float[lowerFieldArray.size()-removedClusters.size()];
+    	int j=0;
+    	for (int i=0; i<lowerFieldArray.size(); i++){
+    		if(removedClusters.contains(i+1))
+    			continue;
+    		lf[j]=Float.parseFloat(this.lowerFieldArray.get(i).getText());
+    		j++;
     	}
     	return lf;
     }
     public float[] getUpperLimit(){
-    	float[] uf = new float[upperFieldArray.size()];
-    	for (int i=0; i<uf.length; i++){
-    		uf[i]=Float.parseFloat(this.upperFieldArray.get(i).getText());
+    	float[] uf = new float[upperFieldArray.size()-removedClusters.size()];
+    	int j=0;
+    	for (int i=0; i<upperFieldArray.size(); i++){
+    		if(removedClusters.contains(i+1))
+    			continue;
+    		uf[j]=Float.parseFloat(this.upperFieldArray.get(i).getText());
+    		j++;
     	}
     	return uf;
     }
@@ -330,6 +360,14 @@ public class ListImportDialog extends AlgorithmDialog {
     private class AddClusterListener extends DialogListener {
         public void actionPerformed(ActionEvent e) {
         	addAnotherCluster();
+        }
+    }
+    /**
+     * The class to listen to remove cluster button.
+     */
+    private class RemoveClusterListener extends DialogListener {
+        public void actionPerformed(ActionEvent e) {
+        	removeCluster(Integer.parseInt(e.getActionCommand()));
         }
     }
         /**
@@ -343,6 +381,8 @@ public class ListImportDialog extends AlgorithmDialog {
             	if (bin){
             		try{
             			for(int i=0; i<lowerFieldArray.size(); i++){
+            				if(removedClusters.contains(i+1))
+            					continue;
 	            			if (Float.parseFloat(upperFieldArray.get(i).getText()) < Float.parseFloat(lowerFieldArray.get(i).getText())){
 	            				JOptionPane.showMessageDialog(null, "Upper limit for Cluster "+(i+1)+" must be greater than lower limit.", "Error", JOptionPane.ERROR_MESSAGE);
 	            				return;
@@ -408,13 +448,14 @@ public class ListImportDialog extends AlgorithmDialog {
     }
     public static void main(String[] args){
     	String[] qwe ={"qwe","werhjkhjkhjk"};
-    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, true, false, true);
+    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, false, false, false);
     	if(lid.showModal() == JOptionPane.OK_OPTION) {
     		for (int i=0; i< lid.getUpperLimit().length;i++){
     			
     			System.out.println(lid.getUpperLimit()[i]);
     		}
     	}
+    	System.exit(0);
     }
     
 }
