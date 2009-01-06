@@ -42,7 +42,19 @@ public class GeneData implements IGeneData{
 	public String getCollapseMode() {
 		return null;
 	}
-
+	
+	//Function to return genesetelement, provided gene name
+	public IGeneDataElement getGeneDataElement(String Gene){
+		for(int i=0; i<this.geneDataElement.size(); i++){
+			GeneDataElement gde=(GeneDataElement)this.geneDataElement.get(i);
+			
+			if(gde.getGeneIdentifier().equalsIgnoreCase(Gene))
+				return gde;
+		}
+		return null;
+	}
+	
+	
 	
 	public IGeneDataElement getGeneDataElement(int index) {
 		if(index <this.geneDataElement.size()){
