@@ -189,6 +189,15 @@ public class GSEAGUI implements IClusterGUI {
 		//	geneset_clusters=new int [geneset.length][max_columns];
 			geneset_clusters=GenesettoProbeMapping(gData, geneset);
 			
+			
+			//add clusters, means, and variances---Move it to gesa.java 
+			FloatMatrix clusterMeans = this.getMeans(matrix, geneset_clusters);
+			FloatMatrix clusterVars = this.getVariances(matrix, clusterMeans, geneset_clusters);
+			algData.addIntMatrix("clusters", geneset_clusters);
+			algData.addMatrix("cluster-means", clusterMeans);
+			algData.addMatrix("cluster-variances", clusterVars);
+		//Move ends
+			
 			/*Printing the gene to probe mapping
 			for(int i=0; i<geneset_clusters.length; i++){
 				System.out.println("Gene set cluster"+i);
@@ -257,18 +266,37 @@ public class GSEAGUI implements IClusterGUI {
 		
 		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
+			addPValueGraphImage(node, result, (String[][])result.getObjectMatrix("geneset-pvals"));
 			addTableViews(node, result, experiment, idata);
 			addExpressionImages(node, result, this.experiment);
-		 		
+		
+			
 		return node;
 	}
 	
+   private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result, String[][]pValues){
+	   
+	
+	//   PValuesGraphViewer graphViewer = new PValuesGraphViewer();
+	   PValuesGraphViewer pvg=new PValuesGraphViewer(0, 100, 0, 100, 0, pValues.length, 0, 0.1, 100, 100, 100, 100, "Gene set p-Values Plot", "Gene set", "p-Values", pValues);
+	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
+	   
+   }
+   
+   
 
    private void addExpressionImages(DefaultMutableTreeNode root,  AlgorithmData result, Experiment experiment) {
 
 					
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
 		GSEAExperimentViewer expViewer = new GSEAExperimentViewer(experiment, geneset_clusters);
+		GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, geneset_clusters);
+		
+		float [][] means = result.getMatrix("cluster-means").A;
+    	float [][] vars = result.getMatrix("cluster-variances").A;
+        centroidViewer.setMeans(means);
+        centroidViewer.setVariances(vars);
+
 		
 		DefaultMutableTreeNode clusterNode;
 		
@@ -279,8 +307,8 @@ public class GSEAGUI implements IClusterGUI {
 	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names.get(i));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
 	            //Will be uncommented when Centroid and expression graph viewers are implemented in GSEA
-	           // clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-	            //clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
 	        //    clusterNode.add(new DefaultMutableTreeNode(resultMatrix[i][1]));
 	            
 	            node.add(clusterNode);
@@ -289,6 +317,101 @@ public class GSEAGUI implements IClusterGUI {
 		root.add(node);
 	}
 
+   
+   /**
+    * @TO DO: Move to GSEA.java
+    *  Calculates means for the clusters
+    */
+   private FloatMatrix getMeans(FloatMatrix data, int [][] clusters){
+       FloatMatrix means = new FloatMatrix(clusters.length, data.getColumnDimension());
+       for(int i = 0; i < clusters.length; i++){
+           means.A[i] = getMeans(data, clusters[i]);
+       }
+       return means;
+   }
+  
+   
+   /**
+    *  TO DO: Move to GSEA.java
+    *  Returns a set of means for an element
+    */
+   private float [] getMeans(FloatMatrix data, int [] indices){
+       int nSamples = data.getColumnDimension();
+       float [] means = new float[nSamples];
+       float sum = 0;
+       float n = 0;
+       float value;
+       for(int i = 0; i < nSamples; i++){
+           n = 0;
+           sum = 0;
+           for(int j = 0; j < indices.length; j++){
+               value = data.get(indices[j],i);
+               if(!Float.isNaN(value)){
+                   sum += value;
+                   n++;
+               }
+           }
+           if(n > 0)
+               means[i] = sum/n;
+           else
+               means[i] = Float.NaN;
+       }
+       return means;
+   }
+   
+  
+
+   /** Returns a matrix of standard deviations grouped by cluster and element
+    * @param data Expression data
+    * @param means calculated means
+    * @param clusters cluster indices
+    * @return
+    */
+   private FloatMatrix getVariances(FloatMatrix data, FloatMatrix means, int [][] clusters){
+       int nSamples = data.getColumnDimension();
+       FloatMatrix variances = new FloatMatrix(clusters.length, nSamples);
+       for(int i = 0; i < clusters.length; i++){
+           variances.A[i] = getVariances(data, means, clusters[i], i);
+       }
+       return variances;
+   }
+   
+   /** Calculates the standard deviation for a set of genes.  One SD for each experiment point
+    * in the expression vectors.
+    * @param data Expression data
+    * @param means previously calculated means
+    * @param indices gene indices for cluster members
+    * @param clusterIndex the index for the cluster to work upon
+    * @return
+    */
+   private float [] getVariances(FloatMatrix data, FloatMatrix means, int [] indices, int clusterIndex){
+       int nSamples = data.getColumnDimension();
+       float [] variances = new float[nSamples];
+       float sse = 0;
+       float mean;
+       float value;
+       int n = 0;
+       for(int i = 0; i < nSamples; i++){
+           mean = means.get(clusterIndex, i);
+           n = 0;
+           sse = 0;
+           for(int j = 0; j < indices.length; j++){
+               value = data.get(indices[j], i);
+               if(!Float.isNaN(value)){
+                   sse += (float)Math.pow((value - mean),2);
+                   n++;
+               }
+           }
+           if(n > 1)
+               variances[i] = (float)Math.sqrt(sse/(n-1));
+           else
+               variances[i] = 0.0f;
+       }
+       return variances;
+   }
+   
+   
+   
    
    /**
     * 
@@ -322,17 +445,17 @@ public class GSEAGUI implements IClusterGUI {
 			   //Retrieve the gene name from the gene set
 			   GeneSetElement gselement=(GeneSetElement)gsElementVector.get(genesetElementIndex);
 			   String Gene=(String)gselement.getGene();
-			   System.out.println("Gene:"+Gene);
+		//	   System.out.println("Gene:"+Gene);
 			   //Retrieve the index of this gene from Gene Data Element 
 			   GeneDataElement gde=(GeneDataElement)gData[0].getGeneDataElement(Gene);
 			   
 			   //Populate the probe_mappings vector here
 			   for(int index=0; index<gde.getProbePosition().size(); index++){
 				   probe_mappings.add((Integer)gde.getProbePosition().get(index));
-				   System.out.print(gde.getProbePosition().get(index));
-				   System.out.print('\t');
+			//	   System.out.print(gde.getProbePosition().get(index));
+			//	   System.out.print('\t');
 			   }
-			   System.out.println();
+			  // System.out.println();
 			  genesetElementIndex=genesetElementIndex+1;
 			   
 		   } //Gene set elements while loop ends

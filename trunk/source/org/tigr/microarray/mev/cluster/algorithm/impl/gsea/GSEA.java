@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
@@ -41,79 +42,77 @@ public class GSEA extends AbstractAlgorithm {
 	private int[] factorAAssignments, factorBAssignments, factorCAssignments;
 	private int[][] allFactorAssignments;
 	private boolean stop=false;
-	
-	
-	 /**
-     * This method should interrupt the calculation.
-     *
-     */
-    public void abort() {
-        stop = true;
-    }
-   
-	
+
+
+	/**
+	 * This method should interrupt the calculation.
+	 *
+	 */
+	public void abort() {
+		stop = true;
+	}
+
+
 
 	public AlgorithmData execute(AlgorithmData data)throws AlgorithmException{
-		
-		//All the getting from algData should be done here.
-		//All setting to algData etc can be done in GSEAGUI
+
 		try{
-			
-		factorNames=data.getStringArray("factor-names");
-		
-		if(!factorNames[0].equalsIgnoreCase("ZERO-FACTORS")){
-		int num_of_samples=data.getGeneMatrix("gene-data-matrix").getColumnDimension();
-		numFactorLevels=data.getIntArray("factor-levels");
-		allFactorAssignments=data.getIntMatrix("factor-assignments");
-		int num_perms=Integer.parseInt(data.getParams().getString("permutations"));
-		
-		
-		//Do this only if there are more than 0 factors.
-		//As of now, DO NOT allow zero factors condition. MeV shows an error when use puts in zero in 
-		//the init box
-		ProcessGroupAssignments pg= new  ProcessGroupAssignments(factorNames, numFactorLevels, allFactorAssignments, true, num_of_samples);
-		pg.findUnassignedSamples(factorNames, numFactorLevels, allFactorAssignments);
-		data.addVector("unassigned-samples", pg.getUnassignedColumns());
-		FloatMatrix factor_matrix=pg.generateFactorMatrix(factorNames, numFactorLevels, allFactorAssignments);
-		
-		
-		lmPerGene(data, factor_matrix, true);
-	
-		FloatMatrix coefficients=data.getGeneMatrix("lmPerGene-coefficients");
-		
-		
-		
-		FloatMatrix coefVar=data.getGeneMatrix("lmPerGene-coefvar");
-		FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
-		
-				
-		//Extract the portion that contains the main factor coefVars
-		FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
-	    String[][]resultMatrix=gsealmPerm(num_perms, data, true);//--commented for testing
-		  
-       data.addObjectMatrix("geneset-pvals", resultMatrix);//commented for testing
-		
-		
-		
-		//Add the result from gsealmPerm (string array[][]) to algorithmdata here. will be useful while creating viewer in GSEAGUI
-		//addObjectMatrix("geneset-pvals");
-		
-		
-		}//End if ZERO FACTOR if loop
-		
-		else{
-			System.out.println("Zero Fcator condition");
-		}
-		
-		
+
+			factorNames=data.getStringArray("factor-names");
+
+			if(!factorNames[0].equalsIgnoreCase("ZERO-FACTORS")){
+				int num_of_samples=data.getGeneMatrix("gene-data-matrix").getColumnDimension();
+				numFactorLevels=data.getIntArray("factor-levels");
+				allFactorAssignments=data.getIntMatrix("factor-assignments");
+				int num_perms=Integer.parseInt(data.getParams().getString("permutations"));
+
+
+				//Do this only if there are more than 0 factors.
+				//As of now, DO NOT allow zero factors condition. MeV shows an error when use puts in zero in 
+				//the init box
+				ProcessGroupAssignments pg= new  ProcessGroupAssignments(factorNames, numFactorLevels, allFactorAssignments, true, num_of_samples);
+				pg.findUnassignedSamples(factorNames, numFactorLevels, allFactorAssignments);
+				data.addVector("unassigned-samples", pg.getUnassignedColumns());
+				FloatMatrix factor_matrix=pg.generateFactorMatrix(factorNames, numFactorLevels, allFactorAssignments);
+
+
+				lmPerGene(data, factor_matrix, true);
+
+				FloatMatrix coefficients=data.getGeneMatrix("lmPerGene-coefficients");
+
+
+
+				FloatMatrix coefVar=data.getGeneMatrix("lmPerGene-coefvar");
+				FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
+
+
+				//Extract the portion that contains the main factor coefVars
+				FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
+				String[][]resultMatrix=gsealmPerm(num_perms, data, true);//--commented for testing
+
+				data.addObjectMatrix("geneset-pvals", resultMatrix);//commented for testing
+
+
+
+				//Add the result from gsealmPerm (string array[][]) to algorithmdata here. will be useful while creating viewer in GSEAGUI
+				//addObjectMatrix("geneset-pvals");
+
+
+			}//End if ZERO FACTOR if loop
+
+			else{
+				System.out.println("Zero Fcator condition");
+			}
+
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+
 		return data;
-	
-		
-		
+
+
+
 	}
 	/**
 	 * lmPerGene is modeled after the R function in GSEAlm package.
@@ -133,9 +132,9 @@ public class GSEA extends AbstractAlgorithm {
 	 * 
 	 * 
 	 */
-	
+
 	public void lmPerGene(AlgorithmData aData, FloatMatrix factor_matrix, boolean removeNA) throws IOException{
-		
+
 		String[]factorNames=aData.getStringArray("factor-names");
 		FloatMatrix gene_expression=aData.getGeneMatrix("gene-data-matrix"); 
 		int nSamples=gene_expression.getColumnDimension();
@@ -151,7 +150,7 @@ public class GSEA extends AbstractAlgorithm {
 		FloatMatrix res=null;
 		FloatMatrix beta=null;
 		FloatMatrix xxInv=null;
-		
+
 		int nSamp;
 
 
@@ -172,36 +171,36 @@ public class GSEA extends AbstractAlgorithm {
 		}
 
 
-		 xTranspose=x.transpose();
+		xTranspose=x.transpose();
 
-		 xx=xTranspose.times(x);
-		
+		xx=xTranspose.times(x);
+
 		//In the R function, they use solve(a) and since the second argument is not provided, solve returns teh inverse of a.
 		//so, in R, if you say solve(a); the second argument b is considered to be an identity matrix. Trying to replicate that
 		//FloatMatrix xxInv=xx.inverse();
-		
+
 		identity=new FloatMatrix(xx.getRowDimension(),xx.getColumnDimension());
-		
-	    identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
+
+		identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
 		xxInv=xx.solve(identity);
-			
-		
-		
-		
-		
-	    ////////////////////////////////////////////////////
+
+
+
+
+
+		////////////////////////////////////////////////////
 		FloatMatrix hMat=x.times(xxInv).times(xTranspose);
 		FloatMatrix diagonalMatrix=createDiagonalMatrix(nSamp, nSamp, 1);
 		FloatMatrix dMat=diagonalMatrix.minus(hMat);
-	
+
 
 		int col=x.getColumnDimension();
 
 		//Will posssibly have lesser columns than the original expression set 
 
-		 xy=eSet.times(x);
-		 res=eSet.times(dMat);
-		 beta=xx.solve(xy.transpose());
+		xy=eSet.times(x);
+		res=eSet.times(dMat);
+		beta=xx.solve(xy.transpose());
 
 
 		//result matrix is calculated using arrayTimes function of Jama. The dimensions of eSet and res are the same.
@@ -221,14 +220,14 @@ public class GSEA extends AbstractAlgorithm {
 
 		aData.addGeneMatrix("lmPerGene-coefficients", beta);
 		aData.addGeneMatrix("lmPerGene-coefvar", coefvar);
-		
-				
+
+
 	}
 
-	
-	
-	
-	
+
+
+
+
 	public FloatMatrix createMatrix(Vector elements, int row, int col){
 		FloatMatrix customMatrix=new FloatMatrix(row,col);
 		int index=0;
@@ -236,13 +235,13 @@ public class GSEA extends AbstractAlgorithm {
 		for(int j=0;j<col;j++){
 			for(int i=0;i<row;i++){
 				customMatrix.set(i, j, ((Float)elements.get(index)).floatValue());
-				
+
 			}
 			if(index<elements.size()){
 				index=index+1;
 			}else
 				index=0;
-			}
+		}
 
 		return customMatrix;
 
@@ -326,21 +325,21 @@ public class GSEA extends AbstractAlgorithm {
 
 	}
 
-/**
- * 
- * removeUnassignedSamples removes the samples which do not have any factor assignments.
- * 
- * @param geneExpression
- * @param unassigned
- * @return FloatMatrix with the samples assigned NA removed 
- */
+	/**
+	 * 
+	 * removeUnassignedSamples removes the samples which do not have any factor assignments.
+	 * 
+	 * @param geneExpression
+	 * @param unassigned
+	 * @return FloatMatrix with the samples assigned NA removed 
+	 */
 	public FloatMatrix removeUnassignedSamples(Vector unassigned, FloatMatrix geneExpression){
 		int colindex=0;
 		int matrixIndex=0;
 		int column=0;
 
 		FloatMatrix withoutNA=new FloatMatrix(geneExpression.getRowDimension(), (geneExpression.getColumnDimension()-unassigned.size()));
-		
+
 		int size=unassigned.size();
 		for(int i=0; i<geneExpression.getColumnDimension(); i++){
 			if(!unassigned.contains(i)){
@@ -351,10 +350,10 @@ public class GSEA extends AbstractAlgorithm {
 
 		}
 
-		
+
 
 		return withoutNA;
-	
+
 	}
 
 	/**
@@ -371,45 +370,45 @@ public class GSEA extends AbstractAlgorithm {
 			float _tempVal=0;
 			for(int col=0; col<matrix.getColumnDimension(); col++){
 				if(!Float.isNaN(matrix.get(index, col)))
-				_tempVal+=matrix.get(index, col);
+					_tempVal+=matrix.get(index, col);
 			}
 			rowSums.add(index, _tempVal);
 		}
 		return rowSums;
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	/**
 	 * Returns a float array containing rowsums/(nSamp-col)
 	 * @param float[]
 	 * @return
 	 */
-	
+
 	public float[] getRowSumandSome(FloatMatrix matrix, int val){
 		float[] _tempList=new float[matrix.getRowDimension()];
 		Vector sum=getRowSums(matrix);
-		
+
 		for(int i=0; i<sum.size(); i++){
 			float value=((Float)sum.get(i)).floatValue();
 			_tempList[i]=value/val;
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		return _tempList;
-		
+
 	}
-	
-	
-	
+
+
+
 	/**
 	 * The apply function has been modeled after the R function "apply".
 	 * This implementation provides the default function  "function(x)x*varr"
@@ -428,7 +427,7 @@ public class GSEA extends AbstractAlgorithm {
 		 * This loop applies function across the rows. 
 		 * 
 		 */
-		
+
 		FloatMatrix tempMatrix=new FloatMatrix(matrix.getRowDimension(), matrix.getColumnDimension());
 		if(margin.length==1&&margin[0] ==2){
 			if(function.equalsIgnoreCase(org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.APPLY_DEFAULT)){
@@ -436,7 +435,7 @@ public class GSEA extends AbstractAlgorithm {
 					for(int row=0;row<matrix.getRowDimension();row++){
 						float temp=(matrix.get(row, col))*varr[row];
 						tempMatrix.set(row,col,temp);
-						
+
 					}
 				}
 			}
@@ -446,8 +445,8 @@ public class GSEA extends AbstractAlgorithm {
 
 	}
 
-	
-	
+
+
 	/**
 	 * Sweep function is modeled afer the R function "sweep"
 	 * Unlike R, this implementation currently allows sweep only across rows. This can be changed in the future if 
@@ -464,8 +463,8 @@ public class GSEA extends AbstractAlgorithm {
 	 * @param function
 	 * @return
 	 */
-	
-	
+
+
 	public FloatMatrix Sweep(FloatMatrix matrix, int[]margin, Vector stats,  String function){
 
 		FloatMatrix swept=new FloatMatrix(matrix.getRowDimension(), matrix.getColumnDimension());
@@ -478,9 +477,9 @@ public class GSEA extends AbstractAlgorithm {
 			prodMargin=margin[0];
 
 
-	/*	
-	 * These two error messages have been temporarily commented. I suspect the checks are wrong
-	 * if(statLength > prodMargin || statLength < prodMargin){
+		/*	
+		 * These two error messages have been temporarily commented. I suspect the checks are wrong
+		 * if(statLength > prodMargin || statLength < prodMargin){
 			String eMsg="<html>The length of stats vector does not match the <br>" +
 			"<html>dimensions of matrix. Cannot execute Sweep function </html>";
 			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
@@ -516,60 +515,60 @@ public class GSEA extends AbstractAlgorithm {
 		return swept;
 
 	}
-	
-	
-/**
- * 
- * @param dataSet
- * @param incidence
- * @param GSEAfun
- * @param func1
- * @param func2
- * @param removeShift
- * @param removeStat
- * @return
- */
+
+
+	/**
+	 * 
+	 * @param dataSet
+	 * @param incidence
+	 * @param GSEAfun
+	 * @param func1
+	 * @param func2
+	 * @param removeShift
+	 * @param removeStat
+	 * @return
+	 */
 	public FloatMatrix GSNormalize(FloatMatrix dataSet, FloatMatrix incidence, String GSEAfun, String func1, String func2
 			, boolean removeShift, String removeStat){
-		
+
 		Vector normBy=new Vector();
 		FloatMatrix outM=null;
 		Vector rowSums, sqrtVector;
-		
-		
-		
+
+
+
 		if(removeShift){
 			//While using apply here, the return is expected to be Vector. The apply function i have
 			//returns FloatMatrix
-		//	Vector colStat=apply(dataSet, 2, null,removeStat);
+			//	Vector colStat=apply(dataSet, 2, null,removeStat);
 		}
 		int nCol=incidence.getColumnDimension();
 		int nRows=dataSet.getRowDimension();
-		
-		
+
+
 		if(nCol!=nRows){
 			String eMsg="<html>GSNormalize: Nonconforming matrices</html>";
 			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 			//System.exit(1);
 		}
-		
+
 		//Default GSEA implementation
 		if(GSEAfun.equalsIgnoreCase(org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.CROSS_PROD)&&func1.equalsIgnoreCase(GSEAConstants.DIVIDE_FUNCTION)
 				&& func2.equalsIgnoreCase(GSEAConstants.SQRT)){
 			rowSums=new Vector();
 			sqrtVector=new Vector();
-			
-	//R uses the crossprod function here.
-			
-			
-			
+
+			//R uses the crossprod function here.
+
+
+
 			outM=incidence.times(dataSet);//Check with Asaf if this is right?--It is right
-			
-					
+
+
 			MatrixFunctions MatrixFunc=new MatrixFunctions();
 			rowSums=MatrixFunc.getRowSums(incidence);
-			
-			
+
+
 			for(int index=0;index<rowSums.size();index++){
 				float temp=((Float)rowSums.get(index)).floatValue();
 				float sqrt=(float) java.lang.Math.sqrt(temp);
@@ -584,36 +583,36 @@ public class GSEA extends AbstractAlgorithm {
 			for(int i=0; i<normBy.size(); i++){
 				System.out.println(normBy.get(i));
 			}*/
-			
-			
-			
-			
+
+
+
+
 			outM=Sweep(outM,margin,normBy, func1);
-		//	System.out.println("GSNormalize:outM diemsions again:"+outM.getRowDimension()+":"+outM.getColumnDimension());
-			
+			//	System.out.println("GSNormalize:outM diemsions again:"+outM.getRowDimension()+":"+outM.getColumnDimension());
+
 		}
-		
+
 		//Used in GSEAlmPerm, func2==Identity, when number of factors is zero
 		if(GSEAfun.equalsIgnoreCase(GSEAConstants.CROSS_PROD)&& func1.equalsIgnoreCase(GSEAConstants.DIVIDE_FUNCTION)
 				&& func2.equalsIgnoreCase(GSEAConstants.IDENTITY_FUNCTION)){
 			outM=dataSet.transpose().times(incidence);//Check this
 			rowSums=new Vector();
-			 rowSums=getRowSums(outM);
+			rowSums=getRowSums(outM);
 			normBy=rowSums;
 			int[]margin={1};
-			
+
 			outM=Sweep(outM,margin,normBy, func1);
-			
-			
+
+
 		}
-		
-		
-		
-		
+
+
+
+
 		return outM;
-		
+
 	}
-	
+
 	/**
 	 * TO DO: Add the data vector obtained by reading the factor file into algorithm data
 	 * This will need to be done in GSEAGUI. Will need this information  for permutation of labels 
@@ -621,10 +620,10 @@ public class GSEA extends AbstractAlgorithm {
 	 * 
 	 */
 	public String[][] gsealmPerm(int num_perms, AlgorithmData adata, boolean removeNA )throws Exception{
-		
+
 		FloatMatrix observedStats;
 		FloatMatrix perms = null;
-		
+
 		/**
 		 * First step is to extract the factor names, factor levels and assignments.
 		 * 
@@ -635,7 +634,7 @@ public class GSEA extends AbstractAlgorithm {
 		int[][]factorAssignments=adata.getIntMatrix("factor-assignments");
 		//Number of samples
 		int nSamp=adata.getGeneMatrix("gene-data-matrix").getColumnDimension();
-		
+
 		/**
 		 *Second step is to run lmPerGene. This is already done in the execute()function.
 		 *so, just pull out the required results from this run. lmPerGene simulates a Linear Model  
@@ -646,15 +645,15 @@ public class GSEA extends AbstractAlgorithm {
 		 * 
 		 * 
 		 */
-		
-		
+
+
 		//Extract the result of lmPerGene, stored in AlgorithmData. 
 		//lmPerGene would work even if number of factors is 0
 		FloatMatrix coefficients=adata.getGeneMatrix("lmPerGene-coefficients");	
 		FloatMatrix coefVar=adata.getGeneMatrix("lmPerGene-coefvar");
 		FloatMatrix amat=adata.getGeneMatrix("association-matrix");
-		
-			
+
+
 		/**
 		 * Third step is to calculate per gene set statistic before permuting.
 		 * To do this, first check if the number of factors is greater than zero. If so,
@@ -670,11 +669,11 @@ public class GSEA extends AbstractAlgorithm {
 			//Extract the portion that contains the main factor coefficients. The zeroth coefficient is the intercept.
 			//The second coefficient will be that of the main factor.
 			FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
-			
-			
+
+
 			//Extract the portion that contains the main factor coefVars
 			FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
-			
+
 
 			//Calculate the sqrt of each element of the coefVar_intermediate matrix
 			FloatMatrix sqrtCoefVar=new FloatMatrix(coefVar_intermediate.getRowDimension(), coefVar_intermediate.getColumnDimension());
@@ -684,60 +683,60 @@ public class GSEA extends AbstractAlgorithm {
 			}
 			//Divide the coef_intermediate matrix with sqrtCoefVar matrix
 			FloatMatrix result=coef_intermediate.arrayRightDivide(sqrtCoefVar);
-			
-					
+
+
 			//I have passed the transpose of the result matrix here. The reason being that in the result matrix, the genes are in the
 			//columns, and each row corresponds to (intercept, mainfactor, otherfactors if present)
 			observedStats=GSNormalize(result.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 					GSEAConstants.SQRT, false, null);
-		
+
 		}else{
-			 observedStats=GSNormalize(coefficients.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
+			observedStats=GSNormalize(coefficients.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 					GSEAConstants.IDENTITY_FUNCTION, false, null);
 
 		}
-		
+
 		/**
 		 * Fourth Step is to generate a permutation matrix and loop through the number of permutations 
 		 * suggested by user.
 		 * 
 		 * 
 		 */
-		
-		
-		
-		
+
+
+
+
 		//Number of factors > 0
 		if(factorNames.length>0){
 			//permutation matrix with rows equal to the number of genes and colmuns equal to number of permutations
 			FloatMatrix permMat=new FloatMatrix(adata.getGeneMatrix("gene-data-matrix").getRowDimension(), num_perms); 
-			
+
 			//In the R code, it says index=1L; check of this is the same as zeroth index in JAVA
 			//Hashtable resultHash=findOriginalClassOrder(factorNames,factorlevels, factorAssignments, nSamp );
-		//	Hashtable origOrder=(Hashtable)resultHash.get("original-order");
-			
+			//	Hashtable origOrder=(Hashtable)resultHash.get("original-order");
+
 			for(int index=0; index<num_perms; index++){
 
 				//code commented for testing
 				Hashtable resultHash=findOriginalClassOrder(factorNames,factorlevels, factorAssignments, nSamp );
-				
+
 				//commented for testing
 				//Hashtable permutedFactorHash=generatePermutedFactorHash((Hashtable)resultHash.get("original-order"),(Hashtable) resultHash.get("permuted-order"), factorNames, factorlevels,factorAssignments,  nSamp);
 				Hashtable permutedFactorHash=generatePermutedFactorHash((Hashtable)resultHash.get("original-order"), (int[])resultHash.get("permuted-order"), factorNames, factorlevels, factorAssignments, nSamp);
-				
+
 				//pga is created just so that we can access the function generateFactorMatrix from the ProcessGroupAssignments class
 				int[][]permutedFactorAssignments=(int[][])permutedFactorHash.get("permuted-factor-assignments");
-				
-				
+
+
 				ProcessGroupAssignments pga=new ProcessGroupAssignments(factorNames,factorlevels,permutedFactorAssignments,true, nSamp);
-			//Added these two lines in for testing
+				//Added these two lines in for testing
 				pga.findUnassignedSamples(factorNames, factorlevels, permutedFactorAssignments);
 				adata.addVector("unassigned-samples", pga.getUnassignedColumns());
-				
-		
+
+
 				/////////////////////////////////////////////////
 				FloatMatrix factor_matrix_new=pga.generateFactorMatrix(factorNames,factorlevels, permutedFactorAssignments);
-				
+
 				lmPerGene(adata,factor_matrix_new , true);
 				FloatMatrix pCoefficients=adata.getGeneMatrix("lmPerGene-coefficients");	
 				FloatMatrix pCoefVar=adata.getGeneMatrix("lmPerGene-coefvar");
@@ -755,18 +754,18 @@ public class GSEA extends AbstractAlgorithm {
 				//Divide the coef_intermediate matrix with sqrtCoefVar matrix
 				//TO DO: Check the matrxi dimensions (permMat and result)if they are the same
 				FloatMatrix result=pcoef_intermediate.arrayRightDivide(psqrtCoefVar);
-				
+
 				permMat.setMatrix(0, permMat.getRowDimension()-1, index, index, result.transpose());
 
-				
+
 			}
-	//		System.out.println("permMat size before GSNomalize:"+permMat.getRowDimension()+":"+permMat.getColumnDimension());
-			
-			
-			
+			//		System.out.println("permMat size before GSNomalize:"+permMat.getRowDimension()+":"+permMat.getColumnDimension());
+
+
+
 			//Assigning to a function global variable to enable passing on as parametres
 			//Dimesnions of this matrix would be equal to (row=number of gene sets, column=number of samples)
-			
+
 			perms=GSNormalize(permMat, amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 					GSEAConstants.SQRT, false, null);
 			//System.out.println("permMat size after GSNomalize:"+perms.getRowDimension()+":"+perms.getColumnDimension());
@@ -778,8 +777,8 @@ public class GSEA extends AbstractAlgorithm {
 			perms=new FloatMatrix(amat.getRowDimension(),amat.getColumnDimension());
 			//permutation matrix with rows equal to the number of genes and columns equal to number of permutations
 			FloatMatrix permMat=new FloatMatrix(adata.getGeneMatrix("gene-data-matrix").getRowDimension(), num_perms); 
-			
-			
+
+
 			//For testing#########################################
 			Vector permCols=new Vector();
 			ArrayList permArray=new ArrayList(nSamp);
@@ -787,26 +786,26 @@ public class GSEA extends AbstractAlgorithm {
 			for(int i=0;i<amat.getColumnDimension(); i++){
 				permCols.add(i, i);
 			}
-			
+
 			permArray=getPermutedValues(permCols);
 			for(int j=0;j<permArray.size();j++){
 				int colNum=((Integer)permArray.get(j)).intValue();
 				permutedAmat.setMatrix(0, permutedAmat.getRowDimension(), j, j, amat.getMatrix(0, amat.getRowDimension(), colNum, colNum));
-				
+
 			}
 			/*#################TESTING ENDS#################################################*/
-			
-			
+
+
 			//CHECK IF THE COLUMNS ARE GETIING SET CORRECTLY
-			
+
 			for(int nperms=0; nperms<num_perms; nperms++){
 				permutedAmat.setMatrix(0, permutedAmat.getRowDimension(), nperms, nperms, GSNormalize(coefficients, permutedAmat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, GSEAConstants.IDENTITY_FUNCTION, false, null));
-				
+
 			}
-			
+
 			perms=permutedAmat;
 		}
-		
+
 		/***
 		 * Fifth step is to calculate p values based on the observed and the permuted values
 		 * 
@@ -814,14 +813,15 @@ public class GSEA extends AbstractAlgorithm {
 		 * 
 		 * 
 		 */
-		
+
 		Vector geneSetNames=(Vector)adata.getVector("gene-set-names");
-			
+
 		String[][]resultMatrix=pValFromPermMat(observedStats, perms, geneSetNames);
-	
+		
+			
 		return resultMatrix;
 	}
-	
+
 	/**
 	 * pValFromPermMat should return a String array, containing three columns namely;
 	 * 1) Gene set names
@@ -834,13 +834,13 @@ public class GSEA extends AbstractAlgorithm {
 	 * @return String[][] will be used to generate a JTable
 	 */	
 	public String[][]pValFromPermMat(FloatMatrix obsStats, FloatMatrix permMat, Vector geneSetNames){
-		
-		
-		
+
+
+
 		float[]lower_rowSums=new float[permMat.getRowDimension()];
 		float[]upper_rowSums=new float[permMat.getRowDimension()];
-		
-		
+
+
 		//resultMatrix will have rows equal to the number of rows in permMat; which is equal to number of gene sets
 		//The number of columns will be equal to 3
 		String[][] resultMatrix=new String[permMat.getRowDimension()][3];
@@ -850,8 +850,8 @@ public class GSEA extends AbstractAlgorithm {
 		//pVals is a FloatMatrix with rows equal to that of permMat and cols =2. This matrix will be 
 		//copied into the String array resultMatrix.
 		FloatMatrix pVals=new FloatMatrix(permMat.getRowDimension(),2, Float.valueOf("NaN"));
-		
-		
+
+
 		//tempObs has dimensions equal to permMat
 		FloatMatrix tempObs=new FloatMatrix(permMat.getRowDimension(), permMat.getColumnDimension());
 
@@ -880,53 +880,56 @@ public class GSEA extends AbstractAlgorithm {
 		 * 
 		 * 
 		 */
-		
+
 		for(int row=0; row<permMat.getRowDimension(); row++){
 			int num_lower_pVals=0;
 			int num_upper_pVals=0;
-			
+
 			for(int column=0; column<permMat.getColumnDimension(); column++){
 				if(permMat.get(row, column)>=tempObs.get(row, column)){
 					num_upper_pVals=num_upper_pVals+1;
 				}else if(permMat.get(row, column)<=tempObs.get(row, column)){
 					num_lower_pVals=num_lower_pVals+1;
 				}
-				
+
 			}
 			lower_rowSums[row]=(num_lower_pVals);
 			upper_rowSums[row]=(num_upper_pVals);
 		}
+
 		
 		
-		
-		
-		
-		
+
+
+
 		//Copying pVals into a string array and assigning the gene set names
 		for(int i=0;i<permMat.getRowDimension(); i++){
 			resultMatrix[i][0]=(String)geneSetNames.get(i);
-			
+
 		}
-		
-			
-		
-		
+
+
+
+
 		for(int row=0; row<lower_rowSums.length; row++){
 			resultMatrix[row][1]=String.valueOf(lower_rowSums[row]/nCols);
 			resultMatrix[row][2]=String.valueOf(upper_rowSums[row]/nCols);
 		}
-	
 
+		
+		
+		
+		
 		return resultMatrix;
 	}
 
 
 
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * findOriginalClassOrder/permuteLabels  is modeled after the R functions split and unsplit.
 	 * findOriginalClassOrder will find the original sample classification.
@@ -945,28 +948,28 @@ public class GSEA extends AbstractAlgorithm {
 	 * 
 	 * @return
 	 */
-	
+
 	public Hashtable findOriginalClassOrder(String[]factorNames, int[]factorLevels, int[][]factorAssignments, int num_Samples){
 		Hashtable origOrder=new Hashtable();
 		Hashtable permOrder=new Hashtable();
 		Hashtable resultHash=new Hashtable();
-		
+
 		//Number of factors equal to one
 		//Hashtable origOrder had key="samplenumber" and value="classification". In case of one factor,
 		//origOrder has key=samplenumber and value="one-factor-class" for all samples
 		if(factorNames.length==1){
-			
+
 			int[]factorAssignment=factorAssignments[0];
 			Vector assign=new Vector();
-			
-			
+
+
 			for(int i=0; i<num_Samples; i++){
 				assign.add(i);
 				origOrder.put(i,"one-factor-class");
 			}
-			
-			
-			
+
+
+
 			permOrder.put("one-factor-class", assign);
 
 		}
@@ -974,8 +977,8 @@ public class GSEA extends AbstractAlgorithm {
 
 		//Loops over the number of samples in the data
 		for(int index=0; index<num_Samples; index++){
-			
-		
+
+
 			//Number of factors is 3. so we will permute the factor labels of factors 2 and 3. The assumption is that
 			//the first factor is the main factor.
 			if(factorNames.length>=2){
@@ -998,67 +1001,67 @@ public class GSEA extends AbstractAlgorithm {
 					permOrder.put(classAssignment, temp);
 				}else{
 					((Vector)(permOrder.get(classAssignment))).add(index);
-					
+
 				}
-					
-				
+
+
 				if(!origOrder.containsKey(index)){
 					origOrder.put(index, classAssignment);
 				}
-				
+
 
 			}//End of two or more factor if loop
 
-			
+
 		}
-		
-	
+
+
 		//System.out.println("number of keys in permOrder:"+permOrder.size());
 		Enumeration keys=permOrder.keys();
-		
+
 		int[]permutedSampleAssignment=new int[num_Samples];
 		while(keys.hasMoreElements()){
 			String key=(String)keys.nextElement();
 			Vector value=(Vector)permOrder.get(key);
-			
+
 			ArrayList permutedArray=new ArrayList(value.size());
-		//	System.out.println("size of permuted array before permutation is:"+permutedArray.size());
+			//	System.out.println("size of permuted array before permutation is:"+permutedArray.size());
 			permutedArray=(ArrayList)getPermutedValues(value);
 			//System.out.println("size of permuted array after permutation is:"+permutedArray.size());
-			
-		
+
+
 			/*****Added for testing******/
-		
-			
-			
+
+
+
 			for (int i = 0; i < value.size(); i++) {
-	            int temp=((Integer)value.get(i)).intValue();
-	            permutedSampleAssignment[temp]=((Integer)permutedArray.get(i)).intValue();
-	            
-				
-	        }
+				int temp=((Integer)value.get(i)).intValue();
+				permutedSampleAssignment[temp]=((Integer)permutedArray.get(i)).intValue();
+
+
+			}
 			/*****Added for testing ends******/
 			permOrder.remove(key);
 			//permOrder.put(key, permutedArray);
 		}
-		
+
 		permOrder.clear();
-		
-			
+
+
 		resultHash.put("original-order", origOrder);
 		resultHash.put("permuted-order", permutedSampleAssignment);
-		
-		
+
+
 		return resultHash;
 	}
 
-	
-	
+
+
 	public ArrayList getPermutedValues(Vector values){
-		
+
 		ArrayList permutedValidArray = new ArrayList(values.size());
-		
-		
+
+
 		for (int i = 0; i < values.size(); i++) {
 			//System.out.println("original Values:"+((Integer)values.get(i)).intValue());
 			permutedValidArray.add(i, ((Integer)values.get(i)).intValue());
@@ -1066,36 +1069,36 @@ public class GSEA extends AbstractAlgorithm {
 
 		int aStart=0;
 		int aEnd=values.size()-1;
-		
-	
-		 for (int i = permutedValidArray.size(); i > 1; i--) {
-			
-			    int randomNumber =  aRandom.nextInt(i - 1);
+
+
+		for (int i = permutedValidArray.size(); i > 1; i--) {
+
+			int randomNumber =  aRandom.nextInt(i - 1);
 			//    System.out.println("random number is:"+randomNumber);
-			    int temp = ((Integer)permutedValidArray.get(randomNumber)).intValue();
-				permutedValidArray.set(randomNumber,  permutedValidArray.get(i-1));
-				permutedValidArray.set(i-1, temp);
-			
-			 
+			int temp = ((Integer)permutedValidArray.get(randomNumber)).intValue();
+			permutedValidArray.set(randomNumber,  permutedValidArray.get(i-1));
+			permutedValidArray.set(i-1, temp);
+
+
 		}  
-		
+
 		return permutedValidArray;
 
 	}
 
 
-	
-	
+
+
 	//only for testing, will replace old one if works.
-	
+
 	public Hashtable generatePermutedFactorHash(Hashtable origOrder, int[]permOrder, String[]factorNames, int[]factorLevels, int[][]factorAssignments, int num_samples){
-		
+
 		Hashtable permutedFactorHash=new Hashtable();
 		int[] rowVector=new int[1];
 		int[][]permutedFactorAssignments=new int[factorNames.length][num_samples];
 		int sample;
-		
-		
+
+
 
 		// Number of factors greater than or equal to 1
 		if(factorNames.length>=1){
@@ -1103,15 +1106,15 @@ public class GSEA extends AbstractAlgorithm {
 			for(int index=1; index<factorNames.length; index++){
 				permutedFactorAssignments[index]=factorAssignments[index];
 			}
-			
+
 			int[]permutedSampleOrder=permOrder;
-			
+
 			for(int index=0; index<num_samples; index++){
 				permutedFactorAssignments[0][index]= rowVector[permutedSampleOrder[index]];
 
 			}
 
-			
+
 
 		}
 
@@ -1120,76 +1123,76 @@ public class GSEA extends AbstractAlgorithm {
 
 
 		return permutedFactorHash;
-		
+
 	}
 
-		
-		
-	
+
+
+
 	public static void main(String[] args) {
-	FloatMatrix m=new FloatMatrix(4,3);
-	FloatMatrix geneset=new FloatMatrix(2,4);
-	float[][] _temp={{1,1,1,0},{1,0,1,0}};
-	
-	for(int i=0; i<2; i++){
-		for(int j=0; j<4; j++){
-			geneset.set(i, j, _temp[i][j]);
+		FloatMatrix m=new FloatMatrix(4,3);
+		FloatMatrix geneset=new FloatMatrix(2,4);
+		float[][] _temp={{1,1,1,0},{1,0,1,0}};
+
+		for(int i=0; i<2; i++){
+			for(int j=0; j<4; j++){
+				geneset.set(i, j, _temp[i][j]);
+			}
 		}
-	}
-	
-	
-	
-	
-	
-	int index=1;
-	for(int col=0; col<3; col++){
-		for(int row=0; row<4; row++){
-			m.set(row, col, index);
-			index=index+1;
-		}
-	}
-	
-	System.out.println("matrix :");
-	for(int row=0; row<4; row++){
+
+
+
+
+
+		int index=1;
 		for(int col=0; col<3; col++){
-			System.out.print(m.get(row, col));
-			System.out.print('\t');
+			for(int row=0; row<4; row++){
+				m.set(row, col, index);
+				index=index+1;
+			}
 		}
-		System.out.println();
-	}
-	System.out.println("matrix Ends:");
-	
-	System.out.println("printing geneset");
-	for(int i=0; i<2; i++){
-		for(int j=0; j<4; j++){
-			System.out.print(geneset.get(i, j));
-			System.out.print('\t');
+
+		System.out.println("matrix :");
+		for(int row=0; row<4; row++){
+			for(int col=0; col<3; col++){
+				System.out.print(m.get(row, col));
+				System.out.print('\t');
+			}
+			System.out.println();
 		}
-		System.out.println();
-	}
-	System.out.println("printing gene set ends");
-	
-	GSEA gsea=new GSEA();
-	FloatMatrix _gSNormRes=gsea.GSNormalize(m, geneset, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, GSEAConstants.SQRT, false, null);
-	
-	System.out.println("printing GSNormalize results");
-	for(int i=0; i<_gSNormRes.getRowDimension(); i++){
-		for(int j=0; j<_gSNormRes.getColumnDimension(); j++){
-			System.out.print(_gSNormRes.get(i, j));
-			System.out.print('\t');
+		System.out.println("matrix Ends:");
+
+		System.out.println("printing geneset");
+		for(int i=0; i<2; i++){
+			for(int j=0; j<4; j++){
+				System.out.print(geneset.get(i, j));
+				System.out.print('\t');
+			}
+			System.out.println();
 		}
-		System.out.println();
+		System.out.println("printing gene set ends");
+
+		GSEA gsea=new GSEA();
+		FloatMatrix _gSNormRes=gsea.GSNormalize(m, geneset, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, GSEAConstants.SQRT, false, null);
+
+		System.out.println("printing GSNormalize results");
+		for(int i=0; i<_gSNormRes.getRowDimension(); i++){
+			for(int j=0; j<_gSNormRes.getColumnDimension(); j++){
+				System.out.print(_gSNormRes.get(i, j));
+				System.out.print('\t');
+			}
+			System.out.println();
+		}
+
+
+
+
+
 	}
-	
-	
-	
-	
-	
-	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 }
