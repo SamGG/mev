@@ -141,4 +141,11 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 		}
 		return true;
 	}
+	public boolean matches(ISupportFileDefinition otherDef) {
+		if(otherDef.getClass().equals(getClass())) {
+			if(otherDef.getUniqueName().equals(getUniqueName()))
+				return true;
+		}
+		return false;
+	}
 }
