@@ -57,6 +57,19 @@ public class FileResourceManager implements IResourceManager {
 	File localRepository;
 	private boolean promptToGetOnline = true;
 	private boolean allowedOnline = true;
+	private Vector<ISupportFileDefinition> filesCheckedThisSession = new Vector<ISupportFileDefinition>();
+
+	private boolean fileHasBeenCheckedRecently(ISupportFileDefinition def) {
+		Enumeration<ISupportFileDefinition> _checkedDefs = filesCheckedThisSession.elements();
+		while(_checkedDefs.hasMoreElements()) {
+			if(_checkedDefs.nextElement().matches(def)) {
+				System.out.println("file has been checked recently: " + def.getUniqueName());
+				return true;
+			}
+		}
+		System.out.println("file has not been checked recently: " + def.getUniqueName());
+		return false;
+	}
 	
 	/**
 	 * Creates the ResourceManager in a specific location on the local drive. 
@@ -144,7 +157,7 @@ public class FileResourceManager implements IResourceManager {
 						// that the file is not versioned,
 						// there is no need to check online for an update to the
 						// file. Return the file as is.
-						if(!def.isVersioned()) {
+						if(!def.isVersioned() || fileHasBeenCheckedRecently(def)) {
 							cachedFiles[i] = cachedFile;
 						} else {
 							getOnlineFlag = true;
@@ -192,7 +205,12 @@ public class FileResourceManager implements IResourceManager {
 		return returnMap;
 		
 	}
+
+	private boolean shouldCheckForUpdate(ISupportFileDefinition def) {
 		
+		return false;
+	}
+	
 	private Hashtable<ISupportFileDefinition, File> getUpdatesIfAvailable(Vector<ISupportFileDefinition> defs, Hashtable<ISupportFileDefinition, File> defToCachedFileMap) throws SupportFileAccessError {
 		Hashtable<ISupportFileDefinition, File> tempMap = new Hashtable<ISupportFileDefinition, File>();
 		
@@ -201,18 +219,20 @@ public class FileResourceManager implements IResourceManager {
 		Enumeration<ISupportFileDefinition> allDefs = defs.elements();
 		while(allDefs.hasMoreElements()) {
 			ISupportFileDefinition thisDef = allDefs.nextElement();
-			try {
-				URL tempURL = thisDef.getURL();
-				URL host = new URL(tempURL.getProtocol(), tempURL.getHost(), tempURL.getPort(), "");
-				if(hostsHash.containsKey(host)) {
-					hostsHash.get(host).add(thisDef);
-				} else {
-					Vector<ISupportFileDefinition> temp = new Vector<ISupportFileDefinition>();
-					temp.add(thisDef);
-					hostsHash.put(host, temp);
+			if(!fileHasBeenCheckedRecently(thisDef)) {
+				try {
+					URL tempURL = thisDef.getURL();
+					URL host = new URL(tempURL.getProtocol(), tempURL.getHost(), tempURL.getPort(), "");
+					if(hostsHash.containsKey(host)) {
+						hostsHash.get(host).add(thisDef);
+					} else {
+						Vector<ISupportFileDefinition> temp = new Vector<ISupportFileDefinition>();
+						temp.add(thisDef);
+						hostsHash.put(host, temp);
+					}
+				} catch(MalformedURLException mue) {
+					mue.printStackTrace();
 				}
-			} catch(MalformedURLException mue) {
-				mue.printStackTrace();
 			}
 		}
 		
@@ -248,6 +268,8 @@ public class FileResourceManager implements IResourceManager {
 					try {
 						thisDefURL = thisDef.getURL();
 						Date lastModifiedDate = fd.getLastModifiedDate(thisDefURL.getPath());
+						//if the locally cached data file doesn't have a cache date or the cache date 
+						//is earlier than the server's lastModifiedDate, download the file and store it locally
 						if(cachedDateForThisDef == null || roundedCompare(cachedDateForThisDef, lastModifiedDate)) {
 							String path = thisDefURL.getPath();
 							String query = thisDefURL.getQuery();
@@ -259,13 +281,18 @@ public class FileResourceManager implements IResourceManager {
 							}
 							if(f != null && f.exists()) {
 								File finalFile = validateAndCopyToRepository(f, thisDef, lastModifiedDate);
-								if (finalFile != null)
+								if (finalFile != null) {
 									tempMap.put(thisDef, finalFile);
+									filesCheckedThisSession.add(thisDef);
+								}
 							} else {
 								SupportFileAccessError sfae = new SupportFileAccessError("File was not downloaded.");
 								ShowThrowableDialog.show(null, "File not found", sfae);
 							}
+							//If the local cached version of the file is up-to-date, just store a reference to the
+							//file definition to note that it's been checked on lately.
 						} else {
+							filesCheckedThisSession.add(thisDef);
 						}
 							
 					} catch (MalformedURLException mue) {
