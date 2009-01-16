@@ -134,6 +134,10 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		this.setXLabel(xLabel);
 		this.setYLabel(yLabel);
 		
+		this.starty = getY();
+		this.startx = getX();
+		this.stopx=getX()+getWidth();
+		this.stopy= getY()+getHeight();
 		
 		initializeViewer();
         initializeCanvas();
@@ -153,13 +157,6 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		graphElements = new Vector();
 
 		setBackground(Color.white);
-		// setTickFont("monospaced", Font.PLAIN, 10);
-		// setLabelFont("monospaced", Font.PLAIN, 12);
-		// setTitleFont("monospaced", Font.PLAIN, 16);
-		// setTickFont("Arial", Font.PLAIN, 10);
-		// setLabelFont("Arial", Font.PLAIN, 12);
-		// setTitleFont("Arial", Font.PLAIN, 16);
-
 		setTickFont("SansSerif", Font.BOLD, 10);
 		setLabelFont("SansSerif", Font.BOLD, 12);
 		setTitleFont("SansSerif", Font.BOLD, 16);
@@ -177,16 +174,15 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 				display(g);
 			}
 		};
-
 		canvas.setBackground(Color.white);
 		canvas.addMouseListener(eventListener);
 		canvas.addMouseMotionListener(eventListener);
 
 		scrollPane = new JScrollPane(canvas,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.getViewport().setBackground(Color.white);
-
+		
 		gba.add(this, scrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C);
 	}
 
@@ -224,27 +220,28 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		GraphElement e;
 		
 		FontMetrics metrics = g.getFontMetrics();
-		  Rectangle rect = new Rectangle(40, 20, getWidth()-80, getHeight() - 40- getNamesWidth(metrics));
-		    this.startx = Double.valueOf(rect.getMinX()).intValue();
-		    this.starty = Double.valueOf(rect.getMinY()).intValue();
-		    this.stopx=Double.valueOf(rect.getMaxX()).intValue();
-		    this.stopy= Double.valueOf(rect.getMaxY()).intValue();
-		    this.preXSpacing=40;
-		    this.preYSpacing=80;
-		    this.postXSpacing=20;
-		    this.postYSpacing=40;
-			setSize(stopx - startx + preXSpacing + postXSpacing, stopy - starty
-					+ preYSpacing + postYSpacing);    
+		    
+		    this.preXSpacing=20+metrics.stringWidth(this.getYLabel());
+		   
+		    this.postXSpacing=this.preXSpacing-(metrics.getHeight()*this.pVals.length);
+		   // this.postXSpacing=0;
+		    this.preYSpacing=metrics.getHeight()+20;
+		  
+		    this.postYSpacing=this.preYSpacing+getNamesWidth(metrics)+40;
+			
+		//	setSize(stopx - startx + preXSpacing + postXSpacing, stopy - starty
+			//		+ preYSpacing + postYSpacing);    
 		
-		
-		 
 		
 		gl = new GraphLine(0, 0, graphstopx, 0, Color.BLACK);
 		graphElements.add(gl);
 
 		gl = new GraphLine(0, 0, 0, graphstopy, Color.BLACK);
 		graphElements.add(gl);
-
+		
+		gl = new GraphLine(graphstartx, 0.05, graphstopx, 0.05, Color.BLACK);
+		graphElements.add(gl);
+		
 		for (double i = 1; i <= graphstopx; i = i + 1) {
 			// GraphLine is used here to construct the yellow colored grid
 			// (vertical bars)
@@ -252,7 +249,7 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 			graphElements.add(gl);
 		}
 
-		for (double i = 0; i < graphstopy; i = i + 0.01) {
+		for (double i = 0; i < graphstopy; i = i + 0.05) {
 			// if (i != 0) {
 			// GraphLine is used here to construct the yellow colored grid
 			// (horizontal bars)
@@ -274,7 +271,7 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 
 		}
 
-		for (double i = graphstarty; i < graphstopy; i = i + 0.01) {
+		for (double i = graphstarty; i < graphstopy; i = i + 0.05) {
 
 			// NumberFormat helps set the number of points after the fraction to
 			// whatever we want it to be
@@ -371,8 +368,11 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
      */
     protected int getNamesWidth(FontMetrics metrics) {
         int maxWidth = 0;
+        int maxHeight=0;
+        maxHeight= metrics.getMaxAscent()-metrics.getMaxDescent();
         for (int i=0; i<this.pVals.length; i++) {
             maxWidth = Math.max(maxWidth, metrics.stringWidth(pVals[i][0]));
+            
         }
         return maxWidth;
     }
