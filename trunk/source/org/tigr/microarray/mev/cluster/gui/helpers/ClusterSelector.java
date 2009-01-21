@@ -180,7 +180,7 @@ public class ClusterSelector extends JPanel {
             width = 35;
             column.setWidth(width);
             column.setPreferredWidth(width);
-        } else if(headerName.equals("Algorithm Node")){
+        } else if(headerName.equals("Factor")){
             column = clusterTable.getColumn(headerName);
             width = 35;
             column.setWidth(width);
@@ -228,7 +228,7 @@ public class ClusterSelector extends JPanel {
         Vector<String> header = new Vector<String>();
         header.add("Serial #");
         header.add("Source");
-        header.add("Algorithm Node");
+        header.add("Factor");
         header.add("Cluster Node");
         header.add("Cluster Label");
         header.add("Remarks");
@@ -238,64 +238,26 @@ public class ClusterSelector extends JPanel {
         
         Vector<Object> dataVector = new Vector<Object>();
         
-        int row = 0;
-        /*
-        for(int i = 0; i < repository.size(); i++){
-            list = repository.getClusterList(i);
-            for(int j = 0; j < list.size(); j++){
-                cluster = list.getClusterAt(j);
-                dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
-                dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
-                dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
-                dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
-                dataVector.add(cluster.getClusterLabel());
-                dataVector.add(cluster.getClusterDescription());
-                dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
-                dataVector.add(cluster.getClusterColor());
-                dataVector.add("Unassigned");
-                //System.out.println("j: " + j);
-                row++;
-            }
-        }*/
         
         int clustersFound = 0;
-        int serialInt = 0;
         
         for(int i = 0; i < repository.size(); i++){
             list = repository.getClusterList(i);
             for(int j = 0; j < list.size(); j++){
-                
-                	cluster = list.getClusterAt(j);
-                	 dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
-                     dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
-                     dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
-                     dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
-                     dataVector.add(cluster.getClusterLabel());
-                     dataVector.add(cluster.getClusterDescription());
-                     dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
-                     dataVector.add(cluster.getClusterColor());
-                     dataVector.add("Unassigned");
-                 	clustersFound++;
+            	cluster = list.getClusterAt(j);
+            	 dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
+                 dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
+                 dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
+                 dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
+                 dataVector.add(cluster.getClusterLabel());
+                 dataVector.add(cluster.getClusterDescription());
+                 dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
+                 dataVector.add(cluster.getClusterColor());
+                 dataVector.add("Unassigned");
+             	clustersFound++;
             }
         }
         
-        
-//        while (serialInt<repository.getClusterSerialCounter()){
-//        	serialInt++;
-//        	if (repository.getCluster(serialInt)==null)
-//        		continue;
-//        	cluster = repository.getCluster(serialInt);
-//            dataVector.add(new JLabel(String.valueOf(cluster.getSerialNumber())));
-//            dataVector.add(new JLabel(String.valueOf(cluster.getSource())));
-//            dataVector.add(new JLabel(String.valueOf(cluster.getAlgorithmName())));
-//            dataVector.add(new JLabel(String.valueOf(cluster.getClusterID())));
-//            dataVector.add(cluster.getClusterLabel());
-//            dataVector.add(cluster.getClusterDescription());
-//            dataVector.add(new JLabel(String.valueOf(cluster.getSize())));
-//            dataVector.add(cluster.getClusterColor());
-//            dataVector.add("Unassigned");
-//        	clustersFound++;
-//        }
         
         model = new ClusterTableModel(header, dataVector);
         clusterTable = new JTable(model);

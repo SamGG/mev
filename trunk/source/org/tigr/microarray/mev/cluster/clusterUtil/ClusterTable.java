@@ -96,7 +96,7 @@ public class ClusterTable extends JPanel implements IViewer {
         Vector headerVector = new Vector();
         headerVector.add("Serial #");
         headerVector.add("Source");
-        headerVector.add("Algorithm Node");
+        headerVector.add("Factor");
         headerVector.add("Cluster Node");
         headerVector.add("Cluster Label");
         headerVector.add("Remarks");
