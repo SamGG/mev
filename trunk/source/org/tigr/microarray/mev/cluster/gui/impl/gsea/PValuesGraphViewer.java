@@ -123,8 +123,8 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 			double graphstartx, double graphstopx, double graphstarty,
 			double graphstopy, int preXSpacing, int postXSpacing,
 			int preYSpacing, int postYSpacing, String title, String xLabel,
-			String yLabel, String[][] pValues) {
-
+			String yLabel, String[][] pValues)  {
+	//	System.out.println("this.getBounds:Width/Height:"+this.getBounds().getWidth()+"|"+this.getBounds().getHeight());
 		this.setPVals(pValues);
 		this.setgraphstartx(graphstartx);
 		this.setgraphstopx(graphstopx);
@@ -162,13 +162,14 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		setTitleFont("SansSerif", Font.BOLD, 16);
 		
 
-	   	setSize(stopx - startx + preXSpacing + postXSpacing, stopy - starty
-				+ preYSpacing + postYSpacing);
+//	   	setSize(stopx - startx + preXSpacing + postXSpacing, stopy - starty
+	//			+ preYSpacing + postYSpacing);
 		coordinateFormat = new DecimalFormat();
 		coordinateFormat.setMaximumFractionDigits(3);
 	}
 
 	private void initializeCanvas() {
+		
 		canvas = new Drawable(startx, stopx, starty, stopy) {
 			public void controlPaint(Graphics g) {
 				display(g);
@@ -180,7 +181,7 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 
 		scrollPane = new JScrollPane(canvas,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.getViewport().setBackground(Color.white);
 		
 		gba.add(this, scrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C);
@@ -220,17 +221,19 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		GraphElement e;
 		
 		FontMetrics metrics = g.getFontMetrics();
-		    
 		    this.preXSpacing=20+metrics.stringWidth(this.getYLabel());
-		   
-		    this.postXSpacing=this.preXSpacing-(metrics.getHeight()*this.pVals.length);
-		   // this.postXSpacing=0;
+	        this.postXSpacing=this.preXSpacing-(metrics.getHeight()*this.pVals.length);
+		    int width=((Double)this.graphstopx).intValue()-((Double)this.graphstartx).intValue();
 		    this.preYSpacing=metrics.getHeight()+20;
 		  
-		    this.postYSpacing=this.preYSpacing+getNamesWidth(metrics)+40;
+		    this.postYSpacing=this.preYSpacing+getNamesWidth(metrics)+20;
 			
-		//	setSize(stopx - startx + preXSpacing + postXSpacing, stopy - starty
-			//		+ preYSpacing + postYSpacing);    
+			setSize(getWidth()+(preXSpacing + postXSpacing), getHeight()+(preYSpacing + postYSpacing));
+		    
+		    //System.out.println("graphstartX :"+graphstartx);
+			//System.out.println("CanvasstartxX"+(canvas.getX()));
+			//System.out.println("canvas size is (Width/Height):"+canvas.getWidth()+":"+canvas.getHeight());
+		  //  setSize(3000, 3000);
 		
 		
 		gl = new GraphLine(0, 0, graphstopx, 0, Color.BLACK);
@@ -239,8 +242,8 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		gl = new GraphLine(0, 0, 0, graphstopy, Color.BLACK);
 		graphElements.add(gl);
 		
-		gl = new GraphLine(graphstartx, 0.05, graphstopx, 0.05, Color.BLACK);
-		graphElements.add(gl);
+	//	gl = new GraphLine(graphstartx, 0.05, graphstopx, 0.05, Color.BLACK);
+		//graphElements.add(gl);
 		
 		for (double i = 1; i <= graphstopx; i = i + 1) {
 			// GraphLine is used here to construct the yellow colored grid
@@ -355,7 +358,7 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 			}
 		}
 
-	//	 enforceGraphBounds(g);
+		// enforceGraphBounds(g);
 
 		drawXLabel(g, xLabel, Color.black);
 		drawYLabel(g, yLabel, Color.black);
@@ -378,11 +381,6 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
     }
   
 	
-	
-	
-	
-	
-	
 
 	public void constructImage() {
 		Graphics2D g = (Graphics2D) this.getGraphics();
@@ -393,7 +391,6 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 		// BufferedImage tempImage = (BufferedImage)
 		// createImage(canvas.getSize().width, canvas.getSize().height);
 		g = tempImage.createGraphics();
-		System.out.println("drawGraph called from constructImage");
 		drawGraph(g);
 		cachedImage = tempImage;
 	}
@@ -1173,7 +1170,7 @@ public class PValuesGraphViewer extends JPanel implements IViewer {
 
 	public void setPVals(String[][] vals) {
 		pVals = vals;
-		System.out.println("Length of p val array is:"+pVals.length);
+//		System.out.println("Length of p val array is:"+pVals.length);
 	}
 
 	public GraphPoint getGp() {
