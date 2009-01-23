@@ -17,6 +17,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -180,8 +181,9 @@ public class GraphViewer extends Viewer {
             canvas.setBackground(Color.white);
             canvas.addMouseListener(eventListener);
             canvas.addMouseMotionListener(eventListener);
+            canvas.setPreferredSize(new Dimension(450,500));
             
-            scrollPane = new JScrollPane(canvas, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scrollPane = new JScrollPane(canvas);
             scrollPane.getViewport().setBackground(Color.white);
             
             gba.add(this, scrollPane, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C);
