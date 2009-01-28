@@ -483,7 +483,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 		if (useLoadedAnnotationFile) {
 			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", true);
 		} else {
-			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background (annotation not loaded)", false);
+			preloadedAnnotationButton = new JRadioButton("Use loaded array population as background", false);
 			preloadedAnnotationButton.setEnabled(false);
 		}
 		preloadedAnnotationButton.setBackground(Color.white);
@@ -502,7 +502,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 
 			}
 		});
-
+		
 		fileButton = new JRadioButton("Select Background Population from File");
 		fileButton.setBackground(Color.white);
 		fileButton.setFocusPainted(false);
@@ -1172,11 +1172,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
 			        	annotationFile = resourceManager.getSupportFile(def, false);
 			        } catch (SupportFileAccessError sfae) {
-			        	//disable population from file button
 			        	useLoadedAnnotationFile = false;
-				        popPanel.fileButton.setSelected(true);
-				        popPanel.preloadedAnnotationButton.setSelected(false);
-				        popPanel.preloadedAnnotationButton.setEnabled(false);
 			        }
 			} else {
 				getEaseSupportFileButton.setEnabled(false);

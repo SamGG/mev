@@ -158,7 +158,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	        try {
 	        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
 	        } catch (IOException ioe) {
-	        	speciestoarrays = null;
+	        	speciestoarrays = null; 
 	        }
 	        if(edf != null || framework.getData().isAnnotationLoaded()) {
 	        	easeFileLocation = supportFiles.get(edf).getAbsolutePath();
@@ -166,6 +166,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
 	        }
         } catch (SupportFileAccessError sfae) {
+        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+        } catch (NullPointerException npe) {
         	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
         }
         

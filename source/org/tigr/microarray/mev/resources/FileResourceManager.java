@@ -63,11 +63,11 @@ public class FileResourceManager implements IResourceManager {
 		Enumeration<ISupportFileDefinition> _checkedDefs = filesCheckedThisSession.elements();
 		while(_checkedDefs.hasMoreElements()) {
 			if(_checkedDefs.nextElement().matches(def)) {
-				System.out.println("file has been checked recently: " + def.getUniqueName());
+//				System.out.println("file has been checked recently: " + def.getUniqueName());
 				return true;
 			}
 		}
-		System.out.println("file has not been checked recently: " + def.getUniqueName());
+//		System.out.println("file has not been checked recently: " + def.getUniqueName());
 		return false;
 	}
 	
