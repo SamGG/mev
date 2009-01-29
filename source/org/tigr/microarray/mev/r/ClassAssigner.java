@@ -16,9 +16,14 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -154,7 +159,6 @@ public class ClassAssigner {
 			//now create the comboBox for this row
 			JComboBox rowCombo = new JComboBox( this.comboNames );
 			rowCombo.setPreferredSize( dCombo );
-			
 			//put this on its own JPanel
 			JPanel rowPanel = new JPanel();
 			rowPanel.setLayout( new BoxLayout( rowPanel, BoxLayout.X_AXIS ) );
@@ -240,96 +244,261 @@ public class ClassAssigner {
 	 * 
 	 */
 	public void onSaveAssignments() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\r\n";
-		for( int i = 0; i < this.vComboBox.size(); i ++ ) {
-			JComboBox box = ( JComboBox ) this.vComboBox.elementAt( i );
-			sb.append( box.getSelectedIndex() );
-			sb.append( newLine );
-		}//i
+    	int numGroups = comboNames.length;	
+		File file;		
+		JFileChooser fileChooser = new JFileChooser("./data");	
 		
-		//show a dialog so user can set save path
-		//load the current path
-		String dataPath = "/" + TMEV.getDataPath();
-		if( dataPath == null ) {
-			dataPath = "";
-		}
-		
-		//pop up dialog for save
-		JFileChooser chooser = new JFileChooser( dataPath );
-		USCTextFileFilter textFilter = new USCTextFileFilter();
-		chooser.addChoosableFileFilter( textFilter );
-		int returnVal = chooser.showSaveDialog( new Frame() );
-		if( returnVal == JFileChooser.APPROVE_OPTION ) {
-			File saveFile;
-			
-			if( chooser.getFileFilter() == textFilter ) {
-				//make sure to add .txt
-				String path = chooser.getSelectedFile().getPath();
-				if( path.toLowerCase().endsWith( "txt" ) ) {
-					//great, already ok
-					saveFile = new File( path );
-				} else {
-					//add it
-					String subPath;
-					int period = path.lastIndexOf( "." );
-					if( period != -1 ) {
-						System.out.println( "period  = -1" );
-						subPath = path.substring( 0, period );
-					} else {
-						subPath = path;
-					}
-					String newPath = subPath + ".txt";
-					saveFile = new File( newPath );
+		if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();			
+			try {
+				PrintWriter pw = new PrintWriter(new FileWriter(file));
+				
+				//comment row
+				Date currDate = new Date(System.currentTimeMillis());			
+				String dateString = currDate.toString();;
+				String userName = System.getProperty("user.name");
+				
+				pw.println("# Assignment File");
+				pw.println("# User: "+userName+" Save Date: "+dateString);
+				pw.println("#");
+				
+				//save group names..?
+				
+				pw.print("Module:\t");
+				pw.println("USC");
+				
+				//Omits the 'Unknown' group from the Group Labels
+				for (int i=0; i<numGroups-1; i++){
+    				pw.print("Group "+(i+1)+" Label:\t");
+					pw.println(comboNames[i]);
 				}
-			} else {
-				saveFile = chooser.getSelectedFile();
+								
+				pw.println("#");
+				
+				pw.println("Sample Index\tSample Name\tGroup Assignment");
+
+				for(int sample = 0; sample < vComboBox.size(); sample++) {
+					JComboBox box = ( JComboBox ) this.vComboBox.elementAt(sample);
+					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+					pw.print(rowNames[sample]+"\t");
+					try{
+						pw.println(comboNames[box.getSelectedIndex()]);
+					}catch(Exception e){
+						pw.println("Exclude");
+					}
+				}
+				pw.flush();
+				pw.close();			
+			} catch (FileNotFoundException fnfe) {
+				fnfe.printStackTrace();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
 			}
-			
-			this.writeFile( saveFile, sb.toString() );
-		} else {
-			//user cancelled
 		}
-	}//onSaveAssignments()
-	
-	
+	}
 	/**
-	 * Write the String s to File f
-	 * @param f
-	 * @param s
-	 */
-	private void writeFile( File f, String s ) {
-		try {
-			FileWriter fw = new FileWriter( f );
-			fw.write( s );
-			fw.flush();
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			this.error( e.getMessage() );
-		}
-	}//writeFile()
-	
-	
-	/**
-	 * 
+	 * Loads file based assignments
 	 */
 	public void onLoadAssignments() {
-		//show a file dialog
-		GenericFileDialog gfd = new GenericFileDialog( new Frame(), "Load the Class File" );
-		if( gfd.showModal() == JOptionPane.OK_OPTION ) {
-			File fLoaded = gfd.getSelectedFile();
-			//File testFile = new File( "/Users/iVu/Documents/Dev/MeV/TMEV3.1_RAMA1.0/data/AML/smallClassFile.txt" );
-			try {
-				this.readClassFile( fLoaded );
-			} catch (Exception e) {
-				e.printStackTrace();
-				this.error( e.getMessage() );
+		/**
+		 * consider the following verifcations and policies
+		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
+		 *-each loaded file name should match a corresponding name in the assignment file, 1:1
+		 *		-if names don't match, throw warning and inform that assignments are based on loaded order
+		 *		 rather than a sample name
+		 *-the number of levels of factor A and factor B specified previously when defining the design
+		 *should match the number of levels in the assignment file, if not warning and quit
+		 *-if the level names match the level names entered then the level names will be used to make assignments
+		 *if not, then there will be a warning and the level index will be used.
+		 *-make sure that each level label pairs to a particular level index, this is a format 
+		 *-Note that all design labels in the assignment file will override existing labels
+		 *this means updating the data structures in this class, and updating AlgorithmData to set appropriate fields
+		 ***AlgorithmData modification requires a fixed vocab. for parameter names to be changed
+		 *these fields are (factorAName, factorBName, factorANames (level names) and factorANames (level names)
+		 *Wow, that was easy :)
+		 */
+		
+		File file;		
+		JFileChooser fileChooser = new JFileChooser("./data");
+		
+		if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+		
+			file = fileChooser.getSelectedFile();
+			
+    		try {						
+    			//first grab the data and close the file
+    			BufferedReader br = new BufferedReader(new FileReader(file));
+    			Vector<String> data = new Vector<String>();
+    			String line;
+    			while( (line = br.readLine()) != null)
+    				data.add(line.trim());
+    			
+    			br.close();
+    				
+    			//build structures to capture the data for assingment information and for *validation
+    			
+    			//factor names
+    			Vector<String> groupNames = new Vector<String>();
+    			
+    			
+    			Vector<Integer> sampleIndices = new Vector<Integer>();
+    			Vector<String> sampleNames = new Vector<String>();
+    			Vector<String> groupAssignments = new Vector<String>();		
+    			
+    			//parse the data in to these structures
+    			String [] lineArray;
+    			//String status = "OK";
+    			for(int row = 0; row < data.size(); row++) {
+    				line = (String)(data.get(row));
+
+    				//if not a comment line, and not the header line
+    				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+    					
+    					lineArray = line.split("\t");
+    					
+    					//check what module saved the file
+    					if(lineArray[0].startsWith("Module:")) {
+    						if (!lineArray[1].equals("USC")){
+    							Object[] optionst = { "Continue", "Cancel" };
+    							if (JOptionPane.showOptionDialog(null, 
+    		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+    		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+    		    						optionst, optionst[0])==0)
+    								continue;
+    							return;
+    						}
+    						continue;
+    					}
+    					
+    					//pick up group names
+    					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+    						groupNames.add(lineArray[1]);
+    						continue;
+    					}
+
+    					//non-comment line, non-header line and not a group label line
+    					
+    					try {
+    						Integer.parseInt(lineArray[0]);
+    					} catch ( NumberFormatException nfe) {
+    						//if not parsable continue
+    						continue;
+    					}
+    					
+    					sampleIndices.add(new Integer(lineArray[0]));
+    					sampleNames.add(lineArray[1]);
+    					groupAssignments.add(lineArray[2]);	
+    				}				
+    			}
+    			
+    			//we have the data parsed, now validate, assign current data
+
+
+    			if( rowNames.length != sampleNames.size()) {
+    				System.out.println(rowNames.length+"  "+sampleNames.size());
+    				//status = "number-of-samples-mismatch";
+    				System.out.println(rowNames.length+ " s length " + sampleNames.size());
+    				//warn and prompt to continue but omit assignments for those not represented				
+
+    				JOptionPane.showMessageDialog(null, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+    						                                   "does not match the number of samples loaded in MeV ("+rowNames.length+").<br>" +
+    						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+    				
+    				return;
+    			}
+
+				for(int i=0; i<groupNames.size(); i++){
+					if(!groupNames.get(i).equals(comboNames[i])){
+						Object[] optionst = { "Use Current Labels", "Use Saved Labels" };
+						if (JOptionPane.showOptionDialog(null, 
+								"The saved file was saved using different group labels. \n Which labels should MeV use?", 
+								"Unmatched label warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+								optionst, optionst[0])==0)
+							break;
+						if (!groupNames.get(groupNames.size()-1).equals(TEST_CLASS_STRING))
+							groupNames.add(TEST_CLASS_STRING);
+						this.comboNames = new String[groupNames.size()];
+						for (int j=0; j<comboNames.length; j++){
+							comboNames[j] = (String)groupNames.get(j);
+						}
+						
+						for (int j=0; j<vComboBox.size(); j++){
+							JComboBox box = (JComboBox)vComboBox.get(j);
+							box.removeAllItems();
+							for (int k=0; k<groupNames.size(); k++){
+								box.addItem((String)groupNames.get(k));
+							}
+						}
+						mainPanel.updateUI();
+						break;
+					}
+						
+				}
+    			
+    			Vector<String> currSampleVector = new Vector<String>();
+    			for(int i = 0; i < rowNames.length; i++)
+    				currSampleVector.add((String)rowNames[i]);
+    			
+    			int fileSampleIndex = 0;
+    			int groupIndex = 0;
+    			String groupName;
+    			
+    			for(int sample = 0; sample < rowNames.length; sample++) {
+    				boolean doIndex = false;
+    				for (int i=0;i<rowNames.length; i++){
+    					if (i==sample)
+    						continue;
+    					if (rowNames[i].equals(rowNames[sample])){
+    						doIndex=true;
+    					}
+    				}
+    				fileSampleIndex = sampleNames.indexOf(rowNames[sample]);
+    				if (fileSampleIndex==-1){
+    					doIndex=true;
+    				}
+    				if (doIndex){
+    					setStateBasedOnIndex(groupAssignments,groupNames);
+    					break;
+    				}
+    				
+    				groupName = (String)(groupAssignments.get(fileSampleIndex));
+    				groupIndex = groupNames.indexOf(groupName);
+    				//set state
+    				try{
+    					JComboBox box = (JComboBox)vComboBox.elementAt(sample);
+    					box.setSelectedIndex(groupIndex);
+    					if (groupIndex==-1)
+    						box.setSelectedIndex(box.getItemCount()-1);
+    				}catch (Exception e){
+    					JComboBox box = (JComboBox)vComboBox.elementAt(sample);
+						box.setSelectedIndex(box.getItemCount()-1); //set to last state... excluded
+    				}
+    			}
+    			
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			JOptionPane.showMessageDialog(null, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+    		}
+    	}
+	}
+	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+		Object[] optionst = { "Continue", "Cancel" };
+		if (JOptionPane.showOptionDialog(null, 
+				"The saved file was saved using a different sample annotation. \n Would you like MeV to try to load it by index order?", 
+				"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+				optionst, optionst[0])==1)
+			return;
+		
+		for(int sample = 0; sample < rowNames.length; sample++) {
+			try{
+				JComboBox box = (JComboBox)vComboBox.elementAt(sample);
+				box.setSelectedIndex(groupNames.indexOf(groupAssignments.get(sample)));
+			}catch(Exception e){
+				JComboBox box = (JComboBox)vComboBox.elementAt(sample);
+				box.setSelectedIndex(groupNames.size()-1);//set to last state... excluded
 			}
-		} else {
-			//user cancelled, do nothing
 		}
-	}//onLoadSelection()
+	}
 	
 	
 	/**
