@@ -177,7 +177,7 @@ public class BNGUI implements IClusterGUI {
 			//Display warning if too many interactions are found.
 			if(status > 50) {
 				if (JOptionPane.showConfirmDialog(framework.getFrame(),
-						"Too many interactions found. \n The process might Run our of Memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
+						"Too many interactions found. \n The process might run out of memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
 					BNGUI.done = false;
 					pgPanel.dispose();
