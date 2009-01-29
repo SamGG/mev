@@ -24,10 +24,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -50,6 +54,7 @@ import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.owa.OneWayANOVAInitBox;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.util.StringSplitter;
@@ -214,39 +219,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             saveButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
-                    int returnVal = fc.showSaveDialog(GroupExptsPanel.this);
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File file = fc.getSelectedFile();
-                        try {
-                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                            int[] factorAGroupAssgn = factorAPanel.getGroupAssignments();
-                            int[] factorBGroupAssgn = factorBPanel.getGroupAssignments();
-                            for (int i = 0; i < factorAGroupAssgn.length; i++) {
-                                out.print(factorAGroupAssgn[i]);
-                                if (i < factorAGroupAssgn.length - 1) {
-                                    out.print("\t");
-                                }
-                            }
-                            out.println();
-                            
-                            for (int i = 0; i < factorBGroupAssgn.length; i++) {
-                                out.print(factorBGroupAssgn[i]);
-                                if (i < factorBGroupAssgn.length - 1) {
-                                    out.print("\t");
-                                }
-                            }
-                            out.println();
-                            
-                            out.flush();
-                            out.close();
-                        } catch (Exception e) {
-                            //e.printStackTrace();
-                        }
-                        //this is where a real application would save the file.
-                        //log.append("Saving: " + file.getName() + "." + newline);
-                    } else {
-                        //log.append("Save command cancelled by user." + newline);
-                    }
+                	saveAssignments();
                 }
             });
             
@@ -255,59 +228,7 @@ public class TFAInitBox2 extends AlgorithmDialog {
             
             loadButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
-                    int returnVal = fc.showOpenDialog(GroupExptsPanel.this);
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        try {
-                            FileReader file = new FileReader(fc.getSelectedFile());
-                            BufferedReader buff = new BufferedReader(file);
-                            String line = buff.readLine();
-                            //System.out.println(line);
-                            StringSplitter st = new StringSplitter('\t');
-                            st.init(line);
-                            Vector factorAGroupsVector = new Vector();
-                            Vector factorBGroupsVector = new Vector();
-                            while (st.hasMoreTokens()) {
-                                String current = st.nextToken();
-                                factorAGroupsVector.add(new Integer(current));
-                                //System.out.print(current);
-                            }
-                            
-                            line = buff.readLine();
-                            st.init(line);
-                            while (st.hasMoreTokens()) {
-                                String current = st.nextToken();
-                                factorBGroupsVector.add(new Integer(current));
-                                //System.out.print(current);
-                            }
-                            
-                            buff.close();
-                            int[] factorAGroupAssgn = factorAPanel.getGroupAssignments();
-                            int[] factorBGroupAssgn = factorBPanel.getGroupAssignments();
-                            if ((factorAGroupsVector.size() != factorAGroupAssgn.length) || (factorBGroupsVector.size() != factorBGroupAssgn.length)){
-                                JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
-                            } else {
-                                int[] factorAAssignments = new int[factorAGroupsVector.size()];
-                                int[] factorBAssignments = new int[factorBGroupsVector.size()];
-                                for (int i = 0; i < factorAAssignments.length; i++) {
-                                    factorAAssignments[i] = ((Integer)(factorAGroupsVector.get(i))).intValue();
-                                    factorBAssignments[i] = ((Integer)(factorBGroupsVector.get(i))).intValue();
-                                }
-                                
-                                factorAPanel.setGroupAssignments(factorAAssignments);
-                                factorBPanel.setGroupAssignments(factorBAssignments);
-                            }
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(gPanel, "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
-                            factorAPanel.reset();
-                            factorBPanel.reset();
-                            //e.printStackTrace();
-                        }
-                        
-                        //this is where a real application would save the file.
-                        //log.append("Saving: " + file.getName() + "." + newline);
-                    } else {
-                        //log.append("Save command cancelled by user." + newline);
-                    }
+                	loadAssignments();
                 }
             });
             //
@@ -337,7 +258,283 @@ public class TFAInitBox2 extends AlgorithmDialog {
             this.add(panel2);
             
         }
-        
+        /**
+    	 * Saves the assignments to file.
+    	 * 
+    	 */
+    	private void saveAssignments() {
+    		
+    		File file;		
+    		JFileChooser fileChooser = new JFileChooser("./data");	
+    		
+    		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    			file = fileChooser.getSelectedFile();			
+    			try {
+    				PrintWriter pw = new PrintWriter(new FileWriter(file));
+    				
+    				//comment row
+    				Date currDate = new Date(System.currentTimeMillis());			
+    				String dateString = currDate.toString();;
+    				String userName = System.getProperty("user.name");
+    				
+    				pw.println("# Assignment File");
+    				pw.println("# User: "+userName+" Save Date: "+dateString);
+    				pw.println("#");
+    				
+    				//save group names..?
+    				
+    				pw.print("Module:\t");
+    				pw.println("2-Factor ANOVA");
+    				for (int i=0; i<Math.max(numFactorLevels[0],numFactorLevels[1]); i++){
+        				pw.print("Group "+(i+1)+" Label:\t");
+    					pw.println("Group "+(i+1));
+    				}
+    								
+    				pw.println("#");
+    				
+    				pw.println("Sample Index\tSample Name\tGroup Assignment");
+
+    				int[]groupAAssgn=getFactorAAssignments();
+    				int[]groupBAssgn=getFactorBAssignments();
+    				
+    				for(int sample = 0; sample < exptNames.size(); sample++) {
+    					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+    					pw.print(exptNames.get(sample)+"\t");
+    					if (groupAAssgn[sample]!=0)
+    						pw.print("Group "+(groupAAssgn[sample]));
+    					else
+    						pw.print("Exclude");
+    					if (groupBAssgn[sample]!=0)
+    						pw.println("\tGroup "+(groupBAssgn[sample]));
+    					else
+    						pw.println("\tExclude");
+    					
+    					
+    				}
+    				pw.flush();
+    				pw.close();			
+    			} catch (FileNotFoundException fnfe) {
+    				fnfe.printStackTrace();
+    			} catch (IOException ioe) {
+    				ioe.printStackTrace();
+    			}
+    		}
+    	}
+    	/**
+	   	 * Loads file based assignments
+	   	 */
+	   	private void loadAssignments() {
+	   		/**
+	   		 * consider the following verifcations and policies
+	   		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
+	   		 *-each loaded file name should match a corresponding name in the assignment file, 1:1
+	   		 *		-if names don't match, throw warning and inform that assignments are based on loaded order
+	   		 *		 rather than a sample name
+	   		 *-the number of levels of factor A and factor B specified previously when defining the design
+	   		 *should match the number of levels in the assignment file, if not warning and quit
+	   		 *-if the level names match the level names entered then the level names will be used to make assignments
+	   		 *if not, then there will be a warning and the level index will be used.
+	   		 *-make sure that each level label pairs to a particular level index, this is a format 
+	   		 *-Note that all design labels in the assignment file will override existing labels
+	   		 *this means updating the data structures in this class, and updating AlgorithmData to set appropriate fields
+	   		 ***AlgorithmData modification requires a fixed vocab. for parameter names to be changed
+	   		 *these fields are (factorAName, factorBName, factorANames (level names) and factorANames (level names)
+	   		 *Wow, that was easy :)
+	   		 */
+	   		
+	   		File file;		
+	   		JFileChooser fileChooser = new JFileChooser("./data");
+	   		
+	   		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	   		
+	   			file = fileChooser.getSelectedFile();
+	   			
+	       		try {						
+	       			//first grab the data and close the file
+	       			BufferedReader br = new BufferedReader(new FileReader(file));
+	       			Vector<String> data = new Vector<String>();
+	       			String line;
+	       			while( (line = br.readLine()) != null)
+	       				data.add(line.trim());
+	       			
+	       			br.close();
+	       				
+	       			//build structures to capture the data for assingment information and for *validation
+	       			
+	       			//factor names
+	       			Vector<String> groupNames = new Vector<String>();
+	       			
+	       			
+	       			Vector<Integer> sampleIndices = new Vector<Integer>();
+	       			Vector<String> sampleNames = new Vector<String>();
+	       			Vector<String> groupAAssignments = new Vector<String>();	
+	       			Vector<String> groupBAssignments = new Vector<String>();		
+	       			
+	       			//parse the data in to these structures
+	       			String [] lineArray;
+	       			//String status = "OK";
+	       			boolean bothloaded = true;
+	       			for(int row = 0; row < data.size(); row++) {
+	       				line = (String)(data.get(row));
+	
+	       				//if not a comment line, and not the header line
+	       				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+	       					
+	       					lineArray = line.split("\t");
+	       					
+	       					//check what module saved the file
+	       					if(lineArray[0].startsWith("Module:")) {
+	       						if (!lineArray[1].equals("2-Factor ANOVA")){
+	       							Object[] optionst = { "Continue", "Cancel" };
+	       							if (JOptionPane.showOptionDialog(null, 
+	       		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+	       		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	       		    						optionst, optionst[0])==0)
+	       								continue;
+	       							return;
+	       						}
+	       						continue;
+	       					}
+	       					
+	       					//pick up group names
+	       					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+	       						groupNames.add(lineArray[1]);
+	       						continue;
+	       					}
+	       						
+	
+	       					//non-comment line, non-header line and not a group label line
+	       					
+	       					try {
+	       						Integer.parseInt(lineArray[0]);
+	       					} catch ( NumberFormatException nfe) {
+	       						//if not parsable continue
+	       						continue;
+	       					}
+	       					
+	       					sampleIndices.add(new Integer(lineArray[0]));
+	       					sampleNames.add(lineArray[1]);
+	       					groupAAssignments.add(lineArray[2]);	
+	       					try{
+		       					groupBAssignments.add(lineArray[3]);
+	       					}catch (Exception e){
+	       						bothloaded=false;
+	       					}
+	       				}				
+	       			}
+	       			if (!bothloaded)
+	       				JOptionPane.showMessageDialog(null, "The loaded file contained only 1 Factor.  Only "+factorNames[0]+" will be loaded.", "Error", JOptionPane.ERROR_MESSAGE);                            	       						
+   					
+	       			//we have the data parsed, now validate, assign current data
+	
+	
+	       			if( exptNames.size() != sampleNames.size()) {
+	       				System.out.println(exptNames.size()+"  "+sampleNames.size());
+	       				//status = "number-of-samples-mismatch";
+	       				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+	       				//warn and prompt to continue but omit assignments for those not represented				
+	
+	       				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+	       						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
+	       						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+	       				
+	       				return;
+	       			}
+	       			Vector<String> currSampleVector = new Vector<String>();
+	       			for(int i = 0; i < exptNames.size(); i++)
+	       				currSampleVector.add((String)exptNames.get(i));
+	       			
+	       			int fileSampleIndexA = 0;
+	       			int groupIndexA = 0;
+	       			int fileSampleIndexB = 0;
+	       			int groupIndexB = 0;
+	       			String groupAName;
+	       			String groupBName;
+	       			
+	       			for(int sample = 0; sample < exptNames.size(); sample++) {
+
+        				boolean doIndex = false;
+        				for (int i=0;i<exptNames.size(); i++){
+        					if (i==sample)
+        						continue;
+        					if (exptNames.get(i).equals(exptNames.get(sample))){
+        						doIndex=true;
+        					}
+        				}
+        				fileSampleIndexA = sampleNames.indexOf(exptNames.get(sample));
+        				if (fileSampleIndexA==-1){
+        					doIndex=true;
+        				}
+        				if (bothloaded){
+		       				fileSampleIndexB = sampleNames.indexOf(exptNames.get(sample));
+		       				if (fileSampleIndexB==-1){
+		       					doIndex=true;
+		       					break;
+		       				}
+        				}
+        				if (doIndex){
+        					setStateBasedOnIndex(groupAAssignments,groupBAssignments,groupNames,bothloaded);
+        					break;
+        				}
+        				
+	       				groupAName = (String)(groupAAssignments.get(fileSampleIndexA));
+	       				groupIndexA = groupNames.indexOf(groupAName);
+	       				
+	       				//set state
+	       				try{
+	       					gPanel.factorAPanel.exptGroupRadioButtons[groupIndexA][sample].setSelected(true);
+	       				}catch (Exception e){
+	       					gPanel.factorAPanel.notInGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+	       				}
+	       				
+	       				if (bothloaded){
+		       				
+		       				groupBName = (String)(groupBAssignments.get(fileSampleIndexB));
+		       				groupIndexB = groupNames.indexOf(groupBName);
+		       				
+		       				//set state
+		       				try{
+		       					gPanel.factorBPanel.exptGroupRadioButtons[groupIndexB][sample].setSelected(true);
+		       				}catch (Exception e){
+		       					gPanel.factorBPanel.notInGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+		       				}
+	       				}
+	       			}
+	       			
+	       			repaint();			
+	       			//need to clear assignments, clear assignment booleans in sample list and re-init
+	       			//maybe a specialized inti for the sample list panel.
+	       		} catch (Exception e) {
+	       			e.printStackTrace();
+	       			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+	       		}
+	       	}
+	   	}
+	   	private void setStateBasedOnIndex(Vector<String>groupAAssignments,Vector<String>groupBAssignments,Vector<String>groupNames, boolean bothloaded){
+	   		Object[] optionst = { "Continue", "Cancel" };
+	   		if (JOptionPane.showOptionDialog(null, 
+						"The saved file was saved using a different sample annotation. \n Would you like MeV to try to load it by index order?", 
+						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+						optionst, optionst[0])==1)
+					return;
+				
+	   		for(int sample = 0; sample < exptNames.size(); sample++) {
+	   			try{
+	   				gPanel.factorAPanel.exptGroupRadioButtons[groupNames.indexOf(groupAAssignments.get(sample))][sample].setSelected(true);
+	   			}catch(Exception e){
+	   				gPanel.factorAPanel.notInGroupRadioButtons[sample].setSelected(true);//set to last state... excluded
+	   			}
+	   		}
+	   		if (bothloaded){
+		   		for(int sample = 0; sample < exptNames.size(); sample++) {
+		   			try{
+		   				gPanel.factorBPanel.exptGroupRadioButtons[groupNames.indexOf(groupBAssignments.get(sample))][sample].setSelected(true);
+		   			}catch(Exception e){
+		   				gPanel.factorBPanel.notInGroupRadioButtons[sample].setSelected(true);//set to last state... excluded
+		   			}
+		   		}
+	   		}
+	   	}
         public void reset() {
             factorAPanel.reset();
             factorBPanel.reset();
@@ -983,5 +1180,23 @@ public class TFAInitBox2 extends AlgorithmDialog {
         }
         
         return bothFactorAssignments;
+    }
+    
+    public static void main(String[] args) {
+        JFrame dummyFrame = new JFrame();
+        Vector dummyVect = new Vector();
+        dummyVect.add("same");
+        dummyVect.add("same");
+        dummyVect.add("same");
+        dummyVect.add("same");
+        dummyVect.add("same");
+        for (int i = 0; i < 95; i++) {
+            dummyVect.add("Expt " + i);
+        }
+        String[] factorNames = {"Factor A", "Factor BEE"};
+        int[] numFactorLevels = {4,3};
+        TFAInitBox2 tfaBox = new TFAInitBox2(dummyFrame, true, dummyVect, factorNames,numFactorLevels, null);
+        tfaBox.setVisible(true);
+        
     }
 }

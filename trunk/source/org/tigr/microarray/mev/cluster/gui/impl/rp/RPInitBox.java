@@ -5,9 +5,9 @@
  * All rights reserved.
  *******************************************************************************/
 /*
- * $RCSfile: OneWayANOVAInitBox.java,v $
+ * $RCSfile: RPInitBox.java,v $
  * $Revision: 1.10 $
- * $Date: 2006-11-07 17:27:40 $
+ * $Date: 2008-11-07 17:27:40 $
  * $Author: dschlauch $
  * $State: Exp $
  */
@@ -216,68 +216,51 @@ public class RPInitBox extends AlgorithmDialog {
             this.setLayout(gridbag);
             buildConstraints(constraints, 0, 0, 1, 1, 100, 10);
             constraints.fill = GridBagConstraints.BOTH;
-                    okReady = true;
-                    try {
-	                            mulgPanel = new MultiGroupExperimentsPanel(exptNames, 1);
-	                            
-	                            
-	                            tabbedmulg = new JTabbedPane();
-	                            
-	                            clusterSelectorCondition= new ClusterSelector(repository,1, "Samples");
-	                            if (repository!=null){
-	                            	clusterSelectorCondition.setClusterType("Experiment");
-	                    		}
-	                            JPanel clusterSelectorPanel = new JPanel();
-	                            clusterSelectorPanel.setLayout(new GridBagLayout());
+                okReady = true;
+                try {
+                    mulgPanel = new MultiGroupExperimentsPanel(exptNames, 1);
+                    
+                    
+                    tabbedmulg = new JTabbedPane();
+                    
+                    clusterSelectorCondition= new ClusterSelector(repository,1, "Samples");
+                    if (repository!=null){
+                    	clusterSelectorCondition.setClusterType("Experiment");
+            		}
+                    JPanel clusterSelectorPanel = new JPanel();
+                    clusterSelectorPanel.setLayout(new GridBagLayout());
 
-	                            GridBagConstraints c = new GridBagConstraints();
-	                            c.fill = GridBagConstraints.BOTH;
-	                            c.weighty =1;
-	                            c.weightx = 1;
-	                            c.gridx = 0;
-	                            c.gridy = 1;
-	                            c.gridwidth = 1;
-	                            c.anchor = GridBagConstraints.PAGE_END;
-	                            clusterSelectorPanel.add(clusterSelectorCondition, c);
-	                            c.gridx = 1;
-	                            //clusterSelectorPanel.add(clusterSelectorTime, c);
-	                            
-	                            
-	                            
-	                            
-	                            tabbedmulg.add("Button Selection", mulgPanel);
-	                            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
-	                            tabbedmulg.setSelectedIndex(0);//set to always be button selection
-	                            if (repository==null||repository.isEmpty())
-	                            	tabbedmulg.setSelectedIndex(0);
-	                            buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
-	                            constraints.fill = GridBagConstraints.BOTH;
-	                            gridbag.setConstraints(tabbedmulg, constraints);
-	                            MultiClassPanel.this.add(tabbedmulg);
-	                            MultiClassPanel.this.validate();
-	                        
-                        
-                    } catch (NumberFormatException nfe) {
-                        JOptionPane.showMessageDialog(null, "Please enter a value greater than 0 and less than 1!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-
-            hclOpsPanel = new HCLSigOnlyPanel();
-            hclOpsPanel.setBorder(null);//.setBorder( BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
-            buildConstraints(constraints, 1, 0, 1, 1, 100, 10);
-            gridbag.setConstraints(hclOpsPanel, constraints);
-            //this.add(hclOpsPanel);
-
-            buildConstraints(constraints, 0, 1, 2, 1, 100, 10);
-            //constraints.insets = new Insets(100,100,100,100);
-            constraints.fill = GridBagConstraints.NONE;
-            gridbag.setConstraints(step2Button, constraints);
-            this.add(step2Button);
+                    GridBagConstraints c = new GridBagConstraints();
+                    c.fill = GridBagConstraints.BOTH;
+                    c.weighty =1;
+                    c.weightx = 1;
+                    c.gridx = 0;
+                    c.gridy = 1;
+                    c.gridwidth = 1;
+                    c.anchor = GridBagConstraints.PAGE_END;
+                    clusterSelectorPanel.add(clusterSelectorCondition, c);
+                    c.gridx = 1;
+                    //clusterSelectorPanel.add(clusterSelectorTime, c);
+                    
+                    
+                    
+                    
+                    tabbedmulg.add("Button Selection", mulgPanel);
+                    tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
+                    tabbedmulg.setSelectedIndex(0);//set to always be button selection
+                    if (repository==null||repository.isEmpty())
+                    	tabbedmulg.setSelectedIndex(0);
+                    buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
+                    constraints.fill = GridBagConstraints.BOTH;
+                    gridbag.setConstraints(tabbedmulg, constraints);
+                    MultiClassPanel.this.add(tabbedmulg);
+                    MultiClassPanel.this.validate();
+                
             
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
-            dummyPanel = new JPanel();
-            dummyPanel.setBackground(Color.white);
-            gridbag.setConstraints(dummyPanel, constraints);
-            this.add(dummyPanel);
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null, "Please enter a value greater than 0 and less than 1!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
         }
         
 
@@ -407,6 +390,7 @@ public class RPInitBox extends AlgorithmDialog {
                 
                 resetButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
+                    	reset();
                     }
                 });
                 
@@ -465,8 +449,9 @@ public class RPInitBox extends AlgorithmDialog {
              *  resets all group assignments
              */
             protected void reset(){
-                for (int i = 0; i < exptNames.size(); i++) {
-                }
+            	for (int i=0; i<mulgPanel.exptCheckBoxes.length; i++){
+            		mulgPanel.exptCheckBoxes[i].setSelected(true);
+            	}
             }
             /**
         	 * Saves the assignments to file.
@@ -497,15 +482,10 @@ public class RPInitBox extends AlgorithmDialog {
         				
         				//save group names..?
         				
-        				//print out the group names (skip the 'exclude' group
-//        				for(int i = 0; i < groups.length-1; i++) {
-//        					pw.print("Group "+String.valueOf(i+1)+" Label:\t");
-//        					pw.println(this.groups[i]);
-//        				}
+        				pw.print("Module:\t");
+        				pw.println("RP");
         				pw.print("Group 1 Label:\t");
-    					pw.println("true");
-    					pw.print("Group 2 Label:\t");
-    					pw.println("false");
+    					pw.println("Include");
         								
         				pw.println("#");
         				
@@ -514,8 +494,10 @@ public class RPInitBox extends AlgorithmDialog {
         				for(int sample = 0; sample < exptNames.size(); sample++) {
         					pw.print(String.valueOf(sample+1)+"\t"); //sample index
         					pw.print(exptNames.get(sample)+"\t");
-        					pw.println(((JCheckBox)(exptCheckBoxes[sample])).isSelected());
-        					
+        					if(((JCheckBox)(exptCheckBoxes[sample])).isSelected())
+        						pw.println("Include");
+        					else
+        						pw.println("Exclude");
         				}			
         				pw.flush();
         				pw.close();			
@@ -557,124 +539,159 @@ public class RPInitBox extends AlgorithmDialog {
         		
         			file = fileChooser.getSelectedFile();
         			
-        		try {						
-        			//first grab the data and close the file
-        			BufferedReader br = new BufferedReader(new FileReader(file));
-        			Vector<String> data = new Vector<String>();
-        			String line;
-        			while( (line = br.readLine()) != null)
-        				data.add(line.trim());
-        			
-        			br.close();
-        				
-        			//build structures to capture the data for assingment information and for *validation
-        			
-        			//factor names
-        			Vector<String> groupNames = new Vector<String>();
-        			
-        			Vector<Integer> sampleIndices = new Vector<Integer>();
-        			Vector<String> sampleNames = new Vector<String>();
-        			Vector<String> groupAssignments = new Vector<String>();			
-        			
-        			//parse the data in to these structures
-        			String [] lineArray;
-        			//String status = "OK";
-        			for(int row = 0; row < data.size(); row++) {
-        				line = (String)(data.get(row));
-
-        				//if not a comment line, and not the header line
-        				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
-        					
-        					lineArray = line.split("\t");
-        					
-        					//pick up group names
-        					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
-        						groupNames.add(lineArray[1]);
-        						continue;
-        					}
-
-        					//non-comment line, non-header line and not a group label line
-        					
-        					try {
-        						Integer.parseInt(lineArray[0]);
-        					} catch ( NumberFormatException nfe) {
-        						//if not parsable continue
-        						continue;
-        					}
-        					
-        					sampleIndices.add(new Integer(lineArray[0]));
-        					sampleNames.add(lineArray[1]);
-        					groupAssignments.add(lineArray[2]);							
-        				}				
-        			}
-        			
-        			//we have the data parsed, now validate, assign current data
-
-
-        			if( exptNames.size() != sampleNames.size()) {
-        				//status = "number-of-samples-mismatch";
-        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
-        				//warn and prompt to continue but omit assignments for those not represented				
-
-        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
-        						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
-        						                                   	"Assingments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
-        				
-        				return;
-        			}
-        	
-        			//check the number of groups... account for 'excluded' by using +1
-        			if(groupNames.size()!=2) {
-        				//status = "number-of-groups-mismatch";
-        				
-        				JOptionPane.showMessageDialog(this, "<html>Error -- number of groups designated in assignment file ("+String.valueOf(groupNames.size())+")<br>" +
-                                "does not follow the include/exclude format required.<br>" +
-                                	"Assingments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
-
-        				return;
-        			}
-        			
-        			Vector<String> currSampleVector = new Vector<String>();
-        			for(int i = 0; i < exptNames.size(); i++)
-        				currSampleVector.add(exptNames.get(i));
-        			
-        			//set all to excluded
-        			
-        			
-        			
-        			int fileSampleIndex = 0;
-        			int groupIndex = 0;
-        			String groupName;
-        			
-        			for(int sample = 0; sample < exptNames.size(); sample++) {
-        				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
-        				groupName = (String)(groupAssignments.get(fileSampleIndex));
-        				
-        				groupIndex = groupNames.indexOf(groupName);
-        				
-//        				button = (exptCheckBoxes[sample]);
-        				//first set the current group names
-        				//button.setStateNames(groups);
-        				//set state
-        				if(groupIndex ==0)
-        					exptCheckBoxes[sample].setSelected(true);
-        				else
-        					exptCheckBoxes[sample].setSelected(false);  //set to last state... excluded
-        			}
-        			
-        			repaint();			
-        			//need to clear assignments, clear assignment booleans in sample list and re-init
-        			//maybe a specialized inti for the sample list panel.
-        		} catch (Exception e) {
-        			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
-        		}
+	        		try {						
+	        			//first grab the data and close the file
+	        			BufferedReader br = new BufferedReader(new FileReader(file));
+	        			Vector<String> data = new Vector<String>();
+	        			String line;
+	        			while( (line = br.readLine()) != null)
+	        				data.add(line.trim());
+	        			
+	        			br.close();
+	        				
+	        			//build structures to capture the data for assingment information and for *validation
+	        			
+	        			//factor names
+	        			Vector<String> groupNames = new Vector<String>();
+	        			
+	        			Vector<Integer> sampleIndices = new Vector<Integer>();
+	        			Vector<String> sampleNames = new Vector<String>();
+	        			Vector<String> groupAssignments = new Vector<String>();			
+	        			
+	        			//parse the data in to these structures
+	        			String [] lineArray;
+	        			//String status = "OK";
+	        			for(int row = 0; row < data.size(); row++) {
+	        				line = (String)(data.get(row));
+	
+	        				//if not a comment line, and not the header line
+	        				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+	        					
+	        					lineArray = line.split("\t");
+	        					
+	        					//check what module saved the file
+	        					if(lineArray[0].startsWith("Module:")) {
+	        						if (!lineArray[1].equals("RP")){
+	        							Object[] optionst = { "Continue", "Cancel" };
+	        							if (JOptionPane.showOptionDialog(null, 
+	        		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+	        		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	        		    						optionst, optionst[0])==0)
+	        								continue;
+	        							return;
+	        						}
+	        						continue;
+	        					}
+	        					
+	        					//pick up group names
+	        					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+	        						groupNames.add(lineArray[1]);
+	        						continue;
+	        					}
+	
+	        					//non-comment line, non-header line and not a group label line
+	        					
+	        					try {
+	        						Integer.parseInt(lineArray[0]);
+	        					} catch ( NumberFormatException nfe) {
+	        						//if not parsable continue
+	        						continue;
+	        					}
+	        					
+	        					sampleIndices.add(new Integer(lineArray[0]));
+	        					sampleNames.add(lineArray[1]);
+	        					groupAssignments.add(lineArray[2]);							
+	        				}				
+	        			}
+	        			
+	        			//we have the data parsed, now validate, assign current data
+	
+	
+	        			if( exptNames.size() != sampleNames.size()) {
+	        				//status = "number-of-samples-mismatch";
+	        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+	        				//warn and prompt to continue but omit assignments for those not represented				
+	
+	        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+	        						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
+	        						                                   	"Assingments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+	        				
+	        				return;
+	        			}
+	        	
+	        			
+	        			Vector<String> currSampleVector = new Vector<String>();
+	        			for(int i = 0; i < exptNames.size(); i++)
+	        				currSampleVector.add(exptNames.get(i));
+	        			
+	        			//set all to excluded
+	        			
+	        			
+	        			
+	        			int fileSampleIndex = 0;
+	        			int groupIndex = 0;
+	        			String groupName;
+	        			
+	        			for(int sample = 0; sample < exptNames.size(); sample++) {
+	        				boolean doIndex = false;
+	        				for (int i=0;i<exptNames.size(); i++){
+	        					if (i==sample)
+	        						continue;
+	        					if (exptNames.get(i).equals(exptNames.get(sample))){
+	        						doIndex=true;
+	        					}
+	        				}
+	        				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
+	        				if (fileSampleIndex==-1){
+	        					doIndex=true;
+	        				}
+	        				if (doIndex){
+	        					setStateBasedOnIndex(groupAssignments,groupNames);
+	        					break;
+	        				}
+	        				
+	        				groupName = (String)(groupAssignments.get(fileSampleIndex));
+	        				
+	        				groupIndex = groupNames.indexOf(groupName);
+	        				
+	        				//set state
+	        				if(groupIndex ==0)
+	        					exptCheckBoxes[sample].setSelected(true);
+	        				else
+	        					exptCheckBoxes[sample].setSelected(false);  //set to last state... excluded
+	        			}
+	        			
+	        			repaint();			
+	        			//need to clear assignments, clear assignment booleans in sample list and re-init
+	        			//maybe a specialized inti for the sample list panel.
+	        		} catch (Exception e) {
+	        			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+	        		}
+	        	}
         	}
+        	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+        		Object[] optionst = { "Continue", "Cancel" };
+        		if (JOptionPane.showOptionDialog(null, 
+						"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+						optionst, optionst[0])==1)
+					return;
+				
+        		for(int sample = 0; sample < exptNames.size(); sample++) {
+        			if(groupNames.indexOf(groupAssignments.get(sample))==0)
+    					exptCheckBoxes[sample].setSelected(true);
+    				else
+    					exptCheckBoxes[sample].setSelected(false);
+        		}
         	}
         	
             
             
         }
         protected void reset(){
+        	for (int i=0; i<mulgPanel.exptCheckBoxes.length; i++){
+        		mulgPanel.exptCheckBoxes[i].setSelected(true);
+        	}
         }
     }
     
@@ -1068,7 +1085,12 @@ public class RPInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         Vector<String> dummyVect = new Vector<String>();
-        for (int i = 0; i < 10; i++) {
+        dummyVect.add("Same");
+        dummyVect.add("Same");
+        dummyVect.add("Same");
+        dummyVect.add("Same");
+        dummyVect.add("Same");
+        for (int i = 0; i < 95; i++) {
             dummyVect.add("Expt " + i);
         }
         
