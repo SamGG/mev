@@ -22,10 +22,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -50,6 +54,7 @@ import javax.swing.table.TableColumnModel;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.impl.knnc.KNNClassificationEditor;
 import org.tigr.util.StringSplitter;
 
 public class DAMClassificationEditor extends JFrame {
@@ -829,107 +834,326 @@ public class DAMClassificationEditor extends JFrame {
         searchDialog.setLocation(this.getLocation().x + 100, this.getLocation().y +100);
         
     }    
-    
     private void saveToFile(File file) {
-        try {
-            PrintWriter out = new PrintWriter(new FileOutputStream(file));
-            for (int i = 0; i < damTabModel.getRowCount(); i++) {
-                out.print(((Integer)(damTabModel.getValueAt(i, 0))).intValue());
-                out.print("\t");
-                for (int j = 1; j <= numberOfClasses; j++) {
-                    if (((Boolean)(damTabModel.getValueAt(i, j))).booleanValue()) {
-                        out.print(j);
+    	try {
+			PrintWriter pw = new PrintWriter(new FileWriter(file));
+			//comment row
+			Date currDate = new Date(System.currentTimeMillis());			
+			String dateString = currDate.toString();;
+			String userName = System.getProperty("user.name");
+			
+			pw.println("# Assignment File");
+			pw.println("# User: "+userName+" Save Date: "+dateString);
+			pw.println("#");
+			
+			//save group names..?
+			
+			pw.print("Module:\t");
+			pw.println("DAM");
+			for (int i=1; i< numberOfClasses+1;i++){
+	   			pw.print("Group "+i+" Label:\t");
+				pw.println("Class "+i);
+			}
+							
+			pw.println("#");
+			
+			pw.println("Index\tName\tGroup Assignment");
+			
+//   				int[] groupAssgn = getGroupAssignments();
+
+	        int numRows = damTabModel.getRowCount(); 
+			for(int sample = 0; sample < numRows; sample++) {
+				pw.print(String.valueOf(sample+1)+"\t"); //sample index
+				pw.print(damTabModel.getValueAt(sample, numberOfClasses + 2)+"\t");
+				for (int j = 1; j <= numberOfClasses; j++) {
+                    if (((Boolean)(damTabModel.getValueAt(sample, j))).booleanValue()) {
+                        pw.println("Class "+j);
                         break;
                     }
                 }
-                if (((Boolean)(damTabModel.getValueAt(i, numberOfClasses + 1))).booleanValue()) {
-                    out.print(-1);
+                if (((Boolean)(damTabModel.getValueAt(sample, numberOfClasses + 1))).booleanValue()) {
+                    pw.println("Exclude");
                 }
-                //out.print("\t");
-                for (int j = numberOfClasses + 2; j < damTabModel.getColumnCount(); j++) {
-                    out.print("\t");
-                    out.print(damTabModel.getValueAt(i, j));
-                }
-                out.print("\r");
-                out.print("\n");
-            }
-            out.flush();
-            out.close();            
-            
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+			}
+			pw.flush();
+			pw.close();			
+		} catch (FileNotFoundException fnfe) {
+			fnfe.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+    }
+    
+	/**
+	 * Loads file based assignments
+	 */
+    private void loadFromFile(File file){
+    	
+		try {						
+			//first grab the data and close the file
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			Vector<String> data = new Vector<String>();
+			String line;
+			while( (line = br.readLine()) != null)
+				data.add(line.trim());
+			
+			br.close();
+				
+			//build structures to capture the data for assingment information and for *validation
+			
+			//factor names
+			Vector<String> groupNames = new Vector<String>();
+			
+			
+			Vector<Integer> sampleIndices = new Vector<Integer>();
+			Vector<String> sampleNames = new Vector<String>();
+			Vector<String> groupAssignments = new Vector<String>();		
+			
+			//parse the data in to these structures
+			String [] lineArray;
+			//String status = "OK";
+			for(int row = 0; row < data.size(); row++) {
+				line = (String)(data.get(row));
+
+				//if not a comment line, and not the header line
+				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+					
+					lineArray = line.split("\t");
+					
+					//check what module saved the file
+					if(lineArray[0].startsWith("Module:")) {
+						if (!lineArray[1].equals("DAM")){
+							Object[] optionst = { "Continue", "Cancel" };
+							if (JOptionPane.showOptionDialog(null, 
+		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+		    						optionst, optionst[0])==0)
+								continue;
+							return;
+						}
+						continue;
+					}
+					
+					//pick up group names
+					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+						groupNames.add(lineArray[1]);
+						continue;
+					}
+						
+
+					//non-comment line, non-header line and not a group label line
+					
+					try {
+						Integer.parseInt(lineArray[0]);
+					} catch ( NumberFormatException nfe) {
+						//if not parsable continue
+						continue;
+					}
+					
+					sampleIndices.add(new Integer(lineArray[0]));
+					sampleNames.add(lineArray[1]);
+					groupAssignments.add(lineArray[2]);	
+				}				
+			}
+			
+			//we have the data parsed, now validate, assign current data
+			
+
+	        int numRows = damTabModel.getRowCount(); 
+			if( numRows != sampleNames.size()) {
+				System.out.println(numRows+"  "+sampleNames.size());
+				//status = "number-of-samples-mismatch";
+				System.out.println(numRows+ " s length " + sampleNames.size());
+				//warn and prompt to continue but omit assignments for those not represented				
+
+				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+						                                   "does not match the number of samples loaded in MeV ("+numRows+").<br>" +
+						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+				incompatible = true;
+				return;
+			}
+			if (numberOfClasses!= groupNames.size()){
+				Object[] optionst = { "Continue", "Cancel" };
+				if (JOptionPane.showOptionDialog(null, 
+					"The saved file was saved using "+groupNames.size()+" classes.\nWould you like MeV to attempt to load selections into " +numberOfClasses + " classes?", 
+					"Class number warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+					optionst, optionst[0])==1){
+					return;
+				}
+			}
+			int fileSampleIndex = 0;
+			int groupIndex = 0;
+			String groupName;
+			for(int sample = 0; sample < numRows; sample++) {
+				boolean doIndex = false;
+				for (int i=0;i<numRows; i++){
+					if (i==sample)
+						continue;
+					if (((String)damTabModel.getValueAt(sample, numberOfClasses + 2)).equals(
+							((String)damTabModel.getValueAt(i, numberOfClasses + 2)))){
+						doIndex=true;
+					}
+				}
+				try{
+					fileSampleIndex = sampleNames.indexOf((String)damTabModel.getValueAt(sample, numberOfClasses+2));
+				}catch (Exception e){
+					e.printStackTrace();
+					fileSampleIndex=-1;
+				}
+				if (fileSampleIndex==-1){
+					doIndex=true;
+				}
+				if (doIndex){
+					setStateBasedOnIndex(groupAssignments,groupNames);
+					break;
+				}
+				
+				groupName = (String)(groupAssignments.get(fileSampleIndex));
+				groupIndex = groupNames.indexOf(groupName);
+				
+				//set all the extra and neither groups to 'neither'
+				if (groupIndex==-1||groupIndex>numberOfClasses)
+					groupIndex = numberOfClasses;
+				//set state
+				
+				try{
+    				damTabModel.setValueAt(new Boolean(true), sample, groupIndex+1);
+				}catch (Exception e){
+					e.printStackTrace();
+					damTabModel.setValueAt(new Boolean(true), sample, numberOfClasses+1);  //set to last state... excluded
+				}
+			}		
+			//need to clear assignments, clear assignment booleans in sample list and re-init
+			//maybe a specialized inti for the sample list panel.
+		} catch (Exception e) {
+			e.printStackTrace();
+			incompatible = true;
+			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+		}
     }
 
+	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+		Object[] optionst = { "Continue", "Cancel" };
+		if (JOptionPane.showOptionDialog(null, 
+				"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+				"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+				optionst, optionst[0])==1)
+			return;
+		int numRows = damTabModel.getRowCount(); 
+		for(int sample = 0; sample < numRows; sample++) {
 
-    public void loadFromFile (File file) {
-        Vector indicesVector = new Vector();
-        Vector classVector = new Vector();
-
-        incompatible = false;
-
-        try {
-           BufferedReader buff = new BufferedReader(new FileReader(file)); 
-
-           String line = new String();
-           StringSplitter st;           
-           
-           while ((line = buff.readLine()) != null) {
-               st = new StringSplitter('\t');
-               st.init(line);
-               String currIndex = st.nextToken();
-               indicesVector.add(new Integer(currIndex));
-               String currClass = st.nextToken();
-               classVector.add(new Integer(currClass));
-           }
-           
-           if (indicesVector.size() != damTabModel.getRowCount()) {
-
-	       JOptionPane.showMessageDialog(framework.getFrame(), "Number of rows mismatch!", "Error", JOptionPane.WARNING_MESSAGE);
-	       incompatible = true;
-               DAMClassificationEditor.this.setVisible(true);
-
-               return;
-           }
-
-           for (int i = 0; i < indicesVector.size(); i++) {
-               int currCl = ((Integer)(classVector.get(i))).intValue();
-
-	       if (currCl > numberOfClasses){
-
-		   JOptionPane.showMessageDialog(framework.getFrame(), "Class index larger than number of classes!", "Error", JOptionPane.WARNING_MESSAGE);
-		   incompatible = true;
-                   DAMClassificationEditor.this.setVisible(true);
-
-		   return;
-	       } 
-           }
-
-           for (int i = 0; i < indicesVector.size(); i++) {
-               int currInd = ((Integer)(indicesVector.get(i))).intValue();
-               int currCl = ((Integer)(classVector.get(i))).intValue();
-
-               if (currCl == (-1)) {
-                   damTabModel.setValueAt(new Boolean(true), currInd, (numberOfClasses + 1));
-                   damClassTable.setValueAt(new Boolean(true), currInd, (numberOfClasses+1));
-               } else {
-                   damTabModel.setValueAt(new Boolean(true), currInd, currCl);
-                   damClassTable.setValueAt(new Boolean(true), currInd, currCl);
-               }
-           }  
-           
-           // DAMClassificationEditor.this.setVisible(true);
-
-           //showWarningMessage();
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(framework.getFrame(), "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
-            incompatible = true;
-            //DAMClassificationEditor.this.dispose();
-            //e.printStackTrace();
-        }
-
-    }
+			//set state
+			try{
+				damTabModel.setValueAt(new Boolean(true), sample, groupNames.indexOf(groupAssignments.get(sample)+1));
+			}catch (Exception e){
+				e.printStackTrace();
+				damTabModel.setValueAt(new Boolean(true), sample, numberOfClasses+1);
+			}
+		}
+	}
+    
+    
+    
+//    private void saveToFile(File file) {
+//        try {
+//            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+//            for (int i = 0; i < damTabModel.getRowCount(); i++) {
+//                out.print(((Integer)(damTabModel.getValueAt(i, 0))).intValue());
+//                out.print("\t");
+//                for (int j = 1; j <= numberOfClasses; j++) {
+//                    if (((Boolean)(damTabModel.getValueAt(i, j))).booleanValue()) {
+//                        out.print(j);
+//                        break;
+//                    }
+//                }
+//                if (((Boolean)(damTabModel.getValueAt(i, numberOfClasses + 1))).booleanValue()) {
+//                    out.print(-1);
+//                }
+//                //out.print("\t");
+//                for (int j = numberOfClasses + 2; j < damTabModel.getColumnCount(); j++) {
+//                    out.print("\t");
+//                    out.print(damTabModel.getValueAt(i, j));
+//                }
+//                out.print("\r");
+//                out.print("\n");
+//            }
+//            out.flush();
+//            out.close();            
+//            
+//        } catch (Exception e) {
+//            //e.printStackTrace();
+//        }
+//    }
+//
+//
+//    public void loadFromFile (File file) {
+//        Vector indicesVector = new Vector();
+//        Vector classVector = new Vector();
+//
+//        incompatible = false;
+//
+//        try {
+//           BufferedReader buff = new BufferedReader(new FileReader(file)); 
+//
+//           String line = new String();
+//           StringSplitter st;           
+//           
+//           while ((line = buff.readLine()) != null) {
+//               st = new StringSplitter('\t');
+//               st.init(line);
+//               String currIndex = st.nextToken();
+//               indicesVector.add(new Integer(currIndex));
+//               String currClass = st.nextToken();
+//               classVector.add(new Integer(currClass));
+//           }
+//           
+//           if (indicesVector.size() != damTabModel.getRowCount()) {
+//
+//	       JOptionPane.showMessageDialog(framework.getFrame(), "Number of rows mismatch!", "Error", JOptionPane.WARNING_MESSAGE);
+//	       incompatible = true;
+//               DAMClassificationEditor.this.setVisible(true);
+//
+//               return;
+//           }
+//
+//           for (int i = 0; i < indicesVector.size(); i++) {
+//               int currCl = ((Integer)(classVector.get(i))).intValue();
+//
+//	       if (currCl > numberOfClasses){
+//
+//		   JOptionPane.showMessageDialog(framework.getFrame(), "Class index larger than number of classes!", "Error", JOptionPane.WARNING_MESSAGE);
+//		   incompatible = true;
+//                   DAMClassificationEditor.this.setVisible(true);
+//
+//		   return;
+//	       } 
+//           }
+//
+//           for (int i = 0; i < indicesVector.size(); i++) {
+//               int currInd = ((Integer)(indicesVector.get(i))).intValue();
+//               int currCl = ((Integer)(classVector.get(i))).intValue();
+//
+//               if (currCl == (-1)) {
+//                   damTabModel.setValueAt(new Boolean(true), currInd, (numberOfClasses + 1));
+//                   damClassTable.setValueAt(new Boolean(true), currInd, (numberOfClasses+1));
+//               } else {
+//                   damTabModel.setValueAt(new Boolean(true), currInd, currCl);
+//                   damClassTable.setValueAt(new Boolean(true), currInd, currCl);
+//               }
+//           }  
+//           
+//           // DAMClassificationEditor.this.setVisible(true);
+//
+//           //showWarningMessage();
+//
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(framework.getFrame(), "Incompatible file!", "Error", JOptionPane.WARNING_MESSAGE);
+//            incompatible = true;
+//            //DAMClassificationEditor.this.dispose();
+//            //e.printStackTrace();
+//        }
+//
+//    }
 
   
     public Vector[] getClassification() {

@@ -554,6 +554,8 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 				
 				//save group names..?
 				
+				pw.print("Module:\t");
+				pw.println("NONPAR");
 				//print out the group names (skip the 'exclude' group
 				for(int i = 0; i < groups.length-1; i++) {
 					pw.print("Group "+String.valueOf(i+1)+" Label:\t");
@@ -638,6 +640,20 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
 					
 					lineArray = line.split("\t");
+					
+					//check what module saved the file
+					if(lineArray[0].startsWith("Module:")) {
+						if (!lineArray[1].equals("NONPAR")){
+							Object[] optionst = { "Continue", "Cancel" };
+							if (JOptionPane.showOptionDialog(null, 
+		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+		    						optionst, optionst[0])==0)
+								continue;
+							return;
+						}
+						continue;
+					}
 					
 					//pick up group names
 					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {

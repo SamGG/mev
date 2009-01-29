@@ -23,9 +23,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -86,6 +89,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
         runButton.setIcon(GUIFactory.getIcon("go.gif"));
         svcApplyMenuItem.setIcon(GUIFactory.getIcon("svcfileicon.gif"));
         saveAsMenuItem.setIcon(GUIFactory.getIcon("svcfileicon.gif"));
+        loadMenuItem.setIcon(GUIFactory.getIcon("svcfileicon.gif"));
         this.tcListMenuItem.setIcon(null);
         
         currentFile = null;
@@ -361,53 +365,289 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
         table.repaint();
         //	svmTableModel.fireTableDataChanged();
     }
-    
+	/**
+	 * Loads file based assignments
+	 */
+    private void loadTableSVC() throws IOException{
+		
+		File file;		
+		JFileChooser fileChooser = new JFileChooser("./data");
+		
+		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+		
+			file = fileChooser.getSelectedFile();
+			
+    		try {						
+    			//first grab the data and close the file
+    			BufferedReader br = new BufferedReader(new FileReader(file));
+    			Vector<String> data = new Vector<String>();
+    			String line;
+    			while( (line = br.readLine()) != null)
+    				data.add(line.trim());
+    			
+    			br.close();
+    				
+    			//build structures to capture the data for assingment information and for *validation
+    			
+    			//factor names
+    			Vector<String> groupNames = new Vector<String>();
+    			
+    			
+    			Vector<Integer> sampleIndices = new Vector<Integer>();
+    			Vector<String> sampleNames = new Vector<String>();
+    			Vector<String> groupAssignments = new Vector<String>();		
+    			
+    			//parse the data in to these structures
+    			String [] lineArray;
+    			//String status = "OK";
+    			for(int row = 0; row < data.size(); row++) {
+    				line = (String)(data.get(row));
+
+    				//if not a comment line, and not the header line
+    				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+    					
+    					lineArray = line.split("\t");
+    					
+    					//check what module saved the file
+    					if(lineArray[0].startsWith("Module:")) {
+    						if (!lineArray[1].equals("SVM")){
+    							Object[] optionst = { "Continue", "Cancel" };
+    							if (JOptionPane.showOptionDialog(null, 
+    		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+    		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+    		    						optionst, optionst[0])==0)
+    								continue;
+    							return;
+    						}
+    						continue;
+    					}
+    					
+    					//pick up group names
+    					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+    						groupNames.add(lineArray[1]);
+    						continue;
+    					}
+    						
+
+    					//non-comment line, non-header line and not a group label line
+    					
+    					try {
+    						Integer.parseInt(lineArray[0]);
+    					} catch ( NumberFormatException nfe) {
+    						//if not parsable continue
+    						continue;
+    					}
+    					
+    					sampleIndices.add(new Integer(lineArray[0]));
+    					sampleNames.add(lineArray[1]);
+    					groupAssignments.add(lineArray[2]);	
+    				}				
+    			}
+    			
+    			//we have the data parsed, now validate, assign current data
+
+
+   		        int numRows = table.getRowCount(); 
+    			if( numRows != sampleNames.size()) {
+    				System.out.println(numRows+"  "+sampleNames.size());
+    				//status = "number-of-samples-mismatch";
+    				System.out.println(numRows+ " s length " + sampleNames.size());
+    				//warn and prompt to continue but omit assignments for those not represented				
+
+    				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+    						                                   "does not match the number of samples loaded in MeV ("+numRows+").<br>" +
+    						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+    				
+    				return;
+    			}
+    			
+    			int fileSampleIndex = 0;
+    			int groupIndex = 0;
+    			String groupName;
+    			
+    			for(int sample = 0; sample < numRows; sample++) {
+    				boolean doIndex = false;
+    				for (int i=0;i<numRows; i++){
+    					if (i==sample)
+    						continue;
+    					if (getRowAnnotationString(i).equals(getRowAnnotationString(sample))){
+    						doIndex=true;
+    					}
+    				}
+    				fileSampleIndex = sampleNames.indexOf((String)table.getValueAt(sample, 4));
+    				if (fileSampleIndex==-1){
+    					doIndex=true;
+    				}
+    				if (doIndex){
+    					setStateBasedOnIndex(groupAssignments,groupNames);
+    					break;
+    				}
+    				
+    				groupName = (String)(groupAssignments.get(fileSampleIndex));
+    				groupIndex = groupNames.indexOf(groupName);
+    				
+    				
+    				//set state
+    				try{
+        				if (groupIndex==0)
+        					table.setValueAt(new Boolean(true), sample, 2);
+        				if (groupIndex==1)
+        					table.setValueAt(new Boolean(true), sample, 1);
+        				if (groupIndex==2||groupIndex==-1)
+        					table.setValueAt(new Boolean(true), sample, 3);
+    				}catch (Exception e){
+    					table.setValueAt(new Boolean(true), sample, 3);  //set to last state... excluded
+    				}
+    			}
+    			
+    			repaint();			
+    			//need to clear assignments, clear assignment booleans in sample list and re-init
+    			//maybe a specialized inti for the sample list panel.
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+    		}
+    	}
+    }
+
+	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+		Object[] optionst = { "Continue", "Cancel" };
+		if (JOptionPane.showOptionDialog(null, 
+				"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+				"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+				optionst, optionst[0])==1)
+			return;
+		int numRows = table.getRowCount(); 
+		for(int sample = 0; sample < numRows; sample++) {
+
+			//set state
+			try{
+				if (groupNames.indexOf(groupAssignments.get(sample))==0)
+					table.setValueAt(new Boolean(true), sample, 2);
+				if (groupNames.indexOf(groupAssignments.get(sample))==1)
+					table.setValueAt(new Boolean(true), sample, 1);
+				if (groupNames.indexOf(groupAssignments.get(sample))==2||groupNames.indexOf(groupAssignments.get(sample))==-1)
+					table.setValueAt(new Boolean(true), sample, 3);
+			}catch (Exception e){
+				e.printStackTrace();
+				table.setValueAt(new Boolean(true), sample, 3);
+			}
+		}
+	}
     private void saveTableAsSVC() throws IOException{
-        
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
-        fc.addChoosableFileFilter(new SVCFileFilter());
-        fc.setFileView(new SVCFileView());             
-        if(currentFile != null)
-            fc.setSelectedFile(currentFile);           
-        int result = fc.showSaveDialog(this);        
-        if(result == JFileChooser.CANCEL_OPTION)
-            return;        
-        else{
-            currentFile = fc.getSelectedFile();
-            writeToFile( currentFile );
-            this.saveMenuItem.setEnabled(true);
-        }        
-        return;
+
+    	saveAssignments(true);
+    	saveMenuItem.setEnabled(true);
+//        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/svm"));
+//        fc.addChoosableFileFilter(new SVCFileFilter());
+//        fc.setFileView(new SVCFileView());             
+//        if(currentFile != null)
+//            fc.setSelectedFile(currentFile);           
+//        int result = fc.showSaveDialog(this);        
+//        if(result == JFileChooser.CANCEL_OPTION)
+//            return;        
+//        else{
+//            currentFile = fc.getSelectedFile();
+//            writeToFile( currentFile );
+//            this.saveMenuItem.setEnabled(true);
+//        }        
+//        return;
     }
     
-    
-    private void writeToFile( File file ) throws IOException{        
-        BufferedWriter bw = new java.io.BufferedWriter( new java.io.FileWriter(file) );
-        PrintWriter pw = new java.io.PrintWriter( bw );
-        String TAB = "\t";
-        String annot;        
-        int numRows = table.getRowCount();        
-        pw.print("Index"+TAB+"Classification"+TAB);
-        for(int col = 0; col < fieldNames.length; col++){
-            pw.print(fieldNames[col] + TAB);
-        }
-        pw.print("\n");        
-        
-        for(int row = 0; row < numRows ; row++){            
-            pw.print(table.getValueAt(row, 0)+TAB+getClassificationString(row)+TAB);
-            annot = getRowAnnotationString(row);            
-            if(!annot.equals(""))
-                pw.print(annot);
-            pw.print("\n");
-        }        
-        pw.close();
-        bw.close();
-    }
+    /**
+   	 * Saves the assignments to file.
+   	 * 
+   	 */
+   	private void saveAssignments(boolean saveas) {
+   		
+   		File file;		
+   		JFileChooser fileChooser = new JFileChooser("./data");	
+   		if (saveas){
+	   		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+	   			file = fileChooser.getSelectedFile();		
+				currentFile = file;
+	   		}else{
+	   			return;
+	   		}
+   		}
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter(currentFile));
+			//comment row
+			Date currDate = new Date(System.currentTimeMillis());			
+			String dateString = currDate.toString();;
+			String userName = System.getProperty("user.name");
+			
+			pw.println("# Assignment File");
+			pw.println("# User: "+userName+" Save Date: "+dateString);
+			pw.println("#");
+			
+			//save group names..?
+			
+			pw.print("Module:\t");
+			pw.println("SVM");
+   			pw.print("Group 1"+" Label:\t");
+			pw.println("-1");
+   			pw.print("Group 2"+" Label:\t");
+			pw.println("1");
+			
+							
+			pw.println("#");
+			
+			pw.println("Sample Index\tSample Name\tGroup Assignment");
+			
+//   				int[] groupAssgn = getGroupAssignments();
+
+	        int numRows = table.getRowCount(); 
+			for(int sample = 0; sample < numRows; sample++) {
+				pw.print(String.valueOf(sample+1)+"\t"); //sample index
+				pw.print(table.getValueAt(sample, 4)+"\t");
+				if (!getClassificationString(sample).equals(String.valueOf(0)))
+					pw.println(getClassificationString(sample));
+				else
+					pw.println("Exclude");
+				
+			}
+   			
+			pw.flush();
+			pw.close();			
+		} catch (FileNotFoundException fnfe) {
+			fnfe.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+   	}
+//    private void writeToFile( File file ) throws IOException{   
+//    	saveAssignments();
+//    	
+//    	
+//    	
+//        BufferedWriter bw = new java.io.BufferedWriter( new java.io.FileWriter(file) );
+//        PrintWriter pw = new java.io.PrintWriter( bw );
+//        String TAB = "\t";
+//        String annot;        
+//        int numRows = table.getRowCount();        
+//        pw.print("Index"+TAB+"Classification"+TAB);
+//        for(int col = 0; col < fieldNames.length; col++){
+//            pw.print(fieldNames[col] + TAB);
+//        }
+//        pw.print("\n");        
+//        
+//        for(int row = 0; row < numRows ; row++){            
+//            pw.print(table.getValueAt(row, 0)+TAB+getClassificationString(row)+TAB);
+//            annot = getRowAnnotationString(row);            
+//            if(!annot.equals(""))
+//                pw.print(annot);
+//            pw.print("\n");
+//        }        
+//        pw.close();
+//        bw.close();
+//    }
     
     
     private void saveTableToCurrentSVC() throws IOException{
         if( currentFile != null){
-            writeToFile(currentFile);
+        	saveAssignments(false);
+//            writeToFile(currentFile);
         }
         
     }
@@ -528,6 +768,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
         fileMenu = new javax.swing.JMenu();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
+        loadMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         closeMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -579,7 +820,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
 
         jToolBar1.add(outClassButton);
 
-        neutralButton.setToolTipText("move to neutal status");
+        neutralButton.setToolTipText("move to neutral status");
         neutralButton.setMaximumSize(new java.awt.Dimension(32, 32));
         neutralButton.setMinimumSize(new java.awt.Dimension(32, 32));
         neutralButton.setPreferredSize(new java.awt.Dimension(32, 32));
@@ -653,6 +894,14 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
             }
         });
 
+        fileMenu.add(loadMenuItem);
+        loadMenuItem.setText("Load File...");
+        loadMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadMenuItemActionPerformed(evt);
+            }
+        });
+        
         fileMenu.add(saveMenuItem);
         saveAsMenuItem.setText("Save as...");
         saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -814,6 +1063,14 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
         }
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
     
+    private void loadMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
+        try{
+            this.loadTableSVC();
+        } catch (IOException e){
+            
+        }
+    }//GEN-LAST:event_loadMenuItemActionPerformed
+    
     private void fileMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileMenuActionPerformed
         // Add your handling code here:
     }//GEN-LAST:event_fileMenuActionPerformed
@@ -853,6 +1110,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
     private javax.swing.JMenuItem svcApplyMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JMenuItem loadMenuItem;
     private javax.swing.JMenu sortByMenu;
     private javax.swing.JButton runButton;
     private javax.swing.JToolBar jToolBar1;

@@ -258,6 +258,7 @@ public class USCAssignLabel extends AlgorithmDialog {
 		
 		USCAssignLabel d = new USCAssignLabel( hybs, labels );
 		d.showModal();
+		System.exit(0);
 	}
 	
 	

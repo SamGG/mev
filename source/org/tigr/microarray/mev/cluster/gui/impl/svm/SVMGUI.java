@@ -20,6 +20,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -839,11 +840,205 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
         }
         else{
             logger.append("Reading classification file\n");
-            if (!readSVCFile())
-                return false;
+//            if (!readSVCFile())
+//                return false;
+            loadTableSVC();
         }
         return true;
     }
+    
+    
+    
+    
+    
+    
+	/**
+	 * Loads file based assignments
+	 */
+	private void loadTableSVC(){
+		
+//		File file;		
+//		JFileChooser fileChooser = new JFileChooser("./data");
+//		
+//	
+//		file = fileChooser.getSelectedFile();
+		
+		try {						
+			//first grab the data and close the file
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(data.classificationFile.getPath())));
+			Vector<String> data = new Vector<String>();
+			String line;
+			while( (line = br.readLine()) != null)
+				data.add(line.trim());
+			
+			br.close();
+				
+			//build structures to capture the data for assingment information and for *validation
+			
+			//factor names
+			Vector<String> groupNames = new Vector<String>();
+			
+			
+			Vector<Integer> sampleIndices = new Vector<Integer>();
+			Vector<String> sampleNames = new Vector<String>();
+			Vector<String> groupAssignments = new Vector<String>();		
+			
+			//parse the data in to these structures
+			String [] lineArray;
+			//String status = "OK";
+			for(int row = 0; row < data.size(); row++) {
+				line = (String)(data.get(row));
+
+				//if not a comment line, and not the header line
+				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+					
+					lineArray = line.split("\t");
+					
+					//check what module saved the file
+					if(lineArray[0].startsWith("Module:")) {
+						if (!lineArray[1].equals("SVM")){
+							Object[] optionst = { "Continue", "Cancel" };
+							if (JOptionPane.showOptionDialog(null, 
+		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+		    						optionst, optionst[0])==0)
+								continue;
+							return;
+						}
+						continue;
+					}
+					
+					//pick up group names
+					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+						groupNames.add(lineArray[1]);
+						continue;
+					}
+						
+
+					//non-comment line, non-header line and not a group label line
+					
+					try {
+						Integer.parseInt(lineArray[0]);
+					} catch ( NumberFormatException nfe) {
+						//if not parsable continue
+						continue;
+					}
+					
+					sampleIndices.add(new Integer(lineArray[0]));
+					sampleNames.add(lineArray[1]);
+					groupAssignments.add(lineArray[2]);	
+				}				
+			}
+			
+			//we have the data parsed, now validate, assign current data
+
+
+		        int numRows;
+		        if (this.classifyGenes)
+		        	numRows=this.experimentMap.getNumberOfGenes(); 
+		        else
+		        	numRows=this.experimentMap.getNumberOfSamples(); 
+			if( numRows != sampleNames.size()) {
+				System.out.println(numRows+"  "+sampleNames.size());
+				//status = "number-of-samples-mismatch";
+				System.out.println(numRows+ " s length " + sampleNames.size());
+				//warn and prompt to continue but omit assignments for those not represented				
+
+				JOptionPane.showMessageDialog(null, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+						                                   "does not match the number of samples loaded in MeV ("+numRows+").<br>" +
+						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+				
+				return;
+			}
+			
+			int fileSampleIndex = 0;
+			int groupIndex = 0;
+			String groupName;
+			
+			for(int sample = 0; sample < numRows; sample++) {
+				boolean doIndex = false;
+				for (int i=0;i<numRows; i++){
+					if (i==sample)
+						continue;
+					if (framework.getData().getSampleAnnotation(i, framework.getData().getCurrentSampleLabelKey()).equals(framework.getData().getSampleAnnotation(sample, framework.getData().getCurrentSampleLabelKey()))){
+						doIndex=true;
+					}
+				}
+				fileSampleIndex = sampleNames.indexOf(framework.getData().getSampleAnnotation(sample, framework.getData().getCurrentSampleLabelKey()));
+				if (fileSampleIndex==-1){
+					doIndex=true;
+				}
+				if (doIndex){
+					setStateBasedOnIndex(groupAssignments,groupNames);
+					break;
+				}
+				
+				groupName = (String)(groupAssignments.get(fileSampleIndex));
+				groupIndex = groupNames.indexOf(groupName);
+				
+				
+                classes[sample]=-1;
+                
+				//set state
+				try{
+    				if (groupIndex==0)
+    					classes[sample]=-1;
+    				if (groupIndex==1)
+    					classes[sample]=1;
+    				if (groupIndex==2||groupIndex==-1)
+    					classes[sample]=0;
+				}catch (Exception e){
+					classes[sample]=0;  //set to last state... excluded
+				}
+			}
+					
+			//need to clear assignments, clear assignment booleans in sample list and re-init
+			//maybe a specialized inti for the sample list panel.
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+	}
+	
+	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+		Object[] optionst = { "Continue", "Cancel" };
+		if (JOptionPane.showOptionDialog(null, 
+				"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+				"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+				optionst, optionst[0])==1)
+			return;
+		int numRows;
+        if (this.classifyGenes)
+        	numRows=this.experimentMap.getNumberOfGenes(); 
+        else
+        	numRows=this.experimentMap.getNumberOfSamples(); 
+		for(int sample = 0; sample < numRows; sample++) {
+	
+			//set state
+			try{
+				if (groupNames.indexOf(groupAssignments.get(sample))==0)
+					classes[sample]=-1;
+				if (groupNames.indexOf(groupAssignments.get(sample))==1)
+					classes[sample]=1;
+				if (groupNames.indexOf(groupAssignments.get(sample))==2||groupNames.indexOf(groupAssignments.get(sample))==-1)
+					classes[sample]=0;
+			}catch (Exception e){
+				e.printStackTrace();
+				classes[sample]=0;
+			}
+		}
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     /**
@@ -895,7 +1090,7 @@ public class SVMGUI implements IClusterGUI, IScriptGUI {
                 JOptionPane.showMessageDialog(parentFrame, "Number of Genes to classify does not match current data set!","Error", JOptionPane.ERROR_MESSAGE);
             }
             else if(!this.classifyGenes && CurrentGene != this.experimentMap.getNumberOfSamples()){
-                JOptionPane.showMessageDialog(parentFrame, "Number of Experiments to classify does not match current data set!","Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(parentFrame, "Number of Experiments, "+CurrentGene+", to classify does not match current data set, "+this.experimentMap.getNumberOfSamples()+"!","Error", JOptionPane.ERROR_MESSAGE);
             }
             else {
                 ReturnValue=true;
