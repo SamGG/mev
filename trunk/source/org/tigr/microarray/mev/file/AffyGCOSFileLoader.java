@@ -549,7 +549,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
         }
         
         sflp.setTableModel(model);
-        Point p = guessFirstExpressionCell(dataVector);
+        Point p = getFirstExpressionCell(dataVector);
         sflp.setSelectedCell(p.x, p.y);
     }
     
@@ -815,7 +815,7 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 	 * Make a guess as to which of the data values represents the
 	 * upper-leftmost expression value. Select that cell as the default.
 	 */
-	public Point guessFirstExpressionCell(Vector<Vector<String>> dataVector) {
+	public Point getFirstExpressionCell(Vector<Vector<String>> dataVector) {
 		int guessCol = 0, guessRow = 0;
 		Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
 		for (int j = lastRow.size() - 2; j >= 0; j--) {
@@ -839,6 +839,11 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 			}
 		}
 		return new Point(guessRow, guessCol);
+	}
+
+	@Override
+	public void setAnnotationFilePath(String filePath) {
+		sflp.adh.setAnnFilePath(filePath);
 	}
 
 }

@@ -668,9 +668,13 @@ public class GenePixFileLoader extends ExpressionFileLoader {
 
 @Override
 public String getAnnotationFilePath() {
-	
-	
 	return null;
 }  
-  
+/**
+ * Not useful in this loader because it doesn't use the annotation model yet.
+ */
+public void setAnnotationFilePath(String filePath) {
+//	sflp.adh.setAnnFilePath(filePath);
+}
+
 }

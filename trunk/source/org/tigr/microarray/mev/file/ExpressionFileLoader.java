@@ -25,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
-import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 
 public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { 
@@ -36,10 +35,9 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 
 	protected IChipAnnotation chipAnno = null;
 
-/*	public ExpressionFileLoader(MultipleArrayViewer mav) {
-		super(mav.getFrame());
-	}*/
-
+	protected int firstRow = -1;
+	protected int firstCol = -1;
+	
 	public ExpressionFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader.getFrame());
 		this.superLoader = superLoader;
@@ -47,6 +45,10 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 
 	public IChipAnnotation getChipAnnotation() {
 		return chipAnno;
+	}
+	public void setCoordinates(int firstRow, int firstCol) {
+		this.firstRow = firstRow;
+		this.firstCol = firstCol;
 	}
 
 	public abstract ISlideData loadExpressionFile(File f)
@@ -84,7 +86,17 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 
 	public abstract String getAnnotationFilePath();
 	
+	public abstract void setAnnotationFilePath(String filePath);
+	
 	public abstract int getDataType();
+
+    /** if the file can be loaded with only the information in the fila, we can skip the
+     *  Loader panel and just load the data
+     *
+     */
+    public boolean canAutoLoad(File file){
+        return false;
+    }
 
 	/**
 	 * Returns number of lines in the specified file.
@@ -106,7 +118,8 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 	 * Make a guess as to which of the data values represents the
 	 * upper-leftmost expression value. Select that cell as the default.
 	 */
-	public Point guessFirstExpressionCell(Vector<Vector<String>> dataVector) {
+	public Point getFirstExpressionCell(Vector<Vector<String>> dataVector) {
+		if(firstRow == -1 || firstCol == -1) {
 		int guessCol = 0, guessRow = 0;
 		Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
 		for (int j = lastRow.size() - 1; j >= 0; j--) {
@@ -130,6 +143,8 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 			}
 		}
 		return new Point(guessRow, guessCol);
+		}
+		return new Point(firstRow, firstCol);
 	}
 
 }

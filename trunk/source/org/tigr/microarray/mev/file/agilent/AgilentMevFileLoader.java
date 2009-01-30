@@ -1256,9 +1256,16 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 
 	}
 
-	@Override
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
 	public String getAnnotationFilePath() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+	public void setAnnotationFilePath(String filePath) {
+//		sflp.adh.setAnnFilePath(filePath);
 	}
 }

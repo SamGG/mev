@@ -1559,4 +1559,8 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 	public boolean isAnnotationSelected() {
 		return aflp.adh.isAnnotationSelected();
 	}
+	@Override
+	public void setAnnotationFilePath(String filePath) {
+		aflp.adh.setAnnFilePath(filePath);
+	}
 }

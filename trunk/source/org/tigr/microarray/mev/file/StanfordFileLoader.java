@@ -127,7 +127,8 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 	public ISlideData loadExpressionFile(File f) {
 		return null;
 	}
-
+	public boolean canAutoLoad(File f) {return true;}
+	
 	/*
 	 *  Handling of Stanford data has been altered in version 3.0 to permit loading of
 	 *  "ratio" input without the creation of false cy3 and cy5.  cy5 values in data structures
@@ -192,9 +193,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			}
 				
 			if(extension.equalsIgnoreCase("txt")){
-			AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
-			_tempAnno = afr.getAffyAnnotation();
-			chipAnno = afr.getAffyChipAnnotation();
+				AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
+				_tempAnno = afr.getAffyAnnotation();
+				chipAnno = afr.getAffyChipAnnotation();
 			}
 		}
 
@@ -445,7 +446,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		}
 
 		sflp.setTableModel(model);
-        Point p = guessFirstExpressionCell(dataVector);
+        Point p = getFirstExpressionCell(dataVector);
         sflp.setSelectedCell(p.x, p.y);
 	}
 
@@ -472,7 +473,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 		return dataType;
 	}
 	public boolean isAnnotationSelected() {
-		return sflp.isAnnotationSelected();
+		return sflp.adh.annotationSelected;
 	}
     
 	/**
@@ -626,7 +627,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 
 		}
 		public boolean isAnnotationSelected() {
-			return adh.isAnnotationSelected();
+			return adh.annotationSelected;
 		}
 		public String getAnnFilePath() {
 			return adh.getAnnFilePath();
@@ -638,6 +639,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			expressionTable.repaint();
 			checkLoadEnable();
 		}
+        
 		public void onBrowse() {
 			JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
 			int retVal = fileChooser.showOpenDialog(StanfordFileLoaderPanel.this);
@@ -696,5 +698,14 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			}
 		}
 
+	}
+
+	@Override
+	public void setAnnotationFilePath(String filePath) {
+		//TODO
+		System.out.println("setting file path");
+		sflp.adh.setAnnFilePath(filePath);
+		sflp.adh.annotationSelected = true;
+		
 	}
 }

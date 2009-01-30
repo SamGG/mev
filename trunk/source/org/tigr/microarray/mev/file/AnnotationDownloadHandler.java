@@ -92,6 +92,9 @@ public class AnnotationDownloadHandler {
 	public String getAnnFilePath() {
 		return annFileListTextField.getText();
 	}
+	public void setAnnFilePath(String filePath) {
+		annFileListTextField.setText(filePath);
+	}
 
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
 

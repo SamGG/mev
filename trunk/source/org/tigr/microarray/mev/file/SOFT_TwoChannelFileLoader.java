@@ -847,5 +847,10 @@ public Vector loadExpressionFiles() throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}    
-    
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+	public void setAnnotationFilePath(String filePath) {
+//		sflp.adh.setAnnFilePath(filePath);
+	}
    	}
