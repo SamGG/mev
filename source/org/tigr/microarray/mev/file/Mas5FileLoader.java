@@ -453,7 +453,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
         }
         
         sflp.setTableModel(model);
-        Point p = guessFirstExpressionCell(dataVector);
+        Point p = getFirstExpressionCell(dataVector);
         sflp.setSelectedCell(p.x, p.y);
     }
     
@@ -795,5 +795,11 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 	public boolean isAnnotationSelected() {
 		return this.sflp.adh.isAnnotationSelected();
 	}
-    }
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+	public void setAnnotationFilePath(String filePath) {
+		sflp.adh.setAnnFilePath(filePath);
+	}	
+}
 

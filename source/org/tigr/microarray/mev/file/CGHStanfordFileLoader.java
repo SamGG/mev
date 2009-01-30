@@ -592,7 +592,7 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
         }
 
         CGHsflp.setTableModel(model);
-        Point p = guessFirstExpressionCell(dataVector);
+        Point p = getFirstExpressionCell(dataVector);
         CGHsflp.setSelectedCell(p.x, p.y);
     }
 
@@ -862,9 +862,17 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
        
     }
 
-	@Override
-	public String getAnnotationFilePath() {
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+    public String getAnnotationFilePath() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+	public void setAnnotationFilePath(String filePath) {
+//		sflp.adh.setAnnFilePath(filePath);
 	}
 }

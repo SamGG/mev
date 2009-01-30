@@ -362,7 +362,7 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 		}
 
 		smatrixflp.setTableModel(model);
-        Point p = guessFirstExpressionCell(dataVector);
+        Point p = getFirstExpressionCell(dataVector);
         smatrixflp.setSelectedCell(p.x, p.y);
 	}
 
@@ -608,7 +608,12 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 		// TODO Auto-generated method stub
 		return null;
 	}    
-
+	/**
+	 * Not useful in this loader because it doesn't use the annotation model yet.
+	 */
+	public void setAnnotationFilePath(String filePath) {
+//		sflp.adh.setAnnFilePath(filePath);
+	}
 
 
 }

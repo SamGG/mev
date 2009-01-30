@@ -1422,4 +1422,8 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 	public boolean isAnnotationSelected() {
 		return this.aflp.adh.isAnnotationSelected();
 	}
+
+	public void setAnnotationFilePath(String filePath) {
+		aflp.adh.setAnnFilePath(filePath);
+	}
 }

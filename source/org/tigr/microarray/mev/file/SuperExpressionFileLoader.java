@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -129,8 +130,26 @@ public class SuperExpressionFileLoader {
 
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer, File file, FileType fileType, String arrayType) {
 		this(viewer);
-		changeSelectedFileFilterAndLoader(fileType.getLoaderIndex());
-		setFilePath(file.getAbsolutePath());
+		ExpressionFileLoader expressionLoader = getFileLoader(fileType.getLoaderIndex());
+        String speciesName = getSpeciesName(arrayType);
+        try {
+        	File annotationFile = getAnnotationFile(speciesName, arrayType);
+    		expressionLoader.setAnnotationFilePath(annotationFile.getAbsolutePath());
+    		
+        } catch (SupportFileAccessError sfae) {
+        	sfae.printStackTrace();
+        }
+        expressionLoader.setCoordinates(2,3);
+        
+        if (expressionLoader.canAutoLoad(file)){
+            selectedFileLoader = expressionLoader;
+            mainFrame.setVisible(false);
+			setFilePath(file.getAbsolutePath());
+            loader.run();
+        } else {
+			changeSelectedFileFilterAndLoader(fileType.getLoaderIndex());
+			setFilePath(file.getAbsolutePath());
+        }
 	}
 
 	public SuperExpressionFileLoader(MultipleArrayViewer viewer) {
@@ -147,6 +166,23 @@ public class SuperExpressionFileLoader {
 		loader = new Loader();
 		initializeFileLoaders();
 		initializeGUI();
+		hasAnnotationList = initializeAnnotationInfo();
+	}
+
+	private String getSpeciesName(String arrayType){
+		if(arrayType == null)
+			return null;
+		Enumeration<String> allAnnTypes = annotationLists.keys();
+		while(allAnnTypes.hasMoreElements()) {
+			String thisSpecies = allAnnTypes.nextElement();
+			Vector<String> theseArrays = annotationLists.get(thisSpecies);
+			for(int i=0; i<theseArrays.size(); i++) {
+				if(arrayType.equals(theseArrays.get(i))) {
+						return thisSpecies;
+				}
+			}
+		}
+		return null;
 	}
 	private boolean initializeAnnotationInfo() {
 		try {
