@@ -11,6 +11,7 @@ public class BifNode {
 	ArrayList<String> parents = new ArrayList<String>();
 	String child;
 	float CPT[];
+	float CPTs[][][];
 	int bins;
 	
 	public BifNode() {
@@ -31,12 +32,20 @@ public class BifNode {
 	 * First function to be called before CPT values can be assigned.
 	 * @param s
 	 */
-	public void initCPT(int s) {
-		CPT = new float[s];
+	public void initCPT(float s[]) {
+		CPT = s;
+	}
+	
+	public void initCPTnD(float arr[][][]) {
+		CPTs = arr;
 	}
 	
 	public float[] getCPT(){
 		return CPT;
+	}
+	
+	public float[][][] getCPT3D() {
+		return CPTs;
 	}
 	
 	public int numParents() {
@@ -68,6 +77,14 @@ public class BifNode {
 	
 	public void addParent(String parent) {
 		this.parents.add(parent);
+	}
+	
+	public void setBins (int n) {
+		bins = n;
+	}
+	
+	public int setBins() {
+		return bins;
 	}
 	
 	/**

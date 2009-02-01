@@ -51,18 +51,6 @@ public class BNGUI implements IClusterGUI {
 	IData data;
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		
-		//Test Code
-		if(1==1) {
-			try {
-				BifDOMBuilder bdb = new BifDOMBuilder();
-				bdb.build("C:/Projects/Mev/MeV_SVN/data/BN_files/affy_HG-U133_Plus_2_BN/results/FixedNetWithCPT.xml");
-				System.out.println("Testing Complete BifDOMBuilder");
-			} catch (Exception e){
-				e.printStackTrace();
-			}
-			return null;
-		}
-		//End Test
 		done = false;
 		run = false;
 		cancelRun = false;
