@@ -68,6 +68,7 @@ public class BifNode {
 	
 	public String getParentAt(int i){
 		if (i < this.parents.size() || i > this.parents.size()-1) return null;
+		if (isOrphan()) return null;
 		return this.parents.get(i);
 	}
 	
@@ -83,7 +84,7 @@ public class BifNode {
 		bins = n;
 	}
 	
-	public int setBins() {
+	public int getBins() {
 		return bins;
 	}
 	
