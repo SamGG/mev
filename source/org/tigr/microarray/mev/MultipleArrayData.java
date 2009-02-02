@@ -2851,7 +2851,7 @@ public class MultipleArrayData implements IData {
     }
 
     private void convertToAffy(){
-    	SlideData ismd = (SlideData)getFeature(0);
+    	SlideData ismd = new SlideData(getFeature(0));
     	Vector allSlideDataElements = ismd.getAllElements();
     	ISlideDataElement sde;
     	for(int i=0; i<allSlideDataElements.size(); i++){
