@@ -59,7 +59,7 @@ public class ShowThrowableDialog extends JDialog {
         if(friendlyMessage == null || friendlyMessage.equals(""))
             this.message = createMessageContent(type, t);
         else
-        	this.message = new JEditorPane("text/html", t.getMessage());
+        	this.message = new JEditorPane("text/html", friendlyMessage);
         
         this.stack   = createStackContent(t);
 
