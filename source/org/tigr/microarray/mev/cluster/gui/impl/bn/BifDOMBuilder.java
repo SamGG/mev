@@ -21,6 +21,7 @@ public class BifDOMBuilder {
 		}
 		System.out.println("BifDOMBuilder()");
 	}
+	
 	/**
 	 * 
 	 * @param fileName_bif
@@ -30,6 +31,7 @@ public class BifDOMBuilder {
 	 */
 	public ArrayList<BifNode> build(String fileName_bif) throws SAXException, IOException {
 		ArrayList<BifNode> bifNodes = new ArrayList<BifNode>();
+		//Number of states attribute
 		int BIN = 0;
 		
 		Document document = builder.parse(fileName_bif);
@@ -64,7 +66,11 @@ public class BifDOMBuilder {
 		for (int i = 0; i < nodes_def.getLength(); i++) {
 			Node def = nodes_def.item(i);
 			
-			//Retrieve all FOR and GIVEN nodes
+			//Create BifNode and set bin size
+			BifNode bnode = new BifNode();
+			bnode.setBins(BIN);
+			
+			//Retrieve all FOR, GIVEN & TABLE nodes
 			NodeList nodes_j = def.getChildNodes();
 			for (int j = 0; j < nodes_j.getLength(); j++) {
 				Node node_j = nodes_j.item(j);
@@ -73,10 +79,6 @@ public class BifDOMBuilder {
 				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
 					break;
 				}
-				
-				//Create BifNode and set bin size
-				BifNode bnode = new BifNode();
-				bnode.setBins(BIN);
 				
 				//Node is FOR (child - 1)
 				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("FOR")) {
@@ -113,8 +115,8 @@ public class BifDOMBuilder {
 					//System.out.println("Start stringCPTtoArray()");
 					bnode.initCPT(ArrayFromStringCPT(_tmp));
 				}
-				bifNodes.add(bnode);
 			}
+			bifNodes.add(bnode);
 		}
 		return bifNodes;
 	}
@@ -140,6 +142,7 @@ public class BifDOMBuilder {
 	 * @return
 	 */
 	private float [][][] nDArrayFromStringCPT(String _cpt[], int binSize) {
+		System.out.println("_cpt.length " + _cpt.length);
 		float arr_1[][][] = new float[_cpt.length][binSize][binSize];
 		for(int k = 0; k < _cpt.length;){
 			for(int l = 0; l < binSize; l++){
@@ -158,7 +161,7 @@ public class BifDOMBuilder {
 		// TODO Auto-generated method stub
 		BifDOMBuilder bdb = new BifDOMBuilder();
 		try {
-			bdb.build("C:/Projects/MeV_SVN/data/BN_files/affy_HG-U133_Plus_2_BN/results/FixedNetWithCPT.xml");
+			bdb.build("C:/Projects/MeV/MeV_SVN/data/BN_files/affy_HG-U133_Plus_2_BN/results/FixedNetWithCPT.xml");
 		} catch (Exception e){
 			e.printStackTrace();
 		}
