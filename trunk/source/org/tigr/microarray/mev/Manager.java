@@ -44,6 +44,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import org.tigr.microarray.mev.file.FileLoadInfo;
 import org.tigr.microarray.mev.file.FileType;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.Query;
@@ -407,15 +408,15 @@ public class Manager {//A class to keep track of viewers
         sav.refreshSlide();
     }
 
-    public static void createNewMultipleArrayViewer(File file, FileType fileType, String arrayType) {
-    	MultipleArrayViewer mav = new MultipleArrayViewer();
+	public static void createNewMultipleArrayViewer(FileLoadInfo fileInfo) {
+		MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
         mav.getFrame().setSize(1150, 700);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
-       mav.getFrame().setVisible(true);
-       mav.loadData(file, fileType, arrayType);
-    }
+        mav.getFrame().setVisible(true);
+        mav.loadData(fileInfo);
+	}
 
     
     public static void displaySlideElementInfo(JFrame frame, MultipleArrayData data, int feature, int probe) {
@@ -676,4 +677,5 @@ public class Manager {//A class to keep track of viewers
         public void windowActivated(WindowEvent event) {}
         public void windowDeactivated(WindowEvent event) {}
     }
+
 }

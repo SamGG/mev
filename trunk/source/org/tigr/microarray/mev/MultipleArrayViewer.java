@@ -189,6 +189,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
+import org.tigr.microarray.mev.file.FileLoadInfo;
 import org.tigr.microarray.mev.file.FileType;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.persistence.BufferedImageWrapper;
@@ -284,12 +285,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	private int[][]clusters;
 	private int clusterIndex;
 	private ClusterTableSearchDialog searchDialog;  
-	
-    public MultipleArrayViewer(File file, FileType fileType, String arrayType) {
-    	this();
-    	loadData(file, fileType, arrayType);
-    }
-	
+
+
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
      * creates menu and tool bars from new instance of action manager,
@@ -3922,34 +3919,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	    menubar.setDataLoadersEnabled(enabled);
 	    fireMenuChanged();
     }
-    /**
-     *  Loads data using <code>SuperExpressionFileLoader</code> and specified file.
-     */
-    public void loadData(File file, FileType fileType, String arrayType){
-        SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, file, fileType, arrayType);
-
-        //Add time node to the analysis node
-//        Date date = new Date(System.currentTimeMillis());
-//        DateFormat format = DateFormat.getDateTimeInstance();
-//        format.setTimeZone(TimeZone.getDefault());
-//        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
-//        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-//        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());
+    public void loadData(FileLoadInfo fileLoadInfo) {
+        SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, fileLoadInfo);
     }
 
     /**
      *  Loads data using <code>SuperExpressionFileLoader</code>.
      */
     private void loadData(){
-        SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);
-        
-        //Add time node to the analysis node
-//        Date date = new Date(System.currentTimeMillis());
-//        DateFormat format = DateFormat.getDateTimeInstance();
-//        format.setTimeZone(TimeZone.getDefault());
-//        DefaultMutableTreeNode node = new DefaultMutableTreeNode(format.format(date));
-//        DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
-//        treeModel.insertNodeInto(node, analysisNode, analysisNode.getChildCount());        
+        SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);    
     }
     
     /**
@@ -6492,6 +6470,8 @@ private void appendResourcererGeneAnnotation() {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 
 }

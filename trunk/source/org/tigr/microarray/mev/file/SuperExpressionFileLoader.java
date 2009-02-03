@@ -52,6 +52,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -60,20 +61,16 @@ import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
-import org.tigr.microarray.mev.SetDetectionFilterDialog;
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
-import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
 import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
-import org.tigr.microarray.mev.resources.IResourceManager;
-import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.ExpressionDataSupportDataFile;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
-import org.tigr.util.StringSplitter;
 
 // Loads expression data in various file formats
 
@@ -128,27 +125,60 @@ public class SuperExpressionFileLoader {
 	protected String defaultSpeciesName;
 	protected String defaultArrayName;
 
-	public SuperExpressionFileLoader(MultipleArrayViewer viewer, File file, FileType fileType, String arrayType) {
+	public SuperExpressionFileLoader(MultipleArrayViewer viewer, FileLoadInfo loadingInfo) {
 		this(viewer);
-		ExpressionFileLoader expressionLoader = getFileLoader(fileType.getLoaderIndex());
-        String speciesName = getSpeciesName(arrayType);
-        try {
-        	File annotationFile = getAnnotationFile(speciesName, arrayType);
-    		expressionLoader.setAnnotationFilePath(annotationFile.getAbsolutePath());
-    		
-        } catch (SupportFileAccessError sfae) {
-        	sfae.printStackTrace();
-        }
-        expressionLoader.setCoordinates(2,3);
+		
+		FileType ft = loadingInfo.getFileType();
+		ExpressionFileLoader expressionLoader = getFileLoader(ft.getLoaderIndex());
+		String arrayType = loadingInfo.getArrayType();
+        String speciesName = getSpeciesName(loadingInfo.getArrayType());
+        String fileURL = loadingInfo.getDataFileURL();
+        boolean isMultiFile = loadingInfo.isMultiFile();
+        File dataFile = new File(TMEV.getDataPath());
         
-        if (expressionLoader.canAutoLoad(file)){
-            selectedFileLoader = expressionLoader;
-            mainFrame.setVisible(false);
-			setFilePath(file.getAbsolutePath());
-            loader.run();
-        } else {
-			changeSelectedFileFilterAndLoader(fileType.getLoaderIndex());
-			setFilePath(file.getAbsolutePath());
+        if(loadingInfo.isDownloadDatafile()) {
+	        try {
+	        	dataFile = viewer.getSupportFile(new ExpressionDataSupportDataFile(fileURL, isMultiFile, ft));
+	        } catch (SupportFileAccessError sfae) {
+	        	ShowThrowableDialog.show(mainFrame, 
+	        			"File download failed", 
+	        			true, 
+	        			ShowThrowableDialog.ERROR, 
+	        			sfae, 
+	        			"MeV was unable to download the file " + fileURL + 
+	        			"<br/><br/>Please check that this is a valid URL and that " +
+	        			"your computer is connected to the internet.");
+	        	dataFile = null;
+	        }
+        }
+        
+        if(arrayType != null && !arrayType.equals("")) {
+	        try {
+	        	File annotationFile = getAnnotationFile(speciesName, arrayType);
+	    		expressionLoader.setAnnotationFilePath(annotationFile.getAbsolutePath());
+	        } catch (SupportFileAccessError sfae) {
+	        	ShowThrowableDialog.show(mainFrame, 
+	        			"File download failed", 
+	        			true, 
+	        			ShowThrowableDialog.ERROR, 
+	        			sfae, 
+	        			"MeV was unable to download the annotation file for the specified array \"" + arrayType + 
+	        			"\".<br/><br/>The array name may be invalid or your computer may not be connected to the internet.");
+	        }
+        }
+        
+        if(dataFile != null) {
+	        expressionLoader.setCoordinates(loadingInfo.getFirstRow(), loadingInfo.getFirstColumn());
+	        
+	        if (expressionLoader.canAutoLoad(dataFile)) {
+	            selectedFileLoader = expressionLoader;
+	            mainFrame.setVisible(false);
+				setFilePath(dataFile.getAbsolutePath());
+	            loader.run();
+	        } else {
+				changeSelectedFileFilterAndLoader(ft.getLoaderIndex());
+				setFilePath(dataFile.getAbsolutePath());
+	        }
         }
 	}
 

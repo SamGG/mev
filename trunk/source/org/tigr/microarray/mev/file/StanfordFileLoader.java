@@ -702,8 +702,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 
 	@Override
 	public void setAnnotationFilePath(String filePath) {
-		//TODO
-		System.out.println("setting file path");
 		sflp.adh.setAnnFilePath(filePath);
 		sflp.adh.annotationSelected = true;
 		

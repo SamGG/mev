@@ -41,6 +41,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
+import org.tigr.microarray.mev.file.FileLoadInfo;
+import org.tigr.microarray.mev.file.InvalidFileArgumentsException;
 import org.tigr.microarray.mev.resources.ExpressionDataSupportDataFile;
 import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.IResourceManager;
@@ -200,25 +202,31 @@ public class TMEV {
             }
 
 		if(so.getDataFile() != null && so.getFileType() != null) {
-			boolean isMultifile = so.getFileType().isMultifile();
+            try {
+            	FileLoadInfo fileInfo = new FileLoadInfo(so);
+//            	boolean isMultifile = so.getFileType().isMultifile();
 
-			ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
-			try {
-				File file = resourceManager.getSupportFile(def, true);
-	
-				if (file != null) {
-					Manager.createNewMultipleArrayViewer(file, so.getFileType(), so.getArrayType());
-				} else { //downloaded file is null
-					JOptionPane.showMessageDialog(new JFrame(),
-							"No files were detected in the download directory.  \n This MeV session will be closed.",
-							"Empty Download", JOptionPane.INFORMATION_MESSAGE);
-					Manager.createNewMultipleArrayViewer();
-				}
-			} catch (SupportFileAccessError sfae) {
-				ShowThrowableDialog.show(new JFrame(), "Error downloading data file", false, 0, sfae, "Unable to download the requested data file. Please check your internet connection and try again.");
-
-			            Manager.createNewMultipleArrayViewer();
-			}
+				Manager.createNewMultipleArrayViewer(fileInfo);
+            } catch(InvalidFileArgumentsException ifae) {
+            	ShowThrowableDialog.show(new JFrame(), "", true, ShowThrowableDialog.ERROR, ifae, "MeV was unable to understand the arguments supplied to it: \n" + so.toString());
+    			Manager.createNewMultipleArrayViewer();
+            }			
+//			ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
+//			try {
+//				File file = resourceManager.getSupportFile(def, true);
+//				
+//				if (file != null) {
+//					Manager.createNewMultipleArrayViewer(file, so.getFileType(), so.getArrayType());
+//				} else { //downloaded file is null
+//					JOptionPane.showMessageDialog(new JFrame(),
+//							"No files were detected in the download directory. ",
+//							"Empty Download", JOptionPane.INFORMATION_MESSAGE);
+//					Manager.createNewMultipleArrayViewer();
+//				}
+//			} catch (SupportFileAccessError sfae) {
+//				ShowThrowableDialog.show(new JFrame(), "Error downloading data file", false, 0, sfae, "Unable to download the requested data file. Please check your internet connection and try again.");
+//			    Manager.createNewMultipleArrayViewer();
+//			}
 		} else {
 			Manager.createNewMultipleArrayViewer();
 		}

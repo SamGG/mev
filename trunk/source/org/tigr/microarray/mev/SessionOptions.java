@@ -27,6 +27,7 @@ public class SessionOptions {
 			" urls are not supported. Local filesystem files are also not \n" +
 			" supported at this time.\n";
 
+
 	public SessionOptions(){}
 
 	@Option(name="-help", usage="Prints help text and exits.")
@@ -41,16 +42,26 @@ public class SessionOptions {
     @Option(name="-fileType", metaVar="FILE_FORMAT", usage="Format of input file. ")    
     private String fileType = DATAFILE_STANFORD_ARG;
 
-    /* This option is not enabled yet, but may be useful later. */
+    /* This option specifies an array name. Annotation for this array should be loaded. */
     @Option(name="-arrayType", metaVar="ARRAY_NAME", usage="Name of array type (optional).")
     private String arrayType = null;
    
+    /* This option specifies the first non-header row of the data file in -fileURL. */
+    @Option(name="-firstRow", metaVar="FIRST_ROW", usage="Index of first non-annotation row of the file in -fileURL (optional).")
+    private int firstRow = -1;
+
+    /* This option specifies the first non-header column of the data file in -fileURL. */
+    @Option(name="-firstColumn", metaVar="FIRST_COLUMN", usage="Index of first non-annotation column of the file in -fileURL (optional).")
+    private int firstColumn = -1;
+    
 	public String toString() {
 		String outString = "";
-		outString += "Connect To Gaggle: " 	+ "\t" + connectToGaggle + "\n";
-		outString += "Data File URL: " 		+ "\t" + dataFile + "\n";
-		outString += "File Loader Type: " 	+ "\t" + fileType + "\n";
-		outString += "Array Name or Type: " + "\t" + arrayType + "\n";
+		outString += "Connect To Gaggle: " 		+ "\t" + connectToGaggle + "\n";
+		outString += "Data File URL: " 			+ "\t" + dataFile + "\n";
+		outString += "File Loader Type: " 		+ "\t" + fileType + "\n";
+		outString += "Array Name or Type: " 	+ "\t" + arrayType + "\n";
+		outString += "First row of data: " 		+ "\t" + firstRow + "\n";
+		outString += "First column of data: " 	+ "\t" + firstColumn + "\n";
 		return outString;
 	}
 	
@@ -100,6 +111,21 @@ public class SessionOptions {
 
 	public void setFileType(String dataType) {
 		this.fileType = dataType;
+	}
+	public int getFirstColumn() {
+		return firstColumn;
+	}
+
+	public void setFirstColumn(int firstColumn) {
+		this.firstColumn = firstColumn;
+	}
+
+	public int getFirstRow() {
+		return firstRow;
+	}
+
+	public void setFirstRow(int firstRow) {
+		this.firstRow = firstRow;
 	}
 
 }
