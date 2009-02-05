@@ -74,14 +74,11 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     
     protected Vector<Float> fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     protected float[][] geneTimeMeans, geneTimeSDs;
-//    protected float[][] geneConditionMeans, geneConditionSDs;
     protected boolean drawSigTreesOnly;
     protected int upDown = 0;
     
-    //protected boolean usePerms;
     
     Vector<String> exptNamesVector;
-    //protected int[] timeAssignments;
     protected int[] inGroupAssignments;
     protected int falseNum, correctionMethod;
     protected double falseProp;
@@ -107,7 +104,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
         int number_of_samples = experiment.getNumberOfSamples();
-        //int number_of_genes = experiment.getNumberOfGenes();
         
         int [] columnIndices = experiment.getColumnIndicesCopy(); 
         
@@ -120,17 +116,23 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         
         if (!RPDialog.isOkPressed()) return null;
         
-        //double alpha = RPDialog.getPValue();
-//        float alpha = RPDialog.getAlpha();
         float alpha = RPDialog.getPValue();
-        //numTimePoints = RPDialog.getNumTimePoints();
         upDown = RPDialog.upDownPanel.getUpDown();
-
-        if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-        	inGroupAssignments=RPDialog.getClusterInGroupAssignments();
+        if (RPDialog.getTestDesign()==RPInitBox.ONE_CLASS){
+	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	        	inGroupAssignments=RPDialog.getClusterOneClassAssignments();
+	        }
+	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
+	        	inGroupAssignments=RPDialog.getOneClassAssignments();
+	        }
         }
-        if (RPDialog.getTestDesign()==RPInitBox.BUTTON_SELECTION){
-        	inGroupAssignments=RPDialog.getInGroupAssignments();
+        if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS){
+	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	        	inGroupAssignments=RPDialog.getClusterTwoClassAssignments();
+	        }
+	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
+	        	inGroupAssignments=RPDialog.getTwoClassAssignments();
+	        }
         }
         boolean usePerms = RPDialog.usePerms();
         int numPerms = 0;
@@ -203,6 +205,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             data.addParam("correction-method", String.valueOf(correctionMethod));
             data.addParam("alpha-value", String.valueOf(RPDialog.mPanel.alpha));
             data.addParam("UpOrDown", String.valueOf(upDown));
+            data.addParam("classes", String.valueOf(RPDialog.getTestDesign()));
             if (correctionMethod == RPInitBox.FALSE_NUM) {
                 data.addParam("falseNum", String.valueOf(falseNum));
             }
@@ -229,14 +232,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
-            //NodeList nodeList = result_cluster.getNodeList();
-            //AlgorithmParameters resultMap = result.getParams();
-            //int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
-            
-       /*     this.clusters = new int[k][];
-            for (int i=0; i<k; i++) {
-                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
-            }*/
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
 
@@ -270,10 +265,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             
             geneTimeMeans = new float[geneTimeMeansMatrix.getRowDimension()][geneTimeMeansMatrix.getColumnDimension()];
             geneTimeSDs = new float[geneTimeSDsMatrix.getRowDimension()][geneTimeSDsMatrix.getColumnDimension()];
-//            if (dataDesign == 2){
-//            	geneConditionMeans = new float[geneConditionMeansMatrix.getRowDimension()][geneConditionMeansMatrix.getColumnDimension()];
-//            	geneConditionSDs = new float[geneConditionSDsMatrix.getRowDimension()][geneConditionSDsMatrix.getColumnDimension()];
-//            }
 
             for (int i = 0; i < geneTimeMeans.length; i++) {
                 for (int j = 0; j < geneTimeMeans[i].length; j++) {
@@ -281,36 +272,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
                     geneTimeSDs[i][j] = geneTimeSDsMatrix.A[i][j];
                 }
             }
-//            if (dataDesign == 2){
-//	            for (int i = 0; i < geneConditionMeans.length; i++) {
-//	                for (int j = 0; j < geneConditionMeans[i].length; j++) {
-//	                    geneConditionMeans[i][j] = geneConditionMeansMatrix.A[i][j];
-//	                    geneConditionSDs[i][j] = geneConditionSDsMatrix.A[i][j];
-//	                }
-//	            }
-//            }
-
-            
-            
-            /*
-            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
-                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
-                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
-            }
-            
-            for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
-                fValues.add(new Float(fValuesMatrix.A[i][0]));
-            }
-            
-            dfNumValues = new Vector();
-            dfDenomValues = new Vector();
-            
-            for (int i = 0; i < dfNumMatrix.getRowDimension(); i++) {
-                dfNumValues.add(new Float(dfNumMatrix.A[i][0]));
-                dfDenomValues.add(new Float(dfDenomMatrix.A[i][0]));
-                ssGroups.add(new Float(ssGroupsMatrix.A[i][0]));
-                ssError.add(new Float(ssErrorMatrix.A[i][0]));
-            }*/
             
             GeneralInfo info = new GeneralInfo();
             info.time = time;
@@ -343,16 +304,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             	titlesVector.add("p-Values (Up)");
             	titlesVector.add("q-Values (Up)");
             }
-            /*
-            titlesVector.add("F ratio");
-            titlesVector.add("SS(Groups)");
-            titlesVector.add("SS(Error)");
-            titlesVector.add("df (Groups)");
-            titlesVector.add("df (Error)");
-            titlesVector.add("Raw p value");
-            if (!((correctionMethod == RPInitBox.FALSE_NUM)||(correctionMethod == RPInitBox.FALSE_PROP))) {            
-                titlesVector.add("Adj. p value");
-            }*/
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -372,16 +323,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
                 	auxData[i][counter++] = pValuesUp.get(i, 0);
                 	auxData[i][counter++] = qValuesUp.get(i, 0);
                 }
-                /*
-                auxData[i][counter++] = fValues.get(i);
-                auxData[i][counter++] = ssGroups.get(i);
-                auxData[i][counter++] = ssError.get(i);
-                auxData[i][counter++] = dfNumValues.get(i);
-                auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = rawPValues.get(i);
-                if (!((correctionMethod == RPInitBox.FALSE_NUM)||(correctionMethod == RPInitBox.FALSE_PROP))) {
-                    auxData[i][counter++] = adjPValues.get(i);
-                }*/
             }
             
             return createResultTree(result_cluster, info);
@@ -416,11 +357,21 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         float alpha = RPDialog.getPValue();
         //numTimePoints = RPDialog.getNumTimePoints();
 
-        if (RPDialog.getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-        	inGroupAssignments=RPDialog.getClusterInGroupAssignments();
+        if (RPDialog.getTestDesign()==RPInitBox.ONE_CLASS){
+	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	        	inGroupAssignments=RPDialog.getClusterOneClassAssignments();
+	        }
+	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
+	        	inGroupAssignments=RPDialog.getOneClassAssignments();
+	        }
         }
-        if (RPDialog.getTestDesign()==RPInitBox.BUTTON_SELECTION){
-        	inGroupAssignments=RPDialog.getInGroupAssignments();
+        if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS){
+	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	        	inGroupAssignments=RPDialog.getClusterTwoClassAssignments();
+	        }
+	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
+	        	inGroupAssignments=RPDialog.getTwoClassAssignments();
+	        }
         }
         boolean usePerms = RPDialog.usePerms();     
         int numPerms = 0;
@@ -554,7 +505,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
             NodeList nodeList = result_cluster.getNodeList();
-            //AlgorithmParameters resultMap = result.getParams();
             int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
                        
             this.clusters = new int[k][];
@@ -563,49 +513,10 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-//            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
-//            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
-//            FloatMatrix fValuesMatrix = result.getMatrix("fValues");
-//            FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
-//            FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
-//            FloatMatrix ssGroupsMatrix = result.getMatrix("ssGroupsMatrix");
-//            FloatMatrix ssErrorMatrix = result.getMatrix("ssErrorMatrix");
-//            FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
-//            FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
-            
             //pValues = new Vector();
             fValues = new Vector<Float>();
             ssGroups = new Vector<Float>();
             ssError = new Vector<Float>();
-/*            
-            geneGroupMeans = new float[geneGroupMeansMatrix.getRowDimension()][geneGroupMeansMatrix.getColumnDimension()];
-            geneGroupSDs = new float[geneGroupSDsMatrix.getRowDimension()][geneGroupSDsMatrix.getColumnDimension()];
-            
-            for (int i = 0; i < geneGroupMeans.length; i++) {
-                for (int j = 0; j < geneGroupMeans[i].length; j++) {
-                    geneGroupMeans[i][j] = geneGroupMeansMatrix.A[i][j];
-                    geneGroupSDs[i][j] = geneGroupSDsMatrix.A[i][j];
-                }
-            }
-            
-            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
-                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
-                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
-            }
-            
-            for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
-                fValues.add(new Float(fValuesMatrix.A[i][0]));
-            }
-            
-            dfNumValues = new Vector();
-            dfDenomValues = new Vector();
-            
-            for (int i = 0; i < dfNumMatrix.getRowDimension(); i++) {
-                dfNumValues.add(new Float(dfNumMatrix.A[i][0]));
-                dfDenomValues.add(new Float(dfDenomMatrix.A[i][0]));
-                ssGroups.add(new Float(ssGroupsMatrix.A[i][0]));
-                ssError.add(new Float(ssErrorMatrix.A[i][0]));
-            }*/
             
             AlgorithmParameters params = algData.getParams();
             
@@ -658,22 +569,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
                     auxData[i][counter++] = new Float(geneTimeMeans[i][j]);
                     auxData[i][counter++] = new Float(geneTimeSDs[i][j]);
                 }
-//                for (int j = 0; j < geneConditionMeans[i].length; j++) {
-//                    auxData[i][counter++] = new Float(geneConditionMeans[i][j]);
-//                    auxData[i][counter++] = new Float(geneConditionSDs[i][j]);
-//                }
-                
-                /*
-                
-                auxData[i][counter++] = fValues.get(i);
-                auxData[i][counter++] = ssGroups.get(i);
-                auxData[i][counter++] = ssError.get(i);
-                auxData[i][counter++] = dfNumValues.get(i);
-                auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = rawPValues.get(i);
-                if (!((correctionMethod == RPInitBox.FALSE_NUM)||(correctionMethod == RPInitBox.FALSE_PROP))) {
-                    auxData[i][counter++] = adjPValues.get(i);
-                }*/
             }
             
             return createResultTree(result_cluster, info);
@@ -799,30 +694,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             }
         }
         
-//         else {
-//        	for (int i=0; i<nodeList.getSize(); i++) {
-//            	if (i==0){
-//            		if (upDown!=1){
-//            			node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
-//            		}
-//            	}
-//            	if (i==1){
-//            		if (upDown!=2){
-//            			node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
-//                    }
-//            	}
-////            	if (i==2){
-////            		
-////            	}
-////                if ((i==0)&&(upDown==2||upDown==3)) {
-////                	node.add(new DefaultMutableTreeNode(new LeafInfo("Negative Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));            
-////                }
-////                if ((i == 1 && upDown==3)||(i==0&&upDown==1)) {
-////                	//System.out.println(nodeList.getNode(1));
-////                	node.add(new DefaultMutableTreeNode(new LeafInfo("Positive Significant Genes ", createHCLViewer(nodeList.getNode(1), info))));            
-////                }
-//        	}
-//        }
         root.add(node);
     }
     
@@ -863,7 +734,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     protected void addCentroidViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-        //RPCentroidViewer centroidViewer = new RPCentroidViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         RPCentroidViewer centroidViewer = new RPCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
@@ -900,33 +770,14 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         
         centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
         expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
-        /*if (errorGenes){
-        	IViewer errorGenesIViewer = new RPExperimentViewer(this.experiment, errorGenesArray, null, null, null, null, null, null, null, null, null);
-        	centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Invalid Genes ", errorGenesIViewer, new Integer(0))));
-        }
-        if (errorGenes){
-        	IViewer errorGenesIViewer = new RPExperimentViewer(this.experiment, errorGenesArray, null, null, null, null, null, null, null, null, null);
-        	expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Invalid Genes ", errorGenesIViewer, new Integer(0))));
-        }*/
+
         root.add(centroidNode);
         root.add(expressionNode);
     }
     
-    /*
-    protected void addFRatioInfoViews(DefaultMutableTreeNode root) {
-        DefaultMutableTreeNode fRatioInfoNode = new DefaultMutableTreeNode("F-Ratio information");
-        IViewer fSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, true);
-        IViewer fNonSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, false);
-        
-        fRatioInfoNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes", fSigViewer)));
-        fRatioInfoNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes", fNonSigViewer)));
-        
-        root.add(fRatioInfoNode);
-    }
-     */
     
     /**
-     * Adds node with general iformation.
+     * Adds node with general information.
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
@@ -946,17 +797,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         	node.add(new DefaultMutableTreeNode("Find up and down-regulated genes"));
         
         	
-        //node.add(new DefaultMutableTreeNode("Used permutation test? " + info.usePerms));
-        if (info.usePerms) {
-            //node.add(new DefaultMutableTreeNode("Number of permutations " + info.numPerms));
-        }
-        /*
-        node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
-        if (isPermutations) {
-            node.add(new DefaultMutableTreeNode("All permutations used: " + info.useAllCombs));
-            node.add(new DefaultMutableTreeNode("Number of permutations per gene: " + info.numCombs));
-        }
-         */
         if (info.correctionMethod.startsWith("False")) {
            node.add(new DefaultMutableTreeNode(info.correctionMethod)); 
         } else {
@@ -971,25 +811,6 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     
     protected DefaultMutableTreeNode getTimeAssignmentInfo() {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Time assignments ");
-        //DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
-        //DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numTimePoints];
-        
-        
-//        for (int i = 0; i < timeAssignments.length; i++) {
-//            int currentGroup = timeAssignments[i];
-//            if (currentGroup == 0) {
-//                notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
-//            } else {
-//                groups[currentGroup - 1].add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
-//            }
-//        }
-        
-//        for (int i = 0; i < groups.length; i++) {
-//            groupAssignmentInfo.add(groups[i]);
-//        }
-//        if (notInGroups.getChildCount() > 0) {
-//            groupAssignmentInfo.add(notInGroups);
-//        }
         return groupAssignmentInfo;
     }
     

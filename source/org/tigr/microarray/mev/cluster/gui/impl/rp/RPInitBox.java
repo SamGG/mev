@@ -74,11 +74,13 @@ public class RPInitBox extends AlgorithmDialog {
 	public static final int JUST_ALPHA = 1;
     public static final int STD_BONFERRONI = 2;
     public static final int ADJ_BONFERRONI = 3;
-    public static final int MAX_T = 9; 
-    public static final int FALSE_NUM = 12;
-    public static final int FALSE_PROP = 13;    
-    public static final int BUTTON_SELECTION = 14;
-    public static final int CLUSTER_SELECTION = 15;
+    public static final int MAX_T = 4; 
+    public static final int FALSE_NUM = 5;
+    public static final int FALSE_PROP = 6;    
+    public static final int ONE_CLASS = 7;
+    public static final int TWO_CLASS = 8;
+    public static final int BUTTON_SELECTION = 9;
+    public static final int CLUSTER_SELECTION = 10;
     
     boolean okPressed = false;
     boolean okReady = false;
@@ -199,9 +201,13 @@ public class RPInitBox extends AlgorithmDialog {
         GridBagConstraints constraints;
         GridBagLayout gridbag;
         JPanel dummyPanel;
-        MultiGroupExperimentsPanel mulgPanel;
-        JTabbedPane tabbedmulg;
-        ClusterSelector clusterSelectorCondition;
+        ExperimentsPanel oneClassPanel;
+        ExperimentsPanel twoClassPanel;
+        JTabbedPane chooseDesignPane;
+        JTabbedPane oneClassmulg;
+        JTabbedPane twoClassmulg;
+        ClusterSelector oneClassClusterSelector;
+        ClusterSelector twoClassClusterSelector;
         //ClusterSelector clusterSelectorTime;
         //int numTimePoints;
         float alpha;
@@ -217,17 +223,24 @@ public class RPInitBox extends AlgorithmDialog {
             constraints.fill = GridBagConstraints.BOTH;
                 okReady = true;
                 try {
-                    mulgPanel = new MultiGroupExperimentsPanel(exptNames, 1);
+                    oneClassPanel = new ExperimentsPanel(exptNames, 1);
+                    twoClassPanel = new ExperimentsPanel(exptNames, 2);
                     
                     
-                    tabbedmulg = new JTabbedPane();
                     
-                    clusterSelectorCondition= new ClusterSelector(repository,1, "Samples");
+                    oneClassClusterSelector= new ClusterSelector(repository,1, "Samples");
                     if (repository!=null){
-                    	clusterSelectorCondition.setClusterType("Experiment");
+                    	oneClassClusterSelector.setClusterType("Experiment");
             		}
-                    JPanel clusterSelectorPanel = new JPanel();
-                    clusterSelectorPanel.setLayout(new GridBagLayout());
+                    twoClassClusterSelector= new ClusterSelector(repository,2, "Samples");
+                    if (repository!=null){
+                    	twoClassClusterSelector.setClusterType("Experiment");
+            		}
+                    
+                    JPanel oneClassClusterSelectorPanel = new JPanel();
+                    oneClassClusterSelectorPanel.setLayout(new GridBagLayout());
+                    JPanel twoClassClusterSelectorPanel = new JPanel();
+                    twoClassClusterSelectorPanel.setLayout(new GridBagLayout());
 
                     GridBagConstraints c = new GridBagConstraints();
                     c.fill = GridBagConstraints.BOTH;
@@ -237,22 +250,31 @@ public class RPInitBox extends AlgorithmDialog {
                     c.gridy = 1;
                     c.gridwidth = 1;
                     c.anchor = GridBagConstraints.PAGE_END;
-                    clusterSelectorPanel.add(clusterSelectorCondition, c);
-                    c.gridx = 1;
-                    //clusterSelectorPanel.add(clusterSelectorTime, c);
+                    oneClassClusterSelectorPanel.add(oneClassClusterSelector, c);
+                    twoClassClusterSelectorPanel.add(twoClassClusterSelector, c);
                     
-                    
-                    
-                    
-                    tabbedmulg.add("Button Selection", mulgPanel);
-                    tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
-                    tabbedmulg.setSelectedIndex(0);//set to always be button selection
+                    oneClassmulg = new JTabbedPane();
+                    oneClassmulg.add("Button Selection", oneClassPanel);
+                    oneClassmulg.add("Cluster Selection", oneClassClusterSelectorPanel);
+                    oneClassmulg.setSelectedIndex(0);//set to always be button selection
                     if (repository==null||repository.isEmpty())
-                    	tabbedmulg.setSelectedIndex(0);
+                    	oneClassmulg.setSelectedIndex(0);
+                    
+                    twoClassmulg = new JTabbedPane();
+                    twoClassmulg.add("Button Selection", twoClassPanel);
+                    twoClassmulg.add("Cluster Selection", twoClassClusterSelectorPanel);
+                    twoClassmulg.setSelectedIndex(0);//set to always be button selection
+                    if (repository==null||repository.isEmpty())
+                    	twoClassmulg.setSelectedIndex(0);
+                    
+                    chooseDesignPane = new JTabbedPane();
+                    chooseDesignPane.add("One-Class", oneClassmulg);
+                    chooseDesignPane.add("Two-Class", twoClassmulg);
+                    
                     buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
-                    gridbag.setConstraints(tabbedmulg, constraints);
-                    MultiClassPanel.this.add(tabbedmulg);
+                    gridbag.setConstraints(chooseDesignPane, constraints);
+                    MultiClassPanel.this.add(chooseDesignPane);
                     MultiClassPanel.this.validate();
                 
             
@@ -264,18 +286,20 @@ public class RPInitBox extends AlgorithmDialog {
         
 
         
-        class MultiGroupExperimentsPanel extends JPanel {
+        class ExperimentsPanel extends JPanel {
             int numPanels = 0;
+            int numberGroups;
             JLabel[] expLabels;
             JCheckBox[] exptCheckBoxes;
-            MultiGroupExperimentsPanel(Vector<String> exptNames, int numTimePoints) {
+            JRadioButton[][] rbArray;
+            ExperimentsPanel(Vector<String> exptNames, int numGroups) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), "Experiment Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
-
-               // JPanel panel1 = new JPanel();
+                numberGroups = numGroups;
+                ButtonGroup chooseGroup[] = new ButtonGroup[exptNames.size()];
                 expLabels = new JLabel[exptNames.size()];
                 exptCheckBoxes = new JCheckBox[exptNames.size()];
-                	
+                rbArray = new JRadioButton[exptNames.size()][numberGroups+1];
                 numPanels = exptNames.size()/512 + 1;
                 
                 
@@ -283,8 +307,6 @@ public class RPInitBox extends AlgorithmDialog {
                 GridBagLayout gridbag2 = new GridBagLayout();
                 GridBagConstraints constraints = new GridBagConstraints();
                 this.setLayout(gridbag2);
-//                panel1.setLayout(gridbag);
-  
 
                 JPanel [] panels = new JPanel[numPanels];
                 
@@ -296,28 +318,29 @@ public class RPInitBox extends AlgorithmDialog {
                 for (int i = 0; i < exptNames.size(); i++) {
                     String s1 = (String)(exptNames.get(i));
                     expLabels[i] = new JLabel(s1);
-                    for (int j = 0; j < numTimePoints; j++) {
-                        exptCheckBoxes[i] = new JCheckBox("",true);
-                    }
-                    
-                    
-                    
-                    
-	                    	
-                    
-                    
-                    
-                    
                     buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
-                        //constraints.fill = GridBagConstraints.BOTH;
+                    if (numGroups==1){
+                    	constraints.anchor = GridBagConstraints.WEST;
+                    	exptCheckBoxes[i] = new JCheckBox("",true);
                         gridbag.setConstraints(exptCheckBoxes[i], constraints);
                         panels[currPanel].add(exptCheckBoxes[i]);
-                        // panel1.add(exptGroupRadioButtons[j][i]);
-                    
-                              
-                    
+                    }
+                    else{
+                        chooseGroup[i] = new ButtonGroup();
+	                    for (int j = 0; j < numberGroups+1; j++) {
+	                    	
+	                        rbArray[i][j] = new JRadioButton("Group "+ (j+1));
+	                        if (j==numberGroups)
+		                        rbArray[i][j] = new JRadioButton("Excluded");
+	                        
+	                        chooseGroup[i].add(rbArray[i][j]);
+	                        buildConstraints(constraints, j, i%512, 1, 1, 100, 100);
+	                        gridbag.setConstraints(rbArray[i][j], constraints);
+	                        panels[currPanel].add(rbArray[i][j]);
+	                    }
+	                    rbArray[i][numberGroups].setSelected(true);
+                    }
                 }
-                
                 
                 int maxLabelWidth = 0;
                 
@@ -348,7 +371,6 @@ public class RPInitBox extends AlgorithmDialog {
                     exptNameHeaderPanels[i].setPreferredSize(new Dimension(maxLabelWidth + 10, panels[i].getPreferredSize().height));
                     exptNameHeaderPanels[i].setLayout(exptHeaderGridbag);
                 }
-                //scroll.getRowHeader().setLayout(exptHeaderGridbag);
                 
                 //need to possibly add to additional panels if number of exp. excedes 512
                 for (int i = 0; i < expLabels.length; i++) {
@@ -403,14 +425,11 @@ public class RPInitBox extends AlgorithmDialog {
                 });
                 
                 
-                //NEED TO REWORK THIS FOR MULTICLASS
-                
                 loadButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
                     	loadAssignments();
                     }
                 });
-                //
                 
                 
                 constraints.anchor = GridBagConstraints.CENTER;
@@ -430,17 +449,8 @@ public class RPInitBox extends AlgorithmDialog {
                 constraints.insets = new Insets(0,0,0,0);
                 buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
                 constraints.anchor = GridBagConstraints.CENTER;
-                //constraints.fill = GridBagConstraints.BOTH;
                 gridbag2.setConstraints(panel2, constraints);
                 this.add(panel2);
-                
-            /*
-            JButton gButton = new JButton("groupExpts");
-            buildConstraints(constraints, 0, 0, 1, 1, 100, 100);
-            constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(gButton, constraints);
-            this.add(gButton);
-             */
                 
             }
             
@@ -448,8 +458,8 @@ public class RPInitBox extends AlgorithmDialog {
              *  resets all group assignments
              */
             protected void reset(){
-            	for (int i=0; i<mulgPanel.exptCheckBoxes.length; i++){
-            		mulgPanel.exptCheckBoxes[i].setSelected(true);
+            	for (int i=0; i<oneClassPanel.exptCheckBoxes.length; i++){
+            		oneClassPanel.exptCheckBoxes[i].setSelected(true);
             	}
             }
             /**
@@ -688,8 +698,8 @@ public class RPInitBox extends AlgorithmDialog {
             
         }
         protected void reset(){
-        	for (int i=0; i<mulgPanel.exptCheckBoxes.length; i++){
-        		mulgPanel.exptCheckBoxes[i].setSelected(true);
+        	for (int i=0; i<oneClassPanel.exptCheckBoxes.length; i++){
+        		oneClassPanel.exptCheckBoxes[i].setSelected(true);
         	}
         }
     }
@@ -869,7 +879,7 @@ public class RPInitBox extends AlgorithmDialog {
             if(command.equals("ok-command")){
             	if (!okReady)
             		return;
-            	if ((getTestDesign()==RPInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
+            	if ((getSelectionDesign()==RPInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
             		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
             	}
@@ -887,16 +897,12 @@ public class RPInitBox extends AlgorithmDialog {
                         }
                     }                     
                     double d = Double.parseDouble(pPanel.pValueInputField.getText());
-                    /*
-                    if (usePerms()) {
-                        int p = getNumPerms();
-                    }
-                     */
+                   
                     int[] inGroupAssignments;
-                    if (getTestDesign()==RPInitBox.CLUSTER_SELECTION){
-                    	inGroupAssignments=getClusterInGroupAssignments();
+                    if (getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+                    	inGroupAssignments=getClusterOneClassAssignments();
                     }else{
-                    	inGroupAssignments=getInGroupAssignments();
+                    	inGroupAssignments=getOneClassAssignments();
                     }
                     int inNum = 0;
                     while(true){
@@ -941,19 +947,34 @@ public class RPInitBox extends AlgorithmDialog {
                     hw.dispose();
                     return;
                 }
-		}
+            }
         }
-        
     }
     
+    public int getSelectionDesign() {
+        int design = -1;
+        if (mPanel.oneClassmulg.getSelectedIndex() == 0) {
+        	design = RPInitBox.BUTTON_SELECTION;
+        } else {
+        	design = RPInitBox.CLUSTER_SELECTION;
+        }
+        return design;
+    }
+    public int getTestDesign() {
+        int design = -1;
+        if (mPanel.chooseDesignPane.getSelectedIndex() == 0) {
+        	design = RPInitBox.ONE_CLASS;
+        } else {
+        	design = RPInitBox.TWO_CLASS;
+        }
+        return design;
+    }
     
-
-    
-    public int[] getInGroupAssignments() {
+    public int[] getOneClassAssignments() {
         int[] inGroupAssignments = new int[exptNames.size()];
         
         for (int i = 0; i < exptNames.size(); i++) {
-            if (mPanel.mulgPanel.exptCheckBoxes[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
+            if (mPanel.oneClassPanel.exptCheckBoxes[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
                 inGroupAssignments[i] = 1;
             } else {
                 inGroupAssignments[i] = 0;
@@ -962,24 +983,13 @@ public class RPInitBox extends AlgorithmDialog {
         return inGroupAssignments;
     }  
    
-    
-    public int getTestDesign() {
-        int design = -1;
-        if (mPanel.tabbedmulg.getSelectedIndex() == 0) {
-        	design = RPInitBox.BUTTON_SELECTION;
-        	} else {
-        	design = RPInitBox.CLUSTER_SELECTION;
-        }
-        return design;
-    }
-    
-    public int[] getClusterInGroupAssignments(){
+    public int[] getClusterOneClassAssignments(){
     	boolean doubleAssigned;
     	int[]groupAssignments = new int[exptNames.size()];
     	ArrayList[] arraylistArray = new ArrayList[2];
     	for (int i=0; i<2; i++){
     		int j = i+1;
-    		arraylistArray[i] = mPanel.clusterSelectorCondition.getGroupSamples("Samples "+j);
+    		arraylistArray[i] = mPanel.oneClassClusterSelector.getGroupSamples("Samples "+j);
     		
     	}
     	for (int i = 0; i < exptNames.size(); i++) {
@@ -1003,10 +1013,50 @@ public class RPInitBox extends AlgorithmDialog {
     	return groupAssignments;
     }
     
-    
-//    public int getNumTimePoints() {
-//        return mPanel.numTimePoints;
-//    }
+    public int[] getTwoClassAssignments() {
+        int[] groupAssignments = new int[exptNames.size()];
+        
+        for (int i = 0; i < exptNames.size(); i++) {
+        	for (int j = 0; j < mPanel.twoClassPanel.numberGroups; j++) {
+	            if (mPanel.twoClassPanel.rbArray[i][j].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
+	                groupAssignments[i] = j+1;
+	                break;
+            	}
+	            groupAssignments[i] = 0;
+            }
+        }
+        return groupAssignments;
+    }
+   
+    public int[] getClusterTwoClassAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[2];
+    	for (int i=0; i<2; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.twoClassClusterSelector.getGroupSamples("Samples "+j);
+    		
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<2;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+	    			}
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
     
     public boolean usePerms() {
         return true;//this.pPanel.permutButton.isSelected();
@@ -1084,17 +1134,14 @@ public class RPInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         Vector<String> dummyVect = new Vector<String>();
-        dummyVect.add("Same");
-        dummyVect.add("Same");
-        dummyVect.add("Same");
-        dummyVect.add("Same");
-        dummyVect.add("Same");
-        for (int i = 0; i < 95; i++) {
-            dummyVect.add("Expt " + i);
+        for (int i = 0; i < 23; i++) {
+            dummyVect.add("Expt " + (i+1));
         }
+        dummyVect.add("Exptsdfsdfsgwegsgsgsd");
         
         RPInitBox oBox = new RPInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
+        System.exit(0);
         
     }
 }
