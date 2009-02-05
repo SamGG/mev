@@ -245,11 +245,49 @@ public class TtestInitDialog extends AlgorithmDialog {
         oneClassTab = new JTabbedPane();
         oneClassTab.add("Button Selection", oPanel);
         oneClassTab.add("Cluster Selection", oneClassPanel);
+        oneClassTab.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                pPanel.tDistButton.setSelected(true);
+                sPanel.justAlphaButton.setSelected(true);
+                sPanel.maxTButton.setSelected(false);
+                sPanel.maxTButton.setEnabled(false);
+                sPanel.minPButton.setSelected(false);
+                sPanel.minPButton.setEnabled(false);                
+                pPanel.allCombsButton.setEnabled(false);
+                pPanel.randomGroupsButton.setEnabled(false);
+                pPanel.numCombsLabel.setForeground(Color.black);
+                pPanel.numCombsLabel.setText(""); 
+                pPanel.timesField.setEnabled(false);
+                if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    pPanel.numCombsLabel.setForeground(Color.black);
+                    pPanel.numCombsLabel.setText("");                     
+                }
+            }
+        });
         chooseDesignPane.add("One Class", oneClassTab);
         betweenSubsTab = new JTabbedPane();
         betweenSubsTab.add("Button Selection", gPanel);
         clusterSelector = new ClusterSelector(repository, 2);
         betweenSubsTab.add("Cluster Selection",clusterSelector);
+        betweenSubsTab.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                pPanel.tDistButton.setSelected(true);
+                sPanel.justAlphaButton.setSelected(true);
+                sPanel.maxTButton.setSelected(false);
+                sPanel.maxTButton.setEnabled(false);
+                sPanel.minPButton.setSelected(false);
+                sPanel.minPButton.setEnabled(false);                
+                pPanel.allCombsButton.setEnabled(false);
+                pPanel.randomGroupsButton.setEnabled(false);
+                pPanel.numCombsLabel.setForeground(Color.black);
+                pPanel.numCombsLabel.setText(""); 
+                pPanel.timesField.setEnabled(false);
+                if (getTestDesign() == TtestInitDialog.ONE_CLASS) {
+                    pPanel.numCombsLabel.setForeground(Color.black);
+                    pPanel.numCombsLabel.setText("");                     
+                }
+            }
+        });
         chooseDesignPane.add("Between subjects", betweenSubsTab);
         tcpmPanel = new TwoClassPairedMainPanel();
         chooseDesignPane.add("Paired", tcpmPanel);  
@@ -2367,7 +2405,6 @@ public class TtestInitDialog extends AlgorithmDialog {
                 groupAssignments[i] = NEITHER_GROUP;
             }
         }
-        
         return groupAssignments;
     }
     public int[] getClusterGroupAssignments(){
