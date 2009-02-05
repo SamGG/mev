@@ -911,18 +911,7 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
         } else {
             node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
-        }        
-        //node.add(new DefaultMutableTreeNode("Used permutation test? " + info.usePerms));
-        if (info.usePerms) {
-            //node.add(new DefaultMutableTreeNode("Number of permutations " + info.numPerms));
-        }
-        /*
-        node.add(new DefaultMutableTreeNode("P-values based on: "+info.pValueBasedOn));
-        if (isPermutations) {
-            node.add(new DefaultMutableTreeNode("All permutations used: " + info.useAllCombs));
-            node.add(new DefaultMutableTreeNode("Number of permutations per gene: " + info.numCombs));
-        }
-         */
+        }  
         if (info.correctionMethod.startsWith("False")) {
            node.add(new DefaultMutableTreeNode(info.correctionMethod)); 
         } else {
