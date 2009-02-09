@@ -12,7 +12,8 @@ import javax.xml.parsers.*;
 public class BifDOMBuilder {
 
 	private DocumentBuilder builder;
-
+	private ArrayList<BifNode> bifAL = new ArrayList<BifNode>();
+	
 	public BifDOMBuilder()   {
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -32,7 +33,8 @@ public class BifDOMBuilder {
 	 * @throws IOException
 	 */
 	public ArrayList<BifNode> build(String fileName_bif) throws SAXException, IOException {
-		ArrayList<BifNode> bifNodes = new ArrayList<BifNode>();
+		bifAL.clear();
+//		ArrayList<BifNode> bifNodes = new ArrayList<BifNode>();
 		//Number of states attribute
 		int BIN = 0;
 		
@@ -119,9 +121,9 @@ public class BifDOMBuilder {
 				}
 			}
 			if(bnode.getChild() != null)
-				bifNodes.add(bnode);
+				bifAL.add(bnode);
 		}
-		return bifNodes;
+		return bifAL;
 	}
 	
 	/**
@@ -228,6 +230,36 @@ public class BifDOMBuilder {
 		return bifNodes;
 	}
 	
+	/**
+	 * 
+	 * @param name The desired BifNode's child.
+	 * @return The BifNode with child corresponding to the String 'name'.
+	 */
+	public BifNode getBifNode(String name){
+		for (int i=0; i<bifAL.size(); i++){
+			if (bifAL.get(i)
+					.getChild()
+					.equals(name))
+				return bifAL.get(i);
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param name The child of all the parents.
+	 * @return An ArrayList of BifNodes representing the parents of the node with child 'name'.
+	 */	
+	public ArrayList<BifNode> getParents(BifNode bifNode){
+		ArrayList<BifNode> bifNodeParents = new ArrayList<BifNode>();
+		ArrayList<String> parents = bifNode.getParents();
+		if (parents!=null)
+			for (int i=0; i<parents.size(); i++){
+				if (parents.get(i)!=null)
+					bifNodeParents.add(getBifNode(parents.get(i)));
+			}
+		return bifNodeParents;
+	}
 	/**
 	 * 
 	 * @param _cpt
