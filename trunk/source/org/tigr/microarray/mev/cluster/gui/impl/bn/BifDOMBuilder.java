@@ -2,9 +2,11 @@ package org.tigr.microarray.mev.cluster.gui.impl.bn;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
+
 import javax.xml.parsers.*;
 
 public class BifDOMBuilder {
@@ -116,7 +118,112 @@ public class BifDOMBuilder {
 					bnode.initCPT(ArrayFromStringCPT(_tmp));
 				}
 			}
-			bifNodes.add(bnode);
+			if(bnode.getChild() != null)
+				bifNodes.add(bnode);
+		}
+		return bifNodes;
+	}
+	
+	/**
+	 * 
+	 * @param fileName_bif
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public HashMap buildHashMap(String fileName_bif) throws SAXException, IOException {
+		HashMap<String, BifNode> bifNodes = new HashMap<String, BifNode>();
+		//Number of states attribute
+		int BIN = 0;
+		
+		Document document = builder.parse(fileName_bif);
+		
+		//Find number of states/bins
+		NodeList nodes_variables = document.getElementsByTagName("VARIABLE");
+		
+		//If no VARIABLE tags found, then doc is invalid
+		if (nodes_variables.getLength() == 0) {
+			throw new SAXException("Invalid XML file content");
+		}
+		
+		//Check first VARIABLE node. If CLASS check next. If still cannot be determined throw Exception
+		Node var = nodes_variables.item(0);
+		Node var1 = nodes_variables.item(1);
+		
+		if (var.getNodeType() == Node.ELEMENT_NODE && 
+				!(((Element) var).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
+			
+			BIN = ((Element) var).getElementsByTagName("OUTCOME").getLength();
+		} else if (var1.getNodeType() == Node.ELEMENT_NODE &&  
+				!(((Element) var1).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
+			
+			BIN = ((Element) var1).getElementsByTagName("OUTCOME").getLength();
+		} else {
+			throw new SAXException("Number of discrete states could not be determined");
+		}
+		System.out.println("Number of BINs " + BIN);
+		
+		//Grab all DEF nodes
+		NodeList nodes_def = document.getElementsByTagName("DEFINITION");
+		for (int i = 0; i < nodes_def.getLength(); i++) {
+			Node def = nodes_def.item(i);
+			
+			//Create BifNode and set bin size
+			BifNode bnode = new BifNode();
+			bnode.setBins(BIN);
+			
+			//Retrieve all FOR, GIVEN & TABLE nodes
+			NodeList nodes_j = def.getChildNodes();
+			for (int j = 0; j < nodes_j.getLength(); j++) {
+				Node node_j = nodes_j.item(j);
+				
+				//Ignore Node labeled CLASS
+				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
+					break;
+				}
+				
+				//Node is FOR (child - 1)
+				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("FOR")) {
+					//Set child for BifNode
+					Element child = (Element) node_j;
+					
+					//Set child
+					System.out.println("Adding Child :" + child.getChildNodes().item(0).getNodeValue().trim());
+					bnode.setChild(child.getChildNodes().item(0).getNodeValue().trim());
+				}
+				
+				//Node is GIVEN (parent - 0, 1 or many)
+				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("GIVEN")) {
+					//Set parent for, count 1
+					Element given = (Element) node_j;
+					
+					//Add Parent
+					System.out.println("Adding Parent :" + given.getChildNodes().item(0).getNodeValue().trim());
+					bnode.addParent(given.getChildNodes().item(0).getNodeValue().trim());
+				}
+				
+				//Node is TABLE ( 1 )
+				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("TABLE")) {
+					//Read CPT as a string
+					Element table = (Element) node_j;
+					String strTable = table.getChildNodes().item(0).getNodeValue();
+										
+					String _tmp[] = strTable.trim().split(" ");
+					//System.out.println("Length " + _tmp.length);
+					
+					//Store string CPT as a nD array of floats
+					//System.out.println("Start stringCPTto3dArray()");
+					bnode.initCPTnD(nDArrayFromStringCPT(_tmp, BIN));
+					
+					//Also store CPT as a 1D array of floats whichever is helpful
+					//System.out.println("Start stringCPTtoArray()");
+					bnode.initCPT(ArrayFromStringCPT(_tmp));
+				}
+				//bifNodes.add(bnode);
+			}
+			//System.out.println("Key Child " + bnode.getChild());
+			if(bnode.getChild() != null)
+				bifNodes.put(bnode.getChild(), bnode);
 		}
 		return bifNodes;
 	}
