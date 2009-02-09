@@ -281,7 +281,7 @@ public class BifDOMBuilder {
 	 * @return
 	 */
 	private float [][][] nDArrayFromStringCPT(String _cpt[], int binSize) {
-		System.out.println("_cpt.length " + _cpt.length);
+//		System.out.println("_cpt.length " + _cpt.length);
 		float arr_1[][][] = new float[_cpt.length][binSize][binSize];
 		for(int k = 0; k < _cpt.length;){
 			for(int l = 0; l < binSize; l++){
