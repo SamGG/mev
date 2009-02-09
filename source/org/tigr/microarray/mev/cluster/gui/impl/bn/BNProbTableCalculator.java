@@ -20,11 +20,14 @@ public class BNProbTableCalculator {
 		for (int i=0; i<numNodes; i++){
 			ptFound[i]= false;
 		}
-		printbdb();
+//		printbdb();
 		calculateTables();
 		printPTs();
 	}
 	
+	/**
+	 * Runs through all nodes, constructing probability tables of expression for each node.
+	 */
 	private void calculateTables(){
 		for (int i=0; i<numNodes; i++){
 			if(!havePT(bif.get(i)))
@@ -32,6 +35,11 @@ public class BNProbTableCalculator {
 		}
 	}
 	
+	/**
+	 * Recursive algorithm.  Gets a Probability table for the given node.  If any of the parent's of bifNode are not solved
+	 * for their respective PTs, then getPT will call itself with the parent as the given node.
+	 * @param bifNode
+	 */
 	private void getPT(BifNode bifNode){
 		for (int i=0; i<bdb.getParents(bifNode).size(); i++){
 			BifNode parent = bdb.getParents(bifNode).get(i);
@@ -41,8 +49,13 @@ public class BNProbTableCalculator {
 		calcPTWithParents(bifNode);
 	}
 	
+	/**
+	 * Calculates the probability table for a given node.  
+	 * *NOTE* All parents of this node must have been solved for their probability
+	 * tables before bifNode's PT can be calculated.
+	 * @param bifNode
+	 */
 	private void calcPTWithParents(BifNode bifNode){
-		System.out.println("calcPT "+ bifNode.getChild());
 		ArrayList<BifNode> parentNodes = bdb.getParents(bifNode);
 		if (parentNodes.size()==0){
 			for (int bin=0; bin<3; bin++){
@@ -52,7 +65,6 @@ public class BNProbTableCalculator {
 					System.out.println(bifNode.getChild());
 					npe.printStackTrace();
 				}
-				System.out.println("asdasd   "+bifNode.getCPT()[bin]);
 			}
 			ptFound[bif.indexOf(bifNode)]=true;
 			return;
@@ -81,8 +93,6 @@ public class BNProbTableCalculator {
 					}
 					break;
 				}
-//				if (indices.length==2)
-//				System.out.print(indices[0]+"\t"+indices[1]+"\n");
 			}
 			probTable[bin][bif.indexOf(bifNode)]=prob;
 			
@@ -90,13 +100,21 @@ public class BNProbTableCalculator {
 		ptFound[bif.indexOf(bifNode)]=true;
 	}
 	
+	/**
+	 * 
+	 * @param bifNode
+	 * @return Returns a boolean for whether or not the PT for the given node has yet been solved.
+	 */
 	private boolean havePT(BifNode bifNode){
 		return ptFound[bif.indexOf(bifNode)];
 	}
 	
+	/**
+	 * Prints a table listing Probabilities of each state for each node.
+	 */
 	private void printPTs(){
 		System.out.println();
-		System.out.println("********Results*******");
+		System.out.println("  ********Results*******");
 		for (int i=0; i<this.numNodes; i++){
 			System.out.print("Node: "+ bif.get(i).getChild()+":     \t");
 			for (int j=0; j<3; j++){
