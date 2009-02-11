@@ -25,8 +25,23 @@ public class SessionOptions {
 			" The URL of the data file to be preloaded. This must be a complete\n" +
 			" url, including the http:// or ftp:// protocol indicators. Relative\n" +
 			" urls are not supported. Local filesystem files are also not \n" +
-			" supported at this time.\n";
+			" supported at this time.\n" +
 
+			"-firstRow \n" +
+			"The index of the first row of data (rather than annotation) in a TDMS-like file. \n" +
+			"If both this and the firstColumn flag are set, MeV can load TDMS-like datafiles \n" +
+			"without interaction from the user. This number is zero-indexed. \n" +
+		
+			"-firstColumn \n" +
+			"The index of the first column of data (rather than annotation) in a TDMS-like file. \n" +
+			"If both this and the firstRow flag are set, MeV can load TDMS-like datafiles \n" +
+			"without interaction from the user. This number is zero-indexed. \n" +
+		
+			"-arrayType \n" +
+			"This value specifies the name of the array that the data in -fileUrl came from. The  \n" +
+			"string must exactly match one of the list of currently-supported arrays, found at " +
+			"ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/kingdom_species_cloneset_list.txt. \n" +
+			"The species name is not required. \n";
 
 	public SessionOptions(){}
 
