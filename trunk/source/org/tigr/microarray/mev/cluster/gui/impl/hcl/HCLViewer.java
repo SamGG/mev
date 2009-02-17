@@ -59,6 +59,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.FloatMatrix;
 
@@ -71,6 +72,7 @@ public class HCLViewer extends JPanel implements IViewer {
     protected static final String DELETE_ALL_CLUSTERS_CMD = "delete-all-clusters-cmd";
     protected static final String GENE_TREE_PROPERTIES_CMD = "gene-tree-properties-cmd";
     protected static final String SAMPLE_TREE_PROPERTIES_CMD = "sample-tree-properties-cmd";
+    protected static final String ROTATE_NODE_CMD = "rotate-node-cmd";
     
     protected static final String SAVE_GENE_ORDER_CMD = "save-gene-order-cmd";
     protected static final String SAVE_EXP_ORDER_CMD = "save-exp-order-cmd";
@@ -134,7 +136,7 @@ public class HCLViewer extends JPanel implements IViewer {
         this.exptID = experiment.getId();
         listener = new Listener();
         this.addMouseListener(listener);
-        features = features == null ? createDefaultFeatures(experiment) : features;
+        this.features = features == null ? createDefaultFeatures(experiment) : features;
         this.expViewer = createExperimentViewer(experiment, features, genes_result, samples_result);
         this.expViewer.getContentComponent().addMouseListener(listener);
         this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
@@ -221,11 +223,11 @@ public class HCLViewer extends JPanel implements IViewer {
         if(this.isExperimentCluster){
             if(genes_result != null){
                 offset = 0;
-                this.expViewer = new ExperimentClusterViewer(experiment, sampleClusters, genesOrder, true, offset);
+                this.expViewer = new ExperimentViewer(experiment, sampleClusters, genesOrder, true, offset);
             }
             else{
                 offset = 10;
-                this.expViewer = new ExperimentClusterViewer(experiment, sampleClusters, genesOrder, true, offset);
+                this.expViewer = new ExperimentViewer(experiment, sampleClusters, genesOrder, true, offset);
             }
         }
         else {
@@ -592,6 +594,12 @@ public class HCLViewer extends JPanel implements IViewer {
         menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
         menuItem.setEnabled(this.sampleTree != null);
         menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);        
+
+        menuItem = new JMenuItem("Rotate Selected Node", GUIFactory.getIcon("edit16.gif"));
+        menuItem.setEnabled(false);
+        menuItem.setActionCommand(ROTATE_NODE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
@@ -1397,6 +1405,70 @@ public class HCLViewer extends JPanel implements IViewer {
         setTreeProperties(this.sampleTree);
         revalidate();
     }
+
+    /**
+     * Rotates the selected node.
+     */
+    public void onRotateNode() {
+    	System.out.println("work, dammit!");
+    	if(selectedCluster.isGeneCluster){
+        	int i=genes_result.child_1_array[selectedCluster.getRoot()];
+        	genes_result.child_1_array[selectedCluster.getRoot()]=genes_result.child_2_array[selectedCluster.getRoot()];
+        	genes_result.child_2_array[selectedCluster.getRoot()]=i;
+            genesOrder = createGenesOrder(experiment, features, genes_result);
+            genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+    	}
+        else{
+        	int i=samples_result.child_1_array[selectedCluster.getRoot()];
+        	samples_result.child_1_array[selectedCluster.getRoot()]=samples_result.child_2_array[selectedCluster.getRoot()];
+        	samples_result.child_2_array[selectedCluster.getRoot()]=i;
+        	System.out.println("rotated "+i +" and "+samples_result.child_1_array[selectedCluster.getRoot()]);
+            samplesOrder = createSamplesOrder(samples_result);
+            sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+//            sampleTree.paint(getGraphics());// = new HCLTree(samples_result, HCLTree.VERTICAL);
+        }
+    	this.removeAll();
+    	
+//    	this.colorBar = new HCLColorBar(this.clusters,
+//    			features.length);
+//        this.colorBar.addMouseListener(listener);
+        this.genesOrder = createGenesOrder(experiment, features, genes_result);
+        this.annotationBar = new HCLAnnotationBar(this.genesOrder);
+        this.annotationBar.addMouseListener(listener);
+        if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
+            this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+            this.genesTree.addMouseListener(listener);
+            this.genesTree.setListener(listener);
+        }
+        if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
+            this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+            this.samplesOrder = createSamplesOrder(samples_result);
+            if(genes_result == null)
+                this.sampleTree.setHorizontalOffset(10);
+            this.sampleTree.addMouseListener(listener);
+            this.sampleTree.setListener(listener);
+        }
+        
+        expViewer.onDataChanged(data);
+        onSelected(framework);
+        for (int i=0; i<((ExperimentViewer)this.expViewer).samplesOrder.length;i++){
+        	System.out.print(((ExperimentViewer)this.expViewer).samplesOrder[i]+" ");
+        }
+        System.out.println("EV");
+        for (int i=0; i<((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).getSamplesOrder().length;i++){
+        	System.out.print(((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).getSamplesOrder()[i]+" ");
+        }
+        System.out.println("EH");
+        if(this.isExperimentCluster){ 
+            ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
+        }
+    	addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
+//        revalidate();
+        for (int i=0; i<((ExperimentViewer)this.expViewer).samplesOrder.length;i++){
+        	System.out.print(((ExperimentViewer)this.expViewer).samplesOrder[i]);
+        }
+        System.out.println();
+    }
     
     private void setTreeProperties(HCLTree tree) {
         Frame frame = JOptionPane.getFrameForComponent(this);
@@ -1510,6 +1582,8 @@ public class HCLViewer extends JPanel implements IViewer {
                 onGeneTreeProperties();
             } else if (command.equals(SAMPLE_TREE_PROPERTIES_CMD)) {
                 onSampleTreeProperties();
+            } else if (command.equals(ROTATE_NODE_CMD)) {
+                onRotateNode();
             } else if (command.equals(SAVE_GENE_ORDER_CMD)){
                 saveGenesOrder();
             } else if (command.equals(SAVE_GENE_HEIGHT_CMD)){
@@ -1534,6 +1608,7 @@ public class HCLViewer extends JPanel implements IViewer {
         }
         
         public void valueChanged(HCLTree source, HCLCluster cluster) {
+        	System.out.println("root = "+cluster.getRoot());
             if(source == sampleTree)
                 cluster.isGeneCluster = false;
             HCLViewer.this.valueChanged(source, cluster);
@@ -1559,6 +1634,7 @@ public class HCLViewer extends JPanel implements IViewer {
             setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
             setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
             //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
+            setEnableMenuItem(ROTATE_NODE_CMD, node >= 0);
             setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
             setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
             setEnableMenuItem(SAVE_CLUSTER_CMD, HCLViewer.this.selectedCluster != null && HCLViewer.this.selectedCluster.root != -1);

@@ -82,7 +82,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     private IData data;
     private int clusterIndex;
     private int[][] clusters;
-    private int[] genesOrder;
+    public int[] genesOrder;
     private Dimension elementSize = new Dimension(20, 5);
     private int labelIndex = -1;
     private boolean isAntiAliasing = true;
