@@ -223,11 +223,11 @@ public class HCLViewer extends JPanel implements IViewer {
         if(this.isExperimentCluster){
             if(genes_result != null){
                 offset = 0;
-                this.expViewer = new ExperimentViewer(experiment, sampleClusters, genesOrder, true, offset);
+                this.expViewer = new ExperimentClusterViewer(experiment, sampleClusters, genesOrder, true, offset);
             }
             else{
                 offset = 10;
-                this.expViewer = new ExperimentViewer(experiment, sampleClusters, genesOrder, true, offset);
+                this.expViewer = new ExperimentClusterViewer(experiment, sampleClusters, genesOrder, true, offset);
             }
         }
         else {
@@ -372,6 +372,7 @@ public class HCLViewer extends JPanel implements IViewer {
             offset = 10;
             viewer = new ExperimentViewer(experiment, clusters, samples, true, offset);
         }
+        ((ExperimentViewer)viewer).setEnableMoveable(false);
         return viewer;
     }
     
@@ -419,7 +420,6 @@ public class HCLViewer extends JPanel implements IViewer {
     private int[] getLeafOrder(int[] nodeOrder, int[] child1, int[] child2, int[] indices) {
         int[] leafOrder = new int[nodeOrder.length];
         Arrays.fill(leafOrder, -1);
-        
         fillLeafOrder(leafOrder, child1, child2, 0, child1.length-2, indices);
         return leafOrder;
     }
@@ -1410,7 +1410,6 @@ public class HCLViewer extends JPanel implements IViewer {
      * Rotates the selected node.
      */
     public void onRotateNode() {
-    	System.out.println("work, dammit!");
     	if(selectedCluster.isGeneCluster){
         	int i=genes_result.child_1_array[selectedCluster.getRoot()];
         	genes_result.child_1_array[selectedCluster.getRoot()]=genes_result.child_2_array[selectedCluster.getRoot()];
@@ -1422,16 +1421,11 @@ public class HCLViewer extends JPanel implements IViewer {
         	int i=samples_result.child_1_array[selectedCluster.getRoot()];
         	samples_result.child_1_array[selectedCluster.getRoot()]=samples_result.child_2_array[selectedCluster.getRoot()];
         	samples_result.child_2_array[selectedCluster.getRoot()]=i;
-        	System.out.println("rotated "+i +" and "+samples_result.child_1_array[selectedCluster.getRoot()]);
             samplesOrder = createSamplesOrder(samples_result);
             sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
-//            sampleTree.paint(getGraphics());// = new HCLTree(samples_result, HCLTree.VERTICAL);
         }
     	this.removeAll();
     	
-//    	this.colorBar = new HCLColorBar(this.clusters,
-//    			features.length);
-//        this.colorBar.addMouseListener(listener);
         this.genesOrder = createGenesOrder(experiment, features, genes_result);
         this.annotationBar = new HCLAnnotationBar(this.genesOrder);
         this.annotationBar.addMouseListener(listener);
@@ -1451,23 +1445,13 @@ public class HCLViewer extends JPanel implements IViewer {
         
         expViewer.onDataChanged(data);
         onSelected(framework);
-        for (int i=0; i<((ExperimentViewer)this.expViewer).samplesOrder.length;i++){
-        	System.out.print(((ExperimentViewer)this.expViewer).samplesOrder[i]+" ");
-        }
-        System.out.println("EV");
-        for (int i=0; i<((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).getSamplesOrder().length;i++){
-        	System.out.print(((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).getSamplesOrder()[i]+" ");
-        }
-        System.out.println("EH");
-        if(this.isExperimentCluster){ 
-            ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
-        }
+
+        ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
+        ((ExperimentViewer)this.expViewer).setSamplesOrder(samplesOrder); 
+        ((ExperimentViewer)this.expViewer).setGenesOrder(genesOrder); 
+        
     	addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
-//        revalidate();
-        for (int i=0; i<((ExperimentViewer)this.expViewer).samplesOrder.length;i++){
-        	System.out.print(((ExperimentViewer)this.expViewer).samplesOrder[i]);
-        }
-        System.out.println();
+
     }
     
     private void setTreeProperties(HCLTree tree) {
@@ -1608,7 +1592,6 @@ public class HCLViewer extends JPanel implements IViewer {
         }
         
         public void valueChanged(HCLTree source, HCLCluster cluster) {
-        	System.out.println("root = "+cluster.getRoot());
             if(source == sampleTree)
                 cluster.isGeneCluster = false;
             HCLViewer.this.valueChanged(source, cluster);

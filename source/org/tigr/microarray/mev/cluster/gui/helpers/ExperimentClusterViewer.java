@@ -1503,9 +1503,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         
             startColumn = findColumn(event.getX());
             startRow = findRow(event.getY());
-            if (!isLegalPosition(startRow, startColumn)) {
-                return;
-            }
+            if ((!isLegalPosition(startRow, startColumn))||event.isShiftDown()||startColumn<experiment.getNumberOfSamples())
+            	return;
             inDrag = true;
 
             dragColumn = startColumn;

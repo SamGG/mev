@@ -95,7 +95,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private IData data;
     private int clusterIndex = 0;
     private int[][] clusters;
-    public int[] samplesOrder;
+    private int[] samplesOrder;
     private Dimension elementSize = new Dimension(20, 5);
     private int labelIndex = -1;
     private boolean isAntiAliasing = true;
@@ -104,6 +104,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private boolean isAutoArrangeColors = true;
     private boolean isShowRects = true;
     private boolean clickedCell = false;
+    private boolean enableMoveable = true;
     private int clickedColumn = 0;
     private int clickedRow = 0;
     private boolean isDrawAnnotations = true;
@@ -138,7 +139,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	private int mouseRow = 0;
 	private int mouseColumn = 0;
 	protected JPopupMenu popup;
-	private boolean inDrag = false;
+	private boolean inColorbarDrag = false;
     private int dragRow = 0;
     private int dragColumn = 0;
     
@@ -560,6 +561,13 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public int[] getCluster() {
         return clusters[this.clusterIndex];
+    }
+    
+    /**
+     * Sets indices of current cluster.
+     */
+    public void setGenesOrder(int[] cluster) {
+    	clusters[this.clusterIndex]=cluster;
     }
     
     /**
@@ -1034,7 +1042,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             	drawClusterRectsAt(g,clickedRow,clickedColumn, Color.red);
             }
         }  
-        if (inDrag){
+        if (inColorbarDrag){
         	g.setColor(Color.blue);
     		g.drawRect(dragColumn*elementSize.width + insets.left +5-1, -1, (elementSize.width), elementSize.height*getCluster().length+1);
         	header.drawClusterHeaderRectsAt(dragColumn, Color.blue, true);
@@ -1422,7 +1430,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 
         	mouseOnMap = false;
         	header.setDrag(false, 0, 0);
-        	inDrag = false;
+        	inColorbarDrag = false;
         	repaint();
         	if (isLegalPosition(oldRow, oldColumn)) {
                 Graphics g = getGraphics();
@@ -1442,24 +1450,18 @@ public class ExperimentViewer extends JPanel implements IViewer {
             int column = findColumn(event.getX());
             int row = findRow(event.getY());
             if (!isLegalPosition(row, column)) {
-            	inDrag = false;
+            	inColorbarDrag = false;
             	header.setDrag(false, 0, 0);
                 return;
             }
-            if (!inDrag)
+            if (!inColorbarDrag)
             	return;
             dragColumn = column;
             dragRow = row;
             header.setDrag(true, dragColumn, dragRow);
         	if (column>=experiment.getNumberOfSamples()){
-        		//Graphics g = getGraphics();
-        		//g.drawRect((experiment.getNumberOfSamples())*elementSize.width + insets.left +5-1, row*elementSize.height-1, (elementSize.width)*(colorWidth)+annotationWidth +8, elementSize.height+1);
-        		//if (isCompact) return;
-        		//g.setColor(Color.blue);
-        		//g.drawRect(column*elementSize.width + insets.left +5-1, -1, (elementSize.width), elementSize.height*getCluster().length+1);
-            	//header.drawClusterHeaderRectsAt(column, Color.blue, true);
         	} else{
-        		inDrag = false;
+        		inColorbarDrag = false;
         		header.setDrag(false, 0, 0);
         	}
         }
@@ -1471,12 +1473,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
 
             startColumn = findColumn(event.getX());
             startRow = findRow(event.getY());
-            if (!isLegalPosition(startRow, startColumn)) {
-                return;
-            }
-            if (event.isShiftDown())
+            if ((!isLegalPosition(startRow, startColumn))||event.isShiftDown()||startColumn<experiment.getNumberOfSamples())
             	return;
-            inDrag = true;
+            inColorbarDrag = true;
 
             dragColumn = startColumn;
             dragRow = startRow;
@@ -1485,9 +1484,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
 
         /** Called when the mouse has been released. */
         public void mouseReleased(MouseEvent event) {
-	        if (!inDrag)
+	        if (!inColorbarDrag)
 	        	return;
-        	inDrag = false;
+        	inColorbarDrag = false;
 	        header.setDrag(false, 0,0);
 	        int endColumn = findColumn(event.getX());
 	        if (endColumn < experiment.getNumberOfSamples())
@@ -1654,6 +1653,17 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	        }
 	        popup.show(e.getComponent(), e.getX(), e.getY());
 	    }
+	}
+
+	public int[] getSamplesOrder() {
+		return samplesOrder;
+	}
+	public void setSamplesOrder(int[] samplesOrder) {
+		this.samplesOrder = samplesOrder;
+	}
+	public void setEnableMoveable(boolean enableMoveable) {
+		this.enableMoveable = enableMoveable;
+		((ExperimentHeader)this.getHeaderComponent()).setEnableMoveable(enableMoveable);
 	}
 }
 
