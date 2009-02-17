@@ -56,6 +56,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     private boolean isAntiAliasing = true;
     private boolean isCompact = false;
     public boolean isShowRects = true;
+    private boolean enableMoveable = true;
     private float maxValue = 3f;
     private float minValue = -3f;
     private float midValue = 0.0f;
@@ -759,7 +760,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
             	isSampleDrag = false;
             	return;
             }
-            if (isShift){
+            if (isShift&&enableMoveable){
         		isShiftMove=true;
             	endShiftMove = column;
             	if (startShiftMove-endShiftMove>Math.min(startShift, endShift))
@@ -770,6 +771,11 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
             }
             sampleDragColumn = column;
         	isSampleDrag = true;
+
+        	if (!enableMoveable){
+            	isShiftMove=false;
+            	isSampleDrag = false;
+        	}
             if (!isLegalPosition(row, column)) {
             	headerDrag = false;
                 return;
@@ -961,5 +967,10 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 
 	public void setSamplesOrder(int[] samplesOrder) {
 		this.samplesOrder = samplesOrder;
+	}
+
+
+	public void setEnableMoveable(boolean enableMoveable) {
+		this.enableMoveable = enableMoveable;
 	}
 }
