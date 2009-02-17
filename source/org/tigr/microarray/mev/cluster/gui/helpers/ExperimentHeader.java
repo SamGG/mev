@@ -117,7 +117,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     public ExperimentHeader(Experiment experiment, int [][] clusters, int[] samplesOrder) {
         this.experiment = experiment;
         this.clusters = clusters;
-        this.samplesOrder = samplesOrder == null ? createSamplesOrder(experiment) : samplesOrder;
+        this.setSamplesOrder(samplesOrder == null ? createSamplesOrder(experiment) : samplesOrder);
         setBackground(Color.white);
 	    Listener listener = new Listener();
 	    addMouseListener(listener);
@@ -127,7 +127,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         this.experiment = experiment;
         this.clusters = clusters;
         this.storedGeneColors = storedGeneColors;
-        this.samplesOrder = samplesOrder == null ? createSamplesOrder(experiment) : samplesOrder;
+        this.setSamplesOrder(samplesOrder == null ? createSamplesOrder(experiment) : samplesOrder);
         setBackground(Color.white);
 	    Listener listener = new Listener();
 	    addMouseListener(listener);
@@ -286,8 +286,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
      * Returns height of color bar for experiments
      */
     private int getColorBarHeight(){
-        for( int sample = 0; sample < samplesOrder.length ; sample++){
-            if(data.getExperimentColor(experiment.getSampleIndex(this.samplesOrder[sample])) != null)
+        for( int sample = 0; sample < getSamplesOrder().length ; sample++){
+            if(data.getExperimentColor(experiment.getSampleIndex(this.getSamplesOrder()[sample])) != null)
                 return COLOR_BAR_HEIGHT;
         }
         return 0;
@@ -507,7 +507,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         String name;
         g.rotate(-Math.PI/2);
         for (int sample = 0; sample < samples; sample++) {
-            name = data.getSampleName(experiment.getSampleIndex(this.samplesOrder[sample]));
+            name = data.getSampleName(experiment.getSampleIndex(this.getSamplesOrder()[sample]));
             g.drawString(name, h, descent + elementWidth*sample + elementWidth/2 + insets.left);
         }
         //write the gene cluster names sideways
@@ -547,7 +547,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         if(hasColorBar){
             int sscLength= storedSampleColors.size();
             for(int sample = 0; sample < samples; sample++){
-                Color[] colors = data.getSampleColorArray(experiment.getSampleIndex(this.samplesOrder[sample]));
+                Color[] colors = data.getSampleColorArray(experiment.getSampleIndex(this.getSamplesOrder()[sample]));
                 if (colors==null) { continue;}
                 for (int clusters=0; clusters<colors.length; clusters++){
 	            	if (colors[clusters]==null) {continue;}
@@ -565,7 +565,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	                			boolean allClear = true;
 	                			for (int j=0; j<storedSampleColors.size(); j++){
 	                				if (ColorOverlaps[j]==i){
-	    			                	if (data.isColorOverlap(experiment.getSampleIndex(this.samplesOrder[sample]), colors[clusters], (Color)storedSampleColors.get(j), false)){
+	    			                	if (data.isColorOverlap(experiment.getSampleIndex(this.getSamplesOrder()[sample]), colors[clusters], (Color)storedSampleColors.get(j), false)){
 	    			                		allClear=false;
 	    			                		break;
 	    			                		}
@@ -832,11 +832,11 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        	int numSpacesMoved=endShiftMove-startShiftMove;
 	        	int[] samplesMoved = new int[numMovedSamples];
 	        	for (int i=0; i<samplesMoved.length; i++){
-	        		samplesMoved[i]=samplesOrder[lowerShift+i];
+	        		samplesMoved[i]=getSamplesOrder()[lowerShift+i];
 	        	}
 	        	ArrayList<Integer> tempSamplesOrder = new ArrayList<Integer>();
-	        	for (int i=0; i<samplesOrder.length; i++){
-	        		tempSamplesOrder.add(samplesOrder[i]);
+	        	for (int i=0; i<getSamplesOrder().length; i++){
+	        		tempSamplesOrder.add(getSamplesOrder()[i]);
 	        	}
 	        	for (int i=0; i<numMovedSamples; i++){
 	        		tempSamplesOrder.remove(lowerShift);
@@ -844,8 +844,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        	for (int i=0; i<numMovedSamples; i++){
 	        		tempSamplesOrder.add(lowerShift+numSpacesMoved+i, samplesMoved[i]);
 	        	}
-	        	for (int i=0; i<samplesOrder.length; i++){
-	        		samplesOrder[i]=tempSamplesOrder.get(i);
+	        	for (int i=0; i<getSamplesOrder().length; i++){
+	        		getSamplesOrder()[i]=tempSamplesOrder.get(i);
 	        	}
 	        	isShiftMove = false;
 	        	isShift = false;
@@ -853,19 +853,19 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        }
 	        if (isSampleDrag){
 		        if (endColumn>startColumn){
-		        	int startSample = samplesOrder[startColumn];
+		        	int startSample = getSamplesOrder()[startColumn];
 		        	for (int i=0; i<endColumn-startColumn; i++){
-		        		samplesOrder[startColumn+i]=samplesOrder[startColumn+i+1];
+		        		getSamplesOrder()[startColumn+i]=getSamplesOrder()[startColumn+i+1];
 		        	}
-		        	samplesOrder[endColumn]=startSample;
+		        	getSamplesOrder()[endColumn]=startSample;
 		      		repaint();
 		        }
 		        if (endColumn<startColumn){
-		        	int startSample = samplesOrder[startColumn];
+		        	int startSample = getSamplesOrder()[startColumn];
 		        	for (int i=0; i<startColumn-endColumn; i++){
-		        		samplesOrder[startColumn-i]=samplesOrder[startColumn-(i+1)];
+		        		getSamplesOrder()[startColumn-i]=getSamplesOrder()[startColumn-(i+1)];
 		        	}
-		        	samplesOrder[endColumn]=startSample;
+		        	getSamplesOrder()[endColumn]=startSample;
 		      		repaint();
 		        }
 	        }
@@ -957,4 +957,9 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
         }
         return true;
     }
+
+
+	public void setSamplesOrder(int[] samplesOrder) {
+		this.samplesOrder = samplesOrder;
+	}
 }
