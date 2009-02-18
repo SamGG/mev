@@ -891,6 +891,7 @@ public class ClusterRepository extends Vector {
         ListImportDialog dialog;
         String [] annList;
         String key;
+        String oldLabel = framework.getData().getCurrentSampleLabelKey();
         int [] newIndices;
         ArrayList<Cluster> clusterArray = new ArrayList<Cluster>();
         int [] allIndices;
@@ -962,6 +963,7 @@ public class ClusterRepository extends Vector {
 	                    break;
 	                }
 	        	}
+                framework.getData().setSampleLabelKey(oldLabel);
             	return clusterArray;
             }
         }else{
@@ -1026,6 +1028,7 @@ public class ClusterRepository extends Vector {
         ListImportDialog dialog;
         String [] annList;
         String key;
+        String oldLabel = framework.getData().getCurrentSampleLabelKey();
         int [] newIndices;
         ArrayList<Cluster> clusterArray = new ArrayList<Cluster>();
         int [] allIndices;
@@ -1091,6 +1094,7 @@ public class ClusterRepository extends Vector {
 		                    
 		            }
         		}
+                framework.getData().setSampleLabelKey(oldLabel);
         	}
         }else{
             	dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, true);
@@ -1339,7 +1343,6 @@ public class ClusterRepository extends Vector {
         String [] annList;
         Vector<Integer> indicesVector= new Vector<Integer>();
         IData data = framework.getData();
-        int idIndex;
         
         if(geneIndices) {
             allIndices = experiment.getRowMappingArrayCopy();
@@ -1380,13 +1383,6 @@ public class ClusterRepository extends Vector {
             		//e.printStackTrace();  just ignore stacktrace if format is incorrect
             	}
             	
-//                if(idVector.contains(annList[i])) {
-//                    indicesVector.addElement(new Integer(allIndices[i]));
-//                    for(int j = 0; j < idVector.size(); j++) {
-//                        if(annList[i].equals((String)(idVector.elementAt(j))))
-//                            matches[j] = true;
-//                    }
-//                }
             }
             
             indices = new int[indicesVector.size()];
@@ -1405,7 +1401,6 @@ public class ClusterRepository extends Vector {
         String [] annList;
         Vector indicesVector = new Vector();
         IData data = framework.getData();
-        int idIndex;
         
         if(geneIndices) {
             allIndices = experiment.getRowMappingArrayCopy();
@@ -1439,6 +1434,7 @@ public class ClusterRepository extends Vector {
         } else {
             allIndices = experiment.getColumnIndicesCopy();
             annList = new String[experiment.getNumberOfSamples()];
+            String oldLabel = data.getCurrentSampleLabelKey();
             data.setSampleLabelKey(key);
             
             Vector idVector = new Vector(annList.length);
@@ -1465,6 +1461,8 @@ public class ClusterRepository extends Vector {
             for(int i = 0; i < indices.length; i++) {
                 indices[i] = ((Integer)(indicesVector.elementAt(i))).intValue();
             }
+
+            data.setSampleLabelKey(oldLabel);
         }
         return indices;
     }
