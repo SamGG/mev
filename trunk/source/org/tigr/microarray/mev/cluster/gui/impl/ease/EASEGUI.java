@@ -174,7 +174,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         EASEInitDialog dialog = new EASEInitDialog(
         		framework.getFrame(), 
         		repository, 
-        		framework.getData().getAllFilledAnnotationFields(), 
+        		framework.getData().getFieldNames(), 
         		easeFileLocation,
         		framework.getResourceManager(),
         		species, 
@@ -481,7 +481,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             Vector<String> ann = new Vector<String>();
             String key;
             while( (key = reader.readLine()) != null ) {
-                ann.add(key);
+                ann.add(key.trim());
             }
             String [] annot = new String [ann.size()];
             for(int i = 0; i < annot.length; i++) {
