@@ -79,7 +79,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     
     
     Vector<String> exptNamesVector;
-    protected int[] inGroupAssignments;
+    protected int[] groupAssignments;
     protected int falseNum, correctionMethod;
     protected double falseProp;
     protected IData data;
@@ -118,20 +118,21 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         
         float alpha = RPDialog.getPValue();
         upDown = RPDialog.upDownPanel.getUpDown();
+        dataDesign=RPDialog.getTestDesign();
         if (RPDialog.getTestDesign()==RPInitBox.ONE_CLASS){
 	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
-	        	inGroupAssignments=RPDialog.getClusterOneClassAssignments();
+	        	groupAssignments=RPDialog.getClusterOneClassAssignments();
 	        }
 	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
-	        	inGroupAssignments=RPDialog.getOneClassAssignments();
+	        	groupAssignments=RPDialog.getOneClassAssignments();
 	        }
         }
         if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS){
 	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
-	        	inGroupAssignments=RPDialog.getClusterTwoClassAssignments();
+	        	groupAssignments=RPDialog.getClusterTwoClassAssignments();
 	        }
 	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
-	        	inGroupAssignments=RPDialog.getTwoClassAssignments();
+	        	groupAssignments=RPDialog.getTwoClassAssignments();
 	        }
         }
         boolean usePerms = RPDialog.usePerms();
@@ -198,7 +199,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("dataDesign", String.valueOf(dataDesign));
-            data.addIntArray("group_assignments", inGroupAssignments);
+            data.addIntArray("group_assignments", groupAssignments);
             data.addParam("usePerms", String.valueOf(usePerms));
             data.addParam("numPerms", String.valueOf(numPerms));
             data.addParam("alpha", String.valueOf(alpha));
@@ -359,18 +360,18 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 
         if (RPDialog.getTestDesign()==RPInitBox.ONE_CLASS){
 	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
-	        	inGroupAssignments=RPDialog.getClusterOneClassAssignments();
+	        	groupAssignments=RPDialog.getClusterOneClassAssignments();
 	        }
 	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
-	        	inGroupAssignments=RPDialog.getOneClassAssignments();
+	        	groupAssignments=RPDialog.getOneClassAssignments();
 	        }
         }
         if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS){
 	        if (RPDialog.getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
-	        	inGroupAssignments=RPDialog.getClusterTwoClassAssignments();
+	        	groupAssignments=RPDialog.getClusterTwoClassAssignments();
 	        }
 	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
-	        	inGroupAssignments=RPDialog.getTwoClassAssignments();
+	        	groupAssignments=RPDialog.getTwoClassAssignments();
 	        }
         }
         boolean usePerms = RPDialog.usePerms();     
@@ -421,7 +422,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         
         data.addParam("distance-function", String.valueOf(function));
         //data.addIntArray("time_assignments", timeAssignments);
-        data.addIntArray("condition_assignments", inGroupAssignments);
+        data.addIntArray("condition_assignments", groupAssignments);
         data.addParam("usePerms", String.valueOf(usePerms));   
         data.addParam("numPerms", String.valueOf(numPerms));
         data.addParam("alpha", String.valueOf(alpha));
@@ -471,7 +472,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         this.experiment = experiment;
         this.data = framework.getData();
         //this.timeAssignments = algData.getIntArray("time_assignments");
-        this.inGroupAssignments = algData.getIntArray("condition_assignments");
+        this.groupAssignments = algData.getIntArray("condition_assignments");
         this.correctionMethod = algData.getParams().getInt("correction-method");
         if (correctionMethod == RPInitBox.FALSE_NUM) {
             falseNum = algData.getParams().getInt("falseNum");
@@ -817,21 +818,30 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     protected DefaultMutableTreeNode getConditionAssignmentInfo() {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Samples Excluded");
-        DefaultMutableTreeNode groups = new DefaultMutableTreeNode("Samples Included");
+        DefaultMutableTreeNode groupA;
+        if (dataDesign==RPInitBox.ONE_CLASS)
+        	groupA= new DefaultMutableTreeNode("Samples Included");
+        else
+        	groupA= new DefaultMutableTreeNode("Group A");
+        DefaultMutableTreeNode groupB = new DefaultMutableTreeNode("Group B");
         
         
-        for (int i = 0; i < inGroupAssignments.length; i++) {
-            int currentGroup = inGroupAssignments[i];
+        for (int i = 0; i < groupAssignments.length; i++) {
+            int currentGroup = groupAssignments[i];
             if (currentGroup == 0) {
                 notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+            } else if(currentGroup ==1){
+                groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
             } else {
-                groups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+            	groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
             }
         }
         
         
-        groupAssignmentInfo.add(groups);
-        
+        groupAssignmentInfo.add(groupA);
+        if (dataDesign==RPInitBox.TWO_CLASS)
+            groupAssignmentInfo.add(groupB);
+        	
         if (notInGroups.getChildCount() > 0) {
             groupAssignmentInfo.add(notInGroups);
         }

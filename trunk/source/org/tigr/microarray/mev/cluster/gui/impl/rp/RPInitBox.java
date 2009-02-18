@@ -85,15 +85,11 @@ public class RPInitBox extends AlgorithmDialog {
     boolean okPressed = false;
     boolean okReady = false;
     Vector<String> exptNames;    
-    MultiClassPanel mPanel;
-    JTabbedPane selectionPanel;
-    //PermOrFDistPanel permPanel;
+    MainPanel mPanel;
     PValuePanel pPanel;
-    UpDownPanel upDownPanel;
-    //HCLSelectionPanel hclOpsPanel;    
+    UpDownPanel upDownPanel; 
     HCLSigOnlyPanel hclOpsPanel;
     ClusterRepository repository;
-    JButton step2Button = new JButton("Continue...");
     
     /** Creates new RPInitBox */
     public RPInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
@@ -111,19 +107,11 @@ public class RPInitBox extends AlgorithmDialog {
         pane.setLayout(gridbag);
         this.okButton.setEnabled(true);
           
-        mPanel = new MultiClassPanel();
+        mPanel = new MainPanel();
 
-
-        
-        JTabbedPane consolidatedPane = new JTabbedPane();
-        //permPanel = new PermOrFDistPanel();
-        //buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
-        //gridbag.setConstraints(permPanel, constraints);
-        //consolidatedPane.add("Permutations or F-Distribution", permPanel);        
+        JTabbedPane consolidatedPane = new JTabbedPane();      
 
         pPanel = new PValuePanel();
-        //buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
-        //gridbag.setConstraints(pPanel, constraints);
         consolidatedPane.add("P-Value/False Discovery Parameters", pPanel);
         
         upDownPanel = new UpDownPanel();
@@ -131,8 +119,6 @@ public class RPInitBox extends AlgorithmDialog {
         
         
         hclOpsPanel = new HCLSigOnlyPanel();
-        //buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
-        //gridbag.setConstraints(hclOpsPanel, constraints);
         consolidatedPane.add("Hierarchical Clusters", hclOpsPanel);  
         buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
         gridbag.setConstraints(consolidatedPane, constraints);
@@ -140,7 +126,6 @@ public class RPInitBox extends AlgorithmDialog {
         
         buildConstraints(constraints, 0, 1, 1, 1, 0, 20);
         gridbag.setConstraints(hclOpsPanel, constraints);
-        //mPanel.add(hclOpsPanel, constraints);
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
         pane.add(mPanel);   
@@ -149,7 +134,6 @@ public class RPInitBox extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);  
-        //pack();
     }
 
     
@@ -193,7 +177,7 @@ public class RPInitBox extends AlgorithmDialog {
         return hclOpsPanel.drawSigTreesOnly();
     }    
     
-    class MultiClassPanel extends JPanel {
+    class MainPanel extends JPanel {
         /**
 		 * 
 		 */
@@ -208,16 +192,12 @@ public class RPInitBox extends AlgorithmDialog {
         JTabbedPane twoClassmulg;
         ClusterSelector oneClassClusterSelector;
         ClusterSelector twoClassClusterSelector;
-        //ClusterSelector clusterSelectorTime;
-        //int numTimePoints;
         float alpha;
-        //Vector exptNames;
         
-        public MultiClassPanel(/*Vector exptNames*/) {
+        public MainPanel() {
             constraints = new GridBagConstraints();
             gridbag = new GridBagLayout();
             this.setBackground(Color.white);
-            //this.exptNames = exptNames;
             this.setLayout(gridbag);
             buildConstraints(constraints, 0, 0, 1, 1, 100, 10);
             constraints.fill = GridBagConstraints.BOTH;
@@ -274,8 +254,8 @@ public class RPInitBox extends AlgorithmDialog {
                     buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
                     gridbag.setConstraints(chooseDesignPane, constraints);
-                    MultiClassPanel.this.add(chooseDesignPane);
-                    MultiClassPanel.this.validate();
+                    MainPanel.this.add(chooseDesignPane);
+                    MainPanel.this.validate();
                 
             
             } catch (NumberFormatException nfe) {
@@ -364,7 +344,6 @@ public class RPInitBox extends AlgorithmDialog {
                 
                 JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();
-                //exptNameHeaderPanel.HEIGHT = panel1.getHeight();
                 for(int i = 0; i < exptNameHeaderPanels.length; i++) {
                     exptNameHeaderPanels[i] = new JPanel();
                     exptNameHeaderPanels[i].setSize(50, panels[i].getPreferredSize().height);
@@ -420,14 +399,20 @@ public class RPInitBox extends AlgorithmDialog {
                 
                 saveButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
-                       saveAssignments();
+                    	if (numberGroups==1)
+                    		saveOneClassAssignments();
+                    	if (numberGroups==2)
+                    		saveTwoClassAssignments();
                     }
                 });
                 
                 
                 loadButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
-                    	loadAssignments();
+                    	if (numberGroups==1)
+                    		loadOneClassAssignments();
+                    	if (numberGroups==2)
+                    		loadTwoClassAssignments();
                     }
                 });
                 
@@ -461,6 +446,9 @@ public class RPInitBox extends AlgorithmDialog {
             	for (int i=0; i<oneClassPanel.exptCheckBoxes.length; i++){
             		oneClassPanel.exptCheckBoxes[i].setSelected(true);
             	}
+            	for (int i=0; i<twoClassPanel.rbArray.length; i++){
+            		twoClassPanel.rbArray[i][2].setSelected(true);
+            	}
             }
             /**
         	 * Saves the assignments to file.
@@ -470,7 +458,7 @@ public class RPInitBox extends AlgorithmDialog {
         	 * A header row is followed by sample index, sample name (primary, field index = 0),
         	 * them factor A assignment (text label) then factor B assignment (text label)
         	 */
-        	private void saveAssignments() {
+        	private void saveOneClassAssignments() {
         		
         		File file;		
         		JFileChooser fileChooser = new JFileChooser("./data");	
@@ -517,12 +505,70 @@ public class RPInitBox extends AlgorithmDialog {
         			}
         		}
         	}
-        	
+
+            /**
+     	   	 * Saves the assignments to file.
+     	   	 * 
+     	   	 */
+     	   	private void saveTwoClassAssignments() {
+     	   		
+     	   		File file;		
+     	   		JFileChooser fileChooser = new JFileChooser("./data");	
+     	   		
+     	   		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+     	   			file = fileChooser.getSelectedFile();			
+     	   			try {
+     	   				PrintWriter pw = new PrintWriter(new FileWriter(file));
+     	   				
+     	   				//comment row
+     	   				Date currDate = new Date(System.currentTimeMillis());			
+     	   				String dateString = currDate.toString();;
+     	   				String userName = System.getProperty("user.name");
+     	   				
+     	   				pw.println("# Assignment File");
+     	   				pw.println("# User: "+userName+" Save Date: "+dateString);
+     	   				pw.println("#");
+     	   				
+     	   				//save group names..?
+     	   				
+     	   				pw.print("Module:\t");
+     	   				pw.println("RP: Two-Class Unpaired");
+     	       			pw.print("Group 1"+" Label:\t");
+     	   				pw.println("1");
+     	       			pw.print("Group 2"+" Label:\t");
+     	   				pw.println("2");
+     	   				
+     	   								
+     	   				pw.println("#");
+     	   				
+     	   				pw.println("Sample Index\tSample Name\tGroup Assignment");
+     	   				
+     	   				int[] groupAssgn = getTwoClassAssignments();
+     	   				
+     	   				for(int sample = 0; sample < exptNames.size(); sample++) {
+     	   					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+     	   					pw.print(exptNames.get(sample)+"\t");
+     	   					if (groupAssgn[sample]!=3)
+     	   						pw.println((groupAssgn[sample]));
+     	   					else
+     	   						pw.println("Exclude");
+     	   					
+     	   				}
+     	       			
+     	   				pw.flush();
+     	   				pw.close();			
+     	   			} catch (FileNotFoundException fnfe) {
+     	   				fnfe.printStackTrace();
+     	   			} catch (IOException ioe) {
+     	   				ioe.printStackTrace();
+     	   			}
+     	   		}
+     	   	}
         	
         	/**
         	 * Loads file based assignments
         	 */
-        	private void loadAssignments() {
+        	private void loadOneClassAssignments() {
         		/**
         		 * consider the following verifcations and policies
         		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
@@ -655,7 +701,7 @@ public class RPInitBox extends AlgorithmDialog {
 	        					doIndex=true;
 	        				}
 	        				if (doIndex){
-	        					setStateBasedOnIndex(groupAssignments,groupNames);
+	        					setOneClassStateBasedOnIndex(groupAssignments,groupNames);
 	        					break;
 	        				}
 	        				
@@ -678,7 +724,7 @@ public class RPInitBox extends AlgorithmDialog {
 	        		}
 	        	}
         	}
-        	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+        	private void setOneClassStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
         		Object[] optionst = { "Continue", "Cancel" };
         		if (JOptionPane.showOptionDialog(null, 
 						"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
@@ -693,13 +739,183 @@ public class RPInitBox extends AlgorithmDialog {
     					exptCheckBoxes[sample].setSelected(false);
         		}
         	}
-        	
+
+        	/**
+        	 * Loads file based assignments
+        	 */
+        	private void loadTwoClassAssignments() {
+        		
+        		File file;		
+        		JFileChooser fileChooser = new JFileChooser("./data");
+        		
+        		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        		
+        			file = fileChooser.getSelectedFile();
+        			
+            		try {						
+            			//first grab the data and close the file
+            			BufferedReader br = new BufferedReader(new FileReader(file));
+            			Vector<String> data = new Vector<String>();
+            			String line;
+            			while( (line = br.readLine()) != null)
+            				data.add(line.trim());
+            			
+            			br.close();
+            				
+            			//build structures to capture the data for assingment information and for *validation
+            			
+            			//factor names
+            			Vector<String> groupNames = new Vector<String>();
+            			
+            			
+            			Vector<Integer> sampleIndices = new Vector<Integer>();
+            			Vector<String> sampleNames = new Vector<String>();
+            			Vector<String> groupAssignments = new Vector<String>();		
+            			
+            			//parse the data in to these structures
+            			String [] lineArray;
+            			//String status = "OK";
+            			for(int row = 0; row < data.size(); row++) {
+            				line = (String)(data.get(row));
+
+            				//if not a comment line, and not the header line
+            				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+            					
+            					lineArray = line.split("\t");
+            					
+            					//check what module saved the file
+            					if(lineArray[0].startsWith("Module:")) {
+            						if (!lineArray[1].equals("RP: Two-Class Unpaired")){
+            							Object[] optionst = { "Continue", "Cancel" };
+            							if (JOptionPane.showOptionDialog(null, 
+            		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+            		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+            		    						optionst, optionst[0])==0)
+            								continue;
+            							return;
+            						}
+            						continue;
+            					}
+            					
+            					//pick up group names
+            					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+            						groupNames.add(lineArray[1]);
+            						continue;
+            					}
+            						
+
+            					//non-comment line, non-header line and not a group label line
+            					
+            					try {
+            						Integer.parseInt(lineArray[0]);
+            					} catch ( NumberFormatException nfe) {
+            						//if not parsable continue
+            						continue;
+            					}
+            					
+            					sampleIndices.add(new Integer(lineArray[0]));
+            					sampleNames.add(lineArray[1]);
+            					groupAssignments.add(lineArray[2]);	
+            				}				
+            			}
+            			
+            			//we have the data parsed, now validate, assign current data
+
+
+            			if( exptNames.size() != sampleNames.size()) {
+            				System.out.println(exptNames.size()+"  "+sampleNames.size());
+            				//status = "number-of-samples-mismatch";
+            				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+            				//warn and prompt to continue but omit assignments for those not represented				
+
+            				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+            						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
+            						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+            				
+            				return;
+            			}
+            			
+            			int fileSampleIndex = 0;
+            			int groupIndex = 0;
+            			String groupName;
+            			
+            			for(int sample = 0; sample < exptNames.size(); sample++) {
+            				boolean doIndex = false;
+            				for (int i=0;i<exptNames.size(); i++){
+            					if (i==sample)
+            						continue;
+            					if (exptNames.get(i).equals(exptNames.get(sample))){
+            						doIndex=true;
+            					}
+            				}
+            				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
+            				if (fileSampleIndex==-1){
+            					doIndex=true;
+            				}
+            				if (doIndex){
+            					setTwoClassStateBasedOnIndex(groupAssignments,groupNames);
+            					break;
+            				}
+            				
+            				groupName = (String)(groupAssignments.get(fileSampleIndex));
+            				groupIndex = groupNames.indexOf(groupName);
+            				
+            				//set state
+            				try{
+    	        				if (groupIndex==0)
+    	        					rbArray[sample][0].setSelected(true);
+    	        				if (groupIndex==1)
+    	        					rbArray[sample][1].setSelected(true);
+    	        				if (groupIndex==2||groupIndex==-1)
+    	        					rbArray[sample][2].setSelected(true);
+            				}catch (Exception e){
+            					rbArray[sample][2].setSelected(true);  //set to last state... excluded
+            				}
+            			}
+            			
+            			repaint();			
+            			//need to clear assignments, clear assignment booleans in sample list and re-init
+            			//maybe a specialized inti for the sample list panel.
+            		} catch (Exception e) {
+            			e.printStackTrace();
+            			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+            		}
+            	}
+        	}
+
+        	private void setTwoClassStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames){
+        		Object[] optionst = { "Continue", "Cancel" };
+        		if (JOptionPane.showOptionDialog(null, 
+    					"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+    					"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+    					optionst, optionst[0])==1)
+    				return;
+    			
+        		for(int sample = 0; sample < exptNames.size(); sample++) {
+        			//set state
+    				try{
+        				if (groupNames.indexOf(groupAssignments.get(sample))==0)
+        					rbArray[0][sample].setSelected(true);
+        				if (groupNames.indexOf(groupAssignments.get(sample))==1)
+        					rbArray[1][sample].setSelected(true);
+        				if (groupNames.indexOf(groupAssignments.get(sample))==2||groupNames.indexOf(groupAssignments.get(sample))==-1)
+        					rbArray[2][sample].setSelected(true);
+    				}catch (Exception e){
+    					rbArray[2][sample].setSelected(true);  //set to last state... excluded
+    				}
+        		}
+        	}
+           
             
             
         }
         protected void reset(){
         	for (int i=0; i<oneClassPanel.exptCheckBoxes.length; i++){
         		oneClassPanel.exptCheckBoxes[i].setSelected(true);
+        	}
+        	
+        	for (int i=0; i<twoClassPanel.rbArray.length; i++){
+        		twoClassPanel.rbArray[i][2].setSelected(true);
         	}
         }
     }
@@ -899,19 +1115,40 @@ public class RPInitBox extends AlgorithmDialog {
                     double d = Double.parseDouble(pPanel.pValueInputField.getText());
                    
                     int[] inGroupAssignments;
-                    if (getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
-                    	inGroupAssignments=getClusterOneClassAssignments();
-                    }else{
-                    	inGroupAssignments=getOneClassAssignments();
-                    }
-                    int inNum = 0;
-                    while(true){
-                    	
-                    	if (inGroupAssignments[inNum]==1)
-                    		break;
-                    	inNum++;
-                    	if (inNum==inGroupAssignments.length){
-                    		JOptionPane.showMessageDialog(null, "No samples have been assigned to the analysis.", "Error!", JOptionPane.ERROR_MESSAGE);
+                    if (getTestDesign()==RPInitBox.ONE_CLASS){
+	                    if (getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	                    	inGroupAssignments=getClusterOneClassAssignments();
+	                    }else{
+	                    	inGroupAssignments=getOneClassAssignments();
+	                    }
+	                    int inNum = 0;
+	                    while(true){
+	                    	
+	                    	if (inGroupAssignments[inNum]==1)
+	                    		break;
+	                    	inNum++;
+	                    	if (inNum==inGroupAssignments.length){
+	                    		JOptionPane.showMessageDialog(null, "No samples have been assigned to the analysis.", "Error!", JOptionPane.ERROR_MESSAGE);
+	                    		okPressed = false;
+	                    		return;
+	                    	}
+	                    }
+                    }else if(getTestDesign()==RPInitBox.TWO_CLASS){
+	                    if (getSelectionDesign()==RPInitBox.CLUSTER_SELECTION){
+	                    	inGroupAssignments=getClusterTwoClassAssignments();
+	                    }else{
+	                    	inGroupAssignments=getTwoClassAssignments();
+	                    }
+	                    int grpA=0;
+	                    int grpB=0;
+	                    for (int i=0; i<inGroupAssignments.length; i++){
+	                    	if (inGroupAssignments[i]==1)
+	                    		grpA++;
+	                    	if (inGroupAssignments[i]==2)
+	                    		grpB++;
+	                    }    
+                    	if (grpA<2||grpB<2){
+                    		JOptionPane.showMessageDialog(null, "At least 2 samples must be assigned to each group.", "Error!", JOptionPane.ERROR_MESSAGE);
                     		okPressed = false;
                     		return;
                     	}
@@ -953,10 +1190,18 @@ public class RPInitBox extends AlgorithmDialog {
     
     public int getSelectionDesign() {
         int design = -1;
-        if (mPanel.oneClassmulg.getSelectedIndex() == 0) {
-        	design = RPInitBox.BUTTON_SELECTION;
-        } else {
-        	design = RPInitBox.CLUSTER_SELECTION;
+        if (getTestDesign()==RPInitBox.ONE_CLASS){
+	        if (mPanel.oneClassmulg.getSelectedIndex() == 0) {
+	        	design = RPInitBox.BUTTON_SELECTION;
+	        } else {
+	        	design = RPInitBox.CLUSTER_SELECTION;
+	        }
+        }else if(getTestDesign()==RPInitBox.TWO_CLASS){
+        	if (mPanel.twoClassmulg.getSelectedIndex() == 0) {
+	        	design = RPInitBox.BUTTON_SELECTION;
+	        } else {
+	        	design = RPInitBox.CLUSTER_SELECTION;
+	        }
         }
         return design;
     }
