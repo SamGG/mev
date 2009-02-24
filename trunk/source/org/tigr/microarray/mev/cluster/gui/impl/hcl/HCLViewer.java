@@ -130,7 +130,7 @@ public class HCLViewer extends JPanel implements IViewer {
      * Constructs a <code>HCLViewer</code> for specified results.
      */
     public HCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {
-        setLayout(new GridBagLayout());
+    	setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
         this.exptID = experiment.getId();
@@ -175,7 +175,7 @@ public class HCLViewer extends JPanel implements IViewer {
      * This is the XMLEncoder/Decoder constructor
      */
     public HCLViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
-        setLayout(new GridBagLayout());
+    	setLayout(new GridBagLayout());
         setBackground(Color.white);
         //this.exptID = exptID.intValue();
         this.offset = offset.intValue();        
@@ -263,7 +263,7 @@ public class HCLViewer extends JPanel implements IViewer {
      * Constructs a <code>HCLViewer</code> for specified results.
      */
     public HCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result, DefaultMutableTreeNode node) {
-        setLayout(new GridBagLayout());
+    	setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
         this.exptID = experiment.getId();
@@ -1410,48 +1410,49 @@ public class HCLViewer extends JPanel implements IViewer {
      * Rotates the selected node.
      */
     public void onRotateNode() {
+    	this.removeAll();
     	if(selectedCluster.isGeneCluster){
         	int i=genes_result.child_1_array[selectedCluster.getRoot()];
         	genes_result.child_1_array[selectedCluster.getRoot()]=genes_result.child_2_array[selectedCluster.getRoot()];
         	genes_result.child_2_array[selectedCluster.getRoot()]=i;
-            genesOrder = createGenesOrder(experiment, features, genes_result);
-            genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+//            genesOrder = createGenesOrder(experiment, features, genes_result);
+//            genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+	        this.genesOrder = createGenesOrder(experiment, features, genes_result);
+		    this.annotationBar = new HCLAnnotationBar(this.genesOrder);
+	        this.annotationBar.addMouseListener(listener);
     	}
         else{
         	int i=samples_result.child_1_array[selectedCluster.getRoot()];
         	samples_result.child_1_array[selectedCluster.getRoot()]=samples_result.child_2_array[selectedCluster.getRoot()];
         	samples_result.child_2_array[selectedCluster.getRoot()]=i;
-            samplesOrder = createSamplesOrder(samples_result);
-            sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+//            samplesOrder = createSamplesOrder(samples_result);
+//            sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
         }
-    	this.removeAll();
     	
-        this.genesOrder = createGenesOrder(experiment, features, genes_result);
-        this.annotationBar = new HCLAnnotationBar(this.genesOrder);
-        this.annotationBar.addMouseListener(listener);
         if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
-            this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+        	this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
             this.genesTree.addMouseListener(listener);
             this.genesTree.setListener(listener);
+            ((ExperimentViewer)this.expViewer).setGenesOrder(genesOrder); 
         }
         if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
-            this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+        	this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
             this.samplesOrder = createSamplesOrder(samples_result);
             if(genes_result == null)
                 this.sampleTree.setHorizontalOffset(10);
             this.sampleTree.addMouseListener(listener);
             this.sampleTree.setListener(listener);
+	        ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
+	        ((ExperimentViewer)this.expViewer).setSamplesOrder(samplesOrder); 
         }
         
-        expViewer.onDataChanged(data);
-        onSelected(framework);
-
-        ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
-        ((ExperimentViewer)this.expViewer).setSamplesOrder(samplesOrder); 
-        ((ExperimentViewer)this.expViewer).setGenesOrder(genesOrder); 
+        
         
     	addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
 
+        updateTrees();
+        expViewer.onDataChanged(data);
+        onSelected(framework);
     }
     
     private void setTreeProperties(HCLTree tree) {
