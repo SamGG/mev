@@ -1410,54 +1410,38 @@ public class HCLViewer extends JPanel implements IViewer {
      * Rotates the selected node.
      */
     public void onRotateNode() {
-    	this.removeAll();
     	if(selectedCluster.isGeneCluster){
-        	int i=genes_result.child_1_array[selectedCluster.getRoot()];
-        	genes_result.child_1_array[selectedCluster.getRoot()]=genes_result.child_2_array[selectedCluster.getRoot()];
-        	genes_result.child_2_array[selectedCluster.getRoot()]=i;
-//            genesOrder = createGenesOrder(experiment, features, genes_result);
-//            genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
-	        this.genesOrder = createGenesOrder(experiment, features, genes_result);
-		    this.annotationBar = new HCLAnnotationBar(this.genesOrder);
-	        this.annotationBar.addMouseListener(listener);
+        	int i=genesTree.treeData.child_1_array[selectedCluster.getRoot()];
+        	genesTree.treeData.child_1_array[selectedCluster.getRoot()]=genesTree.treeData.child_2_array[selectedCluster.getRoot()];
+        	genesTree.treeData.child_2_array[selectedCluster.getRoot()]=i;
+        	genes_result=genesTree.treeData;
+        	genesTree.refreshPositions();
     	}
         else{
-        	int i=samples_result.child_1_array[selectedCluster.getRoot()];
-        	samples_result.child_1_array[selectedCluster.getRoot()]=samples_result.child_2_array[selectedCluster.getRoot()];
-        	samples_result.child_2_array[selectedCluster.getRoot()]=i;
-//            samplesOrder = createSamplesOrder(samples_result);
-//            sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+        	int i=sampleTree.treeData.child_1_array[selectedCluster.getRoot()];
+        	sampleTree.treeData.child_1_array[selectedCluster.getRoot()]=sampleTree.treeData.child_2_array[selectedCluster.getRoot()];
+        	sampleTree.treeData.child_2_array[selectedCluster.getRoot()]=i;
+        	samples_result=sampleTree.treeData;
+        	sampleTree.refreshPositions();
         }
     	
-        if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
-        	this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
-            this.genesTree.addMouseListener(listener);
-            this.genesTree.setListener(listener);
+        if (genesTree!= null && experiment.getNumberOfGenes() > 1 && genesTree.treeData.node_order.length > 1) {
+	        this.genesOrder = createGenesOrder(experiment, features, genesTree.treeData);
             ((ExperimentViewer)this.expViewer).setGenesOrder(genesOrder); 
         }
-        if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
-        	this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
-            this.samplesOrder = createSamplesOrder(samples_result);
-            if(genes_result == null)
-                this.sampleTree.setHorizontalOffset(10);
-            this.sampleTree.addMouseListener(listener);
-            this.sampleTree.setListener(listener);
+        if (sampleTree!= null && experiment.getNumberOfSamples() > 1 && sampleTree.treeData.node_order.length > 1) {
+            this.samplesOrder = createSamplesOrder(sampleTree.treeData);
 	        ((ExperimentHeader)((ExperimentViewer)this.expViewer).getHeaderComponent()).setSamplesOrder(samplesOrder);
 	        ((ExperimentViewer)this.expViewer).setSamplesOrder(samplesOrder); 
         }
         
-        
-        
-    	addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
-
-        updateTrees();
         expViewer.onDataChanged(data);
         onSelected(framework);
     }
     
     private void setTreeProperties(HCLTree tree) {
         Frame frame = JOptionPane.getFrameForComponent(this);
-        HCLConfigDialog dialog = new HCLConfigDialog(frame, this, tree.getZeroThreshold(), tree.getMinDistance(), tree.getMaxDistance(), tree.getMinNodeDistance(), tree.getMaxNodeDistance());
+        HCLConfigDialog dialog = new HCLConfigDialog(frame, this, tree.getZeroThreshold(), tree.getMinDistance(), tree.getMaxDistance(), tree.getMinNodeDistance(), tree.getMaxNodeDistance(), tree);
         dialog.setTree(tree);
         if (dialog.showModal() == JOptionPane.OK_OPTION) {
             tree.setProperties(dialog.getZeroThreshold(), dialog.getMinDistance(), dialog.getMaxDistance());
