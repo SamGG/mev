@@ -265,7 +265,7 @@ public class PTMInitDialog extends AlgorithmDialog {
         
         constraints.anchor = GridBagConstraints.CENTER;        
         gridbag.setConstraints(drawTreesPane, constraints);        
-        buildConstraints(constraints, 1, 2, 1, 1, 5, 0);        
+        buildConstraints(constraints, 1, 2, 1, 1, 80, 0);        
         gridbag.setConstraints(drawTreesPane, constraints);        
         pane.add(drawTreesPane);        
         addContent(pane);        
@@ -1112,7 +1112,8 @@ public class PTMInitDialog extends AlgorithmDialog {
                                 
             });            
                         
-            threshInputField = new JTextField("", 7);            
+            threshInputField = new JTextField("", 7);     
+            threshInputField.setMinimumSize(new Dimension(100,20));
             threshInputField.addActionListener(new ActionListener(){                
                 public void actionPerformed(ActionEvent evt) {                    
                                         
@@ -1446,7 +1447,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     String s = thresh.threshInputField.getText();                    
                     double r = Double.parseDouble(s);                    
                     if ((r > 1)||(r < 0)) {                        
-                        JOptionPane.showMessageDialog(null, "Threshold R value must be between 0 and 1 (inclusive)");                        
+                        JOptionPane.showMessageDialog(null, "P-Value threshold R value must be between 0 and 1 (inclusive)");                        
                         thresh.threshInputField.selectAll();                        
                         thresh.threshInputField.requestFocus();                        
                     }                    
@@ -1457,7 +1458,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                     }                    
                 } catch (Exception exc) {                    
                     //  exc.printStackTrace();                    
-                    JOptionPane.showMessageDialog(null, "Input Format Error: Requires value between 0 and 1 (inclusive)");                    
+                    JOptionPane.showMessageDialog(null, "P-Value Input Format Error: Requires value between 0 and 1 (inclusive)");                    
                     thresh.threshInputField.selectAll();                    
                     thresh.threshInputField.requestFocus();                    
                 }                
