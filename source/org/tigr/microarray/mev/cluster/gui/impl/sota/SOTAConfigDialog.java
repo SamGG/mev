@@ -70,10 +70,13 @@ public class SOTAConfigDialog extends AlgorithmDialog {
         String z = String.valueOf(zeroThreshold);
         z = z.substring(0, Math.min(5, z.length()));
         zeroTextField = new JTextField(z, 4);
+        zeroTextField.setMinimumSize(new Dimension(100,20));
         parameters2.add(zeroTextField, BorderLayout.EAST);
         minTextField = new JTextField(String.valueOf(minPixelDistance), 4);
+        minTextField.setMinimumSize(new Dimension(100,20));
         parameters2.add(minTextField, BorderLayout.EAST);
         maxTextField = new JTextField(String.valueOf(maxPixelDistance), 4);
+        maxTextField.setMinimumSize(new Dimension(100,20));
         parameters2.add(maxTextField, BorderLayout.EAST);
         
         JButton button1 = new JButton("OK");

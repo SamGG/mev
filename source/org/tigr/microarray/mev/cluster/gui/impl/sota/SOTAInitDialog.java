@@ -146,20 +146,27 @@ public class SOTAInitDialog extends AlgorithmDialog {
         maxCyclesLabel = new javax.swing.JLabel();
         maxDivLabel = new javax.swing.JLabel();
         maxTreeDiv = new javax.swing.JTextField();
+        maxTreeDiv.setMinimumSize(new Dimension(100,20));
         stopEpochCriteria = new javax.swing.JTextField();
+        stopEpochCriteria.setMinimumSize(new Dimension(100,20));
         epochImpLabel = new javax.swing.JLabel();
         maxCyclesText = new javax.swing.JTextField();
+        maxCyclesText.setMinimumSize(new Dimension(100,20));
         runMaxCycles = new javax.swing.JCheckBox();
         maxEpPerCycleText = new javax.swing.JTextField();
+        maxEpPerCycleText.setMinimumSize(new Dimension(100,20));
         jLabel52 = new javax.swing.JLabel();
         runIterative = new javax.swing.JCheckBox();
         migCritPanel = new javax.swing.JPanel();
         jLabel57 = new javax.swing.JLabel();
         migFactor_w = new javax.swing.JTextField();
+        migFactor_w.setMinimumSize(new Dimension(100,20));
         jLabel58 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
         migFactor_s = new javax.swing.JTextField();
+        migFactor_s.setMinimumSize(new Dimension(100,20));
         migFactor_p = new javax.swing.JTextField();
+        migFactor_p.setMinimumSize(new Dimension(100,20));
         levelChoice = new java.awt.Choice();
         for(int i = 5; i >= 0; i--){
             this.levelChoice.addItem(String.valueOf(i));
@@ -172,6 +179,7 @@ public class SOTAInitDialog extends AlgorithmDialog {
         useClusterVariance = new javax.swing.JRadioButton();
         pValueLabel = new javax.swing.JLabel();
         pValue = new javax.swing.JTextField();
+        pValue.setMinimumSize(new Dimension(20,20));
         hclOpsPanel = new HCLSelectionPanel();
         
         
