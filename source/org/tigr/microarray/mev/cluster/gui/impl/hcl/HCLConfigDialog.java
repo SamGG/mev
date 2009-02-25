@@ -53,6 +53,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
     private JTextField minTextField;
     private JTextField maxTextField;
     private JTextField numTerminalsField;
+    private JCheckBox armLengthBox;
     
     private float zThr;
     private int minPixDist;
@@ -75,7 +76,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
     /**
      * Constructs the dialog.
      */
-    public HCLConfigDialog(Frame parent, HCLViewer viewer, float zeroThreshold, int minPixelDistance, int maxPixelDistance, float minDist, float maxDist) {
+    public HCLConfigDialog(Frame parent, HCLViewer viewer, float zeroThreshold, int minPixelDistance, int maxPixelDistance, float minDist, float maxDist, HCLTree tree) {
         super(parent, "Tree Configuration", true);
         this.viewer = viewer;
         zThr = zeroThreshold;
@@ -134,12 +135,17 @@ public class HCLConfigDialog extends AlgorithmDialog {
         
         treeDimPanel.add(new JLabel("Minimum pixel height"), new GridBagConstraints(0,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         treeDimPanel.add(new JLabel("Maximum pixel height"), new GridBagConstraints(0,1,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+        treeDimPanel.add(new JLabel("Use jagged tree structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         
         minTextField = new JTextField(String.valueOf(minPixelDistance), 4);
         treeDimPanel.add(minTextField, new GridBagConstraints(1,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         maxTextField = new JTextField(String.valueOf(maxPixelDistance), 4);
         treeDimPanel.add(maxTextField, new GridBagConstraints(1,1,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-        applyButton = new JButton("Apply Dimensions");
+        armLengthBox = new JCheckBox();
+        armLengthBox.setBackground(Color.white);
+        armLengthBox.setSelected(tree.actualArms);
+        treeDimPanel.add(armLengthBox, new GridBagConstraints(1,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        applyButton = new JButton("Apply");
         applyButton.setActionCommand("apply-tree-dimensions-command");
         applyButton.setFocusPainted(false);
         applyButton.setMargin(new Insets(5,15,5,15));
@@ -244,6 +250,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
                     minPixDist = Integer.parseInt(minTextField.getText());
                     maxPixDist = Integer.parseInt(maxTextField.getText());
                     tree.setPixelHeightLimits(minPixDist, maxPixDist);
+                    tree.actualArms = armLengthBox.isSelected();
                     viewer.revalidateViewer();
                     viewer.repaint();
                 } catch (NumberFormatException e1) {
@@ -326,8 +333,8 @@ public class HCLConfigDialog extends AlgorithmDialog {
     }
     
     public static void main(String [] args){
-           //   HCLConfigDialog_1 d = new HCLConfigDialog_1(new Frame(), 2, 3, 4, 0, 1);
-           //   d.showModal();
-           //    System.exit(0);
+//              HCLConfigDialog d = new HCLConfigDialog(new Frame(), 2, 3, 4, 0, 1);
+//              d.showModal();
+               System.exit(0);
     }
 }

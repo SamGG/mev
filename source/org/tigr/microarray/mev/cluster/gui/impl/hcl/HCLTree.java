@@ -66,7 +66,7 @@ public class HCLTree extends JPanel {
     protected Color lineColor = new Color(0, 0, 128);
     protected Color belowThrColor = Color.lightGray;
     protected Color selectedLineColor = Color.magenta;
-    
+    protected boolean actualArms = false;
     // initial data
     protected IData data;
     // a result data
@@ -75,6 +75,7 @@ public class HCLTree extends JPanel {
     protected float minHeight;
     protected int stepSize;
     protected int[] pHeights;
+    int[] nodeRaised;
     protected float[] positions;
     protected boolean[] selected;
     protected Color[] nodesColors;
@@ -457,7 +458,9 @@ public class HCLTree extends JPanel {
         //return 1.0f;
         return this.max_pixels/this.maxHeight;
     }
-    
+    public void refreshPositions(){
+    	positions = getPositions(treeData.node_order, treeData.child_1_array, treeData.child_2_array);
+    }
     /**
      * Calculates tree node positions.
      */
@@ -539,7 +542,20 @@ public class HCLTree extends JPanel {
         return pHeights;
     }
     */
-    
+    private int getNodeRaisedHeight(int index, int max){
+    	int node = treeData.node_order[index];
+    	int heightChange = max-pHeights[node];
+    	int sum=0;
+    	while(parentNodes[node]!=0){
+    		int pn=parentNodes[node];
+    		sum=sum+(Math.min(pHeights[pn]-pHeights[treeData.child_1_array[pn]],pHeights[pn]-pHeights[treeData.child_2_array[pn]]));
+    		node =parentNodes[node];
+    	}
+    	heightChange = heightChange-sum;
+    	return heightChange;
+    }
+  
+  
     /**
      * Paints the tree into specified graphics.
      */
@@ -569,15 +585,27 @@ public class HCLTree extends JPanel {
         int child_1, child_2;
         int child_1_x1, child_1_x2, child_1_y;
         int child_2_x1, child_2_x2, child_2_y;
+        
+        nodeRaised = new int[this.treeData.node_order.length-1];
+        if (actualArms){
+	        for(int i=0; i<treeData.node_order.length-1; i++){
+		    	try{
+		    		nodeRaised[i]=getNodeRaisedHeight(i,max_node_height);
+		    	}catch(Exception e){
+		    		e.printStackTrace();
+		    	}
+	        }
+        }
+        
         for (int i=0; i<this.treeData.node_order.length-1; i++) {
             node = this.treeData.node_order[i];
             child_1 = this.treeData.child_1_array[node];
             child_2 = this.treeData.child_2_array[node];
-            child_1_x1 = (max_node_height-this.pHeights[node])*sign;
-            child_1_x2 = (max_node_height-this.pHeights[child_1])*sign;
+            child_1_x1 = (max_node_height-this.pHeights[node]-this.nodeRaised[i])*sign;
+            child_1_x2 = (max_node_height-this.pHeights[child_1]-this.nodeRaised[i])*sign;
             child_1_y  = (int)(this.positions[child_1]*this.stepSize)+this.stepSize/2;
-            child_2_x1 = (max_node_height-this.pHeights[node])*sign;
-            child_2_x2 = (max_node_height-this.pHeights[child_2])*sign;
+            child_2_x1 = (max_node_height-this.pHeights[node]-this.nodeRaised[i])*sign;
+            child_2_x2 = (max_node_height-this.pHeights[child_2]-this.nodeRaised[i])*sign;
             child_2_y  = (int)(this.positions[child_2]*this.stepSize)+this.stepSize/2;
             
             
@@ -621,58 +649,35 @@ public class HCLTree extends JPanel {
                         this.terminalNodes[child_2] = false;
                     }
                 }
-                
             }
             
             if (this.selected[node])
                 g.setColor(selectedLineColor);
             
-            /*
-            if (this.selected[node]) {
-                g.setColor(selectedLineColor);
-            } else {
-             
-                if (this.nodesColors[node] == null){
-                    if(this.treeData.height[node] >= zero_threshold) {
-                        g.setColor(lineColor);
-                        this.terminalNodes[node] = false;
-                        if(this.pHeights[child_1] == 0)
-                            this.terminalNodes[child_1] = true;
-                        if(this.pHeights[child_2] == 0)
-                            this.terminalNodes[child_2] = true;
-                    } else{
-                        g.setColor(belowThrColor);
-                        this.terminalNodes[node] = false;
-             
-                        if(this.treeData.height[parentNodes[node]] >= zero_threshold){
-                            drawWedge(g, node, child_1_x1+xOrigin, child_2_x1+xOrigin, child_1_y, child_2_y);
-                            this.terminalNodes[node] = true;
-                            this.terminalNodes[child_1] = false;
-                            this.terminalNodes[child_2] = false;
-                        }
-                    }
-                } else {
-                    g.setColor(this.nodesColors[node]);
-                }
-            }
-             
-             */
-            
-            
-            
-            
-            
-            
-            
-            if(this.orientation == HORIZONTAL){
-                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_1_x2 + xOrigin, child_1_y);
-                g.drawLine(child_2_x1 + xOrigin, child_2_y, child_2_x2 + xOrigin, child_2_y);
-                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);
-            }
-            else{
-                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_1_x2, child_1_y+ horizontalOffset);
-                g.drawLine(child_2_x1, child_2_y + horizontalOffset, child_2_x2, child_2_y+ horizontalOffset);
-                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y+ horizontalOffset);
+            if (actualArms){
+	            if(this.orientation == HORIZONTAL){
+		            int maxx1=Math.min(child_1_x2, child_2_x2);
+	                g.drawLine(child_1_x1 + xOrigin, child_1_y, maxx1 + xOrigin, child_1_y);
+	                g.drawLine(child_2_x1 + xOrigin, child_2_y, maxx1 + xOrigin, child_2_y);
+	                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);
+	            }
+	            else{
+		            int maxx1=Math.max(child_1_x2, child_2_x2);
+	                g.drawLine(child_1_x1, child_1_y + horizontalOffset, maxx1, child_1_y+ horizontalOffset);
+	                g.drawLine(child_2_x1, child_2_y + horizontalOffset, maxx1, child_2_y+ horizontalOffset);
+	                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y+ horizontalOffset);
+	            }
+            }else{
+            	if(this.orientation == HORIZONTAL){
+	                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_1_x2 + xOrigin, child_1_y);
+	                g.drawLine(child_2_x1 + xOrigin, child_2_y, child_2_x2 + xOrigin, child_2_y);
+	                g.drawLine(child_1_x1 + xOrigin, child_1_y, child_2_x1 + xOrigin, child_2_y);
+	            }
+	            else{
+	                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_1_x2, child_1_y+ horizontalOffset);
+	                g.drawLine(child_2_x1, child_2_y + horizontalOffset, child_2_x2, child_2_y+ horizontalOffset);
+	                g.drawLine(child_1_x1, child_1_y + horizontalOffset, child_2_x1, child_2_y+ horizontalOffset);
+	            }
             }
         }
     }
@@ -852,9 +857,9 @@ public class HCLTree extends JPanel {
             node = this.treeData.node_order[i];
             child_1 = this.treeData.child_1_array[node];
             child_2 = this.treeData.child_2_array[node];
-            child_1_x1 = (max_node_height-this.pHeights[node]);
+            child_1_x1 = (max_node_height-this.pHeights[node]-this.nodeRaised[i]);
             child_1_y  = (int)(this.positions[child_1]*this.stepSize)+this.stepSize/2 + horizontalOffset;
-            child_2_x1 = (max_node_height-this.pHeights[node]);
+            child_2_x1 = (max_node_height-this.pHeights[node]-this.nodeRaised[i]);
             child_2_y  = (int)(this.positions[child_2]*this.stepSize)+this.stepSize/2 + horizontalOffset;
             switch (this.orientation) {
                 case HORIZONTAL:
