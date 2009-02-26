@@ -1239,14 +1239,11 @@ public class MultipleArrayData implements IData {
       
         IAnnotation annot = element.getElementAnnotation();
         
-        //ignores AIOB error if annotation field is blank
-        try{
+        
         if(isAnnotationLoaded())
-        	if(annot.getAttribute(attr) != null && !annot.getAttribute(attr)[0].equalsIgnoreCase("NA"))
+        	if(annot.getAttribute(attr) != null &&annot.getAttribute(attr).length>0&& !annot.getAttribute(attr)[0].equalsIgnoreCase("NA") )
         		return(annot.getAttribute(attr));
-        }catch (Exception e){
-        	
-        }
+       
 
         //EH added accessor for standard annotation fields
         String[] allFields = getFieldNames();
