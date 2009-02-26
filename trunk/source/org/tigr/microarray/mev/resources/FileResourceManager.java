@@ -251,6 +251,8 @@ public class FileResourceManager implements IResourceManager {
 			} catch (IOException ioe) {
 				//connection failed, 
 				connected = false;
+			} catch (NullPointerException npe) {
+				connected = false;
 			}
 			if(connected) {
 				Vector<ISupportFileDefinition> filesForThisHost = hostsHash.get(thishost);
