@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -47,11 +48,9 @@ public class GSEAGUI implements IClusterGUI {
 	    int max_columns;
 	    private int[][]geneset_clusters;
 	    
-	   
-
-	
+	 	
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
-		
+	
 		this.experiment = framework.getData().getExperiment();
         this.idata = framework.getData();
         FloatMatrix matrix = experiment.getMatrix();
@@ -211,8 +210,6 @@ public class GSEAGUI implements IClusterGUI {
 			}*/
 			
 			
-			
-			
 			resultNode = createResultNode(result, idata, null);//--commented for Testing
 				
 		
@@ -276,11 +273,8 @@ public class GSEAGUI implements IClusterGUI {
 	
    private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result, String[][]pValues){
 	   
-	
-	   PValuesGraphViewer pvg=new PValuesGraphViewer(0, 500, 0, 500, 0, pValues.length, 0, 1, 100, 100, 100, 100, "Gene set p-Values Plot", "Gene set", "p-Values", pValues);
+	   PValueGraphViewer pvg=new PValueGraphViewer(0, pValues.length, 0,1, "P Value graph","Genesets", "p-Values", pValues);
 	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
-	   
-	  // PValueViewer pvv=new PValueViewer(this.experiment, pValues);
 	   
    }
    
