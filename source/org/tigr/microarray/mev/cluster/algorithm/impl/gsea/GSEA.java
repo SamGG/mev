@@ -11,8 +11,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -42,6 +47,8 @@ public class GSEA extends AbstractAlgorithm {
 	private int[] factorAAssignments, factorBAssignments, factorCAssignments;
 	private int[][] allFactorAssignments;
 	private boolean stop=false;
+	private LinkedHashMap overEnrichedPVals=new LinkedHashMap();
+	private LinkedHashMap underEnrichedPVals=new LinkedHashMap();
 
 
 	/**
@@ -88,16 +95,10 @@ public class GSEA extends AbstractAlgorithm {
 
 				//Extract the portion that contains the main factor coefVars
 				FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
-				String[][]resultMatrix=gsealmPerm(num_perms, data, true);//--commented for testing
+				gsealmPerm(num_perms, data, true);
 
-				data.addObjectMatrix("geneset-pvals", resultMatrix);//commented for testing
-
-
-
-				//Add the result from gsealmPerm (string array[][]) to algorithmdata here. will be useful while creating viewer in GSEAGUI
-				//addObjectMatrix("geneset-pvals");
-
-
+				
+				
 			}//End if ZERO FACTOR if loop
 
 			else{
@@ -448,7 +449,7 @@ public class GSEA extends AbstractAlgorithm {
 
 
 	/**
-	 * Sweep function is modeled afer the R function "sweep"
+	 * Sweep function is modeled afTer the R function "sweep"
 	 * Unlike R, this implementation currently allows sweep only across rows. This can be changed in the future if 
 	 * necessary.
 	 * 
@@ -619,7 +620,7 @@ public class GSEA extends AbstractAlgorithm {
 	 * 
 	 * 
 	 */
-	public String[][] gsealmPerm(int num_perms, AlgorithmData adata, boolean removeNA )throws Exception{
+	public void gsealmPerm(int num_perms, AlgorithmData adata, boolean removeNA )throws Exception{
 
 		FloatMatrix observedStats;
 		FloatMatrix perms = null;
@@ -816,10 +817,10 @@ public class GSEA extends AbstractAlgorithm {
 
 		Vector geneSetNames=(Vector)adata.getVector("gene-set-names");
 
-		String[][]resultMatrix=pValFromPermMat(observedStats, perms, geneSetNames);
+		pValFromPermMat(observedStats, perms, geneSetNames, adata);
 		
 			
-		return resultMatrix;
+		
 	}
 
 	/**
@@ -833,7 +834,7 @@ public class GSEA extends AbstractAlgorithm {
 	 * @param permMat
 	 * @return String[][] will be used to generate a JTable
 	 */	
-	public String[][]pValFromPermMat(FloatMatrix obsStats, FloatMatrix permMat, Vector geneSetNames){
+	public void pValFromPermMat(FloatMatrix obsStats, FloatMatrix permMat, Vector geneSetNames, AlgorithmData data){
 
 
 
@@ -844,7 +845,8 @@ public class GSEA extends AbstractAlgorithm {
 		//resultMatrix will have rows equal to the number of rows in permMat; which is equal to number of gene sets
 		//The number of columns will be equal to 3
 		String[][] resultMatrix=new String[permMat.getRowDimension()][3];
-
+		//For testing
+		HashMap tempHash=new HashMap();
 
 		int nCols=permMat.getColumnDimension();
 		//pVals is a FloatMatrix with rows equal to that of permMat and cols =2. This matrix will be 
@@ -903,10 +905,10 @@ public class GSEA extends AbstractAlgorithm {
 
 
 		//Copying pVals into a string array and assigning the gene set names
-		for(int i=0;i<permMat.getRowDimension(); i++){
+		
+		/*for(int i=0;i<permMat.getRowDimension(); i++){
 			resultMatrix[i][0]=(String)geneSetNames.get(i);
-
-		}
+			}
 
 
 
@@ -914,15 +916,68 @@ public class GSEA extends AbstractAlgorithm {
 		for(int row=0; row<lower_rowSums.length; row++){
 			resultMatrix[row][1]=String.valueOf(lower_rowSums[row]/nCols);
 			resultMatrix[row][2]=String.valueOf(upper_rowSums[row]/nCols);
-		}
+			
+		}*///---original code, commented by Sarita
 
+		//Add the over enriched p values to the HashMap 
+	
+		for(int row=0; row<permMat.getRowDimension(); row++){
+			tempHash.put(geneSetNames.get(row), (upper_rowSums[row]/nCols));
+		}
+		
+		//Sort the p Values in ascending order
+		this.overEnrichedPVals=this.sortHashMapByValuesD(tempHash);
+		tempHash.clear();
+		tempHash=new HashMap();
+		
+		//Add the under enriched p values to the HashMap 
+		
+		for(int row=0; row<permMat.getRowDimension(); row++){
+			tempHash.put(geneSetNames.get(row), (lower_rowSums[row]/nCols));
+		}
+		
+		//Sort the p Values in ascending order
+		this.underEnrichedPVals=this.sortHashMapByValuesD(tempHash);
+		tempHash.clear();
+	
+		data.addMappings("over-enriched", overEnrichedPVals);
+		data.addMappings("under-enriched", underEnrichedPVals);
 		
 		
 		
-		
-		return resultMatrix;
 	}
 
+	public LinkedHashMap sortHashMapByValuesD(HashMap passedMap){
+	    List mapKeys = new ArrayList(passedMap.keySet());
+	    List mapValues = new ArrayList(passedMap.values());
+	    Collections.sort(mapValues);
+	    Collections.sort(mapKeys);
+	        
+	    LinkedHashMap sortedMap = 
+	        new LinkedHashMap();
+	    
+	    Iterator valueIt = mapValues.iterator();
+	    while (valueIt.hasNext()) {
+	        Object val = valueIt.next();
+	        Iterator keyIt = mapKeys.iterator();
+	        
+	        while (keyIt.hasNext()) {
+	            Object key = keyIt.next();
+	            String comp1 = passedMap.get(key).toString();
+	            String comp2 = val.toString();
+	            
+	            if (comp1.equals(comp2)){
+	                passedMap.remove(key);
+	                mapKeys.remove(key);
+	                sortedMap.put((String)key, (Float)val);
+	                break;
+	            }
+
+	        }
+
+	    }
+	    return sortedMap;
+	}
 
 
 

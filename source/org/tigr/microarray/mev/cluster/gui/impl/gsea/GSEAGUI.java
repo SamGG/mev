@@ -3,6 +3,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -263,7 +264,7 @@ public class GSEAGUI implements IClusterGUI {
 		
 		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
-			addPValueGraphImage(node, result, (String[][])result.getObjectMatrix("geneset-pvals"));
+		//	addPValueGraphImage(node, result, (String[][])result.getObjectMatrix("geneset-pvals"));--commented for testing
 			addTableViews(node, result, experiment, idata);
 			addExpressionImages(node, result, this.experiment);
 		
@@ -474,7 +475,27 @@ public class GSEAGUI implements IClusterGUI {
    private void addTableViews(DefaultMutableTreeNode root, AlgorithmData result, GSEAExperiment experiment, IData data) {
    	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
    	GSEATableViewer tabViewer;
-   	String[][]pVals =(String[][]) result.getObjectMatrix("geneset-pvals");
+   	
+   	LinkedHashMap overenriched=result.getMappings("over-enriched");
+   	LinkedHashMap underenriched=result.getMappings("under-enriched");
+   	
+	String[][]pVals =new String[overenriched.size()][3];
+   	
+   	//Generate a 2 d string array from the over and under enriched linked hashmaps
+	Object[]gene_sets=overenriched.keySet().toArray();
+   	
+	for(int i=0; i<overenriched.size(); i++){
+		pVals[i][0]=(String)gene_sets[i];
+		pVals[i][1]=((Float)underenriched.get(gene_sets[i])).toString();
+		pVals[i][2]=((Float)overenriched.get(gene_sets[i])).toString();
+   	}
+   	
+   	
+   	
+   	
+   	
+   	
+   
    	String[]headernames={"Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
    	
    	
