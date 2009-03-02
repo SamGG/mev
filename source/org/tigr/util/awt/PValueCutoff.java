@@ -47,15 +47,13 @@ public class PValueCutoff extends ActionInfoDialog{
 			    
 			    optionsButtonGroup = new ButtonGroup();
 			    
-			    option1Radio=new JRadioButton("Less than cutoff", true);
+			    option1Radio=new JRadioButton("Less than equal to cutoff", true);
 			    option1Radio.setName("option1");
 			    optionsButtonGroup.add(option1Radio);
-			    option2Radio=new JRadioButton("Greater than cutoff");
+			    option2Radio=new JRadioButton("Greater than equal to cutoff");
 			    option2Radio.setName("option2");
 			    optionsButtonGroup.add(option2Radio);
-			    option3Radio=new JRadioButton("Equal to cutoff");
-			    option3Radio.setName("option3");
-			    optionsButtonGroup.add(option3Radio);
+			    
 			    
 			    
 			    okButton = new JButton("OK");
@@ -70,7 +68,6 @@ public class PValueCutoff extends ActionInfoDialog{
 			    gba.add(contentPane, selectOptionLabel, 1, 1, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			    gba.add(contentPane, option1Radio, 2, 1, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			    gba.add(contentPane, option2Radio, 3, 1, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			    gba.add(contentPane, option3Radio, 4, 1, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			    gba.add(contentPane, cancelButton, 0, 3, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			     gba.add(contentPane, okButton, 2, 3, 1, 1, 1, 1, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			    
@@ -99,8 +96,6 @@ public class PValueCutoff extends ActionInfoDialog{
 					key=option1Radio.getName();
 				}else if(event.getSource() == option2Radio){
 					key=option2Radio.getName();
-				}else if(event.getSource()== option3Radio){
-					key=option3Radio.getName();
 				}else if(event.getSource()== pValueTextField){
 					pvalue=Double.parseDouble(pValueTextField.getText());
 				}else if (event.getSource() == okButton) {
