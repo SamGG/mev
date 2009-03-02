@@ -156,6 +156,12 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	        item.setActionCommand("Reference Lines");
 	        item.addActionListener(eventListener);
 	        popup.add(item);
+	        popup.addSeparator();
+	        item = new JMenuItem("Set p-value cutoff");
+	        item.setActionCommand("p-value cutoff");
+	        item.addActionListener(eventListener);
+	        popup.add(item);
+	        
 	    }
 	   
 
@@ -841,6 +847,9 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	            } else if (event.getActionCommand() == "Reference Lines") {
 	                referenceLinesOn = (! referenceLinesOn);
 	                repaint();
+	            }else if (event.getActionCommand()=="p-value cutoff"){
+	            	
+	            	repaint();
 	            }
 	        }
 	        public void keyPressed(KeyEvent event) {;}
