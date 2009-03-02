@@ -848,6 +848,10 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	                referenceLinesOn = (! referenceLinesOn);
 	                repaint();
 	            }else if (event.getActionCommand()=="p-value cutoff"){
+	            	//1. Bring up a msg box like i do when GSEA is getting done. Show the steps
+	            	//2. Need to fetch the gene sets which pass the cutoff 
+	            	//3. Redraw x and y axis. The boundaries of x axis would have changed. 0-Number of gene sets passing
+	            	//the cutoff.
 	            	
 	            	repaint();
 	            }
