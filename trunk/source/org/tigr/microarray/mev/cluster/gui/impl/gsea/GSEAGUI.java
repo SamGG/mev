@@ -272,10 +272,10 @@ public class GSEAGUI implements IClusterGUI {
 		return node;
 	}
 	
-   private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result, String[][]pValues){
+   private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result){
 	   
-	   PValueGraphViewer pvg=new PValueGraphViewer(0, pValues.length, 0,1, "P Value graph","Genesets", "p-Values", pValues);
-	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
+	 //  PValueGraphViewer pvg=new PValueGraphViewer(0, , 0,1, "P Value graph","Genesets", "p-Values", pValues);
+	   //root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
 	   
    }
    

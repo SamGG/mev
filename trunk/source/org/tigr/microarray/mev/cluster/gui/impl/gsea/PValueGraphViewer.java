@@ -25,6 +25,7 @@ import java.beans.Expression;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -51,6 +52,7 @@ import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.BoundariesDialog;
 import org.tigr.util.awt.Drawable;
 import org.tigr.util.awt.GBA;
+import org.tigr.util.awt.PValueCutoff;
 
 public class PValueGraphViewer extends JPanel implements IViewer {
 	private GraphPoint gp;
@@ -70,7 +72,9 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	// The range of possible p values. The graph would be centered at 0.05
 	private double graphstarty;
 	private double graphstopy;
-    private String[][]pVals;
+    private LinkedHashMap pValueMapping;
+    private Object[] pValueArray;
+    private Object[]geneSetNames;
     
     
    //Variables for functions from PValueGraphViewer 
@@ -106,7 +110,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
     
     
 	public PValueGraphViewer(double graphstartx, double graphstopx,
-			double graphstarty, double graphstopy, String title, String xLabel, String yLabel,String[][]pValues) {
+			double graphstarty, double graphstopy, String title, String xLabel, String yLabel,LinkedHashMap pvalues) {
 		this.graphstartx = graphstartx;
 		this.graphstopx = graphstopx;
 		this.graphstarty = graphstarty;
@@ -114,7 +118,8 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		this.xLabel=xLabel;
 		this.yLabel=yLabel;
 		this.title=title;
-		this.pVals=pValues;
+		this.pValueMapping=pvalues;
+		
 		eventListener = new EventListener();
 		this.addMouseMotionListener(eventListener);
 		this.addMouseListener(eventListener);
@@ -177,7 +182,14 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		this.postXSpacing=20;
 		//Space where the Title of the graph is displayed
 		this.preYSpacing=50;
+		//Copy p values into the object array
+		pValueArray=this.pValueMapping.values().toArray();
+		//Copy gene set names in to object array
+		geneSetNames=this.pValueMapping.keySet().toArray();
+		
+		
 		updateSize();
+		
 			
 		/*Rectangle bounds=g.getClipBounds();
 		this.startx=
@@ -211,11 +223,11 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 			// }
 		}
 
-		for (int i = 0; i < this.pVals.length; i++) {
+		for (int i = 0; i < this.pValueArray.length; i++) {
 			// GraphPoint is used to draw the actual data points in the graph
 			// (blue colored dots)
 		//	System.out.println("GraphPoint:"+pVals[i][1]);
-			gp = new GraphPoint(i + 1, Double.parseDouble(this.pVals[i][1]),
+			gp = new GraphPoint(i + 1, ((Float)this.pValueArray[i]).doubleValue(),
 					Color.blue, 3);
 			graphElements.add(gp);
 
@@ -237,7 +249,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		for (int i = 0; i < graphstopx; i++) {
 		//	System.out.println("Graphtick:"+pVals[i][0]);
 			gt = new GraphTick(i + 1, 8, Color.black, GC.HORIZONTAL, GC.C,
-					pVals[i][0], Color.black);
+					(String)geneSetNames[i], Color.black);
 			graphElements.add(gt);
 			
 		}
@@ -302,8 +314,8 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 					g2.fillRect(x, y - 15, coordinateWidth + 20, 25);
 					g2.setComposite(comp);
 					g2.setColor(Color.black);
-					g2.drawString("Geneset: "+this.pVals[(int)xVal][0] + ", "
-								+ "Pvalue:"+this.pVals[(int)xVal][1], x + 5, y - 3);
+					g2.drawString("Geneset: "+(String)geneSetNames[(int)xVal] + ", "
+								+ "Pvalue:"+pValueArray[(int)xVal], x + 5, y - 3);
 					
 					//g2.drawString(coordinateFormat.format(xVal) + ", "
 						//	+ coordinateFormat.format(yVal), x + 5, y - 3);
@@ -333,7 +345,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
         Graphics2D g = (Graphics2D)getGraphics();
         //Wonder if i need to add the size of Y label here?
        // int width = elementSize.width*this.pVals.length + 1 + insets.left;--commented by Sarita
-        int width = this.pVals.length*10 + 1 + insets.left;
+        int width = this.pValueMapping.size()*10 + 1 + insets.left;
       /*  if (isDrawAnnotations) {
             this.annotationWidth = getMaxWidth(g);
             width += 20+this.annotationWidth;
@@ -378,8 +390,8 @@ public class PValueGraphViewer extends JPanel implements IViewer {
            int max = 0;
            String str;
            
-          for (int i=0; i<this.pVals.length; i++) {//For loop commented temporarily by sarita
-          	 str =  pVals[i][0];
+          for (int i=0; i<this.geneSetNames.length; i++) {//For loop commented temporarily by sarita
+          	 str = (String) this.geneSetNames[i];
               max = Math.max(max, fm.stringWidth(str));
            }
           
@@ -852,8 +864,31 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	            	//2. Need to fetch the gene sets which pass the cutoff 
 	            	//3. Redraw x and y axis. The boundaries of x axis would have changed. 0-Number of gene sets passing
 	            	//the cutoff.
+	            	//Plot the GraphPoint
+	            	PValueCutoff cutoff=new PValueCutoff(new JFrame(), 0.05);
+	            	cutoff.addActionInfoListener(new ActionInfoListener(){
+	            		public void actionInfoPerformed(ActionInfoEvent event){
+	            			Hashtable hash=event.getHashtable();
+	            			//Get the option that user selected
+	            			String key=(String)hash.get("option");
+	            			//Get the p value cut off
+	            			double cutoff=((Double)hash.get(key)).doubleValue();
+	            			//Get index of element which is equal to the cutoff
+	            			int index=java.util.Arrays.binarySearch(pValueArray, cutoff,null);
+	            			
+	            			if(key.equalsIgnoreCase("greater")){
+	            				//Number of gene sets passing the cutoff will decide the where graph should stop
+	            				  graphstopx = (double)(pValueArray.length-index+1);
+	            				  
+	            			}else{
+	            				graphstopx=(double)(index+1);
+	            			}
+	            			
+	            			repaint();
+	            		}
+	            		
+	            	});
 	            	
-	            	repaint();
 	            }
 	        }
 	        public void keyPressed(KeyEvent event) {;}
