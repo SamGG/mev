@@ -110,7 +110,6 @@ public class EaseElementList extends Vector<EaseDataElement> {
     public Vector<String> getUniqueValueList(){
         Vector<String> list = new Vector<String>();
         int size = size();
-        EaseDataElement element;
         Vector values;
         
         for(int i = 0; i < size; i++){

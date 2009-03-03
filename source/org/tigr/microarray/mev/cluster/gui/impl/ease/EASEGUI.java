@@ -34,6 +34,7 @@ import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.algorithm.*;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ease.EaseAlgorithmData;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.*;
@@ -59,7 +60,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     protected Algorithm algorithm;
     /** The <CODE>AlgorithmData<\CODE> object to encapsulate parameters, input data, and results
      */
-    protected AlgorithmData algorithmData;
+    protected EaseAlgorithmData algorithmData;
     /** The <CODE>Experiment</CODE> data wrapper class.
      */
     protected Experiment experiment;
@@ -105,6 +106,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     public static final String LAST_EASE_FILE_LOCATION = "last-ease-file-location";
     
+    /** Indicates whether the Nested EASE add-on should be run*/
+    protected boolean isNestedEase = false;
+
     /** Creates a new instance of EASEGUI */
     public EASEGUI() {
     }
@@ -118,40 +122,40 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         String sep = System.getProperty("file.separator");
-        algorithmData = new AlgorithmData();
+        algorithmData = new EaseAlgorithmData();
         
         ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
         
         //check for existance of annotation file. If there is annotation loaded and the annotation file it came
         //from can be read, save a filehandle for it. 
     	String easeFileLocation = null;
-	String chipType = null;
-	String species = null;
-	Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
-
-	EASESupportDataFile edf = null;
-
+		String chipType = null;
+		String species = null;
+		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
 	
-	if (framework.getData().isAnnotationLoaded()) {
-		chipType = framework.getData().getChipAnnotation().getChipType();
-		species = framework.getData().getChipAnnotation().getSpeciesName();
-		edf = new EASESupportDataFile(species, chipType);
-		defs.add(edf);
-
-	}
+		EASESupportDataFile edf = null;
 	
-	Hashtable<String, Vector<String>> speciestoarrays = null;
-	AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
-	defs.add(aafd);
+		
+		if (framework.getData().isAnnotationLoaded()) {
+			chipType = framework.getData().getChipAnnotation().getChipType();
+			species = framework.getData().getChipAnnotation().getSpeciesName();
+			edf = new EASESupportDataFile(species, chipType);
+			defs.add(edf);
+	
+		}
+		
+		Hashtable<String, Vector<String>> speciestoarrays = null;
+		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		defs.add(aafd);
         
-        EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
-        defs.add(eiudf);
-        
-        try {
-        	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
-        	
-        	File impliesFile = supportFiles.get(eiudf);
-	        algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
+	    EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
+	    defs.add(eiudf);
+	    
+	    try {
+	    	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
+	    	
+	    	File impliesFile = supportFiles.get(eiudf);
+//	    	algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
 	        algorithmData.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
 	        
 	        File speciesarraymapping = supportFiles.get(aafd);
@@ -165,11 +169,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	        } else {
 	        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
 	        }
-        } catch (SupportFileAccessError sfae) {
-        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
-        } catch (NullPointerException npe) {
-        	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
-        }
+	    } catch (SupportFileAccessError sfae) {
+	    	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+	    } catch (NullPointerException npe) {
+	    	easeFileLocation = "./data/ease" + sep + "ease_" + chipType;
+	    }
         
         EASEInitDialog dialog = new EASEInitDialog(
         		framework.getFrame(), 
@@ -195,6 +199,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         isClusterAnalysis = dialog.isClusterModeSelected();
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
+        isNestedEase = dialog.isNEaseSelected();
         String [] annotationFileList = dialog.getAnnToGOFileList();
         int [] indices;
         boolean isPvalueCorrectionSelected;
@@ -204,24 +209,26 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             cluster = dialog.getSelectedCluster();
             experiment = cluster.getExperiment();   //asign proper experiment object
             indices = cluster.getIndices();  //**These map to IDATA**
-            algorithmData.addParam("report-ease-score", String.valueOf(dialog.isEaseScoreSelected()));
+            algorithmData.setReportEaseScore(dialog.isEaseScoreSelected());
             isPvalueCorrectionSelected = dialog.isCorrectPvaluesSelected();
-            algorithmData.addParam("p-value-corrections", String.valueOf(isPvalueCorrectionSelected));
+            algorithmData.setPvalueCorrectionsOption(String.valueOf(isPvalueCorrectionSelected));
             if(isPvalueCorrectionSelected){
                 algorithmData.addParam("bonferroni-correction", String.valueOf(dialog.isBonferroniSelected()));
                 algorithmData.addParam("bonferroni-step-down-correction", String.valueOf(dialog.isStepDownBonferroniSelected()));
                 algorithmData.addParam("sidak-correction", String.valueOf(dialog.isSidakSelected()));
+                algorithmData.setHochbergCorrection(dialog.isHochbergSelected());
             }
+            algorithmData.setRunNease(dialog.isNEaseSelected());
             
-            algorithmData.addParam("run-permutation-analysis", String.valueOf(dialog.isPermutationAnalysisSelected()));
+            algorithmData.setRunPermutationAnalysis(dialog.isPermutationAnalysisSelected());
             if(dialog.isPermutationAnalysisSelected())
                 algorithmData.addParam("permutation-count", String.valueOf(dialog.getPermutationCount()));
             
             logger.append("Extracting Annotation Key Lists\n");
             String [] clusterKeys = framework.getData().getAnnotationList(annotationKeyType, indices);
 
-            algorithmData.addStringArray("sample-list", clusterKeys);
-            algorithmData.addIntArray("sample-indices", cluster.getExperimentIndices());  //drop in experiment indices
+            algorithmData.setSampleList(clusterKeys);
+            algorithmData.setSampleIndices(cluster.getExperimentIndices());  //drop in experiment indices
 
         }
         
@@ -231,7 +238,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         String [] populationKeys;
         if(isClusterAnalysis && dialog.isPreloadedAnnotationSelected()) {
             try {
-        	populationKeys = loadGeneIDs(dialog.getAnnotationFile());
+            	populationKeys = loadGeneIDs(dialog.getAnnotationFile());
             } catch (IOException ioe) {
                 //Bad file format
                 ShowThrowableDialog.show(framework.getFrame(), "Error loading population file.", ioe);
@@ -245,7 +252,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
 	            try {
 	                populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
-	                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
+//	                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
 	                if(populationKeys == null) {
 	                    return null;
 	                }
@@ -258,18 +265,18 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	            populationKeys = framework.getData().getAnnotationList(annotationKeyType, framework.getData().getExperiment().getRowMappingArrayCopy());            
 	        }
         }
-        algorithmData.addParam("perform-cluster-analysis", String.valueOf(isClusterAnalysis));
-        algorithmData.addStringArray("population-list", populationKeys);
+        algorithmData.setPerformClusterAnalysis(isClusterAnalysis);
+        algorithmData.setPopulationList(populationKeys);
         if(converterFileName != null)
-            algorithmData.addParam("converter-file-name", converterFileName);
+            algorithmData.setConverterFileName(converterFileName);
         
-        algorithmData.addStringArray("annotation-file-list", annotationFileList);
-        algorithmData.addMatrix("expression", experiment.getMatrix());
+        algorithmData.setAnnotationFileList(annotationFileList);
+        algorithmData.setExpression(experiment.getMatrix());
         
         //Trim options
         String [] trimOptions = dialog.getTrimOptions();
-        algorithmData.addParam("trim-option", trimOptions[0]);
-        algorithmData.addParam("trim-value", trimOptions[1]);
+        algorithmData.setTrimOption(trimOptions[0]);
+        algorithmData.setTrimValue(new Float(trimOptions[1]));
         
         algorithm = framework.getAlgorithmFactory().getAlgorithm("EASE");
         algorithm.addAlgorithmListener(listener);
@@ -281,9 +288,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         progress.dispose();
         categoryNames = algorithmData.getStringArray("category-names");
         
-        clusters = algorithmData.getIntMatrix("cluster-matrix");
-        resultMatrix = (String [][])algorithmData.getObjectMatrix("result-matrix");
-        haveAccessionNumbers = algorithmData.getParams().getBoolean("have-accession-numbers", false);
+        clusters = algorithmData.getClusterMatrix();
+        resultMatrix = algorithmData.getResultMatrix();
+        haveAccessionNumbers = algorithmData.isHaveAccessions();
         
         DefaultMutableTreeNode node;
         logger.append("Creating Result Viewers\n");
@@ -304,7 +311,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     
     public AlgorithmData getScriptParameters(IFramework framework) {
-        algorithmData = new AlgorithmData();
+        algorithmData = new EaseAlgorithmData();
         
         EASEInitDialog dialog = new EASEInitDialog(framework.getFrame(), framework.getData().getFieldNames());
         
@@ -329,15 +336,16 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 algorithmData.addParam("bonferroni-correction", String.valueOf(dialog.isBonferroniSelected()));
                 algorithmData.addParam("bonferroni-step-down-correction", String.valueOf(dialog.isStepDownBonferroniSelected()));
                 algorithmData.addParam("sidak-correction", String.valueOf(dialog.isSidakSelected()));
+				algorithmData.addParam("hochberg-correction", String.valueOf(dialog.isHochbergSelected()));
             }
             
+            algorithmData.addParam("run-nease", String.valueOf(dialog.isNEaseSelected()));
             algorithmData.addParam("run-permutation-analysis", String.valueOf(dialog.isPermutationAnalysisSelected()));
             if(dialog.isPermutationAnalysisSelected())
                 algorithmData.addParam("permutation-count", String.valueOf(dialog.getPermutationCount()));
         }
         
         //Use file or IData for population, only permit file use for cluster analysis
-//        String [] populationKeys;
         if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
             // try {
             // populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
@@ -389,7 +397,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     
     public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
         this.isScripting = true;
-        this.algorithmData = algData;
+        this.algorithmData = (EaseAlgorithmData)algData;
         this.experiment = experiment;
         algData.addMatrix("expression", framework.getData().getExperiment().getMatrix());
         
@@ -397,6 +405,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         this.isClusterAnalysis = params.getBoolean("perform-cluster-analysis");
         this.annotationKeyType = params.getString("annotation-key-type");
+        this.isNestedEase = params.getBoolean("run-nease");
         
         
         listener = new Listener();
@@ -502,10 +511,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      */
     protected String [] loadGeneIDs(File annotationFile) throws IOException {
         if(annotationFile != null && annotationFile.exists()) {
-        	try {
 	        	AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(annotationFile);
 	            Hashtable<String, MevAnnotation> annotations = afr.getAffyAnnotation();
-	            IChipAnnotation icAnnotation = afr.getAffyChipAnnotation();
+//	            IChipAnnotation icAnnotation = afr.getAffyChipAnnotation();
 	            String[] annot = new String[annotations.size()];
 	            java.util.Enumeration<String> allAnnotations = annotations.keys();
 	            int i=0;
@@ -516,34 +524,67 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	            	i++;
 	            }
 	            return annot;
-        	} catch (IOException ioe) {
-        		//TODO handle this!
-        	}
         } else {
-        	if(annotationFile == null)
-        		System.out.println("annotation file is null");
-        	else 
-        		System.out.println(annotationFile.getAbsolutePath() + " does not exist.");
+        	throw new IOException();
         }
-        return null;
     }
     
-    /** Creates the result node.
-     * @param result result matrix
-     * @param clusters cluster indices
+    /**
+	 * Creates the result node.
+	 * 
+	 * @param result result matrix
+	 * @param clusters cluster indices
      * @return returns the result node
      */
-    protected DefaultMutableTreeNode createResultNode(AlgorithmData result, int [][] clusters){
+	protected DefaultMutableTreeNode createResultNode(AlgorithmData r, int[][] clusters) {
+		EaseAlgorithmData result = (EaseAlgorithmData) r;
         DefaultMutableTreeNode root;
         if(this.isClusterAnalysis)
             root = new DefaultMutableTreeNode("EASE Analysis");
         else
             root = new DefaultMutableTreeNode("EASE Survey");
-        addTableViewer(root, result);
-        addExpressionViewers(root, result);
+		addTableViewer(root, result, clusters);
+		addExpressionViewers(root, result, clusters);
         addGeneralInfo(root, result);
         if(isClusterAnalysis)
             addGOTree(root, result);
+
+		if (isNestedEase) {
+
+			int nEaseCount = new Integer(result.getParams().getString("nested-ease-count")).intValue();
+			if (nEaseCount > 0) {
+				DefaultMutableTreeNode nestedEaseRoot = new DefaultMutableTreeNode("Nested EASE");
+				String[] nestedEaseTerms = result.getStringArray("selected-nested-ease-terms");
+
+				String[][] neaseConsolidatedResults = result.getNeaseConsolidatedResults();
+				String[] headerNames = result.getStringArray("nease-headers");
+				if (headerNames== null)
+					System.out.println("headernames is null");
+				
+				EASETableViewer tv = new EASETableViewer(headerNames, neaseConsolidatedResults, nestedEaseRoot, experiment, clusters, haveAccessionNumbers, true, true);
+					     
+				DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Nested Ease Summary Table", tv));
+				nestedEaseRoot.add(node);
+
+				for (int i = 0; i < nEaseCount; i++) {
+					DefaultMutableTreeNode nestedEaseNode = new DefaultMutableTreeNode(nestedEaseTerms[i]);
+					AlgorithmData thisEaseResult = result.getResultAlgorithmData(new Integer(i));
+					String[][] thisEaseResultData = (String[][]) thisEaseResult.getObjectMatrix("result-matrix");
+					if (thisEaseResultData != null && thisEaseResultData.length != 0) {
+						int[][] theseClusters = thisEaseResult.getIntMatrix("cluster-matrix");
+						addTableViewer(nestedEaseNode, thisEaseResult, theseClusters);
+						addExpressionViewers(nestedEaseNode, thisEaseResult, theseClusters);
+						addGeneralInfo(nestedEaseNode, thisEaseResult);
+						addGOTree(nestedEaseNode, thisEaseResult);
+						nestedEaseRoot.add(nestedEaseNode);
+					} else {
+						nestedEaseRoot.add(createEmptyResultNode(thisEaseResult, nestedEaseTerms[i]));
+					}
+				}
+				root.add(nestedEaseRoot);
+			}
+		}
+
         return root;
     }
     
@@ -582,7 +623,15 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param result
      * @return  */
     protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result){
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("EASE");
+    	return createEmptyResultNode(result, "EASE");
+    }
+    /** creates an empty result with label label if the result is null.
+     * @param result
+     * @param label the label to apply to the treenode
+     * @return 
+     */
+    protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result, String label){
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(label);
         root.add(new DefaultMutableTreeNode("No Annotation Hits"));
         addGeneralInfo(root, result);
         return root;
@@ -592,7 +641,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result result matrix
      */
-    protected void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData result) {
+    protected void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData result, int[][] clusters) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Viewers");
         
         IViewer expViewer = new EASEExperimentViewer(this.experiment, this.clusters);
@@ -627,14 +676,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result
      */
-    protected void addTableViewer(DefaultMutableTreeNode root, AlgorithmData result){
+    protected void addTableViewer(DefaultMutableTreeNode root, AlgorithmData result, int[][] clusters){
         Object [][] data = result.getObjectMatrix("result-matrix");
         String [] headerNames = result.getStringArray("header-names");
         
         if(data == null || data.length < 1)
             return;
         
-        EASETableViewer tv = new EASETableViewer(headerNames, data, root, experiment, clusters, haveAccessionNumbers, this.isClusterAnalysis);
+        EASETableViewer tv = new EASETableViewer(headerNames, data, root, experiment, clusters, haveAccessionNumbers, this.isClusterAnalysis, false);
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Table Viewer", tv));
         root.add(node);
     }
@@ -706,6 +755,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                     statNode.add(new DefaultMutableTreeNode("Mult.-Correct.: Bonferroni Step Down"));
                 if(params.getBoolean("sidak-correction", false))
                     statNode.add(new DefaultMutableTreeNode("Mult.-Correct.: Sidak Method"));
+                if(params.getBoolean("hochberg-correction", false))
+                    statNode.add(new DefaultMutableTreeNode("Mult.-Correct.: Hochberg Method"));
             }
             if(!(params.getString("trim-option").equals("NO_TRIM"))){
                 if(params.getString("trim-option").equals("N_TRIM"))

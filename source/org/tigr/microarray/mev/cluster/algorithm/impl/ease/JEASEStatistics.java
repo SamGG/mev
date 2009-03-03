@@ -195,9 +195,10 @@ public class JEASEStatistics {
             for(int i = 0; i < annotation_file_names.size(); i++){
                 fileName = (String)annotation_file_names.elementAt(i);
                 stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = impliesFileLocation;
-                impliesFile = new File(impliesFile, fileName.substring(stringIndex+1, fileName.length())).getAbsolutePath();
-                
+                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
+                impliesFile += fileName.substring(stringIndex+1, fileName.length());
+
+               
                 File file = new File(impliesFile);
                 if(!file.exists() || !file.isFile())  {//if implies file is missing move on
                 	System.out.println("Couldn't find implies file at " + impliesFile);
@@ -334,9 +335,8 @@ public class JEASEStatistics {
 			for (int i = 0; i < annotation_file_names.size(); i++) {
 				fileName = (String) annotation_file_names.elementAt(i);
 				stringIndex = fileName.lastIndexOf(sep);
-				impliesFile = impliesFileLocation;
-				impliesFile = new File(impliesFile, fileName.substring(stringIndex + 1, fileName.length())).getAbsolutePath();
-
+				impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
+                impliesFile += fileName.substring(stringIndex+1, fileName.length());
 				File file = new File(impliesFile);
 				if (!file.exists() || !file.isFile()) {//if implies file is missing move on
 					System.out.println("Couldn't find implies file at " + impliesFile);
@@ -358,7 +358,6 @@ public class JEASEStatistics {
 					} else {
 						(implied_associations.get(term + "\t" + line.substring(0, idx).trim())).addElement(term + "\t" + line.substring(idx, line.length()).trim());
 					}
-
 				}
 			}
 
@@ -371,6 +370,7 @@ public class JEASEStatistics {
 				String impCat;
 
 				end = true; //start at true until no new indices are inserted
+
 				for (Enumeration<String> _enum = implied_associations.keys(); _enum.hasMoreElements();) {
 
 					cat = _enum.nextElement();
@@ -428,18 +428,16 @@ public class JEASEStatistics {
         Hashtable<String, String> hash_table = new Hashtable<String, String>();
         Vector<String> returnVector = new Vector<String>();
         
-        System.out.println("Testing for term " + term);
         
         //for each annotation category (such as go terms)
         for(Enumeration<String> _enum = categories.keys(); _enum.hasMoreElements();){
             key = _enum.nextElement();
-            hash_table = (Hashtable<String, String>)categories.get(key);
+			hash_table = (Hashtable<String, String>)categories.get(key);
         	
         	if(key.equals(term)) {
         		//System.out.println("getting category values for key " + key);
         		for(Enumeration<String> e = hash_table.keys(); e.hasMoreElements();) {
 	            	String categoryKey = e.nextElement();
-	            	System.out.println(" value: " + categoryKey);
 	            	returnVector.add(categoryKey);
 	            }
         	}
@@ -448,7 +446,10 @@ public class JEASEStatistics {
     }    
     
     
-    /** Get the number of the genes in the population for each category that exists in the annotation files. */
+    /**
+	 * Get the number of the genes in the population for each category that
+	 * exists in the annotation files.
+	 */
     public void GetPopulationHitsByCategory() {
         BufferedReader in = null;
         String line="", hits="", key="", locus_id;
