@@ -353,7 +353,7 @@ public class EASEInitDialog extends AlgorithmDialog {
      * selected.
      */
     public boolean isCorrectPvaluesSelected(){
-        return (this.isBonferroniSelected() || this.isStepDownBonferroniSelected() || this.isSidakSelected());
+        return (this.isBonferroniSelected() || this.isStepDownBonferroniSelected() || this.isSidakSelected() || isHochbergSelected());
     }
     
     /** Returns true if Bonferroni correction is selected.
@@ -372,6 +372,12 @@ public class EASEInitDialog extends AlgorithmDialog {
      */
     public boolean isSidakSelected(){
         return alphaPanel.sidakBox.isSelected();
+    }
+    
+    /** Returns true if Benjamini-Hochberg correction is selected
+     */
+    public boolean isHochbergSelected(){
+        return alphaPanel.hochbergBox.isSelected();
     }
     
     /** Returns true if bootstrapping permutations
@@ -406,6 +412,10 @@ public class EASEInitDialog extends AlgorithmDialog {
             options[1] = "0";
         }
         return options;
+    }
+    
+    public boolean isNEaseSelected() {
+    	return alphaPanel.nEaseBox.isSelected();
     }
     
     /** Contains mode controls. (anal. or survey)
@@ -831,6 +841,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         //mult. corrections
         protected JCheckBox bonferroniBox;
         protected JCheckBox sidakBox;
+        protected JCheckBox hochbergBox;
         protected JCheckBox bonferroniStepBox;
         protected JCheckBox permBox;
         protected JTextField permField;
@@ -844,6 +855,9 @@ public class EASEInitDialog extends AlgorithmDialog {
         protected JLabel trimPercentLabel;
         protected JTextField trimPercentField;
         
+        //Nested EASE params
+        protected JCheckBox nEaseBox;
+        protected JLabel nEaseLabel;
         
         /** Constucts a new AlphaPanel. This panel contains the statistical parameter
          * selection boxes for EASE.
@@ -868,8 +882,8 @@ public class EASEInitDialog extends AlgorithmDialog {
             easeBox.setFocusPainted(false);
             bg.add(easeBox);
             
-            statPanel.add(fisherBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            statPanel.add(easeBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
+            statPanel.add(fisherBox, new GridBagConstraints	(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
+            statPanel.add(easeBox, new GridBagConstraints	(1,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
             
             
             //P-value Correction Panel
@@ -889,27 +903,32 @@ public class EASEInitDialog extends AlgorithmDialog {
             sidakBox.setBackground(Color.white);
             sidakBox.setFocusPainted(false);
             
+            hochbergBox = new JCheckBox("Benjamini-Hochberg Method", true);
+            hochbergBox.setBackground(Color.white);
+            hochbergBox.setFocusPainted(false);
+            
             permBox = new JCheckBox("Resampling Probability Analysis", false);
             permBox.setActionCommand("permutation-analysis-command");
             permBox.setBackground(Color.white);
             permBox.setFocusPainted(false);
             permBox.addActionListener(listener);
-            //permBox.setEnabled(false);
             
             permField = new JTextField("1000", 10);
             permField.setBackground(Color.white);
-            //permField.setEnabled(false);
+            permField.setEnabled(false);
             
             permLabel = new JLabel("Number of Permutations");
             permLabel.setBackground(Color.white);
-            //permLabel.setEnabled(false);
+            permLabel.setEnabled(false);
             
-            correctionPanel.add(bonferroniBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            correctionPanel.add(sidakBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            correctionPanel.add(bonferroniStepBox, new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
-            correctionPanel.add(permBox, new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));
-            correctionPanel.add(permLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-            correctionPanel.add(permField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
+            correctionPanel.add(bonferroniBox, new GridBagConstraints		(0,0,3,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, 		new Insets(0,0,0,0),0,0));
+            correctionPanel.add(bonferroniStepBox, new GridBagConstraints	(0,1,3,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, 		new Insets(0,0,10,0),0,0));
+            correctionPanel.add(sidakBox, new GridBagConstraints			(0,2,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, 	new Insets(0,0,0,0),0,0));
+            correctionPanel.add(hochbergBox, new GridBagConstraints			(0,3,3,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, 		new Insets(0,0,10,0),0,0));
+
+            correctionPanel.add(permBox, new GridBagConstraints				(4,0,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, 		new Insets(0,0,0,0),0,0));
+            correctionPanel.add(permLabel, new GridBagConstraints			(4,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, 	new Insets(0,0,15,5),0,0));
+            correctionPanel.add(permField, new GridBagConstraints			(5,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
             
             //Trim Panel
             JPanel trimPanel = new JPanel(new GridBagLayout());
@@ -955,20 +974,33 @@ public class EASEInitDialog extends AlgorithmDialog {
             trimPercentField = new JTextField("5", 10);
             trimPercentField.setEnabled(false);
             
-	    trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
+	    trimPanel.add(trimBox, new GridBagConstraints  (0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
 	    
-	    trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	    trimPanel.add(trimNBox, new GridBagConstraints  (0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 	    trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
-	    trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
+        trimPanel.add(trimNField, new GridBagConstraints(2,1,2,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
 	    
-	    trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+	    trimPanel.add(trimPercentBox, new GridBagConstraints  (0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 	    trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
-	    trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
-	    
+        trimPanel.add(trimPercentField, new GridBagConstraints(2,2,2,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
+    
+        //Nested EASE checkbox
+        JPanel nEasePanel = new JPanel(new GridBagLayout());
+        nEasePanel.setBackground(Color.white);
+        nEasePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Nested EASE", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+        
+        nEaseBox = new JCheckBox("Run Nested EASE", false);
+        nEaseBox.setActionCommand("run-nease");
+        nEaseBox.addActionListener(listener);
+        nEaseBox.setBackground(Color.white);
+        
+        nEasePanel.add(nEaseBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
+            
 	    //Add panels to main panel
 	    add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 	    add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 	    add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        add(nEasePanel, new GridBagConstraints		(0,3,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         }
         
         /**

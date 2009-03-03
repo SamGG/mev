@@ -66,7 +66,20 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected boolean haveAccessionNumbers;
     protected JMenuItem launchMenuItem;
     protected Object[][] data;
-    
+
+    /**
+     * Kept for state-saving backwards-compatibility
+     * @param headerNames
+     * @param data
+     * @param analysisNode
+     * @param experiment
+     * @param clusters
+     * @param haveAccessionNumbers
+     * @param clusterAnalysis
+     */
+    public EASETableViewer(String [] headerNames, Object [][] data, DefaultMutableTreeNode analysisNode, Experiment experiment, int [][] clusters, boolean haveAccessionNumbers, boolean clusterAnalysis) {
+    	this(headerNames, data, analysisNode, experiment, clusters, haveAccessionNumbers, clusterAnalysis, false);
+    }
     /** Creates a new instance of EASETableViewer
      * @param headerNames Header names
      * @param data Primary data structure
@@ -75,8 +88,9 @@ public class EASETableViewer extends TableViewer implements Serializable {
      * @param clusters Cluster indices
      * @param haveAccessionNumbers True if acc. numbers are appended
      * @param clusterAnalysis true if result is cluter analysis, else result is a survey
+     * @param isEaseConsolidatedResult true if this is a summary table for nEASE results - slightly different class. 
      */
-    public EASETableViewer(String [] headerNames, Object [][] data, DefaultMutableTreeNode analysisNode, Experiment experiment, int [][] clusters, boolean haveAccessionNumbers, boolean clusterAnalysis) {
+    public EASETableViewer(String [] headerNames, Object [][] data, DefaultMutableTreeNode analysisNode, Experiment experiment, int [][] clusters, boolean haveAccessionNumbers, boolean clusterAnalysis, boolean isEaseConsolidatedResult) {
         super(headerNames, data);
         this.headerNames = headerNames;
         this.clusterAnalysis = clusterAnalysis;
@@ -99,6 +113,18 @@ public class EASETableViewer extends TableViewer implements Serializable {
             }
             setNumerical(4, true);
         }
+        
+        if(isEaseConsolidatedResult) {
+        	if(haveAccessionNumbers) {
+        		setNumerical(12, true);
+        	} else {
+        		setNumerical(8, true);
+        	}
+        	setNumerical(9, true);
+		setNumerical(10, true);
+		setNumerical(11, true);
+
+        }
         easeRoot = analysisNode;
         menu = createPopupMenu();
         this.experiment = experiment;
@@ -112,7 +138,14 @@ public class EASETableViewer extends TableViewer implements Serializable {
     public EASETableViewer(String [] headerNames, Object [][] data) {
    		super(headerNames, data);
     }
-    
+    /*
+    public EASETableViewer(String[] headerNames, Object[][] data, boolean isNestedEase) {
+    	super(headerNames, data);
+        menu = createPopupMenu();
+        table.addMouseListener(new Listener());
+        for(int i = 4; i < headerNames.length-2; i++)
+            setNumerical(i, true);
+    }*/
     
     /** Creats the context menu
      * @return  */

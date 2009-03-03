@@ -31,7 +31,6 @@ import org.tigr.util.QSort;
 
 public class EASE extends AbstractAlgorithm {
     
-    //EH changed private to protected so AMP can make subclasses
     protected JEASEStatistics jstats;
     protected Vector<String> sampleVector;
     protected Vector<String> populationVector;
@@ -51,11 +50,14 @@ public class EASE extends AbstractAlgorithm {
     
     protected boolean stop = false;
     protected boolean performClusterAnalysis;
-    protected boolean isNestedEaseRun = false;
+    protected boolean isRecursedEaseRun = false;
     
-    String tagsFileLocation;
-    
+    String tagsFileLocation;    
+//    protected boolean tomsNeaseIdea = true;    
+    protected EaseElementList populationElementList;        
+    protected static final String HAVE_ACCESSIONS_OPTION = "have-accession-numbers";        
     long start;
+    
     /** Creates a new instance of ease (Default)
      */
     public EASE() {
@@ -65,73 +67,84 @@ public class EASE extends AbstractAlgorithm {
         stop = true;
     }
     
+
     /** Recieves parameters, executes algorithm and returns the result in the <CODE>AlgorithmData</CODE> object.
      * @param algorithmData Intput data and parameters
      * @throws AlgorithmException Reports errors or abort requests
      * @return Returns result in <CODE>AlgorithmData</CODE>
      */
-    public AlgorithmData execute(AlgorithmData algorithmData) throws AlgorithmException {
-        
+    public AlgorithmData execute(AlgorithmData algData) throws AlgorithmException {
+        EaseAlgorithmData algorithmData = (EaseAlgorithmData)algData;
         AlgorithmParameters params = algorithmData.getParams();
         performClusterAnalysis = params.getBoolean("perform-cluster-analysis", true);
         expData = algorithmData.getMatrix("expression");
+        isRecursedEaseRun = params.getBoolean("is-recursed-run", false);
+        
         
         if(performClusterAnalysis) {
-//Uncomment if/else block when Nested EASE is ready for release        	
-//        	if(!params.getBoolean("run-nease", true)) {
+        	if(!algorithmData.isRunNease()) {
         		return performClusterAnnotationAnalysis(algorithmData);
-//        	} else {
-//        		AlgorithmData temp = performClusterAnnotationAnalysis(algorithmData);
-//        		return performNestedEaseAnalysis(temp);
-//        	}	
+        } else {
+        		EaseAlgorithmData temp = performClusterAnnotationAnalysis(algorithmData);
+        		
+        		return performNestedEaseAnalysis(temp);
+        	}	
         } else {
             return performSlideAnnotationSurvey(algorithmData);
         }
     }
     
     /**
-     * Re-enable when Nested EASE is ready for release
-     * Runs EASE on each set of previously-generated EASE results found in algorithmData. Attaches
-     * the additional EASE results (AlgorithmDatas) to the returned AlgorithmData object.
+	 * Runs EASE on each set of previously-generated EASE results, if the
+	 * p-value of that result is less than the Fisher's Cutoff. Attaches the
+	 * additional EASE results (AlgorithmDatas) to the returned
+	 * AlgorithmData object.
      * 
      * @param algorithmData
      * @return The AlgorithmData argument, with new data added. 
      * @throws AlgorithmException
-     
-    protected AlgorithmData performNestedEaseAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
+	 */
+	protected EaseAlgorithmData performNestedEaseAnalysis(EaseAlgorithmData algorithmData) throws AlgorithmException {
         int[] termlist;
-        isNestedEaseRun = true;
         double fishersCutoff=5e-2;
-        String[][] initialResultMatrix = (String[][])algorithmData.getObjectMatrix("result-matrix");
+		String[][] initialResultMatrix = algorithmData.getResultMatrix();
 
         //If initial EASE run had zero results
         if(initialResultMatrix == null || initialResultMatrix.length == 0)
         	return algorithmData;
         
-        String[] headers = (String[])algorithmData.getStringArray("header-names");
         Vector<String[]> selectionGroup = new Vector<String[]>();
         for(int i=0; i<initialResultMatrix.length; i++) {
-        	if(new Double(initialResultMatrix[i][8]).doubleValue() < fishersCutoff) {
+			double compareValue;
+			//If a column with corrected p-values is available, use that as the cutoff to determine whether the 
+			//term should be included in nested ease analysis.
+			try {
+				compareValue = new Double(initialResultMatrix[i][9]).doubleValue();
+			} catch (ArrayIndexOutOfBoundsException aioobe) {
+				compareValue = new Double(initialResultMatrix[i][8]).doubleValue();
+			}
+			if (compareValue < fishersCutoff && new Double(initialResultMatrix[i][6]).doubleValue() > 4) {
         		selectionGroup.add(initialResultMatrix[i]);
         	}
         }
 
-        //Pops up a selection dialog containing a list of all the result EASE categories
-        //from the input AlgorithmData. The user selects one or more (hopefully) and these 
-        //are added to termlist and used as input to the later Nested EASE runs.
-        NestedEaseSelectorDialog nesd = new NestedEaseSelectorDialog(SAMGUI.SAMFrame, true, selectionGroup, headers);
-        nesd.setVisible(true);        
-        termlist = nesd.getTermList();
+		termlist = new int[selectionGroup.size()];
+		for (int k = 0; k < selectionGroup.size(); k++)
+			termlist[k] = k;
   
-        algorithmData.addParam("nested-ease-count", new Integer(termlist.length).toString());
-        int[][] clusterMatrix = algorithmData.getIntMatrix("cluster-matrix");
+		algorithmData.setNestedEaseCount(termlist.length);
+		int[][] clusterMatrix = algorithmData.getClusterMatrix();
         int[] thisCluster;
         
         //Storage for each of the AlgorithmDatas that will result from each EASE run
-        AlgorithmData[] nestedAlgorithmResults = new AlgorithmData[termlist.length];
+		EaseAlgorithmData[] nestedAlgorithmResults = new EaseAlgorithmData[termlist.length];
 
         //The list of terms that nested EASE is run on.
         String[] nestedEaseTerms = new String[termlist.length];
+
+		//Holds the consolidated results from all nested ease runs. Includes all NEASE 
+		//results whose neaseEnrichment value is >.001
+		Vector<String[]> consolidatedNeaseTable = new Vector<String[]>();
 
         //Now loop through each item in termlist and do nested EASE on it.
         for (int i=0; i<termlist.length; i++) {
@@ -139,76 +152,262 @@ public class EASE extends AbstractAlgorithm {
         	String[] thisTerm = selectionGroup.get(termlist[i]);
 
         	//the group of genes associated with this term.
+			//System.out.println("termlist[i]: " + termlist[i]);
             thisCluster = clusterMatrix[termlist[i]];
         	
         	//These two objects (nData and nParams) *must* be declared anew in each iteration of this for loop.
         	//Do not refactor to put declaration outside of this for loop.
-        	AlgorithmData nData = duplicateEASEAlgorithmData(algorithmData);
-            AlgorithmParameters nParams = nData.getParams();
+			EaseAlgorithmData nData = duplicateEASEAlgorithmData(algorithmData);
+		
+			if (algorithmData.isHaveAccessions()) {
+				event.setDescription("Running Nested EASE analysis on " + thisTerm[3] + "\n");
+			} else {
+				event.setDescription("Running Nested EASE analysis on " + thisTerm[2] + "\n");
+			}
 
-            event.setDescription("Running Nested EASE analysis on " + thisTerm[3] + "\n");
             fireValueChanged(event);
             
             EASE nEase = new EASE();
 
-            nParams.setProperty("run-nease", "false");
-            nParams.setProperty("nesting-term", thisTerm[1] + "	" + thisTerm[3]);
-            nestedEaseTerms[i] = thisTerm[1] + ": " + thisTerm[3];
+			nData.setRecursedRun(true);
+			nData.setRunNease(false);
+			if (algorithmData.isHaveAccessions()) {
+				nData.setNestingTerm(thisTerm[1] + "	" + thisTerm[3]);
+				nestedEaseTerms[i] = thisTerm[1] + ": " + thisTerm[3];
+			} else {
+				nData.setNestingTerm(thisTerm[1] + "	" + thisTerm[2]);
+				nestedEaseTerms[i] = thisTerm[1] + ": " + thisTerm[2];
+			}
 
-            String[] oldClusterKeys = algorithmData.getStringArray("sample-list");
-            int[] oldCluster = algorithmData.getIntArray("sample-indices");
+			String[] oldClusterKeys = algorithmData.getSampleList();
+			int[] oldCluster = algorithmData.getSampleIndices();
             
             String[] newClusterKeys = new String[thisCluster.length];
 
+			//What the heck does this block do? 
             for(int j=0; j<oldClusterKeys.length; j++) {
             	for(int k=0; k<thisCluster.length; k++) {
 	            	if(oldCluster[j] == thisCluster[k]) {
 	            		newClusterKeys[k] = oldClusterKeys[j];
-//	            		System.out.println("newclusterkey " + k + ": " + newClusterKeys[k]);
 	            	}
             	}
             }
 
-            nData.addStringArray("sample-list", newClusterKeys);
-            nData.addIntArray("sample-indices", thisCluster);  
+			nData.setSampleList(newClusterKeys);
+			nData.setSampleIndices(thisCluster);
 
-            //TODO set minimum permutation analysis, make sure that it does only 
-            nParams.setProperty("run-permutation-analysis", "true");
-        	nParams.setProperty("permutation-count", "1000");
-            nData = nEase.execute(nData);
-        	nestedAlgorithmResults[i] = nData;
-        }
+			Vector<String> _temp1 = jstats.getSubPopulationForCategory(nData.getNestingTerm());
+//				System.out.println("sub population " + nData.getNestingTerm() + "size " + _temp1.size());
+			String[] newPopKeys = new String[_temp1.size()];
+			String thisKey;
+
+			for (int k = 0; k < _temp1.size(); k++) {
+				thisKey = _temp1.get(k);
+				for (int j = 0; j < populationElementList.size(); j++) {
+					if (populationElementList.get(j).getEaseKeys().contains(thisKey)) {
+						newPopKeys[k] = populationElementList.get(j).getMevKey();
+    }
+				}
+			}
+
+			//This block finds the name of the annotation file that this term came from
+			//and stores that annotation file only in the 'annotation-file' input parameter
+			//for the nested ease run
+			String[] annFileList = new String[1];
+			String[] oldAnnFileList = algorithmData.getAnnotationFileList();//getStringArray("annotation-file-list");
+			for (int k = 0; k < oldAnnFileList.length; k++) {
+				String oldAnnFile = oldAnnFileList[k].substring(
+						oldAnnFileList[k].lastIndexOf(System.getProperty("file.separator")) + 1, oldAnnFileList[k]
+								.lastIndexOf("."));
+				if (thisTerm[1].equalsIgnoreCase(oldAnnFile)) {
+					annFileList[0] = oldAnnFileList[k];
+					break;
+				}
+			}
+			nData.setPopulationList(newPopKeys);
+			nData.setAnnotationFileList(annFileList);
+			nData.setRunPermutationAnalysis(false);
+			nData.setHochbergCorrection(false);
+
+			
+			nData = (EaseAlgorithmData) nEase.execute(nData);
+			
+			if (nData.getResultMatrix() != null) {
+				nData.setResultMatrix(expandResults(nData, algorithmData));
+				consolidatedNeaseTable.addAll(getFilteredSignificantData(nData, algorithmData));
+			} else {
+
+			}
+			nestedAlgorithmResults[i] = nData;
+			
+		}//end loop through each selected EASE term
 
         //add nested results to algorithmData
-        algorithmData.addStringArray("selected-nested-ease-terms", nestedEaseTerms);
+        algorithmData.setSelectedNestedTerms(nestedEaseTerms);
         for(int i=0; i<nestedAlgorithmResults.length; i++) {
             algorithmData.addResultAlgorithmData(i, nestedAlgorithmResults[i]);        	
         }
+        
+        //put consolidated nested ease table here.
+        //table should include all nease terms, ranked on their nease enrichment result. 
+        //include everything with .1% or greater
+        String[][] neases = new String[consolidatedNeaseTable.size()][];
+        for(int k=0; k<consolidatedNeaseTable.size(); k++) {
+        	String[] consolidatedTemp = consolidatedNeaseTable.get(k);
+        	neases[k] = consolidatedTemp;
+        }
+        
+        String[] temp = algorithmData.getHeaderNames();
+        String[] neaseSummaryHeaders = new String[15];
+        for(int j=0; j<9; j++) {
+        	neaseSummaryHeaders[j] = temp[j];
+        }
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 6] = "Gene Enrich.";
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 5] = "p-value log diff.";
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 4] = "nEASE Gene Enrich.";
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 3] = "Percent Gene Enrich.";
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 2] = "EASE Acc";
+        neaseSummaryHeaders[neaseSummaryHeaders.length - 1] = "EASE Term";
+
+        algorithmData.setNeaseConsolidatedResults(neases);
+        algorithmData.setNeaseHeaderNames(neaseSummaryHeaders);//addStringArray("nease-headers", neaseSummaryHeaders);
         return algorithmData;
     }
+
+	/**
+	 * @param nData
     */
+	private Vector<String[]> getFilteredSignificantData(EaseAlgorithmData nData, EaseAlgorithmData eData) {
+		String[][] longResults = nData.getResultMatrix();
+		Vector<String[]> filteredResults = new Vector<String[]>();
+		for(int resultsIndex=0; resultsIndex<longResults.length; resultsIndex++) {
+			String[] thisRow = longResults[resultsIndex];
+			int rowlength = thisRow.length;
+			double neaseGeneEnrichment = new Double(longResults[resultsIndex][rowlength-4]); //write methods EaseAlgorithmData.getNeaseGeneEnrichment(int), etc.
+			double neasePvalueDiff = new Double(longResults[resultsIndex][rowlength-3]);
+			double newNeaseGeneEnrich = new Double(longResults[resultsIndex][rowlength-2]);
+			double neaseScore = new Double(longResults[resultsIndex][rowlength-1]);
+			double percentGeneEnrich = new Double(longResults[resultsIndex][rowlength-1]) * 100;
+			double neaseFishers = nData.getFishers(resultsIndex);
+			//For terms that meet the enrichment cutoff, put their summary data into the NEASE summary table
+			if (neaseScore > 0 && neaseGeneEnrichment > 0 && neasePvalueDiff > 0 && newNeaseGeneEnrich > 0 && neaseFishers < .05) {
+				String[] consolidatedTemp = new String[15];
+				for (int k = 0; k < 9; k++)
+					consolidatedTemp[k] = thisRow[k];
     
+    
+				//String thisNeaseResultTerm = nData.getTerm(resultsIndex);
+				//int easeRowIndexForThisTerm = eData.getIndexForTerm(thisNeaseResultTerm);
+				String condensedNestedTerm = nData.getNestingTerm().substring(nData.getNestingTerm().lastIndexOf("	")+1, nData.getNestingTerm().length());
+				//System.out.println("CondensedNestedTerm: " + condensedNestedTerm);
+				int eDataResultsIndex = eData.getIndexForTerm(condensedNestedTerm);
+				
+				consolidatedTemp[consolidatedTemp.length - 6] = String.valueOf(neaseGeneEnrichment);
+				consolidatedTemp[consolidatedTemp.length - 5] = String.valueOf(neasePvalueDiff);
+				consolidatedTemp[consolidatedTemp.length - 4] = String.valueOf(newNeaseGeneEnrich);
+				consolidatedTemp[consolidatedTemp.length - 3] = String.valueOf(percentGeneEnrich);	
+				
+				consolidatedTemp[consolidatedTemp.length - 2] = eData.getFileName(eDataResultsIndex);
+
+				consolidatedTemp[consolidatedTemp.length - 1] = nData.getNestingTerm();
+				consolidatedTemp[consolidatedTemp.length - 1] = condensedNestedTerm;
+				
+				filteredResults.add(consolidatedTemp);
+			} else {
+				//Data doesn't meet cutoff
+			}
+		}
+		return filteredResults;
+	}
+    
+    private String[][] expandResults(EaseAlgorithmData neaseData, EaseAlgorithmData easeData) {
+
+	    String[][] nResults = neaseData.getResultMatrix();
+		
+		for (int neaseResultsIndex = 0; neaseResultsIndex < nResults.length; neaseResultsIndex++) {
+			String thisNeaseResultTerm = neaseData.getTerm(neaseResultsIndex);
+			//String thisNeaseFileName = neaseData.getFileName(neaseResultsIndex);
+			int easeRowIndexForThisTerm = easeData.getIndexForTerm(thisNeaseResultTerm);
+
+			String[] originalShortNeaseResultRow = nResults[neaseResultsIndex];
+			String[] newLongNeaseResultRow = new String[originalShortNeaseResultRow.length + 4];
+			for (int x = 0; x < originalShortNeaseResultRow.length; x++) {
+				newLongNeaseResultRow[x] = originalShortNeaseResultRow[x];
+			}
+			
+			double neaseListHits = neaseData.getListHits(neaseResultsIndex);
+			double neaseListSize = neaseData.getListSize(neaseResultsIndex);
+			double neasePopHits = neaseData.getPopHits(neaseResultsIndex);
+			double neasePopSize = neaseData.getPopSize(neaseResultsIndex);
+			double neaseFishers = neaseData.getFishers(neaseResultsIndex);
+
+			double easeListHits = easeData.getListHits(easeRowIndexForThisTerm);
+			double easeListSize = easeData.getListSize(easeRowIndexForThisTerm);
+			double easePopHits = easeData.getPopHits(easeRowIndexForThisTerm);
+			double easePopSize = easeData.getPopSize(easeRowIndexForThisTerm);
+			double easeFishers = easeData.getFishers(easeRowIndexForThisTerm);
+
+			double percentGeneEnrich = (neaseListHits / neasePopHits) - (neaseListSize / neasePopSize);
+			double neaseGeneEnrichment = neaseListHits - (neaseListSize / neasePopSize) * neasePopHits;
+			double easeEnrichment = (easeListHits / easePopHits - easeListSize / easePopSize);
+
+			double neaseEnrichment = (percentGeneEnrich - easeEnrichment) / easeEnrichment;
+
+			double easeMinusLog = -Math.log10(easeFishers);
+			double neaseMinusLog = -Math.log10(neaseFishers);
+			double neasePvalueDiff = neaseMinusLog - easeMinusLog;
+
+			double easeGeneEnrichment = easeListHits - (easeListSize / easePopSize) * easePopHits;
+			double newNeaseGeneEnrich = neaseGeneEnrichment - easeGeneEnrichment;
+			double neaseScore = neasePvalueDiff + newNeaseGeneEnrich;
+
+			newLongNeaseResultRow[newLongNeaseResultRow.length - 4] = String.valueOf(neaseGeneEnrichment);
+			newLongNeaseResultRow[newLongNeaseResultRow.length - 3] = String.valueOf(neasePvalueDiff);
+			newLongNeaseResultRow[newLongNeaseResultRow.length - 2] = String.valueOf(newNeaseGeneEnrich);
+			newLongNeaseResultRow[newLongNeaseResultRow.length - 1] = String.valueOf(percentGeneEnrich);
+
+			nResults[neaseResultsIndex] = newLongNeaseResultRow;
+		}
+
+		String[] temp = neaseData.getHeaderNames();
+		String[] temp2 = new String[temp.length + 4];
+
+		for (int j = 0; j < temp.length; j++) {
+			temp2[j] = temp[j];
+		}
+
+		temp2[temp2.length - 4] = "Gene Enrich.";
+		temp2[temp2.length - 3] = "p-value log diff.";
+		temp2[temp2.length - 2] = "nEASE Gene Enrich.";
+		temp2[temp2.length - 1] = "Percent Gene Enrich.";
+		neaseData.addStringArray("header-names", temp2);
+		
+		return nResults;
+    }
     
     /**
      * Creates a new AlgorithmData object with the same input parameters as the supplied 
      * algorithmData object. Uses copy-by-value, not by reference. This method is specifically
      * written for the EASE module and will not work for other modues' AlgorithmData objects.
      */
-    protected AlgorithmData duplicateEASEAlgorithmData(AlgorithmData oldData) {
-    	AlgorithmParameters oldParams = oldData.getParams();
-    	AlgorithmData newData = new AlgorithmData();
+    protected EaseAlgorithmData duplicateEASEAlgorithmData(EaseAlgorithmData oldData) {
+    	EaseAlgorithmData newData = new EaseAlgorithmData();
 
-        newData.addMatrix("expression", oldData.getMatrix("expression"));
-        newData.addParam("perform-cluster-analysis", oldParams.getString("perform-cluster-analysis"));
-    	newData.addParam("run-nease", "false");
-    	newData.addParam("report-ease-score", String.valueOf(oldParams.getBoolean("report-ease-score")));
-    	newData.addParam("converter-file-name", oldParams.getString("converter-file-name"));
-    	newData.addStringArray("population-list", oldData.getStringArray("population-list"));
-    	newData.addStringArray("annotation-file-list", oldData.getStringArray("annotation-file-list"));
-    	newData.addParam("p-value-corrections", String.valueOf(oldParams.getBoolean("p-value-corrections")));
-    	newData.addParam("trim-option", oldParams.getString("trim-option"));
-    	if(oldParams.getString("trim-option").equals("true"))
-    		newData.addParam("trim-value", String.valueOf(oldParams.getFloat("trim-value")));
+        newData.setExpression(oldData.getExpression());
+        newData.setPerformClusterAnalysis(oldData.isPerformClusterAnalysis());
+        newData.setRunNease(false);
+//        newData.addParam("implies-location-list", oldData.getParams().getString("implies-location-list"));
+        newData.addParam("tags-location-list", oldData.getParams().getString("tags-location-list"));
+    	newData.setReportEaseScore(oldData.isReportEaseScore());
+    	if(oldData.getConverterFileName() != null)
+    		newData.setConverterFileName(oldData.getConverterFileName());
+    	if(oldData.getAnnotationFileList() != null)
+    		newData.setAnnotationFileList(oldData.getAnnotationFileList());
+    	newData.setPopulationList(oldData.getPopulationList());
+    	newData.setHaveAccessions(oldData.isHaveAccessions());
+    	newData.setHochbergCorrection(false);
+    	newData.setTrimOption(oldData.getTrimOption());
+    	newData.setTrimValue(oldData.getTrimValue());
     	return newData;
     }
     
@@ -217,31 +416,30 @@ public class EASE extends AbstractAlgorithm {
      * @throws AlgorithmException
      * @return
      */
-    protected AlgorithmData performClusterAnnotationAnalysis(AlgorithmData algorithmData) throws AlgorithmException {
+    protected EaseAlgorithmData performClusterAnnotationAnalysis(EaseAlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
         headerNames = new Vector<String>();
-        reportEaseScore = params.getBoolean("report-ease-score", false);
+        reportEaseScore = algorithmData.isReportEaseScore();//params.getBoolean("report-ease-score", false);
         intializeHeaderNames();
         
         format = new DecimalFormat("0.###E00");
         
         event = new AlgorithmEvent(this, AlgorithmEvent.MONITOR_VALUE, 0);
-        event.setDescription("Start EASE Analyis\n");
+        event.setDescription("Start EASE Analysis\n");
         fireValueChanged(event);
         
-        String converterFileName = params.getString("converter-file-name");
-        int [] clusterIndices = algorithmData.getIntArray("sample-indices");
-        String [] sampleList = algorithmData.getStringArray("sample-list");
+        String converterFileName = algorithmData.getConverterFileName();
         
-        String [] populationList = algorithmData.getStringArray("population-list");
-        annotationFileList = algorithmData.getStringArray("annotation-file-list");
+        int [] clusterIndices = algorithmData.getSampleIndices();//getIntArray("sample-indices");
+        String [] sampleList = algorithmData.getSampleList();//getStringArray("sample-list");
+        String [] populationList = algorithmData.getPopulationList();//getStringArray("population-list");
+        annotationFileList = algorithmData.getAnnotationFileList();//getStringArray("annotation-file-list");
 
-        String impliesFileLocation = params.getString("implies-location-list");
-        tagsFileLocation = params.getString("tags-location-list");
-         
+        String impliesFileLocation = params.getString("implies-location-list");        
+        tagsFileLocation = params.getString("tags-location-list");                 
         EaseElementList sampleElementList = new EaseElementList(clusterIndices, sampleList);
-        EaseElementList populationElementList = new EaseElementList(populationList);
+        populationElementList = new EaseElementList(populationList);
 
         if(stop)
             return null;
@@ -257,10 +455,12 @@ public class EASE extends AbstractAlgorithm {
                 
                 sampleElementList.loadValues(converterFileName);
                 
+
                 event.setDescription("Loading Population Annotation List\n");
                 fireValueChanged(event);
                 
                 populationElementList.loadValues(converterFileName);
+
             } else {
             	event.setDescription("Preparing Annotation Lists (no conversion file)\n");
                 sampleElementList.setDefaultValues();
@@ -295,7 +495,6 @@ public class EASE extends AbstractAlgorithm {
         event.setDescription("Loading Annotation Category Files\n");
         fireValueChanged(event);
         
-        //jstats.GetCategories();
         jstats.GetCategories(populationVector);
 
         if(stop)
@@ -305,6 +504,7 @@ public class EASE extends AbstractAlgorithm {
         
         event.setDescription("Finding Sample Category Hits\n");
         fireValueChanged(event);
+        
         jstats.GetListHitsByCategory(sampleVector);
         
         if(stop)
@@ -313,6 +513,7 @@ public class EASE extends AbstractAlgorithm {
         //alter to take keys as arguments
         event.setDescription("Finding Population Category Hits\n");
         fireValueChanged(event);
+        
         jstats.GetPopulationHitsByCategory(populationVector);
         
         event.setDescription("Statistical Testing and Result Prep.\n");
@@ -342,14 +543,13 @@ public class EASE extends AbstractAlgorithm {
             pValueCorrections(algorithmData);
         }
         
-        if(algorithmData.getParams().getBoolean("run-permutation-analysis", false)){
+        if(algorithmData.isRunPermutationAnalysis()){
         	event.setDescription("Resampling Analysis\n");
         	fireValueChanged(event);
         	Vector<String> sourcePop = null;
         	
-        	//EH nested EASE changes
-        	if(isNestedEaseRun) {
-        		String nestingTerm = algorithmData.getParams().getString("nesting-term");
+        	if(isRecursedEaseRun) {
+        		String nestingTerm = algorithmData.getNestingTerm();
         		sourcePop = jstats.getSubPopulationForCategory(nestingTerm);
         	}
     		permutationAnalysis(algorithmData.getParams().getInt("permutation-count", 1), sourcePop);
@@ -361,15 +561,16 @@ public class EASE extends AbstractAlgorithm {
         event.setDescription("Appending Accessions\n");
         fireValueChanged(event);
         result = appendAccessions(result, annotationFileList);
-        algorithmData.addParam("have-accession-numbers", String.valueOf(haveAccessionNumbers));
+        algorithmData.setHaveAccessions(haveAccessionNumbers);
+        
         
         //apply trim options
-        String trimOption = params.getString("trim-option");
+        String trimOption = algorithmData.getTrimOption();
         float trimValue;
         if(!(trimOption.equals("NO_TRIM"))){
             event.setDescription("Trim Result\n");
             fireValueChanged(event);
-            trimValue = params.getFloat("trim-value");
+            trimValue = algorithmData.getTrimValue();
             trimResult(trimOption, trimValue);
         }
         
@@ -377,8 +578,8 @@ public class EASE extends AbstractAlgorithm {
         fireValueChanged(event);
         indexResult();
         
-        algorithmData.addObjectMatrix("result-matrix", result);
-        algorithmData.addObjectMatrix("hit-list-matrix", hitList);
+        algorithmData.setResultMatrix(result);
+        algorithmData.setHitListMatrix(hitList);
         
         //get sorted clusters
         event.setDescription("Extracting Cluster Indices and Stats\n");
@@ -386,9 +587,9 @@ public class EASE extends AbstractAlgorithm {
         int [][] clusters = getClusters(sampleElementList, hitList);
         
         algorithmData.addStringArray("category-names", categoryNames);
-        algorithmData.addIntMatrix("cluster-matrix", clusters);
+        algorithmData.setClusterMatrix(clusters);
         
-        algorithmData.addStringArray("header-names", getHeaderNames());
+        algorithmData.setHeaderNames(getHeaderNames());
         
         FloatMatrix means = getMeans(expData, clusters);
         algorithmData.addMatrix("means", means);
@@ -397,8 +598,6 @@ public class EASE extends AbstractAlgorithm {
         if(stop)
             return null;
         
-        //System.out.println("Duration: "+(System.currentTimeMillis()-start));        
-        
         return algorithmData;
     }
     
@@ -406,7 +605,7 @@ public class EASE extends AbstractAlgorithm {
      * @param algorithmData
      * @throws AlgorithmException
      * @return  */
-    protected AlgorithmData performSlideAnnotationSurvey(AlgorithmData algorithmData) throws AlgorithmException {
+    protected EaseAlgorithmData performSlideAnnotationSurvey(EaseAlgorithmData algorithmData) throws AlgorithmException {
         AlgorithmParameters params = algorithmData.getParams();
         
         headerNames = new Vector<String>();
@@ -418,10 +617,10 @@ public class EASE extends AbstractAlgorithm {
         fireValueChanged(event);
         
         
-        String converterFileName = params.getString("converter-file-name");
-        String [] populationList = algorithmData.getStringArray("population-list");
-        String [] annotationFileList = algorithmData.getStringArray("annotation-file-list");
-        EaseElementList populationElementList = new EaseElementList(populationList);
+        String converterFileName = algorithmData.getConverterFileName();
+        String [] populationList = algorithmData.getPopulationList();//getStringArray("population-list");
+        String [] annotationFileList = algorithmData.getAnnotationFileList();//getStringArray("annotation-file-list");
+        populationElementList = new EaseElementList(populationList);
         
         try{
             if(converterFileName != null){
@@ -476,16 +675,16 @@ public class EASE extends AbstractAlgorithm {
         event.setDescription("Appending Accessions\n");
         fireValueChanged(event);
         result = appendAccessions(result, annotationFileList);
-        algorithmData.addParam("have-accession-numbers", String.valueOf(haveAccessionNumbers));
-        algorithmData.addStringArray("header-names", getHeaderNames());
+        algorithmData.setHaveAccessions(haveAccessionNumbers);
+        algorithmData.setHeaderNames(getHeaderNames());
         
         //apply trim options
-        String trimOption = params.getString("trim-option");
+        String trimOption = algorithmData.getTrimOption();
         float trimValue;
         if(!(trimOption.equals("NO_TRIM"))){
             event.setDescription("Trim Result\n");
             fireValueChanged(event);
-            trimValue = params.getFloat("trim-value");
+            trimValue = algorithmData.getTrimValue();
             trimResult(trimOption, trimValue);
         }
         
@@ -493,7 +692,7 @@ public class EASE extends AbstractAlgorithm {
         fireValueChanged(event);
         indexResult();
         
-        algorithmData.addObjectMatrix("result-matrix", result);
+        algorithmData.setResultMatrix(result);
         algorithmData.addObjectMatrix("hit-list-matrix", hitList);
         
         //get sorted clusters
@@ -502,7 +701,7 @@ public class EASE extends AbstractAlgorithm {
         int [][] clusters = getClusters(populationElementList, hitList);
         
         algorithmData.addStringArray("category-names", categoryNames);
-        algorithmData.addIntMatrix("cluster-matrix", clusters);
+        algorithmData.setClusterMatrix(clusters);
         
         FloatMatrix means = getMeans(expData, clusters);
         algorithmData.addMatrix("means", means);
@@ -872,7 +1071,6 @@ public class EASE extends AbstractAlgorithm {
     protected void pValueCorrections(AlgorithmData inputData){
         int k = this.result.length;
         double [] pValues = new double[k];
-//        double [] correctedP = new double[k];
         
         int pIndex;
         if(reportEaseScore)
@@ -902,8 +1100,45 @@ public class EASE extends AbstractAlgorithm {
             pValueCorrectionVector.add(sidakCorrection(pValues));
             headerNames.add("Sidak Corr.");
         }
+        
+        if(params.getBoolean("hochberg-correction", false)){
+            pValueCorrectionVector.add(benjaminiHochbergCorrection(pValues));
+            headerNames.add("Hoch. Corr.");
+        }
         appendResult(pValueCorrectionVector);
     }
+    
+    /**
+     * Returns a list of p-value probabilities corresponding to the p-values input. 
+     * Lifted and modified from the NonpaR module. 
+     * 
+     * @param pvalues
+     * @return
+     */
+    private double[] benjaminiHochbergCorrection(double[] pvalues) {
+
+    	QSort sort = new QSort(pvalues);
+		double [] sortedP = sort.getSortedDouble();
+		double [] adjustedP = new double[pvalues.length];
+
+
+		//adjust pvalues
+		for(int i = 0; i < sortedP.length; i++) {
+			adjustedP[i] = (sortedP[i]*(float)sortedP.length)/(float)(i+1);			
+		}
+		
+		if(sortedP.length > 0) {
+			//stepdown procedure, store in sortedP
+			sortedP[sortedP.length-1] = adjustedP[sortedP.length-1];
+			
+			for(int i = sortedP.length-2; i >= 0; i--) {
+				sortedP[i] = Math.min(sortedP[i+1],adjustedP[i]);
+			}
+		}
+			
+		return sortedP;
+	}
+
     
     /** Performs the standard Bonferroni correction.
      * @param pValues Raw values
@@ -957,9 +1192,11 @@ public class EASE extends AbstractAlgorithm {
         return correctedP;
     }
     
-    /** performs permutation analysis, bootstrapping selection of random samples from
-     * the population.
-     * @param p number of permutations
+    /**
+	 * performs permutation analysis, bootstrapping selection of random
+	 * samples from the population.
+	 * 
+	 * @param p number of permutations
      */
     protected void permutationAnalysis(int p, Vector<String> sourcePop){
         //Get a list of categories, have a corresponding accumulator array
@@ -978,22 +1215,21 @@ public class EASE extends AbstractAlgorithm {
         
         int k = result.length;
         int sampleSize = this.sampleVector.size();
-//        int populationSize = this.populationVector.size();
         int [] accumulator = new int[this.result.length];
         
         for(int i = 0; i < accumulator.length; i++)
             accumulator[0]=0;
         
-//        int [] hitNumberAcc = new int[sampleSize];
-        
         Random rand = new Random(System.currentTimeMillis());
         String [][] testResult;
         
-//        long sampleTime = 0;
-//        long startsamp;
+		double[] resampledLowestPValues = new double[p];
+		int[] lowerPvalueCounts = new int[result.length];
         
+		boolean chooseLowestPValueFromEachPermutation = false;
+		boolean chooseLowestPValueFromEachFunctionalClass = true;
+
         for(int i = 0; i < p; i++){
-            
             permEvent.setIntValue(i+1);
             fireValueChanged(permEvent);
 
@@ -1006,15 +1242,16 @@ public class EASE extends AbstractAlgorithm {
             jstats.resetForNewList();
 
             jstats.GetListHitsByCategory(sampleVector);
-    
+
             jstats.ConstructResults();
- 
+
             testResult = jstats.getResults();
             
             accumulateBinHits(testResult, accumulator);
+
+
         }
-        
-        double [] prob = new double[k];
+			double[] prob = new double[k];       
         for(int i = 0; i < k; i++){
             prob[i] = (double)accumulator[i]/(double)p;
             if(prob[i] == 0d)
@@ -1029,9 +1266,10 @@ public class EASE extends AbstractAlgorithm {
         appendResult(probVector);
 
         headerNames.add("Prob. Anal.");
-    }
+	}
     
-    /** Returns the maximum number of population hits for any category.
+    /**
+	 * Returns the maximum number of population hits for any category.
      */
     protected int getMaxPopHits(String [][] result){
         int max = Integer.MIN_VALUE;
@@ -1041,9 +1279,9 @@ public class EASE extends AbstractAlgorithm {
         return max;
     }
     
-    /** Returns a random sample vector of indices.
-     * If a source vector is specified in source, choose random sample vector from
-     * that source.
+	/**
+	 * Returns a random sample vector of indices. If a source vector is
+	 * specified in source, choose random sample vector from that source.
      */
     protected Vector<String> getRandomSampleVector(int sampleSize, Random rand, Vector<String> sourcePop) {
         Vector<String> sampleVector = new Vector<String>(sampleSize);
@@ -1064,10 +1302,13 @@ public class EASE extends AbstractAlgorithm {
         return sampleVector;
     }
     
-    /** accumulates list hits results from permutations
+    /**
+	 * accumulates list hits results from permutations
+	 * 
      * @param result
      * @param keys
-     * @param accumulator  */
+	 * @param accumulator
+	 */
     protected void accumulateHits(String [][] result, String [] keys, int [] accumulator){
         for(int i = 0; i < result.length; i++){
             for(int j = 0; j < keys.length; j++){
@@ -1083,20 +1324,30 @@ public class EASE extends AbstractAlgorithm {
     /** 
      * Accumulates results from permutations.
      */
-    protected void accumulateBinHits(String [][] newResult, int [] accumulator){
+    protected void accumulateBinHits(String [][] permutedResult, int [] accumulator){
         
         double minP;
         
+        //for each type of annotation used in this run (GO Molecular Function, KEGG pathway, etc)
         for(int cat = 0; cat < annotationFileList.length; cat++){
             
             minP = Double.POSITIVE_INFINITY;
 
-            for(int i = 0; i < newResult.length; i++){
-                if(this.annotationFileList[cat].indexOf(newResult[i][0]) >= 0)
-                    minP = Math.min(minP, Double.parseDouble(newResult[i][6]));
+            //for each term in the permuted ease results
+            for(int i = 0; i < permutedResult.length; i++){
+            	//if the current term is from the type of annotation referred to by the cat iterator
+            	//
+                if(this.annotationFileList[cat].indexOf(permutedResult[i][0]) >= 0)
+                    //store in minP the pvalue of this term
+                	minP = Math.min(minP, Double.parseDouble(permutedResult[i][6]));
             }
 
+            //for each term in the original ease results
             for(int j = 0; j < result.length; j++){
+            	//if this term is one of those from the current annotation type as denoted by cat
+            	//and the pvalue for this permuted run is lower than the pvalue for this term in the original 
+            	//ease run, increment the accumulator at index j. (The accumulator at index j stores
+            	//the count of permuted pvalues that are smaller than the "real" ease run's pvalue
                 if((this.annotationFileList[cat].indexOf(result[j][0]) >= 0) && (minP < Double.parseDouble(result[j][6]))){
                     accumulator[j]++;
                 }
@@ -1105,7 +1356,8 @@ public class EASE extends AbstractAlgorithm {
     }
     
     
-    /** Orders the bootstrap probabilities based on raw probability order.
+    /**
+	 * Orders the bootstrap probabilities based on raw probability order.
      */
     protected double [] orderBootStrappedProb(double [] prob){
         double [] orderedProb = new double[result.length];
@@ -1116,9 +1368,14 @@ public class EASE extends AbstractAlgorithm {
     }
     
     
-    /** Trims the results according to specified criteria.
-     * @param trimOption Defines trim mode, "NO_TRIM", "N_TRIM", or "PERCENT_TRIM"
-     * @param trimValue Trim parameter.
+    /**
+	 * Trims the results according to specified criteria.
+	 * 
+	 * @param trimOption
+	 *                Defines trim mode, "NO_TRIM", "N_TRIM", or
+	 *                "PERCENT_TRIM"
+	 * @param trimValue
+	 *                Trim parameter.
      */
     protected void trimResult(String trimOption, float trimValue){
         
