@@ -105,7 +105,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
         int number_of_samples = experiment.getNumberOfSamples();
-        //int number_of_genes = experiment.getNumberOfGenes();
         
         int [] columnIndices = experiment.getColumnIndicesCopy(); 
         
@@ -118,7 +117,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         
         if (!BETRDialog.isOkPressed()) return null;
         
-        //double alpha = BETRDialog.getPValue();
         float alpha = BETRDialog.getAlpha();
         dataDesign = BETRDialog.getDataDesign();
         numTimePoints = BETRDialog.getNumTimePoints();
@@ -237,14 +235,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
-            //NodeList nodeList = result_cluster.getNodeList();
-            //AlgorithmParameters resultMap = result.getParams();
-            //int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
-            
-       /*     this.clusters = new int[k][];
-            for (int i=0; i<k; i++) {
-                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
-            }*/
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
             
@@ -254,16 +244,8 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             if (errorGenesLength>0){
             	errorGenes = true;
             }
-            /*//FloatMatrix pValuesMatrix = result.getMatrix("pValues");
-            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
-            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
-            //FloatMatrix pValuesMatrix = result.getMatrix("pValues");
-            FloatMatrix fValuesMatrix = result.getMatrix("fValues");
-            FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
-            FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
-            FloatMatrix ssGroupsMatrix = result.getMatrix("ssGroupsMatrix");
-            FloatMatrix ssErrorMatrix = result.getMatrix("ssErrorMatrix");*/
             FloatMatrix geneTimeMeansMatrix = result.getMatrix("geneTimeMeansMatrix");
+            
             FloatMatrix geneTimeSDsMatrix = result.getMatrix("geneTimeSDsMatrix");
             FloatMatrix geneConditionMeansMatrix=null;
             FloatMatrix geneConditionSDsMatrix=null;
@@ -300,27 +282,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
 	            }
             }
             
-            
-            /*
-            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
-                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
-                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
-            }
-            
-            for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
-                fValues.add(new Float(fValuesMatrix.A[i][0]));
-            }
-            
-            dfNumValues = new Vector();
-            dfDenomValues = new Vector();
-            
-            for (int i = 0; i < dfNumMatrix.getRowDimension(); i++) {
-                dfNumValues.add(new Float(dfNumMatrix.A[i][0]));
-                dfDenomValues.add(new Float(dfDenomMatrix.A[i][0]));
-                ssGroups.add(new Float(ssGroupsMatrix.A[i][0]));
-                ssError.add(new Float(ssErrorMatrix.A[i][0]));
-            }*/
-            
             GeneralInfo info = new GeneralInfo();
             info.time = time;
             //ADD MORE INFO PARAMETERS HERE
@@ -328,13 +289,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             info.usePerms = usePerms;
             info.numPerms = numPerms;
             info.correctionMethod = getSigMethod(correctionMethod);
-            /*
-            info.pValueBasedOn = getPValueBasedOn(isPermut);
-            if (isPermut) {
-                info.useAllCombs = useAllCombs;
-                info.numCombs = numCombs;
-            }
-             */
             info.function = menu.getFunctionName(function);
             info.hcl = isHierarchicalTree;
             info.hcl_genes = hcl_genes;
@@ -353,16 +307,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
                 }
             }
             titlesVector.add("p-Values");
-            /*
-            titlesVector.add("F ratio");
-            titlesVector.add("SS(Groups)");
-            titlesVector.add("SS(Error)");
-            titlesVector.add("df (Groups)");
-            titlesVector.add("df (Error)");
-            titlesVector.add("Raw p value");
-            if (!((correctionMethod == BETRInitBox.FALSE_NUM)||(correctionMethod == BETRInitBox.FALSE_PROP))) {            
-                titlesVector.add("Adj. p value");
-            }*/
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -383,16 +327,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
                 	}
                 }
                 auxData[i][counter++] = pValues.get(i, 0);
-                /*
-                auxData[i][counter++] = fValues.get(i);
-                auxData[i][counter++] = ssGroups.get(i);
-                auxData[i][counter++] = ssError.get(i);
-                auxData[i][counter++] = dfNumValues.get(i);
-                auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = rawPValues.get(i);
-                if (!((correctionMethod == BETRInitBox.FALSE_NUM)||(correctionMethod == BETRInitBox.FALSE_PROP))) {
-                    auxData[i][counter++] = adjPValues.get(i);
-                }*/
             }
             
             
@@ -584,49 +518,11 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-//            FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
-//            FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
-//            FloatMatrix fValuesMatrix = result.getMatrix("fValues");
-//            FloatMatrix dfNumMatrix = result.getMatrix("dfNumMatrix");
-//            FloatMatrix dfDenomMatrix = result.getMatrix("dfDenomMatrix");
-//            FloatMatrix ssGroupsMatrix = result.getMatrix("ssGroupsMatrix");
-//            FloatMatrix ssErrorMatrix = result.getMatrix("ssErrorMatrix");
-//            FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
-//            FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
             
             //pValues = new Vector();
             fValues = new Vector<Float>();
             ssGroups = new Vector<Float>();
             ssError = new Vector<Float>();
-/*            
-            geneGroupMeans = new float[geneGroupMeansMatrix.getRowDimension()][geneGroupMeansMatrix.getColumnDimension()];
-            geneGroupSDs = new float[geneGroupSDsMatrix.getRowDimension()][geneGroupSDsMatrix.getColumnDimension()];
-            
-            for (int i = 0; i < geneGroupMeans.length; i++) {
-                for (int j = 0; j < geneGroupMeans[i].length; j++) {
-                    geneGroupMeans[i][j] = geneGroupMeansMatrix.A[i][j];
-                    geneGroupSDs[i][j] = geneGroupSDsMatrix.A[i][j];
-                }
-            }
-            
-            for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
-                rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
-                adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
-            }
-            
-            for (int i = 0; i < fValuesMatrix.getRowDimension(); i++) {
-                fValues.add(new Float(fValuesMatrix.A[i][0]));
-            }
-            
-            dfNumValues = new Vector();
-            dfDenomValues = new Vector();
-            
-            for (int i = 0; i < dfNumMatrix.getRowDimension(); i++) {
-                dfNumValues.add(new Float(dfNumMatrix.A[i][0]));
-                dfDenomValues.add(new Float(dfDenomMatrix.A[i][0]));
-                ssGroups.add(new Float(ssGroupsMatrix.A[i][0]));
-                ssError.add(new Float(ssErrorMatrix.A[i][0]));
-            }*/
             
             AlgorithmParameters params = algData.getParams();
             
@@ -638,13 +534,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             info.correctionMethod = getSigMethod(params.getInt("correction-method"));
             info.usePerms = params.getBoolean("usePerms");
             info.numPerms = params.getInt("numPerms");
-            /*
-            info.pValueBasedOn = getPValueBasedOn(isPermut);
-            if (isPermut) {
-                info.useAllCombs = useAllCombs;
-                info.numCombs = numCombs;
-            }
-             */
             info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
             info.hcl = params.getBoolean("hierarchical-tree");
             info.hcl_genes = params.getBoolean("calculate-genes");
@@ -656,16 +545,7 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             for (int i = 0; i < geneTimeMeans[0].length; i++) {
                 titlesVector.add("Group" + (i+1) + " mean");
                 titlesVector.add("Group" + (i + 1) + " std.dev");
-            }/*
-            titlesVector.add("F ratio");
-            titlesVector.add("SS(Groups)");
-            titlesVector.add("SS(Error)");
-            titlesVector.add("df (Groups)");
-            titlesVector.add("df (Error)");
-            titlesVector.add("Raw p value");
-            if (!((correctionMethod == BETRInitBox.FALSE_NUM)||(correctionMethod == BETRInitBox.FALSE_PROP))) {            
-                titlesVector.add("Adj. p value");
-            }*/
+            }
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -683,18 +563,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
                     auxData[i][counter++] = new Float(geneConditionMeans[i][j]);
                     auxData[i][counter++] = new Float(geneConditionSDs[i][j]);
                 }
-                
-                /*
-                
-                auxData[i][counter++] = fValues.get(i);
-                auxData[i][counter++] = ssGroups.get(i);
-                auxData[i][counter++] = ssError.get(i);
-                auxData[i][counter++] = dfNumValues.get(i);
-                auxData[i][counter++] = dfDenomValues.get(i);
-                auxData[i][counter++] = rawPValues.get(i);
-                if (!((correctionMethod == BETRInitBox.FALSE_NUM)||(correctionMethod == BETRInitBox.FALSE_PROP))) {
-                    auxData[i][counter++] = adjPValues.get(i);
-                }*/
             }
             
             return createResultTree(result_cluster, info);
@@ -748,21 +616,17 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         addCentroidViews(root);
         addTableViews(root);
         addClusterInfo(root);
-        //addFRatioInfoViews(root);
         addGeneralInfo(root, info);
     }
     
     protected void addTableViews(DefaultMutableTreeNode root) {
-
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
-        //IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, null, null);
         for (int i=0; i<this.clusters.length; i++) {
             if (i < this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
             } else if (i == this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
-                
             }
         }
         root.add(node);
@@ -774,7 +638,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
     protected void addExpressionImages(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
         IViewer expViewer = new BETRExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
-        //IViewer expViewer = new BETRExperimentViewer(this.experiment, this.clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
         for (int i=0; i<this.clusters.length; i++) {
             if (i < this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", expViewer, new Integer(i))));
@@ -855,14 +718,12 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<this.clusters.length; i++) {
-            
             if (i == 0) {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
             } else if (i == 1) {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-                
             }
         }
         
@@ -873,30 +734,10 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         
         centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
         expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
-        /*if (errorGenes){
-        	IViewer errorGenesIViewer = new BETRExperimentViewer(this.experiment, errorGenesArray, null, null, null, null, null, null, null, null, null);
-        	centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Invalid Genes ", errorGenesIViewer, new Integer(0))));
-        }
-        if (errorGenes){
-        	IViewer errorGenesIViewer = new BETRExperimentViewer(this.experiment, errorGenesArray, null, null, null, null, null, null, null, null, null);
-        	expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Invalid Genes ", errorGenesIViewer, new Integer(0))));
-        }*/
         root.add(centroidNode);
         root.add(expressionNode);
     }
     
-    /*
-    protected void addFRatioInfoViews(DefaultMutableTreeNode root) {
-        DefaultMutableTreeNode fRatioInfoNode = new DefaultMutableTreeNode("F-Ratio information");
-        IViewer fSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, true);
-        IViewer fNonSigViewer = new FStatsTableViewer(this.experiment, this.clusters, this.data, geneGroupMeans, geneGroupSDs, pValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues, false);
-        
-        fRatioInfoNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes", fSigViewer)));
-        fRatioInfoNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes", fNonSigViewer)));
-        
-        root.add(fRatioInfoNode);
-    }
-     */
     
     /**
      * Adds node with general iformation.
@@ -906,7 +747,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         node.add(getTimeAssignmentInfo());
         if (dataDesign==2)
         	node.add(getConditionAssignmentInfo());
-        //node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         if (info.correctionMethod.startsWith("False")) {
             node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
         } else {
@@ -917,7 +757,6 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         } else {
             node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
         }        
-        //node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
         node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));
@@ -1011,14 +850,12 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             if (command.equals("cancel-command")) {
                 algorithm.abort();
                 progress.dispose();
-                //monitor.dispose();
             }
         }
         
         public void windowClosing(WindowEvent e) {
             algorithm.abort();
             progress.dispose();
-            //monitor.dispose();
         }
     }
     
@@ -1026,14 +863,9 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
 
         public int clusters;
         public String correctionMethod;
-        //public String pValueBasedOn;
         public float alpha;
-        //public int numCombs;
-        //public boolean useAllCombs;
         public long time;
         public String function;
-        //public int numReps;
-        //public double thresholdPercent;
         
         protected boolean hcl, usePerms;
         protected int hcl_method, numPerms;
