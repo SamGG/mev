@@ -189,12 +189,24 @@ public class ExperimentClusterTableViewer implements IViewer {
 	//getContentComponent().addMouseListener(listener);  
         clusterTable.addMouseListener(listener);        
     }
-    
+    /** DJS Main View Table Constructor
+     * 
+     */
+    public ExperimentClusterTableViewer(IFramework framework){
+    	this(framework.getData().getExperiment(),defSamplesOrder(framework.getData().getExperiment().getNumberOfSamples()), framework.getData());
+    }
     public ExperimentClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
         this(experiment, clusters, data, new String[0], new Object[0][0]);        
     }
     
-   
+    //DJS creates clusters if parameter is null.  For Main View Table.
+    private static int[][] defSamplesOrder(int size) {
+        int[][] order = new int[1][size];
+        for (int i=0; i<order[0].length; i++) {
+            order[0][i] = i;
+        }
+        return order;
+    }
     /** Returns a component to be inserted into scroll pane view port.
      */
     public JComponent getContentComponent() {
