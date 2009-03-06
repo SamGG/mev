@@ -186,6 +186,7 @@ public class BNGUI implements IClusterGUI {
 					return null;
 				} 
 			}
+			//Generates prior info for Weka
 			prepareXMLBifFile(dialog.getBaseFileLocation());
 			BNGUI.done = true;
 			pgPanel.dispose();
@@ -215,24 +216,32 @@ public class BNGUI implements IClusterGUI {
 		wekaOutputViewer.addHistory(wekaResult);
 
 		GeneralInfo info = new GeneralInfo();
-		if(dialog.isBoth()){
-			info.prior="LM & PPI";
-		}else if (dialog.isKEGG()) {
-			info.prior="KEGG";
-		}else if(dialog.isAll()){
-			info.prior="LM, PPI & KEGG";
-		}else if(dialog.isLitAndKegg()){
-			info.prior="LM & KEGG";
-		}else if(dialog.isPpiAndKegg()){ 
-			info.prior="PPI & KEGG";
-		}else if(dialog.isPPI()){
+		if(dialog.isPPI()){
 			info.prior="PPI";
-		}else if(dialog.isLit()){
+		}
+		if(dialog.isLit()){
 			info.prior="Literature Mining";
 		}
+		if (dialog.isKEGG()) {
+			info.prior="KEGG";
+		}
+		if(dialog.isBoth()){
+			info.prior="LM & PPI";
+		}
+		if(dialog.isLitAndKegg()){
+			info.prior="LM & KEGG";
+		}
+		if(dialog.isPpiAndKegg()){ 
+			info.prior="PPI & KEGG";
+		}
+		if(dialog.isAll()){
+			info.prior="LM, PPI & KEGG";
+		}
+		
 		if(dialog.useGoTerm()){
 			info.useGoTerms="Use GO Terms";
 		}
+	
 		info.algorithm=dialog.getAlgorithm();
 		info.numBin=dialog.getNumberBin();
 		info.numClass=dialog.getNumberClass();
@@ -290,51 +299,6 @@ public class BNGUI implements IClusterGUI {
 	public int literatureMining(boolean lit,boolean ppi, boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg, String path, IData data){
 		//System.out.print(sep);
 		GetInteractionsModule getModule = new GetInteractionsModule(path, this.probeIndexAssocHash);
-		if(lit){			//getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path + 
-					BNConstants.SEP + 
-					BNConstants.TMP_DIR + 
-					BNConstants.SEP + 
-					BNConstants.LIT_INTER_MODULE_FILE, data);
-		}
-		if(ppi){			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
-		}
-		if(LitPpi){			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.BOTH_INTER_MODULE_FILE, data);
-		}
-		if(kegg){
-			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.KEGG_INTER_MODULE_FILE, data);
-		}
-		if(LitKegg){
-			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.LIT_KEGG_INTER_MODULE_FILE, data);
-		}
-		if(KeggPpi){
-			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
-			return GetInteractionsModule.test(path +
-					BNConstants.SEP +
-					BNConstants.TMP_DIR +
-					BNConstants.SEP +
-					BNConstants.PPI_KEGG_INTER_MODULE_FILE, data);
-		}
 		if(LitPpiKegg){
 			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
 			return GetInteractionsModule.test(path +
@@ -343,6 +307,53 @@ public class BNGUI implements IClusterGUI {
 					BNConstants.SEP +
 					BNConstants.PPI_KEGG_LIT_INTER_MODULE_FILE, data);
 		}
+		else if(LitKegg){
+			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.LIT_KEGG_INTER_MODULE_FILE, data);
+		}
+		else if(KeggPpi){
+			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.PPI_KEGG_INTER_MODULE_FILE, data);
+		}
+		else if(LitPpi){
+			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.BOTH_INTER_MODULE_FILE, data);
+		}
+		else if(lit){			//getModule.test(path+sep+"getInterModLit.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path + 
+					BNConstants.SEP + 
+					BNConstants.TMP_DIR + 
+					BNConstants.SEP + 
+					BNConstants.LIT_INTER_MODULE_FILE, data);
+		}
+		else if(ppi){			//getModule.test(path+sep+"getInterModPPIDirectly.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.PPI_INTER_MODULE_DIRECT_FILE, data); 
+		}
+		else if(kegg){
+			//getModule.test(path+sep+"getInterModBoth.props"); //Raktim - USe tmp dir
+			return GetInteractionsModule.test(path +
+					BNConstants.SEP +
+					BNConstants.TMP_DIR +
+					BNConstants.SEP +
+					BNConstants.KEGG_INTER_MODULE_FILE, data);
+		}
+		
 		return -1;
 	}
 	// The bif file is for Weka

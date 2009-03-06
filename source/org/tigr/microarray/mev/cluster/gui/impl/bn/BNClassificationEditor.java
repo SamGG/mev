@@ -86,6 +86,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	JTextArea textArea;
 	JScrollPane evalScrollPane;
 	String evalStr = null;
+	String XmlBifStr = null;
 	RunWekaProgressPanel runProgressPanel;
 	int numClasses;
 	JButton showInCytoButton,showLitCytoButton, showBootInCytoButton, showAllNetworks;
@@ -113,6 +114,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	//Raktim 
 	//String fileName;
 	String evalStrs[] = null;
+	String XmlBifStrs[] = null;
 	Properties props = null;
 	boolean isBootstraping = false;
 	String bootNetFile = null;
@@ -226,8 +228,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		ExampleFileFilter filter = new ExampleFileFilter("txt");
 		fc2.setFileFilter(filter);
 
-		//TODO
-		//The following block may not be needed
+		//TODO The following block may not be needed
 		String dataPath = TMEV.getDataPath();
 		File pathFile = TMEV.getFile("data/bn");
 		if(dataPath != null) {
@@ -501,7 +502,11 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
 						Estimator myEstm [][] = bnNetOrg.getDistributions();
 						System.out.println("Length: " + myEstm.length);
-						//System.out.println(bnNetOrg.toXMLBIF03());
+						XmlBifStr = bnNetOrg.toXMLBIF03();
+						System.out.println("\n\t\t ***** Start Eval and Bif Strs");
+						System.out.println("XmlBifStr\n" + XmlBifStr);
+						System.out.println("evalStr\n" + evalStr);
+						System.out.println("\n\t\t End ***** Eval and Bif Strs");
 
 						//TODO ALL TESTING FROM HERE ON 
 						//Test for BaynetNet & Estimator Class
@@ -532,7 +537,13 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 						System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
 						String[] argsWeka = arguments.split(" ");
-						evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+						BayesNet bnNetOrg = new BayesNet();
+						evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
+						XmlBifStr = bnNetOrg.toXMLBIF03();
+						System.out.println("\t\t ***** Start Eval and Bif Strs");
+						System.out.println("XmlBifStr\n" + XmlBifStr);
+						System.out.println("evalStr\n" + evalStr);
+						System.out.println("\t\t End ***** Eval and Bif Strs");
 
 						//WEKA On bootstrapped data
 						String outarffbase = props.getProperty("rootOutputFileName");
@@ -753,7 +764,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				String outarff = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP + "outExpression.arff";
 				//Specify Data set K for kfold validation in weka
                 String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
-                //Specify Fixed Netwrok Classifier
+                //Specify Fixed Netwrok Classifier from File
                 modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
                 //Specify Fixed Netwrok Bif File
                 modelArgs += bifFileFinal;
@@ -831,26 +842,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	 *
 	 */
 	private void cleanUpFile(){
-		/*
-    	String[] files=new String[8];
-	    files[0]="getInterModLit.props";
-	    files[1]="getInterModBoth.props";
-	    files[2]="getInterModPPIDirectly.props";
-	    files[3]="outInteractionsLit.txt";
-	    files[4]="outInteractionsPPI.txt";
-	    files[5]="outInteractionsBoth.txt";
-        files[6]="weka_transposed.csv";
-	    files[7]="prepareXMLBifMod.props";
-
-	    String sep=System.getProperty("file.separator");
-	    String path=System.getProperty("user.dir");
-	    //path=path+sep+"data"+sep+"bn"+sep; // Raktim - Use Tmp dir
-	    path=path+sep+"data"+sep+"bn"+sep+"tmp"+sep;
-	    for(int i=0;i<8;i++){
-	     File file=new File(path,files[i]);
-              file.deleteOnExit();	    
-	    }
-		 */
 		File file;
 		String path = basePath + BNConstants.TMP_DIR;
 		System.out.println("Cleaning UP temporary files at: " + path);

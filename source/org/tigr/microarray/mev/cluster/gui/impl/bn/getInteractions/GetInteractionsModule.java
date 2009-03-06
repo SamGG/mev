@@ -763,7 +763,9 @@ public class GetInteractionsModule {
 			Properties props = new Properties();
 			props.load(new FileInputStream(propertiesFileName));
 			System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
-			ArrayList interactions = getInteractions(props); //Magic Happens Here !!!
+			
+			//Magic Happens Here. This is where Lit netwrok is created//
+			ArrayList interactions = getInteractions(props); 
 			if(interactions == null || interactions.size() == 0){
 				System.out.print("Oh no NULL Interaction object. Bad...");
 				JOptionPane.showMessageDialog(
