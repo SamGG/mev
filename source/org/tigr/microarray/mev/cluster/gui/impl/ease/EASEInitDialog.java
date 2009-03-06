@@ -501,15 +501,10 @@ public class EASEInitDialog extends AlgorithmDialog {
 		bg.add(preloadedAnnotationButton);
 		preloadedAnnotationButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				//disable 
-//	                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
-//	                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
-//	                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
 				browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
 				popField.setEnabled(!preloadedAnnotationButton.isSelected());
 				popField.setBackground(Color.lightGray);
 				fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
-
 			}
 		});
 		
@@ -1348,6 +1343,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			result = JOptionPane.CLOSED_OPTION;
 			dispose();
 		}
+
 	}
     
 

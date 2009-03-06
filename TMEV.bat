@@ -19,4 +19,4 @@ All rights reserved.
 :CMD
 
 set ClassPath=lib/*;
-java -Xss1M -Xmx1024m -cp %ClassPath% org.tigr.microarray.mev.TMEV
+java -Xss1M -Xmx512m -cp %ClassPath% org.tigr.microarray.mev.TMEV
