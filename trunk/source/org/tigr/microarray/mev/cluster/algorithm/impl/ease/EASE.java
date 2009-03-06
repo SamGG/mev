@@ -107,6 +107,8 @@ public class EASE extends AbstractAlgorithm {
 	protected EaseAlgorithmData performNestedEaseAnalysis(EaseAlgorithmData algorithmData) throws AlgorithmException {
         int[] termlist;
         double fishersCutoff=5e-2;
+        if(algorithmData == null)
+        	return null;
 		String[][] initialResultMatrix = algorithmData.getResultMatrix();
 
         //If initial EASE run had zero results
@@ -440,7 +442,7 @@ public class EASE extends AbstractAlgorithm {
         tagsFileLocation = params.getString("tags-location-list");                 
         EaseElementList sampleElementList = new EaseElementList(clusterIndices, sampleList);
         populationElementList = new EaseElementList(populationList);
-
+   
         if(stop)
             return null;
         
@@ -584,7 +586,7 @@ public class EASE extends AbstractAlgorithm {
         //get sorted clusters
         event.setDescription("Extracting Cluster Indices and Stats\n");
         fireValueChanged(event);
-        int [][] clusters = getClusters(sampleElementList, hitList);
+        int [][] clusters = getClusters(sampleElementList, hitList);        
         
         algorithmData.addStringArray("category-names", categoryNames);
         algorithmData.setClusterMatrix(clusters);
@@ -759,7 +761,7 @@ public class EASE extends AbstractAlgorithm {
             pValueIndex =  headerNames.indexOf("Fisher's Exact");
         
         pValueIndex--;  //subtract one since result is not indexed until after sort
-        
+
         for(int i = 0; i < result.length; i++){
             stat[i] = Double.parseDouble(result[i][pValueIndex]);
         }
