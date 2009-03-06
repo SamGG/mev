@@ -27,114 +27,65 @@ import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
 public class FromWekaToSif {
-    // Pre: Name of input file from WEKA containing network structure
-    // in the format: variable: parent1,...,parentn
-    //      PrintWriter where to write the network in directed SIF format: node1 pd node2
-    // Post: Read a network structure from WEKA output from the given input file name and writes the network in SIF format to the give output PrintWriter
-    public static void fromWekaToSif(String evalStr, PrintWriter pw, boolean map){
-	    String[] evalSubstrings = evalStr.split("\n");
-	    String s = null;
-	    // Process lines after reading Network Structure and before reading LogScore
-	    boolean toProcess = false;
-	    for(int i = 0; i < evalSubstrings.length; i++){
+	// Pre: Name of input file from WEKA containing network structure
+	// in the format: variable: parent1,...,parentn
+	//      PrintWriter where to write the network in directed SIF format: node1 pd node2
+	// Post: Read a network structure from WEKA output from the given input file name and writes the network in SIF format to the give output PrintWriter
+	public static void fromWekaToSif(String evalStr, PrintWriter pw, boolean map){
+		String[] evalSubstrings = evalStr.split("\n");
+		String s = null;
+		// Process lines after reading Network Structure and before reading LogScore
+		boolean toProcess = false;
+		for(int i = 0; i < evalSubstrings.length; i++){
 			s = evalSubstrings[i];
 			s = s.trim();
 			if(s.startsWith("LogScore")){
-			    toProcess = false;
+				toProcess = false;
 			}
 			if(s.startsWith("CLASS"))
 				continue;
 			if(toProcess){
-				if(map)
-					fromWekaToSifOneLine(s, pw, map);
-				else
-					fromWekaToSifOneLine(s, pw);
+				//if(map)
+				//fromWekaToSifOneLine(s, pw, map);
+				//else
+				fromWekaToSifOneLine(s, pw);
 			}
 			if(s.startsWith("Network structure")){
-			    toProcess = true;
+				toProcess = true;
 			}
-	    }
-    }
-    // Pre: String containing variable: parent1,...,parentn
-    //      PrintWriter where to write the network in directed SIF format: node1 pd node2
-    // Post: Reads a variable parent1,...,parentn String and writes in directed SIF format node1 pd node2 to the PrintWriter
-    public static void fromWekaToSifOneLine(String s, PrintWriter pw){	
-    	if(s.endsWith(":")){
-    		return;
-    	}
-	int colon = s.indexOf("(");
-	String to = s.substring(0,colon).trim();
-	int startIndex = s.indexOf("): ")+3;
-	int index = 0;
-	String from;
-	while(index != s.lastIndexOf(" ")){
-	    index = s.indexOf(" ", startIndex+1);
-	    if(index != -1){
-			from = s.substring(startIndex,index).trim();
-			if(!from.equals("CLASS") || !to.equals("CLASS")){
-			    pw.println(from + " pd "+ to);
-			}
-			startIndex = index;	    
-	    }	
-	    else {
-		break;
-	    }
-	}
-	from = s.substring(startIndex, s.length()).trim();
-		if(!from.equals("CLASS") || !to.equals("CLASS")){
-		    pw.println(from + " pd "+ to);
 		}
-    }
-    
-    // Raktim - Temp function for writing gene name instead of Acc#
-    public static void fromWekaToSifOneLine(String s, PrintWriter pw, boolean map){	
-    	//Raktim - Temporarily Done for Gene Name mapping for RnaI data
-        Hashtable<String, String> AccGeneMap = new Hashtable<String, String>();
-        //Raktim - Temporary Hard Coded Value for RnaI Data only
-        AccGeneMap.put("NM_002880", "RAF1");
-        AccGeneMap.put("NM_002880", "RAF1");
-        AccGeneMap.put("NM_002507", "NGFR");
-        AccGeneMap.put("NM_138957", "ERK2");
-        AccGeneMap.put("NM_002746", "ERK1");
-        AccGeneMap.put("NM_002755", "MEK1");
-        AccGeneMap.put("NM_030662", "MEK2");
-        AccGeneMap.put("NM_001964", "EGR-1");
-        AccGeneMap.put("NM_004935", "CDK5");
-        AccGeneMap.put("NM_176795", "RAS");
-        
-    	if(s.endsWith(":")){
-    		return;
-    	}
+	}
+	// Pre: String containing variable: parent1,...,parentn
+	//      PrintWriter where to write the network in directed SIF format: node1 pd node2
+	// Post: Reads a variable parent1,...,parentn String and writes in directed SIF format node1 pd node2 to the PrintWriter
+	public static void fromWekaToSifOneLine(String s, PrintWriter pw){	
+		if(s.endsWith(":")){
+			return;
+		}
 		int colon = s.indexOf("(");
 		String to = s.substring(0,colon).trim();
 		int startIndex = s.indexOf("): ")+3;
 		int index = 0;
 		String from;
 		while(index != s.lastIndexOf(" ")){
-		    index = s.indexOf(" ", startIndex+1);
-		    if(index != -1){
+			index = s.indexOf(" ", startIndex+1);
+			if(index != -1){
 				from = s.substring(startIndex,index).trim();
 				if(!from.equals("CLASS") || !to.equals("CLASS")){
-					if(map)
-						pw.println(AccGeneMap.get(from) + " pd "+ AccGeneMap.get(to));
-					else 
-						pw.println(from + " pd "+ to);
+					pw.println(from + " pd "+ to);
 				}
 				startIndex = index;	    
-		    }	
-		    else {
-			break;
-		    }
+			}	
+			else {
+				break;
+			}
 		}
 		from = s.substring(startIndex, s.length()).trim();
 		if(!from.equals("CLASS") || !to.equals("CLASS")){
-			if(map)
-				pw.println(AccGeneMap.get(from) + " pd "+ AccGeneMap.get(to));
-			else
-				pw.println(from + " pd "+ to);
+			pw.println(from + " pd "+ to);
 		}
-    }
-    
+	}
+
 	/**
 	 * 
 	 * @param evalStr
@@ -145,21 +96,21 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml2(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 		} else {
 			throw new NullArgumentException("Given Probe-Index Hash was null!");
 		}
-		
+
 		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 		Vector<String> edges = new Vector<String>();
 		//int nodeId = 1;
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
 		xgmmlContent = XGMMLGenerator.createHeader(label);
-		
+
 		String[] evalSubstrings = evalStr.split("\n");
 		String s = null;
 		// Process lines after reading Network Structure and before reading LogScore
@@ -184,7 +135,7 @@ public class FromWekaToSif {
 							if(!nodes.contains(fromTo[0].trim())) {
 								nodes.add(fromTo[0].trim());
 							}
-							
+
 							if(!nodes.contains(fromTo[1].trim())) {
 								nodes.add(fromTo[1].trim());
 							}
@@ -197,9 +148,9 @@ public class FromWekaToSif {
 								uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
 								nodeId++;
 							}
-							*/
+							 */
 						}
-						
+
 						//To give a negative ID to nodes. Not sure if required
 						int nodeId = nodes.size();
 						Iterator _itr1 = nodes.iterator();
@@ -207,7 +158,7 @@ public class FromWekaToSif {
 							uniqueNodesWithId.put((String)_itr1.next(), String.valueOf(nodeId*-1));
 							nodeId--;
 						}
-						
+
 						String _tmp = getXgmmlNodesAndEdges(edges, "-", uniqueNodesWithId, probeIndexAssocHash, data);
 						if(_tmp != null)
 							xgmmlContent += _tmp;
@@ -225,6 +176,85 @@ public class FromWekaToSif {
 			throw ioe;
 		}
 	}
+
+	/**
+	 * 
+	 * @param evalStr
+	 * @param fileName
+	 * @param b
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @throws NullArgumentException
+	 * @throws IOException
+	 */
+	public static void fromWekaToXgmml(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+		if(probeIndexAssocHash != null) {
+			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+		} else {
+			throw new NullArgumentException("Given Probe-Index Hash was null!");
+		}
+
+		Vector<String> edges = new Vector<String>();
+		//int nodeId = 1;
+		String xgmmlContent = "";
+		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
+		xgmmlContent = XGMMLGenerator.createHeader(label);
+
+		String[] evalSubstrings = evalStr.split("\n");
+		String s = null;
+		// Process lines after reading Network Structure and before reading LogScore
+		boolean toProcess = false;
+		Vector<String> nodes = new Vector<String>();
+		for(int i = 0; i < evalSubstrings.length; i++){
+			s = evalSubstrings[i];
+			s = s.trim();
+			if(s.startsWith("LogScore")){
+				toProcess = false;
+			}
+			if(s.startsWith("CLASS"))
+				continue;
+			if(toProcess){
+				Vector<String> _tmpEdges = fromWekaToNodes(s);
+				if(_tmpEdges != null) {
+					edges.addAll(_tmpEdges);
+				}
+			}
+			if(s.startsWith("Network structure")){
+				toProcess = true;
+			}
+		}
+		
+		Hashtable<String, Integer> uniqueNodesIdMap = new Hashtable<String, Integer>();
+		Iterator _itr1 = edges.iterator();
+		int nodesId = 1;
+		while(_itr1.hasNext()) {
+			String _nodes[] = ((String)_itr1.next()).split("-"); //"-"
+			String labelFrom = _nodes[0].trim();
+			String labelTo = _nodes[1].trim();
+			
+			if(!uniqueNodesIdMap.containsKey(labelFrom)) {
+				uniqueNodesIdMap.put(labelFrom, new Integer(nodesId));
+				nodesId++;
+			}
+			
+			if(!uniqueNodesIdMap.containsKey(labelTo)) {
+				uniqueNodesIdMap.put(labelTo, new Integer(nodesId));
+				nodesId++;
+			}
+			
+			String _tmp = getXgmmlNodesAndEdges(labelFrom, labelTo, uniqueNodesIdMap, probeIndexAssocHash, data);
+			if(_tmp != null)
+				xgmmlContent += _tmp;
+		}
+		xgmmlContent += XGMMLGenerator.getFooter();
+		try {
+			XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
+		} catch (IOException ioe) {
+			throw ioe;
+		}
+	}
+
 	
 	/**
 	 * 
@@ -246,11 +276,11 @@ public class FromWekaToSif {
 		Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 		Vector<String> edges = new Vector<String>();
 		Vector<String> nodes = new Vector<String>();
-		
+
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
 		xgmmlContent = XGMMLGenerator.createHeader(label);
-		
+
 		Enumeration enumerate = edgesTable.keys();
 		while(enumerate.hasMoreElements()){
 			String edge = (String)enumerate.nextElement();
@@ -262,11 +292,11 @@ public class FromWekaToSif {
 				if(!nodes.contains(fromTo[0].trim())) {
 					nodes.add(fromTo[0].trim());
 				}
-				
+
 				if(!nodes.contains(fromTo[1].trim())) {
 					nodes.add(fromTo[1].trim());
 				}
-				
+
 				/*
 				if(!uniqueNodesWithId.containsKey(fromTo[0].trim())) {
 					uniqueNodesWithId.put(fromTo[0].trim(), String.valueOf(nodeId));
@@ -276,7 +306,7 @@ public class FromWekaToSif {
 					uniqueNodesWithId.put(fromTo[1].trim(), String.valueOf(nodeId));
 					nodeId++;
 				}
-				*/
+				 */
 			}
 		}
 		//To give a negative ID to nodes. Not sure if required
@@ -286,7 +316,7 @@ public class FromWekaToSif {
 			uniqueNodesWithId.put((String)_itr.next(), String.valueOf(nodeId*-1));
 			nodeId--;
 		}
-			
+
 		String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 		if(_tmp != null) {
 			if(!_tmp.equals("")) {
@@ -303,6 +333,41 @@ public class FromWekaToSif {
 
 	/**
 	 * 
+	 * @param labelFrom
+	 * @param labelTo
+	 * @param prodeIdMap
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @return
+	 */
+	private static String getXgmmlNodesAndEdges(String labelFrom, String labelTo, Hashtable prodeIdMap, HashMap probeIndexAssocHash, IData data) {
+		String xgmmlNodeContent = "";
+		String xgmmlEdgeContent = "";
+		int[] fromToIndx = new int[2];
+		Vector<String> nodeCreated = new Vector<String>();
+		
+		//Conver to XGMML node & Edge
+		//Get index from hash map encoded into the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
+		String tmp[] = ((String)probeIndexAssocHash.get(labelFrom)).split("-");
+		fromToIndx[0] = Integer.parseInt(tmp[0]);
+		tmp = ((String)probeIndexAssocHash.get(labelTo)).split("-");
+		fromToIndx[1] = Integer.parseInt(tmp[0]);
+		
+		if(!nodeCreated.contains(labelFrom)) {
+			xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, (String) prodeIdMap.get(labelFrom), data, fromToIndx[0]);
+			nodeCreated.add(labelFrom);
+		}
+
+		if(!nodeCreated.contains(labelTo)) {
+			xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, (String) prodeIdMap.get(labelTo), data, fromToIndx[1]);
+			nodeCreated.add(labelTo);
+		}
+		xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, (String) prodeIdMap.get(labelFrom), (String) prodeIdMap.get(labelTo));
+		return xgmmlNodeContent += xgmmlEdgeContent;
+	}
+	
+	/**
+	 * 
 	 * @param edges
 	 * @param nodeId
 	 * @param probeIndexAssocHash
@@ -316,20 +381,20 @@ public class FromWekaToSif {
 		String labelTo;
 		String labelFrom;
 		int[] fromTo = new int[2];
-		
+
 		Enumeration myEnum = edges.elements();
 		while(myEnum.hasMoreElements()) {
 			String nodes[] = ((String)myEnum.nextElement()).split(nodeConnector); //"-"
 			labelFrom = nodes[0].trim();
 			labelTo = nodes[1].trim();
-			
+
 			//Conver to XGMML node & Edge
 			//Get indx from hash map encoded int the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
 			String tmp[] = ((String)probeIndexAssocHash.get(labelFrom)).split("-");
 			fromTo[0] = Integer.parseInt(tmp[0]);
 			tmp = ((String)probeIndexAssocHash.get(labelTo)).split("-");
 			fromTo[1] = Integer.parseInt(tmp[0]);
-			
+
 			//Get annotation and create nodes and edges in XGMML Format
 			//System.out.println("writeXGMML Edge Indices From: " + fromTo[0] + " To: " + fromTo[1]);
 			String srcId = (String)nodesWithId.get(labelFrom);
@@ -337,19 +402,19 @@ public class FromWekaToSif {
 				xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
 				nodeCreated.add(labelFrom);
 			}
-			
+
 			String tgtId = (String)nodesWithId.get(labelTo);
 			if(!nodeCreated.contains(labelTo)) {
 				xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
 				nodeCreated.add(labelTo);
 			}
-			
+
 			xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, srcId, tgtId);	
 		}
-		
+
 		return xgmmlNodeContent += xgmmlEdgeContent;
 	}
-	
+
 	/**
 	 * 
 	 * @param inter
@@ -375,7 +440,7 @@ public class FromWekaToSif {
 			} else {
 				throw new NullArgumentException("Given Probe-Index Hash was null!");
 			}
-			
+
 			Hashtable<String, String> uniqueNodesWithId = new Hashtable<String, String>();
 			Vector<String> edges = new Vector<String>();
 			Vector<String> nodes = new Vector<String>();
@@ -388,7 +453,7 @@ public class FromWekaToSif {
 			//String label = _tmp[0];
 			System.out.println("Network File Prefix " + label);
 			xgmmlContent = XGMMLGenerator.createHeader(label);
-			
+
 			for(int i = 0; i < inter.size(); i++){
 				sGE = (SimpleGeneEdge) inter.get(i);
 				String labelFrom = sGE.getFrom().trim();
@@ -397,7 +462,7 @@ public class FromWekaToSif {
 				if(!nodes.contains(labelFrom.trim())) {
 					nodes.add(labelFrom.trim());
 				}
-				
+
 				if(!nodes.contains(labelTo.trim())) {
 					nodes.add(labelTo.trim());
 				}
@@ -410,7 +475,7 @@ public class FromWekaToSif {
 					uniqueNodesWithId.put(labelTo, String.valueOf(nodeId));
 					nodeId++;
 				}
-				*/
+				 */
 			}
 			//To give a negative ID to nodes. Not sure if required
 			int nodeId = nodes.size();
@@ -430,14 +495,14 @@ public class FromWekaToSif {
 				XGMMLGenerator.writeFileXGMML(path + fileName, xgmmlContent);
 			} catch (IOException ioe) {
 				throw ioe;
-		}
+			}
 		}
 		catch(IOException ioe){
 			//System.out.println(ioe);
 			throw ioe;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param s
@@ -447,20 +512,21 @@ public class FromWekaToSif {
 		if(s.endsWith(":")){
 			return null;
 		}
-		
+
 		Vector<String> edges = new Vector<String>();
 		int colon = s.indexOf("(");
 		String labelTo = s.substring(0,colon).trim();
 		int startIndex = s.indexOf("): ") + 3;
 		int index = 0;
 		String labelFrom;
-		
+
 		while(index != s.lastIndexOf(" ")){
 			index = s.indexOf(" ", startIndex+1);
 			if(index != -1){
 				labelFrom = s.substring(startIndex,index).trim();
 				if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 					//pw.println(labelFrom + " pd " + labelTo);
+					System.out.println(labelFrom + "-" + labelTo);
 					edges.add(labelFrom + "-" + labelTo);
 				}
 				startIndex = index;	    
@@ -472,11 +538,12 @@ public class FromWekaToSif {
 		labelFrom = s.substring(startIndex, s.length()).trim();
 		if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 			//pw.println(labelFrom + " pd " + labelTo);
+			System.out.println(labelFrom + "-" + labelTo);
 			edges.add(labelFrom + "-" + labelTo);
 		}
 		return edges;
-		
-    }
+
+	}
 }
-	    
-	  
+
+

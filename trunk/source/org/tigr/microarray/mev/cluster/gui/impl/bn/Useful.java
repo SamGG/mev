@@ -659,7 +659,69 @@ public class Useful {
 
 		PrintWriter out = null;
 		try{ 	 
-			if(lit){
+			if(LitPpiKegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[6])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			else if(KeggPpi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[5])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[5]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			else if(LitKegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[4])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[4]);
+				out.flush();
+				out.close();
+			}
+			else if(LitPpi){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=true");
+				out.println(BNConstants.FRM_PPI + "=true");
+				out.println(BNConstants.FRM_KEGG + "=false");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
+				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
+				out.flush();
+				out.close();
+			}
+			else if(lit){
 				out= new PrintWriter(new FileOutputStream(new File(propFile[0])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
@@ -673,7 +735,22 @@ public class Useful {
 				out.flush();
 				out.close();
 			}
-			if(ppi){
+			else if(kegg){
+				out= new PrintWriter(new FileOutputStream(new File(propFile[3])));	 
+				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
+				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
+				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
+				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
+				//out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
+				out.println(BNConstants.FRM_LIT + "=false");
+				out.println(BNConstants.FRM_PPI + "=false");
+				out.println(BNConstants.FRM_KEGG + "=true");
+				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[3]);
+				out.flush();
+				out.close();
+			} 
+			else if(ppi){
 				out= new PrintWriter(new FileOutputStream(new File(propFile[1])));	 
 				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
 				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
@@ -691,84 +768,6 @@ public class Useful {
 				out.close();
 
 			}
-			if(LitPpi){
-				out= new PrintWriter(new FileOutputStream(new File(propFile[2])));	 
-				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
-				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
-				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
-				out.println(BNConstants.FRM_LIT + "=true");
-				out.println(BNConstants.FRM_PPI + "=true");
-				out.println(BNConstants.FRM_KEGG + "=false");
-				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
-				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
-				out.flush();
-				out.close();
-			}
-			if(kegg){
-				out= new PrintWriter(new FileOutputStream(new File(propFile[3])));	 
-				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
-				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
-				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
-				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
-				//out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
-				out.println(BNConstants.FRM_LIT + "=false");
-				out.println(BNConstants.FRM_PPI + "=false");
-				out.println(BNConstants.FRM_KEGG + "=true");
-				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[3]);
-				out.flush();
-				out.close();
-			}
-			if(LitKegg){
-				out= new PrintWriter(new FileOutputStream(new File(propFile[4])));	 
-				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
-				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
-				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
-				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
-				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
-				out.println(BNConstants.FRM_LIT + "=true");
-				out.println(BNConstants.FRM_PPI + "=false");
-				out.println(BNConstants.FRM_KEGG + "=true");
-				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[4]);
-				out.flush();
-				out.close();
-			}
-			if(KeggPpi){
-				out= new PrintWriter(new FileOutputStream(new File(propFile[5])));	 
-				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
-				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
-				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
-				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
-				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
-				out.println(BNConstants.FRM_LIT + "=false");
-				out.println(BNConstants.FRM_PPI + "=true");
-				out.println(BNConstants.FRM_KEGG + "=true");
-				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[5]);
-				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
-				out.flush();
-				out.close();
-			}
-			if(LitPpiKegg){
-				out= new PrintWriter(new FileOutputStream(new File(propFile[6])));	 
-				out.println(BNConstants.RES_FILE_NAME + "=" + BNConstants.RESOURCERER_FILE);
-				out.println(BNConstants.GB_ACC_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
-				out.println(BNConstants.KEGG_SPECIES + "=" + keggSpecies);
-				out.println(BNConstants.SYM_ARTICLES_FRM_PUBMED + "=" + BNConstants.PUBMED_DB_FILE);
-				out.println(BNConstants.SYM_ARTICLES_FRM_GENEDB + "=" + BNConstants.GENE_DB_FILE);
-				out.println(BNConstants.ART_REM_THRESH + "=" + BNConstants.ART_REM_THRESH_VAL);		 	  
-				out.println(BNConstants.FRM_LIT + "=true");
-				out.println(BNConstants.FRM_PPI + "=true");
-				out.println(BNConstants.FRM_KEGG + "=true");
-				out.println(BNConstants.OUT_INTER_FILE_NAME + "=" + outFile[2]);
-				out.println(BNConstants.PPI_FILE_NAME + "=" + BNConstants.PPI_FILE);
-				out.flush();
-				out.close();
-			}
-
 			out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 			if(goTerms){
 				System.out.println("Use GO Terms");
@@ -778,20 +777,22 @@ public class Useful {
 			out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
 			out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
 			out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
-			if(lit){
-				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+			if(LitPpiKegg){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[6]);
+			}else if(LitPpi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
+			}else if(KeggPpi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[5]);
+			}else if(LitKegg){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[4]);
+			}else if(KeggPpi){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[5]);
 			}else if(ppi){
 				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[1]);
-			} else if(LitPpi){
-				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[2]);
-			} else if(kegg){
+			}else if(lit){
+				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[0]);
+			}else if(kegg){
 				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[3]);
-			} else if(LitKegg){
-				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[4]);
-			} else if(KeggPpi){
-				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[5]);
-			} else if(LitPpiKegg){
-				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[6]);
 			}
 			out.flush();
 			out.close();

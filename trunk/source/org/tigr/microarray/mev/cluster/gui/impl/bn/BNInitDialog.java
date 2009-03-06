@@ -83,7 +83,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	ClassNumPanel classnumPanel;
 	XmlBifPanel useGoPanel;
 	RunBNPanel runBNPanel;
-	PopSelectionPanel popPanel;
+	//PopSelectionPanel popPanel;
 	BootStrapPanel bootStrapPanel;
 	ClusterBrowser browser;
 	EventListener listener;
@@ -136,7 +136,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		JPanel popNClusterPanel = new JPanel(new GridBagLayout());
 		popNClusterPanel.setBackground(Color.white);
-		popPanel = new PopSelectionPanel();
+		//popPanel = new PopSelectionPanel();
 		browser = new ClusterBrowser(repository);
 
 		//re-enable this panel when population selection from file is available
@@ -212,7 +212,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		JPanel popNClusterPanel = new JPanel(new GridBagLayout());
 		popNClusterPanel.setBackground(Color.white);
-		popPanel = new PopSelectionPanel();
+		//popPanel = new PopSelectionPanel();
 		// browser = new ClusterBrowser(repository);
 
 		JPanel emptyClusterPanel = new JPanel(new GridBagLayout());
@@ -226,7 +226,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		textArea.setText(text);
 		emptyClusterPanel.add(textArea, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
-		popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		//popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		popNClusterPanel.add(emptyClusterPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
 
@@ -305,17 +305,20 @@ public class BNInitDialog extends AlgorithmDialog {
 	}
 
 
+	/* TODO
 	public boolean isPopFileModeSelected() {
 		return popPanel.fileButton.isSelected();
 	}
-
+	*/
 
 	/** Returns the population fille to load
 	 */
+	/*
 	public String getPopulationFileName() {
 		return this.popPanel.getPopFile();
 	}
-
+	*/
+	
 	/** Returns the name of the converter file selected.
 	 * If none selected null is returned.
 	 */
@@ -409,10 +412,12 @@ public class BNInitDialog extends AlgorithmDialog {
 	public void setUseArcRev(boolean ua){
 		this.useArc=ua;
 	}
+	/*
 	//TODO gray out file selection
 	public boolean isClusterSource(){
 		return this.popPanel.dataButton.isSelected();
 	}
+	*/
 	//public String getAnnotationField(){
 	//return annotKeyPanel.getAnnotationKeyType();
 	// }
@@ -462,7 +467,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			litSourceCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
 			litSourceCheckbox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
-					popPanel.setEnableControls(true);
+					//popPanel.setEnableControls(true);
 				}
 			});
 
@@ -474,7 +479,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			ppiSourceCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
 			ppiSourceCheckbox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
-					popPanel.setEnableControls(true);
+					//popPanel.setEnableControls(true);
 				}
 			});
 
@@ -485,7 +490,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			keggSourceCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
 			keggSourceCheckbox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
-					popPanel.setEnableControls(true);
+					//popPanel.setEnableControls(true);
 				}
 			});
 
@@ -523,7 +528,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 			numLevelsField.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
-					popPanel.setEnableControls(true);
+					//popPanel.setEnableControls(true);
 				}
 			});
 			add(numLevelsLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
@@ -555,7 +560,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 			numClassesField.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
-					popPanel.setEnableControls(true);
+					//popPanel.setEnableControls(true);
 				}
 			});
 			add(numClassesLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
@@ -1699,6 +1704,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 
 				//**End of Validation
+				/*
 				if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
 					String fileName = popPanel.popField.getText();
 					if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
@@ -1711,7 +1717,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						return;
 					}
 				}
-
+				*/
 				/*
                 if(getAnnToGOFileList().length == 0) {
                     JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
