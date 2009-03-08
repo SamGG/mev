@@ -369,7 +369,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 
 		// LM Network
 		String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-		networkFiles.add(lmNetFile);
+		networkFiles.add(0,lmNetFile);
 
 		// BN Observed
 		try {
@@ -386,7 +386,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.xgmml";
 				FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
 			}					
-			networkFiles.add(fileName);
+			networkFiles.add(0,fileName);
 		} catch(IOException ioE){
 			ioE.printStackTrace(); 
 			JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -398,7 +398,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		// BN Bootstrap Network
 		if(isBootstraping){
 			//System.out.println("BN BootStrap: " + bootNetFile);
-			networkFiles.add(bootNetFile);
+			networkFiles.add(0,bootNetFile);
 			updateNetwork = new JButton("Update Network");
 			confThreshField = new JTextField("0.7");
 			confThreshField.setPreferredSize(new Dimension(35, 10));
@@ -462,7 +462,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			evalPanel.add(confThreshField, BorderLayout.CENTER);
 			evalPanel.add(updateNetwork, BorderLayout.EAST);
 		} else {
-			resultFrame.dispose();
+			//resultFrame.dispose();
 		}
 		return evalPanel;
 	}
@@ -736,7 +736,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				resultFrame.hide();
 				// Do stuff to store the final thresh and the file name
 				finalBootFile = _bootNetFile;
-				networkFiles.add(finalBootFile);
+				networkFiles.add(0,finalBootFile);
 				
 				//TODO - Is it possible to just take a network and 
 				//Create weka instance to evaluate probabilities

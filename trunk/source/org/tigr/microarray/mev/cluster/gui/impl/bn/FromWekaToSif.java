@@ -189,7 +189,7 @@ public class FromWekaToSif {
 	 */
 	public static void fromWekaToXgmml(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
-			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 		} else {
 			throw new NullArgumentException("Given Probe-Index Hash was null!");
@@ -225,7 +225,9 @@ public class FromWekaToSif {
 			}
 		}
 		
-		Hashtable<String, Integer> uniqueNodesIdMap = new Hashtable<String, Integer>();
+		Hashtable<String, String> uniqueNodesIdMap = new Hashtable<String, String>();
+		Vector<String> nodeCreated = new Vector<String>();
+		String xgmmlEdges = "";
 		Iterator _itr1 = edges.iterator();
 		int nodesId = 1;
 		while(_itr1.hasNext()) {
@@ -234,19 +236,28 @@ public class FromWekaToSif {
 			String labelTo = _nodes[1].trim();
 			
 			if(!uniqueNodesIdMap.containsKey(labelFrom)) {
-				uniqueNodesIdMap.put(labelFrom, new Integer(nodesId));
+				uniqueNodesIdMap.put(labelFrom, String.valueOf(nodesId));
 				nodesId++;
 			}
 			
 			if(!uniqueNodesIdMap.containsKey(labelTo)) {
-				uniqueNodesIdMap.put(labelTo, new Integer(nodesId));
+				uniqueNodesIdMap.put(labelTo, String.valueOf(nodesId));
 				nodesId++;
 			}
 			
-			String _tmp = getXgmmlNodesAndEdges(labelFrom, labelTo, uniqueNodesIdMap, probeIndexAssocHash, data);
-			if(_tmp != null)
-				xgmmlContent += _tmp;
+			if(!nodeCreated.contains(labelFrom)) {
+				xgmmlContent += getXgmmlNode(labelFrom, uniqueNodesIdMap, probeIndexAssocHash, data);
+				nodeCreated.add(labelFrom);
+			}
+			
+			if(!nodeCreated.contains(labelTo)) {
+				xgmmlContent += getXgmmlNode(labelTo, uniqueNodesIdMap, probeIndexAssocHash, data);
+				nodeCreated.add(labelTo);
+			}
+			
+			xgmmlEdges+= getXgmmlEdge(labelFrom, labelTo, uniqueNodesIdMap);
 		}
+		xgmmlContent += xgmmlEdges;
 		xgmmlContent += XGMMLGenerator.getFooter();
 		try {
 			XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
@@ -340,30 +351,32 @@ public class FromWekaToSif {
 	 * @param data
 	 * @return
 	 */
-	private static String getXgmmlNodesAndEdges(String labelFrom, String labelTo, Hashtable prodeIdMap, HashMap probeIndexAssocHash, IData data) {
+	private static String getXgmmlNode(String nodelabel, Hashtable probeIdMap, HashMap probeIndexAssocHash, IData data) {
 		String xgmmlNodeContent = "";
 		String xgmmlEdgeContent = "";
-		int[] fromToIndx = new int[2];
-		Vector<String> nodeCreated = new Vector<String>();
+		int probeInd;
 		
-		//Conver to XGMML node & Edge
+		//Convert to XGMML node & Edge
 		//Get index from hash map encoded into the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
-		String tmp[] = ((String)probeIndexAssocHash.get(labelFrom)).split("-");
-		fromToIndx[0] = Integer.parseInt(tmp[0]);
-		tmp = ((String)probeIndexAssocHash.get(labelTo)).split("-");
-		fromToIndx[1] = Integer.parseInt(tmp[0]);
+		String tmp[] = ((String)probeIndexAssocHash.get(nodelabel)).split("-");
+		probeInd = Integer.parseInt(tmp[0]);
 		
-		if(!nodeCreated.contains(labelFrom)) {
-			xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, (String) prodeIdMap.get(labelFrom), data, fromToIndx[0]);
-			nodeCreated.add(labelFrom);
-		}
+		xgmmlNodeContent = XGMMLGenerator.createNode(nodelabel, (String) probeIdMap.get(nodelabel), data, probeInd);
+		return xgmmlNodeContent;
+	}
+	
+	/**
+	 * 
+	 * @param labelFrom
+	 * @param labelTo
+	 * @param probeIdMap
+	 * @return
+	 */
+	private static String getXgmmlEdge(String labelFrom, String labelTo, Hashtable probeIdMap) {
+		String xgmmlEdgeContent = "";
 
-		if(!nodeCreated.contains(labelTo)) {
-			xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, (String) prodeIdMap.get(labelTo), data, fromToIndx[1]);
-			nodeCreated.add(labelTo);
-		}
-		xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, (String) prodeIdMap.get(labelFrom), (String) prodeIdMap.get(labelTo));
-		return xgmmlNodeContent += xgmmlEdgeContent;
+		xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, (String) probeIdMap.get(labelFrom), (String) probeIdMap.get(labelTo));
+		return xgmmlEdgeContent;
 	}
 	
 	/**
