@@ -83,7 +83,7 @@ public class XGMMLGenerator {
 	}
 
 	/**
-	 * Replaces chars like ' that XML cannot handle if not escaped properly
+	 * Replaces char ' that XML cannot handle if not escaped properly
 	 * @param string
 	 * @return
 	 */

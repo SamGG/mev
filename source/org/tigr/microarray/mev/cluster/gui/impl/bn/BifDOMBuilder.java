@@ -1,6 +1,7 @@
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,6 +9,7 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 import javax.xml.parsers.*;
+import javax.xml.transform.stream.StreamSource;
 
 public class BifDOMBuilder {
 
@@ -26,7 +28,23 @@ public class BifDOMBuilder {
 	}
 	
 	/**
-	 * 
+	 * Parses a String XML resource
+	 * @param source
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public ArrayList<BifNode> build(InputSource source) throws SAXException, IOException {
+		bifAL.clear();
+		//Number of states attribute
+		int BIN = 0;
+		
+		Document document = builder.parse(source);
+		return build(document, BIN);
+	}
+	
+	/**
+	 * Parses a File URI
 	 * @param fileName_bif
 	 * @return
 	 * @throws SAXException
@@ -34,13 +52,24 @@ public class BifDOMBuilder {
 	 */
 	public ArrayList<BifNode> build(String fileName_bif) throws SAXException, IOException {
 		bifAL.clear();
-//		ArrayList<BifNode> bifNodes = new ArrayList<BifNode>();
+		//ArrayList<BifNode> bifNodes = new ArrayList<BifNode>();
 		//Number of states attribute
 		int BIN = 0;
 		
 		Document document = builder.parse(fileName_bif);
-		
-		//Find number of states/bins
+		return build(document, BIN);
+	}
+	
+	/**
+	 * Handles a Document
+	 * @param document
+	 * @param BIN
+	 * @return
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private ArrayList<BifNode> build(Document document, int BIN) throws SAXException, IOException {
+//		Find number of states/bins
 		NodeList nodes_variables = document.getElementsByTagName("VARIABLE");
 		
 		//If no VARIABLE tags found, then doc is invalid
@@ -305,5 +334,4 @@ public class BifDOMBuilder {
 			e.printStackTrace();
 		}
 	}
-
 }
