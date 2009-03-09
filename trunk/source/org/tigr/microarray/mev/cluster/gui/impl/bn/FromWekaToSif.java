@@ -25,8 +25,46 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.xml.transform.stream.StreamSource;
+
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 public class FromWekaToSif {
+	
+	/**
+	 * Converts a Bif XML network with CPT info into a simple sif file 
+	 * @param xmlBifStr
+	 * @param pw
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public static void fromWekaBifToSif(String xmlBifStr, PrintWriter pw) throws SAXException, IOException {
+		BifDOMBuilder bifDom = new BifDOMBuilder();
+		ArrayList<BifNode> bifNodes = bifDom.build(new InputSource(new StringReader(xmlBifStr)));
+		
+		Hashtable<String, String> uniqueNodesIdMap = new Hashtable<String, String>();
+		int nodesId = 1;
+		
+		for(int c = 0; c < bifNodes.size(); c++) {
+			BifNode _tmpBifNode = (BifNode)bifNodes.get(c);
+			String labelTo = _tmpBifNode.getChild();
+			if(!uniqueNodesIdMap.containsKey(labelTo)) {
+				uniqueNodesIdMap.put(labelTo, String.valueOf(nodesId));
+				nodesId++;
+			}
+			//Run thru parent(s) if any and create edges in sif format
+			for(int p = 0; p < _tmpBifNode.numParents(); p++) {
+				String labelFrom = _tmpBifNode.getParentAt(p);
+				if(!uniqueNodesIdMap.containsKey(labelFrom)) {
+					uniqueNodesIdMap.put(labelFrom, String.valueOf(nodesId));
+					nodesId++;
+				}
+				pw.println(labelFrom + " pd "+ labelTo);
+			}
+		}
+	}
+	
 	// Pre: Name of input file from WEKA containing network structure
 	// in the format: variable: parent1,...,parentn
 	//      PrintWriter where to write the network in directed SIF format: node1 pd node2
@@ -177,6 +215,62 @@ public class FromWekaToSif {
 		}
 	}
 
+	/**
+	 * 
+	 * @param bifStr
+	 * @param fileName
+	 * @param probeIndexAssocHash
+	 * @param data
+	 * @throws NullArgumentException
+	 * @throws IOException
+	 * @throws SAXException
+	 */
+	public static void fromWekaBifToXgmml(String bifStr, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException, SAXException {
+		BifDOMBuilder bifDom = new BifDOMBuilder();
+		ArrayList<BifNode> bifNodes = bifDom.build(new InputSource(new StringReader(bifStr)));
+		
+		String xgmmlContent = "";
+		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
+		xgmmlContent = XGMMLGenerator.createHeader(label);
+		String xgmmlNodes = "";
+		String xgmmlEdges = "";
+		Hashtable<String, String> uniqueNodesIdMap = new Hashtable<String, String>();
+		int nodesId = 1;
+		for(int c = 0; c < bifNodes.size(); c++) {
+			BifNode _tmpBifNode = (BifNode)bifNodes.get(c);
+			String labelTo = _tmpBifNode.getChild();
+			if(!uniqueNodesIdMap.containsKey(labelTo)) {
+				uniqueNodesIdMap.put(labelTo, String.valueOf(nodesId));
+				nodesId++;
+				
+				xgmmlNodes += getXgmmlNode(labelTo, uniqueNodesIdMap, probeIndexAssocHash, data);
+			}
+			//Run thru parent(s) if any and create edges
+			for(int p = 0; p < _tmpBifNode.numParents(); p++) {
+				String labelFrom = _tmpBifNode.getParentAt(p);
+				if(!uniqueNodesIdMap.containsKey(labelFrom)) {
+					uniqueNodesIdMap.put(labelFrom, String.valueOf(nodesId));
+					nodesId++;
+					
+					xgmmlNodes += getXgmmlNode(labelFrom, uniqueNodesIdMap, probeIndexAssocHash, data);
+				}
+				xgmmlEdges += getXgmmlEdge(labelFrom, labelTo, uniqueNodesIdMap);
+			}
+		}
+		xgmmlContent += xgmmlNodes;
+		xgmmlContent += xgmmlEdges;
+		xgmmlContent += XGMMLGenerator.getFooter();
+		try {
+			XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
+		} catch (IOException ioe) {
+			throw ioe;
+		}
+	}
+	
+	public static void fromWekaBifToXgmml(Hashtable edgesTable, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+		
+	}
+	
 	/**
 	 * 
 	 * @param evalStr
