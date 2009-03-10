@@ -58,7 +58,7 @@ import org.tigr.microarray.mev.resources.SupportFileAccessError;
  */
 
 public class TEASEGUI implements IClusterGUI {
-
+	String sep = System.getProperty("file.separator");
 	public static final String LAST_TEASE_FILE_LOCATION = "last-tease-file-location";
 	private Algorithm algorithm;   //a reference to TEASE algorithm
 	private JFrame frame;
@@ -71,7 +71,7 @@ public class TEASEGUI implements IClusterGUI {
     private boolean hclOnly;            //variables used specifically for HCL only
     private boolean clusterGeneTree;
     private boolean clusterSampleTree;
-    
+    private String baseFileSystem, baseImpliesFileLocation, baseTagFileLocation;
 	/**
 	 * Constructor. Create an instance of TEASEGUI
 	 *
@@ -209,9 +209,9 @@ public class TEASEGUI implements IClusterGUI {
         	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
         	
         	File impliesFile = supportFiles.get(eiudf);
-	        data.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
-	        data.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
-	        
+	    	baseImpliesFileLocation = eiudf.getImpliesLocation(impliesFile);
+	    	baseTagFileLocation = eiudf.getTagsLocation(impliesFile);
+	        	        
 	        File speciesarraymapping = supportFiles.get(aafd);
 	        try {
 	        	speciestoarrays = aafd.parseAnnotationListFile(speciesarraymapping);
@@ -244,6 +244,26 @@ public class TEASEGUI implements IClusterGUI {
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
+        baseFileSystem = dialog.getBaseFileLocation();
+        if(!dialog.isPreloadedAnnotationSelected()) {
+	        data.addParam("implies-location-list", baseFileSystem + sep + "Data" + sep + "Class" + sep + "Implies");
+	        data.addParam("tags-location-list", baseFileSystem + sep + "Data" + sep + "Class" + sep + "URL data" + sep + "Tags");
+        }
+        if(data.getParams().getString("implies-location-list") == null || 
+        		! new File(data.getParams().getString("implies-location-list")).exists() ||
+        		! new File(data.getParams().getString("implies-location-list")).isDirectory() 
+        		) {
+//        	System.out.println("bad implies file location: " + data.getParams().getString("implies-location-list"));
+        	data.addParam("implies-location-list", baseImpliesFileLocation);
+        }
+        if(data.getParams().getString("tags-location-list") == null ||        		
+        		! new File(data.getParams().getString("tags-location-list")).exists() ||
+        		! new File(data.getParams().getString("tags-location-list")).isDirectory() 
+        		) {
+//        	System.out.println("bad tag file location: " + data.getParams().getString("tags-location-list"));
+        	data.addParam("tags-location-list", baseTagFileLocation);
+        }
+        
         
         int method = dialog.getMethod();
         function = dialog.getDistanceMetric();
