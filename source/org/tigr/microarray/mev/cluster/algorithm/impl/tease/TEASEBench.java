@@ -58,6 +58,7 @@ public class TEASEBench {
     public boolean reportEaseScore; //indicates statistic to report
     private Hashtable pop_totals;  //accumulates totals for various systems 
     private Hashtable sample_totals;  //accumulates totals for various systems 
+    private String impliesFileLocation;
 	
     private String sep = //"/";  //os file separator
     	System.getProperty("file.separator");
@@ -270,6 +271,9 @@ public class TEASEBench {
     public void AddAnnotationFileName(String file_name) {
         annotation_file_names.addElement(file_name);
     }
+    public void setImpliesFileLocation(String impliesFileLocation) {
+    	this.impliesFileLocation = impliesFileLocation;
+    }
     
     /**  
      * Obtain the categories from the annotation files and create a hashtable 
@@ -329,21 +333,18 @@ public class TEASEBench {
             //(jcb)
             //create hash table for implies using (implies_associator)
             //This will then be used to add implied categories
-            String fileName, impliesFile;
-            int stringIndex;
+            String fileName;
             for(int i = 0; i < annotation_file_names.size(); i++){
                 fileName = (String)annotation_file_names.elementAt(i);
-                stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
-                impliesFile += fileName.substring(stringIndex+1, fileName.length());
+                
                 
                 //System.out.println("implies file = "+impliesFile);
                 
-                File file = new File(impliesFile);
+                File file = new File(impliesFileLocation, fileName);
                 if(!file.exists() || !file.isFile())  //if implies file is missing move on
                     continue;
                 
-                in = new BufferedReader(new FileReader(impliesFile));
+                in = new BufferedReader(new FileReader(file));
                 //term = fileName.substring(file_name.lastIndexOf("/")+1, file_name.indexOf("."));
                 term = fileName.substring(fileName.lastIndexOf(sep)+1, fileName.lastIndexOf("."));
                 
@@ -490,19 +491,15 @@ public class TEASEBench {
                         
             //create hash table for implies using (implies_associator)
             //This will then be used to add implied categories
-            String fileName, impliesFile;
-            int stringIndex;
+            String fileName;
             for(int i = 0; i < annotation_file_names.size(); i++){
                 fileName = (String)annotation_file_names.elementAt(i);
-                stringIndex = fileName.lastIndexOf(sep);
-                impliesFile = fileName.substring(0, stringIndex) + sep+"Implies"+sep;
-                impliesFile += fileName.substring(stringIndex+1, fileName.length());
                  
-                File file = new File(impliesFile);
+                File file = new File(impliesFileLocation, fileName);
                 if(!file.exists() || !file.isFile())  //if implies file is missing move on
                     continue;
                 
-                in = new BufferedReader(new FileReader(impliesFile));
+                in = new BufferedReader(new FileReader(file));
                 //term = fileName.substring(file_name.lastIndexOf("/")+1, file_name.indexOf("."));
                 term = fileName.substring(fileName.lastIndexOf(sep)+1, fileName.lastIndexOf("."));
                 

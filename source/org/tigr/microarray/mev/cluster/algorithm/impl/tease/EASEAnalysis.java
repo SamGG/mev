@@ -320,6 +320,7 @@ public class EASEAnalysis{
         for(int i = 0; i < annotationFileList.length; i++){
             this.bench.AddAnnotationFileName(annotationFileList[i]);   //store annotatiln file names in TEASEBench
         }
+        this.bench.setImpliesFileLocation(data.getParams().getString("implies-location-list"));
 
         if(this.performClusterAnalysis) {            //if cluster analysis
             //extract population-list
