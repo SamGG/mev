@@ -34,8 +34,9 @@ public class EASE extends AbstractAlgorithm {
     protected JEASEStatistics jstats;
     protected Vector<String> sampleVector;
     protected Vector<String> populationVector;
-    
+
     protected String [] annotationFileList;
+    protected String impliesFileLocation;
     protected String [][] result;
     protected String [][] hitList;
     protected String [] categoryNames;
@@ -53,7 +54,6 @@ public class EASE extends AbstractAlgorithm {
     protected boolean isRecursedEaseRun = false;
     
     String tagsFileLocation;    
-//    protected boolean tomsNeaseIdea = true;    
     protected EaseElementList populationElementList;        
     protected static final String HAVE_ACCESSIONS_OPTION = "have-accession-numbers";        
     long start;
@@ -241,7 +241,7 @@ public class EASE extends AbstractAlgorithm {
 
 			}
 			nestedAlgorithmResults[i] = nData;
-			
+		
 		}//end loop through each selected EASE term
 
         //add nested results to algorithmData
@@ -398,13 +398,14 @@ public class EASE extends AbstractAlgorithm {
         newData.setExpression(oldData.getExpression());
         newData.setPerformClusterAnalysis(oldData.isPerformClusterAnalysis());
         newData.setRunNease(false);
-//        newData.addParam("implies-location-list", oldData.getParams().getString("implies-location-list"));
-        newData.addParam("tags-location-list", oldData.getParams().getString("tags-location-list"));
     	newData.setReportEaseScore(oldData.isReportEaseScore());
     	if(oldData.getConverterFileName() != null)
     		newData.setConverterFileName(oldData.getConverterFileName());
-    	if(oldData.getAnnotationFileList() != null)
+    	if(oldData.getAnnotationFileList() != null) {
     		newData.setAnnotationFileList(oldData.getAnnotationFileList());
+    	}
+    	newData.setImpliesFileLocation(oldData.getImpliesFileLocation());
+    	newData.setTagFileLocation(oldData.getTagFileLocation());
     	newData.setPopulationList(oldData.getPopulationList());
     	newData.setHaveAccessions(oldData.isHaveAccessions());
     	newData.setHochbergCorrection(false);
@@ -437,9 +438,9 @@ public class EASE extends AbstractAlgorithm {
         String [] sampleList = algorithmData.getSampleList();//getStringArray("sample-list");
         String [] populationList = algorithmData.getPopulationList();//getStringArray("population-list");
         annotationFileList = algorithmData.getAnnotationFileList();//getStringArray("annotation-file-list");
+        impliesFileLocation = algorithmData.getImpliesFileLocation();
+        tagsFileLocation = algorithmData.getTagFileLocation();
 
-        String impliesFileLocation = params.getString("implies-location-list");        
-        tagsFileLocation = params.getString("tags-location-list");                 
         EaseElementList sampleElementList = new EaseElementList(clusterIndices, sampleList);
         populationElementList = new EaseElementList(populationList);
    
@@ -648,6 +649,7 @@ public class EASE extends AbstractAlgorithm {
         for(int i = 0; i < annotationFileList.length; i++){
             jstats.AddAnnotationFileName(annotationFileList[i]);
         }
+        jstats.setImpliesFileLocation(impliesFileLocation);
         
         event.setDescription("Reading Annotation Category Files into Memory\n");
         fireValueChanged(event);
@@ -833,7 +835,7 @@ public class EASE extends AbstractAlgorithm {
      * @return
      */
     protected String [][] appendAccessions(String [][] resultMatrix, String [] fileNames){
-        
+
         if(resultMatrix == null || resultMatrix.length < 1)
             return resultMatrix;
         
@@ -865,7 +867,7 @@ public class EASE extends AbstractAlgorithm {
             return newResult;
         else
             return resultMatrix;
-    }
+        }
     
     /** Builds a result copy
      */

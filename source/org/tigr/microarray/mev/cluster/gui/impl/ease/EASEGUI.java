@@ -103,7 +103,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      */
     protected boolean isScripting = false;
     protected File annotationFile;
-    
+
+    String baseImpliesFileLocation = "";
+    String baseTagFileLocation = "";
     public static final String LAST_EASE_FILE_LOCATION = "last-ease-file-location";
     
     /** Indicates whether the Nested EASE add-on should be run*/
@@ -123,7 +125,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         String sep = System.getProperty("file.separator");
         algorithmData = new EaseAlgorithmData();
-        
+
         ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
         
         //check for existance of annotation file. If there is annotation loaded and the annotation file it came
@@ -155,8 +157,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	    	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);
 	    	
 	    	File impliesFile = supportFiles.get(eiudf);
-//	    	algorithmData.addParam("implies-location-list", eiudf.getImpliesLocation(impliesFile));
-	        algorithmData.addParam("tags-location-list", eiudf.getTagsLocation(impliesFile));
+	    	baseImpliesFileLocation = eiudf.getImpliesLocation(impliesFile);
+	    	baseTagFileLocation = eiudf.getTagsLocation(impliesFile);
 	        
 	        File speciesarraymapping = supportFiles.get(aafd);
 	        try {
@@ -178,7 +180,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         EASEInitDialog dialog = new EASEInitDialog(
         		framework.getFrame(), 
         		repository, 
-        		framework.getData().getFieldNames(), 
+        		//TODO change to getFieldNames later
+        		framework.getData().getAllFilledAnnotationFields(), 
         		easeFileLocation,
         		framework.getResourceManager(),
         		species, 
@@ -201,6 +204,27 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         annotationKeyType = dialog.getAnnotationKeyType();
         isNestedEase = dialog.isNEaseSelected();
         String [] annotationFileList = dialog.getAnnToGOFileList();
+        
+        if(!dialog.isPreloadedAnnotationSelected()) {
+    		algorithmData.setImpliesFileLocation(baseFileSystem + sep + "Data" + sep + "Class" + sep + "Implies");
+    		algorithmData.setTagFileLocation(baseFileSystem + sep + "Data" + sep + "Class" + sep + "URL data" + sep + "Tags");
+        }
+        if(algorithmData.getImpliesFileLocation() == null || 
+        		! new File(algorithmData.getImpliesFileLocation()).exists() ||
+        		! new File(algorithmData.getImpliesFileLocation()).isDirectory() 
+        		) {
+        	System.out.println("bad implies file location: " + algorithmData.getImpliesFileLocation());
+        	algorithmData.setImpliesFileLocation(baseImpliesFileLocation);
+        }
+        if(algorithmData.getTagFileLocation() == null ||        		
+        		! new File(algorithmData.getTagFileLocation()).exists() ||
+        		! new File(algorithmData.getTagFileLocation()).isDirectory() 
+        		) {
+        	System.out.println("bad tag file location: " + algorithmData.getTagFileLocation());
+        	algorithmData.setTagFileLocation(baseTagFileLocation);
+        }
+
+    	
         int [] indices;
         boolean isPvalueCorrectionSelected;
         experiment = framework.getData().getExperiment();
@@ -252,7 +276,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	        if(isClusterAnalysis && dialog.isPopFileModeSelected()) {
 	            try {
 	                populationKeys = getPopulationKeysFromFile(dialog.getPopulationFileName());
-//	                algorithmData.addParam("population-file-name", dialog.getPopulationFileName());
 	                if(populationKeys == null) {
 	                    return null;
 	                }
@@ -553,7 +576,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 
 			int nEaseCount = new Integer(result.getParams().getString("nested-ease-count")).intValue();
 			if (nEaseCount > 0) {
-				DefaultMutableTreeNode nestedEaseRoot = new DefaultMutableTreeNode("Nested EASE");
+				DefaultMutableTreeNode nestedEaseRoot = new DefaultMutableTreeNode("Nested EASE: " + nEaseCount + " Terms");
 				String[] nestedEaseTerms = result.getStringArray("selected-nested-ease-terms");
 
 				String[][] neaseConsolidatedResults = result.getNeaseConsolidatedResults();
@@ -567,18 +590,18 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 				nestedEaseRoot.add(node);
 
 				for (int i = 0; i < nEaseCount; i++) {
-					DefaultMutableTreeNode nestedEaseNode = new DefaultMutableTreeNode(nestedEaseTerms[i]);
-					AlgorithmData thisEaseResult = result.getResultAlgorithmData(new Integer(i));
-					String[][] thisEaseResultData = (String[][]) thisEaseResult.getObjectMatrix("result-matrix");
+					DefaultMutableTreeNode nestedEaseNode = new DefaultMutableTreeNode("nEASE run: " + nestedEaseTerms[i]);
+					EaseAlgorithmData thisNeaseResult = result.getNEASEResults(new Integer(i));
+					String[][] thisEaseResultData = (String[][]) thisNeaseResult.getResultMatrix();//getObjectMatrix("result-matrix");
 					if (thisEaseResultData != null && thisEaseResultData.length != 0) {
-						int[][] theseClusters = thisEaseResult.getIntMatrix("cluster-matrix");
-						addTableViewer(nestedEaseNode, thisEaseResult, theseClusters);
-						addExpressionViewers(nestedEaseNode, thisEaseResult, theseClusters);
-						addGeneralInfo(nestedEaseNode, thisEaseResult);
-						addGOTree(nestedEaseNode, thisEaseResult);
+						int[][] theseClusters = thisNeaseResult.getClusterMatrix();//getIntMatrix("cluster-matrix");
+						addTableViewer(nestedEaseNode, thisNeaseResult, theseClusters);
+						addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
+						addGeneralInfo(nestedEaseNode, thisNeaseResult);
+						addGOTree(nestedEaseNode, thisNeaseResult);
 						nestedEaseRoot.add(nestedEaseNode);
 					} else {
-						nestedEaseRoot.add(createEmptyResultNode(thisEaseResult, nestedEaseTerms[i]));
+						nestedEaseRoot.add(createEmptyResultNode(thisNeaseResult, nestedEaseTerms[i]));
 					}
 				}
 				root.add(nestedEaseRoot);
@@ -599,21 +622,21 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         
         if(categories.indexOf("GO Biological Process") != -1) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode();
-            GOTreeViewer viewer = new GOTreeViewer("GO Biological Process", headerNames, data, root, this.baseFileSystem);
+            GOTreeViewer viewer = new GOTreeViewer("GO Biological Process", headerNames, data, root, algorithmData.getImpliesFileLocation());
             node.setUserObject(new LeafInfo("GO Hierarchy -- Biological Process", viewer));
             root.add(node);
         }
         
         if(categories.indexOf("GO Cellular Component") != -1) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode();
-            GOTreeViewer viewer = new GOTreeViewer("GO Cellular Component", headerNames, data, root, this.baseFileSystem);
+            GOTreeViewer viewer = new GOTreeViewer("GO Cellular Component", headerNames, data, root, algorithmData.getImpliesFileLocation());
             node.setUserObject(new LeafInfo("GO Hierarchy -- Cellular Component", viewer));
             root.add(node);
         }
         
         if(categories.indexOf("GO Molecular Function") != -1) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode();
-            GOTreeViewer viewer = new GOTreeViewer("GO Molecular Function", headerNames, data, root, this.baseFileSystem);
+            GOTreeViewer viewer = new GOTreeViewer("GO Molecular Function", headerNames, data, root, algorithmData.getImpliesFileLocation());
             node.setUserObject(new LeafInfo("GO Hierarchy -- Molecular Function", viewer));
             root.add(node);
         }
@@ -641,14 +664,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result result matrix
      */
-    protected void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData result, int[][] clusters) {
+    protected void addExpressionViewers(DefaultMutableTreeNode root, AlgorithmData thisresult, int[][] theseclusters) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Viewers");
-        
-        IViewer expViewer = new EASEExperimentViewer(this.experiment, this.clusters);
-        EASECentroidViewer graphViewer = new EASECentroidViewer(this.experiment, this.clusters);
+        IViewer expViewer = new EASEExperimentViewer(this.experiment, theseclusters);
+        EASECentroidViewer graphViewer = new EASECentroidViewer(this.experiment, theseclusters);
         //set means and variances in the graph viewer
-        graphViewer.setMeans(result.getMatrix("means").A);
-        graphViewer.setVariances(result.getMatrix("variances").A);
+        String[][] thisResultMatrix = (String [][])thisresult.getObjectMatrix("result-matrix");
+        graphViewer.setMeans(thisresult.getMatrix("means").A);
+        graphViewer.setVariances(thisresult.getMatrix("variances").A);
         DefaultMutableTreeNode clusterNode;//, annotNode, popNode;
         int accindex = 1;
         if(this.haveAccessionNumbers) {
@@ -656,15 +679,15 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         } else {
         	accindex=2;
         }
-        for (int i=0; i<this.clusters.length; i++) {
-            clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1) + ": " + resultMatrix[i][accindex+2]);
+        for (int i=0; i<theseclusters.length; i++) {
+            clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1) + ": " + thisResultMatrix[i][accindex+2]);
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            clusterNode.add(new DefaultMutableTreeNode(resultMatrix[i][1]));
+            clusterNode.add(new DefaultMutableTreeNode(thisResultMatrix[i][1]));
             if(this.haveAccessionNumbers)
-                clusterNode.add(new DefaultMutableTreeNode(resultMatrix[i][2]));
-            clusterNode.add(new DefaultMutableTreeNode("Number of Genes: "+this.clusters[i].length));
+                clusterNode.add(new DefaultMutableTreeNode(thisResultMatrix[i][2]));
+            clusterNode.add(new DefaultMutableTreeNode("Number of Genes: "+theseclusters[i].length));
             
             node.add(clusterNode);
         }
@@ -676,9 +699,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
      * @param root root node
      * @param result
      */
-    protected void addTableViewer(DefaultMutableTreeNode root, AlgorithmData result, int[][] clusters){
-        Object [][] data = result.getObjectMatrix("result-matrix");
-        String [] headerNames = result.getStringArray("header-names");
+    protected void addTableViewer(DefaultMutableTreeNode root, AlgorithmData thisresult, int[][] clusters){
+        Object [][] data = thisresult.getObjectMatrix("result-matrix");
+        String [] headerNames = thisresult.getStringArray("header-names");
         
         if(data == null || data.length < 1)
             return;

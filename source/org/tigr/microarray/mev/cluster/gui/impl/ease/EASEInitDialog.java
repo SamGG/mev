@@ -139,7 +139,7 @@ public class EASEInitDialog extends AlgorithmDialog {
         this.resourceManager = rm;
         this.speciestoarrays = speciestoarrays;
         this.useLoadedAnnotationFile = isAnnotationLoaded;
-
+        
         if(defaultFileLocation == null) {
         	defaultFileBaseLocation = TMEV.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
         } else {
@@ -501,10 +501,16 @@ public class EASEInitDialog extends AlgorithmDialog {
 		bg.add(preloadedAnnotationButton);
 		preloadedAnnotationButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
+				if(preloadedAnnotationButton.isSelected()) {
+                	easeParamPanel.fieldNamesBox.setSelectedItem(ANNOTATION_LINK);
+                	easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
+                	easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
+				}
 				browseButton.setEnabled(!preloadedAnnotationButton.isSelected());
 				popField.setEnabled(!preloadedAnnotationButton.isSelected());
 				popField.setBackground(Color.lightGray);
 				fileLabel.setEnabled(!preloadedAnnotationButton.isSelected());
+
 			}
 		});
 		
@@ -1343,7 +1349,6 @@ public class EASEInitDialog extends AlgorithmDialog {
 			result = JOptionPane.CLOSED_OPTION;
 			dispose();
 		}
-
 	}
     
 

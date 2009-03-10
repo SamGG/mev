@@ -83,7 +83,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     private double upper = 0.05;
     private double lower = 0.01;
     
-//    private String baseFileSystem;
+    private String baseFileSystem;
     
     private GONode[][] storedNodes;
     private String[] headerFields;
@@ -111,7 +111,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public GOTreeViewer(GONode [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
         super(new GridBagLayout());
         this.storedNodes = data;
-//        this.baseFileSystem = baseFileSystem;
+        this.baseFileSystem = baseFileSystem;
         tree = new Ktree(data);
         header = new GOTreeHeader(data[0][0], this, upper, lower);
         this.viewerNode = viewerNode;
@@ -137,7 +137,7 @@ public class GOTreeViewer extends JPanel implements IViewer {
         super(new GridBagLayout());
         
         this.viewerNode = viewerNode;
-//        this.baseFileSystem = baseFileSystem;
+        this.baseFileSystem = baseFileSystem;
         category = goCategory;
         this.storedNodes = constructTree(goCategory, headerFields, data);
         this.headerFields = headerFields;
@@ -407,30 +407,17 @@ public class GOTreeViewer extends JPanel implements IViewer {
         }
     }
     
-    private Hashtable getAllAssociations() throws FileNotFoundException, IOException {
+    private Hashtable<String, Vector<String>> getAllAssociations() throws FileNotFoundException, IOException {
         //create hash table for implies using (implies_associator)
         //This will then be used to add implied categories
         int idx;
-        String impliesFile, line;
-        Hashtable implied_associations = new Hashtable(10000);
-        EASEImpliesAndURLDataFile impliesFolderDef = new EASEImpliesAndURLDataFile();
-        File impliesFolder = null;
-        File impliesAndUrlFolder;
-        try {
-        	impliesAndUrlFolder = TMEV.getResourceManager().getSupportFile(impliesFolderDef, false);
-        	impliesFolder = new File(impliesFolderDef.getImpliesLocation(impliesAndUrlFolder));
-        } catch (SupportFileAccessError sfae) {
-        	throw new IOException(sfae.getMessage());
-        }
-//        File impliesFolder = TMEV.getFile(baseFileSystem+"/Data/Class/Implies/");
-        String folderPath = impliesFolder.getPath();
-        impliesFile = folderPath+"/"+category+".txt";
-        
-        File file = new File(impliesFile);
+        String line;
+        Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>(10000);
+        File file = new File(baseFileSystem, category + ".txt");
         if(!file.exists() || !file.isFile())  //if implies file is missing move on
             return null;
         
-        BufferedReader in = new BufferedReader(new FileReader(impliesFile));
+        BufferedReader in = new BufferedReader(new FileReader(file));
         
         while((line = in.readLine()) != null){
             idx = line.indexOf('\t');
@@ -439,10 +426,10 @@ public class GOTreeViewer extends JPanel implements IViewer {
                 continue;
             
             if(!implied_associations.containsKey(line.substring(0,idx).trim())) {
-                implied_associations.put(line.substring(0,idx).trim(), new Vector());
-                ((Vector)(implied_associations.get(line.substring(0,idx).trim()))).addElement(line.substring(idx, line.length()).trim());
+                implied_associations.put(line.substring(0,idx).trim(), new Vector<String>());
+                ((implied_associations.get(line.substring(0,idx).trim()))).addElement(line.substring(idx, line.length()).trim());
             } else {
-                ((Vector)(implied_associations.get(line.substring(0,idx).trim()))).addElement(line.substring(idx, line.length()).trim());
+                ((implied_associations.get(line.substring(0,idx).trim()))).addElement(line.substring(idx, line.length()).trim());
             }
         }
         return implied_associations;

@@ -13,6 +13,8 @@ public class EaseAlgorithmData extends AlgorithmData {
 	private static final String RESULT_MATRIX_OPTION = "result-matrix";
 	private static final String POPULATION_LIST_OPTION = "population-list";
 	private static final String ANNOTATION_FILE_LIST_OPTION = "annotation-file-list";
+	private static final String IMPLIES_FILE_LOCATION_OPTION = "implies-file-location";
+	private static final String TAG_FILE_LOCATION_OPTION = "tag-file-location";
 	private static final String RUN_PERMUTATION_OPTION = "run-permutation-analysis";
 	private static final String HOCHBERG_CORRECTION_OPTION = "hochberg-correction";
 	private static final String SELECTED_NESTED_TERMS_OPTION = "selected-nested-ease-terms";
@@ -126,6 +128,18 @@ public class EaseAlgorithmData extends AlgorithmData {
 	}
 	public String[] getAnnotationFileList() {
 		return getStringArray(ANNOTATION_FILE_LIST_OPTION);
+	}
+	public void setImpliesFileLocation(String impliesFileLocation) {
+		getParams().setProperty(IMPLIES_FILE_LOCATION_OPTION, impliesFileLocation);
+	}
+	public String getImpliesFileLocation() {
+		return getParams().getString(IMPLIES_FILE_LOCATION_OPTION);
+	}
+	public void setTagFileLocation(String tagFileLocation) {
+		getParams().setProperty(TAG_FILE_LOCATION_OPTION, tagFileLocation);
+	}
+	public String getTagFileLocation() {
+		return getParams().getString(TAG_FILE_LOCATION_OPTION);
 	}
 	public EaseAlgorithmData getNEASEResults(int index) {
 		return (EaseAlgorithmData)getResultAlgorithmData(new Integer(index));
