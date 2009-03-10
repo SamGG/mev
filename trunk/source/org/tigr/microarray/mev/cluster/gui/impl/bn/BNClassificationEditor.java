@@ -366,7 +366,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	}
 
 	public JPanel getScrollPanePanel(){
-		//final JFrame frame;
 
 		// LM Network
 		String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
@@ -380,8 +379,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
 				FileOutputStream fos = new FileOutputStream(fileName);
 				PrintWriter pw = new PrintWriter(fos, true);
-				FromWekaToSif.fromWekaToSif(evalStr, pw, false);
-				//FromWekaToSif.fromWekaBifToSif(this.XmlBifStr, pw);
+				//TODO Move from evalStr to CPT Bif
+				//FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+				FromWekaToSif.fromWekaBifToSif(this.XmlBifStr, pw);
+				//TODO Write CPT file
 			}
 			else {
 				//create xgmml file
@@ -389,6 +390,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				//TODO Should move completely to Bif CPT format
 				//FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
 				FromWekaToSif.fromWekaBifToXgmml(this.XmlBifStr, fileName, probeIndexAssocHash, data);
+				//TODO Write CPT file
 			}					
 			networkFiles.add(0,fileName);
 		} catch(IOException ioE){
@@ -407,7 +409,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			//System.out.println("BN BootStrap: " + bootNetFile);
 			networkFiles.add(0,bootNetFile);
 			updateNetwork = new JButton("Update Network");
-			confThreshField = new JTextField("0.7");
+			confThreshField = new JTextField("0.8");
 			confThreshField.setPreferredSize(new Dimension(35, 10));
 
 			finalThreshBox = new JCheckBox("Final");
@@ -430,11 +432,28 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		evalPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		// The evalStr is now shown in the Viewer
 		if(isBootstraping){
-			//updateNetwork = new JButton("Update Network");
 			updateNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					onUpdateNetwork();
 					/* Try Cytoscape Broadcast */
+					if(!framework.isGaggleConnected()) {
+						if(framework.requestGaggleConnect()) {
+							try {
+								broadcastNetworkGaggle(interactionsfinal);
+							} catch (Exception e) {
+								JOptionPane.showMessageDialog(null, "Error Using Gaggle Broadcast", "Error", JOptionPane.ERROR_MESSAGE);
+								e.printStackTrace();
+								if(finalThreshBox.isSelected())
+									resultFrame.dispose();
+								else
+									resultFrame.show();
+							}
+						} else {
+							//TODO just write and file and display msg
+							JOptionPane.showMessageDialog(null, "Could not connect to Gaggle", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					/*
 					if(framework.isGaggleConnected()) {
 						try {
 							broadcastNetworkGaggle(interactionsfinal);
@@ -459,7 +478,8 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							e.printStackTrace();
 							resultFrame.show();
 						} 
-					}
+					} 
+					*/
 				}
 			});
 		}
@@ -612,7 +632,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			e.printStackTrace();
 		}
 
-		//Count occurance of each edge accros all the iterations of the bootstrap nretoerk sif files
+		//Count occurrence of each edge across all the iterations of the bootstrap network sif files
 		try {
 			for(int i = 0; i < numItr; i++) {
 				//System.out.println("Reading file: " + fileName+i+".sif");
@@ -635,10 +655,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
-
-		// Remove edges below threshold
-		
-		// Create sif or xgmml File from XML Bif
 		
 		//Remove Edges below threshold
 		Vector<String> interactions = new Vector<String>();
@@ -678,6 +694,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				fos = new FileOutputStream(bootNetFile);
 				pw = new PrintWriter(fos, true);
 				FromWekaToSif.fromWekaBifToSif(bifCpt, pw);
+				//TODO Write CPT file
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -717,6 +734,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				//TODO Move from edgesTable method
 				//FromWekaToSif.fromWekaToXgmml(edgesTable, numItr, confThreshold, bootNetFile, probeIndexAssocHash, data);
 				FromWekaToSif.fromWekaBifToXgmml(bifCpt, bootNetFile, probeIndexAssocHash, data);
+				//TODO Write CPT file
 			} catch (Exception e) {
 				//throw new Exception("Error creating XGML File from Bootstrap");
 				e.printStackTrace();
@@ -960,6 +978,10 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		return _tmp;
 	}
 
+	/**
+	 * Broadcasts a list of edges as a network to Cytoscape using Gaggle
+	 * @param interacts a list of edges encoded with node labels and probe index id
+	 */
 	protected void broadcastNetworkGaggle(Vector<String> interacts) {
 		Vector<int[]> interactions = new Vector<int[]>();
 		Vector<String> types = new Vector<String>();
