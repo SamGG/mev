@@ -365,45 +365,11 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		resultFrame.setVisible(true);
 	}
 
+	/**
+	 * Panel to create nets for different user given thresholds
+	 * @return
+	 */
 	public JPanel getScrollPanePanel(){
-
-		// LM Network
-		String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
-		networkFiles.add(0,lmNetFile);
-
-		// BN Observed
-		try {
-			String fileName = "";
-			if(!data.isAnnotationLoaded()) {
-				//Create sif file
-				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.sif";
-				FileOutputStream fos = new FileOutputStream(fileName);
-				PrintWriter pw = new PrintWriter(fos, true);
-				//TODO Move from evalStr to CPT Bif
-				//FromWekaToSif.fromWekaToSif(evalStr, pw, false);
-				FromWekaToSif.fromWekaBifToSif(this.XmlBifStr, pw);
-				//TODO Write CPT file
-			}
-			else {
-				//create xgmml file
-				fileName = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "result.xgmml";
-				//TODO Should move completely to Bif CPT format
-				//FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
-				FromWekaToSif.fromWekaBifToXgmml(this.XmlBifStr, fileName, probeIndexAssocHash, data);
-				//TODO Write CPT file
-			}					
-			networkFiles.add(0,fileName);
-		} catch(IOException ioE){
-			ioE.printStackTrace(); 
-			JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		} catch(NullArgumentException nae){
-			nae.printStackTrace(); 
-			JOptionPane.showMessageDialog(null, nae.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-		} catch (SAXException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Error processing Weka Bif DOM", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-
 		// BN Bootstrap Network
 		if(isBootstraping){
 			//System.out.println("BN BootStrap: " + bootNetFile);
@@ -453,33 +419,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							JOptionPane.showMessageDialog(null, "Could not connect to Gaggle", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
-					/*
-					if(framework.isGaggleConnected()) {
-						try {
-							broadcastNetworkGaggle(interactionsfinal);
-						} catch (Exception e) {
-							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-							e.printStackTrace();
-							if(finalThreshBox.isSelected())
-								resultFrame.dispose();
-							else
-								resultFrame.show();
-						}
-					} else {
-						try{
-							framework.requestGaggleConnect();
-							broadcastNetworkGaggle(interactionsfinal);
-							if(finalThreshBox.isSelected())
-								resultFrame.dispose();
-							else
-								resultFrame.show();
-						} catch (Exception e) {
-							JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-							e.printStackTrace();
-							resultFrame.show();
-						} 
-					} 
-					*/
 				}
 			});
 		}
@@ -520,35 +459,59 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					//String sep = System.getProperty("file.separator"); 
 					String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 					String outarff = "outExpression.arff";
+					
+					//	WEKA on observed Data
+					String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+					System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
+					String[] argsWeka = arguments.split(" ");
+					BayesNet bnNetOrg = new BayesNet();
+					evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
+					bnNetOrg.estimateCPTs();
+					XmlBifStr = bnNetOrg.toXMLBIF03();
+					System.out.println("\t\t ***** Start Eval and Bif Strs");
+					System.out.println("XmlBifStr\n" + XmlBifStr);
+					System.out.println("evalStr\n" + evalStr);
+					System.out.println("\t\t End ***** Eval and Bif Strs");
+					
+					//TODO Start
+					//LM Network
+					String lmNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
+					networkFiles.add(0,lmNetFile);
 
-					if(!isBootstraping) {
-						String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-						System.out.println("calling weka with arguments: \n"+arguments);
-						final String[] argsWeka = arguments.split(" ");
-						BayesNet bnNetOrg = new BayesNet();
-						evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
-						Estimator myEstm [][] = bnNetOrg.getDistributions();
-						System.out.println("Length: " + myEstm.length);
-						bnNetOrg.estimateCPTs();
-						XmlBifStr = bnNetOrg.toXMLBIF03();
-						System.out.println("\n\t\t ***** Start Eval and Bif Strs");
-						System.out.println("XmlBifStr\n" + XmlBifStr);
-						System.out.println("evalStr\n" + evalStr);
-						System.out.println("\n\t\t End ***** Eval and Bif Strs");
-					} else {
-						//WEKA on observed Data
-						String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-						System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
-						String[] argsWeka = arguments.split(" ");
-						BayesNet bnNetOrg = new BayesNet();
-						evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
-						bnNetOrg.estimateCPTs();
-						XmlBifStr = bnNetOrg.toXMLBIF03();
-						System.out.println("\t\t ***** Start Eval and Bif Strs");
-						System.out.println("XmlBifStr\n" + XmlBifStr);
-						System.out.println("evalStr\n" + evalStr);
-						System.out.println("\t\t End ***** Eval and Bif Strs");
-
+					// BN Observed
+					String obsNetFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_";
+					String obsCptFile = obsNetFile + "CPT.xml";
+					
+					//Write CPT file
+					FileOutputStream fos;
+					PrintWriter pw;	
+					fos = new FileOutputStream(obsCptFile);
+					pw = new PrintWriter(fos, true);
+					pw.print(bnNetOrg.toXMLBIF03());
+					pw.close();
+					fos.close();
+					
+					if(!data.isAnnotationLoaded()) {
+						//Create sif file
+						obsNetFile += ".sif";
+						fos = new FileOutputStream(obsNetFile);
+						pw = new PrintWriter(fos, true);
+						//Move from evalStr to CPT Bif
+						//FromWekaToSif.fromWekaToSif(evalStr, pw, false);
+						FromWekaToSif.fromWekaBifToSif(XmlBifStr, pw);
+						fos.flush();fos.close();pw.close();
+					}
+					else {
+						//create xgmml file
+						obsNetFile += ".xgmml";
+						//Should move completely to Bif CPT format
+						//FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
+						FromWekaToSif.fromWekaBifToXgmml(XmlBifStr, obsNetFile, probeIndexAssocHash, data);
+					}					
+					networkFiles.add(0,obsNetFile);
+					//TODO End
+					
+					if(isBootstraping) {	
 						//WEKA On bootstrapped data
 						String outarffbase = props.getProperty("rootOutputFileName");
 						String outarffext = ".arff";
@@ -571,18 +534,25 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							//break;
 						}
 						//if(!BNGUI.cancelRun)
-						bootNetFile = createNetworkFromBootstrapedEvals(XmlBifStrs, evalStrs, numIterations, outarffbase);
+						bootNetFile = createNetworkFromBootstraps(XmlBifStrs, evalStrs, numIterations, outarffbase);
 					}
-				}
-				catch(OutOfMemoryError ofm){
+				} catch(OutOfMemoryError ofm){
 					runProgressPanel.dispose();
 					System.out.println("Error: Out of Memory..");
 					ofm.printStackTrace();
 					JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Cannot Continue!", JOptionPane.ERROR_MESSAGE);
 					BNGUI.run = true;
 					BNGUI.cancelRun = true;
-				}
-				catch(Exception ex){
+				} catch(IOException ioE){
+					ioE.printStackTrace(); 
+					JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch(NullArgumentException nae){
+					nae.printStackTrace(); 
+					JOptionPane.showMessageDialog(null, nae.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (SAXException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error processing Weka Bif DOM", "Error", JOptionPane.ERROR_MESSAGE);
+				} catch(Exception ex){
 					runProgressPanel.dispose();
 					System.out.println("Weka exception..");
 					ex.printStackTrace();
@@ -608,12 +578,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	 * @param outarffbase
 	 * @return
 	 */
-	private String createNetworkFromBootstrapedEvals(String[] xmlBifStrs, String[] evalStrs, int numItr, String outarffbase) {
-		//String sep = System.getProperty("file.separator"); 
+	private String createNetworkFromBootstraps(String[] xmlBifStrs, String[] evalStrs, int numItr, String outarffbase) {
 		String path = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 		String fileName = path + outarffbase;
 
 		//Create sif files for every output of the resampled WEKA evaluation
+		//This can be done in memory but avoided by disk writes
 		try {
 			for(int i = 0; i < numItr; i++) {
 				//System.out.println("Creating file: " + fileName+i+outarffext);
@@ -659,19 +629,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		//Remove Edges below threshold
 		Vector<String> interactions = new Vector<String>();
 		interactions = createInteractions(edgesTable, confThreshold, numItr);
-		//TODO Remove
-		/*
-		Enumeration enumerate = edgesTable.keys();
-		while(enumerate.hasMoreElements()){
-			String edge = (String)enumerate.nextElement();
-			Integer count = (Integer)edgesTable.get(edge);
-			float presence = count.floatValue()/numItr;
-			//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
-			if(presence >= confThreshold){
-				interactions.add(edge);
-			}
-		}
-		*/
 		
 		//Fix the network learn the CPT
 		String bifCpt = "";
@@ -683,18 +640,35 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		}
 		
 		//End Code block to learn CPTs
-		String bootNetFile = "";
+		String bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP
+							+Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" 
+							+ "boot_result_" + numIterations + "_" + confThreshold;
+		String bootCptFile = bootNetFile + "_CPT.xml";
+		
+		//Write CPT file for confidence threshold
+		FileOutputStream fos;
+		PrintWriter pw;
+		try {
+			fos = new FileOutputStream(bootCptFile);
+			pw = new PrintWriter(fos, true);
+			pw.print(bifCpt);
+			pw.close();
+			fos.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		//Create Cytoscape File
 		if(!data.isAnnotationLoaded()) {
 			//Create sif file
-			bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-			Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "boot_result_" + numIterations + "_" + confThreshold + ".sif";
-			FileOutputStream fos;
-			PrintWriter pw;
+			bootNetFile += ".sif";
 			try {
 				fos = new FileOutputStream(bootNetFile);
 				pw = new PrintWriter(fos, true);
 				FromWekaToSif.fromWekaBifToSif(bifCpt, pw);
-				//TODO Write CPT file
+				fos.flush();fos.close();pw.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -705,36 +679,14 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			/*
-			try {
-				FileOutputStream fos = new FileOutputStream(bootNetFile);
-				PrintWriter pw = new PrintWriter(fos, true);
-				Enumeration enumerate = edgesTable.keys();
-				while(enumerate.hasMoreElements()){
-					String edge = (String)enumerate.nextElement();
-					Integer count = (Integer)edgesTable.get(edge);
-					float presence = count.floatValue()/numItr;
-					//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + threshold);
-					if(presence >= confThreshold){
-						pw.println(edge);
-					}
-				}
-				fos.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			*/
 		} else {
 			//create xgmml file
-			bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-			Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" + "boot_result_" + numIterations + "_" + confThreshold + ".xgmml";
+			bootNetFile += ".xgmml";
 			
 			try {
 				//TODO Move from edgesTable method
 				//FromWekaToSif.fromWekaToXgmml(edgesTable, numItr, confThreshold, bootNetFile, probeIndexAssocHash, data);
 				FromWekaToSif.fromWekaBifToXgmml(bifCpt, bootNetFile, probeIndexAssocHash, data);
-				//TODO Write CPT file
 			} catch (Exception e) {
 				//throw new Exception("Error creating XGML File from Bootstrap");
 				e.printStackTrace();
@@ -773,6 +725,12 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		
 	}
 	
+	/**
+	 * Learns the CPT of a fixed network
+	 * @param interactions
+	 * @return
+	 * @throws Exception
+	 */
 	private String learnCPTFromFixedNetwork(Vector<String> interactions) throws Exception {
 		String propsFile = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.XML_BIF_MODULE_FILE;
 		PrepareXMLBifModule.createXMLBifFromList(propsFile, interactions);
@@ -805,14 +763,13 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 	 */
 	protected void onUpdateNetwork() {
 		try {
-			//To track last created network from bootstrap data statrs with null
+			//To track last created network from bootstrap data starts with null
 			Vector<String> interactionsPrefinal = null;
-			// For lookup during gaggle broadcast and for creating final list of edges
+			//For lookup during gaggle broadcast and for creating final list of edges
 			interactionsPrefinal = interactionsfinal;
 			interactionsfinal = new Vector<String>();
-			// To Remove edges below threshold
+			//To Remove edges below threshold
 			float confThres = Float.parseFloat(confThreshField.getText().trim());
-			String _bootNetFile = null;
 			
 			//Remove Edges below threshold
 			interactionsfinal = createInteractions(edgesTable, confThres, numIterations);
@@ -822,80 +779,55 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			try {
 				bifCpt = learnCPTFromFixedNetwork(interactionsfinal);
 			} catch (Exception e1) {
-				// TODO Create JOptionPane Msg ??
+				//TODO Create JOptionPane Msg ??
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(null, "Error Learning CPT from Weka", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			
+			String _bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
+									Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
+									"boot_result_"+numIterations+"_"+confThres;
+			
+			String outCPTBifXML = _bootNetFile + "_CPT.xml";
+			
+			//Write network File
+			if(!data.isAnnotationLoaded()) {
+				//Create interactions & sif file
+				_bootNetFile += ".sif";
+				FileOutputStream fos;
+				PrintWriter pw;
+				try {
+					fos = new FileOutputStream(_bootNetFile);
+					pw = new PrintWriter(fos, true);
+					FromWekaToSif.fromWekaBifToSif(bifCpt, pw);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (SAXException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				//xgmml File
+				_bootNetFile += ".xgmml";
+				//FromWekaToSif.fromWekaToXgmml(edgesTable, numIterations, confThres, _bootNetFile, probeIndexAssocHash, data);
+				FromWekaToSif.fromWekaBifToXgmml(bifCpt, _bootNetFile, probeIndexAssocHash, data);
+			}
+
+			
 			if(finalThreshBox.isSelected()) {
 				//Create File & interaction adges
-				_bootNetFile = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+
-				Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +"boot_result_"+numIterations+"_"+confThres;
-				if(!data.isAnnotationLoaded()) {
-					//Create interactions & sif file
-					FileOutputStream fos;
-					PrintWriter pw;
-					try {
-						fos = new FileOutputStream(_bootNetFile);
-						pw = new PrintWriter(fos, true);
-						FromWekaToSif.fromWekaBifToSif(bifCpt, pw);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-					} catch (SAXException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-					}
-					/*
-					try {
-						_bootNetFile += ".sif";
-						FileOutputStream fos = new FileOutputStream(_bootNetFile);
-						PrintWriter pw = new PrintWriter(fos, true);
-						Enumeration enumerate = edgesTable.keys();
-						while(enumerate.hasMoreElements()){
-							String edge = (String)enumerate.nextElement();
-							Integer count = (Integer)edgesTable.get(edge);
-							float presence = count.floatValue()/numIterations;
-							//System.out.println(edge + " : " + count.toString() + " presence : " + presence + " thresh : " + confThres);
-							if(presence >= confThres){
-								pw.println(edge);
-								interactionsfinal.add(edge);
-							}
-						}
-						fos.close();
-					} catch (Exception e) {
-						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-					} 
-					*/
-				} else {
-					// Create interactions & xgmml File
-					_bootNetFile += ".xgmml";
-					//interactionsfinal = createInteractions(edgesTable, confThres, numIterations);
-					//FromWekaToSif.fromWekaToXgmml(edgesTable, numIterations, confThres, _bootNetFile, probeIndexAssocHash, data);
-					FromWekaToSif.fromWekaBifToXgmml(bifCpt, _bootNetFile, probeIndexAssocHash, data);
-				}
-
+				
 				System.out.println("Boot threshold: " + confThres);
 				System.out.println("Boot file: " + _bootNetFile);
 
-				resultFrame.hide();
-				// Do stuff to store the final thresh and the file name
+				//store the final thresh and the file name
 				finalBootFile = _bootNetFile;
 				networkFiles.add(0,finalBootFile);
 				
-				//TODO - Is it possible to just take a network and 
-				//Create weka instance to evaluate probabilities
-				//Create Weka Instance Object
-				//Evalute model
-				//Extract probabilities from Estimator class
-				//}
 				if(interactionsfinal.size() == 0) {
 					JOptionPane.showMessageDialog(this, "No valid network for selected threshold\n Will try to use last selected threshold.", "Warning", JOptionPane.INFORMATION_MESSAGE);
 					if(interactionsPrefinal != null) {
@@ -909,47 +841,17 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 					}
 				}
 				
-				//Write CPT XML File
-				String outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FixedNetWithCPT.xml";
-				FileOutputStream fos = new FileOutputStream(outCPTBifXML);
-				PrintWriter pw = new PrintWriter(fos, true);
-				pw.print(learnCPTFromFixedNetwork(interactionsfinal));
-				pw.close();
-				fos.close();
-				JOptionPane.showMessageDialog(this, "BIF File with CPTs, written here:\n" + outCPTBifXML, "CPTs File", JOptionPane.PLAIN_MESSAGE);
-				/*
-				String propsFile = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.XML_BIF_MODULE_FILE;
-				PrepareXMLBifModule.createXMLBifFromList(propsFile, interactionsfinal);
-				String bifFileFinal = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_XML_BIF_FILE_FINAL;
-				BayesNet bnNet = new BayesNet();
-				//Dataset
-				String outarff = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP + "outExpression.arff";
-				//Specify Data set K for kfold validation in weka
-                String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
-                //Specify Fixed Netwrok Classifier from File
-                modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
-                //Specify Fixed Netwrok Bif File
-                modelArgs += bifFileFinal;
-                //Specify Weka Estimator with inital alpha
-                modelArgs += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
-                //Run Weka Model
-                Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
-                Estimator myEstm [][] = bnNet.getDistributions();
-				bnNet.estimateCPTs();
-				//Write The network with CPts in BIF File format
-				//System.out.println(bnNet.toXMLBIF03());
-				String outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FixedNetWithCPT.xml";
-				FileOutputStream fos = new FileOutputStream(outCPTBifXML);
-				PrintWriter pw = new PrintWriter(fos, true);
-				pw.print(bnNet.toXMLBIF03());
-				pw.close();
-				fos.close();
-				JOptionPane.showMessageDialog(this, "BIF File with CPTs, written here:\n" + outCPTBifXML, "CPTs File", JOptionPane.PLAIN_MESSAGE);
-				*/
-			} else {
-				//Just create interactions, if not final
-				//interactionsfinal = createInteractions(edgesTable, confThres, numIterations);
+				//Distinct name for final CPT XML File
+				outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FinalNetWithCPT.xml";
+				resultFrame.hide();
 			}
+			
+			//Write CPT File final or otherwise
+			FileOutputStream fos = new FileOutputStream(outCPTBifXML);
+			PrintWriter pw = new PrintWriter(fos, true);
+			pw.print(bifCpt);
+			pw.close();fos.flush();fos.close();
+			//JOptionPane.showMessageDialog(this, "BIF File with CPTs, written here:\n" + outCPTBifXML, "CPTs File", JOptionPane.PLAIN_MESSAGE);
 		}catch(Exception ex){
 			JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();
