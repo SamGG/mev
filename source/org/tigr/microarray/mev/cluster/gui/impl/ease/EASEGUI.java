@@ -213,14 +213,14 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         		! new File(algorithmData.getImpliesFileLocation()).exists() ||
         		! new File(algorithmData.getImpliesFileLocation()).isDirectory() 
         		) {
-        	System.out.println("bad implies file location: " + algorithmData.getImpliesFileLocation());
+//        	System.out.println("bad implies file location: " + algorithmData.getImpliesFileLocation());
         	algorithmData.setImpliesFileLocation(baseImpliesFileLocation);
         }
         if(algorithmData.getTagFileLocation() == null ||        		
         		! new File(algorithmData.getTagFileLocation()).exists() ||
         		! new File(algorithmData.getTagFileLocation()).isDirectory() 
         		) {
-        	System.out.println("bad tag file location: " + algorithmData.getTagFileLocation());
+//        	System.out.println("bad tag file location: " + algorithmData.getTagFileLocation());
         	algorithmData.setTagFileLocation(baseTagFileLocation);
         }
 
@@ -569,9 +569,12 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 		addTableViewer(root, result, clusters);
 		addExpressionViewers(root, result, clusters);
         addGeneralInfo(root, result);
-        if(isClusterAnalysis)
-            addGOTree(root, result);
-
+        if(isClusterAnalysis) {
+//          addGOTree(root, result);
+          addGOTree(root, result.getResultMatrix(), result.getHeaderNames());
+//	        String [][] data = (String [][]) (result.getObjectMatrix("result-matrix"));
+//	        String [] headerNames = result.getStringArray("header-names");
+        }
 		if (isNestedEase) {
 
 			int nEaseCount = new Integer(result.getParams().getString("nested-ease-count")).intValue();
@@ -588,7 +591,10 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 					     
 				DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Nested Ease Summary Table", tv));
 				nestedEaseRoot.add(node);
-
+				
+				//TODO add gotree viewer 
+				addGOTree(nestedEaseRoot, result.getNeaseConsolidatedResults(), result.getHeaderNames());
+				
 				for (int i = 0; i < nEaseCount; i++) {
 					DefaultMutableTreeNode nestedEaseNode = new DefaultMutableTreeNode("nEASE run: " + nestedEaseTerms[i]);
 					EaseAlgorithmData thisNeaseResult = result.getNEASEResults(new Integer(i));
@@ -598,7 +604,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 						addTableViewer(nestedEaseNode, thisNeaseResult, theseClusters);
 						addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
 						addGeneralInfo(nestedEaseNode, thisNeaseResult);
-						addGOTree(nestedEaseNode, thisNeaseResult);
+						
+//						addGOTree(nestedEaseNode, thisNeaseResult);
+						addGOTree(nestedEaseNode, (String[][])thisNeaseResult.getObjectMatrix("result-matrix"), thisNeaseResult.getStringArray("header-names"));
+
+
 						nestedEaseRoot.add(nestedEaseNode);
 					} else {
 						nestedEaseRoot.add(createEmptyResultNode(thisNeaseResult, nestedEaseTerms[i]));
@@ -611,9 +621,10 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         return root;
     }
     
-    protected void addGOTree(DefaultMutableTreeNode root, AlgorithmData result) {
-        String [][] data = (String [][]) (result.getObjectMatrix("result-matrix"));
-        String [] headerNames = result.getStringArray("header-names");
+    protected void addGOTree(DefaultMutableTreeNode root, String[][] data, String[] headerNames) {
+//    protected void addGOTree(DefaultMutableTreeNode root, AlgorithmData result) {
+//        String [][] data = (String [][]) (result.getObjectMatrix("result-matrix"));
+//        String [] headerNames = result.getStringArray("header-names");
         
         String categories = new String("");
         
