@@ -350,15 +350,15 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 		dispose();
 	}
 
+	/**
+	 * Window that allows iteration over bootstrap network
+	 * @param panel
+	 */
 	public void displayScrollPane(JPanel panel){
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//JFrame.setDefaultLookAndFeelDecorated(true);
-		//Create and set up the window.
-
-		//JDialog frame = new JDialog(new JFrame(), "Results from Weka", true);
+		
 		resultFrame = new JDialog(mainFrame, "Results from Weka", false);
-		// frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//frame
+		
 		resultFrame.getContentPane().add(panel);
 		resultFrame.pack();
 		resultFrame.setLocation((screenSize.width-getSize().width)/2,(screenSize.height-getSize().height)/2);
@@ -389,9 +389,6 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			System.out.println("File: " + networkFiles.get(i));
 		}
 		//End Debug
-
-		// Call Webstart wuth Files
-		CytoscapeWebstart.onWebstartCytoscape(networkFiles);
 
 		final JPanel evalPanel = new JPanel();
 		evalPanel.setLayout(new BorderLayout());
@@ -523,18 +520,17 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 							arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 							System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
 							argsWeka = arguments.split(" ");
-							// evalStr = Evaluation.evaluateModel(new BayesNet(), argsWeka);
+							
 							bnNetOrg = new BayesNet();
 							evalStrs[i] = Evaluation.evaluateModel(bnNetOrg, argsWeka);
 							bnNetOrg.estimateCPTs();
 							XmlBifStrs[i] = bnNetOrg.toXMLBIF03();
-							//evalStr = evalStrs[i];
+							
 							System.out.println("Bootstrap Itr: " + i);
-							//if(BNGUI.cancelRun)
-							//break;
 						}
 						//if(!BNGUI.cancelRun)
 						bootNetFile = createNetworkFromBootstraps(XmlBifStrs, evalStrs, numIterations, outarffbase);
+						displayScrollPane(getScrollPanePanel());
 					}
 				} catch(OutOfMemoryError ofm){
 					runProgressPanel.dispose();
@@ -562,7 +558,9 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				}
 				runProgressPanel.dispose();
 				//if(!BNGUI.cancelRun)
-				displayScrollPane(getScrollPanePanel());
+				//displayScrollPane(getScrollPanePanel());
+				//Call Webstart with Files
+				CytoscapeWebstart.onWebstartCytoscape(networkFiles);
 				BNGUI.run = true;
 			}
 		});
@@ -900,7 +898,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			tmp = probeIndexAssocHash.get(edgeLabels[2]).split("-");
 			fromTo[1] = Integer.parseInt(tmp[0]);
 			types.add("pd");
-			directionals.add(false);
+			directionals.add(true);
 			interactions.add(fromTo);
 		}
 		framework.broadcastNetwork(interactions, types, directionals);
