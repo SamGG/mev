@@ -6,6 +6,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.bn;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
@@ -48,8 +49,10 @@ public class XGMMLGenerator {
 		xgmml_header += "      </rdf:Description>" + lineSep;
 		xgmml_header += "    </rdf:RDF>" + lineSep;
 		xgmml_header += "  </att>" + lineSep;
-		xgmml_header += "  <att type='string' name='backgroundColor' value='#ccccff'/>" + lineSep;
-		xgmml_header += "  <att type='string' name='Layout' value='grid'/>" + lineSep;
+		xgmml_header += "  <att name='backgroundColor' value='#ccccff'/>" + lineSep;
+		xgmml_header += "  <att name='layout' value='grid'/>" + lineSep;
+		xgmml_header += "  <att name='cpt' value='/home/rsinha/myCPT.xml'/>" + lineSep; 
+		//TODO Modify to get CPT file Name
 		return xgmml_header;
 	}
 
@@ -63,6 +66,7 @@ public class XGMMLGenerator {
 	 */
 	public static String createNode(String label, String id, IData data, int rowInd) {
 		String node = "";
+		String nodeType = "string";
 		//node = "  <node label='" + NM_001964 + " 'id='" + -1 + "'>";
 		node = "  <node label='" + label + "' id='" + id + "' >" + lineSep;
 		String[] fieldNames = MevAnnotation.getFieldNames();
@@ -75,9 +79,21 @@ public class XGMMLGenerator {
 			}
 			//AnnoAttributeObj annoObj =  data.getElementAnnotationObject(rowInd, fieldNames[i]);
 			//System.out.println("Annotation from data.getElementAnnotation() & annoObj.getAttributeAt(): " + _tmp[0] + " : " /*+ (String)annoObj.getAttributeAt(0)*/);
-			node += createNodeAttribute(fieldNames[i], _tmp[0]);
+			if(fieldNames[i].equals("GENE_SYMBOL") 
+					|| fieldNames[i].equals("GENE_TITLE")
+					|| fieldNames[i].equals("ENTREZ_ID")
+					|| fieldNames[i].equals("GENBANK_ACC")
+					)
+				nodeType = "list";
+			node += createNodeAttribute(fieldNames[i], _tmp[0], nodeType);
+			nodeType = "string";
 		}
-		node += "    <graphics type='ELLIPSE' fill='#CCFF99'/>" + lineSep;
+		node += "    <graphics type='ELLIPSE' width='2' fill='#FFCC99' outline='#CC9900' >" + lineSep;
+		node += "    	<att name='cytoscapeNodeGraphicsAttributes'>" + lineSep;
+		node += "    		<att name='nodeLabelFont' value='Default-0-12'/>" + lineSep;
+		node += "    		<att name='borderLineType' value='solid'/>" + lineSep;
+		node += "    	</att>" + lineSep;
+		node += "    </graphics>" + lineSep;
 		node += "  </node>" + lineSep;
 		return node;
 	}
@@ -97,11 +113,23 @@ public class XGMMLGenerator {
 	 * Creates a XGMML attribute node
 	 * @param attribName
 	 * @param attribValue
+	 * @param nodeType 
 	 * @return
 	 */
-	public static String createNodeAttribute(String attribName, String attribValue) {
+	public static String createNodeAttribute(String attribName, String attribValue, String nodeType) {
 		String attrib = "";
-		attrib = "    <att type='string' name='" + attribName + "' value='" + attribValue + "'/>" + lineSep;
+		if(nodeType.equals("list")) {
+			attrib = "    <att type='list' name='" + attribName + "' label='" + attribName + "'>" + lineSep;
+			
+			StringTokenizer tokens = new StringTokenizer(attribValue, "///");
+	    	while(tokens.hasMoreTokens()){
+	    		attrib += "    	<att type='string' value='" + tokens.nextToken().trim() + "'/>" + lineSep;
+	    	}
+			attrib += "    </att>" + lineSep;
+		} else {
+			attrib = "    <att type='string' name='" + attribName + "' value='" + attribValue + "'/>" + lineSep;	
+		}
+
 		return attrib;
 	}
 
@@ -119,7 +147,7 @@ public class XGMMLGenerator {
 		edge = "  <edge label='" + srcLbl + " (pd) " + tgtLabel + "' source='" + srcId +"' target='" + tgtId + "' weight='0'>" + lineSep;
 		//edge += "    <att type='string' name='canonicalName' value='" + srcLbl + " (pd) " + tgtLabel + "'/>" + lineSep;
 		edge += "    <att type='string' name='interaction' value='pd'/>" + lineSep;
-		edge += "    <graphics width='2' fill='#0000ff' cy:sourceArrow='0' cy:targetArrow='3' cy:sourceArrowColor='#000000' cy:targetArrowColor='#000000' cy:edgeLabelFont='Default-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
+		edge += "    <graphics width='2' fill='#999999' cy:sourceArrow='0' cy:targetArrow='3' cy:sourceArrowColor='#cdcdc1' cy:targetArrowColor='#333333' cy:edgeLabelFont='Default-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
 		edge += "  </edge>" + lineSep;
 		return edge;
 	}

@@ -451,7 +451,7 @@ public class Useful {
 
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
-		String arguments = "-t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+		String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
 		if(useArc){
 			arguments +="-R";
 		}
@@ -484,7 +484,7 @@ public class Useful {
 	 */
 	public static String getWekaArgsWithCPTs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
-		String arguments = "-t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+		String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
 		if(useArc){
 			arguments +="-R";
 		}
