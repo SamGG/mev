@@ -592,7 +592,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 				DefaultMutableTreeNode node = new DefaultMutableTreeNode(new LeafInfo("Nested Ease Summary Table", tv));
 				nestedEaseRoot.add(node);
 				
-				//TODO add gotree viewer 
 				addGOTree(nestedEaseRoot, result.getNeaseConsolidatedResults(), result.getHeaderNames());
 				
 				for (int i = 0; i < nEaseCount; i++) {
@@ -604,10 +603,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 						addTableViewer(nestedEaseNode, thisNeaseResult, theseClusters);
 						addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
 						addGeneralInfo(nestedEaseNode, thisNeaseResult);
-						
-//						addGOTree(nestedEaseNode, thisNeaseResult);
 						addGOTree(nestedEaseNode, (String[][])thisNeaseResult.getObjectMatrix("result-matrix"), thisNeaseResult.getStringArray("header-names"));
-
 
 						nestedEaseRoot.add(nestedEaseNode);
 					} else {

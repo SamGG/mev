@@ -66,6 +66,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected boolean haveAccessionNumbers;
     protected JMenuItem launchMenuItem;
     protected Object[][] data;
+    protected boolean isEaseConsolidatedResult = false;
 
     /**
      * Kept for state-saving backwards-compatibility
@@ -113,18 +114,17 @@ public class EASETableViewer extends TableViewer implements Serializable {
             }
             setNumerical(4, true);
         }
-        
-        if(isEaseConsolidatedResult) {
+        this.isEaseConsolidatedResult = isEaseConsolidatedResult;
+        if(this.isEaseConsolidatedResult) {
         	if(haveAccessionNumbers) {
         		setNumerical(12, true);
         	} else {
         		setNumerical(8, true);
         	}
         	setNumerical(9, true);
-		setNumerical(10, true);
-		setNumerical(11, true);
-
-        }
+        	setNumerical(10, true);
+			setNumerical(11, true);
+        }       
         easeRoot = analysisNode;
         menu = createPopupMenu();
         this.experiment = experiment;
@@ -235,11 +235,33 @@ public class EASETableViewer extends TableViewer implements Serializable {
         int index = getSelectedRow();
         
         if(index == -1 || easeRoot == null)
-            return;
-        
+            return; 
+
+        //This is the node marked "Expression Viewers"
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)easeRoot.getChildAt(1);
-        if(node.getChildCount() < index)
+
+    	//Jump to nEASE sub-result for term that matches summary results
+        if(isEaseConsolidatedResult) {
+        	int fileindex = 1;
+        	int termindex = 14;
+        	String term = (String) this.table.getValueAt(index, fileindex) + ": " + (String) this.table.getValueAt(index, termindex);
+        	System.out.println("term selected: " + term);
+        	int neaseindex = 0;
+        	for(int i=2; i<easeRoot.getChildCount(); i++) {
+        		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(term)) {
+        			neaseindex = i;
+        			break;
+        		}
+        	}
+        	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
+        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);
+        }
+        
+        if(node.getChildCount() < index) {
             return;
+        }
+        
+        //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
         node = (DefaultMutableTreeNode)(node.getChildAt(index));
         
         if(viewerType.equals("expression image")){
