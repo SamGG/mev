@@ -134,7 +134,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml2(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml2(String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -147,7 +147,7 @@ public class FromWekaToSif {
 		//int nodeId = 1;
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
-		xgmmlContent = XGMMLGenerator.createHeader(label);
+		xgmmlContent = XGMMLGenerator.createHeader(label, cptFile);
 
 		String[] evalSubstrings = evalStr.split("\n");
 		String s = null;
@@ -225,13 +225,13 @@ public class FromWekaToSif {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static void fromWekaBifToXgmml(String bifStr, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException, SAXException {
+	public static void fromWekaBifToXgmml(String bifStr, String fileName, String cptFileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException, SAXException {
 		BifDOMBuilder bifDom = new BifDOMBuilder();
 		ArrayList<BifNode> bifNodes = bifDom.build(new InputSource(new StringReader(bifStr)));
 		
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
-		xgmmlContent = XGMMLGenerator.createHeader(label);
+		xgmmlContent = XGMMLGenerator.createHeader(label, cptFileName);
 		String xgmmlNodes = "";
 		String xgmmlEdges = "";
 		Hashtable<String, String> uniqueNodesIdMap = new Hashtable<String, String>();
@@ -281,7 +281,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(String evalStr, String fileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -293,7 +293,7 @@ public class FromWekaToSif {
 		//int nodeId = 1;
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
-		xgmmlContent = XGMMLGenerator.createHeader(label);
+		xgmmlContent = XGMMLGenerator.createHeader(label, cptFileName);
 
 		String[] evalSubstrings = evalStr.split("\n");
 		String s = null;
@@ -371,7 +371,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(Hashtable edgesTable, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -384,7 +384,7 @@ public class FromWekaToSif {
 
 		String xgmmlContent = "";
 		String label = fileName.substring(fileName.lastIndexOf(BNConstants.SEP)+1, fileName.lastIndexOf("."));
-		xgmmlContent = XGMMLGenerator.createHeader(label);
+		xgmmlContent = XGMMLGenerator.createHeader(label, cptFileName);
 
 		Enumeration enumerate = edgesTable.keys();
 		while(enumerate.hasMoreElements()){
@@ -559,7 +559,7 @@ public class FromWekaToSif {
 			//String _tmp[] = fileName.split(".");
 			//String label = _tmp[0];
 			System.out.println("Network File Prefix " + label);
-			xgmmlContent = XGMMLGenerator.createHeader(label);
+			xgmmlContent = XGMMLGenerator.createHeader(label, "");
 
 			for(int i = 0; i < inter.size(); i++){
 				sGE = (SimpleGeneEdge) inter.get(i);

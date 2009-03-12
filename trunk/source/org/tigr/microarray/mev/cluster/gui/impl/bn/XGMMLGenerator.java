@@ -31,7 +31,7 @@ public class XGMMLGenerator {
 	 * @param label
 	 * @return
 	 */
-	public static String createHeader(String label) {
+	public static String createHeader(String label, String cptFileLoc) {
 		String xgmml_header = "";
 		xgmml_header =  "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" + lineSep;
 		xgmml_header += "<graph label='" + label + "' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:cy='http://www.cytoscape.org' xmlns='http://www.cs.rpi.edu/XGMML' >" + lineSep;
@@ -51,8 +51,7 @@ public class XGMMLGenerator {
 		xgmml_header += "  </att>" + lineSep;
 		xgmml_header += "  <att name='backgroundColor' value='#ccccff'/>" + lineSep;
 		xgmml_header += "  <att name='layout' value='grid'/>" + lineSep;
-		xgmml_header += "  <att name='cpt' value='/home/rsinha/myCPT.xml'/>" + lineSep; 
-		//TODO Modify to get CPT file Name
+		xgmml_header += "  <att name='cpt' value='" + cptFileLoc.trim() + "'/>" + lineSep;
 		return xgmml_header;
 	}
 
