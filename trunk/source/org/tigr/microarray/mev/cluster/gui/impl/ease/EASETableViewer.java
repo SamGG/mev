@@ -245,7 +245,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
         	int fileindex = 1;
         	int termindex = 14;
         	String term = (String) this.table.getValueAt(index, fileindex) + ": " + (String) this.table.getValueAt(index, termindex);
-        	System.out.println("term selected: " + term);
+//        	System.out.println("term selected: " + term);
         	int neaseindex = 0;
         	for(int i=2; i<easeRoot.getChildCount(); i++) {
         		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(term)) {
@@ -255,6 +255,8 @@ public class EASETableViewer extends TableViewer implements Serializable {
         	}
         	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
         	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);
+//        	System.out.println("Setting index from " + index + " to " + (String)this.table.getValueAt(index, 0) + " -1");
+        	index = new Integer((String)this.table.getValueAt(index, 0)) -1;
         }
         
         if(node.getChildCount() < index) {
