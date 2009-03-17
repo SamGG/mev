@@ -232,8 +232,8 @@ public class EASETableViewer extends TableViewer implements Serializable {
     /** Handles opening cluster viewers.
      */
     protected void onOpenViewer(String viewerType){
-        int index = getSelectedRow();
-        
+        int index = this.table.getSelectedRow();
+
         if(index == -1 || easeRoot == null)
             return; 
 
@@ -245,7 +245,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
         	int fileindex = 1;
         	int termindex = 14;
         	String term = (String) this.table.getValueAt(index, fileindex) + ": " + (String) this.table.getValueAt(index, termindex);
-//        	System.out.println("term selected: " + term);
         	int neaseindex = 0;
         	for(int i=2; i<easeRoot.getChildCount(); i++) {
         		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(term)) {
@@ -253,9 +252,9 @@ public class EASETableViewer extends TableViewer implements Serializable {
         			break;
         		}
         	}
+
         	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
-        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);
-//        	System.out.println("Setting index from " + index + " to " + (String)this.table.getValueAt(index, 0) + " -1");
+        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);//Expression Viewers folder within nease result number neaseindex
         	index = new Integer((String)this.table.getValueAt(index, 0)) -1;
         }
         
@@ -265,7 +264,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
         //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
         node = (DefaultMutableTreeNode)(node.getChildAt(index));
-        
         if(viewerType.equals("expression image")){
             node = (DefaultMutableTreeNode)(node.getChildAt(0));
         } else if(viewerType.equals("centroid graph")){
