@@ -254,9 +254,10 @@ public class EASETableViewer extends TableViewer implements Serializable {
         	}
 
         	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
-        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);//Expression Viewers folder within nease result number neaseindex
-        	index = new Integer((String)this.table.getValueAt(index, 0)) -1;
+        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);//Expression Viewers folder within nease result number neaseindex	
         }
+        
+        index = new Integer((String)this.table.getValueAt(index, 0)) -1;
         
         if(node.getChildCount() < index) {
             return;
