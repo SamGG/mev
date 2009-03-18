@@ -1807,19 +1807,16 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<arg value="${basedir}/build.properties_template"/>
 	 		<arg value="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 		</exec>
-		<jar destfile="${home.dir}/lib/mev-base.jar" update="yes">
-			<filename name="${source.dir}/org/tigr/microarray/mev/build.properties"/>
-		</jar>
 
 	</target>
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
-	<target name="build-package" depends="clean, build-all">
+	<target name="build-package" depends="clean, record-versioning-info, build-all">
 
-		<ant target="record-versioning-info"/>
 		
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+
 		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 		
 		
