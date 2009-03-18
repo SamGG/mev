@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
@@ -206,7 +207,20 @@ public class AnnotationDownloadHandler {
 							try {
 								inProgress = true;
 								updateLabel();
-								datapath = irm.getSupportFile(def, true).getAbsolutePath();
+								try {
+									datapath = irm.getSupportFile(def, true).getAbsolutePath();
+								} catch (SupportFileAccessError sfae) {
+									annotationSelected = false;
+									inProgress = false;
+									updateLabel();
+									if(sfae.isFileNotFound() || !sfae.isInternetAccessWasAllowed()) {
+										ShowThrowableDialog.show(new JFrame(), "Annotation not available", true, ShowThrowableDialog.ERROR, sfae, 
+												def.getURL() + "was not found. Please check that your internet connection is enabled. ");
+									} else {
+										ShowThrowableDialog.show(new JFrame(), "Annotation not available", true, ShowThrowableDialog.ERROR, sfae, sfae.getMessage());
+									}
+									return;
+								}
 								getAdditionalSupportFiles(organismName, arrayName);
 								annotationSelected = true;
 								inProgress = false;
