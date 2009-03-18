@@ -178,6 +178,11 @@ public class TMEV {
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
             loadProperties();
+
+            System.out.println("MeV Build: "+getSettingForOption("BUILD-REVISION"));
+            System.out.println("MeV Revision Date: "+getSettingForOption("REVISION-DATE"));
+            System.out.println("MeV Branch: "+getSettingForOption("BUILD-BRANCH-URL"));
+
             setupFiles();
                      
             configure();
@@ -341,7 +346,13 @@ public class TMEV {
 		} catch (IOException ioe) {
 			System.out.println("Could not load default properties from org/tigr/microarray/mev/default.properties");
 		}
-
+		try {
+			InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/build.properties");
+			if (in != null) {
+				props.load(in); // Can throw IOException
+			}
+		} catch (IOException ioe) {	}
+		
 		/*		 
 		 * Try to get online and download default properties from tm4.org. If not available, skip. 
 		 * If available, *override* stored user url locations with new ones from website. 
