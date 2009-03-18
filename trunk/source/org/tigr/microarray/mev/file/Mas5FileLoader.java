@@ -790,7 +790,7 @@ public class Mas5FileLoader extends ExpressionFileLoader {
 
 	@Override
 	public String getAnnotationFilePath() {
-		return this.sflp.adh.annFileListTextField.getText();
+		return this.sflp.adh.getAnnFilePath();
 	}  
 	public boolean isAnnotationSelected() {
 		return this.sflp.adh.isAnnotationSelected();

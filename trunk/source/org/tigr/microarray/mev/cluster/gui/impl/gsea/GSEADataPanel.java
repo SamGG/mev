@@ -239,8 +239,8 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 	public void initialize(String annPath, boolean isAnnLoaded, String info) {
 		if (isAnnLoaded) {
-			adh.onClickAnnDownload();
-			// adh.setDownloadEnabled(false);
+//			adh.onClickAnnDownload();
+			 adh.setDownloadEnabled(false);
 			// adh.setBrowseEnabled(false);
 		}
 
@@ -261,6 +261,8 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 		if (adh.isAnnotationSelected()) {
 			algData.addParam("annotation-file", adh.getAnnFilePath());
+		} else {
+			algData.addParam("annotation-file", framework.getData().getChipAnnotation().getAnnFileName());
 		}
 		if (geneSetTextField.getText() != null) {
 			algData.addParam("gene-set-file", geneSetTextField.getText());

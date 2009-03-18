@@ -12,14 +12,18 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -36,10 +40,9 @@ import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 public class AnnotationDownloadHandler {
 	public static final String GOT_ANNOTATION_FILE = "got-annotation-file";
-	JComboBox organismListBox;
-
-	JComboBox arrayListBox;
-
+	public static final String CHOOSE_ORGANISM = "Choose an organism";
+	public static final String CHOOSE_ARRAY = "Choose an array";
+	
 	boolean annotationSelected = false;
 
 	boolean isEnabled = true;
@@ -51,18 +54,20 @@ public class AnnotationDownloadHandler {
 	 */
 	JPanel annotationPanel;
 
-	JLabel getAnnotation, /*customAnnotation,*/ statusLabel;
-
-	JButton connectButton, browseButton;
-
-	JTextField annFileListTextField;
-
-	JLabel chooseOrg, chooseArray;
-
-	JTextField annFileNameTextField;
-
 	String defaultSpeciesName;
 	String defaultArrayName;
+	boolean inProgress = false;
+	
+	JComboBox organismListBox;
+	JComboBox arrayListBox;
+	JCheckBox proceedLoadingAnnotation;
+	JRadioButton autoDownload, loadFromFile;
+	JTextField annFileLocation;
+	JButton browseAnnFileButton;
+	JLabel statusLabel;
+	ButtonGroup bg = new ButtonGroup();
+	
+	String datapath;
 
 	Hashtable<String, Vector<String>> annotationLists;
 	IResourceManager irm;
@@ -77,8 +82,8 @@ public class AnnotationDownloadHandler {
 	public AnnotationDownloadHandler(IFramework framework) {
 		this.irm = framework.getResourceManager();
 		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
-		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES);
-		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY);
+		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES, CHOOSE_ORGANISM);
+		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY, CHOOSE_ARRAY);
 		try {
 			File f = irm.getSupportFile(aafd, true);
 			this.annotationLists = aafd.parseAnnotationListFile(f);
@@ -89,53 +94,41 @@ public class AnnotationDownloadHandler {
 		}
 	}
 
-	public String getAnnFilePath() {
-		return annFileListTextField.getText();
-	}
-	public void setAnnFilePath(String filePath) {
-		annFileListTextField.setText(filePath);
-	}
 
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
-
 		
+
 		annotationPanel = new JPanel();
 		annotationPanel.setLayout(new GridBagLayout());
 		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Load Annotation Data"));
 
-		statusLabel = new JLabel("Choose an array and Organism and select Download");
+		proceedLoadingAnnotation = new JCheckBox("Load Annotation");
+		proceedLoadingAnnotation.setEnabled(true);
+		proceedLoadingAnnotation.setSelected(false);
 		
-		getAnnotation = new JLabel("Retrieve  Annotation  from  Resourcerer");
+		autoDownload = new JRadioButton("Automatically download");
+		loadFromFile = new JRadioButton("Load from local file");
 
-		connectButton = new JButton("Connect");
-		connectButton.setSize(new Dimension(100, 30));
-		connectButton.setPreferredSize(new Dimension(100, 30));
-		connectButton.addActionListener(new EventListener());
-
-		statusLabel = new JLabel("Choose an array and Organism and select Download");
-//		customAnnotation = new JLabel("Selected File:");
-
-		annFileListTextField = new JTextField("No annotation selected.");
-		annFileListTextField.setEditable(false);
-		annFileListTextField.setForeground(Color.black);
-		annFileListTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-
-		browseButton = new JButton("Browse");
-		browseButton.setSize(new Dimension(100, 30));
-		browseButton.setPreferredSize(new Dimension(100, 30));
-		browseButton.addActionListener(new EventListener());
-
-		chooseOrg = new JLabel("Choose Organism");
-		chooseArray = new JLabel("Choose Array");
 		
+		annFileLocation = new JTextField("No file selected");
+		annFileLocation.setEditable(false);
+		browseAnnFileButton = new JButton("Choose File");
+		statusLabel = new JLabel("Please select a species name and array name.");
+		bg.add(autoDownload);
+		bg.add(loadFromFile);
 
+		autoDownload.addActionListener(new EventListener());
+		loadFromFile.addActionListener(new EventListener());
+		browseAnnFileButton.addActionListener(new EventListener());
+		proceedLoadingAnnotation.addActionListener(new EventListener());
+		
 		if (annotationLists != null && annotationLists.size() > 0) {
 			arrayListBox = new JComboBox();
 			arrayListBox.setEnabled(true);
 			arrayListBox.addActionListener(new EventListener());
-
-			organismListBox = new JComboBox(new Vector<String>(annotationLists
-					.keySet()));
+			Vector<String> organisms = new Vector<String>(annotationLists.keySet());
+			organisms.add(0, CHOOSE_ORGANISM);
+			organismListBox = new JComboBox(organisms);
 			organismListBox.setSelectedIndex(0);
 			organismListBox.addActionListener(new EventListener());
 
@@ -143,10 +136,10 @@ public class AnnotationDownloadHandler {
 				organismListBox.setSelectedItem(defaultSpeciesName);
 			}
 
-			updateLabel(organismListBox.getSelectedItem().toString());
+			updateArrayList(organismListBox.getSelectedItem().toString());
 			arrayListBox.setSelectedItem(defaultArrayName);
 
-			connectButton.setEnabled(true);
+			proceedLoadingAnnotation.setSelected(true);
 		} else {
 			Vector<String> temp = new Vector<String>();
 			temp.add("No species available");
@@ -156,105 +149,89 @@ public class AnnotationDownloadHandler {
 			temp2.add("No arrays available");
 			arrayListBox = new JComboBox(new Vector<String>(temp2));
 			arrayListBox.setEnabled(false);
-			getAnnotation = new JLabel("No annotation lists available.");
-			connectButton.setEnabled(false);
-			chooseOrg.setEnabled(false);
-			chooseArray.setEnabled(false);
+			proceedLoadingAnnotation.setEnabled(false);
+			proceedLoadingAnnotation.setSelected(false);
 		}
 
-//		gba.add(annotationPanel, statusLabel,			0, 0, 0, 0, 0, 0, GBA.H, GBA.W, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, chooseOrg, 			0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, chooseArray, 			0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, autoDownload,				0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, organismListBox, 			0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, arrayListBox, 				0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
 
-		gba.add(annotationPanel, organismListBox, 		1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, arrayListBox, 			1, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, loadFromFile,				1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, annFileLocation,			1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, browseAnnFileButton,		1, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
 
-		gba.add(annotationPanel, getAnnotation, 			3, 1, 2, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, connectButton, 			3, 2, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 0), 0, 0);
-
-//		gba.add(annotationPanel, customAnnotation, 		0, 3, 3, 1, 0, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, statusLabel,	 		0, 3, 3, 1, 3, 0, GBA.H, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, annFileListTextField, 	0, 4, 2, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, browseButton, 			2, 4, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 10, 0), 0, 0);
+		gba.add(annotationPanel, proceedLoadingAnnotation,	2, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, statusLabel,				2, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		
+		checkForAnnotationFile();
+
+		autoDownload.setSelected(true);
+		onSelectAutoDownload();
 		checkForAnnotationFile();
 		return annotationPanel;
 	}
+
+	
+	public String getAnnFilePath() {
+
+		return datapath;//annFileLocation.getText();
+	}
+	public void setAnnFilePath(String filePath) {
+		annFileLocation.setText(filePath);
+	}
+
+
 	
 
-
-	public void setDownloadEnabled(boolean isEnabled) {
-		connectButton.setEnabled(isEnabled);
-		organismListBox.setEnabled(isEnabled);
-		arrayListBox.setEnabled(isEnabled);
-		this.isEnabled = isEnabled;
-	}
-	public void setBrowseEnabled(boolean isEnabled) {
-		browseButton.setEnabled(isEnabled);
-	}
-
-	protected void updateLabel(String name) {
+	protected void updateArrayList(String organismName) {
 		arrayListBox.removeAllItems();
-		Vector<String> annFileKeyBoxItems = annotationLists.get(name);
+		Vector<String> annFileKeyBoxItems = annotationLists.get(organismName);
+		annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
 		for (int i = 0; i < annFileKeyBoxItems.size(); i++) {
 			arrayListBox.addItem(annFileKeyBoxItems.elementAt(i));
 		}
 	}
 
-	protected void checkForAnnotationFile() {
-		connectButton.setEnabled(true);
-		if (organismListBox.getSelectedItem() != null && arrayListBox.getSelectedItem() != null) {
-			ISupportFileDefinition def = new ResourcererAnnotationFileDefinition(
-					organismListBox.getSelectedItem().toString(), arrayListBox
-							.getSelectedItem().toString());
+	protected void checkForAnnotationFile() {		
+		try {
+			final String organismName = organismListBox.getSelectedItem().toString();
+			final String arrayName = arrayListBox.getSelectedItem().toString();
+			if(autoDownload.isSelected()) {
+				if(!organismName.equals(CHOOSE_ORGANISM) &&	!arrayName.equals(CHOOSE_ARRAY)) {
+					final ISupportFileDefinition def = new ResourcererAnnotationFileDefinition(organismName, arrayName);
 
-			if (irm.fileIsInRepository(def)) {
-				connectButton.setText("Select This");
-				getAnnotation.setText("MeV has this file");
-				statusLabel.setText("This file already stored locally. Click the Select button to use it.");
-			} else {
-				connectButton.setText("Download");
-				getAnnotation.setText("Click to download.");
-				statusLabel.setText("This file is not stored locally. Click the Download button to get it from the internet.");
-			}
-		} else {
-			statusLabel.setText("It is not possible to select an annotation file at this time.");
+					Thread thread = new Thread(new Runnable() {
+						public void run() {
+							try {
+								inProgress = true;
+								updateLabel();
+								datapath = irm.getSupportFile(def, true).getAbsolutePath();
+								getAdditionalSupportFiles(organismName, arrayName);
+								annotationSelected = true;
+								inProgress = false;
+								updateLabel();
+							} catch (Exception e) {
+								annotationSelected = false;
+								updateLabel();
+								e.printStackTrace();
+							}
+						}
+						
+					});
+	
+					thread.setPriority(Thread.MIN_PRIORITY);
+					thread.start();
+				}
+			} 
+		} catch (NullPointerException npe){
+			annotationSelected = false;
 		}
-
+		updateLabel();
 	}
 
 	public boolean isAnnotationSelected() {
 		return annotationSelected;
-	}
-
-	public boolean onClickAnnDownload() {
-		try {
-			ResourcererAnnotationFileDefinition rafd = new ResourcererAnnotationFileDefinition(organismListBox
-					.getSelectedItem().toString(), arrayListBox
-					.getSelectedItem().toString());
-			File f = irm.getSupportFile(rafd, true);
-			if (f==null)
-				return false;
-			this.annotationSelected = true;
-			annFileListTextField.setText(f.getAbsolutePath());
-			connectButton.setText("Selected");
-			connectButton.setEnabled(false);
-			getAnnotation.setText("Selected");
-			getAdditionalSupportFiles(organismListBox
-					.getSelectedItem().toString(), arrayListBox
-					.getSelectedItem().toString());
-
-			statusLabel.setText("This annotation file is selected and ready to use.");
-			return true;
-		} catch (SupportFileAccessError sfae) {
-			annotationSelected = false;
-			getAnnotation.setText("Failure");
-			connectButton.setText("Select this");
-			connectButton.setEnabled(true);
-			statusLabel.setText("There was a problem downloading this file.");
-			sfae.printStackTrace();
-			return false;
-		}
 	}
 
 	public int onAnnotationFileBrowse() {
@@ -266,9 +243,9 @@ public class AnnotationDownloadHandler {
 
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			selectedFile = fileChooser.getSelectedFile();
-			annFileListTextField.setText(selectedFile.getAbsolutePath());
+			annFileLocation.setText(selectedFile.getAbsolutePath());
 			this.annotationSelected = true;
-			statusLabel.setText("This file is selected and ready to use.");
+			updateLabel();
 		}
 		return retVal;
 	}
@@ -291,36 +268,108 @@ public class AnnotationDownloadHandler {
 	private class EventListener implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			Object source = event.getSource();
-			if (source == browseButton) {
+			if (source == browseAnnFileButton) {
 				int retVal = onAnnotationFileBrowse();
 				if(additionalListener != null && retVal == JFileChooser.APPROVE_OPTION) {
-					additionalListener.actionPerformed(new ActionEvent(browseButton, 0, GOT_ANNOTATION_FILE));
+					additionalListener.actionPerformed(new ActionEvent(browseAnnFileButton, 0, GOT_ANNOTATION_FILE));
 				}
-			} else if (source == connectButton) {
-				Thread thread = new Thread(new Runnable() {
-					public void run() {
-						try {
-							boolean success = onClickAnnDownload();
-							if(additionalListener != null && success ) {
-								additionalListener.actionPerformed(new ActionEvent(connectButton, 0, GOT_ANNOTATION_FILE));
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					
-				});
-
-				thread.setPriority(Thread.MIN_PRIORITY);
-				thread.start();
-				
+			} else if (source.equals(autoDownload)) {
+				if(autoDownload.isSelected()) {
+					onSelectAutoDownload();
+				}
+			} else if (source.equals(loadFromFile)) {
+				if(loadFromFile.isSelected()) {
+					onSelectBrowseFile();
+				}
+			} else if (source.equals(proceedLoadingAnnotation)) {
+				onToggleProceed();
 			} else if (source.equals(organismListBox)) {
-				updateLabel((String) organismListBox.getSelectedItem());
+				updateArrayList((String) organismListBox.getSelectedItem());
 				checkForAnnotationFile();
 			} else if (source.equals(arrayListBox)) {
 				checkForAnnotationFile();
 			}
 		}
+	}
+	private void onSelectAutoDownload() {
+		annFileLocation.setEnabled(false);
+		browseAnnFileButton.setEnabled(false);
+		organismListBox.setEnabled(true);
+		arrayListBox.setEnabled(true);
+		checkForAnnotationFile();
+		if(annotationSelected)
+			proceedLoadingAnnotation.setSelected(true);
+
+	}
+	private void onSelectBrowseFile() {
+		annFileLocation.setEnabled(true);
+		browseAnnFileButton.setEnabled(true);
+		organismListBox.setEnabled(false);
+		arrayListBox.setEnabled(false);
+		if(annotationSelected)
+			proceedLoadingAnnotation.setSelected(true);
+		updateLabel();
+	}
+	private void onToggleProceed() {
+		updateLabel();
+	}
+	private void updateLabel() {
+		System.out.println("updating label");
+		if(inProgress) {
+			statusLabel.setText("Downloading...");
+			statusLabel.setForeground(Color.black);
+		} else if(!proceedLoadingAnnotation.isSelected()) {
+			statusLabel.setText("No annotation will be loaded.");
+			statusLabel.setForeground(Color.red);
+			annotationSelected = false;
+		} else {
+			if(autoDownload.isSelected()) {
+				if(organismListBox.getSelectedItem() == null ||
+						organismListBox.getSelectedItem().equals(CHOOSE_ORGANISM) || 
+						arrayListBox.getSelectedItem() == null ||
+						arrayListBox.getSelectedItem().equals(CHOOSE_ARRAY)){
+					statusLabel.setText("Please choose an array and species name.");
+					statusLabel.setForeground(Color.red);
+					annotationSelected = false;
+				} else {
+					if(annotationSelected) {
+						statusLabel.setText("Annotation will be loaded.");
+						statusLabel.setForeground(Color.black);
+						annotationSelected = true;
+					} else {
+						statusLabel.setText("Annotation could not be downloaded.");
+						statusLabel.setForeground(Color.red);
+						annotationSelected = false;
+					}
+				}
+			} else {
+				if(!new File(annFileLocation.getText()).exists()) {
+					statusLabel.setText("Please choose a valid annotation file.");
+					statusLabel.setForeground(Color.red);
+					annotationSelected = false;
+				} else {
+					statusLabel.setText("Annotation will be loaded.");
+					statusLabel.setForeground(Color.black);
+					annotationSelected = true;
+				}
+			}
+		}
+		SwingUtilities.updateComponentTreeUI(statusLabel);
+		annotationPanel.repaint();
+		statusLabel.repaint();
+	
+	}
+	
+	public void setDownloadEnabled(boolean isEnabled) {
+		autoDownload.setEnabled(isEnabled);
+		loadFromFile.setSelected(!isEnabled);
+		loadFromFile.setEnabled(isEnabled);
+		organismListBox.setEnabled(isEnabled);
+		arrayListBox.setEnabled(isEnabled);
+		proceedLoadingAnnotation.setSelected(false);
+		proceedLoadingAnnotation.setEnabled(false);
+		annotationSelected = false;
+		this.isEnabled = isEnabled;
 	}
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Testing Annotation Download Handler");
@@ -328,7 +377,7 @@ public class AnnotationDownloadHandler {
 
 	    	GBA gba = new GBA();
 	    	frame.setLayout(new GridBagLayout());
-	    	frame.setSize(600, 300);
+	    	frame.setSize(800, 200);
 	    	
 		try {
 			irm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
@@ -344,6 +393,7 @@ public class AnnotationDownloadHandler {
 			AnnotationDownloadHandler adh = new AnnotationDownloadHandler(irm, speciestoarrays, "Human", "affy_HG-U133A");
 			JPanel annotationPanel = adh.getAnnotationLoaderPanel(gba);
 			frame.add(annotationPanel);
+
 		} catch (SupportFileAccessError sfae) {
 //			fail("Couldn't get species/array mappings from repository.");
 		} catch (IOException ioe) {
@@ -351,5 +401,6 @@ public class AnnotationDownloadHandler {
 //			fail("Couldn't get annotation file.");
 		}
 		frame.setVisible(true);
+		
 	}
 }

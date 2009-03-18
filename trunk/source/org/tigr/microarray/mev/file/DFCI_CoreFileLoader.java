@@ -1417,7 +1417,7 @@ public class DFCI_CoreFileLoader extends ExpressionFileLoader {
 
 	@Override
 	public String getAnnotationFilePath() {
-		return this.aflp.adh.annFileListTextField.getText();
+		return this.aflp.adh.getAnnFilePath();
 	}
 	public boolean isAnnotationSelected() {
 		return this.aflp.adh.isAnnotationSelected();
