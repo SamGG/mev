@@ -763,16 +763,16 @@ public class SuperExpressionFileLoader {
 		return data;
 	}
 
-	private void updateDataPath(String dataPath, String annotationPath) {
+	private void updateDataPath(String dataPath) {//, String annotationPath) {
 		if(dataPath != null) {
 			
 			DATA_PATH = dataPath;
 			TMEV.setDataPath(DATA_PATH);
 		}
-		if (annotationPath != null) {
-			ANNOTATION_PATH = annotationPath;
-			TMEV.storeProperty("current-annotation-path", ANNOTATION_PATH);
-		}
+//		if (annotationPath != null) {
+//			ANNOTATION_PATH = annotationPath;
+//			TMEV.storeProperty("current-annotation-path", ANNOTATION_PATH);
+//		}
 	}
 
 	/*
@@ -813,7 +813,8 @@ public class SuperExpressionFileLoader {
 				chipAnnotation = selectedFileLoader.getChipAnnotation();
 				dataType = selectedFileLoader.getDataType();
 				selectedFileLoader.dispose();
-				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
+//				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
+				updateDataPath(selectedFileLoader.getFilePath());//, selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);
 				}

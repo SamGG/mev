@@ -748,7 +748,7 @@ public boolean isAnnotationSelected() {
 
 	@Override
 	public String getAnnotationFilePath() {
-		return this.sflp.adh.annFileListTextField.getText();
+		return this.sflp.adh.getAnnFilePath();
 		
 	}    
 	public boolean isAnnotationSelected() {
