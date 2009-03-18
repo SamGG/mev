@@ -305,5 +305,5 @@ public interface ISlideData {
     public boolean isMissingData(int cloneIndex);
     
     public String getSampleLabelKey();
-
+    
 }

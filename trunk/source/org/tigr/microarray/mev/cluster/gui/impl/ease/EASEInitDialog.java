@@ -522,7 +522,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 		fileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				easeParamPanel.fieldNamesBox.setEnabled(!preloadedAnnotationButton.isSelected());
-				easeParamPanel.fieldNamesBox.setSelectedItem(AnnotationFieldConstants.CLONE_ID);
+				easeParamPanel.fieldNamesBox.setSelectedItem(AnnotationFieldConstants.PROBE_ID);
 				easeParamPanel.useAnnBox.setEnabled(!preloadedAnnotationButton.isSelected());
 				browseButton.setEnabled(fileButton.isSelected());
 				popField.setEnabled(fileButton.isSelected());

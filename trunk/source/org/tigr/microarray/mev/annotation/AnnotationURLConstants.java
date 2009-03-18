@@ -22,4 +22,5 @@ public class AnnotationURLConstants {
 	public static final String PFAM = "PFAM";
 	public static final String TIGR = "TIGR";
 	public static final String GENERIC = "GENERIC";
+	
 }

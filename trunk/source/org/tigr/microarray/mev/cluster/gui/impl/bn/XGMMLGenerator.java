@@ -68,7 +68,8 @@ public class XGMMLGenerator {
 		String nodeType = "string";
 		//node = "  <node label='" + NM_001964 + " 'id='" + -1 + "'>";
 		node = "  <node label='" + label + "' id='" + id + "' >" + lineSep;
-		String[] fieldNames = MevAnnotation.getFieldNames();
+		//EH
+		String[] fieldNames = data.getFieldNames();//MevAnnotation.getFieldNames();
 		for(int i = 0; i < fieldNames.length; i++) {
 			String _tmp[] = data.getElementAnnotation(rowInd, fieldNames[i]);
 			if(_tmp[0].trim().equalsIgnoreCase("na")) {

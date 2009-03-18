@@ -61,7 +61,7 @@ public class GenomeAnnoDialog extends AlgorithmDialog {
      * Constructs a <code>RelNetInitDialog</code> with default
      * initial parameters.
      */
-    public GenomeAnnoDialog(Frame parent) {
+    public GenomeAnnoDialog(Frame parent, String[] availableFields) {
         super(parent, "Genome Annotation Field Selection", true);
         this.parent = parent;
         Listener listener = new Listener();
@@ -80,7 +80,7 @@ public class GenomeAnnoDialog extends AlgorithmDialog {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2; gbc.insets.bottom = 5;
         
-        String[] cols = MevAnnotation.getFieldNames();
+        String[] cols = availableFields;//MevAnnotation.getFieldNames();
         annoFieldBoxes = new JCheckBox[cols.length];
         for(int i=0; i < cols.length; i++){
         	annoFieldBoxes[i] = new JCheckBox(cols[i]);
@@ -346,7 +346,7 @@ public class GenomeAnnoDialog extends AlgorithmDialog {
     	}
 
     public static void main(String[] args) {
-    	GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame());
+    	GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame(), new String[] {"PROBE_ID", "TX_END", "ENTREZ_ID", "PROTEIN_ACC", "CYTOBAND"});
         if (dlg.showModal() == JOptionPane.OK_OPTION) {
             System.out.println("ok");
         }

@@ -14,10 +14,17 @@
 package org.tigr.microarray.mev;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
+import org.tigr.microarray.mev.annotation.ChipAnnotationFieldConstants;
+import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
@@ -27,19 +34,10 @@ import org.tigr.midas.util.ColumnWorker;
 import org.tigr.util.Xcon;
 import org.tigr.util.math.LinearEquation;
 
-//EH state-saving additions
-import org.tigr.microarray.mev.persistence.StateSavingProgressPanel;
-import javax.swing.JFrame;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.lang.reflect.Field;
 
 
 public class SlideData implements ISlideData, ISlideMetaData {
-	//EH
     private Vector allSlideDataElements;
     private String slideDataName;
     private String slideFileName;
@@ -50,13 +48,14 @@ public class SlideData implements ISlideData, ISlideMetaData {
     private boolean isNonZero = true;
     private boolean abbrName = false;
     private int dataType = IData.DATA_TYPE_TWO_INTENSITY;
-    private String[] fieldNames;  //EH added so fieldNames are no longer in TMEV.java
+    private String[] fieldNames; 
 
     //Support multiple sample labels
     private String sampleLabelKey = "Default Slide Name";
     private Hashtable sampleLabels;
     private Vector sampleLabelKeys;
     
+    private String[] loadedAnnotationFields;
 
     /**
      * Raktim Oct 31, 2005
@@ -87,6 +86,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
         sampleLabels = original.getSlideDataLabels();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];   
+    	updateFilledAnnFields();
     }
 
     /**
@@ -101,6 +101,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
         sampleLabels = new Hashtable();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];
+    	updateFilledAnnFields();
+
     }
 
     /**
@@ -115,6 +117,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
         sampleLabels = new Hashtable();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];
+    	updateFilledAnnFields();
+
     }
 
     /**
@@ -124,6 +128,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
     	allSlideDataElements = new Vector();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];
+    	updateFilledAnnFields();
+
     }
     
     //
@@ -156,6 +162,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
     	this.dataType = dataType.intValue();
     	//loadAnnotation(new DataInputStream(new FileInputStream(System.getProperty("java.io.tmpdir") + MultipleArrayViewer.CURRENT_TEMP_DIR + System.getProperty("file.separator") + annotationFileName)));
     	//readDataFromInputFile(inputFileName);
+    	updateFilledAnnFields();
+
     }
 
 
@@ -248,7 +256,32 @@ public class SlideData implements ISlideData, ISlideMetaData {
     }
 
     public String[] getFieldNames() {
-    	return fieldNames;
+	    List<String> allAnns = new ArrayList<String>();
+	    Collections.addAll(allAnns, fieldNames);
+	    Collections.addAll(allAnns, loadedAnnotationFields);
+	    return allAnns.toArray(new String[] {});
+    }
+    /**
+     * Checks through the annotation loaded into the ISlideDataElements in allSlideDataElements
+     * and updates {@link loadedAnnotationFields} with those field names.
+     * @return
+     */
+    public void updateFilledAnnFields() {
+	    Vector<String> filledFields = new Vector<String>();
+	    IAnnotation anno;
+	    Field[] temp = AnnotationFieldConstants.class.getFields();
+	    for(int i=0; i<temp.length; i++) {
+		    String thisFieldName = temp[i].getName();
+		    for(int j=0; j<allSlideDataElements.size(); j++) {
+			    anno = ((ISlideDataElement)allSlideDataElements.get(j)).getElementAnnotation();
+			    if(anno != null && !anno.getAttribute(thisFieldName)[0].equals(ChipAnnotationFieldConstants.NOT_AVAILABLE)) {
+				    filledFields.add(thisFieldName);
+				    break;
+			    }
+		    }
+	    }
+
+	    this.loadedAnnotationFields = filledFields.toArray(new String[filledFields.size()]);
     }
     
     /**
@@ -372,10 +405,65 @@ public class SlideData implements ISlideData, ISlideMetaData {
 
     /**
      * Returns an element value of specified type.
+     * @deprecated
      */
     public String getValueAt(int index, int valueType) {
         ISlideDataElement sde = (ISlideDataElement)elementAt(index);
         return sde.getFieldAt(valueType);
+    }
+    
+    /**
+     * Returns the annotation values corresponding to attr for the row indicated by index. Includes both
+     * the new and old annotation model values. 
+     * @param index the row of the gene for which annotation should be returned
+     * @param attr the type of annotation to be returned
+     * @return the annotation values for row index, type attr.
+     */
+    public String[] getAnnotationValue(int index, String attr) {
+		ISlideDataElement element = getSlideDataElement(index);
+
+		IAnnotation annot = element.getElementAnnotation();
+
+		if (annot != null && annot.getAttribute(attr) != null && annot.getAttribute(attr).length > 0 && !annot.getAttribute(attr)[0].equalsIgnoreCase("NA")) {
+			return (annot.getAttribute(attr));
+		}
+
+		String[] allFields = getFieldNames();
+		for (int i = 0; i < allFields.length; i++) {
+			if (allFields[i].equals(attr)) {
+				if (!element.getFieldAt(i).equals("")) {
+					return new String[] { element.getFieldAt(i) };
+				} else
+					return new String[] { "NA" };
+			}
+		}
+		return new String[] { "NA" };
+	}
+    
+    public AnnoAttributeObj getAnnotationObj(int index, String attr) {
+		ISlideDataElement element = getSlideDataElement(index);
+
+		//Try to get an annotation object from the slidedataelement and return the appropriate annotation from there
+		IAnnotation annot = element.getElementAnnotation();
+		if (annot != null && annot.getAttribute(attr) != null && annot.getAttribute(attr).length > 0 && !annot.getAttribute(attr)[0].equalsIgnoreCase("NA")) {
+			return (annot.getAttributeObj(attr));
+		}
+
+		//If no annotation object exists in the slidedataelement, or that 
+		//annotation object doesn't contain the attribute specified, 
+		//check the other annotation types
+		String[] allFields = getFieldNames();
+		String[] values = new String[] { "NA" };
+		for (int i = 0; i < allFields.length; i++) {
+			if (allFields[i].equals(attr)) {
+				if (!element.getFieldAt(i).equals("")) {
+					values = new String[] { element.getFieldAt(i) };
+				} else
+					values = new String[] { "NA" };
+			}
+		}
+		return new AnnoAttributeObj(attr, values);
+		
     }
 
     /**
@@ -1326,206 +1414,5 @@ public class SlideData implements ISlideData, ISlideMetaData {
         }
         */
     }
-    /**
-    *
-    *@deprecated
-      
-   public void writeAnnotation(DataOutputStream dos, JFrame pb) throws IOException {
-   	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
-   	int numSlideDataElements = allSlideDataElements.size();
-   	progressPanel.setMaximum(numSlideDataElements);
-   	ISlideDataElement sde;
-   	dos.writeInt(numSlideDataElements);
-   	   	 
-   	for(int i=0; i<numSlideDataElements; i++){
-  			sde = (ISlideDataElement)allSlideDataElements.get(i);
-   		
-   		String uid = sde.getUID();
-   		char[] temp = uid.toCharArray();
-   		dos.writeInt(temp.length);
-   		for(int j=0; j<temp.length; j++){
-   			dos.writeChar(temp[j]);
-   		}
-		
-   		int rowsize = sde.getRows().length;
-   		dos.writeInt(rowsize);
-   		for(int j=0; j<rowsize; j++){
-   			dos.writeInt(sde.getRows()[j]);
-   		}
-   		int colsize = sde.getColumns().length;
-   		dos.writeInt(colsize);
-   		for(int j=0; j<colsize; j++){
-   			dos.writeInt(sde.getColumns()[j]);
-   		}
-		
-   		int numFields = sde.getExtraFields().length;
-   		dos.writeInt(numFields);
-   		for(int j=0; j<numFields; j++){
-   			try {
-	    			temp = sde.getExtraFields()[j].toCharArray();
-	        		dos.writeInt(temp.length);
-	        		for(int k=0; k<temp.length; k++){
-	        			dos.writeChar(temp[k]);
-	        		}
-   			} catch (NullPointerException npe){
-   				dos.writeInt(0);
-   			}
-   		}
-
-   		dos.writeBoolean(sde.getIsNull());
-   		dos.writeBoolean(sde.isNonZero());
-			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
-				
-			} else {		//IData has affy data
-				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
-			}
-   		progressPanel.increment();
-   	}
-   	
-   }
-   */
-   /**
-    * @deprecated
-    
-   public void loadAnnotation(DataInputStream dis) throws IOException {
-   	int numSlideDataElements = dis.readInt();
-   	allSlideDataElements = new Vector(numSlideDataElements);
-   	
-   	int[] rows, cols;
-   	String[] extraFields;
-   	String uid;
-   	int temp;
-   	boolean isNull, isNonZero;
-   	for(int i=0; i<numSlideDataElements; i++){
-
-   		temp = dis.readInt();
-   		char[] buff = new char[temp];
-   		for(int j=0; j<temp; j++) {
-   			buff[j] = dis.readChar();
-   		}
-   		uid = new String(buff);
-
-   		rows = new int[dis.readInt()];
-   		for(int j=0; j<rows.length; j++){
-   			rows[j] = dis.readInt();
-   		}
-		
-   		cols = new int[dis.readInt()];
-   		for(int j=0; j<cols.length; j++){
-   			cols[j] = dis.readInt();
-   		}
-		
-   		extraFields = new String[dis.readInt()];
-   		for(int j=0; j<extraFields.length; j++){
-   			buff = new char[dis.readInt()];
-       		for(int k=0; k<buff.length; k++){
-       			buff[k] = dis.readChar();
-       		}
-       		extraFields[j] = new String(buff);
-   		}
-			isNull = dis.readBoolean();
-			isNonZero = dis.readBoolean();
-			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
-				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
-			} else {		//IData has affy data
-				char detection = dis.readChar();
-				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
-
-			}
-   	}
-   	
-   }*/
-   /*
-    * @deprecated
-    
-   public void loadAnnotation(DataInputStream dis, JFrame pb) throws IOException {
-   	StateSavingProgressPanel progressPanel = (StateSavingProgressPanel)pb;
-   	int numSlideDataElements = dis.readInt();
-   	progressPanel.setMaximum(numSlideDataElements);
-   	allSlideDataElements = new Vector(numSlideDataElements);
-   	
-   	int[] rows, cols;
-   	String[] extraFields;
-   	String uid;
-   	int temp;
-   	boolean isNull, isNonZero;
-   	for(int i=0; i<numSlideDataElements; i++){
-
-   		temp = dis.readInt();
-   		char[] buff = new char[temp];
-   		for(int j=0; j<temp; j++) {
-   			buff[j] = dis.readChar();
-   		}
-   		uid = new String(buff);
-
-   		rows = new int[dis.readInt()];
-   		for(int j=0; j<rows.length; j++){
-   			rows[j] = dis.readInt();
-   		}
-		
-   		cols = new int[dis.readInt()];
-   		for(int j=0; j<cols.length; j++){
-   			cols[j] = dis.readInt();
-   		}
-		
-   		extraFields = new String[dis.readInt()];
-   		for(int j=0; j<extraFields.length; j++){
-   			buff = new char[dis.readInt()];
-       		for(int k=0; k<buff.length; k++){
-       			buff[k] = dis.readChar();
-       		}
-       		extraFields[j] = new String(buff);
-   		}
-			isNull = dis.readBoolean();
-			isNonZero = dis.readBoolean();
-			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
-				allSlideDataElements.add(i, new SlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
-			} else {		//IData has affy data
-				char detection = dis.readChar();
-				allSlideDataElements.add(i, new AffySlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero, detection));
-
-			}
-   		progressPanel.increment();
-   	}
-   	
-   }*/
-
-
-   /**
-    * 
-    * @param dos
-    * @throws IOException
-    * @deprecated
-    
-   public void writeIntensities(DataOutputStream dos) throws IOException {
-   	ISlideDataElement sde;
-   	int numSlideDataElements = size();
-   	dos.writeInt(numSlideDataElements);
-   	for(int i=0; i<numSlideDataElements; i++){
-   		sde = (ISlideDataElement)allSlideDataElements.get(i);
-   		dos.writeFloat(sde.getIntensity(0));
-   		dos.writeFloat(sde.getIntensity(1));
-   		dos.writeFloat(sde.getTrueIntensity(0));
-   		dos.writeFloat(sde.getTrueIntensity(1));	
-   		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
-   			dos.writeChar(sde.getDetection().toCharArray()[0]);
-   		} 
-   	}
-   }   */
-   //TODO remove
-	/*
-   public void loadIntensities(DataInputStream dis) throws IOException{
-   	ISlideDataElement sde;
-   	int numSlideDataElements = dis.readInt();
-   	for(int i=0; i<numSlideDataElements; i++){
-   		sde = (ISlideDataElement)allSlideDataElements.get(i);
-   		sde.setIntensity(0, dis.readFloat());
-   		sde.setIntensity(1, dis.readFloat());
-   		sde.setTrueIntensity(0, dis.readFloat());
-   		sde.setTrueIntensity(1, dis.readFloat());
-   		if(dataType != IData.DATA_TYPE_TWO_INTENSITY && dataType != IData.DATA_TYPE_RATIO_ONLY){
-       		sde.setDetection(new Character(dis.readChar()).toString());
-   		} 	
-   	}
-   }*/
+ 
 }

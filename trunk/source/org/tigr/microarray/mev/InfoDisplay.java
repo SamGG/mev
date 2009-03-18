@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -31,6 +32,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.tigr.graph.GC;
 import org.tigr.graph.GraphLine;
@@ -39,11 +42,16 @@ import org.tigr.graph.GraphTick;
 import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.annotation.InsufficientArgumentsException;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.annotation.URLNotFoundException;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.util.Xcon;
 import org.tigr.util.awt.ActionInfoDialog;
 import org.tigr.util.awt.GBA;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 public class InfoDisplay extends ActionInfoDialog  {
     
@@ -61,7 +69,7 @@ public class InfoDisplay extends ActionInfoDialog  {
     private int LINEAR = 0; // to return just ratio
     private int LOG = 1;   //for log2(ratio)
     
-    // from single array wiewer
+    // from single array viewer
     public InfoDisplay(JFrame parent, ISlideData slideData, ISlideDataElement element, int probe) {
         super(parent, false);
         this.probe = probe;
@@ -69,7 +77,7 @@ public class InfoDisplay extends ActionInfoDialog  {
         init(slideData, element);
     }
     
-    // from multiple array wiewer
+    // from multiple array viewer
     public InfoDisplay(JFrame parent, MultipleArrayData data, int feature, int probe) {
         super(parent, false);
         this.data = data;
@@ -101,7 +109,17 @@ public class InfoDisplay extends ActionInfoDialog  {
         infoDisplayTextPane.setCaretPosition(0);
         
         
-        
+        infoDisplayTextPane.addHyperlinkListener(new HyperlinkListener() {  
+        	public void hyperlinkUpdate(HyperlinkEvent hle) {  
+		        	if (HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {
+		        		try {
+		        			BrowserLauncher.openURL(hle.getURL().toString());
+		        		} catch (IOException ioe) {
+		        			ioe.printStackTrace();
+		        		}
+		        	}  
+	        	}  
+        	}); 
         
         JButton viewGeneGraphButton = new JButton("Gene Graph");
         viewGeneGraphButton.setActionCommand("view-gene-graph");
@@ -209,7 +227,7 @@ public class InfoDisplay extends ActionInfoDialog  {
        // message += "</table>";
 
         //experiment annotation
-        Vector keys = slideData.getSlideDataKeys();
+        Vector<String> keys = slideData.getSlideDataKeys();
         Hashtable expLabels =  slideData.getSlideDataLabels();
         message += "<th colspan=2 align=left valign=center><font size=6>Sample Annotation</font></header></th/>";
         String key, value;
@@ -220,7 +238,6 @@ public class InfoDisplay extends ActionInfoDialog  {
                 value = "";
             message += "<tr valign=top><td><i>" + key + "</i></td><td>" + value + "</td></tr>";         
         }
-      //  message += "</table>";
         
         
         /**
@@ -237,51 +254,47 @@ public class InfoDisplay extends ActionInfoDialog  {
          * 
          */
        
-        String[] fieldNames = slideData.getSlideMetaData().getFieldNames();
-        if(data.isAnnotationLoaded()) {
-        	
+        String[] fieldNames = data.getFieldNames();
         	message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
-        	
-        	for (int i = 0; i < MevAnnotation.getFieldNames().length; i++) {                
-        		IAnnotation anno=element.getElementAnnotation();
-        		String[]annotations=data.getElementAnnotation(this.probe, MevAnnotation.getFieldNames()[i]); 
-//        		System.out.println("InfoDisplay:annotations"+annotations[0]);
-        		if(annotations.length>1) {
-        			message += "<tr valign=top><td><i>"  +MevAnnotation.getFieldNames()[i]+ "</i></td><td>" + ((AnnoAttributeObj)data.getElementAnnotationObject(i, MevAnnotation.getFieldNames()[i])).toString() + "</td></tr>";
-//        		System.out.println("annotation size is >1:");
+        	for (int i = 0; i < fieldNames.length; i++) {                
+        		AnnoAttributeObj anno = data.getElementAnnotationObject(this.probe, fieldNames[i]);
+        			if(anno.getAttribCount() < 1 || anno.getAttributeAt(0).toString().equalsIgnoreCase("na")) {
+        				message += "<tr valign=top><td><i>"  + fieldNames[i] + "</i></td><td>NA</td></tr>";
+        			} else {
+	        			message += "<tr valign=top><td><i>"  + fieldNames[i] + "</i></td><td>";
+	            		for(int j=0; j<anno.getAttribCount(); j++) {
+	            			if(PublicURL.hasUrlForKey(anno.getAttribName())) {
+		            			try {
+		            				message += "<a href=\"" + PublicURL.getURL(anno.getAttribName(), new String[]{anno.getAttributeAt(j).toString()})+ "\">" + anno.getAttributeAt(j).toString() + "</a>";
+		            			} catch (URLNotFoundException unfe) {
+		            				message += anno.getAttributeAt(j);
+		            			} catch (InsufficientArgumentsException iae) {
+		            				message += anno.getAttributeAt(j);
         		}
-        		else
-        			
-        		message += "<tr valign=top><td><i>" +MevAnnotation.getFieldNames()[i] +"</i></td><td>" + annotations[0] +"</td></tr>";
-        		
+	            			} else {
+	            				message += anno.getAttributeAt(j);
         	}               
+	            			if(j < anno.getAttribCount()-1)
+	            				message += ", ";
         }
+	        			message += "</td></tr>";
+        			}
+        	}               
 
 
 
         if(fieldNames != null && fieldNames.length > 0){
-        	
-        	//Need to have the header "Gene Annotation" only once. This is to avoid duplication of the 
-        	//header, in case there is annotation in the file and the user also loaded Resourcerer annotation.
-        	//
-        	
-        	if(!data.isAnnotationLoaded())
-        		message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
         	for (int i = 0; i < fieldNames.length; i++) {                
 
         		//pcahan change to call getDetection on the element rather than the field  
         		if(fieldNames[i].equals("Detection")){
         			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getDetection() + "</td></tr>";
-        		}
-        		else if(fieldNames[i].equals("P-value")){
+        		} else if(fieldNames[i].equals("P-value")) {
         			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getPvalue() + "</td></tr>";;
-        		}else{
-        			message += "<tr valign=top><td><i>" + fieldNames[i] + "</i></td><td>" + element.getFieldAt(i) + "</td></tr>";  
         		}               
         	}
 
         }
-      //  }
 
         //spot specific information
         SpotInformationData spotData = this.slideData.getSpotInformationData();
@@ -292,7 +305,6 @@ public class InfoDisplay extends ActionInfoDialog  {
             for (int i = 0; i < spotInfoLabels.length; i++) {
                 message += "<tr valign=top><td><i>" + spotInfoLabels[i] + "</i></td><td>" + info[i] + "</td></tr>";
             }
-           // message += "</table>";
         }
         message += "</table>";
         message += "</basefont></body></html>";

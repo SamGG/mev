@@ -155,9 +155,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
          * Raktim - Annotation Demo Only. 
          * Good Place to initialize URLS.
          */
-        if(PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0){
-        	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
+//        if(PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0){
+//        	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
+//        }
        
         if(aflp.absoluteRadioButton.isSelected()){
             data = loadAffyAbsolute(files);

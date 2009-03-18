@@ -568,7 +568,7 @@ public class BridgeGUI implements IClusterGUI {
 			this.dataPath += str + sep;
 		}
 		// sets the data path in config to render well
-		TMEV.updateDataPath(renderedPath);
+		TMEV.setDataPath(renderedPath);
 
 		// sets variable to conform to OS spec.
 		TMEV.setDataPath(this.dataPath);

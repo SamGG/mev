@@ -427,8 +427,9 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 			AnnotationFileReader reader = AnnotationFileReader
 			.createAnnotationFileReader(getAnnotationFile());
+			//EH
 			GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(
-					new JFrame(), dataFieldNames, MevAnnotation.getFieldNames());
+					new JFrame(), dataFieldNames, reader.getAvailableAnnotations());//MevAnnotation.getFieldNames());
 
 			if (importDialog.showModal() == JOptionPane.OK_OPTION) {
 				((MultipleArrayData) this.idata).addResourcererGeneAnnotation(

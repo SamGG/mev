@@ -24,6 +24,7 @@ import javax.swing.JProgressBar;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.Manager;
 import org.tigr.microarray.mev.MultipleArrayMenubar;
 import org.tigr.microarray.mev.MultipleArrayViewer;
@@ -332,7 +333,7 @@ public class Rama {
 		frame.setLocation( ( screenSize.width - frame.getSize().width)/2, 
 		( screenSize.height - frame.getSize().height)/2 );
 		frame.setContentPane( barPanel );
-		frame.show();
+		frame.setVisible(true);
 		
 		return bar;
 	}//createProgress()
@@ -390,12 +391,12 @@ public class Rama {
 			//take care of annotations
 			String[] extraFields = new String[ currentFieldNames.length ];
 			SlideDataElement loadedSDE = ( SlideDataElement ) data.getSlideDataElement( 0, i );
-			for( int e = 0; e < extraFields.length; e ++ ) {
-				extraFields[ e ] = loadedSDE.getFieldAt( e );
-			}
-			
-			SlideDataElement sde = new SlideDataElement( data.getUniqueId( i ), 
-					rows, cols, intensities, extraFields );
+//			for( int e = 0; e < extraFields.length; e ++ ) {
+//				extraFields[ e ] = loadedSDE.getFieldAt( e );
+//			}
+			ISlideDataElement sde = loadedSDE.clone();
+//			SlideDataElement sde = new SlideDataElement( data.getUniqueId( i ), 
+//					rows, cols, intensities, extraFields );
 			slideData.add( sde );
 		}
 		

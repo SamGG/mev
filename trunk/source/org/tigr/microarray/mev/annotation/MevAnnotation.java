@@ -154,7 +154,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	}
 	
 	public String getCloneID() {
-		return (String)annotHash.get(AnnotationFieldConstants.CLONE_ID);
+		return (String)annotHash.get(AnnotationFieldConstants.PROBE_ID);
 	}
 	
 	public String getProbeChromosome(){
@@ -334,7 +334,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public void setCloneID(String _temp) {
 		//String[] _tmp = {_temp};
 		String _tmp = _temp;
-		annotHash.put(AnnotationFieldConstants.CLONE_ID, _tmp);
+		annotHash.put(AnnotationFieldConstants.PROBE_ID, _tmp);
 	}
 
 	public void setEntrezGeneID(String _temp) {
@@ -551,7 +551,8 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	/**
 	 * 
 	 * @return
-	 */
+	 * @deprecated
+	
 	public static String[] getFieldNames() {
 		Vector<String> names = new Vector<String>();
 		Class c = fieldConsts.getClass();
@@ -564,7 +565,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	
 		return names.toArray(new String[0]);
 	}
-
+ */
 	/**
 	 * 
 	 */
@@ -584,9 +585,9 @@ public class MevAnnotation implements IAnnotation, Comparable {
 			return _temp;
 
 
-		}else {
+		} else {
 
-			String[]_temp;
+			String[] _temp;
 			_temp = (String[])annotHash.get(attr);
 			if (_temp == null) {
 				_temp = new String[1];
@@ -612,7 +613,11 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	public AnnoAttributeObj getAttributeObj(String attr) {
 		String[] _temp;
 		AnnoAttributeObj _tempAttr;
-		_temp = (String[])annotHash.get(attr);
+		try {
+			_temp = (String[])annotHash.get(attr);
+		} catch (ClassCastException cce) {
+			_temp = new String[]{(String)annotHash.get(attr)};
+		}
 		if (_temp == null) {
 			_temp = new String[1];
 			_temp[0] = ChipAnnotationFieldConstants.NOT_AVAILABLE;

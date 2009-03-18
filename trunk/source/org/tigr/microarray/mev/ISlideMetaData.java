@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.util.swing.ProgressBar;
 
 public interface ISlideMetaData {
@@ -50,6 +51,7 @@ public interface ISlideMetaData {
 
     /**
      * Returns description of a specified microarray spot.
+     * @deprecated
      */
     public String getValueAt(int index, int valueType);
 
@@ -78,8 +80,11 @@ public interface ISlideMetaData {
     public void clearFieldNames();
     
     public void appendFieldNames(String[] fieldNames);
-    //public void writeAnnotation(DataOutputStream dos, JFrame progressBar) throws IOException; 
-    //public void loadAnnotation(DataInputStream dis, JFrame progressBar) throws IOException; 
+    
     public void setFieldNames(String[] fieldNames);
     
+    public void updateFilledAnnFields();
+
+    public String[] getAnnotationValue(int index, String attr);
+    public AnnoAttributeObj getAnnotationObj(int index, String attr);
 }

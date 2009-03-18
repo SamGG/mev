@@ -562,7 +562,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     	
     	while(labels.hasMoreElements()){
     		JRadioButtonMenuItem aButton = (JRadioButtonMenuItem)labels.nextElement();
-    		temp.add((String)aButton.getLabel());
+    		temp.add((String)aButton.getText());
     		
     	}
     	String[] temp2 = new String[temp.size()];
@@ -719,12 +719,12 @@ public class MultipleArrayMenubar extends JMenuBar {
     
     
     //Added by Sarita
-    public void replaceLabelMenuItems(String [] fieldNames, String[]annoFields){
-        //remove all menu items
-        this.labelMenu.removeAll();
-        labelGroup=new ButtonGroup();
-       this.addLabelMenuItems(fieldNames, annoFields);
-    }
+//    public void replaceLabelMenuItems(String [] fieldNames, String[]annoFields){
+//        //remove all menu items
+//        this.labelMenu.removeAll();
+//        labelGroup=new ButtonGroup();
+//       this.addLabelMenuItems(fieldNames, annoFields);
+//    }
     
     
     

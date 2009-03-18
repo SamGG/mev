@@ -8,6 +8,7 @@ package org.tigr.microarray.mev.annotation;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.util.Hashtable;
@@ -21,7 +22,7 @@ import org.tigr.util.StringSplitter;
 
 public class PublicURL {
 
-	private static boolean urlLaoded = false;
+	private static boolean urlLoaded = false;
 	private static Hashtable<String, String> urlHash;
 	
 	/*************************************************************************
@@ -29,7 +30,7 @@ public class PublicURL {
 	 * currently avaialble in the Model. Class is kep separate for a simple 
 	 * implementation of Java Reflection to query URL names at run time.
 	 *************************************************************************/
-	public static AnnotationURLConstants urlConsts = new AnnotationURLConstants();
+	public static AnnotationConstants urlConsts = new AnnotationConstants();
 	
 	/******************************************************
 	 * Static Functions to Retreive URLs by URL constant
@@ -45,13 +46,30 @@ public class PublicURL {
 	 * AnnotationURLConstants class.
 	 */
 	public static String getURL(final String URLKey, String[] params) throws InsufficientArgumentsException, URLNotFoundException, IllegalArgumentException {
-	//	System.out.println("getURL():Key: " + URLKey + " Params[0]: " + params[0]);
+		if(!isUrlLoaded())
+			throw new URLNotFoundException("No URLs were loaded");
 		String urlTemplate = urlHash.get(URLKey.trim());
-		if(urlTemplate == null) throw new URLNotFoundException();
+		if(urlTemplate == null) throw new URLNotFoundException(); 
 		
+		//Special handling for go terms. Multiple terms can be queried together
+
+		//TGI accessions are a special case in that they require a species name
+		//added to their accession. For all other accessions, multiple accession values are 
+		//added together into one string to put into the query.
+		if(!URLKey.equals(AnnotationConstants.TGI_GC) &&
+				!URLKey.equals(AnnotationConstants.TGI_ORTH) &&
+						!URLKey.equals(AnnotationConstants.TGI_TC)
+				) {
+			String temp = params[0];
+			for(int i=1; i<params.length; i++) {
+				temp += "," + params[i];
+			}
+			params = new String[]{temp};
+		}
+
 		Vector<Integer> paramSites = getParamIndices("FIELD", urlTemplate);
 		if(paramSites.size() != params.length) {
-			String _temp = "# of params required: " + paramSites.size() + ". # of Params given: " + params.length;
+			String _temp = "For field " + URLKey + ": " + paramSites.size() + " params required. " + params.length + " params returned.";
 			throw new InsufficientArgumentsException(_temp);
 		}
 		
@@ -61,23 +79,7 @@ public class PublicURL {
 		// match the order in which the params argument is supplied to the funciton.
 		// 3 - A description of each parameter
 		String[] _TemplateChop = urlTemplate.split("\\|");
-		// System.out.println("_TemplateChop.length: " + _TemplateChop.length);
-		// System.out.println("_TemplateChop[0]: " + _TemplateChop[0]);
-		 //System.out.println("_TemplateChop[1]: " + _TemplateChop[1]);
-		 //System.out.println("_TemplateChop[2]: " + _TemplateChop[2]);
-		String[] _paramDataTypes = _TemplateChop[1].split(":");
-		String[] _paramDesc = _TemplateChop[2].split(":");
-		
-		if(!checkParamTypeAndOrder(params, _paramDataTypes)) {
-			String _temp = "", _tmp = "";
-			for(int i = 0; i < _paramDesc.length; i++){
-				_temp += _paramDesc[i] + " ";
-			}
-			for(int i = 0; i < params.length; i++){
-				_tmp += params[i] + " ";
-			}
-			throw new IllegalArgumentException("Expected argument(s): " + _temp + ". Given argument(s): " + _tmp);
-		}
+
 		
 		Integer[] indx = new Integer[paramSites.size()];
 		paramSites.toArray(indx);
@@ -85,7 +87,7 @@ public class PublicURL {
 		return formedURL;
 	}
 	
-	private static String fillParameters(String template, String[] params, Integer[] indices) {
+	protected static String fillParameters(String template, String[] params, Integer[] indices) {
 		//www.ncbi.nlm.nih.gov/mapview/maps.cgi?TAXID=FIELD&CHR=FIELD&BEG=FIELD&END=FIELD&thmb=on
 		String formedURL = "";
 		int startIndex = 0;
@@ -123,7 +125,7 @@ public class PublicURL {
 		return true;
 	}
 
-	private static Vector<Integer> getParamIndices(String str, String withinStr) {
+	protected static Vector<Integer> getParamIndices(String str, String withinStr) {
 		//System.out.println("urlTemplate: " + withinStr);
 		int fromIndex = 0;
 		int hitIndex = 0;
@@ -360,15 +362,31 @@ public class PublicURL {
 		String formedURL = fillParameters(_TemplateChop[0], new String[] {searchTerm}, indx);
 		return formedURL;
 	}
+	public static String getURL_TGI_orth(String searchTerm) throws InsufficientArgumentsException, URLNotFoundException, IllegalArgumentException  {
+		String urlTemplate = urlHash.get(AnnotationConstants.TGI_ORTH);
+		if(urlTemplate == null) throw new URLNotFoundException();
+		String species = searchTerm.substring(0, searchTerm.indexOf('_'));
+		String TC = searchTerm.substring(searchTerm.indexOf('_')+1);
+		
+		Vector<Integer> paramSites = getParamIndices("FIELD", urlTemplate);
+		
+		String[] _TemplateChop = urlTemplate.split("\\|");
+		
+		Integer[] indx = new Integer[paramSites.size()];
+		paramSites.toArray(indx);
+		String formedURL = fillParameters(_TemplateChop[0], new String[] {species, TC}, indx);
+		
+		return formedURL;
+	}
+
+	
 	
 	public static boolean isUrlLoaded() {
-		return urlLaoded;
+		return urlLoaded;
 	}
 	
-	public static int loadURLs(File configFile) {
-		if(urlLaoded) return 0;
-		
-		urlHash = new Hashtable<String, String>();
+	public static int loadURLs(File configFile) throws FileNotFoundException {
+		Hashtable<String, String> tempHash = new Hashtable<String, String>();
         try {
             FileReader fr = new FileReader(configFile);
             BufferedReader buff = new BufferedReader(fr);
@@ -382,39 +400,25 @@ public class PublicURL {
                     String _tempKey = st.nextToken();
                     String _tempURL = st.nextToken();
                     st.nextToken();
-                    if(validateURLKey(_tempKey)){
-                    	urlHash.put(_tempKey.trim(), _tempURL);
-                    	//System.out.println(_tempKey + "-" + _tempURL);
-                    } else {
-                    	//System.out.println("Invalid Key: " + _tempKey);
-                    }
+                    tempHash.put(_tempKey.trim(), _tempURL);
                 }
             }
             buff.close();
-        } catch (java.io.FileNotFoundException fne) {
-            JOptionPane.showMessageDialog(new JFrame(), "Could not find " + configFile + " file", "Error", JOptionPane.ERROR_MESSAGE);
-            return -1;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(new JFrame(), "Incompatible " + configFile + " file. Possible issues: extra newline characters, too many or too few tabs per line", "Error", JOptionPane.ERROR_MESSAGE);
-            return -1;
+        	return -1;
         }
         
-        if(urlHash.size() < 1) 
+        if(tempHash.size() < 1) 
         	return -1;
-		urlLaoded = true;
+        urlHash = tempHash;
+		urlLoaded = true;
 		return 0; 
 	}
-	
-	private static boolean validateURLKey(String key){
-		boolean ret = false;
-		Class c = urlConsts.getClass();
-		Field[] fields = c.getFields();
-		for(int j = 0; j < fields.length; j++) {
-			if(key.trim().equals(fields[j].getName())) {
-				ret = true;
-				break;
-			}
-		}
-		return ret;
+	public static boolean hasUrlForKey(String key) {
+		if(urlHash == null)
+			return false;
+		if(urlHash.get(key.trim()) != null)
+			return true;
+		return false;
 	}
 }

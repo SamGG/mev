@@ -97,7 +97,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 	private Hashtable _tempAnno = new Hashtable();
 	private MultipleArrayViewer mav;
 
-	protected MevAnnotation mevAnno = new MevAnnotation();
 
 
     public void setFilePath(String path) {
@@ -205,9 +204,9 @@ public class StanfordFileLoader extends ExpressionFileLoader {
          * Raktim - Annotation Demo Only. 
          * Good Place to initialize URLS.
 		 */
-		if (PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0) {
-			JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
-		}
+//		if (PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0) {
+//			JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
+//		}
 
 		while ((currentLine = reader.readLine()) != null) {
 			try {
@@ -252,30 +251,27 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 					}
 
 					String cloneName = moreFields[0];
-					if (_tempAnno.size() != 0 && getDataType() == TMEV.DATA_TYPE_AFFY) {
-
-             	
+					
+					MevAnnotation mevAnno = null;
+					if(_tempAnno.size() != 0) {
 						if (((MevAnnotation) _tempAnno.get(cloneName)) != null) {
-							MevAnnotation mevAnno = (MevAnnotation) _tempAnno.get(cloneName);
-
-                		sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
+							mevAnno = (MevAnnotation) _tempAnno.get(cloneName);
 						} else {
-                 /*
-               	  * Sarita: clone ID explicitly set here because if the data file
-               	  * has a probe (for eg. Affy house keeping probes) for which Resourcerer
-               	  * does not have annotation, MeV would still work fine. NA will be
-               	  * appended for the rest of the fields. 
+							/*
+							  * Sarita: clone ID explicitly set here because if the data file
+							  * has a probe (for eg. Affy house keeping probes) for which Resourcerer
+							  * does not have annotation, MeV would still work fine. NA will be
+							  * appended for the rest of the fields. 
 							 */
-							MevAnnotation mevAnno = new MevAnnotation();
+							mevAnno = new MevAnnotation();
 							mevAnno.setCloneID(cloneName);
-                    sde = new AffySlideDataElement(String.valueOf(row+1), rows, columns, new float[2], moreFields, mevAnno);
-
 						}
-                } else {
-						sde = new SlideDataElement(String.valueOf(row + 1), rows, columns, new float[2], moreFields);
 					}
-
-                
+					if(getDataType() == TMEV.DATA_TYPE_AFFY) {
+						sde = new AffySlideDataElement(String.valueOf(row + 1), rows, columns, new float[2], moreFields, mevAnno);
+					} else {
+						sde = new SlideDataElement(String.valueOf(row + 1), rows, columns, new float[2], moreFields, mevAnno);
+					}
                 
 					slideDataArray[0].addSlideDataElement(sde);
 
@@ -689,11 +685,11 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 				} else if (source == twoColorArray) {
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
-					adh.setDownloadEnabled(!twoColorArray.isSelected());
+//					adh.setDownloadEnabled(!twoColorArray.isSelected());
 				} else if (source == singleColorArray) {
 					dataType = IData.DATA_TYPE_AFFY_ABS;
 					setDataType(dataType);
-					adh.setDownloadEnabled(singleColorArray.isSelected());
+//					adh.setDownloadEnabled(singleColorArray.isSelected());
 				}
 			}
 		}

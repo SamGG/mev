@@ -1095,8 +1095,10 @@ public class MultipleArrayData implements IData {
             //get the data key
             if(dataKeyCol == -1) //use UID
                 dataID = sde.getUID();
-            else
-                dataID = sde.getFieldAt(dataKeyCol);
+            else {
+//                dataID = sde.getFieldAt(dataKeyCol);
+                dataID = getElementAnnotation(row, dataKey)[0];
+            }
                 
             if(annotationHash.containsKey(dataID))
                 updateCount++;
@@ -1174,10 +1176,11 @@ public class MultipleArrayData implements IData {
             //get sde
             sde = slideData.getSlideDataElement(row);
             
-            dataID = sde.getFieldAt(dataKeyCol);
+//            dataID = sde.getFieldAt(dataKeyCol);
+            dataID = getElementAnnotation(row, dataKey)[0];
              String cloneName = dataID;
              //System.out.println("cloneName:"+cloneName);
-                if(annotationHash.size()!=0 && getDataType()==TMEV.DATA_TYPE_AFFY) {
+                if(annotationHash.size()!=0) {
              	   
              	
                 	if(((MevAnnotation)annotationHash.get(cloneName))!=null) {
@@ -1205,56 +1208,36 @@ public class MultipleArrayData implements IData {
                 
              }
         this.setAnnotationLoaded(true);
+    	slideData.getSlideMetaData().updateFilledAnnFields();
+
         }
         
-      
-    
-    
-    
-    
-    
-
     /**
-     * Returns an element attribute for specified row and
-     * attribute index.
+     * Returns an element attribute for specified row and attribute index. If 
+     * more than one value is available for this annotation/gene combination, 
+     * the values are concatenated into a single "///"-delimited string.
+     * @deprecated use String[] getElementAnnotation(int row, String attr) instead
      */
     public String getElementAttribute(int row, int attr) {
-        if (featuresList.size() == 0) {
-            return "";
+	    String[] allResults = getElementAnnotation(row, getFieldNames()[attr]);
+	    String annotationConcatenated;
+	    if(allResults == null || allResults.length < 1)
+		    annotationConcatenated = "NA";
+	    else 
+		    annotationConcatenated = allResults[0];
+	    for(int i=1; i<allResults.length; i++) {
+		    annotationConcatenated += "///" + allResults[i];
         }
-        ISlideData slideData = (ISlideData)featuresList.get(0);
-        ISlideDataElement element = slideData.getSlideDataElement(row);
-        return element.getFieldAt(attr);
+	    return annotationConcatenated;
     }
     
     /**
      * Raktim - Annotation Model Method
      */
     public String[] getElementAnnotation(int row, String attr) {
-        if (featuresList.size() == 0) {
-            return null;
+	    return ((ISlideData)featuresList.get(0)).getSlideMetaData().getAnnotationValue(row, attr);
         }
-        ISlideData slideData = (ISlideData)featuresList.get(0);
-        ISlideDataElement element = slideData.getSlideDataElement(row);
       
-        IAnnotation annot = element.getElementAnnotation();
-        
-        
-        if(isAnnotationLoaded())
-        	if(annot.getAttribute(attr) != null &&annot.getAttribute(attr).length>0&& !annot.getAttribute(attr)[0].equalsIgnoreCase("NA") )
-        		return(annot.getAttribute(attr));
-       
-
-        //EH added accessor for standard annotation fields
-        String[] allFields = getFieldNames();
-        for(int i=0; i<allFields.length; i++) {
-        	if(allFields[i].equals(attr))
-        		return new String[]{getElementAttribute(row, i)};
-        }
-        return new String[]{"NA"};
-        
-    }
-    
     /**
      * Raktim - Annotation Model Method
      */
@@ -1263,10 +1246,7 @@ public class MultipleArrayData implements IData {
             return null;
         }
         ISlideData slideData = (ISlideData)featuresList.get(0);
-        ISlideDataElement element = slideData.getSlideDataElement(row);
-        IAnnotation annot = element.getElementAnnotation();
-      //  System.out.println("Annotation:"+annot.getGenBankAcc());
-        return annot.getAttributeObj(attr);
+        return slideData.getSlideMetaData().getAnnotationObj(row, attr);
 	}
     
     /**
@@ -1286,7 +1266,6 @@ public class MultipleArrayData implements IData {
     /**
      * 
      * Returns all annotation fields
-     * @deprecated Use String[] getAllFilledAnnotationFields()
      */
     public String[] getFieldNames() {
     	return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
@@ -1296,21 +1275,12 @@ public class MultipleArrayData implements IData {
      * Returns a combination of annotation fields from original annotation model and new model,
      * excluding annotation fields from the new model that have no values loaded.
      * @return the list of fieldnames
+     * @deprecated
      */
     public String[] getAllFilledAnnotationFields() {
-	    String[] fieldnames =  ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames();
-	    String[] annotations =  MevAnnotation.getFieldNames();
-	    String[] allanns = new String[fieldnames.length + annotations.length];
-	    for(int i=0; i<fieldnames.length; i++) {
-		    allanns[i] = fieldnames[i];
+	    return ((ISlideData)featuresList.get(0)).getSlideMetaData().getFieldNames(); 
 	    }
-	    for(int i=fieldnames.length; i<allanns.length; i++) {
-		    allanns[i] = annotations[i-fieldnames.length];
-	    }
-	    return allanns;
 
-    }
-    
     /**
      * Returns a spot base row.
      */
@@ -1746,6 +1716,7 @@ public class MultipleArrayData implements IData {
      * Adds an array of microarrays data.
      */
     void addFeatures(ISlideData[] slideData) {
+	slideData[0].getSlideMetaData().updateFilledAnnFields();
         for (int i = 0; i < slideData.length; i++) {
             featuresList.add(slideData[i]);
             slideData[i].setDataType(this.dataType);
@@ -3167,32 +3138,11 @@ public class MultipleArrayData implements IData {
      * Returns an annotation array for the provided indices based on annotation key
      */
     public String[] getAnnotationList(String fieldName, int[] indices) {
-        String [] fieldNames = this.getFieldNames();
-        int fieldIndex;
-        for(fieldIndex = 0; fieldIndex < fieldNames.length; fieldIndex++){
-            if(fieldName.equals(fieldNames[fieldIndex])) {
-            	break;
-            }
-        }
-
-        
-        if(fieldIndex >= fieldNames.length) {
-        	String[] _temp = new String[indices.length];
-        	boolean hasAnnotation = false;
+	    String[] annot = new String[indices.length];
         	for(int i=0; i<indices.length; i++) {
         		String thisAnnot = this.getElementAnnotation(indices[i], fieldName)[0];
-
-        		_temp[i] = thisAnnot;
+		    annot[i] = thisAnnot;
         	}
-        		return _temp;
-        }
-
-        String [] annot = new String[indices.length];
-
-        for(int i = 0; i < annot.length; i++) {
-            annot[i] = this.getElementAttribute(indices[i], fieldIndex);
-
-        }
         return annot;
     }
     

@@ -14,7 +14,7 @@ package org.tigr.microarray.mev.annotation;
  *
  */
 public class AnnotationConstants {
-	public static final String CLONE_ID = "CLONE_ID";
+	public static final String PROBE_ID = "PROBE_ID";
 	public static final String CHR = "CHR";
 	public static final String TX_START = "TX_START";
 	public static final String TX_END = "TX_END";
@@ -34,4 +34,7 @@ public class AnnotationConstants {
 	public static final String BIO_CARTA = "BIO_CARTA";
 	public static final String KEGG = "KEGG";
 	public static final String DESC = "DESC";
+	public static final String TGI_TC = "TGI_TC";
+	public static final String TGI_GC = "TGI_GC";
+	public static final String TGI_ORTH = "TGI_ORTH";
 }

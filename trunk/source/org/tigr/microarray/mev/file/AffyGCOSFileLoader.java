@@ -144,28 +144,6 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
 			}
     		        	
         }
-        
-     
-        /**
-         * TODO
-         * Raktim - Annotation Demo Only. 
-         * Good Place to initialize URLS.
-         */
-        if(PublicURL.loadURLs(TMEV.getConfigurationFile("annotation_URLs.txt")) != 0){
-        	JOptionPane.showMessageDialog(new JFrame(), "URLs will not be loaded", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-       
-        
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_GENE, new String[] {"MYC"}));
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-        try {
-        	//System.out.println("1: " + PublicURL.getURL(AnnotationURLConstants.NCBI_MAPVIEWER, new String[] {"9606", "16Abc", "12345", "223456"}));
-        } catch(Exception e){
-        	e.printStackTrace();
-        }
 
         return loadAffyGCOSExpressionFile(new File(this.sflp.selectedFiles.getText()));
     }

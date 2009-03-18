@@ -7,3 +7,14 @@ GO	http://www.ebi.ac.uk/ego/GTerm?id=FIELD1	Gene Ontology Terms (EBI)
 KEGG	http://www.genome.ad.jp/dbget-bin/show_pathway?FIELD1	KEGG
 GenMAPP	http://www.genmapp.org/MAPPSet-FIELD1	GenMAPP
 Pfam	http://pfam.wustl.edu/cgi-bin/getdesc?acc=FIELD1	Pfam(St. Louis)
+GENBANK_ACC	http://www.ncbi.nlm.nih.gov/sites/entrez?db=nucleotide&cmd=search&term=FIELD1	GenBank Accession Number
+UNIGENE_ID	http://www.ncbi.nlm.nih.gov/sites/entrez?db=unigene&cmd=search&term=FIELD1	NCBI UniGene
+GO_TERMS	http://www.ebi.ac.uk/ego/GSearch?q=FIELD1	Gene Ontology Terms (EBI)
+REFSEQ_ACC	http://www.ncbi.nlm.nih.gov/sites/entrez?db=nuccore&cmd=search&term=FIELD1	NCBI Refseq Search
+ENTREZ_ID	http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=search&term=FIELD1	NCBI Entrez ID search
+GENE_SYMBOL	http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=search&term=FIELD1	NCBI Gene Symbol Search
+PROTEIN_ACC	http://www.ncbi.nlm.nih.gov/sites/entrez?db=protein&cmd=search&term=FIELD1	NCBI Protein Search
+TGI_TC	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&tc=FIELD	TIGR Gene Indices
+TGI_GC	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&tc=FIELD	TIGR Gene Indices
+TGI_ORTH	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&tc=FIELD	TIGR Gene Indices
+GENE_TITLE	http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=search&term=FIELD1	NCBI free text search

@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,6 +40,9 @@ import javax.swing.UIManager;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.tigr.microarray.mev.annotation.AnnotationURLsFileDefinition;
+import org.tigr.microarray.mev.annotation.InvalidAnnMappingFileException;
+import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.gui.IGUIFactory;
 import org.tigr.microarray.mev.file.FileLoadInfo;
@@ -70,6 +74,7 @@ public class TMEV {
     public static final String PROMPT_TO_SAVE_ANALYSIS = "prompt-for-save";
     public static final String PROMPT_TO_GET_ONLINE = "prompt-to-get-online";
     public static final String ALLOWED_ONLINE = "allow-internet-connections";
+    public static final String ANNOTATION_URLS_FILE = "annotation-urls-mapping-file";
     
     public final static int ANALYSIS_LOADED = 101;
     
@@ -192,9 +197,9 @@ public class TMEV {
             
             Manager manager = new Manager();
             
-            
             try {
         	    resourceManager = new FileResourceManager(new File(mevUserDir, "repository"));
+        	    
             } catch (RepositoryInitializationError rie) {
         	    JOptionPane.showMessageDialog(null, "MeV was unable to create a repository for support data files at the location \n" + mevUserDir.getAbsolutePath() + "repository.\n" + 
         			    "MeV will be able to load expression data and do analyses, \nbut will not be able to automatically retrieve support data files from the internet for you. ", 
@@ -203,6 +208,35 @@ public class TMEV {
         	    rie.printStackTrace();
             }
             
+            File _urlsFile;
+    	    boolean _hasurlsloaded = false;
+    	    String _urlfilename = TMEV.getSettingForOption(ANNOTATION_URLS_FILE, null);
+    	    if(_urlfilename != null) {
+	    	_urlsFile = new File(_urlfilename);
+	    	if(_urlsFile.exists()) {
+	    		try {
+        	    	loadAnnotationsURLs(_urlsFile);
+        	    	_hasurlsloaded = true;
+        	    } catch (FileNotFoundException fnfe) {
+        	    	fnfe.printStackTrace();
+        	    }
+        	 } 
+    	    }
+
+	    	if(!_hasurlsloaded && resourceManager != null) {
+    	        try {
+        	    	_urlsFile = resourceManager.getSupportFile(new AnnotationURLsFileDefinition(), true);
+        	    	loadAnnotationsURLs(_urlsFile);
+        	    	_hasurlsloaded = true;
+        	    } catch (SupportFileAccessError sfae) {
+        	    } catch (NullPointerException npe) {
+        	    }
+	    	}
+	    	if(!_hasurlsloaded) {
+    	    	_urlsFile = getConfigurationFile("annotation_URLs.txt");
+    	    	loadAnnotationsURLs(_urlsFile);
+	    	}
+	    	
             if (os.indexOf("Apple") != -1 || os.indexOf("Mac") != -1 ) {
                 manager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());              
             }
@@ -247,6 +281,12 @@ public class TMEV {
 		}
 	}
  
+    public static void loadAnnotationsURLs(File urlsFile) throws FileNotFoundException, InvalidAnnMappingFileException {
+    	if (PublicURL.loadURLs(urlsFile) != 0) {
+    		throw new InvalidAnnMappingFileException();
+    	}
+    	TMEV.storeProperty(ANNOTATION_URLS_FILE, urlsFile.getAbsolutePath());
+    }
 
 
 	private static SessionOptions parseArgs(String[] args) {
