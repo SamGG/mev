@@ -240,14 +240,14 @@ public class ReadGeneSet {
 
 
 		String temp;
-
+       
 		parseGenesetNamesfromGMT(filePath);
 		BufferedReader bread=new BufferedReader(new FileReader(new File(filePath)));
 		String currentLine;
 
 		int index=0;
 		int num_geneSets=this.genesetNames.size();
-		//	System.out.println("gene set size:"+num_geneSets);
+		System.out.println("gene set size:"+num_geneSets);
 
 		set=new Geneset[num_geneSets];
 
@@ -257,14 +257,15 @@ public class ReadGeneSet {
 
 			set[i]=new Geneset();
 			set[i].setGeneSetName(gsetName);
-			//System.out.println("gene set name:"+set[i].geneSetName+":"+i);
+			System.out.println("gene set name:"+set[i].geneSetName+":"+i);
 		}
-
+		 getCountOfLines(new File(filePath));
 		set[0].setAllGenesetNames(genesetNames);
 
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
-		while((currentLine=bread.readLine())!=null&&currentLine.trim().length()!=0){
+		while((currentLine=bread.readLine())!=null && currentLine.trim().length()!=0){
 			//System.out.print("currentline:"+currentLine);
+			currentLine=currentLine.trim();
 			split.init(currentLine);
 			String geneSetName=split.nextToken();//First column has gene set names
 			geneSetName=geneSetName.trim();
@@ -272,14 +273,16 @@ public class ReadGeneSet {
 
 
 			while(split.hasMoreTokens()&& genesetNames.contains(geneSetName)){
+				//System.out.println("Gene setname:"+set[index].geneSetName);
+				//System.out.println("index:"+index);
 				//Remove any leading/trailing white spaces.
 				temp=split.nextToken().trim();
 				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("") && !temp.equalsIgnoreCase("na")){
 
 					gsElement=new GeneSetElement(String.valueOf(curpos), temp);
-					//System.out.println("Gene setname:"+set[index].geneSetName);
+					
 					//System.out.println("gene name is:"+temp);
-					//System.out.println("index:"+index);
+					
 					//System.out.println("curpos:"+curpos);
 					set[index].setGeneSetElement(gsElement, curpos);
 					if(!set[index].getGenesinGeneset().contains(temp)){
@@ -378,6 +381,7 @@ public class ReadGeneSet {
 		int index=0;
 
 		while((currentLine=bread.readLine())!=null && currentLine.trim().length()!=0){
+			currentLine=currentLine.trim();
 			split.init(currentLine); 
 
 			//Remove any leading or trailing spaces
@@ -417,7 +421,7 @@ public class ReadGeneSet {
 			count++;
 		}
 		reader.close();
-		//System.out.println("line count:"+count);
+		System.out.println("line count:"+count);
 		return count;
 	}
 

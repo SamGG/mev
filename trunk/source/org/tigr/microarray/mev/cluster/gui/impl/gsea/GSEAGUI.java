@@ -520,7 +520,8 @@ public class GSEAGUI implements IClusterGUI {
    	
    	
   //Display Collapse Probe to Gene 
-   String[]header2=new String[max_columns+1];
+   	System.out.println("max columns:"+this.max_columns);
+   String[]header2=new String[this.max_columns+1];
     header2[0]="Gene";
    	for(int i=0; i<max_columns; i++){
    		header2[i+1]="Probes";

@@ -113,7 +113,7 @@ public class GeneData implements IGeneData{
 			GeneDataElement gde = (GeneDataElement) gData[0].getGeneDataElement(gene);
 			gDataArray[gene]=new String[gde.getProbeID().size()+1];
 			gDataArray[gene][0]=gde.getGeneIdentifier();
-			//System.out.print(gDataArray[gene][0]);
+		//	System.out.print(gDataArray[gene][0]);
 			//System.out.print('\t');
 			Vector pVector=gde.getProbeID();
 			if(pVector.size()>maxprobe){
@@ -129,7 +129,8 @@ public class GeneData implements IGeneData{
 			//	System.out.println();
 			pVector=null;
 		}
-
+		//Added Mar 17, 09
+		set_max_num_probes_mapping_to_gene(maxprobe);
 		return gDataArray;
 	}
 
