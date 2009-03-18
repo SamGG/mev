@@ -133,6 +133,7 @@ public class TMEV {
     private static File mevPropertiesFile;
     
     private static ConfMap props;
+    private static Properties buildProps = new Properties();
 	private static SessionOptions so;
     
     public static void main(String[] args) {
@@ -164,7 +165,8 @@ public class TMEV {
             }
             
             os = System.getProperty("os.name");
-            
+            loadBuildProperties();
+
             //System.out.println(System.currentTimeMillis());
             System.out.println("Java Runtime Environment version: "+System.getProperty("java.version"));
             System.out.println("Java Runtime Environment vendor: "+System.getProperty("java.vendor"));
@@ -177,11 +179,10 @@ public class TMEV {
             System.out.println("Operating System name: "+os);
             System.out.println("Operating System version: "+System.getProperty("os.version"));
             System.out.println("Operating System architecture: "+System.getProperty("os.arch"));
+            System.out.println("MeV Build: " + buildProps.getProperty("BUILD-REVISION", "unknown"));
+            System.out.println("MeV Revision Date: " + buildProps.getProperty("REVISION-DATE", "unknown"));
+            System.out.println("MeV Branch: " + buildProps.getProperty("BUILD-BRANCH-URL", "unknown"));
             loadProperties();
-
-            System.out.println("MeV Build: "+getSettingForOption("BUILD-REVISION"));
-            System.out.println("MeV Revision Date: "+getSettingForOption("REVISION-DATE"));
-            System.out.println("MeV Branch: "+getSettingForOption("BUILD-BRANCH-URL"));
 
             setupFiles();
                      
@@ -327,7 +328,19 @@ public class TMEV {
 		    }
 		}
     }
-    	
+    
+    /**
+     * Loads a set of properties including information about the MeV build. Not saved in the user's properties file.
+     */
+    private static void loadBuildProperties() {
+		try {
+			InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/build.properties");
+			if (in != null) {
+				buildProps.load(in); // Can throw IOException
+			}
+		} catch (IOException ioe) {	}
+    }
+    
     /**
      * Loads a user properties file from userdir/.mev/mev.properties, if available or loads a default 
      * properties file from the classpath and writes it to userdir/.mev/mev.properties if not. 
@@ -346,12 +359,7 @@ public class TMEV {
 		} catch (IOException ioe) {
 			System.out.println("Could not load default properties from org/tigr/microarray/mev/default.properties");
 		}
-		try {
-			InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/microarray/mev/build.properties");
-			if (in != null) {
-				props.load(in); // Can throw IOException
-			}
-		} catch (IOException ioe) {	}
+
 		
 		/*		 
 		 * Try to get online and download default properties from tm4.org. If not available, skip. 
