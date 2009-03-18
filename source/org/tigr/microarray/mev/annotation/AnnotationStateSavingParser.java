@@ -96,7 +96,7 @@ public class AnnotationStateSavingParser {
        			int index=columnNames.indexOf((Object)field);
        		
        			Vector<String> _tmpGo = new Vector<String>();
-       			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
+       			if(field.equalsIgnoreCase(AnnotationFieldConstants.PROBE_ID)&&index==i){
        				cloneID=_temp;
        				annotationObj.setCloneID(_temp);
        				//System.out.println("clone id:"+probeID);
@@ -300,7 +300,7 @@ public class AnnotationStateSavingParser {
 		
 		File AnnotationFile_saved;
 
-		String[] fieldNames = new String[]{	AnnotationFieldConstants.CLONE_ID, 
+		String[] fieldNames = new String[]{	AnnotationFieldConstants.PROBE_ID, 
 											AnnotationFieldConstants.GENBANK_ACC, 
 											AnnotationFieldConstants.REFSEQ_ACC, 
 											AnnotationFieldConstants.ENTREZ_ID, 
@@ -315,7 +315,7 @@ public class AnnotationStateSavingParser {
 		writer.println();
 		writer.write("# Fields:"); 
 		writer.println();
-		writer.write("#    1. CLONE_ID");
+		writer.write("#    1. PROBE_ID");
 		writer.println();
 		writer.write("#    2. GENBANK_ACC");
 		writer.println();

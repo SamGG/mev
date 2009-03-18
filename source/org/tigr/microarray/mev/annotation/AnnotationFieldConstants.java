@@ -16,7 +16,7 @@ package org.tigr.microarray.mev.annotation;
  */
 
 public class AnnotationFieldConstants {
-	public static final String CLONE_ID = "CLONE_ID";
+	public static final String PROBE_ID = "PROBE_ID";
 	public static final String CHR = "CHR";
 	public static final String TX_START = "TX_START";
 	public static final String TX_END = "TX_END";

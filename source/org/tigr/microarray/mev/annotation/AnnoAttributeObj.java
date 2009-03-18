@@ -9,6 +9,10 @@
  */
 package org.tigr.microarray.mev.annotation;
 
+import java.util.Arrays;
+
+import org.tigr.microarray.mev.file.StringSplitter;
+
 /**
  * @author Raktim
  *
@@ -24,18 +28,26 @@ public class AnnoAttributeObj {
 		attribName = "";
 	}
 	
-	AnnoAttributeObj(String attribName, String[] attribVals){
-		attribCount = attribVals.length;
+	public AnnoAttributeObj(String attribName, String[] attribVals){
+		setAttribute(attribVals);
 		this.attribName = attribName;
-		attribValue = attribVals;
 	}
 	
 	public void setAttribute(String[] attribs) {
+		if(attribs[0].contains("///")) {
+			String[] newvals = attribs[0].split("///");
+			attribs = newvals;
+		}
 		attribValue = attribs;
+		attribCount = attribValue.length;
 	}
 	
 	public int getAttribCount(){
 		return attribCount;
+	}
+	
+	public String getAttribName() {
+		return attribName;
 	}
 	
 		

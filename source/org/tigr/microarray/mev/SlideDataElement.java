@@ -84,6 +84,11 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
         this.trueIntensity = copyArray(intensities);
         this.extraFields = copyArray(values);
     }
+
+    public SlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values, MevAnnotation mevAnno) {
+	    this(UID, rows, columns, intensities, values);
+	    setElementAnnotation(mevAnno);
+    }
     
     /**
      * Constructs a <code>SlideDataElement</code> with specified meta rows,
@@ -468,6 +473,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
     /**
      * Returns a description by specified index. Or empty string if feild index
      * does not exist
+     * @deprecated 
      */
     public String getFieldAt(int index) {
         if(extraFields == null || index < 0 || index > (extraFields.length - 1)) {
@@ -475,6 +481,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
         }
         return extraFields[index];
     }
+    
     
     /**
      * Returns clone on this element.
@@ -511,5 +518,6 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
 	public void setElementAnnotation(IAnnotation annotation) {
 		this.annotation=(MevAnnotation)annotation;
 	}
-    
+
+
 }

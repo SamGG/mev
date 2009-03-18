@@ -71,6 +71,7 @@ public class SlideDataSorter {
         public IndicesComparator(int type) {
             this.type = type;
         }
+
         
         /**
          * Compare two elements with specified indices.
@@ -107,8 +108,9 @@ public class SlideDataSorter {
             }
             default: {
                 ISlideMetaData meta = slideData.getSlideMetaData();
-                String value1 = meta.getValueAt(index1, type);
-                String value2 = meta.getValueAt(index2, type);
+                String attrType = meta.getFieldNames()[type];
+                String value1 = meta.getAnnotationValue(index1, attrType)[0];
+                String value2 = meta.getAnnotationValue(index2, attrType)[0];
                 return value1.compareTo(value2);
             }
         }

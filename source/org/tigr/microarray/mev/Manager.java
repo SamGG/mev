@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Hashtable;
@@ -44,6 +45,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import org.tigr.microarray.mev.annotation.InvalidAnnMappingFileException;
 import org.tigr.microarray.mev.file.FileLoadInfo;
 import org.tigr.microarray.mev.file.FileType;
 import org.tigr.util.BrowserLauncher;
@@ -70,6 +72,7 @@ public class Manager {//A class to keep track of viewers
     private JCheckBoxMenuItem toolTipsItem;
     private JCheckBoxMenuItem promptToSaveItem;
     private JCheckBoxMenuItem promptToGetOnlineItem;
+    private JMenuItem selectURLLinkoutFile;
     private static JMenu windowMenu;
     private JMenu referencesMenu;
     private JMenuItem systemInfoItem;
@@ -184,6 +187,10 @@ public class Manager {//A class to keep track of viewers
         promptToGetOnlineItem.addActionListener(eventListener);
         preferencesMenu.add(promptToGetOnlineItem);
         promptToGetOnlineItem.setSelected(new Boolean(TMEV.getSettingForOption(TMEV.PROMPT_TO_GET_ONLINE)));
+        
+        selectURLLinkoutFile = new JMenuItem("Select annotation linkout file...");
+        selectURLLinkoutFile.addActionListener(eventListener);
+        preferencesMenu.add(selectURLLinkoutFile);
         
         menuBar.add(preferencesMenu);
         
@@ -576,6 +583,22 @@ public class Manager {//A class to keep track of viewers
             } else if (source == promptToGetOnlineItem) {
         	    TMEV.storeProperty(TMEV.PROMPT_TO_GET_ONLINE, new Boolean(promptToGetOnlineItem.isSelected()).toString());
         	    TMEV.getResourceManager().setAskToGetOnline(new Boolean(promptToGetOnlineItem.isSelected()));
+            } else if (source == selectURLLinkoutFile) {
+            	JFileChooser chooser = new JFileChooser(System.getProperty(TMEV.getDataPath()));
+        		chooser.setDialogTitle("Select an annotation mapping file");
+        		chooser.setCurrentDirectory(new File(TMEV.getDataPath()));
+        		chooser.setMultiSelectionEnabled(false);
+
+        		if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        			File urlsFile = chooser.getSelectedFile();
+	            	try {
+	            		TMEV.loadAnnotationsURLs(urlsFile);
+	            	} catch (InvalidAnnMappingFileException iamfe) {
+	            		JOptionPane.showMessageDialog(frame, "MeV was unable to read the URL mappings from the file " + urlsFile.toString() + ". The MeV manual contains details about this type of file. ", "Error", JOptionPane.ERROR_MESSAGE);            		
+	            	} catch (FileNotFoundException fnfe) {
+	            		JOptionPane.showMessageDialog(frame, "Could not find " + urlsFile + " file", "Error", JOptionPane.ERROR_MESSAGE);            		
+	            	}
+        		}
             } else if (source == promptToSaveItem) {
         	    TMEV.storeProperty(TMEV.PROMPT_TO_SAVE_ANALYSIS, new Boolean(promptToSaveItem.isSelected()).toString());
             } else if(source == acknolMenuItem){

@@ -34,8 +34,14 @@ import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.InsufficientArgumentsException;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.annotation.URLNotFoundException;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -77,7 +83,9 @@ public class TableViewer extends JPanel implements IViewer {
         model = new DefaultViewerTableModel(headerNames, data);
         
         table = new JTable(model);
+        ((DefaultViewerTableModel)model).setColumnRenderers(table);
         table.getTableHeader().addMouseListener(new TableHeaderMouseListener());
+        
         
         pane = new JScrollPane(table);
         pane.setHorizontalScrollBarPolicy(pane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -165,12 +173,22 @@ public class TableViewer extends JPanel implements IViewer {
             tableData = data;
             numerical = new boolean[headerNames.length];
             rows = new Row[data.length];
+      
             for(int i = 0; i < rows.length; i++){
                 rows[i] = new Row();
                 rows[i].index = i;
             }
+          
         }
-        
+        public void setColumnRenderers(JTable table) {
+            CellRenderer c = new CellRenderer();
+            TableColumn col;
+            for(int vColIndex = 0; vColIndex<table.getColumnCount(); vColIndex++) {
+//            	System.out.println("vcol " + vColIndex);
+	            col = table.getColumnModel().getColumn(vColIndex);
+	            col.setCellRenderer(c);
+            }
+        }
         /** Sets column as numerical for sorting.
          * @param col column index
          * @param numericalBool sets as numerical or not numerical
@@ -253,18 +271,35 @@ public class TableViewer extends JPanel implements IViewer {
     }
     
     
-    
+    public class LinkComponent extends javax.swing.JEditorPane {
+    	public LinkComponent() {
+    		super();
+    		setEditable(false);
+   			addHyperlinkListener(new javax.swing.event.HyperlinkListener() {  
+    			public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent hle) {  
+	    			if (javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.equals(hle.getEventType())) {  
+	    			}  
+    			}
+   			});
+    	}
+   		
+    	public void setLink(String url, String linktext) {
+    		setText("<a href=\"" + url + "\">" + linktext + "</a>");
+    	}
+    	
+    }
     
     public class CellRenderer extends DefaultTableCellRenderer {
         
         JPanel colorPanel = new JPanel();
         JLabel label;
-        JTextArea textArea;
+        JTextArea textArea = new JTextArea();
+        LinkComponent linkComponent = new LinkComponent();
         
         /** Renders basic data input types JLabel, Color,
          */        
         public Component getTableCellRendererComponent(JTable jTable, Object obj, boolean param, boolean param3, int row, int col) {
-            if(obj instanceof Color){
+        	if(obj instanceof Color){
                 colorPanel.setBackground((Color)obj);
                 return colorPanel;
             } else if(obj instanceof JLabel){
@@ -277,14 +312,30 @@ public class TableViewer extends JPanel implements IViewer {
                 if(table.isRowSelected(row))
                     label.setBackground(table.getSelectionBackground());
                 return label;
+
             } else if(obj instanceof JTextArea){
                 textArea = (JTextArea)obj;
                 if(table.isRowSelected(row))
                     textArea.setBackground(table.getSelectionBackground());
                 return textArea;
+            } else if(obj instanceof AnnoAttributeObj) {
+            	try {
+	            	String url = PublicURL.getURL(((AnnoAttributeObj)obj).getAttribName(), new String[]{((AnnoAttributeObj)obj).getAttributeAt(0).toString()});
+	            	linkComponent.setLink(url, obj.toString());
+            	} catch (URLNotFoundException unfe) {
+                	linkComponent.setLink("http://www.tm4.org/", "test");            		
+            	} catch(InsufficientArgumentsException iae ){
+                	linkComponent.setLink("http://www.tm4.org/", "test");
+            	}
+            	return linkComponent;
+            } else {
+            	textArea.setText(obj.toString());
+                if(table.isRowSelected(row))
+                    textArea.setBackground(table.getSelectionBackground());
+                else
+                	textArea.setBackground(table.getBackground());
+                return textArea;
             }
-           colorPanel.setBackground(Color.white);
-           return colorPanel;
         }
     }
         

@@ -1380,11 +1380,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        
 			         /*Added by Sarita*/
 			        
-			       if((data.getSlideDataElement(0,0).getElementAnnotation())!=null) {
-			    	   menubar.replaceLabelMenuItems(data.getFieldNames(), MevAnnotation.getFieldNames());
-			       }else {
+//			       if((data.getSlideDataElement(0,0).getElementAnnotation())!=null) {
+//			    	   menubar.replaceLabelMenuItems(data.getFieldNames(), MevAnnotation.getFieldNames());
+//			       }else {
 			    	   menubar.replaceLabelMenuItems(data.getFieldNames());
-			       }
+//			       }
 			        
            	    if(!keepSaving()) {
         	    	cancelLoad();
@@ -3743,6 +3743,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         data.addFeatures(features);
         data.setDataType(dataType);
         data.setChipAnnotation(chipAnnotation);
+        
         if(chipAnnotation != null) {
         	if(chipAnnotation.getSpeciesName() != null)
                 	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, chipAnnotation.getSpeciesName());
@@ -3763,11 +3764,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	 * 
         	 */ 
         	
-        	if (this.getData().isAnnotationLoaded()) {
-           	String[] annoFields = MevAnnotation.getFieldNames();
-        	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
-        	}
-        	else
+//        	if (this.getData().isAnnotationLoaded()) {
+//           	String[] annoFields = MevAnnotation.getFieldNames();
+//        	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
+//        	}
+//        	else
         	 this.menubar.addLabelMenuItems(this.data.getFieldNames(), null);//--Commented by Raktim for demo
            
         	
@@ -3981,10 +3982,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	SearchDialog dialog;
     	//Populates the search dialog with fields from the annotation model and the expression data, if annotation has
     	//been loaded.
-    	if(data.isAnnotationLoaded())
-    		 dialog= new SearchDialog(this.getFrame(), this.data.getAllFilledAnnotationFields(), this.data.getSlideNameKeyArray());
-    	//Populates the search dialog with the fields from the expression data.
-    	else
+//    	if(data.isAnnotationLoaded())
+//    		 dialog= new SearchDialog(this.getFrame(), this.data.getAllFilledAnnotationFields(), this.data.getSlideNameKeyArray());
+//    	//Populates the search dialog with the fields from the expression data.
+//    	else
     		 dialog = new SearchDialog(this.getFrame(), this.data.getFieldNames(), this.data.getSlideNameKeyArray());
         if( dialog.showModal() == JOptionPane.OK_OPTION) {
             AlgorithmData searchParameters = dialog.getSearchCriteria();
@@ -4305,18 +4306,12 @@ private void appendResourcererGeneAnnotation() {
                 
                 
                 //get annotation keys for mapping
-                GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(getFrame(), dataFieldNames, MevAnnotation.getFieldNames());
+                GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(getFrame(), dataFieldNames, reader.getAvailableAnnotations());
             	                
                 if(importDialog.showModal() == JOptionPane.OK_OPTION) {
-
-                    String [] newFields = MevAnnotation.getFieldNames();
-                                                    
                      data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
                     
-                            	
-                    
-                      //  menubar.replaceLabelMenuItems(data.getFieldNames(),newFields );
-                        menubar.replaceLabelMenuItems(data.getAllFilledAnnotationFields());
+                        menubar.replaceLabelMenuItems(data.getFieldNames());
                         
                         //add event to history log
                         String historyMsg = "New Gene Annotation\n";
@@ -4509,7 +4504,7 @@ private void appendResourcererGeneAnnotation() {
     private void onChangeCghDisplayOrder(){
     	//System.out.println("CGH onChangeCghDisplayOrder ");
     	CGHDisplayOrderChanger changer = new CGHDisplayOrderChanger(data, framework.getFrame(), true);
-    	changer.show(true);
+    	changer.setVisible(true);
     	if (changer.isCancelled())
     		return;
         fireDataChanged();
@@ -5454,7 +5449,7 @@ private void appendResourcererGeneAnnotation() {
         /* Raktim - Annotation Demo Only */
         private void onGenomeAnnotation() {
 			//System.out.println("onGenomeAnnotation() Called");
-			GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame());
+			GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame(), data.getFieldNames());
 	        if (dlg.showModal() == JOptionPane.OK_OPTION) {
 	            System.out.println("ok");
 	        }
@@ -5852,10 +5847,10 @@ private void appendResourcererGeneAnnotation() {
                     m.set(i, j, data.getRatio(j, rows[i], IData.LOG));
         		}
         	}
-        	String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
+        	String fieldname = data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()];
         	rowTitles = data.getAnnotationList(fieldname, rows);
         	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
+	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
 	    	String[] temp = new String[f.getColumnDimension()];
 	    	for(int i=0; i<temp.length; i++) {
 	    		temp[i] = data.getSampleAnnotation(i, data.getCurrentSampleLabelKey());
@@ -5899,11 +5894,11 @@ private void appendResourcererGeneAnnotation() {
 	            	m.set(i, j, experiment.get(rows[i], columns[j]));
 	            }
 	        }
-	        String fieldname = data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()];
+	        String fieldname = data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()];
 	        String[] rowTitles = data.getAnnotationList(fieldname, indices);
 
 	    	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()]);
+	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
 
 	    	String[] columnTitles = new String[columns.length];
 	    	for(int i=0; i<columnTitles.length; i++) {
@@ -5939,7 +5934,7 @@ private void appendResourcererGeneAnnotation() {
         	int[] indices = cw.getUniqueIndices(clusters);
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
         	}
         	nl.setName("MeV Namelist (" + names.length + ") from algorithm " + clusters[0].getAlgorithmName());
     		nl.setNames(names);
@@ -5962,7 +5957,7 @@ private void appendResourcererGeneAnnotation() {
 	        Namelist nl = new Namelist();
         	String[] names = new String[indices.length];
         	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
         	}
         	nl.setName("MeV Namelist (" + names.length + ")");
     		nl.setNames(names);
@@ -5983,10 +5978,10 @@ private void appendResourcererGeneAnnotation() {
 		Network nt = new Network();
     	nt.setSpecies(getCurrentSpecies());
     	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
-    	String[] allFields = data.getAllFilledAnnotationFields();
+    	String[] allFields = data.getFieldNames();
     	for(int i=0; i<interactions.size(); i++) {
-    		String source = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
-    		String target = data.getAnnotationList(data.getAllFilledAnnotationFields()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+    		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
+    		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
     		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
     		
     		nt.add(tempInt);

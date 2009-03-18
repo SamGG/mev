@@ -62,17 +62,18 @@ public class AffymetrixAnnotationParser {
     			String field=((String)columnNames.get(i));
     			int index=columnNames.indexOf((Object)field);
     		
-    			
-    			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
+    			//The match to CLONE_ID is here for backwards-compatibility with old state-saving analysis files
+    			//that used CLONE_ID.
+    			if((field.equalsIgnoreCase(AnnotationFieldConstants.PROBE_ID ) || field.equalsIgnoreCase("CLONE_ID")) && index==i){
     				probeID=_temp;
     				annotationObj.setCloneID(_temp);
-    		//		System.out.println("clone id:"+probeID+":"+index);
+    				System.out.println("clone id:"+probeID+":"+index);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.GENBANK_ACC)&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
     				}
     				annotationObj.setGenBankAcc(_temp);
-    				//System.out.println("Genbank acc:"+_temp+":"+index);
+    				System.out.println("Genbank acc:"+_temp+":"+index);
     			}else if(field.equalsIgnoreCase(AnnotationFieldConstants.UNIGENE_ID)&&index==i){
     				if(_temp==null){
     					_temp=ChipAnnotationFieldConstants.NOT_AVAILABLE;
@@ -182,7 +183,7 @@ public class AffymetrixAnnotationParser {
     			_temp=removeAllSpaces(_temp);
     			
     			if(_temp.contains("ProbeSetID")){
-    				columnNames.add(columnNumber,AnnotationFieldConstants.CLONE_ID);
+    				columnNames.add(columnNumber,AnnotationFieldConstants.PROBE_ID);
     				
     			}else if(_temp.equalsIgnoreCase("UniGeneID")){
     				columnNames.add(columnNumber, AnnotationConstants.UNIGENE_ID);

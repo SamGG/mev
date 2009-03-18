@@ -16,12 +16,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.*;
 
+import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
+import org.tigr.microarray.mev.annotation.AnnotationConstants;
+import org.tigr.microarray.mev.annotation.ChipAnnotationFieldConstants;
+import org.tigr.microarray.mev.annotation.InsufficientArgumentsException;
+import org.tigr.microarray.mev.annotation.PublicURL;
+import org.tigr.microarray.mev.annotation.URLNotFoundException;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -30,6 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
+import org.tigr.util.BrowserLauncher;
 import org.tigr.util.QSort;
 
 /**
@@ -38,8 +46,6 @@ import org.tigr.util.QSort;
  */
 public class ClusterTableViewer implements IViewer {
     
-    private static final String NO_GENES_STR = "No Genes in Cluster!";
-    private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String STORE_SELECTED_ROWS_CMD = "store-selected-rows-cmd";
     protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
@@ -68,20 +74,21 @@ public class ClusterTableViewer implements IViewer {
     private IFramework framework;
     private IData data;
     private int clusterIndex, xColumn;
-    //private int xRow;
+    private int xRow;
     private int[][] clusters;
     private int[][] sortedClusters;
     private int[] samplesOrder;
     private int[] lastSelectedAnnotationIndices;
     private String[] auxTitles, fieldNames;
     private Object[][] auxData;
-    //private Object[][] origData;
     private boolean[][] sortedAscending;  
     private JTable clusterTable;
     private ClusterTableModel clusterModel;  
     private ClusterTableSearchDialog searchDialog;
     private JMenuItem urlMenuItem;
     private int exptID = 0;
+    
+    protected LinkRenderer linkRenderer;
     
     /** DJS Main View Table Constructor
      * 
@@ -103,7 +110,7 @@ public class ClusterTableViewer implements IViewer {
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.clusters = clusters;  
-        this.fieldNames = data.getAllFilledAnnotationFields();
+        this.fieldNames = data.getFieldNames();
         this.auxTitles = auxTitles;
         if(this.auxTitles == null) {
         	this.auxTitles = new String[0];
@@ -132,10 +139,15 @@ public class ClusterTableViewer implements IViewer {
         this.clusterTable = new JTable(clusterModel);
         clusterTable.setCellSelectionEnabled(true);
         clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        linkRenderer = new LinkRenderer();
+        clusterTable.setDefaultRenderer(AnnoAttributeObj.class, linkRenderer);
+      
         TableColumn column = null;
         for (int i = 0; i < clusterModel.getColumnCount(); i++) {
             column = clusterTable.getColumnModel().getColumn(i);
             column.setMinWidth(30);
+            //TODO
+//            System.out.println("column " + i + ": " + column.getModelIndex() + ": " + clusterTable.getValueAt(100,i) + ": " + clusterTable.getValueAt(100,i).getClass().toString());
         } 
         
         this.sortedAscending = new boolean[clusters.length][clusterModel.getColumnCount()];
@@ -144,26 +156,18 @@ public class ClusterTableViewer implements IViewer {
                 sortedAscending[i][j] = false;
             }
         }
-        /*
-        clusterTable.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent event) {
-                if (!event.isPopupTrigger()){
-                    xRow = clusterTable.rowAtPoint(event.getPoint());
-                    xColumn = clusterTable.columnAtPoint(event.getPoint()); 
-                    System.out.println("xRow = " + xRow + ", xCol = " + xColumn);
-                }
-            }
-        });  
-         */      
+        
         addMouseListenerToHeaderInTable(clusterTable);
         header  = clusterTable.getTableHeader();        
         
         searchDialog = new ClusterTableSearchDialog(JOptionPane.getFrameForComponent(clusterTable), clusterTable, false);  
         setMaxWidth(getContentComponent(), getHeaderComponent());  
         
-	Listener listener = new Listener();
-	this.popup = createJPopupMenu(listener);
+		Listener listener = new Listener();
+		this.popup = createJPopupMenu(listener);
         clusterTable.addMouseListener(listener);
+        clusterTable.addMouseListener(new LinkListener());
+        
     }    
     
     //DJS creates clusters if parameter is null.  For Main View Table.
@@ -468,27 +472,17 @@ public class ClusterTableViewer implements IViewer {
             } else if(!hasAnnotation){
             	return new Integer(row+1);
             } else if (col < fieldNames.length + 1) {
-        	    String[] tempAnnList = data.getElementAnnotation(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), fieldNames[col-1]);
-        	    String concatAnns = tempAnnList[0];
-        	    for(int i=1; i<tempAnnList.length; i++)
-        		    concatAnns += "///" + tempAnnList[i];
-        	    return concatAnns;
+            	return data.getElementAnnotationObject(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), fieldNames[col-1]);
             } else {
-                return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
+				return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
+
             }
         }
         
        public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
-        /*
-        public void setValueAt(Object value, int row, int col) {
-            //tableData[row][col] = value;
-            fireTableCellUpdated(row, col);
-        }
-         */
        
-        
     }
     
     
@@ -1131,7 +1125,6 @@ public class ClusterTableViewer implements IViewer {
         
 	Listener listener = new Listener();
 	this.popup = createJPopupMenu(listener);
-	//getContentComponent().addMouseListener(listener);  
         clusterTable.addMouseListener(listener);
     }
     
@@ -1150,4 +1143,153 @@ public class ClusterTableViewer implements IViewer {
     protected void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());
     }
+
+    public class LinkRenderer extends DefaultTableCellRenderer {
+        public void setValue(Object pValue) {
+        		if(pValue instanceof AnnoAttributeObj && PublicURL.hasUrlForKey(((AnnoAttributeObj)pValue).getAttribName())) {
+
+                    AnnoAttributeObj anno = (AnnoAttributeObj)pValue;
+                    if(anno != null && 
+                    		anno.getAttributeAt(0) != null && 
+                    		!anno.getAttributeAt(0).toString().equalsIgnoreCase("na")) 
+                    {
+	        			String link = "<html>";
+	
+	                	//These links are in place for appearance's sake. They don't actually work.
+	                	//linking is handled by the LinkListener
+	                	link += "<a href=\"\">" + anno.getAttributeAt(0);
+	                	for(int i=1; i<anno.getAttribCount(); i++) {
+	                		link+= ", " + anno.getAttributeAt(i);
+	                	}
+                    //TODO
+                    //This block is saved hopefully to user later if we can get multi-hyperlinks working in these tables.
+//                    String linkUrl, linkText;
+//                    for(int i=0; i<anno.getAttribCount(); i++) {
+//                    	linkText = anno.getAttributeAt(i).toString();
+//
+//                    	if(linkText == null || linkText.equalsIgnoreCase("NA") || linkText.equals("")) {
+//                    		setText("NA");
+//                    		
+//                
+//                    	} else {
+//	                    	try {
+//	                    		if(anno.getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_TC) ||
+//	                    				anno.getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_GC) ||
+//	                    				anno.getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_ORTH)
+//	                    			) {
+//	                    			linkUrl = PublicURL.getURL(anno.getAttribName(), new String[]{linkText, framework.getData().getChipAnnotation().getSpeciesName()}).toString();
+//	                    		} else {
+//	                    			linkUrl = PublicURL.getURL(anno.getAttribName(), new String[]{linkText}).toString();
+//	                    		}
+//	                        	link += "<a href=\"" + linkUrl + "\">" + linkText + "</a>";
+//	                    	} catch (URLNotFoundException unfe) {
+//	                    		link += linkText;
+//	                    	} catch (InsufficientArgumentsException iae) {
+//	                    		link += linkText;
+//	                    	}
+//	                    	if(i < anno.getAttribCount()-1)
+//	                    		link += " | ";
+//	                    }
+//                    }
+//                    if(anno.getAttribCount() <1)
+//                    	link += "NA";
+
+	                    link += "</a>";
+	                    link += "</html>";
+	                    setText(link); 
+                    }else {
+	                	setText("NA");
+                    }
+                } else {
+                	setText(pValue.toString());                }
+        }
+    }
+
+    public class LinkListener extends MouseAdapter {
+        public void mouseEntered(MouseEvent event) {
+        	xRow = clusterTable.rowAtPoint(event.getPoint());
+            xColumn = clusterTable.columnAtPoint(event.getPoint()); 
+            Object value = clusterTable.getValueAt(xRow, xColumn);
+
+            if (	value != null && 
+            		value instanceof AnnoAttributeObj &&
+            		((AnnoAttributeObj)value).getAttribCount() > 0 &&
+            		!((AnnoAttributeObj)value).getAttributeAt(0).equals(ChipAnnotationFieldConstants.NOT_AVAILABLE))
+            {	
+            	Cursor c = new Cursor(Cursor.HAND_CURSOR);
+            	JOptionPane.getFrameForComponent(clusterTable).setCursor(c);
+            } else {
+            	Cursor c = Cursor.getDefaultCursor();
+            	JOptionPane.getFrameForComponent(clusterTable).setCursor(c);
+            }
+            event.consume();
+        }
+        public void mouseExited(MouseEvent event) {
+        	Cursor c = Cursor.getDefaultCursor();
+        	JOptionPane.getFrameForComponent(clusterTable).setCursor(c);
+        }
+        
+        public void mouseMoved(MouseEvent event){
+        	xRow = clusterTable.rowAtPoint(event.getPoint());
+            xColumn = clusterTable.columnAtPoint(event.getPoint()); 
+            Object value = clusterTable.getValueAt(xRow, xColumn);
+            if (	value != null && 
+            		value instanceof AnnoAttributeObj &&
+            		((AnnoAttributeObj)value).getAttribCount() > 0 &&
+            		!((AnnoAttributeObj)value).getAttributeAt(0).equals(ChipAnnotationFieldConstants.NOT_AVAILABLE))
+            {	
+            	Cursor c = new Cursor(Cursor.HAND_CURSOR);
+            	JOptionPane.getFrameForComponent(clusterTable).setCursor(c);
+            } else {
+            	Cursor c = Cursor.getDefaultCursor();
+            	JOptionPane.getFrameForComponent(clusterTable).setCursor(c);
+            }
+            event.consume();
+        }
+        
+        public void mousePressed(MouseEvent event) {
+
+        	xRow = clusterTable.rowAtPoint(event.getPoint());
+            xColumn = clusterTable.columnAtPoint(event.getPoint()); 
+            Object value = clusterTable.getValueAt(xRow, xColumn);
+            
+            if (	value != null && 
+            		value instanceof AnnoAttributeObj &&
+            		((AnnoAttributeObj)value).getAttribCount() > 0 &&
+            		!((AnnoAttributeObj)value).getAttributeAt(0).equals(ChipAnnotationFieldConstants.NOT_AVAILABLE) &&
+            		PublicURL.hasUrlForKey(((AnnoAttributeObj)value).getAttribName())) 
+            {
+            	String url = "http://www.tm4.org/search?" + ((AnnoAttributeObj)value).getAttributeAt(0);
+            	
+            	String[] attribvalue = new String[((AnnoAttributeObj)value).getAttribCount()];
+            	for(int i=0; i<attribvalue.length; i++) {
+            		attribvalue[i] = ((AnnoAttributeObj)value).getAttributeAt(i).toString();
+            	}
+            	
+            	try {
+            		if(((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_TC) ||
+            				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_GC) ||
+            				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_ORTH)		
+            			) {
+            			String[] newString = new String[attribvalue.length+1];
+            			newString[0] = framework.getData().getChipAnnotation().getSpeciesName().toString();
+            			for(int i=0; i<attribvalue.length; i++) {
+            				newString[i+1] = attribvalue[i];
+            			}
+                		url = PublicURL.getURL(((AnnoAttributeObj)value).getAttribName(), newString);
+            		} else {
+            			url = PublicURL.getURL(((AnnoAttributeObj)value).getAttribName(), attribvalue);
+            		}
+               		BrowserLauncher.openURL(url);
+            	} catch (InsufficientArgumentsException iae) {
+            		iae.printStackTrace();
+            	} catch (URLNotFoundException unfe) {
+            		unfe.printStackTrace();
+            	} catch (IOException ioe) {
+            		ioe.printStackTrace();
+               	}
+            }
+            event.consume();
+        }
+    } 
 }

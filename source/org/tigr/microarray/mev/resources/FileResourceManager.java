@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationURLsFileDefinition;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
 import org.tigr.microarray.mev.file.FileType;
 
@@ -846,6 +847,7 @@ public class FileResourceManager implements IResourceManager {
 		defs.add(new ResourcererAnnotationFileDefinition("Human", "APPLERA_ABI1700"));
 		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
 		defs.add(new ResourcererAnnotationFileDefinition("Rat", "Agilent_RatOligo"));
+		defs.add(new AnnotationURLsFileDefinition());
 //		defs.add(new EASESupportDataFile("Human", "APPLERA_ABI1700"));
 //		defs.add(new GseaSupportDataFile("c1.all.v2.5.symbols.gmt"));
 //		defs.add(new GseaSupportDataFile("c2.v2.symbols.gmt"));

@@ -838,18 +838,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         int max = 0;
         String str;
         
-       for (int i=0; i<getCluster().length; i++) {//For loop commented temporarily by sarita
-        	//Added by Sarita to check for Label width in both instances,
-    	   //namely if label is a "ExtraField" OR if label is actually
-    	   //added using the new annotation model 
-    	 if(labelIndex <= data.getFieldNames().length-1) {
-    		 //using new annotation model
-       		 str = data.getElementAttribute(getMultipleArrayDataRow(i), labelIndex);
-       		
-     	} else {
-     		//using new annotation model
-       	 str =  (data.getElementAnnotation(getMultipleArrayDataRow(i), MevAnnotation.getFieldNames()[labelIndex-(data.getFieldNames().length)])).toString();
-       	}
+       for (int i=0; i<getCluster().length; i++) {
+	       str = data.getElementAnnotation(getMultipleArrayDataRow(i), data.getFieldNames()[labelIndex]).toString();
             max = Math.max(max, fm.stringWidth(str));
         }
         return max;
@@ -1014,15 +1004,15 @@ public class ExperimentViewer extends JPanel implements IViewer {
                          * or the new annotation Model. The functions are called accordingly
                          * 
                          */
-                    	
-                    	if(labelIndex <= data.getFieldNames().length-1) {
-                    		annot[0] = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
-                    		//System.out.println("Extra Field selected is:"+annot[0]);
-                    	}
-                    	else {
-                    	//	System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
-                    		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
-                    	}
+                    	annot = data.getElementAnnotation(getMultipleArrayDataRow(row), data.getFieldNames()[labelIndex]);
+//                    	if(labelIndex <= data.getFieldNames().length-1) {
+//                    		annot[0] = data.getElementAttribute(getMultipleArrayDataRow(row), labelIndex);
+//                    		//System.out.println("Extra Field selected is:"+annot[0]);
+//                    	}
+//                    	else {
+//                    	//	System.out.println("Annotation selected is:"+MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+//                    		annot= data.getElementAnnotation(getMultipleArrayDataRow(row), MevAnnotation.getFieldNames()[labelIndex-fieldNamesLength-1]);
+//                    	}
                     }
                     annY = (row+1)*elementSize.height;
                     g.drawString(annot[0], uniqX + insets.left, annY-1);

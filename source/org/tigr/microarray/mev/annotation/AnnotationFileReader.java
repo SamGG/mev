@@ -21,7 +21,7 @@ import org.tigr.util.StringSplitter;
 
 public class AnnotationFileReader {
 	String[] fieldNames=new String[0];
-	Vector columnNames=new Vector();
+	Vector<String> columnNames=new Vector<String>();
 	Hashtable<String, MevAnnotation> annoHash;
 	IChipAnnotation chipAnnotation;
 
@@ -44,7 +44,9 @@ public class AnnotationFileReader {
     	fieldNames=newAnnotation;	
     }
     
-    
+    public String[] getAvailableAnnotations() {
+	    return columnNames.toArray(new String[columnNames.size()]);
+    }
     
     public String[] getAnnotation() {
     	return this.fieldNames;
@@ -133,7 +135,8 @@ public class AnnotationFileReader {
     			int index=columnNames.indexOf((Object)field);
     		
     			Vector<String> _tmpGo = new Vector<String>();
-    			if(field.equalsIgnoreCase(AnnotationFieldConstants.CLONE_ID)&&index==i){
+    			//CLONE_ID matching is here for legacy resourcerer files
+    			if((field.equalsIgnoreCase(AnnotationFieldConstants.PROBE_ID) || field.equalsIgnoreCase("CLONE_ID")) &&index==i){
     				probeID=_temp;
     				annotationObj.setCloneID(_temp);
     				//System.out.println("clone id:"+probeID);
