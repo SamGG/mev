@@ -314,7 +314,7 @@ public class AnnotationDownloadHandler {
 		updateLabel();
 	}
 	private void updateLabel() {
-		System.out.println("updating label");
+//		System.out.println("updating label");
 		if(inProgress) {
 			statusLabel.setText("Downloading...");
 			statusLabel.setForeground(Color.black);

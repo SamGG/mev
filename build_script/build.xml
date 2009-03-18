@@ -1810,14 +1810,18 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<jar destfile="${home.dir}/lib/mev-base.jar" update="yes">
 			<filename name="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 		</jar>
-		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+
 	</target>
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
 	<target name="build-package" depends="clean, build-all">
-		
+
 		<ant target="record-versioning-info"/>
+		
+		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+		
 		
 		<echo message="Please be sure that all user documentation to be included in the package
 		has been converted to pdf and placed in the user_docs directory. "/>
@@ -1854,7 +1858,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
 		
-		<zip destfile="${package.dir}/MeV_${version}_win.zip"
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_win.zip"
 			basedir="${package.dir}"
 			>
 			<include name="${mev_version.dir}/data/**"/>
@@ -1866,7 +1870,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<exclude name=".svn"/>
 		</zip>	
     	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
-		<zip destfile="${package.dir}/MeV_${version}_linux.zip"
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux.zip"
 			basedir="${package.dir}"
 			>
 			<include name="${mev_version.dir}/data/**"/>
@@ -1900,7 +1904,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<delete file="${package.dir}/${mev_version.dir}/TMEV.bat"/>
 		<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
 			
-		<echo message="Mac build (MeV_${version}_mac.zip) must be zipped up by hand using 7-zip."/>
+		<echo message="Mac build (MeV_${version}_r${BUILD-REVISION}_mac.zip) must be zipped up by hand using 7-zip."/>
 		<!-- 
 			<zip destfile="${package.dir}/MeV_${version}_mac.zip"
 				basedir="${package.dir}"
