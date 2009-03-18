@@ -1800,13 +1800,21 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         <delete dir="${dest.dir}"/> 
     </target>
 -->
-	
+	<!-- svn version stuff -->
+	<target name="record-versioning-info">
+	  <exec executable="SubWCRev.exe" osfamily="Windows">
+	    <arg value="${home.dir}"/>
+	    <arg value="${basedir}/build.properties_template"/>
+	    <arg value="${dest.dir}/build.properties"/>
+	  </exec>
+	</target>
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
 	<target name="build-package" depends="clean, build-all">
 
-	
+		<ant target="record-versioning-info"/>
+			
 		<echo message="Please be sure that all user documentation to be included in the package
 		has been converted to pdf and placed in the user_docs directory. "/>
 		
