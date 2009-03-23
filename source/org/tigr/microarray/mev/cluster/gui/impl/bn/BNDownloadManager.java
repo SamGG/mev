@@ -32,11 +32,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.annotation.AnnotationDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.remote.soap.UnzipAnnotationFile;
 
 import ftp.FtpBean;
 import ftp.FtpListResult;
