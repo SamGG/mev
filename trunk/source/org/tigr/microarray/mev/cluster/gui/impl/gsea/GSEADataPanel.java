@@ -107,11 +107,6 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 		this.framework = framework;
 
 		initComponents();
-		initialize(
-				"./data/Annotation/"
-						+ this.idata.getChipAnnotation().getChipType() + ".txt",
-				idata.isAnnotationLoaded(),
-				"<html> You have already loaded annotations, so please continue with selecting the rest of the parameters</html>");
 	}
 
 	/**
@@ -124,8 +119,7 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 		setLayout(new GridBagLayout());
 
 		JPanel fileLoaderPanel;
-		adh = new AnnotationDownloadHandler(framework);
-		adh.addListener(new Listener());
+
 
 		// Group Assignment panel
 		groupAssignmentPanel = new javax.swing.JPanel();
@@ -140,8 +134,16 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 		groupAssignment.addActionListener(new Listener());
 
 		// Annotation panel
+		adh = new AnnotationDownloadHandler(framework);
+		if(idata.isAnnotationLoaded()) {
+			adh.setOptionalMessage("Annotation is already loaded for array " + framework.getData().getChipAnnotation().getChipType());
+			adh.setAnnFilePath(framework.getData().getChipAnnotation().getAnnFileName());
+		}
+		adh.addListener(new Listener());
 		annotationPanel = adh.getAnnotationLoaderPanel(gba);
 
+		adh.setDownloadEnabled(!idata.isAnnotationLoaded());
+		
 		// Gene set panel
 		genesetPanel = new javax.swing.JPanel();
 		downloadStatusLabel = new javax.swing.JLabel();
@@ -239,9 +241,8 @@ public class GSEADataPanel extends JPanel implements IWizardParameterPanel {
 
 	public void initialize(String annPath, boolean isAnnLoaded, String info) {
 		if (isAnnLoaded) {
-//			adh.onClickAnnDownload();
 			 adh.setDownloadEnabled(false);
-			// adh.setBrowseEnabled(false);
+			 adh.setOptionalMessage("Annotation is already loaded for array " + framework.getData().getChipAnnotation().getChipName());
 		}
 
 	}
