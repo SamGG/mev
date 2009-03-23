@@ -63,10 +63,11 @@ public class AnnotationDownloadHandler {
 	JComboBox arrayListBox;
 	JCheckBox proceedLoadingAnnotation;
 	JRadioButton autoDownload, loadFromFile;
-	JTextField annFileLocation;
+	JTextField annFileLocation = new JTextField("No file selected");
 	JButton browseAnnFileButton;
 	JLabel statusLabel;
 	ButtonGroup bg = new ButtonGroup();
+	JLabel optionalMessage;
 	
 	String datapath;
 
@@ -86,7 +87,7 @@ public class AnnotationDownloadHandler {
 		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES, CHOOSE_ORGANISM);
 		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY, CHOOSE_ARRAY);
 		try {
-			File f = irm.getSupportFile(aafd, true);
+			File f = irm.getSupportFile(aafd, false);
 			this.annotationLists = aafd.parseAnnotationListFile(f);
 		} catch (SupportFileAccessError sfae) {
 			//TODO disable buttons
@@ -96,8 +97,9 @@ public class AnnotationDownloadHandler {
 	}
 
 
+
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
-		
+
 
 		annotationPanel = new JPanel();
 		annotationPanel.setLayout(new GridBagLayout());
@@ -110,8 +112,7 @@ public class AnnotationDownloadHandler {
 		autoDownload = new JRadioButton("Automatically download");
 		loadFromFile = new JRadioButton("Load from local file");
 
-		
-		annFileLocation = new JTextField("No file selected");
+			
 		annFileLocation.setEditable(false);
 		browseAnnFileButton = new JButton("Choose File");
 		statusLabel = new JLabel("Please select a species name and array name.");
@@ -154,16 +155,22 @@ public class AnnotationDownloadHandler {
 			proceedLoadingAnnotation.setSelected(false);
 		}
 
-		gba.add(annotationPanel, autoDownload,				0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
-		gba.add(annotationPanel, organismListBox, 			0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
-		gba.add(annotationPanel, arrayListBox, 				0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		int i=0; //add 1 to y-coordinate in GBA if the optional message label is in place. 
+		if(optionalMessage != null) {
+			i=1;
+			gba.add(annotationPanel, optionalMessage, 		0, 0, 3, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		}
 
-		gba.add(annotationPanel, loadFromFile,				1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
-		gba.add(annotationPanel, annFileLocation,			1, 1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
-		gba.add(annotationPanel, browseAnnFileButton,		1, 2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, autoDownload,				0, i, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, organismListBox, 			0, i+1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, arrayListBox, 				0, i+2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
 
-		gba.add(annotationPanel, proceedLoadingAnnotation,	2, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(annotationPanel, statusLabel,				2, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, loadFromFile,				1, i, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, annFileLocation,			1, i+1, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+		gba.add(annotationPanel, browseAnnFileButton,		1, i+2, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 10), 0, 0);
+
+		gba.add(annotationPanel, proceedLoadingAnnotation,	2, i, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(annotationPanel, statusLabel,				2, i+1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		
 		checkForAnnotationFile();
 
@@ -173,12 +180,16 @@ public class AnnotationDownloadHandler {
 		return annotationPanel;
 	}
 
+	public void setOptionalMessage(String message) {
+		optionalMessage = new JLabel(message);
+	}
 	
 	public String getAnnFilePath() {
 
 		return datapath;//annFileLocation.getText();
 	}
 	public void setAnnFilePath(String filePath) {
+		datapath = filePath;
 		annFileLocation.setText(filePath);
 	}
 
@@ -368,6 +379,9 @@ public class AnnotationDownloadHandler {
 				}
 			}
 		}
+		if(!isEnabled) {
+			statusLabel.setForeground(Color.gray);
+		}
 		SwingUtilities.updateComponentTreeUI(statusLabel);
 		annotationPanel.repaint();
 		statusLabel.repaint();
@@ -383,6 +397,7 @@ public class AnnotationDownloadHandler {
 		proceedLoadingAnnotation.setSelected(false);
 		proceedLoadingAnnotation.setEnabled(false);
 		annotationSelected = false;
+		statusLabel.setForeground(Color.gray);
 		this.isEnabled = isEnabled;
 	}
 	public static void main(String[] args) {
