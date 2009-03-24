@@ -385,6 +385,7 @@ public class Manager {//A class to keep track of viewers
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         mav.getFrame().setLocation((screenSize.width - mav.getFrame().getSize().width)/2, (screenSize.height - mav.getFrame().getSize().height)/2);
         mav.getFrame().setVisible(true);
+        
     }
     
     public static void createNewSingleArrayViewer() {

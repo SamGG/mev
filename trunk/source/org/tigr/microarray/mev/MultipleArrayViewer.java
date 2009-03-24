@@ -492,7 +492,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	
         systemEnable(TMEV.DATA_AVAILABLE);
         fireDataChanged();
-        
+
+        initMainViewAndClusterManager();
         //systemDisable(TMEV.DB_AVAILABLE);
         //systemDisable(TMEV.DATA_AVAILABLE);
     }
@@ -1759,7 +1760,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		if (this.viewer instanceof CGHPositionGraphViewer) {
 			this.viewer.onSelected(framework);
         }
-     
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
         
         //Top Header (column header)
@@ -1799,7 +1799,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 		if (!(this.viewer instanceof CGHPositionGraphViewer)) {
 			this.viewer.onSelected(framework);
         }
-        doViewLayout();
+//        doViewLayout();
     }
     
 
@@ -3873,6 +3873,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         if(features.length > 0)
             addHistory(features[0].getSize()+" genes loaded.");
+        initMainViewAndClusterManager();
+    }
+    
+    public void initMainViewAndClusterManager(){
 
         DefaultMutableTreeNode experViewer = new DefaultMutableTreeNode();
         experViewer.setUserObject(new LeafInfo("Expression Image", new ExperimentViewer(framework)));
@@ -3882,21 +3886,35 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         IViewer tabViewer = new ClusterTableViewer(framework);
         IViewer sampleTabViewer = new ExperimentClusterTableViewer(framework);
         
-        
-        
+		if (experimentClusterRepository==null){
+	        experimentClusterRepository = new ClusterRepository(data.getFeaturesCount(), framework);
+			this.data.setExperimentClusterRepository(this.experimentClusterRepository);
+		}
+        if(experimentClusterManager == null) {
+            this.experimentClusterManager = new ClusterTable(this.experimentClusterRepository, framework);
+            DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(new LeafInfo("Sample Clusters", this.experimentClusterManager), false);
+            addNode(this.clusterNode, experimentNode);
+        }
+		if(this.geneClusterRepository == null) {
+            this.geneClusterRepository = new ClusterRepository(data.getFeaturesSize(), framework, true);
+            this.data.setGeneClusterRepository(this.geneClusterRepository);
+        }
+		if(geneClusterManager == null){
+            this.geneClusterManager = new ClusterTable(this.geneClusterRepository, framework);
+            DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(new LeafInfo("Gene Clusters", this.geneClusterManager), false);
+            addNode(this.clusterNode, genesNode);
+        }
         mainViewerNode.add(experViewer);
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VARIANCES_MODE))));
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VALUES_MODE))));
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Gene Table View", tabViewer, new Integer(0))));
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Sample Table View", sampleTabViewer, new Integer(0))));
-        //int[] rows = {1,2};
-        //tree.setSelectionRows(rows);
+        
+        tree.expandPath(new TreePath(clusterNode.getPath()));
         tree.setSelectionRow(1);
         tree.updateUI();
         tree.repaint();
     }
-    
-    
     
     
     
@@ -4041,17 +4059,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     /** Refreshes the current viewer by calling <code>IViewer</code> onSelected(IFramework)
      */
     private void refreshCurrentViewer() {
-        TreePath path = tree.getSelectionPath();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-        
-        Object leafInfo = node.getUserObject();
-        
-        if(leafInfo instanceof LeafInfo) {
-            IViewer viewer = ((LeafInfo)leafInfo).getViewer();
-            if(viewer != null) {
-                viewer.onSelected(framework);
-            }
-        }
+//        TreePath path = tree.getSelectionPath();
+//        DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+//        
+//        Object leafInfo = node.getUserObject();
+//        
+//        if(leafInfo instanceof LeafInfo) {
+//            IViewer viewer = ((LeafInfo)leafInfo).getViewer();
+//            if(viewer != null) {
+//                viewer.onSelected(framework);
+//            }
+//        }
     }
     
     /** Imports a list of gene or sample identifiers based on matching an annotation key
@@ -4099,20 +4117,20 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        if(clusterArray != null) {
 	            if(clusterType == Cluster.GENE_CLUSTER) {
 	                this.geneClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Binned Cluster");
 	            } else {
 	                this.experimentClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Binned Cluster");
 	            }
 	            refreshCurrentViewer();
 	        }
 	    }
     }
     
-    /** Automatically imports a list of identifiers for each annotation type and
+    /** Automatically creates clusters for each annotation type and
      * creates clusters for each identifier within each of the user-selected annotation type
      */
-    private void onAutoImportList(int clusterType) {
+    private void onAutoCluster(int clusterType) {
         ClusterRepository cr = getClusterRepository(clusterType);
         
         ArrayList clusterArray = cr.autoCreateClusters();
@@ -4120,10 +4138,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	        if(clusterArray != null) {
 	            if(clusterType == Cluster.GENE_CLUSTER) {
 	                this.geneClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto Cluster");
 	            } else {
 	                this.experimentClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto Cluster");
 	            }
 	            refreshCurrentViewer();
 	        }
@@ -4141,10 +4159,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	for (int i = 0; i< clusterArray.size(); i++){
 	            if(clusterType == Cluster.GENE_CLUSTER) {
 	                this.geneClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Gene Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto Cluster");
 	            } else {
 	                this.experimentClusterManager.onRepositoryChanged(cr);
-	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto List Import");
+	                addHistory("Save Sample Cluster: Serial #: "+((Cluster)clusterArray.get(i)).getSerialNumber()+", Source: Auto Cluster");
 	            }
 	            refreshCurrentViewer();
 	        }
@@ -5246,9 +5264,9 @@ private void appendResourcererGeneAnnotation() {
             } else if (command.equals(ActionManager.BIN_IMPORT_SAMPLE_LIST_COMMAND)) {
                 onBinImportList(Cluster.EXPERIMENT_CLUSTER);
             } else if (command.equals(ActionManager.AUTO_IMPORT_GENE_LIST_COMMAND)) {
-                onAutoImportList(Cluster.GENE_CLUSTER);
+                onAutoCluster(Cluster.GENE_CLUSTER);
             } else if (command.equals(ActionManager.AUTO_IMPORT_SAMPLE_LIST_COMMAND)) {
-                onAutoImportList(Cluster.EXPERIMENT_CLUSTER);
+                onAutoCluster(Cluster.EXPERIMENT_CLUSTER);
         	} else if (command.equals(ActionManager.CDNA_LOW_INTENSITY_CMD)) {
         		applyLowerCutoffs();
         	}else if (command.equals(ActionManager.OLIGEN_LOW_INTENSITY_CMD)) {

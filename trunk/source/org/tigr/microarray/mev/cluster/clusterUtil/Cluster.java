@@ -133,7 +133,6 @@ public class Cluster {
     public Cluster(int [] indices, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, Integer index, Integer serialNumber, Color clusterColor, DefaultMutableTreeNode node, Experiment experiment) {
     	this(indices, source, clusterLabel, algorithmName, clusterID, clusterDescription, index.intValue(), serialNumber.intValue(), clusterColor, null, experiment);
 //      TODO
-    	System.out.println("constructor 3");
     }    
     
    /** Creates new cluster object

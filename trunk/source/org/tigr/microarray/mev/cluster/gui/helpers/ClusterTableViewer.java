@@ -95,6 +95,7 @@ public class ClusterTableViewer implements IViewer {
      */
     public ClusterTableViewer(IFramework framework){
     	this(framework.getData().getExperiment(),defGenesOrder(framework.getData().getExperiment().getNumberOfGenes()), framework.getData());
+    	this.framework = framework;
     }
     
     public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
@@ -170,6 +171,10 @@ public class ClusterTableViewer implements IViewer {
         
     }    
     
+    public JTable getTable(){
+    	return clusterTable;
+    }
+    
     //DJS creates clusters if parameter is null.  For Main View Table.
     private static int[][] defGenesOrder(int size) {
         int[][] order = new int[1][size];
@@ -177,6 +182,18 @@ public class ClusterTableViewer implements IViewer {
             order[0][i] = i;
         }
         return order;
+    }
+    
+    public void setTableClusters(int[][] mat){
+    	sortedClusters = new int[mat.length][mat[0].length];
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    			this.sortedClusters[i][j]=mat[i][j];
+    		}
+    	}
+        clusterTable.clearSelection();        
     }
     
     public Expression getExpression(){
@@ -713,7 +730,16 @@ public class ClusterTableViewer implements IViewer {
         framework.storeSubCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);
         onDataChanged(this.data);
     }    
-
+//    public void storeSelectedRowsAsCluster2(){
+//        if (getArrayMappedToSelectedIndices().length == 0) {
+//            JOptionPane.showMessageDialog(null, "No rows selected! Cluster will not be saved", "Error", JOptionPane.ERROR_MESSAGE);
+//        } else {
+//            framework.storeSubCluster(getArrayMappedToSelectedIndices(), experiment, ClusterRepository.GENE_CLUSTER);
+//            
+//        }
+//    	
+//    }
+    
     public void storeSelectedRowsAsCluster() {
         if (getArrayMappedToSelectedIndices().length == 0) {
             JOptionPane.showMessageDialog(null, "No rows selected! Cluster will not be saved", "Error", JOptionPane.ERROR_MESSAGE);

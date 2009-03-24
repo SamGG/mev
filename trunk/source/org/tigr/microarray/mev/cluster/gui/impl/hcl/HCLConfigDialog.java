@@ -135,7 +135,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
         
         treeDimPanel.add(new JLabel("Minimum pixel height"), new GridBagConstraints(0,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         treeDimPanel.add(new JLabel("Maximum pixel height"), new GridBagConstraints(0,1,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
-        treeDimPanel.add(new JLabel("Use jagged tree structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+        treeDimPanel.add(new JLabel("Use true branch length structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         
         minTextField = new JTextField(String.valueOf(minPixelDistance), 4);
         treeDimPanel.add(minTextField, new GridBagConstraints(1,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -237,6 +237,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
                     minPixDist = Integer.parseInt(minTextField.getText());
                     maxPixDist = Integer.parseInt(maxTextField.getText());
                     tree.setProperties(zThr, minPixDist, maxPixDist);
+                    tree.actualArms = armLengthBox.isSelected();
                     viewer.revalidateViewer();
                     viewer.repaint();
                     result = JOptionPane.OK_OPTION;

@@ -143,7 +143,7 @@ public class ExperimentClusterTableViewer implements IViewer {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
         }
-//        this.data = data;
+        this.data = data;
         this.experiment = experiment;
         this.clusters = clusters;  
         //this.fieldNames = data.getFieldNames();
@@ -193,7 +193,8 @@ public class ExperimentClusterTableViewer implements IViewer {
      * 
      */
     public ExperimentClusterTableViewer(IFramework framework){
-    	this(framework.getData().getExperiment(),defSamplesOrder(framework.getData().getExperiment().getNumberOfSamples()), framework.getData());
+    	this(framework.getData().getExperiment(),defSamplesOrder(framework.getData().getExperiment().getNumberOfSamples()), framework.getData(), framework.getData().getSlideNameKeyArray(),framework.getData().getSampleAnnotationMatrix());
+    	this.framework = framework;
     }
     public ExperimentClusterTableViewer(Experiment experiment, int[][] clusters, IData data) {
         this(experiment, clusters, data, new String[0], new Object[0][0]);        
@@ -207,6 +208,23 @@ public class ExperimentClusterTableViewer implements IViewer {
         }
         return order;
     }
+    
+    public JTable getTable(){
+    	return clusterTable;
+    }
+    
+    public void setTableClusters(int[][] mat){
+    	sortedClusters = new int[mat.length][mat[0].length];
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    			this.sortedClusters[i][j]=mat[i][j];
+    		}
+    	}
+        clusterTable.clearSelection();        
+    }
+    
     /** Returns a component to be inserted into scroll pane view port.
      */
     public JComponent getContentComponent() {
@@ -305,7 +323,7 @@ public class ExperimentClusterTableViewer implements IViewer {
      */
     public void onSelected(IFramework framework) {
         this.framework = framework;
-        this.data = framework.getData();        
+        this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
         Integer userObject = (Integer)framework.getUserObject();        
         setClusterIndex(userObject == null ? 0 : userObject.intValue());  
@@ -374,7 +392,7 @@ public class ExperimentClusterTableViewer implements IViewer {
         public ExperimentClusterTableModel() {
             columnNames = new String[2 + auxTitles.length];
             //int counter;
-            columnNames[0] = "Stored Color";
+            columnNames[0] = "Last Stored Color";
             columnNames[1] = "Sample Name";
             for (int i = 2; i < columnNames.length; i++) {
                 columnNames[i] = auxTitles[i - 2];
@@ -399,7 +417,10 @@ public class ExperimentClusterTableViewer implements IViewer {
             } else if (col == 1) {
                 return data.getFullSampleName(experiment.getSampleIndex(getSortedCluster()[row]));
             } else {
-                return String.valueOf(auxData[getSortedCluster()[row]][col - 2]);
+                return String.valueOf(auxData
+                		[getSortedCluster()
+                		 [row]]
+                		 [col - 2]);
             }
         }
         
