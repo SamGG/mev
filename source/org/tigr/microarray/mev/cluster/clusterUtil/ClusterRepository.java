@@ -956,7 +956,7 @@ public class ClusterRepository extends Vector {
 	                    clusterLabel = clusterDialog.getLabel();
 	                    String clusterDescription = clusterDialog.getDescription();
 	                    this.clusterSerialCounter++;
-	                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+	                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "Binned Cluster", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
 	                    
 	                    addCluster(list, cluster);
 	                    clusterArray.add(cluster);
@@ -1008,7 +1008,7 @@ public class ClusterRepository extends Vector {
 		                    clusterLabel = clusterDialog.getLabel();
 		                    String clusterDescription = clusterDialog.getDescription();
 		                    this.clusterSerialCounter++;
-		                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+		                    Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "Binned Cluster", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
 		                    
 		                    addCluster(list, cluster);
 		                    clusterArray.add(cluster);
@@ -1088,7 +1088,7 @@ public class ClusterRepository extends Vector {
 		                    String clusterLabel = labelArray[label][0];
 		                    String clusterDescription = null;
 		                    this.clusterSerialCounter++;
-		                    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+		                    Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
 		                    addCluster(list, cluster);
 		                    clusterArray.add(cluster);
 		                    
@@ -1139,7 +1139,7 @@ public class ClusterRepository extends Vector {
     		                String clusterLabel = labelArray[label][0];
     		                String clusterDescription = null;
     		                this.clusterSerialCounter++;
-    		                Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", 
+    		                Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", 
     		                		clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
     		                addCluster(list, cluster);
     		                clusterArray.add(cluster);
@@ -1207,7 +1207,7 @@ public class ClusterRepository extends Vector {
                 String clusterLabel = labelArray[label][0];
                 String clusterDescription = null;
                 this.clusterSerialCounter++;
-                Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+                Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
                 addCluster(list, cluster);
                 clusterArray.add(cluster);  
             }      		
@@ -1247,7 +1247,7 @@ public class ClusterRepository extends Vector {
     		    String clusterLabel = labelArray[label][0];
     		    String clusterDescription = null;
     		    this.clusterSerialCounter++;
-    		    Cluster cluster = new Cluster(selectedIndices, "List Import", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+    		    Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
     		    addCluster(list, cluster);
     		    clusterArray.add(cluster);
             }

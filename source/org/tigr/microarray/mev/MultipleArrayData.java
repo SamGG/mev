@@ -3134,6 +3134,17 @@ public class MultipleArrayData implements IData {
        return indices; 
     }
     
+    public String[][] getSampleAnnotationMatrix(){
+    	String[] s = getSlideNameKeyArray();
+    	String[][] m = new String[getFeaturesCount()][s.length];
+    	for (int i=0; i<s.length; i++){
+    		for (int j=0; j<getFeaturesCount(); j++){
+    			m[j][i] = getSampleAnnotation(j, s[i]);
+    		}
+    	}
+    	return m;                               
+    }
+    
     /** 
      * Returns an annotation array for the provided indices based on annotation key
      */

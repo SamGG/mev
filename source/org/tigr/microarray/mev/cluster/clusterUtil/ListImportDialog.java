@@ -122,7 +122,7 @@ public class ListImportDialog extends AlgorithmDialog {
     ArrayList<Integer> removedClusters = new ArrayList<Integer>();
     /** Creates a new instance of binned GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto, boolean bin) {
-        super(parent, geneList ? "Gene List Import Dialog" : "Sample List Import Dialog", true);
+        super(parent, geneList ? "Gene Binning Dialog" : "Sample Binning Dialog", true);
         importType =2;
         this.bin =bin;
         annFields = new Vector<String>();
@@ -132,9 +132,9 @@ public class ListImportDialog extends AlgorithmDialog {
         checkBoxes = new JCheckBox[annFields.size()];
         JComboBox comboBox = new JComboBox();
         if(geneList)
-            binParamPanel = new ParameterPanel("Gene List Import Parameters");
+            binParamPanel = new ParameterPanel("Gene Binning Parameters");
         else
-            binParamPanel = new ParameterPanel("Sample List Import Parameters");
+            binParamPanel = new ParameterPanel("Sample Binning Parameters");
         
         binParamPanel.setLayout(new GridBagLayout());
         listBox = new JComboBox(annFields);
@@ -142,7 +142,7 @@ public class ListImportDialog extends AlgorithmDialog {
         if(geneList)
             listLabel = new JLabel("Gene ID Type:");        
         else
-            listLabel = new JLabel("Sample ID Type:"); 
+            listLabel = new JLabel("Sample Factor:"); 
         binParamPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,20), 0,0)); 
  
         
@@ -219,7 +219,7 @@ public class ListImportDialog extends AlgorithmDialog {
     
     /** Creates a new instance of GeneListImportDialog */
     public ListImportDialog(java.awt.Frame parent, String [] fieldNames, boolean geneList, boolean auto) {
-        super(parent, geneList ? "Automatic Gene List Import Dialog" : "Automatic Sample List Import Dialog", true);
+        super(parent, geneList ? "Automatic Gene Clustering Dialog" : "Automatic Sample Clustering Dialog", true);
         importType =1;
         annFields = new Vector();
         for(int i = 0; i < fieldNames.length; i++){
@@ -229,9 +229,9 @@ public class ListImportDialog extends AlgorithmDialog {
         JComboBox comboBox = new JComboBox();
         ParameterPanel paramPanel;
         if(geneList)
-            paramPanel = new ParameterPanel("Gene List Import Parameters");
+            paramPanel = new ParameterPanel("Gene Auto-Clustering Parameters");
         else
-            paramPanel = new ParameterPanel("Sample List Import Parameters");
+            paramPanel = new ParameterPanel("Sample Auto-Clustering Parameters");
         
         paramPanel.setLayout(new GridBagLayout());
         
@@ -239,12 +239,12 @@ public class ListImportDialog extends AlgorithmDialog {
         if(geneList)
             listLabel = new JLabel("Available Gene ID Types:");        
         else
-            listLabel = new JLabel("Available Sample ID Types:");        
+            listLabel = new JLabel("Available Sample Factors:");        
         JLabel otherListLabel;
         if(geneList)
             otherListLabel = new JLabel("Selected Gene ID Types:");        
         else
-            otherListLabel = new JLabel("Selected Sample ID Types:"); 
+            otherListLabel = new JLabel("Selected Sample Factors:"); 
             
         listBox = new JComboBox(annFields);
         pane = new JTextPane();

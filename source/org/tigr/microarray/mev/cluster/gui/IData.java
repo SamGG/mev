@@ -346,6 +346,9 @@ public interface IData {
 	public int[][] getChromosomeIndices();
 
 	public int[] getSamplesOrder();
+	
+	public String[][] getSampleAnnotationMatrix();
+	public String [] getSlideNameKeyArray();
 
 	/**
 	 * Getter for property annotations.
