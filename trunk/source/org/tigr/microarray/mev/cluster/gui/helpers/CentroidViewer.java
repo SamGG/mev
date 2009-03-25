@@ -178,6 +178,18 @@ public class CentroidViewer extends JPanel implements IViewer {
     }
     
     /**
+     * Constructs a <code>CentroidViewer</code> for insertion into ClusterTable
+     *
+     * @param experiment the data of an experiment.
+     */
+    public CentroidViewer(IFramework framework, int mode) {
+        this(framework.getData().getExperiment(), defGenesOrder(framework.getData().getExperiment().getNumberOfGenes()));
+        this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+        this.setMode(mode);
+        this.onSelected(framework);
+    }
+    /**
      * Constructs a <code>CentroidViewer</code> for specified
      * experiment and clusters.
      *
@@ -187,7 +199,10 @@ public class CentroidViewer extends JPanel implements IViewer {
         this(framework.getData().getExperiment(), defGenesOrder(framework.getData().getExperiment().getNumberOfGenes()));
         this.means = getMeans(clusters).A;
         this.variances = getVariances(clusters, getMeans(clusters)).A;
+        this.framework=framework;
+        this.onSelected(framework);
     }
+    
     
     //DJS creates clusters if parameter is null.  For Main View Centroid.
     private static int[][] defGenesOrder(int size) {
@@ -349,12 +364,14 @@ public class CentroidViewer extends JPanel implements IViewer {
         setData(framework.getData());
         setAntiAliasing(framework.getDisplayMenu().isAntiAliasing());
         Object userObject = framework.getUserObject();
-        if (userObject instanceof CentroidUserObject) {
-            setClusterIndex(((CentroidUserObject)userObject).getClusterIndex());
-            setMode(((CentroidUserObject)userObject).getMode());
-        } else {
-            //	setClusterIndex(((Integer)userObject).intValue());
-            setMode(((Integer)userObject).intValue());
+        if (userObject!=null){
+	        if (userObject instanceof CentroidUserObject) {
+	            setClusterIndex(((CentroidUserObject)userObject).getClusterIndex());
+	            setMode(((CentroidUserObject)userObject).getMode());
+	        } else {
+	            //	setClusterIndex(((Integer)userObject).intValue());
+	            setMode(((Integer)userObject).intValue());
+	        }
         }
         updateValues(getCluster());
         this.maxValue = framework.getDisplayMenu().getMaxRatioScale();
@@ -500,6 +517,19 @@ public class CentroidViewer extends JPanel implements IViewer {
     public void storeCluster(){
         framework.storeCluster(getArrayMappedToData(), experiment, ClusterRepository.GENE_CLUSTER);       
         onDataChanged(this.data);
+    }
+    
+    public void setClusters(int[][] mat){
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    		}
+    	}
+    	this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+        this.repaint();
+        this.updateUI();  
     }
     
     /**

@@ -164,6 +164,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
      */
     public ExperimentViewer(IFramework framework){
     	this(framework.getData().getExperiment(), null);
+    	this.framework = framework;
+    	this.onSelected(framework);
     }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
@@ -204,7 +206,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
+        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, storedGeneColors);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         setBackground(Color.white);
         Listener listener = new Listener();
@@ -236,7 +238,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
+        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, storedGeneColors);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.insets.left = offset;
         this.header.setLeftInset(offset);
@@ -743,10 +745,21 @@ public class ExperimentViewer extends JPanel implements IViewer {
     		for (int i=0; i<savedGeneColorOrder.size(); i++){
 		    	storedGeneColors.add((Color)savedGeneColorOrder.get(i));
     		}
-    }
+    	}
 	    this.isCompact = value;
-    
     } 
+    
+    public void setClusters(int[][] mat){
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    		}
+    	}
+        this.repaint();
+        this.updateUI();  
+    }
+    
     /**
      * Sets show Rects attribute.
      */
@@ -1384,7 +1397,14 @@ public class ExperimentViewer extends JPanel implements IViewer {
                 drawRectAt(g, row, column, Color.white);
                 if (isShowRects)
                 	drawClusterRectsAt(g, row, column, Color.gray);
-                framework.setStatusText("Gene: "+data.getUniqueId(getMultipleArrayDataRow(row))+" Sample: "+data.getSampleName(experiment.getSampleIndex(getColumn(column)))+" Value: "+experiment.get(getExperimentRow(row), getColumn(column)));
+                framework.setStatusText(
+                		"Gene: "+
+                		data.getUniqueId(getMultipleArrayDataRow(row))
+                		+" Sample: "+
+                		data.getSampleName(experiment.getSampleIndex(getColumn(column)))
+                		+" Value: "+
+                		experiment.get(getExperimentRow(row),
+                				getColumn(column)));
             }
             //mouse on different rectangle, but still on the map
             if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){

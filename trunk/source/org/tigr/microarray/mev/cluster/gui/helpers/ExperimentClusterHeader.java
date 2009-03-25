@@ -164,12 +164,12 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
 	    addMouseListener(listener);
 	    addMouseMotionListener(listener);
     }
-    public ExperimentClusterHeader(Experiment experiment, int[][] samplesOrder, String centroidName, ArrayList<Color> storedGeneColors) {
+    public ExperimentClusterHeader(Experiment experiment, int[][] samplesOrder, String centroidName, ArrayList<Color> strdGeneColors) {
         this.experiment = experiment;
         this.samplesOrder = samplesOrder;
         this.centroidName = centroidName;
         this.hasCentroid = true;
-        this.storedGeneColors = storedGeneColors;
+        storedGeneColors = strdGeneColors;
         setBackground(Color.white);
         Listener listener = new Listener();
 	    addMouseListener(listener);
@@ -427,6 +427,17 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
                 return COLOR_BAR_HEIGHT;
         }
         return 0;
+    }
+    
+    public void setClusters(int[][] mat){
+    	samplesOrder = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.samplesOrder[i][j]=mat[i][j];
+    		}
+    	}
+        this.repaint();
+        this.updateUI();  
     }
     
     /**
