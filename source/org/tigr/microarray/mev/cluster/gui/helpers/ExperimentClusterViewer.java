@@ -143,6 +143,12 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         this(experiment, clusters, true);
     }
     
+    public ExperimentClusterViewer(IFramework framework){
+    	this(framework.getData().getExperiment(), null);
+    	this.framework = framework;
+    	this.onSelected(framework);
+    }
+    
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
      * experiment, clusters and draw annotations attribute.
@@ -761,6 +767,17 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     	}
     }
 
+    public void setClusters(int[][] mat){
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    		}
+    	}
+        this.repaint();
+        this.updateUI();  
+    }
+    
 	/**
 	 * Sets show Rects attribute.
 	 */

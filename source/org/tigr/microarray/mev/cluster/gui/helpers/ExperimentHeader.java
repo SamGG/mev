@@ -248,6 +248,17 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 
     }
     
+    public void setClusters(int[][] mat){
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    		}
+    	}
+        this.repaint();
+        this.updateUI();  
+    }
+    
     /**
      * Sets flag to use a double gradient 
      */

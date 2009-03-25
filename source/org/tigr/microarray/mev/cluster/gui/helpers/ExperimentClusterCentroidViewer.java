@@ -42,6 +42,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.FloatMatrix;
 
 
 
@@ -119,6 +120,85 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
         
+    }
+    /**
+     * Constructs a <code>CentroidViewer</code> for insertion into ClusterTable
+     *
+     * @param experiment the data of an experiment.
+     */
+    public ExperimentClusterCentroidViewer(IFramework framework, int mode) {
+        this(framework.getData().getExperiment(), defSampsOrder(framework.getData().getExperiment().getNumberOfSamples()));
+        this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+        this.setMode(mode);
+        this.onSelected(framework);
+    }
+    private static int[][] defSampsOrder(int size) {
+        int[][] order = new int[1][size];
+        for (int i=0; i<order[0].length; i++) {
+            order[0][i] = i;
+        }
+        return order;
+    }
+    private FloatMatrix getMeans(int[][] clusters) {
+    	FloatMatrix means = new FloatMatrix(clusters.length, experiment.getNumberOfGenes());
+    	FloatMatrix mean;
+    	for (int i=0; i<clusters.length; i++) {
+    	    mean = getMean(clusters[i]);
+    	    means.A[i] = mean.A[0];
+    	}
+    	return means;
+    }
+    private FloatMatrix getMean(int[] cluster) {
+    	FloatMatrix mean = new FloatMatrix(1, experiment.getNumberOfGenes());
+    	float currentMean;
+    	int n = cluster.length;
+    	int denom = 0;
+    	float value;
+    	for (int i=0; i<experiment.getNumberOfGenes(); i++) {
+    	    currentMean = 0f;
+    	    denom = 0;
+    	    for (int j=0; j<n; j++) {
+	    		value = experiment.get(i, ((Integer) cluster[j]).intValue());
+	    		if (!Float.isNaN(value)) {
+	    		    currentMean += value;
+	    		    denom++;
+	    		}
+    	    }
+    	    mean.set(0, i, currentMean/(float)denom);
+    	}
+
+    	return mean;
+    }
+    private FloatMatrix getVariances(int[][] clusters, FloatMatrix means) {
+    	final int rows = means.getRowDimension();
+    	final int columns = means.getColumnDimension();
+    	FloatMatrix variances = new FloatMatrix(rows, columns);
+    	for (int row=0; row<rows; row++) {
+    	    for (int column=0; column<columns; column++) {
+    		variances.set(row, column, getSampleVariance(clusters[row], column, means.get(row, column)));
+    	    }
+    	}
+    	return variances;
+    }
+    private float getSampleVariance(int[] cluster, int column, float mean) {
+    	return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
+    	
+    }    
+    int validN;
+    private float getSampleNormalizedSum(int[] cluster, int column, float mean) {
+    	final int size = cluster.length;
+    	float sum = 0f;
+    	float value;
+    	validN = 0;
+    	for (int i=0; i<size; i++) {
+    	    value = experiment.get(column, ((Integer) cluster[i]).intValue());
+    	    if (!Float.isNaN(value)) {
+    		sum += Math.pow(value-mean, 2);
+    		validN++;
+    	    }
+    	}
+    	return sum;
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
@@ -269,11 +349,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         setData(framework.getData());
         setAntiAliasing(framework.getDisplayMenu().isAntiAliasing());
         Object userObject = framework.getUserObject();
-        if (userObject instanceof CentroidUserObject) {
-            setClusterIndex(((CentroidUserObject)userObject).getClusterIndex());
-            setMode(((CentroidUserObject)userObject).getMode());
-        } else {
-            setClusterIndex(((Integer)userObject).intValue());
+        if (userObject!=null){
+	        if (userObject instanceof CentroidUserObject) {
+	            setClusterIndex(((CentroidUserObject)userObject).getClusterIndex());
+	            setMode(((CentroidUserObject)userObject).getMode());
+	        } else {
+	            setClusterIndex(((Integer)userObject).intValue());
+	        }
         }
         updateValues(getCluster());
         this.maxValue = framework.getDisplayMenu().getMaxRatioScale();
@@ -283,7 +365,18 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         ExperimentClusterCentroidViewer.negColorImage = framework.getDisplayMenu().getNegativeGradientImage();
         this.gradientColors = framework.getDisplayMenu().getColorGradientState();
     }
-    
+    public void setClusters(int[][] mat){
+    	clusters = new int[mat.length][mat[0].length];
+    	for (int i=0; i<mat.length; i++){
+    		for (int j=0; j<mat[i].length; j++){
+    			this.clusters[i][j]=mat[i][j];
+    		}
+    	}        
+    	this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+        this.repaint();
+        this.updateUI();  
+    }
     /**
      * Sets data.
      */
