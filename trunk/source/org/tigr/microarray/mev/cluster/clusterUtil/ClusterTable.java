@@ -1456,6 +1456,9 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         public void mouseClicked(MouseEvent mouseEvent) {
+        	if (mouseEvent.getClickCount()==2){
+                modifyClusterAttributes();
+        	}
         }
         
         public void mouseEntered(MouseEvent mouseEvent) {
