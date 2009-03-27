@@ -684,7 +684,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         if(this.haveAccessionNumbers) {
         	accindex=1;
         } else {
-        	accindex=2;
+        	accindex=0;
         }
         for (int i=0; i<theseclusters.length; i++) {
             clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1) + ": " + thisResultMatrix[i][accindex+2]);
