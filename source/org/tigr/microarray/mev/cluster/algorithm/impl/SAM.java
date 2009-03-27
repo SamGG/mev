@@ -58,6 +58,7 @@ public class SAM extends AbstractAlgorithm {
     
     private int function;
     private float factor;
+    float noNaNs=.000000001f;
     private boolean absolute;
     private FloatMatrix expMatrix;
     
@@ -316,8 +317,8 @@ public class SAM extends AbstractAlgorithm {
             for (int i = 0; i < dArray.length; i++) {
                 //System.out.println("current gene = " + i);
                 dArray[i] = getD(i, imputedMatrix); //  UNCOMMENT
+
                 rArray[i] = getR(i, imputedMatrix);
-                //System.out.println("dArray[" + i + "] = " + dArray[i]);
             }
             
             SAMState.dArray = dArray;
@@ -2972,9 +2973,8 @@ public class SAM extends AbstractAlgorithm {
    }
     
    
-   
    private double getD(int gene, FloatMatrix matrix) {
-       return (getR(gene, matrix)/(getS(gene, matrix) + sNought));
+       return (getR(gene, matrix)/(getS(gene, matrix) + sNought + noNaNs));
    }
    
     
