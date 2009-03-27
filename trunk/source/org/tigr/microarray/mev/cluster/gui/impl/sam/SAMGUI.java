@@ -649,7 +649,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             allFields.add("Numerator(r)");
             allFields.add("Denominator (s+s0)");
             if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)) {
-                allFields.add("Fold change");
+                allFields.add("Fold change(Unlogged)");
             }
             if (calculateQLowestFDR) {
                 allFields.add("q-value (%)");
@@ -1620,7 +1620,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             allFields.add("Numerator(r)");
             allFields.add("Denominator (s+s0)");
             if ((studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED)) {
-                allFields.add("Fold change");
+                allFields.add("Fold change (Unlogged)");
             }
             if (calculateQLowestFDR) {
                 allFields.add("q-value (%)");
