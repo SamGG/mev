@@ -134,7 +134,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml2(String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml2(boolean dir, String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -197,7 +197,7 @@ public class FromWekaToSif {
 							nodeId--;
 						}
 
-						String _tmp = getXgmmlNodesAndEdges(edges, "-", uniqueNodesWithId, probeIndexAssocHash, data);
+						String _tmp = getXgmmlNodesAndEdges(dir, edges, "-", uniqueNodesWithId, probeIndexAssocHash, data);
 						if(_tmp != null)
 							xgmmlContent += _tmp;
 					}
@@ -225,7 +225,7 @@ public class FromWekaToSif {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static void fromWekaBifToXgmml(String bifStr, String fileName, String cptFileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException, SAXException {
+	public static void fromWekaBifToXgmml(boolean dir, String bifStr, String fileName, String cptFileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException, SAXException {
 		BifDOMBuilder bifDom = new BifDOMBuilder();
 		ArrayList<BifNode> bifNodes = bifDom.build(new InputSource(new StringReader(bifStr)));
 		
@@ -254,7 +254,7 @@ public class FromWekaToSif {
 					
 					xgmmlNodes += getXgmmlNode(labelFrom, uniqueNodesIdMap, probeIndexAssocHash, data);
 				}
-				xgmmlEdges += getXgmmlEdge(labelFrom, labelTo, uniqueNodesIdMap);
+				xgmmlEdges += getXgmmlEdge(dir, labelFrom, labelTo, uniqueNodesIdMap);
 			}
 		}
 		xgmmlContent += xgmmlNodes;
@@ -281,7 +281,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(boolean dir, String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -349,7 +349,7 @@ public class FromWekaToSif {
 				nodeCreated.add(labelTo);
 			}
 			
-			xgmmlEdges+= getXgmmlEdge(labelFrom, labelTo, uniqueNodesIdMap);
+			xgmmlEdges+= getXgmmlEdge(dir, labelFrom, labelTo, uniqueNodesIdMap);
 		}
 		xgmmlContent += xgmmlEdges;
 		xgmmlContent += XGMMLGenerator.getFooter();
@@ -371,7 +371,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(boolean dir, Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -422,7 +422,7 @@ public class FromWekaToSif {
 			nodeId--;
 		}
 
-		String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
+		String _tmp = getXgmmlNodesAndEdges(dir, edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 		if(_tmp != null) {
 			if(!_tmp.equals("")) {
 				xgmmlContent += _tmp;
@@ -466,10 +466,10 @@ public class FromWekaToSif {
 	 * @param probeIdMap
 	 * @return
 	 */
-	private static String getXgmmlEdge(String labelFrom, String labelTo, Hashtable probeIdMap) {
+	private static String getXgmmlEdge(boolean dir, String labelFrom, String labelTo, Hashtable probeIdMap) {
 		String xgmmlEdgeContent = "";
 
-		xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, (String) probeIdMap.get(labelFrom), (String) probeIdMap.get(labelTo));
+		xgmmlEdgeContent += XGMMLGenerator.createEdge(dir, labelFrom, labelTo, (String) probeIdMap.get(labelFrom), (String) probeIdMap.get(labelTo));
 		return xgmmlEdgeContent;
 	}
 	
@@ -481,7 +481,7 @@ public class FromWekaToSif {
 	 * @param data
 	 * @return
 	 */
-	private static String getXgmmlNodesAndEdges(Vector edges, String nodeConnector, Hashtable nodesWithId, HashMap probeIndexAssocHash, IData data) {
+	private static String getXgmmlNodesAndEdges(boolean dir, Vector edges, String nodeConnector, Hashtable nodesWithId, HashMap probeIndexAssocHash, IData data) {
 		String xgmmlNodeContent = "";
 		String xgmmlEdgeContent = "";
 		Vector<String> nodeCreated = new Vector<String>();
@@ -516,7 +516,7 @@ public class FromWekaToSif {
 				nodeCreated.add(labelTo);
 			}
 
-			xgmmlEdgeContent += XGMMLGenerator.createEdge(labelFrom, labelTo, srcId, tgtId);	
+			xgmmlEdgeContent += XGMMLGenerator.createEdge(dir, labelFrom, labelTo, srcId, tgtId);	
 		}
 
 		return xgmmlNodeContent += xgmmlEdgeContent;
@@ -531,7 +531,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromSimpleGeneEdgeToXgmml(ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromSimpleGeneEdgeToXgmml(boolean dir, ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		//FileOutputStream fos = null;
 		String path=System.getProperty("user.dir");
 		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
@@ -591,7 +591,7 @@ public class FromWekaToSif {
 				uniqueNodesWithId.put((String)_itr.next(), String.valueOf(nodeId*-1));
 				nodeId--;
 			}
-			String _tmp = getXgmmlNodesAndEdges(edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
+			String _tmp = getXgmmlNodesAndEdges(dir, edges, "pd", uniqueNodesWithId, probeIndexAssocHash, data);
 			if(_tmp != null) {
 				if(!_tmp.equals("")) {
 					xgmmlContent += _tmp;

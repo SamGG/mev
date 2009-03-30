@@ -7,9 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
-import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
@@ -34,7 +32,7 @@ public class XGMMLGenerator {
 	public static String createHeader(String label, String cptFileLoc) {
 		String xgmml_header = "";
 		xgmml_header =  "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" + lineSep;
-		xgmml_header += "<graph label='" + label + "' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:cy='http://www.cytoscape.org' xmlns='http://www.cs.rpi.edu/XGMML' >" + lineSep;
+		xgmml_header += "<graph id='" + label + "' label='" + label + "' xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#' xmlns:cy='http://www.cytoscape.org' xmlns='http://www.cs.rpi.edu/XGMML' >" + lineSep;
 		xgmml_header += "  <att name='documentVersion' value='1.1'/>" + lineSep;
 		xgmml_header += "  <att name='networkMetadata'>" + lineSep;
 		xgmml_header += "    <rdf:RDF>" + lineSep;
@@ -43,7 +41,7 @@ public class XGMMLGenerator {
 		xgmml_header += "        <dc:description>N/A</dc:description>" + lineSep;
 		xgmml_header += "        <dc:identifier>N/A</dc:identifier>" + lineSep;
 		xgmml_header += "        <dc:date>2008-07-18 21:55:08</dc:date>" + lineSep;
-		xgmml_header += "        <dc:title>Sample XGMML Format</dc:title>" + lineSep;
+		xgmml_header += "        <dc:title>" + label + "</dc:title>" + lineSep;
 		xgmml_header += "        <dc:source>http://www.cytoscape.org/</dc:source>" + lineSep;
 		xgmml_header += "        <dc:format>Cytoscape-XGMML</dc:format>" + lineSep;
 		xgmml_header += "      </rdf:Description>" + lineSep;
@@ -141,13 +139,16 @@ public class XGMMLGenerator {
 	 * @param tgtId
 	 * @return
 	 */
-	public static String createEdge(String srcLbl, String tgtLabel, String srcId, String tgtId) {
+	public static String createEdge(boolean dir, String srcLbl, String tgtLabel, String srcId, String tgtId) {
 		String edge = "";
 		//edge = "  <edge label='" + NM_138957 + " (pd) " + NM_176795 + "' source='" + -9 +"' target='" + -5 + "'>";
 		edge = "  <edge label='" + srcLbl + " (pd) " + tgtLabel + "' source='" + srcId +"' target='" + tgtId + "' weight='0'>" + lineSep;
 		//edge += "    <att type='string' name='canonicalName' value='" + srcLbl + " (pd) " + tgtLabel + "'/>" + lineSep;
 		edge += "    <att type='string' name='interaction' value='pd'/>" + lineSep;
-		edge += "    <graphics width='2' fill='#999999' cy:sourceArrow='0' cy:targetArrow='3' cy:sourceArrowColor='#cdcdc1' cy:targetArrowColor='#333333' cy:edgeLabelFont='Default-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
+		if(dir)
+			edge += "    <graphics width='2' fill='#999999' cy:sourceArrow='0' cy:targetArrow='3' cy:sourceArrowColor='#cdcdc1' cy:targetArrowColor='#333333' cy:edgeLabelFont='Default-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
+		else
+			edge += "    <graphics width='2' fill='#999999' cy:sourceArrow='0' cy:targetArrow='0' cy:sourceArrowColor='#000000' cy:targetArrowColor='#000000' cy:edgeLabelFont='SanSerif-0-10' cy:edgeLineType='SOLID' cy:curved='STRAIGHT_LINES'/>" + lineSep;
 		edge += "  </edge>" + lineSep;
 		return edge;
 	}

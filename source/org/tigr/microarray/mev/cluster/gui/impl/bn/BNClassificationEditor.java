@@ -503,7 +503,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 						obsNetFile += ".xgmml";
 						//Should move completely to Bif CPT format
 						//FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
-						FromWekaToSif.fromWekaBifToXgmml(XmlBifStr, obsNetFile, obsCptFile, probeIndexAssocHash, data);
+						FromWekaToSif.fromWekaBifToXgmml(true, XmlBifStr, obsNetFile, obsCptFile, probeIndexAssocHash, data);
 					}					
 					networkFiles.add(0,obsNetFile);
 					//TODO End
@@ -684,7 +684,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 			try {
 				//TODO Move from edgesTable method
 				//FromWekaToSif.fromWekaToXgmml(edgesTable, numItr, confThreshold, bootNetFile, probeIndexAssocHash, data);
-				FromWekaToSif.fromWekaBifToXgmml(bifCpt, bootNetFile, bootCptFile, probeIndexAssocHash, data);
+				FromWekaToSif.fromWekaBifToXgmml(true, bifCpt, bootNetFile, bootCptFile, probeIndexAssocHash, data);
 			} catch (Exception e) {
 				//throw new Exception("Error creating XGML File from Bootstrap");
 				e.printStackTrace();
@@ -812,7 +812,7 @@ public class BNClassificationEditor extends javax.swing.JDialog {// JFrame {
 				//xgmml File
 				_bootNetFile += ".xgmml";
 				//FromWekaToSif.fromWekaToXgmml(edgesTable, numIterations, confThres, _bootNetFile, probeIndexAssocHash, data);
-				FromWekaToSif.fromWekaBifToXgmml(bifCpt, _bootNetFile, outCPTBifXML, probeIndexAssocHash, data);
+				FromWekaToSif.fromWekaBifToXgmml(true, bifCpt, _bootNetFile, outCPTBifXML, probeIndexAssocHash, data);
 			}
 
 			

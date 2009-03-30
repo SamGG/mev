@@ -461,7 +461,7 @@ public class UsefulInteractions {
 	 * 
 	 */
 	public static void writeXgmmlFileUndir(ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
-		FromWekaToSif.fromSimpleGeneEdgeToXgmml(inter, fileName, probeIndexAssocHash, data);
+		FromWekaToSif.fromSimpleGeneEdgeToXgmml(false, inter, fileName, probeIndexAssocHash, data);
 			}
 
 	
