@@ -297,43 +297,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	/*
-    public static ArrayList getInteractionsFromPpi(Properties props) throws NullArgumentException {	
-    	try {
-    	    if(props == null){
-    		throw new NullArgumentException("The given properties were null");
-    	    }
-    	    // get props of ppi list, gbs, res
-    	    // path=GetInteractionParemeterPPIDialog.path;
-    	    String ppiFileName = props.getProperty("ppiFileName", null);
-    	    String resFileName = props.getProperty("resourcererFileName", null);
-    	    String gbAccessionsFileName = props.getProperty("gbAccessionsFileName", null);
-    	    Useful.checkFile(ppiFileName);
-    	    Useful.checkFile(resFileName);
-    	    Useful.checkFile(gbAccessionsFileName);
-    	    // convert to unique symbols
-    	    HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
-    	    HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
-    	    ArrayList queryNodes = new ArrayList();
-    	    queryNodes.addAll(uniqueSymbols);
-    	    ArrayList ppi = UsefulInteractions.readInteractions(ppiFileName);
-    	    return getInteractionsFromPpi(ppi,queryNodes,props); 
-    	}
-    	catch(IOException ioe){
-    	    System.out.println(ioe);
-    	    ioe.printStackTrace();
-    	}
-    	catch(NullArgumentException nae){
-    	    System.out.println(nae);
-    	    nae.printStackTrace();
-    	}
-    	catch(OutOfRangeException oore){
-    	    System.out.println(oore);
-    	    oore.printStackTrace();
-    	}
-    	return null;
-        }
-	 */
+	
 	/**
 	 * The <code>getInteractionsFromPpi</code> method gets protein protein interactions from
 	 * given <code>ArrayList</code> representing ppi, given <code>ArrayList</code> representing 
@@ -382,23 +346,24 @@ public class GetInteractionsModule {
 		ArrayList ppiIner = null;
 		if(usePpiDirectlyStr.equals("true")){
 			if(usePpiOnlyWithinStr.equals("true")){
-				//System.exit(1);
+				System.out.println("usePpiDirectlyStr & usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodesOnlyWithin()");
 				//return UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
 				ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
 			}
 			else {
-				//System.exit(1);
+				System.out.println("usePpiDirectlyStr & !usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodes()");
 				//return UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
 				ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
 			}
-		}
-		else {
+		} else {
 			if(useTransitiveClosureStr.equals("true")){
+				System.out.println("!usePpiDirectlyStr & useTransitiveClosureStr \n getInteractionsWithReachableNodes()");
 				//return TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
 				ppiIner = TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
 			}
 			else {		
 				//return AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
+				System.out.println("!usePpiDirectlyStr & !useTransitiveClosureStr \n getInteractionsWithNodesAtDistanceK()");
 				ppiIner = AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
 			}
 		}
@@ -512,39 +477,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	/*
-    public static ArrayList getInteractionsFromPpi(ArrayList ppi, ArrayList queryNodes, Properties props) throws NullArgumentException, OutOfRangeException{	
-    	if(ppi == null || queryNodes == null){
-    	    throw new NullArgumentException("At least one of ppi or queryNodes was null\nppi="+ppi+"\nqueryNodes="+queryNodes);
-    	}
-    	//path=GetInteractionParemeterPPIDialog.path;
-    	// get props whether to construct ppi directly from subset	
-    	// or from all pairs shortest paths algorithm, or from transitive closure algorithm
-    	String usePpiDirectlyStr = props.getProperty("usePpiDirectly", "true");
-    	String usePpiOnlyWithinStr = props.getProperty("usePpiOnlyWithin", "true");
-    	String useTransitiveClosureStr =props.getProperty("useTransitiveClosure", "false");
-            double distanceK = Double.parseDouble(props.getProperty("distanceK", "3.0"));
-    	if(distanceK < 0){
-    	    throw new OutOfRangeException("DistanceK is out of range (should be positive or equal to zero)!\ndistanceK="+distanceK);
-    	}
-    	if(usePpiDirectlyStr.equals("true")){
-    	    if(usePpiOnlyWithinStr.equals("true")){
-    		return UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
-    	    }
-    	    else {
-    		return UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
-    	    }
-    	}
-    	else {
-    	    if(useTransitiveClosureStr.equals("true")){
-    		return TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
-    	    }
-    	    else {		
-    		return AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
-    	    }
-    	}
-        }
-	 */
+	
 	/**
 	 * The <code>getInteractions</code> method gets interactions from the given properties, 
 	 * corresponding to interactions obtained either from the literature by co-occurrences 
@@ -607,7 +540,7 @@ public class GetInteractionsModule {
 		if(props == null){
 			throw new NullArgumentException("The given properties were null");
 		}
-		//System.out.println(props);
+		// System.out.println(props);
 		String isLiteratureStr = props.getProperty(BNConstants.FRM_LIT, "true").trim();
 		String isPpiStr = props.getProperty(BNConstants.FRM_PPI, "false").trim();
 		String isKeggStr = props.getProperty(BNConstants.FRM_KEGG, "false").trim();
@@ -617,9 +550,9 @@ public class GetInteractionsModule {
 		ArrayList interFromPpiSyms = null;	
 		ArrayList interFromKegg = null;	
 
-		// get interactions from all -  kegg, literature and ppi
+		// get interactions from all - kegg, literature and ppi
 		if(isLiteratureStr.equals("true") && isPpiStr.equals("true") && isKeggStr.equals("true")){
-			//TODO
+			//TODO KEGG, PPI & LIT
 			return null;
 		}
 		// get interactions from both literature and ppi NOT kegg
@@ -648,9 +581,22 @@ public class GetInteractionsModule {
 		}
 		// get interactions from both kegg and ppi and NOT literature 
 		else if(!isLiteratureStr.equals("true") && isPpiStr.equals("true") && isKeggStr.equals("true")){
-			//TODO
 			System.out.println("Only KEGG & PPI");
-			return null;
+			ArrayList keggAndPpiInterActions = null;
+			//Get KEGG interactions
+			interFromKegg = getInteractionsFromKegg(props);
+			//get PPI interactions
+			interFromPpiSyms = getInteractionsFromPpi(props);
+			//Replace symbols with gbs in interFromPpi
+			interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
+			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+				prepareGBsForPpiNotDirectly(interFromPpi, props);
+				keggAndPpiInterActions = GetUnionOfInters.uniquelyMergeArrayLists(interFromKegg, interFromPpi);
+			} else {
+				keggAndPpiInterActions = GetUnionOfInters.uniquelyMergeArrayLists(interFromKegg, interFromPpi);
+			}
+			
+			return keggAndPpiInterActions;
 		}
 		// get interactions from literature but NOT from ppi & kegg
 		else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && !isKeggStr.equals("true")){
@@ -664,16 +610,14 @@ public class GetInteractionsModule {
 			System.out.println("Only PPI");
 			interFromPpiSyms = getInteractionsFromPpi(props);
 			//System.out.println(interFromPpiSyms.size());
-			//System.exit(1);
 			// replace symbols with gbs in interFromPpi
 			interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
-			//System.exit(1);
 			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
 				prepareGBsForPpiNotDirectly(interFromPpi, props);	
 			}
 			return interFromPpi;
 		}
-		//	 get interactions from only  kegg and  and NOT ppi and literature 
+		// get interactions from only  kegg and  and NOT ppi and literature 
 		else if(!isLiteratureStr.equals("true") && !isPpiStr.equals("true") && isKeggStr.equals("true")){
 			System.out.println("Only KEGG");
 			interFromKegg = getInteractionsFromKegg(props);

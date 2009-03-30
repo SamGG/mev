@@ -73,7 +73,7 @@ public class CytoscapeWebstart {
     }
     
     /**
-     * privare Static function to fork Java Webstart based on a JNLP file
+     * private Static function to fork Java Webstart based on a JNLP file
      */
     private static void startCytoscape(String jnlpURI) {
         String command = System.getProperty("java.home");
@@ -230,8 +230,8 @@ public class CytoscapeWebstart {
     	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
     	xml += "    <argument>-p</argument>";
     	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
-    	xml += "    <argument>-V</argument>";
-    	xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
+    	//xml += "    <argument>-V</argument>";
+    	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
     	//xml += "    <argument>-N</argument>";
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
     	for(int i=0; i < files.size(); i++) {
@@ -384,8 +384,8 @@ public class CytoscapeWebstart {
     	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
     	xml += "    <argument>-p</argument>";
     	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
-    	xml += "    <argument>-V</argument>";
-    	xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
+    	//xml += "    <argument>-V</argument>";
+    	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
     	//xml += "    <argument>-N</argument>";
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
     	for(int i=0; i < files.size(); i++) {

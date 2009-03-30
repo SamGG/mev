@@ -68,9 +68,10 @@ import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
+
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
- * @author eleanora
+ * @author raktim
  */
 public class BNInitDialog extends AlgorithmDialog {
 
@@ -88,7 +89,6 @@ public class BNInitDialog extends AlgorithmDialog {
 	ClusterBrowser browser;
 	EventListener listener;
 	BNParameterPanel bnParamPanel;
-	AlphaPanel statParamsPanel;
 	JTabbedPane tabbedPane;
 	Font font;
 	String sep;
@@ -111,9 +111,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	 * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
 	 * @param annotationLabels Annotation types
 	 */
-	//public BNInitDialog(Frame parent, ClusterRepository repository, String [] annotationLabels) {
 	public BNInitDialog(IFramework frame, ClusterRepository repository, String [] annotationLabels, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
-		//super(parent, "BN: Bayes Network Analysis", true);
 		super(frame.getFrame(), "BN: Bayes Network Analysis", true);
 		this.parent = frame.getFrame(); //parent;
 		this.framework = frame;
@@ -145,15 +143,6 @@ public class BNInitDialog extends AlgorithmDialog {
 		tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
 
 		bnParamPanel = new BNParameterPanel(annotationLabels);        
-		//TODO removed tabbedpane until other features are enabled that require rearranging
-		//the dialog
-		//tabbedPane.add("Annotation Parameters", bnParamPanel);
-
-		//TODO removed tabbedpane until other features are enabled that require rearranging
-		//the dialog
-		//statParamsPanel = new AlphaPanel();
-		//tabbedPane.add("Statistical Parameters", statParamsPanel);
-
 		JPanel parameters = new JPanel(new GridBagLayout());
 		parameters.setBackground(Color.white);
 
@@ -212,8 +201,6 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		JPanel popNClusterPanel = new JPanel(new GridBagLayout());
 		popNClusterPanel.setBackground(Color.white);
-		//popPanel = new PopSelectionPanel();
-		// browser = new ClusterBrowser(repository);
 
 		JPanel emptyClusterPanel = new JPanel(new GridBagLayout());
 		String text = "<center><b>Note: When running BN in script mode the cluster<br>";
@@ -229,16 +216,6 @@ public class BNInitDialog extends AlgorithmDialog {
 		//popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		popNClusterPanel.add(emptyClusterPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 		tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
-
-		//bnParamPanel = new BNParameterPanel(annotationLabels);
-		//TODO removed tabbedpane until other features are enabled that require rearranging
-		//the dialog
-		//tabbedPane.add("Runing Bayesian Network Parameters", bnParamPanel);
-
-		//statParamsPanel = new AlphaPanel();
-		//TODO removed tabbedpane until other features are enabled that require rearranging
-		//the dialog
-		//tabbedPane.add("Statistical Parameters", statParamsPanel);
 
 		JPanel parameters = new JPanel(new GridBagLayout());
 		parameters.setBackground(Color.white);
@@ -263,17 +240,6 @@ public class BNInitDialog extends AlgorithmDialog {
 		addContent(parameters);
 		setActionListeners(listener);
 
-		/*   if(repository == null || repository.isEmpty()) {
-            Component comp = tabbedPane.getComponentAt(0);
-            JPanel panel = (JPanel)comp;
-            panel.removeAll();
-            panel.validate();
-            panel.setOpaque(false);
-            panel.add(new JLabel("Empty Cluster Repository"), new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(15,0,10,0),0,0));
-            panel.add(new JLabel("Only Annotation Survey is Enabled"), new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-            tabbedPane.setSelectedIndex(1);
-        }
-		 */
 		this.setSize(600,800);
 	}
 
@@ -303,21 +269,6 @@ public class BNInitDialog extends AlgorithmDialog {
 	public Cluster getSelectedCluster(){
 		return this.browser.getSelectedCluster();
 	}
-
-
-	/* TODO
-	public boolean isPopFileModeSelected() {
-		return popPanel.fileButton.isSelected();
-	}
-	*/
-
-	/** Returns the population fille to load
-	 */
-	/*
-	public String getPopulationFileName() {
-		return this.popPanel.getPopFile();
-	}
-	*/
 	
 	/** Returns the name of the converter file selected.
 	 * If none selected null is returned.
@@ -412,15 +363,6 @@ public class BNInitDialog extends AlgorithmDialog {
 	public void setUseArcRev(boolean ua){
 		this.useArc=ua;
 	}
-	/*
-	//TODO gray out file selection
-	public boolean isClusterSource(){
-		return this.popPanel.dataButton.isSelected();
-	}
-	*/
-	//public String getAnnotationField(){
-	//return annotKeyPanel.getAnnotationKeyType();
-	// }
 	public int getNumIterations(){
 		return this.bootStrapPanel.getNumIterations();
 	}
@@ -496,7 +438,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 
 			ppiSourceCheckbox.setSelected(false);
-			ppiSourceCheckbox.setEnabled(false);
+			ppiSourceCheckbox.setEnabled(true);
 			litSourceCheckbox.setEnabled(true);
 			keggSourceCheckbox.setEnabled(true);
 
@@ -610,25 +552,11 @@ public class BNInitDialog extends AlgorithmDialog {
 			confThresholdField.setBackground(Color.white);
 			confThresholdLabel = new JLabel(" Confidence Threshold");
 			confThresholdLabel.setBackground(Color.white);
-			//bootstrappingNotAvailable = new JLabel("Bootstrapping is not yet available");
-			//bootstrappingNotAvailable.setForeground(Color.red);
+			
 			isBootstrappingCheckbox.setEnabled(true);
 			numIterationsField.setEnabled(true);
 			confThresholdField.setEnabled(true);
-			//isBootStrappingLabel.setForeground(Color.gray);
-			//numIterationsLabel.setForeground(Color.gray);
-			//confThresholdLabel.setForeground(Color.gray);
-
-			//add(bootstrappingNotAvailable, 	new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-			/*
-            add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-            add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-            add(numIterationsField, 		new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-            add(numIterationsLabel, 		new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-            add(confThresholdField, 		new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-            add(confThresholdLabel, 		new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-			 */
-
+			
 			add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,30),0,0));
 			//add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
 			add(numIterationsLabel, 		new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
@@ -645,124 +573,6 @@ public class BNInitDialog extends AlgorithmDialog {
 		public float getConfThreshold(){return new Float(confThresholdField.getText()).floatValue();}
 		public boolean isBootstrapping(){return isBootstrappingCheckbox.isSelected();}
 	}    
-
-	private class PopSelectionPanel extends ParameterPanel {
-
-		JRadioButton fileButton;
-		JRadioButton dataButton;
-		JTextField popField;
-		JButton browseButton;
-		JLabel fileLabel;
-
-		public PopSelectionPanel() {
-			super("Population Selection");
-			setLayout(new GridBagLayout());
-
-			ButtonGroup bg = new ButtonGroup();
-			fileButton = new JRadioButton("Population from File", true);
-			fileButton.setBackground(Color.white);
-			fileButton.setFocusPainted(false);
-			bg.add(fileButton);
-
-			fileButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-
-					browseButton.setEnabled(fileButton.isSelected());
-					popField.setEnabled(fileButton.isSelected());
-					popField.setBackground(Color.white);
-					fileLabel.setEnabled(fileButton.isSelected());
-
-				}
-			});
-
-			dataButton = new JRadioButton("Population from Current Viewer");
-			dataButton.setBackground(Color.white);
-			dataButton.setFocusPainted(false);
-			bg.add(dataButton);
-			dataButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					browseButton.setEnabled(fileButton.isSelected());
-					popField.setEnabled(fileButton.isSelected());
-					popField.setBackground(Color.white);
-					fileLabel.setEnabled(fileButton.isSelected());
-
-				}
-			});
-
-			browseButton = new JButton("File Browser");
-			browseButton.setFocusPainted(false);
-			browseButton.setPreferredSize(new Dimension(150, 25));
-			browseButton.setSize(150, 25);
-			browseButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					JFileChooser chooser = new JFileChooser(TMEV.getFile("Data/"));
-					chooser.setDialogTitle("Population File Selection");
-					chooser.setMultiSelectionEnabled(false);
-					if(chooser.showOpenDialog(parent) == JOptionPane.OK_OPTION){
-						updatePopField(chooser.getSelectedFile().getPath());
-					}
-				}
-			});
-
-			fileLabel = new JLabel("File: ");
-			popField = new JTextField(25);
-
-			//EH disabling 'select cluster from file' options until that feature is ready. 
-			JLabel filePopNotAvailable = new JLabel("Population selection from file is not yet available.");
-			filePopNotAvailable.setForeground(Color.red);
-			fileLabel.setForeground(Color.gray);
-			popField.setEnabled(false);
-			fileButton.setEnabled(false);
-			browseButton.setEnabled(false);
-			dataButton.setSelected(true);
-
-			add(filePopNotAvailable,new GridBagConstraints(0,0,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-			add(fileButton, 		new GridBagConstraints(0,1,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,30,0,0), 0,0));
-			add(fileLabel, 			new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,30,0,0), 0,0));
-			add(popField, 			new GridBagConstraints(1,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,10,0,0), 0,0));
-			add(browseButton, 		new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,25,0,20), 0,0));
-			add(dataButton, 		new GridBagConstraints(0,3,3,1,1,0,GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(15,30,20,0), 0,0));
-		}
-
-		private void setEnableControls(boolean enable) {
-			fileButton.setEnabled(enable);
-			dataButton.setEnabled(enable);
-			popField.setEnabled(enable);
-			browseButton.setEnabled(enable);
-			fileLabel.setEnabled(enable);
-			setOpaque(enable);
-			tabbedPane.setEnabledAt(0, enable);
-		}
-
-		private void updatePopField(String file) {
-			this.popField.setText(file);
-		}
-
-		private String getPopFile() {
-			return popField.getText();
-		}        
-	}
-
-	/*
-    private class AnnotKeyPanel extends JPanel{
-    	JComboBox fieldNamesBox;
-    	public AnnotKeyPanel(String[] fieldNames){
-	        super(new GridBagLayout());
-	        	setLayout(new GridBagLayout());
-	        	setBackground(Color.white);
-            	this.fieldNamesBox = new JComboBox(fieldNames);
-            	this.fieldNamesBox.setEditable(false);
-    			setBackground(Color.white);
-    			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Genbank accession field", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-    			add(new JLabel("Genbank Accession Annotation Field:  "), new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-    			add(this.fieldNamesBox, new GridBagConstraints(1,0,1,1,0.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-    	}
-
-        public String getAnnotationKeyType(){
-            return (String)this.fieldNamesBox.getSelectedItem();
-        }
-    }
-	 */  
 
 	private class XmlBifPanel extends JPanel{
 		private JRadioButton useGoButton,useDFSButton;
@@ -1027,12 +837,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			return null;
 		}
 
-		/** Returns the annotation type string.
-		 */
-		// public String getAnnotationKeyType(){
-		//   return annotKeyPanel.getAnnotationKeyType();
-		// }
-
+		
 		private class BNListListener implements ListSelectionListener {
 			public void valueChanged(ListSelectionEvent listSelectionEvent) {
 				updateFileDirectoryField();
@@ -1073,199 +878,6 @@ public class BNInitDialog extends AlgorithmDialog {
 				File file = (File) value;
 				setText(file.getName());
 				return this;
-			}
-		}
-	}
-
-	/** Contains statistical parameter controls.
-	 */
-	private class AlphaPanel extends JPanel{
-
-		//Stats
-		private JCheckBox fisherBox;
-		private JCheckBox easeBox;
-		//mult. corrections
-		private JCheckBox bonferroniBox;
-		private JCheckBox sidakBox;
-		private JCheckBox bonferroniStepBox;
-		private JCheckBox permBox;
-		private JTextField permField;
-		private JLabel permLabel;
-		//Trim params
-		private JCheckBox trimBox;
-		private JCheckBox trimNBox;
-		private JLabel trimNLabel;
-		private JTextField trimNField;
-		private JCheckBox trimPercentBox;
-		private JLabel trimPercentLabel;
-		private JTextField trimPercentField;
-
-
-		/** Constucts a new AlphaPanel.
-		 */
-		public AlphaPanel(){
-			super(new GridBagLayout());
-			setBackground(Color.white);
-
-			bootStrapPanel = new BootStrapPanel();  	
-
-			//STAT PANEL
-			JPanel statPanel = new JPanel(new GridBagLayout());
-			statPanel.setBackground(Color.white);
-			statPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Reported Statistic", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-
-			/*
-            ButtonGroup bg = new ButtonGroup();
-            fisherBox = new JCheckBox("Fisher Exact Probability", true);
-            fisherBox.setBackground(Color.white);
-            fisherBox.setFocusPainted(false);
-            bg.add(fisherBox);
-
-            easeBox = new JCheckBox("EASE Score", false);
-            easeBox.setBackground(Color.white);
-            easeBox.setFocusPainted(false);
-            bg.add(easeBox);
-
-            statPanel.add(fisherBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            statPanel.add(easeBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
-
-
-            //P-value Correction Panel
-            JPanel correctionPanel = new JPanel(new GridBagLayout());
-            correctionPanel.setBackground(Color.white);
-            correctionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Multiplicity Corrections", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-
-            bonferroniBox = new JCheckBox("Bonferroni Correction", false);
-            bonferroniBox.setBackground(Color.white);
-            bonferroniBox.setFocusPainted(false);
-
-            bonferroniStepBox = new JCheckBox("Bonferroni Step Down Correction", false);
-            bonferroniStepBox.setBackground(Color.white);
-            bonferroniStepBox.setFocusPainted(false);
-
-            sidakBox = new JCheckBox("Sidak Method", false);
-            sidakBox.setBackground(Color.white);
-            sidakBox.setFocusPainted(false);
-
-            permBox = new JCheckBox("Resampling Probability Analysis", false);
-            permBox.setActionCommand("permutation-analysis-command");
-            permBox.setBackground(Color.white);
-            permBox.setFocusPainted(false);
-            permBox.addActionListener(listener);
-            //permBox.setEnabled(false);
-
-            permField = new JTextField("1000", 10);
-            permField.setBackground(Color.white);
-            //permField.setEnabled(false);
-
-            permLabel = new JLabel("Number of Permutations");
-            permLabel.setBackground(Color.white);
-            //permLabel.setEnabled(false);
-
-            correctionPanel.add(bonferroniBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            correctionPanel.add(sidakBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            correctionPanel.add(bonferroniStepBox, new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,10,0),0,0));
-            correctionPanel.add(permBox, new GridBagConstraints(0,2,2,1,0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,5,0),0,0));
-            correctionPanel.add(permLabel, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,15,0),0,0));
-            correctionPanel.add(permField, new GridBagConstraints(1,3,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.VERTICAL, new Insets(0,0,15,0),0,0));
-
-            //Trim Panel
-            JPanel trimPanel = new JPanel(new GridBagLayout());
-            trimPanel.setBackground(Color.white);
-            trimPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Trim Parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-
-            trimBox = new JCheckBox("Trim Resulting Groups", false);
-            trimBox.setActionCommand("trim-result-command");
-            trimBox.addActionListener(listener);
-            trimBox.setBackground(Color.white);
-            trimBox.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-            trimBox.setFocusPainted(false);
-
-            bg = new ButtonGroup();
-
-            trimNBox = new JCheckBox("Select Minimum Hit Number", true);
-            trimNBox.setActionCommand("trim-result-command");
-            trimNBox.addActionListener(listener);
-            trimNBox.setEnabled(false);
-            trimNBox.setBackground(Color.white);
-            trimNBox.setFocusPainted(false);
-            bg.add(trimNBox);
-
-            trimNLabel = new JLabel("Min. Hits");
-            trimNLabel.setBackground(Color.white);
-            trimNLabel.setEnabled(false);
-
-            trimNField = new JTextField("5", 10);
-            trimNField.setEnabled(false);
-
-            trimPercentBox = new JCheckBox("Select Minimum Hit Percentage", false);
-            trimPercentBox.setActionCommand("trim-result-command");
-            trimPercentBox.addActionListener(listener);
-            trimPercentBox.setEnabled(false);
-            trimPercentBox.setBackground(Color.white);
-            trimPercentBox.setFocusPainted(false);
-            bg.add(trimPercentBox);
-
-            trimPercentLabel = new JLabel("Percent Hits");
-            trimPercentLabel.setBackground(Color.white);
-            trimPercentLabel.setEnabled(false);
-
-            trimPercentField = new JTextField("5", 10);
-            trimPercentField.setEnabled(false);
-
-            trimPanel.add(trimBox, new GridBagConstraints(0,0,3,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,20,0),0,0));
-
-            trimPanel.add(trimNBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-            trimPanel.add(trimNLabel, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,20,0,15),0,0));
-            trimPanel.add(trimNField, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
-
-            trimPanel.add(trimPercentBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-            trimPanel.add(trimPercentLabel, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(10,20,0,15),0,0));
-            trimPanel.add(trimPercentField, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(10,0,0,0),0,0));
-			 */
-			//Add panels to main panel
-			//add(statPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			//add(correctionPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			//add(trimPanel, new GridBagConstraints(0,2,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-
-			discPanel = new DiscretizingPanel();
-			classnumPanel = new ClassNumPanel();
-
-			//TODO removed bootStrapPanel until bootstrapping is enabled in module
-			add(discPanel, new GridBagConstraints(0,0,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			add(classnumPanel, new GridBagConstraints(0,1,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-			//add(bootStrapPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-
-		}
-
-		/** Indicates if permutations are selected.
-		 */
-		public boolean performPermutations(){
-			return permBox.isSelected();
-		}
-
-		public void setEnablePermutations(){
-			permLabel.setEnabled(permBox.isSelected());
-			permField.setEnabled(permBox.isSelected());
-		}
-
-		public void validateTrimOptions(){
-			if(this.trimBox.isSelected()){
-				trimNBox.setEnabled(true);
-				trimPercentBox.setEnabled(true);
-
-				trimNLabel.setEnabled(trimNBox.isSelected());
-				trimNField.setEnabled(trimNBox.isSelected());
-				trimPercentLabel.setEnabled(!trimNBox.isSelected());
-				trimPercentField.setEnabled(!trimNBox.isSelected());
-			} else {
-				trimNBox.setEnabled(false);
-				trimPercentBox.setEnabled(false);
-
-				trimNLabel.setEnabled(false);
-				trimNField.setEnabled(false);
-				trimPercentLabel.setEnabled(false);
-				trimPercentField.setEnabled(false);
 			}
 		}
 	}
@@ -1433,9 +1045,6 @@ public class BNInitDialog extends AlgorithmDialog {
 				} catch (SupportFileAccessError sfae) {
 					//disable population from file button
 					useLoadedAnnotationFile = false;
-					//popPanel.fileButton.setSelected(true);
-					//popPanel.preloadedAnnotationButton.setSelected(false);
-					//popPanel.preloadedAnnotationButton.setEnabled(false);
 				}
 			} else {
 				getBNSupportFileButton.setEnabled(false);
@@ -1528,10 +1137,6 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 			} else if (command.equals("remove-ann-file-command")){
 				bnParamPanel.removeSelectedFiles();
-				//    } else if (command.equals("permutation-analysis-command")){
-				//        statParamsPanel.setEnablePermutations();
-				//    } else if (command.equals("trim-result-command")){
-				//        statParamsPanel.validateTrimOptions();
 			} else if (command.equals("select-file-base-command")) {
 				configPanel.selectFileSystem();
 			} else if (command.equals("update-files-command")) {
@@ -1704,29 +1309,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 
 				//**End of Validation
-				/*
-				if(isClusterModeSelected() && popPanel.fileButton.isSelected()) {
-					String fileName = popPanel.popField.getText();
-					if(fileName == null || fileName.equals("") || fileName.equals(" ")) {
-						JOptionPane.showMessageDialog(parent, "You have selected to use a population file but have not "+
-								"entered a file name.  \nPlease enter a file or use the file browser to select a file.", "BN Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
-						tabbedPane.setSelectedIndex(0);
-						popPanel.popField.grabFocus();
-						popPanel.popField.selectAll();
-						//popPanel.popField.setCaretPosition(0);
-						return;
-					}
-				}
-				*/
-				/*
-                if(getAnnToGOFileList().length == 0) {
-                    JOptionPane.showMessageDialog(parent, "You have not selected any gene annotation/gene ontology linking files. \n"+
-                    "Please enter files or use the browser to select files.", "BN Initialization: Missing Parameter", JOptionPane.WARNING_MESSAGE);
-                    tabbedPane.setSelectedIndex(1);
-                    bnParamPanel.browserButton.grabFocus();
-                    return;
-                }
-				 */
+				
 				if(bnParamPanel.useAnnBox.isSelected()) {
 					String fileName = bnParamPanel.getConverterFileName();
 					if( fileName == null || fileName.equals("") || fileName.equals(" ") ) {
