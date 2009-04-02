@@ -40,7 +40,7 @@ public class XGMMLGenerator {
 		xgmml_header += "        <dc:type>Protein-Protein Interaction</dc:type>" + lineSep;
 		xgmml_header += "        <dc:description>N/A</dc:description>" + lineSep;
 		xgmml_header += "        <dc:identifier>N/A</dc:identifier>" + lineSep;
-		xgmml_header += "        <dc:date>2008-07-18 21:55:08</dc:date>" + lineSep;
+		xgmml_header += "        <dc:date>" + Useful.getDateTime() + "</dc:date>" + lineSep;
 		xgmml_header += "        <dc:title>" + label + "</dc:title>" + lineSep;
 		xgmml_header += "        <dc:source>http://www.cytoscape.org/</dc:source>" + lineSep;
 		xgmml_header += "        <dc:format>Cytoscape-XGMML</dc:format>" + lineSep;
@@ -68,8 +68,11 @@ public class XGMMLGenerator {
 		node = "  <node label='" + label + "' id='" + id + "' >" + lineSep;
 		//EH
 		String[] fieldNames = data.getFieldNames();//MevAnnotation.getFieldNames();
+		//System.out.println("XGMML Field Count " + fieldNames.length);
 		for(int i = 0; i < fieldNames.length; i++) {
 			String _tmp[] = data.getElementAnnotation(rowInd, fieldNames[i]);
+			//System.out.println("XGMML Field Nmae " + fieldNames[i]);
+			//System.out.println("XGMML Field Value " + _tmp[0].trim());
 			if(_tmp[0].trim().equalsIgnoreCase("na")) {
 				_tmp[0] = "";
 			} else {

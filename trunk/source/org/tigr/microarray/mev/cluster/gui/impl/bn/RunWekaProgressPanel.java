@@ -12,19 +12,13 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 
 	private JProgressBar progressBar;
 	private JButton cancelButton;
-	//MultipleArrayViewer mav;
 	JPanel progressPanel;
 
-	public RunWekaProgressPanel() {		setTitle("Running Data Mining...");   		/*
+	public RunWekaProgressPanel() {		setTitle("Running Data Mining...");   		
 		cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				BNGUI.cancelRun = true;
-				BNGUI.run = true;
-				dispose();
-			}
-		});
-		 */
+		cancelButton.setPreferredSize(new Dimension(150, 50));
+		cancelButton.setActionCommand("cancel");
+		cancelButton.addActionListener(this);
 		progressPanel = new JPanel(new BorderLayout());
 		progressPanel.setPreferredSize(new Dimension(350, 100));
 
@@ -34,7 +28,7 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 		progressBar.setStringPainted(true);		progressBar.setPreferredSize(new Dimension(310, 30));
 
 
-		progressPanel.add(progressBar, BorderLayout.PAGE_START);		//progressPanel.add(cancelButton, BorderLayout.SOUTH);
+		progressPanel.add(progressBar, BorderLayout.PAGE_START);		progressPanel.add(cancelButton, BorderLayout.CENTER);
 		progressPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));		setContentPane(progressPanel);
 
 		progressPanel.setOpaque(true);		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,7 +41,6 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 	public void actionPerformed(ActionEvent evt) {
 		String command = evt.getActionCommand();
 		if (command.equals("cancel")) {
-			//mav.cancelLoadState();
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			progressBar.setIndeterminate(true);
 		}
