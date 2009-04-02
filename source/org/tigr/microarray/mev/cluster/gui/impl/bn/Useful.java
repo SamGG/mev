@@ -448,6 +448,16 @@ public class Useful {
 		//System.out.println(" 2. " + dateString);
 		return dateString;
 	}
+	
+	public static String getDateTime() {
+		Date now = new Date();
+		String dateString = now.toString();
+
+		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy HH:mm:ss");
+		dateString = formatDt.format(now);
+		//System.out.println(" 2. " + dateString);
+		return dateString;
+	}
 
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
@@ -456,6 +466,7 @@ public class Useful {
 			arguments +="-R";
 		}
 		arguments +=" -P "+numParents+" -S "+sType;
+		/*
 		while(!BNGUI.done){
 			try{
 				Thread.sleep(10000);	
@@ -463,10 +474,11 @@ public class Useful {
 				//ignore;
 			}
 		}
-		if(BNGUI.prior){     
+		*/
+		//if(BNGUI.prior){     
 			arguments += " -X " + path+ "resultBif.xml";
 			//System.out.print("my prior");
-		}
+		//}
 		arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
 		return arguments;
 	}
@@ -489,17 +501,18 @@ public class Useful {
 			arguments +="-R";
 		}
 		arguments +=" -P "+numParents+" -S "+sType;
-		while(!BNGUI.done){
-			try{
-				Thread.sleep(10000);	
-			}catch(InterruptedException x){
+		
+		//while(!BNGUI.done){
+			//try{
+				//Thread.sleep(10000);	
+			//}catch(InterruptedException x){
 				//ignore;
-			}
-		}
-		if(BNGUI.prior){     
+			//}
+		//}
+		//if(BNGUI.prior){     
 			arguments += " -X " + path+ "resultBif.xml";
 			//System.out.print("my prior");
-		}
+		//}
 		arguments += " -E weka.classifiers.bayes.net.estimate.BMAEstimator -- -A 0.5";
 		return arguments;
 	}
