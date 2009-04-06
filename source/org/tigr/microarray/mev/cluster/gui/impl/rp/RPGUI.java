@@ -73,7 +73,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     protected Object[][] auxData;
     
     protected Vector<Float> fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
-    protected float[][] geneTimeMeans, geneTimeSDs;
+    protected float[][] geneTimeMeans, geneTimeSDs;//, geneFCs;
     protected boolean drawSigTreesOnly;
     protected int upDown = 0;
     
@@ -255,8 +255,13 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 
             FloatMatrix pValuesDown = result.getMatrix("pValuesDown");
             FloatMatrix qValuesDown = result.getMatrix("qValuesDown");
+            FloatMatrix rpValuesDown = result.getMatrix("RPValsDown");
             FloatMatrix pValuesUp = result.getMatrix("pValuesUp");
             FloatMatrix qValuesUp = result.getMatrix("qValuesUp");
+            FloatMatrix rpValuesUp = result.getMatrix("RPValsUp");
+        	FloatMatrix fcValues = null;
+            if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS)
+            	fcValues = result.getMatrix("fold_change");
             
             rawPValues = new Vector<Float>();
             adjPValues = new Vector<Float>();
@@ -266,6 +271,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             
             geneTimeMeans = new float[geneTimeMeansMatrix.getRowDimension()][geneTimeMeansMatrix.getColumnDimension()];
             geneTimeSDs = new float[geneTimeSDsMatrix.getRowDimension()][geneTimeSDsMatrix.getColumnDimension()];
+//            geneFCs = new float[fcValues.getRowDimension()][fcValues.getColumnDimension()];
 
             for (int i = 0; i < geneTimeMeans.length; i++) {
                 for (int j = 0; j < geneTimeMeans[i].length; j++) {
@@ -295,16 +301,20 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             info.hcl_method = hcl_method;
             
             Vector<String> titlesVector = new Vector<String>();
-            titlesVector.add("Mean");
-            titlesVector.add("std.dev");
             if (upDown!=1){
             	titlesVector.add("p-Values (Down)");
             	titlesVector.add("q-Values (Down)");
+            	titlesVector.add("RP-Values (Down)");
             }
             if (upDown!=2){
             	titlesVector.add("p-Values (Up)");
             	titlesVector.add("q-Values (Up)");
+            	titlesVector.add("RP-Values (Up)");
             }
+            if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS)
+            	titlesVector.add("Fold Change");
+            titlesVector.add("Mean");
+            titlesVector.add("std.dev");
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -314,16 +324,20 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
             for (int i = 0; i < auxData.length; i++) {
                 int counter = 0;
-                auxData[i][counter++] = new Float(geneTimeMeans[i][0]);
-                auxData[i][counter++] = new Float(geneTimeSDs[i][0]);
                 if (upDown!=1){
                 	auxData[i][counter++] = pValuesDown.get(i, 0);
                 	auxData[i][counter++] = qValuesDown.get(i, 0);
+                	auxData[i][counter++] = rpValuesDown.get(i, 0);
                 }
                 if (upDown!=2){
                 	auxData[i][counter++] = pValuesUp.get(i, 0);
                 	auxData[i][counter++] = qValuesUp.get(i, 0);
+                	auxData[i][counter++] = rpValuesUp.get(i, 0);
                 }
+                if (RPDialog.getTestDesign()==RPInitBox.TWO_CLASS)
+                	auxData[i][counter++] = fcValues.get(i,0);
+                auxData[i][counter++] = new Float(geneTimeMeans[i][0]);
+                auxData[i][counter++] = new Float(geneTimeSDs[i][0]);
             }
             
             return createResultTree(result_cluster, info);
@@ -786,7 +800,11 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         node.add(getConditionAssignmentInfo());
         //node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         if (info.correctionMethod.startsWith("False")) {
-            node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
+            if (info.correctionMethod.startsWith("False significant number")) {
+            	
+            }else{
+	            node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - falseProp)*100 + " %"));
+            }
         } else {
             node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
         }

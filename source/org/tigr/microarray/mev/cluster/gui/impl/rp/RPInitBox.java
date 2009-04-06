@@ -971,7 +971,7 @@ public class RPInitBox extends AlgorithmDialog {
     	JLabel numPermsLabel;
     	JTextField timesField;
         JTextField pValueInputField, falseNumField, falsePropField;
-        JRadioButton falseNumButton, falsePropButton;
+        JRadioButton pValueButton, falseNumButton, falsePropButton;
         
         public PValuePanel() {
             this.setBorder(new TitledBorder(new EtchedBorder(), "P-value / false discovery parameters", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
@@ -997,19 +997,38 @@ public class RPInitBox extends AlgorithmDialog {
             gridbag.setConstraints(timesField, constraints);
             this.add(timesField);
             
+            JPanel pValSelectionPanel = new JPanel();
+            pValSelectionPanel.setBackground(Color.white);
+            pValSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED), "P-Value Cutoff ", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            GridBagLayout pValSelectionPanelgrid = new GridBagLayout();
+            pValSelectionPanel.setLayout(pValSelectionPanelgrid);
+            
+
+            pValueButton = new JRadioButton("", true);
+            pValueButton.setFocusPainted(false);
+            pValueButton.setForeground(UIManager.getColor("Label.foreground"));
+            pValueButton.setBackground(Color.white);
+            pValSelectionPanel.add(pValueButton);
+            
             JLabel pValueLabel = new JLabel("Enter alpha (critical p-value): ");
-            buildConstraints(constraints, 0, 1, 1, 1, 33, 25);
-            constraints.anchor = GridBagConstraints.EAST;
-            gridbag.setConstraints(pValueLabel, constraints);
-            this.add(pValueLabel);
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 25);
+            constraints.anchor = GridBagConstraints.WEST;
+            pValSelectionPanelgrid.setConstraints(pValueLabel, constraints);
+            pValSelectionPanel.add(pValueLabel);
             
             pValueInputField = new JTextField("0.01", 7);
             pValueInputField.setMinimumSize(new Dimension(50, 20));
-            buildConstraints(constraints, 1, 1, 1, 1, 33, 0);
-            constraints.anchor = GridBagConstraints.WEST;
-            gridbag.setConstraints(pValueInputField, constraints);
-            this.add(pValueInputField);
-            
+            buildConstraints(constraints, 2, 0, 1, 1, 33, 0);
+            constraints.anchor = GridBagConstraints.EAST;
+            pValSelectionPanelgrid.setConstraints(pValueInputField, constraints);
+            pValSelectionPanel.add(pValueInputField);
+
+	        buildConstraints(constraints, 0, 1, 2, 1, 33, 25);
+	        constraints.anchor = GridBagConstraints.EAST;
+	        constraints.fill=GridBagConstraints.HORIZONTAL;
+	        gridbag.setConstraints(pValSelectionPanel, constraints);
+            this.add(pValSelectionPanel);
+	        
             constraints.anchor = GridBagConstraints.CENTER;
             
             
@@ -1037,6 +1056,7 @@ public class RPInitBox extends AlgorithmDialog {
             ButtonGroup chooseCorrection = new ButtonGroup();
             chooseCorrection.add(falseNumButton);
             chooseCorrection.add(falsePropButton);
+            chooseCorrection.add(pValueButton);
             //stdBonfButton.setEnabled(false);
             //adjBonfButton.setEnabled(false);
             
