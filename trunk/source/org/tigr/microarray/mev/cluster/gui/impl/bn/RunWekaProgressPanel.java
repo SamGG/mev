@@ -16,7 +16,8 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 
 	public RunWekaProgressPanel() {		setTitle("Running Data Mining...");   		
 		cancelButton = new JButton("Cancel");
-		cancelButton.setPreferredSize(new Dimension(150, 50));
+		cancelButton.setPreferredSize(new Dimension(100, 30));
+		cancelButton.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 		cancelButton.setActionCommand("cancel");
 		cancelButton.addActionListener(this);
 		progressPanel = new JPanel(new BorderLayout());
@@ -27,8 +28,21 @@ public class RunWekaProgressPanel extends JFrame implements WindowListener, Acti
 		progressBar.setString("");
 		progressBar.setStringPainted(true);		progressBar.setPreferredSize(new Dimension(310, 30));
 
+		JTextField jTextField1;
+	    JTextField jTextField2;
+	    jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+		jTextField1.setEditable(false);
+        jTextField1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        jTextField1.setPreferredSize(new Dimension(100, 30));
 
-		progressPanel.add(progressBar, BorderLayout.PAGE_START);		progressPanel.add(cancelButton, BorderLayout.CENTER);
+        jTextField2.setEditable(false);
+        jTextField2.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        jTextField2.setPreferredSize(new Dimension(100, 30));
+        
+		progressPanel.add(progressBar, BorderLayout.PAGE_START);
+		progressPanel.add(jTextField1, BorderLayout.LINE_START);		progressPanel.add(cancelButton, BorderLayout.CENTER);
+		progressPanel.add(jTextField2, BorderLayout.LINE_END);
 		progressPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));		setContentPane(progressPanel);
 
 		progressPanel.setOpaque(true);		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
