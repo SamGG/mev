@@ -81,23 +81,8 @@ public class BNGUI implements IClusterGUI {
 	private JCheckBox finalThreshBox;
 	private JTextField confThreshField;
 	private JButton updateNetwork;
-	//New vars
-	//private File labelFile = null;
-	//JTable BNClassTable;
-	//private BNClassTableModel kModel;
+	
 	private String basePath;
-	//private Properties props = null;
-	//private boolean isBootstraping = false;
-	//private String numBin;
-	//private int numClasses;
-	//private String[] label;
-	//private String sType;
-	//private String sAlgorithm;
-	//private String numParents;
-	//private boolean useArc;
-	//private int numIterations = 100;
-	//private float confThreshold = 0.07f;
-	//private int kfold = 10;
 	private String evalStr = null;
 	private String XmlBifStr = null;
 	private String evalStrs[] = null;
@@ -106,21 +91,16 @@ public class BNGUI implements IClusterGUI {
 	private String bootNetFile = null;
 	private Vector<String> interactionsfinal = null;
 	private String finalBootFile = null;
-	//private Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();
-	//End New vars
+	
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		
-		//done = false;
-		//run = false;
-		//cancelRun = false;
-		//prior = true;
 		this.framework = framework;
 		mainFrame = (JFrame)(framework.getFrame());
 		data = framework.getData();
 		Experiment exp = data.getExperiment();
 		//exp.getGeneIndexMappedToData(row);
 		ClusterRepository repository = framework.getClusterRepository(Cluster.GENE_CLUSTER);
-		// String easeFileLocation = null;
+		
 		String chipType = null;
 		String species = null;
 		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
