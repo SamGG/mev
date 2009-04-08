@@ -3907,8 +3907,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         mainViewerNode.add(experViewer);
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VARIANCES_MODE))));
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(0, CentroidUserObject.VALUES_MODE))));
-        mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Gene Table View", tabViewer, new Integer(0))));
         mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Sample Table View", sampleTabViewer, new Integer(0))));
+        mainViewerNode.add(new DefaultMutableTreeNode(new LeafInfo("Gene Table View", tabViewer, new Integer(0))));
         
         tree.expandPath(new TreePath(clusterNode.getPath()));
         tree.setSelectionRow(1);
