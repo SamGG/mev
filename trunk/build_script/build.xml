@@ -20,7 +20,6 @@
     <property name="lib.dir" location="${home.dir}/lib"/>
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
-	<property name="version" value="4_3"/> 
 	<property name="package.dir" location="${home.dir}/deploy"/>
 	
 
@@ -176,6 +175,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     	<echo level="info" message="lib.dir: ${lib.dir}" />
         <delete dir="${dest.dir}"/>
         <mkdir dir="${dest.dir}"/>
+
+    	<ant target="record-versioning-info"/>
     </target>
 
 
@@ -1802,7 +1803,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 -->
 	<!-- svn version stuff -->
 	<target name="record-versioning-info">
-		<exec executable="SubWCRev.exe" osfamily="Windows">
+		<exec failifexecutionfails="false" executable="SubWCRev.exe" osfamily="Windows">
 			<arg value="${home.dir}"/>
 			<arg value="${basedir}/build.properties_template"/>
 	 		<arg value="${source.dir}/org/tigr/microarray/mev/build.properties"/>
@@ -1812,7 +1813,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	
 	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
 	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
-	<target name="build-package" depends="clean, record-versioning-info, build-all">
+	<target name="build-package" depends="clean, build-all">
 
 		
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
@@ -1824,7 +1825,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		has been converted to pdf and placed in the user_docs directory. "/>
 		
 		<mkdir dir="${package.dir}"/>
-		
+		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
 		<property name="mev_version.dir" value="MeV_${version}"/>
 		<mkdir dir="${package.dir}/${mev_version.dir}"/>
 
@@ -1840,10 +1841,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
 			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
 		</copy>
-		<zip destfile="${package.dir}/MeV_${version}_source.zip"
-			basedir="${source.dir}"
-			excludes=".svn"
-		/>
+
 		
 		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
