@@ -88,7 +88,7 @@ public class InformationPanel extends JPanel {
 	g2.drawString("MeV",40,70);
 	Font InfoFont = new Font("monospaced",Font.BOLD,14);
 	g2.setFont(InfoFont);
-	g2.drawString("Version "+TMEV.VERSION,40,90);
+	g2.drawString("Version "+TMEV.getVersion(),40,90);
 	int CurrentPosition=150;
 	g2.setColor(new Color(155,180,215));
 	//g2.drawString("Version 1.0 Beta",40,CurrentPosition);

@@ -59,8 +59,6 @@ import org.tigr.util.awt.ImageScreen;
 public class TMEV {
     private static final String MEV_URL_PROPERTIES_LOCATION = "http://www.tm4.org/mev/mev_url.properties";
 
-	public final static String VERSION = "4.3";
-    
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;
     public final static int DB_LOGIN = 1002;
@@ -155,7 +153,9 @@ public class TMEV {
     	mevPropertiesFile = new File(mevUserDir, "mev.properties");
     	try {
 
-            System.out.println("MultiExperimentViewer - version "+TMEV.VERSION+" - " + System.getProperty("os.name"));
+            loadBuildProperties();
+            
+            System.out.println("MultiExperimentViewer - version "+getVersion()+" - " + System.getProperty("os.name"));
             String Java3DTitle, Java3DVendor, Java3DVersion;
             InformationPanel info = new InformationPanel();
             try {
@@ -170,7 +170,6 @@ public class TMEV {
             }
             
             os = System.getProperty("os.name");
-            loadBuildProperties();
 
             //System.out.println(System.currentTimeMillis());
             System.out.println("Java Runtime Environment version: "+System.getProperty("java.version"));
@@ -280,7 +279,12 @@ public class TMEV {
 			Manager.createNewMultipleArrayViewer();
 		}
 	}
- 
+    public static String getVersion() {
+    	String temp =buildProps.getProperty("PACKAGE-MAJOR-VERSION", "unknown") + "." +buildProps.getProperty("PACKAGE-MINOR-VERSION", "unknown") + "." + buildProps.getProperty("PACKAGE-MICRO-VERSION", "unknown");
+    	if(temp.contains("unknown"))
+    		return "unknown";
+    	return temp;
+    }
     public static void loadAnnotationsURLs(File urlsFile) throws FileNotFoundException, InvalidAnnMappingFileException {
     	if (PublicURL.loadURLs(urlsFile) != 0) {
     		throw new InvalidAnnMappingFileException();
