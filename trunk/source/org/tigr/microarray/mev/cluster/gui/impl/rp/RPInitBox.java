@@ -236,14 +236,14 @@ public class RPInitBox extends AlgorithmDialog {
                     oneClassmulg = new JTabbedPane();
                     oneClassmulg.add("Button Selection", oneClassPanel);
                     oneClassmulg.add("Cluster Selection", oneClassClusterSelectorPanel);
-                    oneClassmulg.setSelectedIndex(0);//set to always be button selection
+                    oneClassmulg.setSelectedIndex(1);//set to be cluster selection
                     if (repository==null||repository.isEmpty())
                     	oneClassmulg.setSelectedIndex(0);
                     
                     twoClassmulg = new JTabbedPane();
                     twoClassmulg.add("Button Selection", twoClassPanel);
                     twoClassmulg.add("Cluster Selection", twoClassClusterSelectorPanel);
-                    twoClassmulg.setSelectedIndex(0);//set to always be button selection
+                    twoClassmulg.setSelectedIndex(1);//set to be cluster selection
                     if (repository==null||repository.isEmpty())
                     	twoClassmulg.setSelectedIndex(0);
                     
