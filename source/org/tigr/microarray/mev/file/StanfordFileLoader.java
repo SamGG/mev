@@ -120,9 +120,10 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     	if (this.sflp.getXColumn()==0){
     		JOptionPane.showMessageDialog(null, 
 					"The selected file has no gene annotation and cannot be loaded. " +
+					"\n" +
 					"\nPlease make sure you have selected an EXPRESSION value in the file loader table." +
 					"\nThe 1st column cannot contain expression values.", 
-					"Missing annotation error", JOptionPane.ERROR_MESSAGE, null);
+					"Missing Annotation Error", JOptionPane.ERROR_MESSAGE, null);
     		return null;
     	}
     		
