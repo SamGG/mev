@@ -117,6 +117,15 @@ public class StanfordFileLoader extends ExpressionFileLoader {
     }
 
     public Vector<ISlideData> loadExpressionFiles() throws IOException {
+    	if (this.sflp.getXColumn()==0){
+    		JOptionPane.showMessageDialog(null, 
+					"The selected file has no gene annotation and cannot be loaded. " +
+					"\nPlease make sure you have selected an EXPRESSION value in the file loader table." +
+					"\nThe 1st column cannot contain expression values.", 
+					"Missing annotation error", JOptionPane.ERROR_MESSAGE, null);
+    		return null;
+    	}
+    		
         return loadStanfordExpressionFile(new File(this.sflp.fileNameTextField.getText()), 
         		this.sflp.getXRow()+1,
         		this.sflp.getXColumn());
