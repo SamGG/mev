@@ -899,7 +899,6 @@ public class RP extends AbstractAlgorithm{
 		for (int i=0; i<numGroupA; i++){
 			for (int j=0; j<numGroupB; j++){
 				for (int k=0; k<numGenes; k++){
-//					adata[col][k] = Math.log(Math.pow(2,dataGroupB.get(k, j))/Math.pow(2,dataGroupA.get(k, i)));
 					adata[col][k] = dataGroupB.get(k, j)-dataGroupA.get(k, i);
 				}
 				col++;
@@ -940,7 +939,6 @@ public class RP extends AbstractAlgorithm{
 	    //begin permutation-based estimation
 
 	    //////////*************************
-//	    double[][]randomRankProductMatrix = new double[numGenes][numPerms];
 	    double[] trynewarray= new double[numGenes*numPerms];
 	    int ind = 0;
 	    for (int perm = 0; perm < numPerms; perm++) {
@@ -951,14 +949,6 @@ public class RP extends AbstractAlgorithm{
 	    	float[][] groupARand= new float[dataGroupA.getColumnDimension()][numGenes];
 	    	float[][] groupBRand= new float[dataGroupB.getColumnDimension()][numGenes];
 	    	updateProgressBar();
-//            int[] permutedExpts = new int[1];
-//            Vector validExpts = new Vector();
-//            
-//            for (int j = 0; j < inGroupAssignments.length; j++) {
-//                if (inGroupAssignments[j] != 0) {
-//                    validExpts.add(new Integer(j));
-//                }
-//            }
             
             FloatMatrix permutedMatrix = getPermutedMatrix(expMatrix);
             groupARand = permutedMatrix.getMatrix(0, permutedMatrix.getRowDimension()-1, groupAAss).A;
@@ -968,7 +958,6 @@ public class RP extends AbstractAlgorithm{
 		    for (int i=0; i<groupARand[0].length; i++){
 			    for (int j=0; j<groupBRand[0].length; j++){
 			    	for (int g=0; g<numGenes; g++){
-//			    		randPairs[x][g]=Math.pow(2,groupBRand[g][j])/Math.pow(2,groupARand[g][i]);
 			    		randPairs[x][g]=groupBRand[g][j]-groupARand[g][i];
 			    	}
 			    	x++;
@@ -993,84 +982,12 @@ public class RP extends AbstractAlgorithm{
 		    	for (int j = 0; j<numOfPairs; j++){
 		    		permutedRankProduct = permutedRankProduct*(randPairs[j][i]+1)/numGenes;
 		    	}
-//		    	randomRankProductMatrix[i][perm] = permutedRankProduct;
 		    	trynewarray[ind]= numGenes*Math.pow(permutedRankProduct, 1f/(float)adata.length);
 		    	ind++;
 		    	permutedRankProduct = 1;
 		    }
-		    //Arrays.sort(randomRankProductMatrix[perm]);
         }
-//	    for (int i = 0; i<numGenes; i++){
-//	    	Arrays.sort(randomRankProductMatrix[i]);
-//	    }
 	    Arrays.sort(trynewarray);
-	    //////////*************************
-	    
-
-	    
-	    /**  Commented Good code
-	     * 
-	    double[][]randomRankProductMatrix = new double[numPerms][numGenes];
-	    for (int permutations=0; permutations<numPerms; permutations++){
-	    	if (stop)
-	    		break;
-	    	updateProgressBar();
-	    	float[][] groupARand= new float[dataGroupA.getColumnDimension()][numGenes];
-	    	float[][] groupBRand= new float[dataGroupB.getColumnDimension()][numGenes];
-	    	double[][] randPairs = new double[numOfPairs][numGenes];
-		    int[][] intRanksMatrix = new int[numOfPairs][numGenes];
-		    for (int i=0; i<numOfPairs; i++){
-		    	for (int j=0; j<numGenes; j++){
-			    	intRanksMatrix[i][j] = (int)adata[i][j]-1;
-			    }
-		    }
-		    for (int i=0; i<groupARand.length; i++){
-		    	for (int j=0; j<numGenes; j++){
-		    		groupARand[i][j]=10*(float)Math.random()+1;
-		    	}
-		    }
-		    for (int i=0; i<groupBRand.length; i++){
-		    	for (int j=0; j<numGenes; j++){
-		    		groupBRand[i][j]=10*(float)Math.random()+1;
-		    	}
-		    }
-		    int x=0;
-		    for (int i=0; i<groupARand.length; i++){
-			    for (int j=0; j<groupBRand.length; j++){
-			    	for (int g=0; g<numGenes; g++){
-			    		randPairs[x][g]=Math.pow(2,groupBRand[j][g])/Math.pow(2,groupARand[i][g]);
-			    	}
-			    	x++;
-			    }
-		    }
-
-			double[] order = new double[numGenes];
-			for (int i=0; i<order.length; i++){
-				order[i]=i;
-			}
-		    for (int i=0; i< numOfPairs; i++){
-		    	ExperimentUtil.sort2(randPairs[i], order);
-		    	
-		    	for (int j=0; j<numGenes; j++){
-		    		randPairs[i][j]=j+1.0;
-		    	}
-		    	ExperimentUtil.sort2(order, randPairs[i]);
-		    }
-
-		    for (int i = 0; i<numGenes; i++){
-		    	double permutedRankProduct = 1;
-		    	for (int j = 0; j<numOfPairs; j++){
-		    		permutedRankProduct = permutedRankProduct*(randPairs[j][i]+1)/numGenes;
-		    	}
-		    	randomRankProductMatrix[permutations][i] = permutedRankProduct;
-		    	permutedRankProduct = 1;
-		    }
-		    Arrays.sort(randomRankProductMatrix[permutations]);
-	    }
-
-	    */
-	    
-	    
 	    
 	    event.setDescription("Finding q-values");
 	    progress=0;
@@ -1084,43 +1001,8 @@ public class RP extends AbstractAlgorithm{
 	    
 	    double[] expectedPDown = new double[numGenes];
 	    double[] expectedPUp = new double[numGenes];
-//	    int totalC=0;
 	    totalProgressStep2 = expectedPDown.length;
 	    
-	   /*
-	    if (upDown==2 || upDown==3){
-		    event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Finding Down Regulated q-values...");
-	    	event.setId(AlgorithmEvent.PROGRESS_VALUE);
-	    	event.setIntValue(0);
-	    	for (int h=0; h<numGenes;h++){
-		    	totalC=0;
-		    	updateProgressBar2();
-			    for (int i=0; i<randomRankProductMatrix.length; i++){
-		    		int c;
-		    		c=-Arrays.binarySearch(randomRankProductMatrix[i], rankProductArrayDown[h])-1;
-		    		if (c<0)
-			    		c=Arrays.binarySearch(randomRankProductMatrix[i], rankProductArrayDown[h]);
-		    		totalC=totalC+c;
-			    }
-			    expectedPDown[h]=(double)totalC/numPerms;
-		    }
-	    }
-	    if (upDown==1 || upDown==3){
-		    event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Finding Up Regulated q-values...");
-	    	progress=0;
-	    	event.setId(AlgorithmEvent.PROGRESS_VALUE);
-	    	event.setIntValue(0);
-	    	for (int h=0; h<numGenes;h++){
-		    	updateProgressBar2();
-			    	int c;
-		    		c=-Arrays.binarySearch(randomRankProductMatrix[h], rankProductArrayUp[h])-1;
-		    		if (c<0)
-			    		c=Arrays.binarySearch(randomRankProductMatrix[h], rankProductArrayUp[h]);
-			    expectedPUp[h]=(double)c;
-		    }
-	    }
-	    */
-	                       
 	    if (doDown){
 		    event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Finding Down Regulated q-values...");
 	    	event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -1148,7 +1030,6 @@ public class RP extends AbstractAlgorithm{
 			    expectedPUp[h]=(double)c/numPerms;
 		    }
 	    }
-	    
 	    
 	    sigGenesArrays = new int[3][];
 	    if (doDown){
@@ -1210,7 +1091,6 @@ public class RP extends AbstractAlgorithm{
 			    		sigGenesDownCounter++;
 			    }
 		    }
-
 		    
 		    sigGenesArrays[0] = new int[sigGenesDownCounter];
 	 		int counters=0;
@@ -1352,10 +1232,6 @@ public class RP extends AbstractAlgorithm{
 	    for (int i=0; i<sigGenesArrays[2].length; i++){
 	    	sigGenesArrays[2][i]=insigGenes.get(i);
 	    }
-	    
-//	    for (int i=0; i<sigGenesArrays[1].length; i++){
-//	    	System.out.println(getFoldChange(sigGenesArrays[1][i]));
-//	    }
 	}
     protected FloatMatrix getPermutedMatrix(FloatMatrix inputMatrix) {
     	int[] validArray = new int[numGenes];
@@ -1437,7 +1313,5 @@ public class RP extends AbstractAlgorithm{
     	for (int i=0; i<result.length;i++){
     		System.out.print(result[i]+"\t");
     	}
-    	
     }
-    
 }
