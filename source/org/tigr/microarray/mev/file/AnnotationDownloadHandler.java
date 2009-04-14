@@ -200,9 +200,12 @@ public class AnnotationDownloadHandler {
 	protected void updateArrayList(String organismName) {
 		arrayListBox.removeAllItems();
 		Vector<String> annFileKeyBoxItems = annotationLists.get(organismName);
-		if(annFileKeyBoxItems == null)
+		if(annFileKeyBoxItems == null) {
 			annFileKeyBoxItems = new Vector<String>();
-		annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
+		}
+		if(!annFileKeyBoxItems.get(0).equals(CHOOSE_ARRAY)) {
+			annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
+		}
 		for (int i = 0; i < annFileKeyBoxItems.size(); i++) {
 			arrayListBox.addItem(annFileKeyBoxItems.elementAt(i));
 		}
