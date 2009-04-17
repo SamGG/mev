@@ -1150,6 +1150,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
 				String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
 				String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+				String pluginsDir = ((String)repInfo.get("cytoscape_plugins_dir")).trim();
 
 				if(codeBase == null || libDir == null) {
 					JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
@@ -1158,6 +1159,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 				BNConstants.setCodeBaseLocation(codeBase);
 				BNConstants.setLibDirLocation(libDir);
+				BNConstants.setPluginsDirLocation(pluginsDir);
 
 				//Check if cluster size exceeds max genes allowed
 				if(getSelectedCluster().getSize() > BNConstants.MAX_GENES) {

@@ -1333,6 +1333,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
 		    	String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
 		    	String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+		    	String pluginsDir = ((String)repInfo.get("cytoscape_plugins_dir")).trim();
 		    	
 		    	if(codeBase == null || libDir == null) {
 		    		JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
@@ -1341,6 +1342,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 				
 		    	BNConstants.setCodeBaseLocation(codeBase);
 		    	BNConstants.setLibDirLocation(libDir);
+		    	BNConstants.setPluginsDirLocation(pluginsDir);
 		    	
 				// Validate if selected options have supporting file(s)
 				String fileBase = configPanel.getBaseFileLocation();

@@ -71,7 +71,7 @@ public class XGMMLGenerator {
 		//System.out.println("XGMML Field Count " + fieldNames.length);
 		for(int i = 0; i < fieldNames.length; i++) {
 			String _tmp[] = data.getElementAnnotation(rowInd, fieldNames[i]);
-			//System.out.println("XGMML Field Nmae " + fieldNames[i]);
+			//System.out.println("XGMML Field Name " + fieldNames[i]);
 			//System.out.println("XGMML Field Value " + _tmp[0].trim());
 			if(_tmp[0].trim().equalsIgnoreCase("na")) {
 				_tmp[0] = "";
@@ -89,6 +89,9 @@ public class XGMMLGenerator {
 			node += createNodeAttribute(fieldNames[i], _tmp[0], nodeType);
 			nodeType = "string";
 		}
+		//Hack to make a node level cpt attribute
+		//node += createDummyNodeAttribute("cpt", "");
+		
 		node += "    <graphics type='ELLIPSE' width='2' fill='#FFCC99' outline='#CC9900' >" + lineSep;
 		node += "    	<att name='cytoscapeNodeGraphicsAttributes'>" + lineSep;
 		node += "    		<att name='nodeLabelFont' value='Default-0-12'/>" + lineSep;
@@ -119,6 +122,8 @@ public class XGMMLGenerator {
 	 */
 	public static String createNodeAttribute(String attribName, String attribValue, String nodeType) {
 		String attrib = "";
+		//TODO Commented out Node LIST. Please re-visit
+		/*
 		if(nodeType.equals("list")) {
 			attrib = "    <att type='list' name='" + attribName + "' label='" + attribName + "'>" + lineSep;
 			
@@ -127,10 +132,22 @@ public class XGMMLGenerator {
 	    		attrib += "    	<att type='string' value='" + tokens.nextToken().trim() + "'/>" + lineSep;
 	    	}
 			attrib += "    </att>" + lineSep;
-		} else {
+		} else {*/
 			attrib = "    <att type='string' name='" + attribName + "' value='" + attribValue + "'/>" + lineSep;	
-		}
+		//}
 
+		return attrib;
+	}
+	
+	/**
+	 * Dummy Node attribute to fake CPT attribute
+	 * @param attribName
+	 * @param attribValue
+	 * @return
+	 */
+	public static String createDummyNodeAttribute(String attribName, String attribValue) {
+		String attrib = "";
+		attrib = "    <att type='string' name='" + attribName + "' value='" + attribValue + "'/>" + lineSep;	
 		return attrib;
 	}
 

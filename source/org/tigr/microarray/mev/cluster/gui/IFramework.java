@@ -228,6 +228,8 @@ public interface IFramework {
 
 	public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals);
 
+	public void broadcastNetwork(Vector<int[]> interactions, String type, boolean directionals, String title);
+	
 	public boolean isGaggleConnected();
 
 	public boolean requestGaggleConnect();

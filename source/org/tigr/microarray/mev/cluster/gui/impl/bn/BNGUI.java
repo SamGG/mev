@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -70,6 +71,7 @@ public class BNGUI implements IClusterGUI {
 	//private static boolean run = false;
 	//private static boolean cancelRun = false;
 	//private static boolean prior = true;
+	private static String GAGGLE_SIG = "abrakadabra:";
 
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	HistoryViewer wekaOutputViewer;
@@ -91,6 +93,8 @@ public class BNGUI implements IClusterGUI {
 	private String bootNetFile = null;
 	private Vector<String> interactionsfinal = null;
 	private String finalBootFile = null;
+	
+	private static ProgressMonitor pbar;
 	
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		
@@ -165,15 +169,25 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		}
 		
-		RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
-		pgPanel.setString("Learning Network priors");
-		pgPanel.setIndeterminate(true);
-		pgPanel.setLocationRelativeTo(framework.getFrame());
-		//pgPanel.setLocation((screenSize.width-framework.getFrame().getSize().width)/2,(screenSize.height-framework.getFrame().getSize().height)/2);
-		pgPanel.setVisible(true);
+		//Progress Monitor
+		pbar = new ProgressMonitor(framework.getFrame(), "Monitoring Progress", "Initializing . . .", 0, 3);
+		pbar.setMillisToPopup(0);
+		pbar.setProgress(0);
+		//
+		
+		//RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
+		//pgPanel.setString("Learning Network priors");
+		//pgPanel.setIndeterminate(true);
+		//pgPanel.setLocationRelativeTo(framework.getFrame());
+		//pgPanel.setVisible(true);
 
 		try {
+			pbar.setNote("Mapping Genes to UID");
 			this.probeIndexAssocHash = Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
+			if(pbar.isCanceled()) {
+				pbar.close();
+				return null;
+			}
 			if(this.probeIndexAssocHash == null){
 				throw new Exception("Error in mapping Unique identifiers to Accession");
 			}
@@ -181,26 +195,37 @@ public class BNGUI implements IClusterGUI {
 			//JOptionPane.showMessageDialog(framework.getFrame(), "Error mapping Unique identifiers", "Error!", JOptionPane.ERROR_MESSAGE);
 			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 			LMGUI.done = false;
-			pgPanel.dispose();
+			//pgPanel.dispose();
+			pbar.close();
 			return null;
 		}
 		
+		pbar.setProgress(1);
 		String kegg_sp = dialog.getKeggSpecies();
 		if(kegg_sp != null) kegg_sp = kegg_sp.trim();
 		else kegg_sp = "na";
 
 		//Build Property file for Weka Params
+		pbar.setNote("Building WEKA Property File");
 		Useful.buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
-		
-		//Thread thread = new Thread( new Runnable(){
-		//public void run(){	
-		//if(!dialog.isNone()){		System.out.println(dialog.getBaseFileLocation());
+		if(pbar.isCanceled()) {
+			pbar.close();
+			return null;
+		}
+		pbar.setProgress(2);
+		pbar.setNote("Doing Literature Search..");
+				System.out.println(dialog.getBaseFileLocation());
 		int status = -1;
 		try {
 			status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation(), this.data);
+			if(pbar.isCanceled()) {
+				pbar.close();
+				return null;
+			}
 		} 
 		catch(OutOfMemoryError ofm){
-			pgPanel.dispose();
+			//pgPanel.dispose();
+			pbar.close();
 			//BNGUI.done = false;
 			System.out.println("Out of Memory. Aborting...");
 			JOptionPane.showMessageDialog(framework.getFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Aborting!", JOptionPane.ERROR_MESSAGE);
@@ -209,8 +234,8 @@ public class BNGUI implements IClusterGUI {
 		catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(framework.getFrame(), e.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
-			//BNGUI.done = false;
-			pgPanel.dispose();
+			//pgPanel.dispose();
+			pbar.close();
 			return null;
 		}
 		//literatureMining(true,false,false,dialog.getBaseFileLocation());
@@ -221,8 +246,7 @@ public class BNGUI implements IClusterGUI {
 				if (JOptionPane.showConfirmDialog(framework.getFrame(),
 						"Too many interactions found. \n The process might run out of memory! \n Do you want to continue ? ", "Interaction found: " + status + "!",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-					//BNGUI.done = false;
-					pgPanel.dispose();
+					//pgPanel.dispose();
 					return null;
 				} 
 			}
@@ -231,18 +255,24 @@ public class BNGUI implements IClusterGUI {
 			//BNGUI.done = true;
 			//pgPanel.dispose();
 		} else {
-			//BNGUI.done = false;
-			pgPanel.dispose();
+			//pgPanel.dispose();
+			pbar.setProgress(3);
+			pbar.close();
 			return null;
 		}
+		pbar.close();
 		
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework, false, dialog.getNumberClass(), dialog.getBaseFileLocation());
-		pgPanel.dispose();
+		//pgPanel.dispose();
 		//bnEditor.showModal(true);
 		
 		if(bnEditor.showModal(true) != JOptionPane.OK_OPTION)
 			return null;
 		
+		//Progress Monitor
+		pbar = new ProgressMonitor(framework.getFrame(), "Netwrok Search", "Initializing . . .", 0, 5+dialog.getNumIterations()+1);
+		pbar.setMillisToPopup(0);
+		pbar.setProgress(0);
 		//Start new structure
 		AlgorithmData algData = new AlgorithmData();
 		
@@ -262,18 +292,6 @@ public class BNGUI implements IClusterGUI {
 		//this.label = new String[data.getFeaturesCount()];
 		onOk(dialog.getSelectedCluster(), labelFile, kModel, isBootstraping, numBin, numClasses, sType, sAlgorithm, numParents, kfold, useArc, numIterations, confThreshold);
 		//End New Struct
-
-		/*
-		while(!BNGUI.run){
-			try{
-				Thread.sleep(500);	
-			}catch(InterruptedException x){
-				//ignore;
-			}
-		}
-		*/
-		//if(BNGUI.cancelRun)
-			//return null;
 		
 		//Added to record the Weka output for Observed BN analysis
 		wekaOutputViewer = new HistoryViewer();
@@ -329,24 +347,28 @@ public class BNGUI implements IClusterGUI {
 	 * @param cl
 	 */
 	protected void onOk(Cluster cl, File labelFile, BNClassTableModel kModel, boolean isBootstraping, String numBin, int numClasses, String sType, String sAlgorithm, String numParents, int kfold, boolean useArc, int numIterations, float confThreshold) {
-		//result = JOptionPane.OK_OPTION;
-		//BNClassificationEditor.this.dispose(); 
-		RunWekaProgressPanel runProgressPanel;
-		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		runProgressPanel = new RunWekaProgressPanel();
-		runProgressPanel.setString("Running Network Search");
-		runProgressPanel.setIndeterminate(true);
+
+		//RunWekaProgressPanel runProgressPanel;
+		//runProgressPanel = new RunWekaProgressPanel();
+		//runProgressPanel.setString("Running Network Search");
+		//runProgressPanel.setIndeterminate(true);
 		//runProgressPanel.setLocation((screenSize.width)/2,(screenSize.height)/2);
-		runProgressPanel.setLocationRelativeTo(framework.getFrame());
-		runProgressPanel.setVisible(true);
+		//runProgressPanel.setLocationRelativeTo(framework.getFrame());
+		//runProgressPanel.setVisible(true);
 		
 		String[] label = saveToFile(kModel, numClasses, data.getFeaturesCount(), basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP+"label");
 		if(labelFile != null) {
 			saveToFile(kModel, numClasses, labelFile);
 		}
+		pbar.setNote("Encoding matrix by class labels");
 		saveWekaData(cl, framework, label, basePath+BNConstants.SEP+BNConstants.TMP_DIR);
+		if(pbar.isCanceled()) return;
+		pbar.setProgress(1);
+		pbar.setNote("Transposing matrix");
 		Properties props = tranSaveWeka(isBootstraping, numBin, numClasses, numIterations, basePath+BNConstants.SEP+BNConstants.TMP_DIR);
-
+		if(pbar.isCanceled()) return;
+		pbar.setProgress(2);
+		
 		//Thread thread = new Thread( new Runnable(){
 			//public void run(){
 				try{     
@@ -355,13 +377,18 @@ public class BNGUI implements IClusterGUI {
 					String outarff = "outExpression.arff";
 					
 					//	WEKA on observed Data
+					pbar.setNote("Evaluating Model on Obeserved data");
 					String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 					System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
 					String[] argsWeka = arguments.split(" ");
 					BayesNet bnNetOrg = new BayesNet();
 					evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
+					if(pbar.isCanceled()) return;
+					pbar.setNote("Learning CPT for Obeserved data model");
 					bnNetOrg.estimateCPTs();
 					XmlBifStr = bnNetOrg.toXMLBIF03();
+					if(pbar.isCanceled()) return;
+					pbar.setProgress(3);
 					System.out.println("\t\t ***** Start Eval and Bif Strs");
 					System.out.println("XmlBifStr\n" + XmlBifStr);
 					System.out.println("evalStr\n" + evalStr);
@@ -377,6 +404,7 @@ public class BNGUI implements IClusterGUI {
 					String obsCptFile = obsNetFile + "CPT.xml";
 					
 					//Write CPT file
+					pbar.setNote("Writing CPT file");
 					FileOutputStream fos;
 					PrintWriter pw;	
 					fos = new FileOutputStream(obsCptFile);
@@ -384,6 +412,8 @@ public class BNGUI implements IClusterGUI {
 					pw.print(bnNetOrg.toXMLBIF03());
 					pw.close();
 					fos.close();
+					if(pbar.isCanceled()) return;
+					pbar.setProgress(4);
 					
 					if(!data.isAnnotationLoaded()) {
 						//Create sif file
@@ -396,16 +426,20 @@ public class BNGUI implements IClusterGUI {
 						fos.flush();fos.close();pw.close();
 					}
 					else {
+						pbar.setNote("Writing XGMML network for Observed Data");
 						//create xgmml file
 						obsNetFile += ".xgmml";
 						//Should move completely to Bif CPT format
 						//FromWekaToSif.fromWekaToXgmml(evalStr, fileName, false, probeIndexAssocHash, data);
 						FromWekaToSif.fromWekaBifToXgmml(true, XmlBifStr, obsNetFile, obsCptFile, probeIndexAssocHash, data);
+						if(pbar.isCanceled()) return;
+						pbar.setProgress(5);
 					}					
 					networkFiles.add(0,obsNetFile);
 					//TODO End
 					
 					if(isBootstraping) {	
+						pbar.setNote("Starting Bootstrap");
 						//WEKA On bootstrapped data
 						String outarffbase = props.getProperty("rootOutputFileName");
 						String outarffext = ".arff";
@@ -413,6 +447,7 @@ public class BNGUI implements IClusterGUI {
 						XmlBifStrs = new String[numIterations];
 						for(int i=0; i < numIterations; i++){
 							//Previously created .arff files for bootstrap
+							pbar.setNote("Evalutaion model... Bootstrap" + i+1 + " of " + numIterations);
 							outarff = outarffbase + i + outarffext;
 							arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 							System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
@@ -423,38 +458,49 @@ public class BNGUI implements IClusterGUI {
 							bnNetOrg.estimateCPTs();
 							XmlBifStrs[i] = bnNetOrg.toXMLBIF03();
 							
+							if(pbar.isCanceled()) return;
+							pbar.setProgress(5 + i +i);
 							System.out.println("Bootstrap Itr: " + i);
 						}
 						//if(!BNGUI.cancelRun)
+						pbar.setNote("Creating Newwork from Bootstrap Models");
 						Hashtable<String, Integer> edgesTable = new Hashtable<String, Integer>();
 						bootNetFile = createNetworkFromBootstraps(XmlBifStrs, evalStrs, numIterations, outarffbase, sType, sAlgorithm, kfold, numIterations, confThreshold, edgesTable);
+						if(pbar.isCanceled()) return;
+						pbar.setProgress(5 + numIterations + 1);
 						displayScrollPane(getScrollPanePanel(isBootstraping, sType, sAlgorithm, kfold, numIterations, edgesTable));
 					}
 				} catch(OutOfMemoryError ofm){
-					runProgressPanel.dispose();
+					//runProgressPanel.dispose();
+					pbar.close();
 					System.out.println("Error: Out of Memory..");
 					ofm.printStackTrace();
 					JOptionPane.showMessageDialog(new JFrame(), ofm.getMessage() + "\n Out of Memory", "Error - Out of Memory. Cannot Continue!", JOptionPane.ERROR_MESSAGE);
 					//BNGUI.run = true;
 					//BNGUI.cancelRun = true;
 				} catch(IOException ioE){
+					pbar.close();
 					ioE.printStackTrace(); 
 					JOptionPane.showMessageDialog(null, ioE.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 				} catch(NullArgumentException nae){
+					pbar.close();
 					nae.printStackTrace(); 
 					JOptionPane.showMessageDialog(null, nae.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 				} catch (SAXException e) {
+					pbar.close();
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Error processing Weka Bif DOM", "Error", JOptionPane.ERROR_MESSAGE);
 				} catch(Exception ex){
-					runProgressPanel.dispose();
+					//runProgressPanel.dispose();
+					pbar.close();
 					System.out.println("Weka exception..");
 					ex.printStackTrace();
 					JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error!", JOptionPane.ERROR_MESSAGE);
 					//BNGUI.run = true;
 					//BNGUI.cancelRun = true;
 				}
-				runProgressPanel.dispose();
+				//runProgressPanel.dispose();
+				pbar.close();
 				//if(!BNGUI.cancelRun)
 				//displayScrollPane(getScrollPanePanel());
 				//Call Webstart with Files
@@ -514,12 +560,12 @@ public class BNGUI implements IClusterGUI {
 		if(isBootstraping){
 			updateNetwork.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					onUpdateNetwork(sType, sAlgorithm, kfold, numIterations, edgesTable);
+					String cptFile = onUpdateNetwork(sType, sAlgorithm, kfold, numIterations, edgesTable);
 					// Try Cytoscape Broadcast
 					if(!framework.isGaggleConnected()) {
 						if(framework.requestGaggleConnect()) {
 							try {
-								broadcastNetworkGaggle(interactionsfinal);
+								broadcastNetworkGaggle(interactionsfinal, GAGGLE_SIG+cptFile);
 							} catch (Exception e) {
 								JOptionPane.showMessageDialog(null, "Error Using Gaggle Broadcast", "Error", JOptionPane.ERROR_MESSAGE);
 								e.printStackTrace();
@@ -552,7 +598,8 @@ public class BNGUI implements IClusterGUI {
 	 * Creates interactions & network files
 	 *
 	 */
-	protected void onUpdateNetwork(String sType, String sAlgorithm, int kfold, int numIterations, Hashtable<String, Integer> edgesTable) {
+	protected String onUpdateNetwork(String sType, String sAlgorithm, int kfold, int numIterations, Hashtable<String, Integer> edgesTable) {
+		String outCPTBifXML = "";
 		try {
 			//To track last created network from bootstrap data starts with null
 			Vector<String> interactionsPrefinal = null;
@@ -579,7 +626,7 @@ public class BNGUI implements IClusterGUI {
 									Useful.getUniqueFileID()+ sAlgorithm + "_" + sType + "_" +
 									"boot_result_"+numIterations+"_"+confThres;
 			
-			String outCPTBifXML = _bootNetFile + "_CPT.xml";
+			outCPTBifXML = _bootNetFile + "_CPT.xml";
 			
 			//Write network File
 			if(!data.isAnnotationLoaded()) {
@@ -624,11 +671,11 @@ public class BNGUI implements IClusterGUI {
 					if(interactionsPrefinal != null) {
 						if(interactionsPrefinal.size() > 0) {
 							JOptionPane.showMessageDialog(mainFrame, "Last network not avaialble. Aborting.", "Warning", JOptionPane.INFORMATION_MESSAGE);
-							return;
+							return null;
 						}
 					} else {
 						JOptionPane.showMessageDialog(mainFrame, "Last network not avaialble. Aborting.", "Warning", JOptionPane.INFORMATION_MESSAGE);
-						return;
+						return null;
 					}
 				}
 				
@@ -647,6 +694,7 @@ public class BNGUI implements IClusterGUI {
 			JOptionPane.showMessageDialog(null, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();
 		}
+		return outCPTBifXML;
 	}
 
 	private void saveToFile(BNClassTableModel kModel, int numClasses, File file) {
@@ -1015,11 +1063,12 @@ public class BNGUI implements IClusterGUI {
 	/**
 	 * Broadcasts a list of edges as a network to Cytoscape using Gaggle
 	 * @param interacts a list of edges encoded with node labels and probe index id
+	 * @param cptFile 
 	 */
-	protected void broadcastNetworkGaggle(Vector<String> interacts) {
+	protected void broadcastNetworkGaggle(Vector<String> interacts, String cptFile) {
 		Vector<int[]> interactions = new Vector<int[]>();
-		Vector<String> types = new Vector<String>();
-		Vector<Boolean> directionals = new Vector<Boolean>();
+		//Vector<String> types = new Vector<String>();
+		//Vector<Boolean> directionals = new Vector<Boolean>();
 		for(int j=0; j<interacts.size(); j++) {
 			//String uid = this.data.getSlideDataElement(0,rows[j]).getFieldAt(0);
 			// Of the form XXXXXX pp XXXXXX
@@ -1031,11 +1080,11 @@ public class BNGUI implements IClusterGUI {
 			fromTo[0] = Integer.parseInt(tmp[0]);
 			tmp = probeIndexAssocHash.get(edgeLabels[2]).split("-");
 			fromTo[1] = Integer.parseInt(tmp[0]);
-			types.add("pd");
-			directionals.add(true);
+			//types.add("pd");
+			//directionals.add(false);
 			interactions.add(fromTo);
 		}
-		framework.broadcastNetwork(interactions, types, directionals);
+		framework.broadcastNetwork(interactions, "pd", true, cptFile);
 	}
 
 	//End New Support Function
