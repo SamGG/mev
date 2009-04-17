@@ -113,6 +113,7 @@ import org.systemsbiology.gaggle.geese.common.*;
 import org.systemsbiology.gaggle.util.MiscUtil;
 import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.action.ActionManager;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.annotation.GenomeAnnoDialog;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
@@ -5993,13 +5994,14 @@ private void appendResourcererGeneAnnotation() {
     		gaggleConnectWarning();
     		return;
     	}
-		Network nt = new Network();
+		Network nt = new Network();		
     	nt.setSpecies(getCurrentSpecies());
     	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
     	String[] allFields = data.getFieldNames();
     	for(int i=0; i<interactions.size(); i++) {
     		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
     		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+    		
     		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
     		
     		nt.add(tempInt);
@@ -6021,6 +6023,58 @@ private void appendResourcererGeneAnnotation() {
     	nt.setName("MeV Network (" + nt.getNodes().length + ")");
     	MultipleArrayViewer.this.doBroadcastNetwork(nt);
     }
+    
+    /**
+     * Funtion to create Network for Gaggle Broadcast
+     * @author raktim
+     * @param interactions contains index of 2 probes representing source and target nodes
+     * @param type interaction type - pd, pp etc.
+     * @param directionals - true if graph is directed else otherwise
+     * @param title - name of the network, hacked to pass CPT file name
+     */
+    public void broadcastNetwork(Vector<int[]> interactions, String type, boolean directionals, String title) {
+    	if(!isGaggleConnected()) {
+    		gaggleConnectWarning();
+    		return;
+    	}
+		Network nt = new Network();
+		
+    	nt.setSpecies("");
+    	
+		String[] allFields = data.getFieldNames();
+    	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
+    	
+    	for(int i=0; i<interactions.size(); i++) {
+    		String source = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[0]})[0];
+    		String target = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[1]})[0];
+    		//String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
+    		//String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
+    		
+    		Interaction tempInt = new Interaction(source, target, type, directionals);
+    		//Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
+    		
+    		nt.add(tempInt);
+    		
+    		if(!nodeAnnotations.containsKey(source)) {
+    			nodeAnnotations.put(source, new String[0]);
+    			for(String field: allFields) {
+        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+        			//System.out.println(source + " " + field + " " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+    			}
+    		}
+    		if(!nodeAnnotations.containsKey(target)) {
+    			nodeAnnotations.put(target, new String[0]);
+    			for(String field: allFields) {
+    				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    				//System.out.println(target + " " + field + " " + data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    			}
+    		}
+    	}
+
+    	nt.setName(title);
+    	MultipleArrayViewer.this.doBroadcastNetwork(nt);
+    }
+
     public boolean isGaggleConnected() {
 		return isConnected;
     }

@@ -45,8 +45,8 @@ public class BNDownloadManager {
 	// Generic FTP related Constants
 	private String FTP_REMOTE_FILE_OR_DIR;
 	private boolean isDir = false;
-
-	private static String FTP_CONFIG_URL = "http://www.tm4.org/mev/mev_url.properties";
+	//TODO Change testing URL
+	private static String FTP_CONFIG_URL = "http://web-dev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt"; //"http://www.tm4.org/mev/mev_url.properties";
 	private String FTP_SERVER;    
 	private String REPOSITORY_ROOT;
 

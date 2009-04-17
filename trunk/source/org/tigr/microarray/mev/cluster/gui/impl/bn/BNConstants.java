@@ -146,8 +146,10 @@ public class BNConstants {
 	 */
 	private static String CODE_BASE = "";
 	private static String LIB_DIR = "";
+	private static String PLUGINS_DIR = "";
 	private static boolean CODE_BASE_SET = false;
 	private static boolean LIB_DIR_SET = false;
+	private static boolean PLUGINS_DIR_SET = false;
 	
 	public static void setCodeBaseLocation(String path){
 		CODE_BASE = path;
@@ -168,6 +170,15 @@ public class BNConstants {
 	}
 	
 	public static boolean isSetCytoscapeParams() {
-		return CODE_BASE_SET | LIB_DIR_SET;
+		return CODE_BASE_SET | LIB_DIR_SET | PLUGINS_DIR_SET;
+	}
+
+	public static String gePluginsDirLocation() {
+		return PLUGINS_DIR;
+	}
+	
+	public static void setPluginsDirLocation(String path){
+		PLUGINS_DIR = path;
+		PLUGINS_DIR_SET = true;
 	}
 }
