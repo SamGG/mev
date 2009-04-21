@@ -37,13 +37,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.systemsbiology.gaggle.core.datatypes.Interaction;
+import org.systemsbiology.gaggle.core.datatypes.Network;
 import org.tigr.microarray.mev.HistoryViewer;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -1094,10 +1095,8 @@ public class BNGUI implements IClusterGUI {
 	 */
 	protected void broadcastNetworkGaggle(Vector<String> interacts, String cptFile) {
 		Vector<int[]> interactions = new Vector<int[]>();
-		//Vector<String> types = new Vector<String>();
-		//Vector<Boolean> directionals = new Vector<Boolean>();
+		
 		for(int j=0; j<interacts.size(); j++) {
-			//String uid = this.data.getSlideDataElement(0,rows[j]).getFieldAt(0);
 			// Of the form XXXXXX pp XXXXXX
 			String[] edgeLabels = interacts.get(j).split(" ");
 			System.out.println("Encoding edge: " + edgeLabels[0] + " - " + edgeLabels[2]);
@@ -1107,13 +1106,56 @@ public class BNGUI implements IClusterGUI {
 			fromTo[0] = Integer.parseInt(tmp[0]);
 			tmp = probeIndexAssocHash.get(edgeLabels[2]).split("-");
 			fromTo[1] = Integer.parseInt(tmp[0]);
-			//types.add("pd");
-			//directionals.add(false);
 			interactions.add(fromTo);
 		}
-		framework.broadcastNetwork(interactions, "pd", true, cptFile);
+		Network nt = getGaggleNetwork(interactions, "pd", true, cptFile);
+		framework.broadcastNet(nt);
 	}
 
+	/**
+     * Funtion to create Network for Gaggle Broadcast
+     * @author raktim
+     * @param interactions contains index of 2 probes representing source and target nodes
+     * @param type interaction type - pd, pp etc.
+     * @param directionals - true if graph is directed else otherwise
+     * @param title - name of the network, hacked to pass CPT file name
+     */
+    public Network getGaggleNetwork(Vector<int[]> interactions, String type, boolean directionals, String title) {
+    	
+		Network nt = new Network();
+		
+    	nt.setSpecies("");
+    	
+		String[] allFields = data.getFieldNames();
+    	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
+    	
+    	for(int i=0; i<interactions.size(); i++) {
+    		String source = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[0]})[0];
+    		String target = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[1]})[0];
+    		
+    		Interaction tempInt = new Interaction(source, target, type, directionals);
+    		
+    		nt.add(tempInt);
+    		
+    		if(!nodeAnnotations.containsKey(source)) {
+    			nodeAnnotations.put(source, new String[0]);
+    			for(String field: allFields) {
+        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+        			//System.out.println(source + " " + field + " " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
+    			}
+    		}
+    		if(!nodeAnnotations.containsKey(target)) {
+    			nodeAnnotations.put(target, new String[0]);
+    			for(String field: allFields) {
+    				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    				//System.out.println(target + " " + field + " " + data.getElementAnnotation(interactions.get(i)[1], field)[0]);
+    			}
+    		}
+    	}
+
+    	nt.setName(title);
+    	return nt;
+    }
 	//End New Support Function
 	
 	private DefaultMutableTreeNode createResultTree(Experiment experiment, LMBNViewer fileViewer, HistoryViewer out, GeneralInfo info) {
