@@ -6025,53 +6025,16 @@ private void appendResourcererGeneAnnotation() {
     }
     
     /**
-     * Funtion to create Network for Gaggle Broadcast
+     * Generic function for Gaggle to Broadcast any Network
      * @author raktim
-     * @param interactions contains index of 2 probes representing source and target nodes
-     * @param type interaction type - pd, pp etc.
-     * @param directionals - true if graph is directed else otherwise
-     * @param title - name of the network, hacked to pass CPT file name
+     * @param nt Network as defined by Gaggle datatypes
      */
-    public void broadcastNetwork(Vector<int[]> interactions, String type, boolean directionals, String title) {
+    public void broadcastNet(Network nt) {
     	if(!isGaggleConnected()) {
     		gaggleConnectWarning();
     		return;
     	}
-		Network nt = new Network();
 		
-    	nt.setSpecies("");
-    	
-		String[] allFields = data.getFieldNames();
-    	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
-    	
-    	for(int i=0; i<interactions.size(); i++) {
-    		String source = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[0]})[0];
-    		String target = data.getAnnotationList(AnnotationFieldConstants.GENBANK_ACC, new int[]{interactions.get(i)[1]})[0];
-    		//String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
-    		//String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
-    		
-    		Interaction tempInt = new Interaction(source, target, type, directionals);
-    		//Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
-    		
-    		nt.add(tempInt);
-    		
-    		if(!nodeAnnotations.containsKey(source)) {
-    			nodeAnnotations.put(source, new String[0]);
-    			for(String field: allFields) {
-        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-        			//System.out.println(source + " " + field + " " + data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-    			}
-    		}
-    		if(!nodeAnnotations.containsKey(target)) {
-    			nodeAnnotations.put(target, new String[0]);
-    			for(String field: allFields) {
-    				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
-    				//System.out.println(target + " " + field + " " + data.getElementAnnotation(interactions.get(i)[1], field)[0]);
-    			}
-    		}
-    	}
-
-    	nt.setName(title);
     	MultipleArrayViewer.this.doBroadcastNetwork(nt);
     }
 

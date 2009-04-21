@@ -592,7 +592,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<classpath>
 				<pathelement location="${lib.dir}/ftpbean.jar" />
 				<pathelement location="${lib.dir}/weka.jar" />
-
+				<pathelement location="${lib.dir}/goose.jar" />
 				<!-- jars to support module compilation -->
 				<pathelement location="${lib.dir}/mev-util.jar" />
 				<pathelement location="${lib.dir}/mev-gui-impl.jar" />

@@ -228,7 +228,12 @@ public interface IFramework {
 
 	public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals);
 
-	public void broadcastNetwork(Vector<int[]> interactions, String type, boolean directionals, String title);
+	/**
+     * Generic function for Gaggle to Broadcast any Network
+     * @author raktim
+     * @param nt Network as defined by Gaggle datatypes
+     */
+	public void broadcastNet(org.systemsbiology.gaggle.core.datatypes.Network nt);
 	
 	public boolean isGaggleConnected();
 
