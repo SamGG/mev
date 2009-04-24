@@ -409,13 +409,13 @@ public class TMEV {
 		 * Try to get online and download default properties from tm4.org. If not available, skip. 
 		 * If available, *override* stored user url locations with new ones from website. 
 		 */
-		try {
-			URLConnection conn = new URL(MEV_URL_PROPERTIES_LOCATION).openConnection();
-			InputStream is = conn.getInputStream();
-			props.load(is);
-		} catch (IOException ioe) {
-			System.out.println("Could not download default properties from tm4.org.");
-		}
+//		try {
+//			URLConnection conn = new URL(MEV_URL_PROPERTIES_LOCATION).openConnection();
+//			InputStream is = conn.getInputStream();
+//			props.load(is);
+//		} catch (IOException ioe) {
+//			System.out.println("Could not download default properties from tm4.org.");
+//		}
 
 		/*
 		 * load user's properties from mev.properties file, if any. 
