@@ -174,7 +174,7 @@ public class BNGUI implements IClusterGUI {
 		pbar = new ProgressMonitor(framework.getFrame(), "Monitoring Progress", "Initializing . . .", 0, 4);
 		pbar.setMillisToDecideToPopup(0);
 		pbar.setMillisToPopup(0);
-		pbar.setProgress(1);
+		pbar.setProgress(0);
 		//
 		
 		//RunWekaProgressPanel pgPanel = new RunWekaProgressPanel();
@@ -185,7 +185,7 @@ public class BNGUI implements IClusterGUI {
 
 		try {
 			pbar.setNote("Mapping Genes to UID");
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			this.probeIndexAssocHash = Useful.converter(dialog.getSelectedCluster(),framework,dialog.getBaseFileLocation());
 			if(pbar.isCanceled()) {
 				pbar.close();
@@ -203,25 +203,32 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		}
 		
-		pbar.setProgress(2);
+		pbar.setProgress(1);
+		if(pbar.isCanceled()) return null;
 		String kegg_sp = dialog.getKeggSpecies();
 		if(kegg_sp != null) kegg_sp = kegg_sp.trim();
 		else kegg_sp = "na";
 
 		//Build Property file for Weka Params
 		pbar.setNote("Building WEKA Property File");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Useful.buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
 		if(pbar.isCanceled()) {
 			pbar.close();
 			return null;
 		}
-		pbar.setProgress(3);
-		
+		pbar.setProgress(2);
+		if(pbar.isCanceled()) return null;
 				System.out.println(dialog.getBaseFileLocation());
 		int status = -1;
 		try {
 			pbar.setNote("Doing Literature Search..");
-			Thread.sleep(5000);
+			Thread.sleep(3000);
 			status = literatureMining(dialog.isLit(), dialog.isPPI(), dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.getBaseFileLocation(), this.data);
 			if(pbar.isCanceled()) {
 				pbar.close();
@@ -258,22 +265,27 @@ public class BNGUI implements IClusterGUI {
 				} 
 			}
 			//Generates prior info for Weka
+			pbar.setProgress(3);
 			pbar.setNote("Generating Priors");
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			prepareXMLBifFile(dialog.getBaseFileLocation());
+			if(pbar.isCanceled()) {
+				pbar.close();
+				return null;
+			}
 			//BNGUI.done = true;
 			//pgPanel.dispose();
 		} else {
 			//pgPanel.dispose();
-			pbar.setProgress(4);
 			pbar.close();
 			return null;
 		}
+		pbar.setProgress(4);
 		pbar.close();
 		
 		BNClassificationEditor bnEditor = new BNClassificationEditor(framework, false, dialog.getNumberClass(), dialog.getBaseFileLocation());
@@ -585,21 +597,23 @@ public class BNGUI implements IClusterGUI {
 					String cptFile = onUpdateNetwork(sType, sAlgorithm, kfold, numIterations, edgesTable);
 					// Try Cytoscape Broadcast
 					if(!framework.isGaggleConnected()) {
-						if(framework.requestGaggleConnect()) {
-							try {
-								broadcastNetworkGaggle(interactionsfinal, GAGGLE_SIG+cptFile);
-							} catch (Exception e) {
-								JOptionPane.showMessageDialog(null, "Error Using Gaggle Broadcast", "Error", JOptionPane.ERROR_MESSAGE);
-								e.printStackTrace();
-								if(finalThreshBox.isSelected())
-									resultFrame.dispose();
-								else
-									resultFrame.show();
-							}
-						} else {
-							//TODO just write and file and display msg
-							JOptionPane.showMessageDialog(null, "Could not connect to Gaggle", "Error", JOptionPane.ERROR_MESSAGE);
-						}
+						framework.requestGaggleConnect();					
+					}
+					if(!framework.isGaggleConnected()) {//if still not connected give up
+						//TODO just write and file and display msg
+						JOptionPane.showMessageDialog(null, "Could not connect to Gaggle", "Error", JOptionPane.ERROR_MESSAGE);
+						resultFrame.dispose();
+						return;
+					}
+					try {
+						broadcastNetworkGaggle(interactionsfinal, cptFile);
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Error Using Gaggle Broadcast", "Error", JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+						if(finalThreshBox.isSelected())
+							resultFrame.dispose();
+						else
+							resultFrame.show();
 					}
 				}
 			});
@@ -702,7 +716,7 @@ public class BNGUI implements IClusterGUI {
 				}
 				
 				//Distinct name for final CPT XML File
-				outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FinalNetWithCPT.xml";
+				//outCPTBifXML = basePath+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + "FinalNetWithCPT.xml";
 				resultFrame.hide();
 			}
 			
@@ -1109,6 +1123,7 @@ public class BNGUI implements IClusterGUI {
 			interactions.add(fromTo);
 		}
 		Network nt = getGaggleNetwork(interactions, "pd", true, cptFile);
+		System.out.println("Broadcasting " + nt.getName());
 		framework.broadcastNet(nt);
 	}
 
