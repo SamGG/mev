@@ -631,7 +631,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         	//In the if loop below, the check for data.getFieldNames().length was introduced because
         	//the .TAV files do not have "Field Names"
         
-//        	if(data.getFieldNames().length >0 && labelIndex > data.getFieldNames().length-1) {
+        	if(data.getFieldNames().length >0 && labelIndex > data.getFieldNames().length-1) {
+        	
         		String prefix = "Label by ";
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
         		
@@ -640,9 +641,9 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         			label = ((AnnoAttributeObj)data.getElementAnnotationObject(i, attr)).toString();
         		else
         			label = _temp[0];
-//        	} else {
-//        		label = data.getElementAttribute(i, labelIndex);
-//        	}
+        	} else {
+        		label = data.getElementAttribute(i, labelIndex);
+        	}
             maxWidth = Math.max(maxWidth, fm.stringWidth(label));
         }
         maxLabelWidth = (int)maxWidth;
@@ -667,11 +668,12 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
       //In the if loop below, the check for data.getFieldNames().length was introduced because
     //the .TAV files do not have "Field Names"
         
-//        if(labelIndex > data.getFieldNames().length-1 && (data.getFieldNames()).length >0) { 
+        if(labelIndex > data.getFieldNames().length-1 && (data.getFieldNames()).length >0) { 
         
         	
         	for (int probe = top; probe < bottom; probe++) {
         		String prefix = "Label by ";
+        		
         		String attr = getMenuLabel(labelIndex).substring(prefix.length()).trim();
         		
         		String[] _temp = data.getElementAnnotation(indices[probe], attr);
@@ -685,15 +687,15 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
                     g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
                 }
             }
-//        } else {
-//        	for (int probe = top; probe < bottom; probe++) {
-//	            label = data.getElementAttribute(indices[probe], labelIndex);
-//	            
-//	            if (label != null) {
-//	                g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
-//	            }
-//	        }
-//        }
+        } else {
+        	for (int probe = top; probe < bottom; probe++) {
+	            label = data.getElementAttribute(indices[probe], labelIndex);
+	            
+	            if (label != null) {
+	                g.drawString(label, insets.left + getXSize() + insets.right, insets.top + ((probe +1)*elementSize.height) -1);
+	            }
+	        }
+        }
     }
     
     
