@@ -269,7 +269,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	public Cluster getSelectedCluster(){
 		return this.browser.getSelectedCluster();
 	}
-	
+
 	/** Returns the name of the converter file selected.
 	 * If none selected null is returned.
 	 */
@@ -465,7 +465,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			numLevelsField = new JTextField("3", 1);
 			numLevelsField.setBackground(Color.white);
 
-			numLevelsLabel = new JLabel(" Number of Levels");
+			numLevelsLabel = new JLabel(" Number of States");
 			numLevelsLabel.setBackground(Color.white);
 
 			numLevelsField.addActionListener(new ActionListener() {
@@ -552,11 +552,11 @@ public class BNInitDialog extends AlgorithmDialog {
 			confThresholdField.setBackground(Color.white);
 			confThresholdLabel = new JLabel(" Confidence Threshold");
 			confThresholdLabel.setBackground(Color.white);
-			
+
 			isBootstrappingCheckbox.setEnabled(true);
 			numIterationsField.setEnabled(true);
 			confThresholdField.setEnabled(true);
-			
+
 			add(isBootstrappingCheckbox, 	new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,30),0,0));
 			//add(isBootStrappingLabel, 		new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
 			add(numIterationsLabel, 		new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,5),0,0));
@@ -837,7 +837,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			return null;
 		}
 
-		
+
 		private class BNListListener implements ListSelectionListener {
 			public void valueChanged(ListSelectionEvent listSelectionEvent) {
 				updateFileDirectoryField();
@@ -1311,7 +1311,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				}
 
 				//**End of Validation
-				
+
 				if(bnParamPanel.useAnnBox.isSelected()) {
 					String fileName = bnParamPanel.getConverterFileName();
 					if( fileName == null || fileName.equals("") || fileName.equals(" ") ) {
@@ -1371,6 +1371,23 @@ public class BNInitDialog extends AlgorithmDialog {
 						bootStrapPanel.numIterationsField.grabFocus();
 						return;
 					}
+				}
+
+				//Number of Bins validation
+				try {
+					if(discPanel.getNumLevels() != 3) {
+						JOptionPane.showMessageDialog(parent, "Currently Supports 3 States only\n Up, Neutral and Down", "Error", JOptionPane.ERROR_MESSAGE); 
+						discPanel.numLevelsField.setText("3");
+						discPanel.numLevelsField.grabFocus();
+						return;
+					}
+				}
+				catch (NumberFormatException nfe){
+					//System.out.println("In Try block Excp");
+					JOptionPane.showMessageDialog(parent, "States can be Integers only", "Error", JOptionPane.ERROR_MESSAGE); 
+					discPanel.numLevelsField.setText("3");
+					discPanel.numLevelsField.grabFocus();
+					return;
 				}
 
 				//Create "tmp" & "results" directories if they don't exist report 
