@@ -1083,15 +1083,17 @@ public class ClusterRepository extends Vector {
 	                    }                        
 	                    Color nextColor = getNextDefaultColor();
 	                  	clusterColors.add(nextColor);
-		                    ClusterList list = getClusterOperationsList();
-		                    Color clusterColor = nextColor;
-		                    String clusterLabel = labelArray[label][0];
-		                    String clusterDescription = null;
-		                    this.clusterSerialCounter++;
-		                    Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-		                    addCluster(list, cluster);
-		                    clusterArray.add(cluster);
-		                    
+	                    ClusterList list = getClusterOperationsList();
+	                    Color clusterColor = nextColor;
+	                    String clusterLabel = labelArray[label][0];
+	                    String clusterDescription = null;
+	                    this.clusterSerialCounter++;
+	                    Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+//	                    addCluster(list, cluster);
+
+	                    list.addCluster(cluster);
+	                    updateClusterMembership(cluster);
+	                    clusterArray.add(cluster);
 		            }
         		}
                 framework.getData().setSampleLabelKey(oldLabel);
@@ -1141,7 +1143,9 @@ public class ClusterRepository extends Vector {
     		                this.clusterSerialCounter++;
     		                Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", 
     		                		clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-    		                addCluster(list, cluster);
+//    		                addCluster(list, cluster);
+    	                    list.addCluster(cluster);
+    	                    updateClusterMembership(cluster);
     		                clusterArray.add(cluster);
     		            }
             		}
@@ -1208,7 +1212,9 @@ public class ClusterRepository extends Vector {
                 String clusterDescription = null;
                 this.clusterSerialCounter++;
                 Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-                addCluster(list, cluster);
+//                addCluster(list, cluster);
+                list.addCluster(cluster);
+                updateClusterMembership(cluster);
                 clusterArray.add(cluster);  
             }      		
         }else{
@@ -1248,7 +1254,9 @@ public class ClusterRepository extends Vector {
     		    String clusterDescription = null;
     		    this.clusterSerialCounter++;
     		    Cluster cluster = new Cluster(selectedIndices, "Auto Cluster", key + " - " + clusterLabel, key, "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-    		    addCluster(list, cluster);
+//    		    addCluster(list, cluster);
+                list.addCluster(cluster);
+                updateClusterMembership(cluster);
     		    clusterArray.add(cluster);
             }
         }
