@@ -538,7 +538,7 @@ public class ClusterTable extends JPanel implements IViewer {
 			mat = new int[1][framework.getData().
 			                         getExperiment().getNumberOfGenes()];
     		for (int i=0; i<mat[0].length; i++){
-    			mat[0][i] = i;
+    			mat[0][i] = framework.getData().getExperiment().getGeneIndexMappedToData(i);
     		}
     	}else if (this.tableOfClusters.getSelectedRowCount()==0){	//no cluster selected
     		mat = new int[1][0];
@@ -618,10 +618,11 @@ public class ClusterTable extends JPanel implements IViewer {
     		}
     		mat = new int[1][framework.getData().
 			                         getExperiment().getNumberOfGenes()-arl.size()];
+    		
     		int count=0;
     		for (int i=0; i<framework.getData().getExperiment().getNumberOfGenes(); i++){
-    			if (!arl.contains(i)){
-    				mat[0][count] = i;
+    			if (!arl.contains(framework.getData().getExperiment().getGeneIndexMappedToData(i))){
+    				mat[0][count] = framework.getData().getExperiment().getGeneIndexMappedToData(i);
     				count++;
     			}
     		}
