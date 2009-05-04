@@ -56,6 +56,7 @@ public class ClusterTableViewer implements IViewer {
     protected static final String LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD = "launch-new-session-with-sel-rows-cmd"; 
     protected static final String SEARCH_CMD = "search-cmd";
     protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
+    protected static final String COPY_CMD = "copy-cells";
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
@@ -766,6 +767,14 @@ public class ClusterTableViewer implements IViewer {
         framework.launchNewMAV(getArrayMappedToSelectedIndices(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.GENE_CLUSTER);        
     }
     
+    public void copyCells(){
+		TransferHandler th = clusterTable.getTransferHandler();
+		if (th != null) {
+		Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+		th.exportToClipboard(clusterTable, cb, TransferHandler.COPY);
+		}
+    }
+    
     public void sortInOrigOrder() {
         for (int i = 0; i < getSortedCluster().length; i++) {
             sortedClusters[this.clusterIndex][i] = getCluster()[i];
@@ -874,6 +883,11 @@ public class ClusterTableViewer implements IViewer {
         menu.add(menuItem);  
         
         menu.addSeparator();
+
+        menuItem = new JMenuItem("Copy", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(COPY_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
         
         menuItem = new JMenuItem("Select all rows...", GUIFactory.getIcon("TableViewerResult.gif"));
         menuItem.setActionCommand(SELECT_ALL_CMD);
@@ -1017,6 +1031,8 @@ public class ClusterTableViewer implements IViewer {
                 searchTable();
             } else if (command.equals(CLEAR_ALL_CMD)) {
                 clusterTable.clearSelection();
+            } else if (command.equals(COPY_CMD)) {
+                copyCells();
             } else if (command.equals(SELECT_ALL_CMD)) {
                 clusterTable.selectAll();
             } else if (command.equals(SORT_ORIG_ORDER_CMD)) {

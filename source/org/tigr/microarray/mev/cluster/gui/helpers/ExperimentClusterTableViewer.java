@@ -13,6 +13,7 @@
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
@@ -50,6 +51,7 @@ public class ExperimentClusterTableViewer implements IViewer {
     protected static final String SEARCH_CMD = "search-cmd";
     protected static final String CLEAR_ALL_CMD = "clear-all-cmd";
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
+    protected static final String COPY_CELLS = "copy-cells-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
@@ -692,6 +694,14 @@ public class ExperimentClusterTableViewer implements IViewer {
         framework.launchNewMAV(getArrayMappedToSelectedIndices(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.EXPERIMENT_CLUSTER);        
     }    
     
+    public void copyCells(){
+		TransferHandler th = clusterTable.getTransferHandler();
+		if (th != null) {
+		Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+		th.exportToClipboard(clusterTable, cb, TransferHandler.COPY);
+		}
+    }
+    
     public void sortInOrigOrder() {
         for (int i = 0; i < getSortedCluster().length; i++) {
             sortedClusters[this.clusterIndex][i] = getCluster()[i];
@@ -801,6 +811,11 @@ public class ExperimentClusterTableViewer implements IViewer {
         menu.add(menuItem);  
         
         menu.addSeparator();
+
+        menuItem = new JMenuItem("Copy", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(COPY_CELLS);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
         
         menuItem = new JMenuItem("Select all rows...", GUIFactory.getIcon("TableViewerResult.gif"));
         menuItem.setActionCommand(SELECT_ALL_CMD);
@@ -922,6 +937,8 @@ public class ExperimentClusterTableViewer implements IViewer {
             clusterTable.clearSelection();
         } else if (command.equals(SELECT_ALL_CMD)) {
             clusterTable.selectAll();
+        } else if (command.equals(COPY_CELLS)) {
+            copyCells();
         } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
             sortInOrigOrder();
 	    } else if(command.equals(BROADCAST_MATRIX_GAGGLE_CMD)){
