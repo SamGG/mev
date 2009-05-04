@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 import java.io.IOException;
@@ -168,6 +169,12 @@ public class ClusterTableViewer implements IViewer {
 		this.popup = createJPopupMenu(listener);
         clusterTable.addMouseListener(listener);
         clusterTable.addMouseListener(new LinkListener());
+//        System.out.println("set up clipboard");
+//        TransferHandler th = clusterTable.getTransferHandler();
+//        if (th != null) {
+//        Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+//        th.exportToClipboard(clusterTable, cb, TransferHandler.COPY);
+//        }
         
     }    
     
