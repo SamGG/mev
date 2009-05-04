@@ -526,7 +526,7 @@ public class ClusterTableViewer implements IViewer {
     public void addMouseListenerToHeaderInTable(JTable table) {
         //final TableSorter sorter = this;
         final JTable tableView = table;
-        tableView.setColumnSelectionAllowed(false);
+        tableView.setColumnSelectionAllowed(true);
         MouseAdapter listMouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 TableColumnModel columnModel = tableView.getColumnModel();
