@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.TMEV;
 
 /**
- * Webstart utility file for Cystoscape
+ * Webstart utility file for Cytoscape
  * @author Raktim
  *
  */
@@ -28,7 +28,7 @@ public class CytoscapeWebstart {
 	public static Process runtimeProc;
 	
 	/**
-     * Public static funtion invokes webstart and creates the jnlp file
+     * Public static function invokes webstart and creates the jnlp file
      */
     public static void onWebstartCytoscape(Vector netFiles) {
     	//TODO
@@ -45,14 +45,14 @@ public class CytoscapeWebstart {
     		Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
         	codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
         	libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
-        	//pluginsDir = ((String)repInfo.get("cytoscape_plugins_dir")).trim();
+        	pluginsDir = ((String)repInfo.get("cytoscape_plugins_dir")).trim();
     	}
     		
     	if(codeBase == null || libDir == null) {
     		JOptionPane.showMessageDialog(new JFrame(), "Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
     		//codeBase = "gaggle.systemsbiology.net/2007-04/cy/blankSlate/cy2.6.0";
     		//libDir = "/2007-04/jars_cy2.6.0/";
-    		codeBase = "web-dev.dfci.harvard.edu";
+    		codeBase = "compbio.dfci.harvard.edu";
     		libDir = "/webstart/cytoscape/lib/";
     		pluginsDir = "/webstart/cytoscape/plugins/";
     	}

@@ -1156,7 +1156,10 @@ public class BNInitDialog extends AlgorithmDialog {
 					JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-
+				
+				System.out.println("Jnlp codeBase: " + codeBase);
+				System.out.println("Jnlp libDir: " + libDir);
+				System.out.println("Jnlp pluginsDir: " + pluginsDir);
 				BNConstants.setCodeBaseLocation(codeBase);
 				BNConstants.setLibDirLocation(libDir);
 				BNConstants.setPluginsDirLocation(pluginsDir);

@@ -46,7 +46,8 @@ public class BNDownloadManager {
 	private String FTP_REMOTE_FILE_OR_DIR;
 	private boolean isDir = false;
 	//TODO Change testing URL
-	private static String FTP_CONFIG_URL = "http://web-dev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt"; //"http://www.tm4.org/mev/mev_url.properties";
+	private static String FTP_CONFIG_URL = "http://compbio.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt"; //"http://www.tm4.org/mev/mev_url.properties";
+	private static String FTP_CONFIG_URL_TEST = "http://web-dev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt";
 	private String FTP_SERVER;    
 	private String REPOSITORY_ROOT;
 
@@ -170,7 +171,7 @@ public class BNDownloadManager {
 				TMEV.storeProperty(key, (String)repHash.get(key));
 			}
 		} catch (Exception e) {
-			System.out.println("Could not tereive Web Repository Info. Using cached value instead.");
+			System.out.println("Could not retreive Web Repository Info. Using cached value instead.");
 			//e.printStackTrace();
 			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
 			// Try to use cached values from TMEV props

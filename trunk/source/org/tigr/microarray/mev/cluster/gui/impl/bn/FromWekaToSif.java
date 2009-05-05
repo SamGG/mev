@@ -134,7 +134,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml2(boolean dir, String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml2(boolean dir, String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -281,7 +281,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(boolean dir, String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(boolean dir, String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -371,7 +371,7 @@ public class FromWekaToSif {
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */
-	public static void fromWekaToXgmml(boolean dir, Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
+	public static void fromWekaToXgmml(boolean dir, Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
 			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
@@ -476,6 +476,7 @@ public class FromWekaToSif {
 	/**
 	 * 
 	 * @param edges
+	 * @param interactionType 
 	 * @param nodeId
 	 * @param probeIndexAssocHash
 	 * @param data
@@ -528,6 +529,7 @@ public class FromWekaToSif {
 	 * @param fileName
 	 * @param probeIndexAssocHash
 	 * @param data
+	 * @param interactionType 
 	 * @throws NullArgumentException
 	 * @throws IOException
 	 */

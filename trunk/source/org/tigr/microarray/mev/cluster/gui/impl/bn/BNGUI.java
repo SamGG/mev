@@ -67,13 +67,7 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.BayesNet;
 
 public class BNGUI implements IClusterGUI {
-	//private static final int GENE_CLUSTER = 0;
-	//private static boolean done = false;
-	//private static boolean run = false;
-	//private static boolean cancelRun = false;
-	//private static boolean prior = true;
-	private static String GAGGLE_SIG = "abrakadabra:";
-
+	
 	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
 	HistoryViewer wekaOutputViewer;
 	LMBNViewer fileViewer;
@@ -171,7 +165,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		
 		//Progress Monitor
-		pbar = new ProgressMonitor(framework.getFrame(), "Monitoring Progress", "Initializing . . .", 0, 4);
+		pbar = new ProgressMonitor(framework.getFrame(), "Literature Mining", "Initializing . . .", 0, 4);
 		pbar.setMillisToDecideToPopup(0);
 		pbar.setMillisToPopup(0);
 		pbar.setProgress(0);
@@ -296,13 +290,12 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		
 		//Progress Monitor
-		pbar = new ProgressMonitor(framework.getFrame(), "Netwrok Search", "Initializing . . .", 0, 5+dialog.getNumIterations()+3);
+		pbar = new ProgressMonitor(framework.getFrame(), "Bayesian Network Search", "Initializing . . .", 0, 5+dialog.getNumIterations()+3);
 		pbar.setMillisToDecideToPopup(0);
 		pbar.setMillisToPopup(0);
 		pbar.setProgress(0);
-		//Start new structure
-		AlgorithmData algData = new AlgorithmData();
 		
+		//Start new structures
 		File labelFile = bnEditor.getLabelFile();
 		BNClassTableModel kModel = bnEditor.getClassTableModel();
 		this.basePath = dialog.getBaseFileLocation();
@@ -318,7 +311,7 @@ public class BNGUI implements IClusterGUI {
 		float confThreshold = dialog.getConfThreshold();
 		//this.label = new String[data.getFeaturesCount()];
 		onOk(dialog.getSelectedCluster(), labelFile, kModel, isBootstraping, numBin, numClasses, sType, sAlgorithm, numParents, kfold, useArc, numIterations, confThreshold);
-		//End New Struct
+		//End New structures
 		
 		//Added to record the Weka output for Observed BN analysis
 		wekaOutputViewer = new HistoryViewer();
@@ -368,7 +361,7 @@ public class BNGUI implements IClusterGUI {
 		//return root;
 	}
 
-	//New Support Funct
+	//New Support Function
 	/**
 	 * Core function to run BN with weka on the selected cluster
 	 * @param cl
@@ -1086,9 +1079,9 @@ public class BNGUI implements IClusterGUI {
 		String outarff = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP + "outExpression.arff";
 		//Specify Data set K for kfold validation in weka
         String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
-        //Specify Fixed Netwrok Classifier from File
+        //Specify Fixed Network Classifier from File
         modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
-        //Specify Fixed Netwrok Bif File
+        //Specify Fixed Network Bif File
         modelArgs += bifFileFinal;
         //Specify Weka Estimator with inital alpha
         modelArgs += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
