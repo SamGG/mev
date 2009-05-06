@@ -288,6 +288,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	private int clusterIndex;
 	private ClusterTableSearchDialog searchDialog;  
 
+	//Dan's time saver
+	private static boolean firstLoad = true;
 
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -334,6 +336,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
         	connectToGaggle();
         }
+        
+        /** Dan's time saver. To use, uncomment this line and change the path to a valid dataset.
+         *  
+         *  Loads a hard-coded dataset when MeV is first opened.  
+         *	To load a different dataset, start a new session.
+        */
+//        if (firstLoad) loadDataOnStart("C://workspace//data//1Martin_10genedata.txt");firstLoad = false;
+        
     }
     
     
@@ -3953,6 +3963,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this);    
     }
     
+    /**
+     *  Dan's Time Saver</code>.
+     */
+    private void loadDataOnStart(String path){
+        new SuperExpressionFileLoader(this, true, path);    
+    }
     /**
      * Returns specfied the cluster repository, possibly null
      */

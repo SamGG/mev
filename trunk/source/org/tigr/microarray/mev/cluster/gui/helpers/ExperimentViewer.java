@@ -824,7 +824,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 
         if (header.getSize().width < width){
         	setSize(width, height);
-        setPreferredSize(new Dimension(width, height));
+        	setPreferredSize(new Dimension(width, height));
         }else{
         	setSize(new Dimension(header.getSize().width, getSize().height));
         	setPreferredSize(new Dimension(header.getSize().width, getSize().height));
@@ -834,6 +834,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         	setSize(width, height);
         	setPreferredSize(new Dimension(width, height));
         }
+        header.setHeaderWidth(width);
     }
     
     /**

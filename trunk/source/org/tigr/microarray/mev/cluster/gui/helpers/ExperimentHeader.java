@@ -90,6 +90,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     private int labelLength = 0;
     private int startShiftMove = 0;
     private int endShiftMove = 0;
+    private int headerWidth = 0;
 
 	public boolean clusterViewerClicked = false;
 	public int clusterViewerClickedColumn = 0;
@@ -341,59 +342,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     		g.drawRect(column*elementWidth + insets.left + inset, getSize().height - (COLOR_BAR_HEIGHT*(compactedColorBarHeight) + maxSampleLabelLength + 7), (elementWidth-1), (COLOR_BAR_HEIGHT)*compactedColorBarHeight+maxSampleLabelLength+4 + side);
     	
     }
-    /**
-     * Updates size of this header.
-     *//*
-    public void updateSizesx(int contentWidth, int elementWidth) {
-        if(data == null)
-            return;
-        setElementWidth(elementWidth);
-        Graphics2D g = (Graphics2D)getGraphics();
-        if (g == null) {
-            return;
-        }
-        if (isAntiAliasing) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        }
-        FontMetrics hfm = g.getFontMetrics();
-        int maxHeight = 0;
-        String name;
-        int rewriteWidth=0;
-        final int size = this.experiment.getNumberOfSamples();
-        for (int feature = 0; feature < size; feature++) {
-            name = data.getSampleName(experiment.getSampleIndex(feature));
-            maxHeight = Math.max(maxHeight, hfm.stringWidth(name));
-        }
-        maxSampleLabelLength = maxHeight;
-        maxHeight += RECT_HEIGHT + hfm.getHeight() + 10;
-        if (!isCompact){
-        	maxHeight += (getColorBarHeight()*storedSampleColors.size());
-            String sampleLabel;
-            int labelLength=0;
-            for (int feature = 0; feature < storedSampleColors.size(); feature++) {
-                sampleLabel = data.getClusterLabel(feature, false);
-                labelLength = Math.max(labelLength, hfm.stringWidth(sampleLabel));
-            }
-            if (labelLength != oldLabelLength) {
-            	contentWidth = contentWidth - oldLabelLength + labelLength; 
-            	oldLabelLength = labelLength;
-            }
-        }
-        if(isCompact){
-    		int maxSpacesOver=-1;
-    		for (int i=0; i<storedSampleColors.size(); i++){
-    			if ((ColorOverlaps[i])>maxSpacesOver)
-    				maxSpacesOver=ColorOverlaps[i];
-    		}
-    		maxHeight += getColorBarHeight()*(maxSpacesOver+1);
-    		compactedColorBarHeight= maxSpacesOver+1;
-    	}
-        setSize(contentWidth, maxHeight);
-        setPreferredSize(new Dimension(contentWidth, maxHeight));
-        //System.out.println("contentWidth" + contentWidth);
-        drawHeader(g);
-    }    */
+    
     /**
      * DS re-write
      */
@@ -444,15 +393,23 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     		maxHeight += getColorBarHeight()*(maxSpacesOver+1);
     		compactedColorBarHeight= maxSpacesOver+1;
 
-            setSize(getWidth(), maxHeight);
-            setPreferredSize(new Dimension(getWidth(), maxHeight));
+//            setSize(getWidth(), maxHeight);
+//            setPreferredSize(new Dimension(getWidth(), maxHeight));
+            setSize(this.headerWidth, maxHeight);
+            setPreferredSize(new Dimension(this.headerWidth, maxHeight));
             drawHeader(g);
     		return;
     	}
         
-        setSize(contentWidth, maxHeight);
-        setPreferredSize(new Dimension(contentWidth, maxHeight));
+//        setSize(contentWidth, maxHeight);
+//        setPreferredSize(new Dimension(contentWidth, maxHeight));
+        setSize(this.headerWidth, maxHeight);
+        setPreferredSize(new Dimension(this.headerWidth, maxHeight));
         drawHeader(g);
+    }
+    
+    public void setHeaderWidth(int hw){
+    	this.headerWidth = hw;
     }
     
     /**
@@ -530,9 +487,6 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        g.rotate(-Math.PI/2);
 	        int numberOfClusters = storedGeneColors.size();
 	        for (int cluster = 0; cluster < numberOfClusters; cluster++) {
-	        	//System.out.println("data.getClusterLabel(cluster, true))="+data.getClusterLabel(cluster, true));
-	        	
-	        	//if (data.getClusterLabel(cluster, true)==null) break;
 	        	int index = data.getVisibleCluster((Color)storedGeneColors.get(cluster), true);
 	        	if (index==0)
 	        		break;

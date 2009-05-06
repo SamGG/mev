@@ -191,7 +191,19 @@ public class SuperExpressionFileLoader {
 		initializeFileLoaders();
 		initializeGUI();
 	}
-
+	//Dan's TimeSaver
+	public SuperExpressionFileLoader(MultipleArrayViewer viewer, boolean tf, String path) {
+		this.viewer = viewer;
+		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY);
+		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES);
+		hasAnnotationList = initializeAnnotationInfo();
+		loader = new Loader();
+		initializeFileLoaders();
+		initializeGUI();
+		((StanfordFileLoader)fileLoaders[0]).dansTimeSaver(path);
+		onLoad();
+		
+	}
 	public SuperExpressionFileLoader() {
 		loader = new Loader();
 		initializeFileLoaders();
