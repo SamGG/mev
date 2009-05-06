@@ -57,7 +57,6 @@ import org.tigr.util.StringSplitter;
 import org.tigr.util.awt.ImageScreen;
 
 public class TMEV {
-    private static final String MEV_URL_PROPERTIES_LOCATION = "http://www.tm4.org/mev/mev_url.properties";
 
     public final static int SYSTEM = 1000;
     public final static int DB_AVAILABLE = 1001;

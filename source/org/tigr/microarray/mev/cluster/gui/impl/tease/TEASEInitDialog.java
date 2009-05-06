@@ -102,7 +102,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
     private String sep;
     private Frame parent;
 
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
     protected boolean useLoadedAnnotationFile = false;
     protected File defaultEaseFileLocation;
     

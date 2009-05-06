@@ -14,12 +14,12 @@ public class SupportFileUrlsPropertiesDefinition extends ISupportFileDefinition 
 
 	@Override
 	public URL getURL() throws MalformedURLException {
-		return new URL("http://www.tm4.org/mev/support_file_url.properties");
+		return new URL("http://www.tm4.org/mev/support_file_url_4_4.properties");
 	}
 
 	@Override
 	public String getUniqueName() {
-		return "mev_url.properties";
+		return "mev_url_4_4.properties";
 	}
 
 	@Override

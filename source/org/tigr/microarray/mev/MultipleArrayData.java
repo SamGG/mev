@@ -1237,6 +1237,13 @@ public class MultipleArrayData implements IData {
     public String[] getElementAnnotation(int row, String attr) {
 	    return ((ISlideData)featuresList.get(0)).getSlideMetaData().getAnnotationValue(row, attr);
         }
+    public String[][] getElementAnnotation(int[] rows, String attr) {
+    	String[][] _temp = new String[rows.length][];
+    	for(int i=0; i<_temp.length; i++) {
+    		_temp[i] = ((ISlideData)featuresList.get(0)).getSlideMetaData().getAnnotationValue(rows[i], attr);
+    	}
+    	return _temp;
+    }
       
     /**
      * Raktim - Annotation Model Method
