@@ -10,7 +10,7 @@ public class EASEImpliesAndURLDataFile extends ISupportFileDefinition {
 	private static String easeFileRoot;
 	
 	public EASEImpliesAndURLDataFile() {
-		easeFileRoot =  getBaseResourceURL("ease_support_file_location");
+		easeFileRoot =  getBaseResourceURL("ease_implies_file_location");
 	} 
 	@Override
 	public URL getURL() throws MalformedURLException {

@@ -394,6 +394,7 @@ public interface IData {
 	 * @return
 	 */
 	public String[] getElementAnnotation(int index, String attr);
+	public String[][] getElementAnnotation(int[] index, String attr);
 	public AnnoAttributeObj getElementAnnotationObject(int index, String attr);
 	public boolean isAnnotationLoaded() ;
 	public void setAnnotationLoaded(boolean isAnnotationLoaded) ;	

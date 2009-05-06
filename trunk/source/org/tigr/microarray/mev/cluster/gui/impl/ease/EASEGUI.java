@@ -39,6 +39,7 @@ import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.*;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetGOs;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -158,7 +159,11 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	    	
 	    	File impliesFile = supportFiles.get(eiudf);
 	    	baseImpliesFileLocation = eiudf.getImpliesLocation(impliesFile);
+	    	if(baseImpliesFileLocation == null)
+	    		baseImpliesFileLocation = "";
 	    	baseTagFileLocation = eiudf.getTagsLocation(impliesFile);
+	    	if(baseTagFileLocation == null)
+	    		baseTagFileLocation = "";
 	        
 	        File speciesarraymapping = supportFiles.get(aafd);
 	        try {
@@ -202,6 +207,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         isClusterAnalysis = dialog.isClusterModeSelected();
         String converterFileName = dialog.getConverterFileName();
         annotationKeyType = dialog.getAnnotationKeyType();
+        algorithmData.addParam("annotation-key-type", annotationKeyType);
         isNestedEase = dialog.isNEaseSelected();
         String [] annotationFileList = dialog.getAnnToGOFileList();
         

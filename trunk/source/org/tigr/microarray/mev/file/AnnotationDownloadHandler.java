@@ -151,6 +151,7 @@ public class AnnotationDownloadHandler {
 			temp2.add("No arrays available");
 			arrayListBox = new JComboBox(new Vector<String>(temp2));
 			arrayListBox.setEnabled(false);
+			annotationLists = new Hashtable<String,Vector<String>>();
 //			annotationLists.put("No species available", temp);
 			proceedLoadingAnnotation.setEnabled(false);
 			proceedLoadingAnnotation.setSelected(false);
@@ -203,7 +204,7 @@ public class AnnotationDownloadHandler {
 		if(annFileKeyBoxItems == null) {
 			annFileKeyBoxItems = new Vector<String>();
 		}
-		if(!annFileKeyBoxItems.get(0).equals(CHOOSE_ARRAY)) {
+		if(annFileKeyBoxItems.get(0) == null || !annFileKeyBoxItems.get(0).equals(CHOOSE_ARRAY)) {
 			annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
 		}
 		for (int i = 0; i < annFileKeyBoxItems.size(); i++) {

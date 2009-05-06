@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -114,7 +115,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected Hashtable<String, Vector<String>> speciestoarrays;
     protected IResourceManager resourceManager;
     
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
     protected boolean useLoadedAnnotationFile = false;
     File annotationFile;
     protected String defaultFileBaseLocation;
@@ -1139,17 +1140,24 @@ public class EASEInitDialog extends AlgorithmDialog {
 		}
 
 		private void onDownloadSupportFile() {
+			String species = organismListBox.getSelectedItem().toString();
+			String array = arrayListBox.getSelectedItem().toString();
+			EASESupportDataFile esdf = new EASESupportDataFile(species, array);
+			
 			try {
-				String species = organismListBox.getSelectedItem().toString();
-				String array = arrayListBox.getSelectedItem().toString();
-				File f = resourceManager.getSupportFile(new EASESupportDataFile(species, array), true);
+				File f = resourceManager.getSupportFile(esdf, true);
+				
 				supportFileLocationField.setText(f.getAbsolutePath());
 				getEaseSupportFileButton.setText("Select This");
 				statusLabel.setText("Selected");
 				getEaseSupportFileButton.setEnabled(false);
 			} catch (SupportFileAccessError sfae) {
 				statusLabel.setText("Failure");
-				ShowThrowableDialog.show(parent, "Unable to download EASE files", true, ShowThrowableDialog.ERROR, sfae, sfae.getMessage());
+				String easeURL = null;
+				try {
+					easeURL = esdf.getURL().toString();
+				} catch (MalformedURLException mue) {}
+				ShowThrowableDialog.show(parent, "Unable to download EASE files", true, ShowThrowableDialog.ERROR, sfae, "unable to download file from " + easeURL);
 				sfae.printStackTrace();
 			} catch (NullPointerException npe) {
 				statusLabel.setText("Failure");
