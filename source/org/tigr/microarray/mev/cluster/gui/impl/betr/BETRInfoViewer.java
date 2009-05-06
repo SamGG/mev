@@ -29,7 +29,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 /**
  *
- * @author  nbhagaba
+ * @author  dschlauch
  * @version 
  */
 public class BETRInfoViewer extends ViewerAdapter {

@@ -146,6 +146,13 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 	 *  taking log2(cy5/cy3).
 	 */
 
+	/**Dan time saver.
+	 * Loads a hard-coded dataset.
+	 */
+	public void dansTimeSaver(String path){
+		processStanfordFile(new File(path));
+	}
+	
     public Vector<ISlideData> loadStanfordExpressionFile(File f, int rowcoord, int colcoord) throws IOException {
     	int preSpotRows, preExperimentColumns;
     		preSpotRows = rowcoord;
@@ -428,6 +435,7 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			}
 
 			model.setColumnIdentifiers(columnHeaders);
+			
 			int cnt = 0;
 			while ((currentLine = reader.readLine()) != null && cnt < 100) {
 				cnt++;
@@ -645,14 +653,17 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			checkLoadEnable();
 		}
         
-		public void onBrowse() {
+		public boolean onBrowse() {
 			JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
 			int retVal = fileChooser.showOpenDialog(StanfordFileLoaderPanel.this);
 
 			if (retVal == JFileChooser.APPROVE_OPTION) {
 				File selectedFile = fileChooser.getSelectedFile();
 				processStanfordFile(selectedFile);
+				return true;
 			}
+			return false;
+			
 
 		}
 
