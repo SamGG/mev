@@ -389,7 +389,7 @@ public class ProbetoGene {
 							col);
 				}
 				current_sd = JSci.maths.ArrayMath.standardDeviation(matrixVals);
-				if (current_sd > Double.parseDouble(SDcutoff)) {
+				if (current_sd >=Double.parseDouble(SDcutoff)) {
 
 					// Keep a track of the probes passing SD cutoff. This can be
 					// used to populate the Gene Data Matrix(FloatMatrix)
@@ -403,7 +403,7 @@ public class ProbetoGene {
 					genes_with_low_variability.add(Gene);
 				}
 
-			} else {
+			} else { //If there are more than one probes mapping to a gene 
 				matrixVals = new double[cols];
 				// Loops through the probes mapping to a gene
 				for (int k = 0; k < num_probes; k++) {
@@ -423,7 +423,7 @@ public class ProbetoGene {
 					// and greater than the current
 					// max_sd value
 					if (current_sd > max_sd
-							&& current_sd > Double.parseDouble(SDcutoff)) {
+							&& current_sd >= Double.parseDouble(SDcutoff)) {
 						max_probeSD_pos = probe_pos;
 					}
 

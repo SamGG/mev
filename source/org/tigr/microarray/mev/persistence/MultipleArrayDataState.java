@@ -6,10 +6,14 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.persistence;
 
+import org.tigr.microarray.mev.sampleannotation.MageIDF;
+
 public class MultipleArrayDataState{
 	float maxCY3, maxCY5;
 	public MultipleArrayDataState(){}
 	public boolean isAnnotationLoaded=false;
+	public boolean isSampleAnnotationLoaded=false;
+	protected MageIDF mageIDFObject=null;
 	/**
 	 * @return Returns the maxCY3.
 	 */
@@ -42,4 +46,22 @@ public class MultipleArrayDataState{
 	public void setAnnotationLoaded(boolean isAnnotationLoaded) {
 		this.isAnnotationLoaded = isAnnotationLoaded;
 	}
+	
+	public boolean isSampleAnnotationLoaded(){
+		return isSampleAnnotationLoaded;
+	}
+	
+	public void setSampleAnnotationLoaded(boolean loaded){
+		this.isSampleAnnotationLoaded=loaded;
+	}
+	public MageIDF getMageIDFObject() {
+		return mageIDFObject;
+	}
+	public void setMageIDFObject(MageIDF mageIDFObject) {
+		this.mageIDFObject = mageIDFObject;
+		
+	}
+	
+	
+	
 }

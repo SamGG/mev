@@ -248,7 +248,7 @@ public class SuperExpressionFileLoader {
 	protected void initializeFileLoaders() {
 		int defaultSelection = 0;
 
-		fileLoaders = new ExpressionFileLoader[15];
+		fileLoaders = new ExpressionFileLoader[16];
 		fileLoaders[0] = new StanfordFileLoader(this);
 
 		fileLoaders[1] = null;
@@ -265,7 +265,8 @@ public class SuperExpressionFileLoader {
 		fileLoaders[12] = null;
 		fileLoaders[13] = null;
 		fileLoaders[14] = null;
-
+		fileLoaders[15] = null;
+		
 		selectedFileLoader = fileLoaders[defaultSelection];
 
 		fileFilters = new FileFilter[fileLoaders.length];
@@ -286,7 +287,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public void menuItem(JMenu jItem, final String st) {
-		menuItem = new JMenuItem[6];
+		menuItem = new JMenuItem[7];
 		menuItem[0] = new JMenuItem("Tab Delimited, Multiple Sample Files");
 
 		menuItem[0].addActionListener(new ActionListener() {
@@ -457,7 +458,23 @@ public class SuperExpressionFileLoader {
 
 		jItem.add(menuItem[4]);
 
-		menuItem[5] = new JMenu("Other Format Files");
+//jaw start---------------------------------------------
+		menuItem[5] = new JMenuItem("MAGE-TAB Files");
+
+		menuItem[5].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (st == "File Format Hint") {
+					helpWindow("MAGE");
+				} else {
+					changeSelectedFileFilterAndLoader(15);
+
+				}
+			}
+		});
+		jItem.add(menuItem[5]);
+		
+//jaw end-----------------------------------------------
+		menuItem[6] = new JMenu("Other Format Files");
 
 		subMenuItem = new JMenuItem[2];
 		subMenuItem[0] = new JMenuItem("GenePix Format Files");
@@ -470,7 +487,7 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[5].add(subMenuItem[0]);
+		menuItem[6].add(subMenuItem[0]);
 
 		subMenuItem[1] = new JMenuItem("Agilent Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
@@ -482,9 +499,9 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[5].add(subMenuItem[1]);
+		menuItem[6].add(subMenuItem[1]);
 
-		jItem.add(menuItem[5]);
+		jItem.add(menuItem[6]);
 
 	}
 
@@ -656,6 +673,9 @@ public class SuperExpressionFileLoader {
 			break;
 		case GEO_GDS:
 			loader = new GEO_GDSFileLoader(this);
+			break;
+		case MAGETAB:
+			loader = new MAGETABFileLoader(this);
 			break;
 		default:
 			loader = new StanfordFileLoader(this);

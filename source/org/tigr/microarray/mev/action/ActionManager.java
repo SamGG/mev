@@ -371,6 +371,13 @@ public class ActionManager implements java.io.Serializable {
     // display experiment label actions
     public static final String ADD_NEW_EXPERIMENT_LABEL_ACTION = "add-new-experiment-action";
     public static final String ADD_NEW_EXPERIMENT_LABEL_CMD = "add-new-experiment-label";
+    
+    //display labels to edit/display MAGE-TAB, IDF files 
+    public static final String ADD_NEW_IDF_LABEL_ACTION = "add-new-idf-action";
+    public static final String ADD_NEW_IDF_LABEL_CMD = "add-new-idf-label";
+    
+    
+    
     public static final String DISPLAY_EXPERIMENT_LABEL_ACTION = "display-experiment_label-action";
     public static final String DISPLAY_EXPERIMENT_LABEL_CMD    = "display-experiment-label-cmd";
     // sort label actions

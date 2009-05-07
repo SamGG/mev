@@ -361,6 +361,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
 				<pathelement location="${lib.dir}/goose.jar" />
 				<pathelement location="${lib.dir}/tar.jar" />
+            	<pathelement location="${lib.dir}/magetab-parser.jar" />
             </classpath>	    
         </javac>
         <!-- Copy html files from source to dest directory so they can
@@ -509,6 +510,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			org/tigr/microarray/mev/script/**,
         	org/tigr/microarray/mev/persistence/**,
         	org/tigr/microarray/mev/annotation/**,
+        	org/tigr/microarray/mev/sampleannotation/**,
         	org/tigr/microarray/mev/resources/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         	update="true"

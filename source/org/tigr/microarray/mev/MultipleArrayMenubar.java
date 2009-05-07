@@ -227,7 +227,9 @@ public class MultipleArrayMenubar extends JMenuBar {
         expLabelMenu.add(expLabelSelectionMenu);
         expLabelMenu.addSeparator();
         expLabelMenu.add(this.createJMenuItem("Edit Labels/Reorder Samples", ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD, listener));        
-        expLabelMenu.add(createJMenuItem("Abbr. Sample Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));          
+        expLabelMenu.add(createJMenuItem("Abbr. Sample Names", ActionManager.TOGGLE_ABBR_EXPT_NAMES_CMD, listener));    
+        //IDF editing/display
+        expLabelMenu.add(this.createJMenuItem("Edit / Display IDF Fields", ActionManager.ADD_NEW_IDF_LABEL_CMD, listener));
         experimentLabelGroup = new ButtonGroup();        
         displayMenu.add(expLabelMenu);
         

@@ -34,6 +34,8 @@ import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
 import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.ISampleAnnotation;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.util.FloatMatrix;
 
 /**
@@ -102,11 +104,42 @@ public class PersistenceObjectFactory {
 		dis.close();
     	return matrix;
     }
+    /**
+     * 
+     * Constructor to maintain backwards compatibility with version 4.3 and lower
+     * @param sampleLabelKeys
+     * @param sampleLabels
+     * @param filename
+     * @param name
+     * @param isNonZero
+     * @param normalizedState
+     * @param sortState
+     * @param spotInfoData
+     * @param dataType
+     * @param ismd
+     * @param intensityFileName
+     * @return
+     * @throws IOException
+     */
+    public static FloatSlideData makeFloatSlideData(Vector sampleLabelKeys, Hashtable sampleLabels, 
+    		String filename, String name, Boolean isNonZero,
+			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
+			Integer dataType, ISlideMetaData ismd, String intensityFileName) throws IOException{
+    	
+    	return(makeFloatSlideData(sampleLabelKeys, sampleLabels, filename, name, isNonZero, normalizedState, sortState, spotInfoData, dataType, ismd, intensityFileName, null));
+    	
+    	
+    }
+    
+    
+    
+    
+    
 
     public static FloatSlideData makeFloatSlideData(Vector sampleLabelKeys, Hashtable sampleLabels, 
     		String filename, String name, Boolean isNonZero,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
-			Integer dataType, ISlideMetaData ismd, String intensityFileName) throws IOException {
+			Integer dataType, ISlideMetaData ismd, String intensityFileName, SampleAnnotation sampAnn) throws IOException {
     	FloatSlideData fsd;
     	fsd = new FloatSlideData(sampleLabelKeys, sampleLabels, 
     			filename, name, isNonZero.booleanValue(), 
@@ -155,6 +188,11 @@ public class PersistenceObjectFactory {
     	fsd.setGenePixFlags(flags);
     	
     	dis.close();
+    	if(sampAnn!=null){
+    		fsd.setSampleAnnotation(sampAnn);
+    	  	
+    	}
+    	
     	return fsd;
     }
 
@@ -192,10 +230,46 @@ public class PersistenceObjectFactory {
     			sampleLabels, slideFileName, isNonZero, rows, columns, 
     			normalizedState, sortState, spotInfoData, 
     			fieldNames, dataType, 
-    			annotationFileName, dataFile, null);
+    			annotationFileName, dataFile, null, null);
     }
 
-    
+    /***
+     * 
+     * @param slideDataName
+     * @param sampleLabelKeys
+     * @param sampleLabelKey
+     * @param sampleLabels
+     * @param slideFileName
+     * @param isNonZero
+     * @param rows
+     * @param columns
+     * @param normalizedState
+     * @param sortState
+     * @param spotInfoData
+     * @param fieldNames
+     * @param dataType
+     * @param annotationFileName
+     * @param dataFile
+     * @param iAnnotationFileName
+     * @return
+     * @throws IOException
+     * 
+     * Constructor to maintain backwards compatibility with version 4.1 thru 4.3 
+     * 
+     * 
+     */
+   public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
+     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
+ 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
+ 			String[] fieldNames, Integer dataType,	String annotationFileName, String dataFile, String iAnnotationFileName) throws IOException {
+     	      return(  makeSlideData( slideDataName, sampleLabelKeys,  sampleLabelKey,
+     	        		 sampleLabels, slideFileName,  isNonZero, rows,  columns,
+     	    			 normalizedState,  sortState,  spotInfoData, 
+     	    			 fieldNames,  dataType,
+     	    			 annotationFileName,  dataFile,  iAnnotationFileName, null));
+     	
+     }
+     
     
     
     /***
@@ -224,8 +298,8 @@ public class PersistenceObjectFactory {
      * 
      */
     
-   
     
+  
 
 
     
@@ -233,7 +307,7 @@ public class PersistenceObjectFactory {
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
 			String[] fieldNames, Integer dataType,
-			String annotationFileName, String dataFile, String iAnnotationFileName) throws IOException {
+			String annotationFileName, String dataFile, String iAnnotationFileName, SampleAnnotation sampAnn) throws IOException {
 
 
     	SlideData aSlideData;
@@ -280,6 +354,11 @@ public class PersistenceObjectFactory {
     	dis.close();
     	
 		aSlideData.setAllElements(allSlideDataElements);
+		//Added the loop for setting sample Annotation to slideData 
+		if(sampAnn!=null){
+			aSlideData.setSampleAnnotation(sampAnn);
+			
+		}
     	return aSlideData;
     }
     

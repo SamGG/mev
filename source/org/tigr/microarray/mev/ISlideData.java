@@ -20,6 +20,9 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.tigr.microarray.mev.sampleannotation.ISampleAnnotation;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
+
 public interface ISlideData {
     
     // Normalization Modes
@@ -305,5 +308,31 @@ public interface ISlideData {
     public boolean isMissingData(int cloneIndex);
     
     public String getSampleLabelKey();
+    
+    /**
+     *@author sarita
+     *Sets sample annotation object
+     * 
+     */
+    
+    public void setSampleAnnotation(SampleAnnotation sampAnn);
+    
+    /**
+     * @author sarita
+     * gets SampleAnnotation object
+     * 
+     */
+    
+    public SampleAnnotation getSampleAnnotation();
+    	
+    /**
+     * @author sarita
+     * getters and setters for SampleAnnotationModel.
+     * 
+     * 
+     */
+    public boolean isSampleAnnotationLoaded();
+    public void setSampleAnnotationLoaded(boolean isAnnLoaded);
+    
     
 }

@@ -78,6 +78,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -235,12 +236,15 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 
 				ss.init(currentLine);
 				if (counter == 0) { // parse header
+					
 					int experimentCount = ss.countTokens() + 1 - preExperimentColumns;
+					SampleAnnotation sampAnn=new SampleAnnotation();
 					slideDataArray = new ISlideData[experimentCount];
-					slideDataArray[0] = new SlideData(rRows, rColumns);
+					slideDataArray[0] = new SlideData(rRows, rColumns, sampAnn);
 					slideDataArray[0].setSlideFileName(f.getPath());
 					for (int i = 1; i < slideDataArray.length; i++) {
-						slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+						 sampAnn=new SampleAnnotation();
+						slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount, sampAnn);
 						slideDataArray[i].setSlideFileName(f.getPath());
 					}
 					//get Field Names
@@ -251,7 +255,16 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 					slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
 
 					for (int i = 0; i < experimentCount; i++) {
-						slideDataArray[i].setSlideDataName(ss.nextToken());
+						//This is where the "Default Slide Name" gets set in the SampleAnnotation Model
+						
+						String val=ss.nextToken();
+						slideDataArray[i].setSampleAnnotationLoaded(true);
+						slideDataArray[i].getSampleAnnotation().setAnnotation("Default Slide Name", val);
+						slideDataArray[i].setSlideDataName(val);
+						
+						this.mav.getData().setSampleAnnotationLoaded(true);
+				
+						
 					}
 				} else if (counter >= preSpotRows) { // data rows
 					rows[0] = rows[2] = row;
@@ -305,7 +318,8 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 						slideDataArray[i].setIntensities(counter - preSpotRows, cy3, cy5);
 					}
 				} else {
-					//we have additional sample annoation
+					//we have additional sample annotation. 
+					//Add the additional sample annotation to the SampleAnnotation object
 
 					//advance to sample key
 					for (int i = 0; i < preExperimentColumns - 1; i++) {
@@ -314,7 +328,18 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 					String key = ss.nextToken();
 
 					for (int j = 0; j < slideDataArray.length; j++) {
-						slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
+						
+						if(slideDataArray[j].getSampleAnnotation()!=null){
+						
+							String val=ss.nextToken();
+							slideDataArray[j].getSampleAnnotation().setAnnotation(key, val);
+							
+						}else{
+								SampleAnnotation sampAnn=new SampleAnnotation();
+								sampAnn.setAnnotation(key, ss.nextToken());
+								slideDataArray[j].setSampleAnnotation(sampAnn);
+								slideDataArray[j].setSampleAnnotationLoaded(true);
+						}
 					}
 				}
 

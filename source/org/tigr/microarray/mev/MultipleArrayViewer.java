@@ -67,6 +67,7 @@ import java.util.EventObject;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -206,6 +207,9 @@ import org.tigr.microarray.mev.resources.IMultiSupportFileDefinition;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
+import org.tigr.microarray.mev.sampleannotation.IDFConstants;
+import org.tigr.microarray.mev.sampleannotation.MageIDF;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.mev.script.ScriptManager;
 import org.tigr.microarray.util.awt.AccessibleColorSchemeSelectionDialog;
 import org.tigr.microarray.util.awt.ColorSchemeSelectionDialog;
@@ -2082,10 +2086,39 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     		System.err.println("Couldn't show Goose " + key);
     	}
     }
+    
+    //Will be called when user wants to add IDF Fields to the file
+    private void onIDFFieldsAdded() {
+    	 boolean safeToReorderExperiments = false;
 
+
+    	IDFEditor editor=new IDFEditor(this.getFrame(), "IDF File Editor", true, safeToReorderExperiments, this.data);
+    	
+    	editor.showModal();
+    	 //get data and keys
+        String [][] data = editor.getLabelDataWithoutKeys();
+        String [] keyes = editor.getLabelKeys();
+        Hashtable<String, ArrayList<String>> temp=new Hashtable<String, ArrayList<String>>();
+      
+        for(int index=0; index<keyes.length; index++){
+        	//System.out.println("keyes:"+keyes[index]);
+            ArrayList l=new ArrayList();
+            for(int j=0; j<data[index].length; j++){
+           // 	System.out.println("value:"+data[index][j]);
+            	l.add(data[index][j]);
+            }
+        	temp.put(keyes[index], l);
+        
+        }
+    	this.data.getIDFObject().setIDFHash(temp);
+    
+    	
+    	this.fireDataChanged();
+    	
+    }
     
     private void onExperimentLabelAdded() {
-        
+      
         boolean safeToReorderExperiments = false;
         
         //make sure no results exist and cluster repositories are null, then safe to reorder.
@@ -3937,15 +3970,17 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         Vector keyVector;
         Vector fullKeyVector = new Vector();
         String key;
-        for( int i = 0; i < features.length; i++) {
+       for( int i = 0; i < features.length; i++) {
             keyVector = features[i].getSlideDataKeys();
             for(int j = 0; j < keyVector.size(); j++) {
                 key = (String)(keyVector.elementAt(j));
+               
                 if(!fullKeyVector.contains(key))
                     fullKeyVector.addElement(key);
             }
         }
-        return fullKeyVector;
+      return fullKeyVector;
+       
     }
     
     public void setDataLoadersEnabled(boolean enabled) {
@@ -3954,6 +3989,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
     public void loadData(FileLoadInfo fileLoadInfo) {
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, fileLoadInfo);
+        
     }
 
     /**
@@ -5163,6 +5199,8 @@ private void appendResourcererGeneAnnotation() {
                 onExperimentLabelChanged((Action)event.getSource());
             } else if (command.equals(ActionManager.ADD_NEW_EXPERIMENT_LABEL_CMD)) {
                 onExperimentLabelAdded();
+            } else if (command.equals(ActionManager.ADD_NEW_IDF_LABEL_CMD)) { //Label to facilitate IDF editing/display
+                onIDFFieldsAdded();
             } else if (command.equals(ActionManager.DISPLAY_10X10_CMD)) {
                 onElementSizeChanged(10, 10);
             } else if (command.equals(ActionManager.DISPLAY_20X5_CMD)) {
@@ -5536,7 +5574,7 @@ private void appendResourcererGeneAnnotation() {
       
 
 
-        	//Original code. Commented out temporarily by sarita	
+        	
         	if (userObject instanceof LeafInfo) {
         		popup = ((LeafInfo)userObject).getJPopupMenu();
 
@@ -5546,7 +5584,7 @@ private void appendResourcererGeneAnnotation() {
         	
         	
         	
-        	//Original code. Commented temporarily by sarita//  	
+        	  	
         	if (selPath.getPathCount() > 2) {
         		if(node.getParent() == clusterNode)
         			return;
@@ -6520,7 +6558,9 @@ private void appendResourcererGeneAnnotation() {
 		
 	}
 
-
+   public void setIDF(MageIDF idfObj){
+	   this.data.setIDF(idfObj);
+   }
 
 
 }
