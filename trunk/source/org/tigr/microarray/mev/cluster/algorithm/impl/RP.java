@@ -85,24 +85,26 @@ public class RP extends AbstractAlgorithm{
      * @param data the data to be calculated.
      */
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
-    	expMatrix = data.getMatrix("experiment");
-    	inGroupAssignments = data.getIntArray("group_assignments");
-    	int q =0;
-    	for (int i=0; i<inGroupAssignments.length; i++){
-    		if (inGroupAssignments[i]!=0)
-    			q++;
-    	}
-    	int[] groupAssignments=new int[q];
-    	q=0;
-    	for (int i=0; i<inGroupAssignments.length; i++){
-    		if (inGroupAssignments[i]!=0){
-    			groupAssignments[q]=i;
-    			q++;
-    		}
-    	}
-    	experimentData = expMatrix.getMatrix(0, expMatrix.getRowDimension()-1, groupAssignments);
-    	
     	AlgorithmParameters map = data.getParams();
+        testDesign = map.getInt("classes",0);
+    	expMatrix = data.getMatrix("experiment");
+    	if (testDesign==RPInitBox.ONE_CLASS||testDesign==RPInitBox.TWO_CLASS){
+	    	inGroupAssignments = data.getIntArray("group_assignments");
+	    	int q =0;
+	    	for (int i=0; i<inGroupAssignments.length; i++){
+	    		if (inGroupAssignments[i]!=0)
+	    			q++;
+	    	}
+	    	int[] groupAssignments=new int[q];
+	    	q=0;
+	    	for (int i=0; i<inGroupAssignments.length; i++){
+	    		if (inGroupAssignments[i]!=0){
+	    			groupAssignments[q]=i;
+	    			q++;
+	    		}
+	    	}
+	    	experimentData = expMatrix.getMatrix(0, expMatrix.getRowDimension()-1, groupAssignments);
+    	}
     	
         numPerms = map.getInt("numPerms", 0);
         upDown = map.getInt("UpOrDown",0);
@@ -113,10 +115,11 @@ public class RP extends AbstractAlgorithm{
         if (upDown==2)
         	doUp=false;
         
-        if (map.getInt("classes",0)==RPInitBox.ONE_CLASS)
-        	testDesign = RPInitBox.ONE_CLASS;
-        else
-        	testDesign = RPInitBox.TWO_CLASS;
+        
+        if (testDesign ==RPInitBox.PAIRED){
+        	experimentData = expMatrix.getMatrix(0, expMatrix.getRowDimension()-1, data.getIntArray("groupB_paired_assignments")).
+    			minus(expMatrix.getMatrix(0, expMatrix.getRowDimension()-1, data.getIntArray("groupA_paired_assignments")));
+        }
         
         if (testDesign ==RPInitBox.TWO_CLASS){
         	int r=0;
@@ -180,7 +183,7 @@ public class RP extends AbstractAlgorithm{
     	event.setIntValue(0);
     	fireValueChanged(event);
     	
-    	if (testDesign==RPInitBox.ONE_CLASS)
+    	if (testDesign==RPInitBox.ONE_CLASS||testDesign==RPInitBox.PAIRED)
     		runOneClassAlg();
     	else
     		runTwoClassAlg();

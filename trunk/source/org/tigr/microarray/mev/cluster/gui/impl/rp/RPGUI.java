@@ -79,7 +79,7 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
     
     
     Vector<String> exptNamesVector;
-    protected int[] groupAssignments;
+    protected int[] groupAssignments, groupAPaired,groupBPaired;
     protected int falseNum, correctionMethod;
     protected double falseProp;
     protected IData data;
@@ -134,6 +134,10 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 	        if (RPDialog.getSelectionDesign()==RPInitBox.BUTTON_SELECTION){
 	        	groupAssignments=RPDialog.getTwoClassAssignments();
 	        }
+        }
+        if (RPDialog.getTestDesign()==RPInitBox.PAIRED){
+        	groupAPaired=RPDialog.getPairedAExpts();
+        	groupBPaired=RPDialog.getPairedBExpts();
         }
         boolean usePerms = RPDialog.usePerms();
         int numPerms = 0;
@@ -200,6 +204,8 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("dataDesign", String.valueOf(dataDesign));
             data.addIntArray("group_assignments", groupAssignments);
+            data.addIntArray("groupA_paired_assignments", groupAPaired);
+            data.addIntArray("groupB_paired_assignments", groupBPaired);
             data.addParam("usePerms", String.valueOf(usePerms));
             data.addParam("numPerms", String.valueOf(numPerms));
             data.addParam("alpha", String.valueOf(alpha));
@@ -837,27 +843,33 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Samples Excluded");
         DefaultMutableTreeNode groupA;
+    	groupA= new DefaultMutableTreeNode("Samples Included");
         if (dataDesign==RPInitBox.ONE_CLASS)
         	groupA= new DefaultMutableTreeNode("Samples Included");
-        else
+        else if (dataDesign==RPInitBox.TWO_CLASS||dataDesign==RPInitBox.PAIRED)
         	groupA= new DefaultMutableTreeNode("Group A");
         DefaultMutableTreeNode groupB = new DefaultMutableTreeNode("Group B");
         
-        
-        for (int i = 0; i < groupAssignments.length; i++) {
-            int currentGroup = groupAssignments[i];
-            if (currentGroup == 0) {
-                notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
-            } else if(currentGroup ==1){
-                groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
-            } else {
-            	groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
-            }
+        if (dataDesign!=RPInitBox.PAIRED){
+	        for (int i = 0; i < groupAssignments.length; i++) {
+	            int currentGroup = groupAssignments[i];
+	            if (currentGroup == 0) {
+	                notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+	            } else if(currentGroup ==1){
+	                groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+	            } else {
+	            	groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+	            }
+	        }
+        }else{
+        	for (int i = 0; i < groupAPaired.length; i++) {
+        		groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(groupAPaired[i]))));
+        		groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(groupBPaired[i]))));
+	        }
         }
         
-        
         groupAssignmentInfo.add(groupA);
-        if (dataDesign==RPInitBox.TWO_CLASS)
+        if (dataDesign==RPInitBox.TWO_CLASS||dataDesign==RPInitBox.PAIRED)
             groupAssignmentInfo.add(groupB);
         	
         if (notInGroups.getChildCount() > 0) {
@@ -914,20 +926,14 @@ public class RPGUI implements IClusterGUI, IScriptGUI {
 
         public int clusters;
         public String correctionMethod;
-        //public String pValueBasedOn;
         public float alpha;
-        //public int numCombs;
-        //public boolean useAllCombs;
         public long time;
         public String function;
-        //public int numReps;
-        //public double thresholdPercent;
         
         protected boolean hcl, usePerms;
         protected int hcl_method, numPerms;
         protected boolean hcl_genes;
         protected boolean hcl_samples;
-    	//EH constructor added so AMP could extend
         protected GeneralInfo(){
     		super();
     	}        

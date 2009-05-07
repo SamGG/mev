@@ -40,7 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 
 /**
  *
- * @author  nbhagaba
+ * @author  dschlauch
  * @version 
  */
 public class RPExperimentViewer extends ExperimentViewer {

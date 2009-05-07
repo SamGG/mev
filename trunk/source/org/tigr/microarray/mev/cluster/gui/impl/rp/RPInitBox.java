@@ -27,6 +27,7 @@ import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,11 +38,13 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -79,8 +82,9 @@ public class RPInitBox extends AlgorithmDialog {
     public static final int FALSE_PROP = 6;    
     public static final int ONE_CLASS = 7;
     public static final int TWO_CLASS = 8;
-    public static final int BUTTON_SELECTION = 9;
-    public static final int CLUSTER_SELECTION = 10;
+    public static final int PAIRED = 9;
+    public static final int BUTTON_SELECTION = 10;
+    public static final int CLUSTER_SELECTION = 11;
     
     boolean okPressed = false;
     boolean okReady = false;
@@ -187,6 +191,7 @@ public class RPInitBox extends AlgorithmDialog {
         JPanel dummyPanel;
         ExperimentsPanel oneClassPanel;
         ExperimentsPanel twoClassPanel;
+        TwoClassPairedMainPanel pairedPanel;
         JTabbedPane chooseDesignPane;
         JTabbedPane oneClassmulg;
         JTabbedPane twoClassmulg;
@@ -246,10 +251,13 @@ public class RPInitBox extends AlgorithmDialog {
                     twoClassmulg.setSelectedIndex(1);//set to be cluster selection
                     if (repository==null||repository.isEmpty())
                     	twoClassmulg.setSelectedIndex(0);
-                    
+
+                    pairedPanel = new TwoClassPairedMainPanel();
+
                     chooseDesignPane = new JTabbedPane();
                     chooseDesignPane.add("One-Class", oneClassmulg);
-                    chooseDesignPane.add("Two-Class", twoClassmulg);
+                    chooseDesignPane.add("Two-Class Unpaired", twoClassmulg);
+                    chooseDesignPane.add("Two-Class Paired", pairedPanel);
                     
                     buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
@@ -921,6 +929,400 @@ public class RPInitBox extends AlgorithmDialog {
     }
     
     
+    
+    class TwoClassPairedMainPanel extends JPanel {
+        TwoClassPairedPanel tcpPanel;
+        JButton saveButton, resetButton, loadButton;
+        GridBagConstraints constraints;
+        GridBagLayout gridbag;  
+        JLabel lotsOfSamplesWarningLabel;
+        
+        public TwoClassPairedMainPanel() {
+            tcpPanel = new TwoClassPairedPanel();
+            JPanel bottomPanel = new JPanel();
+            bottomPanel.setBackground(Color.white);
+            constraints = new GridBagConstraints();
+            gridbag = new GridBagLayout();   
+            this.setLayout(gridbag);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 90);
+            constraints.fill = GridBagConstraints.BOTH;
+            gridbag.setConstraints(tcpPanel, constraints);
+            this.add(tcpPanel);
+            
+            GridBagLayout grid1 = new GridBagLayout();
+            bottomPanel.setLayout(grid1);
+            
+            saveButton = new JButton("Save pairings");
+            
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File("Data"));
+            
+            saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                    int returnVal = fc.showSaveDialog(TwoClassPairedMainPanel.this); 
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile(); 
+                        try {
+                            PrintWriter out = new PrintWriter(new FileOutputStream(file));
+                            for (int i = 0; i < tcpPanel.pairedAExpts.size(); i++) {
+                                int currentA = ((Integer)(tcpPanel.pairedAExpts.get(i))).intValue();
+                                int currentB = ((Integer)(tcpPanel.pairedBExpts.get(i))).intValue();
+                                out.print(currentA);
+                                out.print("\t");
+                                out.print(currentB);
+                                out.print("\t");
+                                out.println();
+                            }
+                            out.flush();
+                            out.close();
+                        } catch (Exception e) {
+                        }
+                    } else {
+                    }
+                }
+            });
+            constraints.fill = GridBagConstraints.NONE;
+            buildConstraints(constraints, 0, 1, 1, 1, 33, 100);
+            grid1.setConstraints(saveButton, constraints);
+            bottomPanel.add(saveButton);       
+            
+            loadButton = new JButton("Load pairings");
+           
+            loadButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                }
+            });
+           
+            buildConstraints(constraints, 1, 1, 1, 1, 33, 100);
+            grid1.setConstraints(loadButton, constraints);
+            bottomPanel.add(loadButton);     
+            
+            resetButton = new JButton("Reset");
+           
+            resetButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                    tcpPanel.reset();        
+                }
+            });
+            
+            buildConstraints(constraints, 2, 1, 1, 1, 34, 100);
+            grid1.setConstraints(resetButton, constraints);
+            bottomPanel.add(resetButton);    
+            
+            
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
+            gridbag.setConstraints(bottomPanel, constraints);
+            this.add(bottomPanel);             
+        }
+    }
+    
+    class TwoClassPairedPanel extends JPanel {
+        ExperimentButton[] exptButtons;
+        GridBagConstraints constraints;
+        GridBagLayout gridbag;
+        JTextField currentATextField, currentBTextField;
+        JButton removeCurrentAButton, removeCurrentBButton, loadABPairButton, removeABPairButton;
+        PairedExperimentsPanel pairPanel;
+        JList pairedExptsList;
+        DefaultListModel pairedListModel;
+        boolean currentAFilled, currentBFilled;
+        int currentAExpt, currentBExpt;
+        int numPanels = 0;
+        Vector pairedAExpts, pairedBExpts;
+        
+        public TwoClassPairedPanel() {
+            currentAExpt = -1;
+            currentBExpt = -1;
+            currentAFilled = false;
+            currentBFilled = false;
+            pairedAExpts = new Vector();
+            pairedBExpts = new Vector();
+            constraints = new GridBagConstraints();
+            gridbag = new GridBagLayout();
+            this.setLayout(gridbag);  
+            
+            pairedListModel = new DefaultListModel();
+            pairedExptsList = new JList(pairedListModel);
+            numPanels = exptNames.size()/512 + 1;
+            JPanel [] panels = new JPanel[numPanels];
+            
+            int currPanel = 0;
+            for(int i = 0; i < panels.length; i++) {
+                panels[i] = new JPanel(gridbag);
+            }
+            exptButtons = new ExperimentButton[exptNames.size()];
+            
+            int maxWidth = 0;
+            int maxNameLength = 0;
+            
+            for (int i = 0; i < exptNames.size(); i++) {
+                exptButtons[i] = new ExperimentButton(i);
+                //set current panel
+                currPanel = i / 512;
+                
+                if (exptButtons[i].getPreferredSize().getWidth() > maxWidth) {
+                    maxWidth = (int)Math.ceil(exptButtons[i].getPreferredSize().getWidth());
+                }
+                
+                String s = (String)(exptNames.get(i));
+                int currentNameLength = s.length();
+                
+                if (currentNameLength > maxNameLength) {
+                    maxNameLength = currentNameLength;
+                }
+                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+                constraints.fill= GridBagConstraints.BOTH;
+                gridbag.setConstraints(exptButtons[i], constraints);
+                panels[currPanel].add(exptButtons[i]);
+            }
+            
+            currentATextField = new JTextField("", maxNameLength + 2);
+            currentBTextField = new JTextField("", maxNameLength + 2);
+            
+            currentATextField.setBackground(Color.white);
+            currentBTextField.setBackground(Color.white);
+            currentATextField.setEditable(false);
+            currentBTextField.setEditable(false);   
+            JPanel bigPanel = new JPanel(new GridBagLayout());
+            
+            for(int i = 0; i < numPanels; i++) {
+                bigPanel.add(panels[i] ,new GridBagConstraints(0,i,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+            }
+            
+            JScrollPane scroll = new JScrollPane(bigPanel);
+            scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
+            
+            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+            scroll.getVerticalScrollBar().setUnitIncrement(20);
+            
+            buildConstraints(constraints, 0, 0, 1, 1, 40, 100);
+            constraints.fill =GridBagConstraints.BOTH;
+            gridbag.setConstraints(scroll, constraints);
+            this.add(scroll);
+            
+            constraints.fill = GridBagConstraints.NONE;
+            
+            JPanel currentSelectionPanel = new JPanel();
+            GridBagLayout grid2 = new GridBagLayout();
+            currentSelectionPanel.setLayout(grid2);
+            removeCurrentAButton = new JButton("< Remove A");
+            removeCurrentBButton = new JButton("< Remove B");
+            loadABPairButton = new JButton("   Load Pair >>   ");
+            removeABPairButton = new JButton("<< Remove Pair");
+            removeCurrentAButton.setEnabled(false);
+            removeCurrentBButton.setEnabled(false);
+            loadABPairButton.setEnabled(false); 
+            removeABPairButton.setEnabled(false);
+            removeCurrentAButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    exptButtons[currentAExpt].setEnabled(true);
+                    currentAExpt = -1;
+                    currentATextField.setText("");
+                    currentAFilled = false;
+                    removeCurrentAButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false);
+                }
+            });
+            
+            removeCurrentBButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    exptButtons[currentBExpt].setEnabled(true);
+                    currentBExpt = -1;
+                    currentBTextField.setText("");
+                    currentBFilled = false;
+                    removeCurrentBButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false);                    
+                }
+            });     
+            
+            loadABPairButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    String currentPair = "A: " + (String)(exptNames.get(currentAExpt)) + " - B: " + (String)(exptNames.get(currentBExpt));
+                    pairedListModel.addElement(currentPair);
+                    pairedAExpts.add(new Integer(currentAExpt));
+                    pairedBExpts.add(new Integer(currentBExpt));
+                    currentAExpt = -1;
+                    currentBExpt = -1;
+                    currentATextField.setText("");
+                    currentBTextField.setText("");
+                    currentAFilled = false;
+                    currentBFilled = false;
+                    removeCurrentAButton.setEnabled(false);
+                    removeCurrentBButton.setEnabled(false);
+                    loadABPairButton.setEnabled(false); 
+                    removeABPairButton.setEnabled(true);
+                    pairedExptsList.setSelectedIndex(pairedListModel.size() - 1);                 
+                }
+            });
+            
+            removeABPairButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    int index = pairedExptsList.getSelectedIndex();
+                    pairedListModel.removeElementAt(index);
+                    int removedAIndex = ((Integer)(pairedAExpts.remove(index))).intValue();
+                    int removedBIndex = ((Integer)(pairedBExpts.remove(index))).intValue();
+                    exptButtons[removedAIndex].setEnabled(true);
+                    exptButtons[removedBIndex].setEnabled(true);
+                    if (pairedListModel.isEmpty()) {
+                        removeABPairButton.setEnabled(false);
+                    } else {
+                        pairedExptsList.setSelectedIndex(pairedListModel.size() - 1);
+                    }                
+                }
+            });
+            JScrollPane currentAScroll = new JScrollPane(currentATextField);
+            currentAScroll.setMinimumSize(new Dimension(90, 50));
+            JScrollPane currentBScroll = new JScrollPane(currentBTextField);
+            currentBScroll.setMinimumSize(new Dimension(90, 50));
+            
+            
+            currentAScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            currentAScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);   
+            
+            currentBScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            currentBScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);            
+            
+            currentAScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentAScroll.getVerticalScrollBar().setUnitIncrement(20);
+            
+            currentBScroll.getHorizontalScrollBar().setUnitIncrement(20);
+            currentBScroll.getVerticalScrollBar().setUnitIncrement(20);
+
+            buildConstraints(constraints, 0, 0, 1, 1, 20, 50);
+            grid2.setConstraints(removeCurrentAButton, constraints);
+            currentSelectionPanel.add(removeCurrentAButton);
+            
+            JLabel aLabel = new JLabel(" Current A: ");
+            buildConstraints(constraints, 1, 0, 1, 1, 20, 0);
+            grid2.setConstraints(aLabel, constraints);
+            currentSelectionPanel.add(aLabel);    
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 60, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            //constraints.ipady = 100;
+            grid2.setConstraints(currentAScroll, constraints);
+            currentSelectionPanel.add(currentAScroll);   
+            
+            //constraints.ipady = 0;
+            constraints.fill = GridBagConstraints.NONE;
+            
+            buildConstraints(constraints, 0, 1, 1, 1, 20, 50);
+            grid2.setConstraints(removeCurrentBButton, constraints);
+            currentSelectionPanel.add(removeCurrentBButton);   
+            
+            JLabel bLabel = new JLabel("Current B: ");
+            buildConstraints(constraints, 1, 1, 1, 1, 20, 0);
+            grid2.setConstraints(bLabel, constraints);
+            currentSelectionPanel.add(bLabel);  
+            
+            buildConstraints(constraints, 2, 1, 1, 1, 60, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            //constraints.ipady = 100;
+            grid2.setConstraints(currentBScroll, constraints);
+            currentSelectionPanel.add(currentBScroll);   
+            
+            //constraints.ipady = 0;
+            constraints.fill = GridBagConstraints.NONE;
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 10, 0);
+            //constraints.fill = GridBagConstraints.HORIZONTAL;
+            //constraints.ipadx = 200;
+            gridbag.setConstraints(currentSelectionPanel, constraints);
+            this.add(currentSelectionPanel);   
+            
+            constraints.fill = GridBagConstraints.NONE;
+            //constraints.ipadx = 0;
+            
+            JPanel pairButtonsPanel = new JPanel();
+            GridBagLayout grid3 = new GridBagLayout();
+            pairButtonsPanel.setLayout(grid3);
+            buildConstraints(constraints, 0, 0, 1, 1, 100, 50);
+            grid3.setConstraints(loadABPairButton, constraints);
+            pairButtonsPanel.add(loadABPairButton);
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+            grid3.setConstraints(removeABPairButton, constraints);
+            pairButtonsPanel.add(removeABPairButton);            
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 5, 0);
+            gridbag.setConstraints(pairButtonsPanel, constraints);
+            this.add(pairButtonsPanel);  
+            
+            buildConstraints(constraints, 3, 0, 1, 1, 45, 0);
+            constraints.fill = GridBagConstraints.BOTH;
+            JScrollPane pairScroll = new JScrollPane(pairedExptsList);
+            pairScroll.setBorder(new TitledBorder("Paired Samples"));
+            gridbag.setConstraints(pairScroll, constraints);
+            this.add(pairScroll);              
+        }
+        
+        public void reset() {
+            for (int i = 0; i < exptButtons.length; i++) {
+                exptButtons[i].setEnabled(true);
+                currentATextField.setText("");
+                currentBTextField.setText("");
+                removeCurrentAButton.setEnabled(false);
+                removeCurrentBButton.setEnabled(false);
+                loadABPairButton.setEnabled(false);
+                removeABPairButton.setEnabled(false);
+                pairedListModel.clear();
+                currentAFilled = false;
+                currentBFilled = false;
+                currentAExpt = -1;
+                currentBExpt = -1;
+                pairedAExpts.clear();
+                pairedBExpts.clear();
+            }
+        }
+        
+        class ExperimentButton extends JButton {
+            String s;
+            int index;
+            public ExperimentButton(int i) {
+                this.index = i;
+                s = (String)(exptNames.get(i));
+                this.setText(s);
+                this.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if ((currentAFilled)&&(currentBFilled)) {
+                            JOptionPane.showMessageDialog(null, "Clear at least one current field first!", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else if (!currentAFilled) {
+                            currentAExpt = index;
+                            currentATextField.setText(s);
+                            currentAFilled = true;
+                            ExperimentButton.this.setEnabled(false);
+                            removeCurrentAButton.setEnabled(true);
+                        } else if (!currentBFilled) {
+                            currentBExpt = index;
+                            currentBTextField.setText(s);
+                            currentBFilled = true;
+                            ExperimentButton.this.setEnabled(false);
+                            removeCurrentBButton.setEnabled(true);
+                        }
+                        
+                        if ((currentAFilled) && (currentBFilled)) {
+                            loadABPairButton.setEnabled(true);
+                        } else {
+                            loadABPairButton.setEnabled(false);
+                        }
+                    }
+                });
+            }
+        }
+       
+        class PairedExperimentsPanel extends JPanel {
+            public PairedExperimentsPanel() {
+                //this.setBorder(new TitledBorder("Paired Experiments"));
+            }
+        }
+   }  
+    
+    
+    
+    
+    
+    
     class UpDownPanel extends JPanel {
     	JRadioButton upButton, downButton, bothButton;
     	public UpDownPanel(){
@@ -1172,6 +1574,13 @@ public class RPInitBox extends AlgorithmDialog {
                     		okPressed = false;
                     		return;
                     	}
+                    }else if(getTestDesign()==RPInitBox.PAIRED){
+                    	
+                        if (mPanel.pairedPanel.tcpPanel.pairedListModel.size() < 2) {
+                            JOptionPane.showMessageDialog(null, "Need at least two pairs of samples!", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        
                     }
                     if ((d <= 0d)||(d > 1d) || (usePerms() && (getNumPerms() <= 1))) {
                         JOptionPane.showMessageDialog(null, "Valid inputs: 0 < alpha < 1, and # of permutations (integer only) > 1", "Error!", JOptionPane.ERROR_MESSAGE);                            
@@ -1229,8 +1638,10 @@ public class RPInitBox extends AlgorithmDialog {
         int design = -1;
         if (mPanel.chooseDesignPane.getSelectedIndex() == 0) {
         	design = RPInitBox.ONE_CLASS;
-        } else {
+        } else if (mPanel.chooseDesignPane.getSelectedIndex() == 1) {
         	design = RPInitBox.TWO_CLASS;
+        } else if (mPanel.chooseDesignPane.getSelectedIndex() == 2) {
+        	design = RPInitBox.PAIRED;
         }
         return design;
     }
@@ -1322,7 +1733,22 @@ public class RPInitBox extends AlgorithmDialog {
         }
     	return groupAssignments;
     }
+
+    public int[] getPairedAExpts() {
+    	int[] a = new int[mPanel.pairedPanel.tcpPanel.pairedAExpts.size()];
+    	for (int i=0; i<mPanel.pairedPanel.tcpPanel.pairedAExpts.size(); i++){
+    		a[i] = (int)(Integer)mPanel.pairedPanel.tcpPanel.pairedAExpts.get(i);
+    	}
+        return a;
+    }
     
+    public int[] getPairedBExpts() {
+    	int[] b = new int[mPanel.pairedPanel.tcpPanel.pairedBExpts.size()];
+    	for (int i=0; i<mPanel.pairedPanel.tcpPanel.pairedBExpts.size(); i++){
+    		b[i] = (int)(Integer)mPanel.pairedPanel.tcpPanel.pairedBExpts.get(i);
+    	}
+        return b;
+    } 
     public boolean usePerms() {
         return true;//this.pPanel.permutButton.isSelected();
     }
@@ -1406,6 +1832,7 @@ public class RPInitBox extends AlgorithmDialog {
         
         RPInitBox oBox = new RPInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
+        System.out.println("end");
         System.exit(0);
         
     }
