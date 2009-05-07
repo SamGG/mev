@@ -347,7 +347,6 @@ public class AnnotationDownloadHandler {
 		updateLabel();
 	}
 	private void updateLabel() {
-//		System.out.println("updating label");
 		if(inProgress) {
 			statusLabel.setText("Downloading...");
 			statusLabel.setForeground(Color.black);
@@ -356,6 +355,7 @@ public class AnnotationDownloadHandler {
 			statusLabel.setForeground(Color.red);
 			annotationSelected = false;
 		} else {
+			annotationSelected = true;
 			if(autoDownload.isSelected()) {
 				if(organismListBox.getSelectedItem() == null ||
 						organismListBox.getSelectedItem().equals(CHOOSE_ORGANISM) || 
@@ -368,11 +368,9 @@ public class AnnotationDownloadHandler {
 					if(annotationSelected) {
 						statusLabel.setText("Annotation will be loaded.");
 						statusLabel.setForeground(Color.black);
-						annotationSelected = true;
 					} else {
 						statusLabel.setText("Annotation could not be downloaded.");
 						statusLabel.setForeground(Color.red);
-						annotationSelected = false;
 					}
 				}
 			} else {
