@@ -23,6 +23,8 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.ISampleAnnotation;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
 import org.tigr.midas.engine.RatioStats;
@@ -70,9 +72,18 @@ public class FloatSlideData implements ISlideData {
     private int[] flags;
     
     //Support multiple sample labels
-    private String sampleLabelKey = "Default Slide Name";
+    private String sampleLabelKey = IData.DEFAULT_SAMPLE_ANNOTATION_KEY;
     private Hashtable sampleLabels;
     private Vector sampleLabelKeys;
+    
+    /*
+     * @author Sarita Nair
+     * Instance of new SampleAnnotation object
+     */
+   
+    private SampleAnnotation sampAnn;
+    private boolean isSampleAnnotationLoaded=false;
+    
     
 	//TODO this item needs to be added to the state-saving functions for 
 	//FloatSlideData
@@ -83,6 +94,9 @@ public class FloatSlideData implements ISlideData {
      * for each chromosome
      */
     private Vector[] flankingRegions;
+    
+    
+    
     
     /**
      * Creates a new FloatSlideData with no intensity or detection data. Designed for use 
@@ -112,6 +126,40 @@ public class FloatSlideData implements ISlideData {
     	this.dataType = dataType.intValue();
     	this.slideMetaData = ismd;
     }    
+    
+    /**
+     * @author sarita
+     * Creates a <code>FloatSlideData</code> with specified reference
+     * to a microarray meta data and SampleAnnotation object
+     */
+    public FloatSlideData(ISlideMetaData slideMetaData, SampleAnnotation sampAnn) {
+        this(slideMetaData, slideMetaData.getSize());
+        this.sampAnn=sampAnn;
+    }
+  
+    
+    /**
+     * @author sarita
+     * Creates a <code>FloatSlideData</code> with specified reference
+     * to a microarray meta data and initial size.
+     * @param size the size of slide data.
+     * @param SampleAnnotation object
+     */
+    public FloatSlideData(ISlideMetaData slideMetaData, int size, SampleAnnotation sampAnn) {
+        this.slideMetaData = slideMetaData;
+        trueCY3 = new float[size];
+        trueCY5 = new float[size];
+        detection = new char[size];
+        pvalue=new float[size];
+        flags=new int[size];
+        this.sampAnn=sampAnn;
+    }
+  
+     
+    
+    
+    
+    
     /**
      * Creates a <code>FloatSlideData</code> with specified reference
      * to a microarray meta data.
@@ -123,8 +171,8 @@ public class FloatSlideData implements ISlideData {
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
     }
-    
-    /**
+  
+     /**
      * Creates a <code>FloatSlideData</code> with specified reference
      * to a microarray meta data and initial size.
      * @param size the size of slide data.
@@ -213,11 +261,22 @@ public class FloatSlideData implements ISlideData {
      * Sets a microarray name.
      */
     public void setSlideDataName(String slideDataName) {
-        this.name = slideDataName; 
-        String key = "Default Slide Name";
-        sampleLabelKey = key;        
-        sampleLabelKeys.addElement(key);
-        sampleLabels.put(key, slideDataName);
+    	
+    	 this.name = slideDataName;
+         
+         
+         if(this.isSampleAnnotationLoaded){
+         	if(!((SampleAnnotation)getSampleAnnotation()).getSampleAnnoHash().containsKey(IData.DEFAULT_SAMPLE_ANNOTATION_KEY))
+         		getSampleAnnotation().setAnnotation(IData.DEFAULT_SAMPLE_ANNOTATION_KEY, this.name);
+         }else{
+         	String key = IData.DEFAULT_SAMPLE_ANNOTATION_KEY;
+         	sampleLabelKey = key;        
+         	sampleLabelKeys.addElement(key);
+         	sampleLabels.put(key, slideDataName);
+         }
+         
+    	
+     
     }
     
     /**
@@ -231,11 +290,16 @@ public class FloatSlideData implements ISlideData {
      * Returns the name of a microarray.
      */
     public String getSlideDataName() {
-        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
+
+    	String name = "";
+    	if(this.isSampleAnnotationLoaded)	
+    		name=getSampleAnnotation().getAnnotation(this.sampleLabelKey);
+    	else	
+    		name=(String)this.sampleLabels.get(this.sampleLabelKey);
 
         if(name == null)
             return " ";
-        
+
         if(!this.abbrName)
             return name;
         else{
@@ -243,14 +307,22 @@ public class FloatSlideData implements ISlideData {
                 return name;
             return name.substring(0, 25)+"...";
         }
+    	
+    	
     }
     
     public String getFullSlideDataName() {
-        String name = (String)this.sampleLabels.get(this.sampleLabelKey);
-        if(name == null)
-            return " ";
-        else
-            return name;
+    	String name=""; 
+    	if(this.isSampleAnnotationLoaded){
+    		name=getSampleAnnotation().getAnnotation(this.sampleLabelKey);
+       	}else  
+       		name = (String)this.sampleLabels.get(this.sampleLabelKey);
+       		
+    	
+    	if(name == null)
+             return " ";
+         else
+             return name;
     }
     
     /**
@@ -1112,14 +1184,25 @@ public class FloatSlideData implements ISlideData {
      * Returns the slide name keys.
      */
     public Vector getSlideDataKeys() {
-        return this.sampleLabelKeys;
+    	//Added by Sarita
+     	//Gets the keys from the SampleAnnotation model object and returns as a Vector.
+    	if(this.isSampleAnnotationLoaded)
+         return new Vector(((SampleAnnotation)getSampleAnnotation()).getAnnotationKeys());
+    	else  
+          return this.sampleLabelKeys;
+    	
     }
     
     /**
      * Returns the slide name keys and pairs
      */
     public Hashtable getSlideDataLabels() {
-        return this.sampleLabels;
+    	if(this.isSampleAnnotationLoaded)
+       	 return (((SampleAnnotation)getSampleAnnotation()).getSampleAnnoHash());
+       	else
+       		return this.sampleLabels;
+       	
+       	 
     }
     
     /** Sets the current label index.
@@ -1134,14 +1217,29 @@ public class FloatSlideData implements ISlideData {
     /** Adds a new key and label value
      */
     public void addNewSampleLabel(String label, String value) {        
-       if(!sampleLabelKeys.contains(label))
-            this.sampleLabelKeys.addElement(label);
-        this.sampleLabels.put(label, value);
+
+    	if (!this.isSampleAnnotationLoaded) {
+			if (!sampleLabelKeys.contains(label))
+				this.sampleLabelKeys.addElement(label);
+			this.sampleLabels.put(label, value);
+
+		} else {
+
+			// Add the Key and value to the new Sample Annotation model
+
+			if (getSampleAnnotation() != null)
+				getSampleAnnotation().setAnnotation(label, value);
+			else {
+				SampleAnnotation ann = new SampleAnnotation();
+				this.setSampleAnnotation(ann);
+				getSampleAnnotation().setAnnotation(label, value);
+			}
+		}
+
     }
     /**
-     * CGH IFeatureData implemetations
-     * Raktim Oct 31, 2005
-     */
+	 * CGH IFeatureData implemetations Raktim Oct 31, 2005
+	 */
 
     /**
      * Raktim, CGH
@@ -1267,4 +1365,25 @@ public class FloatSlideData implements ISlideData {
     		dos.writeChar(detection[i]);
     	}
     }
+
+	
+	public SampleAnnotation getSampleAnnotation() {
+		return this.sampAnn;
+	}
+
+	
+	public void setSampleAnnotation(SampleAnnotation sampAnn) {
+		this.sampAnn=sampAnn;
+		
+	}
+
+	
+	public boolean isSampleAnnotationLoaded() {
+		return this.isSampleAnnotationLoaded;
+	}
+
+	
+	public void setSampleAnnotationLoaded(boolean isAnnLoaded) {
+		this.isSampleAnnotationLoaded=isAnnLoaded;
+	}
 }

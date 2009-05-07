@@ -60,7 +60,7 @@ public class ISlideDataPersistenceDelegate extends
 						new Object[]{fsd.getSlideDataKeys(), fsd.getSlideDataLabels(), fsd.getFullSlideFileName(), 
 							fsd.getSlideDataName(), new Boolean(fsd.getIsNonZero()), new Integer(fsd.getNormalizedState()), 
 							new Integer(fsd.getSortState()), fsd.getSpotInformationData(), new Integer(fsd.getDataType()), fsd.getSlideMetaData(),
-							outputFile.getName()});
+							outputFile.getName(), fsd.getSampleAnnotation()});
 			} else {
 				SlideData sd = (SlideData) oldInstance;
 				
@@ -84,11 +84,12 @@ public class ISlideDataPersistenceDelegate extends
 				PersistenceObjectFactory.writeSlideDataIntensities(dos, sd);
 				dos.close();
 				
+				
 				e = new Expression((SlideData)oldInstance, new PersistenceObjectFactory().getClass(), "makeSlideData",
 						new Object[]{sd.getSlideDataName(), sd.getSlideDataKeys(), sd.getSampleLabelKey(),
 							sd.getSlideDataLabels(), sd.getSlideFileName(), new Boolean(sd.isNonZero()), new Integer(sd.getRows()), new Integer(sd.getColumns()),
 							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), sd.getFieldNames(), new Integer(sd.getDataType()),
-							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName()/*, progBar*/});
+							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName(), sd.getSampleAnnotation()/*, progBar*/});
 //				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
 			}
 		} catch (Exception ioe){

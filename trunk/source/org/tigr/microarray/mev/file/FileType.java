@@ -20,7 +20,8 @@ public enum FileType {
   	GENEPIX					("genepix", 			11,	true,	GenePixFileLoader.class,			"GenePix Format Files"),
   	AGILENT					("agilent",				12,	true,	AgilentMevFileLoader.class,			"Agilent Files"),
   	GEO_SERIES_MATRIX		("geo-series-matrix",	13,	false,	GEOSeriesMatrixLoader.class,		"GEO Series Matrix Files"),
-  	GEO_GDS					("geo-gds", 			14,	false,	GEO_GDSFileLoader.class,			"GEO GDS Format Files"),;
+  	GEO_GDS					("geo-gds", 			14,	false,	GEO_GDSFileLoader.class,			"GEO GDS Format Files"), 
+  	MAGETAB					("mage-tab", 			15,	false,	MAGETABFileLoader.class,			"MAGE-TAB Format Files"),;
 
  	
   	private String commandArg;

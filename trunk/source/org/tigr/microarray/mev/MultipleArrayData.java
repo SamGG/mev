@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -68,6 +69,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.normalization.RatioStats
 import org.tigr.microarray.mev.file.StringSplitter;
 import org.tigr.microarray.mev.persistence.MultipleArrayDataPersistenceDelegate;
 import org.tigr.microarray.mev.persistence.MultipleArrayDataState;
+import org.tigr.microarray.mev.sampleannotation.MageIDF;
 import org.tigr.microarray.util.Adjustment;
 import org.tigr.microarray.util.SlideDataSorter;
 import org.tigr.midas.engine.Parameter;
@@ -186,6 +188,9 @@ public class MultipleArrayData implements IData {
      * Annotation model
      */
     public String gaggleOrganismName;
+    
+    //IDF object
+   public MageIDF IDFObject=new MageIDF();
     
     public MultipleArrayData(){
     	mads = new MultipleArrayDataState();
@@ -883,6 +888,7 @@ public class MultipleArrayData implements IData {
      * Returns the key vector for the sample with the longest sample name key list
      */
     public Vector getSlideNameKeyVectorUnion() {
+    	
         Vector keyVector;
         Vector fullKeyVector = new Vector();
         String key;
@@ -944,7 +950,7 @@ public class MultipleArrayData implements IData {
         ISlideData slideData;
 
         for(int i = 0; i < featuresList.size(); i++) {
-            getFeature(i).addNewSampleLabel(key, values[i]);;
+            getFeature(i).addNewSampleLabel(key, values[i]);
         }
     }
     
@@ -3181,7 +3187,16 @@ public class MultipleArrayData implements IData {
     /** Returns the slected sample annotation
      */
     public String getSampleAnnotation(int column, String key) {
-        return (String)(this.getFeature(column).getSlideDataLabels().get(key));
+    	
+        
+    	if(this.getFeature(0).isSampleAnnotationLoaded())
+    		return (String)(this.getFeature(column).getSampleAnnotation().getAnnotation(key));
+    	else
+    		return (String)(this.getFeature(column).getSlideDataLabels().get(key));
+    	
+    	
+    	
+    	
     }    
 	/*************************************************************************
      * Raktim CGH Functions
@@ -4109,6 +4124,7 @@ public class MultipleArrayData implements IData {
     public String getCurrentSampleLabelKey() {
     	//return ((ISlideData)featuresList.get(0)).getSlideDataName();
     	//Raktim 10.4. Commented out the above code. It was returning the SampleLabel instead of the key
+    	
     	return ((ISlideData)featuresList.get(0)).getSampleLabelKey();
     }
     public static PersistenceDelegate getPersistenceDelegate() {
@@ -4156,8 +4172,29 @@ public class MultipleArrayData implements IData {
 	public boolean isAnnotationLoaded() {
 		return mads.isAnnotationLoaded();
 	}
+	
 	public void setAnnotationLoaded(boolean isAnnotationLoaded) {
 		this.mads.setAnnotationLoaded(isAnnotationLoaded);
+	}
+	
+	public boolean isSampleAnnotationLoaded() {
+		return mads.isSampleAnnotationLoaded;
+	}
+	
+	public void setSampleAnnotationLoaded(boolean isAnnLoaded) {
+		this.mads.setSampleAnnotationLoaded(isAnnLoaded);
+		
+	}
+	
+	public MageIDF getIDFObject() {
+
+		return mads.getMageIDFObject();
+	}
+	
+	public void setIDF(MageIDF idfObj) {
+		
+	   this.IDFObject=idfObj;
+		mads.setMageIDFObject(idfObj);
 	}
 	
 

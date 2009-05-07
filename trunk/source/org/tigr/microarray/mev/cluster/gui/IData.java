@@ -22,6 +22,7 @@ import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterList;
+import org.tigr.microarray.mev.sampleannotation.MageIDF;
 import org.tigr.microarray.mev.annotation.AnnoAttributeObj;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
 
@@ -410,6 +411,19 @@ public interface IData {
     public String getClusterLabel(int index, boolean gene);
     public int getVisibleClusters();
     public int getVisibleCluster(Color color, boolean gene);
+    
+    
+    /**
+     * @author sarita
+     * getters and setters for SampleAnnotationModel.
+     * 
+     * 
+     */
+    public boolean isSampleAnnotationLoaded();
+    public void setSampleAnnotationLoaded(boolean isAnnLoaded);
+    
+    public void setIDF(MageIDF idfObj);
+    public MageIDF getIDFObject();
     
     
 }
