@@ -203,7 +203,8 @@ public class AnnotationDownloadHandler {
 		Vector<String> annFileKeyBoxItems = annotationLists.get(organismName);
 		if(annFileKeyBoxItems == null) {
 			annFileKeyBoxItems = new Vector<String>();
-		}
+			annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
+		} 
 		if(annFileKeyBoxItems.get(0) == null || !annFileKeyBoxItems.get(0).equals(CHOOSE_ARRAY)) {
 			annFileKeyBoxItems.add(0, CHOOSE_ARRAY);
 		}
