@@ -85,6 +85,7 @@ import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.SDRFNode;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.SourceNode;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.CharacteristicsAttribute;
+import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.handler.sdrf.node.attribute.CharacteristicsHandler;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
 
@@ -661,22 +662,30 @@ for(int k=0;k<dataTypes.length;k++) {
         }
         reader.close();
         //Added by Sarita to populate SampleAnnotation model with fields from SDRF
-        System.out.println("IDF file path:"+getIDFFilePath());
+       // System.out.println("IDF file path:"+getIDFFilePath());
         if(getIDFFilePath()!=null){
         	URL fileURL;
         	try {
         		fileURL = new URL("file:///" +getIDFFilePath());
         		investigation=mageTabParser.parse(fileURL);
         		populateIDFObject(investigation.IDF);
-
+        		populateSampleAnnotationfromSDRF(slideDataArray);
 
 
 
         	} catch (Exception e) {
-        		// TODO Auto-generated catch block
-        		e.printStackTrace();
+        	  if(e instanceof ParseException){
+        		  String text=
+        		  "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
+                  text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
+                  text += "2. Check the column names of SDRF file. If Protocol Ref has any prefixes, delete the prefix.<br><br>";
+                  text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
+                  text+="<br><br></body></html>";
+        		  JOptionPane.showMessageDialog(null,text , "Mage Error Message", JOptionPane.WARNING_MESSAGE);
+        	  }
+        	
         	}
-        	populateSampleAnnotationfromSDRF(slideDataArray);
+        	
         }
 
 
