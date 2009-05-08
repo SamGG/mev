@@ -1392,14 +1392,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             	    	cancelLoad();
             	    	return;
             	    }
-			        
-			         /*Added by Sarita*/
-			        
-//			       if((data.getSlideDataElement(0,0).getElementAnnotation())!=null) {
-//			    	   menubar.replaceLabelMenuItems(data.getFieldNames(), MevAnnotation.getFieldNames());
-//			       }else {
-			    	   menubar.replaceLabelMenuItems(data.getFieldNames());
-//			       }
+			    	menubar.replaceLabelMenuItems(data.getFieldNames());
+
 			        
            	    if(!keepSaving()) {
         	    	cancelLoad();
@@ -3808,12 +3802,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         	 * 
         	 * 
         	 */ 
-        	
-//        	if (this.getData().isAnnotationLoaded()) {
-//           	String[] annoFields = MevAnnotation.getFieldNames();
-//        	this.menubar.addLabelMenuItems(this.data.getFieldNames(), annoFields);
-//        	}
-//        	else
         	 this.menubar.addLabelMenuItems(this.data.getFieldNames(), null);//--Commented by Raktim for demo
            
         	

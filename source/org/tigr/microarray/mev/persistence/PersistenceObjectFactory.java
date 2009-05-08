@@ -309,7 +309,6 @@ public class PersistenceObjectFactory {
 			String[] fieldNames, Integer dataType,
 			String annotationFileName, String dataFile, String iAnnotationFileName, SampleAnnotation sampAnn) throws IOException {
 
-
     	SlideData aSlideData;
     	aSlideData = new SlideData(slideDataName, sampleLabelKeys, sampleLabelKey,
         		sampleLabels, slideFileName, isNonZero, rows, columns,
@@ -354,6 +353,7 @@ public class PersistenceObjectFactory {
     	dis.close();
     	
 		aSlideData.setAllElements(allSlideDataElements);
+		aSlideData.updateFilledAnnFields();
 		//Added the loop for setting sample Annotation to slideData 
 		if(sampAnn!=null){
 			aSlideData.setSampleAnnotation(sampAnn);
