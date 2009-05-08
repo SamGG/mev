@@ -2091,7 +2091,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     private void onIDFFieldsAdded() {
     	 boolean safeToReorderExperiments = false;
 
-
+    if(this.data.getIDFObject()!=null){
     	IDFEditor editor=new IDFEditor(this.getFrame(), "IDF File Editor", true, safeToReorderExperiments, this.data);
     	
     	editor.showModal();
@@ -2114,6 +2114,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     
     	
     	this.fireDataChanged();
+    }else
+    	JOptionPane.showMessageDialog(null, "You do not seem to have loaded an IDF file.", "IDF Warning", JOptionPane.INFORMATION_MESSAGE);
     	
     }
     
