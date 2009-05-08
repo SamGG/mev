@@ -100,6 +100,8 @@ public class MAGETABFileLoader extends ExpressionFileLoader {
     private int DataType;
     protected String[] dataTypes;
     protected Hashtable<String, String> columnDataTypes = new Hashtable<String,String>();
+    private String SDRFFilePath;
+    private String IDFFilePath;
 //    protected Vector<String> quantHeaders;
     protected Hashtable<String, Integer> quantTypes;
     //sampleNames holds the list of experiment names in order
@@ -659,12 +661,25 @@ for(int k=0;k<dataTypes.length;k++) {
         }
         reader.close();
         //Added by Sarita to populate SampleAnnotation model with fields from SDRF
+        System.out.println("IDF file path:"+getIDFFilePath());
+        if(getIDFFilePath()!=null){
+        	URL fileURL;
+        	try {
+        		fileURL = new URL("file:///" +getIDFFilePath());
+        		investigation=mageTabParser.parse(fileURL);
+        		populateIDFObject(investigation.IDF);
 
-       //  if( !this.sflp.selectedSDRF.getText().endsWith(" does not exist."))
+
+
+
+        	} catch (Exception e) {
+        		// TODO Auto-generated catch block
+        		e.printStackTrace();
+        	}
         	populateSampleAnnotationfromSDRF(slideDataArray);
-       // }
+        }
 
-      
+
         Vector data = new Vector(slideDataArray.length);
         for(int j = 0; j < slideDataArray.length; j++)
         	data.add(slideDataArray[j]);
@@ -1445,23 +1460,25 @@ for(int k=0;k<dataTypes.length;k++) {
     				} else if(fileName.endsWith("IDF.txt")) {
     					textS = "IDF.txt";
     				}
-    				if(selectedFile.exists()){
-    					
-    					URL fileURL;
-						try {
-							fileURL = new URL("file:///" +selectedFile.getAbsolutePath());
-							investigation=mageTabParser.parse(fileURL);
-							populateIDFObject(investigation.IDF);
-							
-							
-							
-							
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-    					
-    				}
+    				if(selectedFile.exists())
+    					setIDFFilePath(selectedFile.getAbsolutePath());
+//    				if(selectedFile.exists()){
+//    					
+//    					URL fileURL;
+//						try {
+//							fileURL = new URL("file:///" +selectedFile.getAbsolutePath());
+//							investigation=mageTabParser.parse(fileURL);
+//							populateIDFObject(investigation.IDF);
+//							
+//							
+//							
+//							
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//    					
+//    				}
         		} else if(fileType.equalsIgnoreCase("SDRF")) {
     				selectedSDRF.setText(selectedFile.getAbsolutePath());
     				if(fileName.endsWith("sdrf.txt")) {
@@ -1510,6 +1527,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				selectedIDF.setText("File " + testName + " does not exist.");
         				setLoadEnabled(false);
         			}
+        				
 				}
 
         		if(selectedDataMatrix.getText().equals("")) {
@@ -1521,7 +1539,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				setLoadEnabled(false);
         			} else {
         				setLoadEnabled(true);
-            			processAffyGCOSFile(dataFile);
+        				processAffyGCOSFile(dataFile);
         			}
 				}
         	}
@@ -1814,10 +1832,22 @@ for(int k=0;k<dataTypes.length;k++) {
 		return new Point(guessRow, guessCol);
 	}
 
-@Override
+
 public void setAnnotationFilePath(String filePath) {
 	// TODO Auto-generated method stub
 	
+}
+public String getSDRFFilePath() {
+	return SDRFFilePath;
+}
+public void setSDRFFilePath(String filePath) {
+	SDRFFilePath = filePath;
+}
+public String getIDFFilePath() {
+	return IDFFilePath;
+}
+public void setIDFFilePath(String filePath) {
+	IDFFilePath = filePath;
 }
 
 }
