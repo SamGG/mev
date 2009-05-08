@@ -668,24 +668,53 @@ for(int k=0;k<dataTypes.length;k++) {
         	try {
         		fileURL = new URL("file:///" +getIDFFilePath());
         		investigation=mageTabParser.parse(fileURL);
-        		populateIDFObject(investigation.IDF);
-        		populateSampleAnnotationfromSDRF(slideDataArray);
-
-
-
         	} catch (Exception e) {
-        	  if(e instanceof ParseException){
-        		  String text=
-        		  "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
-                  text +="Here are the possible reasons<br>";
-        		  text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
-                  text += "2. Check the column names of SDRF file. If Protocol Ref has any prefixes, delete the prefix.<br>";
-                  text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
-                  text+="<br><br></body></html>";
-        		  JOptionPane.showMessageDialog(null,text , "Mage Error Message", JOptionPane.WARNING_MESSAGE);
-        	  }
-        	
+          	  if(e instanceof ParseException){
+          		  String text=
+          		  "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
+                    text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
+                    text += "2. Check the column names of SDRF file. If Protocol Ref has any prefixes, delete the prefix.<br><br>";
+                    text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
+                    text+="<br><br></body></html>";
+          		  JOptionPane.showMessageDialog(null,text , "Loader Parse failure", JOptionPane.WARNING_MESSAGE);
+        	  } else if(e instanceof IOException) {
+        		  String text= "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
+        		  text += "<font face=arial size=4>The IDF or SDRF file could not be located. <br>";
+        		  text += "Check that both files are in the same directory.<br><br>";
+        		  text+="<br><br></body></html>";
+                  JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
+          	  }
         	}
+        	try {
+        		populateIDFObject(investigation.IDF);
+          	} catch (Exception e) {
+          	  if(e instanceof NullPointerException) {
+        		  String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+        		  text += "<font face=arial size=4>The IDF file could not be parsed due to an incorrect MAGE-TAB version (We support v.1.0). <br>";
+        		  text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+        		  text+="<br><br></body></html>";
+                  JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
+        		populateSampleAnnotationfromSDRF(slideDataArray);
+        	  }
+        	  e.printStackTrace();
+        	}
+          	try {
+          		populateSampleAnnotationfromSDRF(slideDataArray);
+          	} catch (Exception e) {
+            	  if(e instanceof NullPointerException) {
+          		  String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+          		  text += "<font face=arial size=4>The SDRF file could not be parsed due to inconsistencies between IDF <br>";
+          		  text += "and SDRF files or an incorrect MAGE-TAB version (We support v.1.0). <br>";
+          		  text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
+          		  text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
+          		  text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
+        		  text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+          		  text+="<br><br></body></html>";
+                    JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
+          	  }
+          	  e.printStackTrace();
+          	}
+
         	
         }
 
