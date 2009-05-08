@@ -106,6 +106,16 @@ public class PCA3DViewer extends ViewerAdapter {
         dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
         popup = createJPopupMenu();
     }   
+    /**
+     * State-saving constructor.
+     * @param e
+     * @param geneViewer
+     * @param U
+     * @param mode
+     * @param xAxis
+     * @param yAxis
+     * @param zAxis
+     */
     public PCA3DViewer(Experiment e, Boolean geneViewer, FloatMatrix U, Integer mode, Integer xAxis, Integer yAxis, Integer zAxis){
         this.geneViewer = geneViewer.booleanValue();
         this.U = U;

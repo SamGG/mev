@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.persistence;
 
+import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.OutputStream;
@@ -26,9 +27,17 @@ public class MavXMLEncoder extends XMLEncoder {
      * @see XMLDecoder#readObject
      */
     public void writeObject(Object o) {
-    	if(mav.keepSaving())
-    		super.writeObject(o);
-    	else 
-    		close();
+	    if(mav.keepSaving())
+	    	try {
+	    		super.writeObject(o);
+	    	} catch (StackOverflowError sofe) {
+	    		;//Just printing this error will kill the saving process.
+	    	} catch (Exception e) {
+	    		ExceptionListener el = getExceptionListener();
+	    		el.exceptionThrown(e);
+
+	    	}
+	    else 
+	    	close();
     }
 }
