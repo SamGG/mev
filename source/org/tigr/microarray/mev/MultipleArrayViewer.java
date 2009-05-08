@@ -753,7 +753,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	                PrintStream log = new PrintStream(new FileOutputStream(new File("saving.log"), false));//OutputStream(new FileOutputStream(new File("log.log"))));
     	                log.println(new Date());
             			exception.printStackTrace(log);
-            			System.out.println(exception.toString());
             		}
             	} catch (IOException ioe){
             		System.out.println("Could not open save log file.");
@@ -1424,7 +1423,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 			        fireMenuChanged();
 			        fireDataChanged();
 			        fireHeaderChanged();
-			        
+			        initMainViewAndClusterManager();
 			
 			        //Add time node to the analysis node
 			        Date date = new Date(System.currentTimeMillis());
