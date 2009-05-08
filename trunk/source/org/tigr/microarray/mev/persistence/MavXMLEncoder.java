@@ -34,7 +34,7 @@ public class MavXMLEncoder extends XMLEncoder {
 	    		;//Just printing this error will kill the saving process.
 	    	} catch (Exception e) {
 	    		ExceptionListener el = getExceptionListener();
-	    		el.exceptionThrown(e);
+	    		el.exceptionThrown(new Exception("Object " + o.getClass() + " could not be saved:", e));
 
 	    	}
 	    else 
