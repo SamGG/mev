@@ -687,6 +687,7 @@ for(int k=0;k<dataTypes.length;k++) {
         	}
         	try {
         		populateIDFObject(investigation.IDF);
+        		//populateSampleAnnotationfromSDRF(slideDataArray);
           	} catch (Exception e) {
           	  if(e instanceof NullPointerException) {
         		  String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
@@ -694,9 +695,9 @@ for(int k=0;k<dataTypes.length;k++) {
         		  text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
         		  text+="<br><br></body></html>";
                   JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-        		populateSampleAnnotationfromSDRF(slideDataArray);
+        		
         	  }
-        	  e.printStackTrace();
+        	//  e.printStackTrace();
         	}
           	try {
           		populateSampleAnnotationfromSDRF(slideDataArray);
@@ -712,7 +713,7 @@ for(int k=0;k<dataTypes.length;k++) {
           		  text+="<br><br></body></html>";
                     JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
           	  }
-          	  e.printStackTrace();
+          	//  e.printStackTrace();
           	}
 
         	
