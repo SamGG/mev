@@ -685,40 +685,37 @@ for(int k=0;k<dataTypes.length;k++) {
                   JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
           	  }
         	}
-        	try {
-        		populateIDFObject(investigation.IDF);
-        		//populateSampleAnnotationfromSDRF(slideDataArray);
-          	} catch (Exception e) {
-          	  if(e instanceof NullPointerException) {
-        		  String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
-        		  text += "<font face=arial size=4>The IDF file could not be parsed due to an incorrect MAGE-TAB version (We support v.1.0). <br>";
-        		  text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
-        		  text+="<br><br></body></html>";
-                  JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-        		
-        	  }
-        	//  e.printStackTrace();
+        	if(investigation != null) {
+        		try {
+        			populateIDFObject(investigation.IDF);
+        		} catch (Exception e) {
+        			if(e instanceof NullPointerException) {
+        				String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+        				text += "<font face=arial size=4>The IDF file could not be parsed due to an incorrect MAGE-TAB version (We support v.1.0). <br>";
+        				text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+        				text+="<br><br></body></html>";
+        				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
+//            			e.printStackTrace();
+        			}
+        		}
+        		try {
+        			populateSampleAnnotationfromSDRF(slideDataArray);
+        		} catch (Exception e) {
+        			if(e instanceof NullPointerException) {
+        				String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+        				text += "<font face=arial size=4>The SDRF file could not be parsed due to inconsistencies between IDF <br>";
+        				text += "and SDRF files or an incorrect MAGE-TAB version (We support v.1.0). <br>";
+        				text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
+        				text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
+        				text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
+        				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+        				text+="<br><br></body></html>";
+        				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
+//                		e.printStackTrace();
+        			}
+        		}
         	}
-          	try {
-          		populateSampleAnnotationfromSDRF(slideDataArray);
-          	} catch (Exception e) {
-            	  if(e instanceof NullPointerException) {
-          		  String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
-          		  text += "<font face=arial size=4>The SDRF file could not be parsed due to inconsistencies between IDF <br>";
-          		  text += "and SDRF files or an incorrect MAGE-TAB version (We support v.1.0). <br>";
-          		  text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
-          		  text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
-          		  text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
-        		  text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
-          		  text+="<br><br></body></html>";
-                    JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-          	  }
-          	//  e.printStackTrace();
-          	}
-
-        	
         }
-
 
         Vector data = new Vector(slideDataArray.length);
         for(int j = 0; j < slideDataArray.length; j++)
