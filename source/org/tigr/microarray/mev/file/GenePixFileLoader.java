@@ -44,9 +44,11 @@ import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.FileLoaderUtility;
 
 public class GenePixFileLoader extends ExpressionFileLoader {
@@ -54,9 +56,11 @@ public class GenePixFileLoader extends ExpressionFileLoader {
     private GBA gba;
     private GenePixFileLoaderPanel gpflp;    
     private boolean loadEnabled = false;
+    private MultipleArrayViewer mav;
     
     public GenePixFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
+        this.mav=superLoader.getArrayViewer();
         gba = new GBA();
         gpflp = new GenePixFileLoaderPanel();
     }
@@ -135,8 +139,8 @@ public class GenePixFileLoader extends ExpressionFileLoader {
                 maxRows = Math.max(maxRows, ((Integer)spotData.elementAt(2)).intValue());
                 maxCols = Math.max(maxCols, ((Integer)spotData.elementAt(3)).intValue());
             }
-                 
-            slideData = new SlideData(maxRows, maxCols);
+            SampleAnnotation sampAnn=new SampleAnnotation();
+            slideData = new SlideData(maxRows, maxCols, sampAnn);
             this.setLinesCount(numElements);
             for(int i = 0; i < numElements; i++){  //start at 1 to pass header
                 rows = new int[3];
@@ -160,6 +164,10 @@ public class GenePixFileLoader extends ExpressionFileLoader {
                 slideData.add(sde);
                 setFileProgress(i);
             }
+            
+            slideData.setSampleAnnotationLoaded(true);
+    		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
+    		this.mav.getData().setSampleAnnotationLoaded(true);
             slideData.setSlideDataName(currentFile.getName());
             slideData.setSlideFileName(currentFile.getPath());
         }
@@ -175,7 +183,8 @@ public class GenePixFileLoader extends ExpressionFileLoader {
         GenepixFileParser parser = new GenepixFileParser(currentFile, false);
      //   parser.run();
         if(parser.isCompleted()){
-            slideData = new FloatSlideData(meta);
+        	SampleAnnotation sampAnn=new SampleAnnotation();
+            slideData = new FloatSlideData(meta, sampAnn);
             Vector data = parser.getTavFile();
             int numElements = data.size();
             setLinesCount(numElements);
@@ -192,6 +201,9 @@ public class GenePixFileLoader extends ExpressionFileLoader {
                 slideData.setGenePixFlags(i,m);
                 setFileProgress(i);
             }
+            slideData.setSampleAnnotationLoaded(true);
+    		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
+    		this.mav.getData().setSampleAnnotationLoaded(true);
             slideData.setSlideDataName(currentFile.getName());
             slideData.setSlideFileName(currentFile.getPath());
         }

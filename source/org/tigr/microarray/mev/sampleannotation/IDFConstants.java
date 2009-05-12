@@ -54,8 +54,8 @@ public class IDFConstants {
 	public static final String TERM_SOURCE_FILE="Term Source File";
 	public static final String TERM_SOURCE_VERSION="Term Source Version";
 	//Add a static final string for comments
-	public static final char TAB_CHAR = '\t';
-	public static final String SPACE_CHAR= " ";
+	//public static final char TAB_CHAR = '\t';
+	//public static final String SPACE_CHAR= " ";
 	
 	
 	

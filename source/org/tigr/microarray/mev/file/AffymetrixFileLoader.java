@@ -60,6 +60,7 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.FileLoaderUtility;
 
 
@@ -555,9 +556,11 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
         int maxRows = getCountOfLines(this.files[0]);
         int maxColumns = 1;
-
-        SlideData slideData = new SlideData(maxRows, maxColumns);
-
+        
+        SampleAnnotation sampAnn=new SampleAnnotation();
+        SlideData slideData = new SlideData(maxRows, maxColumns, sampAnn);
+        
+		
         BufferedReader reader = new BufferedReader(new FileReader(file));
         int header_row = 0;
         int curpos = 0;
@@ -673,6 +676,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
 
         }
         reader.close();
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", file.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
         slideData.setFieldNames(this.fieldNames);
@@ -702,8 +708,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
                    slideData = new FloatSlideData(slideMetaData);
                }
                 */
+        SampleAnnotation sampAnn=new SampleAnnotation();
 
-        slideData = new FloatSlideData(slideMetaData);
+        slideData = new FloatSlideData(slideMetaData, sampAnn);
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
                 
         String currentLine;
@@ -730,6 +737,9 @@ public class AffymetrixFileLoader extends ExpressionFileLoader {
             index++;
         }
         reader.close();
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", file.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
         return slideData;

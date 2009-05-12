@@ -55,10 +55,12 @@ import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -80,9 +82,11 @@ public class TavFileLoader extends ExpressionFileLoader {
 	int uniqueIDIndex;
 	int nameIndex;
 	boolean indicesAdjusted = true;
+	private MultipleArrayViewer mav;
 
     public TavFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
+        this.mav=superLoader.getArrayViewer();
         gba = new GBA();
         tflp = new TavFileLoaderPanel();
     }
@@ -197,7 +201,9 @@ public class TavFileLoader extends ExpressionFileLoader {
             if (currentRow > maxRows) maxRows = currentRow;
             if (currentColumn > maxColumns) maxColumns = currentColumn;
         }
-        SlideData slideData = new SlideData(maxRows, maxColumns);
+        
+        SampleAnnotation sampAnn=new SampleAnnotation();
+        SlideData slideData = new SlideData(maxRows, maxColumns, sampAnn);
         reader.close();
         reader = new BufferedReader(new FileReader(file));
         header_row = 0;
@@ -233,6 +239,10 @@ public class TavFileLoader extends ExpressionFileLoader {
             slideData.addSlideDataElement(slideDataElement);
         }
         reader.close();
+        
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", file.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
         return slideData;
@@ -253,7 +263,8 @@ public class TavFileLoader extends ExpressionFileLoader {
             indicesAdjusted = true;
         }
         
-        FloatSlideData slideData = new FloatSlideData(slideMetaData);
+        SampleAnnotation sampAnn=new SampleAnnotation();
+        FloatSlideData slideData = new FloatSlideData(slideMetaData, sampAnn);
         
         BufferedReader reader = new BufferedReader(new FileReader(file), BUFFER_SIZE);
         
@@ -278,6 +289,10 @@ public class TavFileLoader extends ExpressionFileLoader {
             index++;
         }
         reader.close();
+        
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", file.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
         return slideData;
@@ -327,7 +342,8 @@ public class TavFileLoader extends ExpressionFileLoader {
             if (currentRow > maxRows) maxRows = currentRow;
             if (currentColumn > maxColumns) maxColumns = currentColumn;
         }
-        SlideData slideData = new SlideData(maxRows, maxColumns);
+        SampleAnnotation sampAnn=new SampleAnnotation();
+        SlideData slideData = new SlideData(maxRows, maxColumns, sampAnn);
         reader.close();
         reader = new BufferedReader(new FileReader(file));
         header_row = 0;
@@ -376,6 +392,11 @@ public class TavFileLoader extends ExpressionFileLoader {
                 }
             }
         }
+        
+        
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", file.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
         slideData.setSlideDataName(file.getName());
         slideData.setSlideFileName(file.getPath());
         return slideData;

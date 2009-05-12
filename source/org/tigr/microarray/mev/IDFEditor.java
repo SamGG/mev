@@ -373,31 +373,54 @@ public class IDFEditor extends AlgorithmDialog {
 		//Allows user to add missing fields of IDF file.
 		public void addNewRow() {
 			int fieldCount=0;
-			//Get the available keys in the table
-			boolean flag=true;
+			
+			boolean flag=false;
 			ArrayList rows_to_add=new ArrayList();
+			//Get the available keys in the table
 			String[]keys=getLabelKeys();
+			//Get all fields from IDFConstants
 			Field[] fields=IDFConstants.class.getFields();
 			
-		
-//			for(int index1=0; index1<fields.length; index1++){
-//				for(int index2=0; index2<keys.length; index2++){
-//					try{
-//					if(!.equalsIgnoreCase(keys[index2])){
-//						flag=false;
-//					}else
-//						flag=true;
-//					}catch(Exception e){
-//						e.printStackTrace();
-//					}
-//				}
-//				if(flag==false)
-//					rows_to_add.add(fields[index1].getName());
-//			}
-//			
-			if(rows_to_add.isEmpty())
-				JOptionPane.showMessageDialog(null, "Your file has all required IDF Fields", "Information", JOptionPane.INFORMATION_MESSAGE);
+		//Loop through all the fields
+			for(int index1=0; index1<fields.length; index1++){
+				try{
+				String temp=(String)fields[index1].get(new IDFConstants());
+				flag=false;
+				//System.out.println(temp);
+				//Loop through all the keys
+				for(int index2=0; index2<keys.length; index2++){
+					//If current field is also present in the keys, set flag to true 
+					if(temp.equalsIgnoreCase(keys[index2])){
+						flag=true;
+						return;
+					}
+					
+				}
 				
+				if(flag==false){
+					System.out.println("Field to add:"+temp);
+						rows_to_add.add(temp);
+					
+				}
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			
+			if(rows_to_add.isEmpty()){
+				JOptionPane.showMessageDialog(null, "Your file has all required IDF Fields", "Information", JOptionPane.INFORMATION_MESSAGE);
+			}else{
+				String text=
+	        		  "<html><body><b><center>The following missing fields will be added</center><b><br>";//<hr size=3>";
+						for(int num=0; num<rows_to_add.size(); num++){
+							text+=rows_to_add.get(num)+"<br>";
+						}
+					  text+="<br><br></body></html>";
+					  JOptionPane.showMessageDialog(null, text, "Information", JOptionPane.INFORMATION_MESSAGE);
+				
+			}
+				
+			
 			
 			//Compare with all available fields in IDFConstants 
 			
@@ -424,6 +447,7 @@ public class IDFEditor extends AlgorithmDialog {
 			}
 			// fireTableDataChanged();
 			fireTableRowsInserted(dataObject.length - 1, dataObject.length - 1);
+			
 		}
 
 		public void addNewRow(String[] newRow) {

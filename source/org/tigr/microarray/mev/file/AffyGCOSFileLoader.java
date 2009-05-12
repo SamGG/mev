@@ -71,6 +71,7 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 
 
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
@@ -227,10 +228,13 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             	
             	
             	slideDataArray = new ISlideData[experimentCount];
-                slideDataArray[0] = new SlideData(rRows, rColumns);
+            	SampleAnnotation sampAnn=new SampleAnnotation();
+            	slideDataArray[0] = new SlideData(rRows, rColumns, sampAnn);//Added by Sarita to include SampleAnnotation model.
+              
                 slideDataArray[0].setSlideFileName(f.getPath());
                 for (int i=1; i<experimentCount; i++) {
-                	slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),spotCount);
+                	sampAnn=new SampleAnnotation();
+                	slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(),spotCount, sampAnn);//Added by Sarita 
                 	slideDataArray[i].setSlideFileName(f.getPath());
                 	//System.out.println("slideDataArray[i].slide file name: "+ f.getPath());
                 }
@@ -256,8 +260,13 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
                 }
                 ss.nextToken();//parse the blank on header
                 for (int i=0; i<experimentCount; i++) {
-                	slideDataArray[i].setSlideDataName(ss.nextToken());//commented by sarita
-                	 
+                	String val=ss.nextToken();
+					slideDataArray[i].setSampleAnnotationLoaded(true);
+					slideDataArray[i].getSampleAnnotation().setAnnotation("Default Slide Name", val);
+					slideDataArray[i].setSlideDataName(val);
+					
+					this.mav.getData().setSampleAnnotationLoaded(true);
+			                                	 
                     if(sflp.intensityWithDetectionPvalRadioButton.isSelected()){
                     	ss.nextToken();//parse the detection
                         ss.nextToken();//parse the pvalue
@@ -373,16 +382,25 @@ public class AffyGCOSFileLoader extends ExpressionFileLoader {
             } else {
                 //we have additional sample annoation
                 
-                //advance to sample key
-            		for(int i = 0; i < preExperimentColumns-1; i++) {
-            			ss.nextToken();
-            		}
-            		String key = ss.nextToken();
-            		
-                
-            		for(int j = 0; j < slideDataArray.length; j++) {
-            			slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
-            		}
+            	for (int i = 0; i < preExperimentColumns - 1; i++) {
+					ss.nextToken();
+				}
+				String key = ss.nextToken();
+
+				for (int j = 0; j < slideDataArray.length; j++) {
+					
+					if(slideDataArray[j].getSampleAnnotation()!=null){
+					
+						String val=ss.nextToken();
+						slideDataArray[j].getSampleAnnotation().setAnnotation(key, val);
+						
+					}else{
+							SampleAnnotation sampAnn=new SampleAnnotation();
+							sampAnn.setAnnotation(key, ss.nextToken());
+							slideDataArray[j].setSampleAnnotation(sampAnn);
+							slideDataArray[j].setSampleAnnotationLoaded(true);
+					}
+				}
             	}
             	
             this.setFileProgress(counter);

@@ -72,6 +72,7 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHDataGenerator.CGHCloneComparator;
 import org.tigr.microarray.mev.cgh.CGHDataObj.CGHClone;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 public class CGHStanfordFileLoader extends ExpressionFileLoader {
@@ -80,13 +81,14 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
     private boolean stop = false;
     private CGHStanfordFileLoaderPanel CGHsflp;
     private ExpressionFileTableCellRenderer myCellRenderer;
-    
+    private MultipleArrayViewer mav; 
     /**
      * 
      * @param superLoader
      */
     public CGHStanfordFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
+        this.mav= this.superLoader.getArrayViewer();//Moved here by Sarita
         gba = new GBA();
         CGHsflp = new CGHStanfordFileLoaderPanel();
     }
@@ -178,12 +180,17 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
                 slideDataArray = new ISlideData[experimentCount];
                 //Raktim
                 //System.out.println("ISlideData length: " + experimentCount);
-                slideDataArray[0] = new SlideData(rRows, rColumns);
+                SampleAnnotation sampAnn=new SampleAnnotation();
+				slideDataArray = new ISlideData[experimentCount];
+				slideDataArray[0] = new SlideData(rRows, rColumns, sampAnn);
+              
                 //Raktim
                 //System.out.println("SlideData rRows & rColumns: " + rRows + ", " + rColumns);
                 slideDataArray[0].setSlideFileName(f.getPath());
+                
                 for (int i=1; i<slideDataArray.length; i++) {
-                    slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+                	sampAnn=new SampleAnnotation();
+					slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount, sampAnn);
                     slideDataArray[i].setSlideFileName(f.getPath());
                 }
                 //get Field Names
@@ -197,7 +204,15 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
                 slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
 
                 for (int i=0; i<experimentCount; i++) {
-                    slideDataArray[i].setSlideDataName(ss.nextToken());
+                	//This is where the "Default Slide Name" gets set in the SampleAnnotation Model
+					
+					String val=ss.nextToken();
+					slideDataArray[i].setSampleAnnotationLoaded(true);
+					slideDataArray[i].getSampleAnnotation().setAnnotation("Default Slide Name", val);
+					slideDataArray[i].setSlideDataName(val);
+					
+					this.mav.getData().setSampleAnnotationLoaded(true);
+                  
                     //Raktim
                 	//System.out.println("Expr Token " + slideDataArray[i].getSlideDataName());
                 }
@@ -245,21 +260,36 @@ public class CGHStanfordFileLoader extends ExpressionFileLoader {
                 //we have additional sample annotation
 
                 //advance to sample key
-                for(int i = 0; i < preExperimentColumns-1; i++) {
-                    ss.nextToken();
-                }
-                String key = ss.nextToken();
+            	//we have additional sample annotation. 
+				//Add the additional sample annotation to the SampleAnnotation object
 
-                for(int j = 0; j < slideDataArray.length; j++) {
-                    slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
-                }
+				//advance to sample key
+				for (int i = 0; i < preExperimentColumns - 1; i++) {
+					ss.nextToken();
+				}
+				String key = ss.nextToken();
+
+				for (int j = 0; j < slideDataArray.length; j++) {
+					
+					if(slideDataArray[j].getSampleAnnotation()!=null){
+					
+						String val=ss.nextToken();
+						slideDataArray[j].getSampleAnnotation().setAnnotation(key, val);
+						
+					}else{
+							SampleAnnotation sampAnn=new SampleAnnotation();
+							sampAnn.setAnnotation(key, ss.nextToken());
+							slideDataArray[j].setSampleAnnotation(sampAnn);
+							slideDataArray[j].setSampleAnnotationLoaded(true);
+					}
+				}
             }
 
             this.setFileProgress(counter);
             counter++;
         }
         reader.close();
-        MultipleArrayViewer mav = this.superLoader.getArrayViewer();
+      //  MultipleArrayViewer mav = this.superLoader.getArrayViewer();--commented by Sarita
         
         //Set Data characteristics
         ((MultipleArrayData)mav.getData()).setHasDyeSwap(false);

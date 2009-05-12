@@ -77,6 +77,7 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -218,11 +219,14 @@ public class RMAFileLoader extends ExpressionFileLoader {
     		if (counter == 0) { // parse header
     			int experimentCount = ss.countTokens()+1 - preExperimentColumns;
     			slideDataArray = new ISlideData[experimentCount];
-    			slideDataArray[0] = new SlideData(rRows, rColumns);
-    			slideDataArray[0].setSlideFileName(f.getPath());
+    			 SampleAnnotation sampAnn=new SampleAnnotation();
+                 slideDataArray = new ISlideData[experimentCount];
+                 slideDataArray[0] = new SlideData(rRows, rColumns, sampAnn);
+    			 slideDataArray[0].setSlideFileName(f.getPath());
 
     			for (int i=1; i<slideDataArray.length; i++) {
-    				slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount);
+    				sampAnn=new SampleAnnotation();
+					slideDataArray[i] = new FloatSlideData(slideDataArray[0].getSlideMetaData(), spotCount, sampAnn);
     				slideDataArray[i].setSlideFileName(f.getPath());
 
     			}
@@ -237,7 +241,13 @@ public class RMAFileLoader extends ExpressionFileLoader {
     			slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
 
     			for (int i=0; i<experimentCount; i++) {
-    				slideDataArray[i].setSlideDataName(ss.nextToken());
+    				String val=ss.nextToken();
+					slideDataArray[i].setSampleAnnotationLoaded(true);
+					slideDataArray[i].getSampleAnnotation().setAnnotation("Default Slide Name", val);
+					slideDataArray[i].setSlideDataName(val);
+					
+					this.mav.getData().setSampleAnnotationLoaded(true);
+    				
     			}
 
     		} else if (counter >= preSpotRows) { // data rows
@@ -299,18 +309,29 @@ public class RMAFileLoader extends ExpressionFileLoader {
     			}
 
     		} else {
-    			//we have additional sample annoation
-    			//advance to sample key
+    			//we have additional sample annotation. 
+				//Add the additional sample annotation to the SampleAnnotation object
 
-    			for(int i = 0; i < preExperimentColumns-1; i++) {
-    				ss.nextToken();
-    			}
+				//advance to sample key
+				for (int i = 0; i < preExperimentColumns - 1; i++) {
+					ss.nextToken();
+				}
+				String key = ss.nextToken();
 
-    			String key = ss.nextToken();
-    			for(int j = 0; j < slideDataArray.length; j++) {
-    				slideDataArray[j].addNewSampleLabel(key, ss.nextToken());
-
-    			}
+				for (int j = 0; j < slideDataArray.length; j++) {
+					
+					if(slideDataArray[j].getSampleAnnotation()!=null){
+					
+						String val=ss.nextToken();
+						slideDataArray[j].getSampleAnnotation().setAnnotation(key, val);
+						
+					}else{
+							SampleAnnotation sampAnn=new SampleAnnotation();
+							sampAnn.setAnnotation(key, ss.nextToken());
+							slideDataArray[j].setSampleAnnotation(sampAnn);
+							slideDataArray[j].setSampleAnnotationLoaded(true);
+					}
+				}
 
     		}
 

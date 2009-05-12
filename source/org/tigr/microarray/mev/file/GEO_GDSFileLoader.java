@@ -52,10 +52,12 @@ import javax.swing.table.TableModel;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 /**
@@ -81,9 +83,12 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 	private Vector datainfo=new Vector();//	   store sample info
 	private Vector platforminfo=new Vector();//store platform info
 	private boolean unload=false;
+	private MultipleArrayViewer mav;
 
+	
 	public GEO_GDSFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
+		this.mav = superLoader.getArrayViewer();
 		gba = new GBA();
 		smatrixflp = new GEO_GDSFileLoaderPanel();
 	}
@@ -136,13 +141,15 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
        ISlideData[]slideData=new ISlideData[experimentCount];
        SlideDataElement sde=null;
 
-       slideData[0]=new SlideData(spotCount, rColumns);
+       SampleAnnotation sampAnn=new SampleAnnotation();
+       slideData[0] = new SlideData(spotCount, rColumns, sampAnn);
        slideData[0].setSlideFileName(f.getAbsolutePath());
-      // slideData[0].setSlideDataName(sflp.expressionTable.getColumnName(0));
+    
        
        for (int i=1; i<slideData.length; i++) {
-           slideData[i] = new FloatSlideData(slideData[0].getSlideMetaData(), spotCount);
-           slideData[i].setSlideFileName(f.getPath());
+    	   sampAnn=new SampleAnnotation();
+			slideData[i] = new FloatSlideData(slideData[0].getSlideMetaData(), spotCount, sampAnn);
+            slideData[i].setSlideFileName(f.getPath());
            
        }
        
@@ -159,9 +166,14 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
       
         
         for(int i=0; i<slideData.length;i++) {
+        	String val=smatrixflp.expressionTable.getColumnName(i+preExperimentColumns);
+			slideData[i].setSampleAnnotationLoaded(true);
+			slideData[i].getSampleAnnotation().setAnnotation("Default Slide Name", val);
+						
         	//System.out.println("slidedataName:"+smatrixflp.expressionTable.getColumnName(i+preExperimentColumns));
         	slideData[i].setSlideDataName(smatrixflp.expressionTable.getColumnName(i+preExperimentColumns));
-        	
+			this.mav.getData().setSampleAnnotationLoaded(true);
+
         }
       //  System.out.println("prespotrows:"+preSpotRows);
         for(int i=0;i<spotCount;i++){
@@ -487,16 +499,29 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 			gba.add(fileSelectionPanel, selectedFiles, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0); 
 			gba.add(fileSelectionPanel, buttonPanel, 0, 3, 0, 0, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 			
-
 			expressionTable = new JTable();
-			expressionTable.setSize(300, 300);
-			expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
+			myCellRenderer = new ExpressionFileTableCellRenderer();
+    		expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
+			expressionTable.setIntercellSpacing(new Dimension(1, 1));
+			expressionTable.setShowHorizontalLines(false);
+			expressionTable.setShowVerticalLines(true);
 			expressionTable.setGridColor(Color.LIGHT_GRAY);
 			expressionTable.setCellSelectionEnabled(true);
 			expressionTable.setColumnSelectionAllowed(false);
 			expressionTable.setRowSelectionAllowed(false);
 			expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			expressionTable.getTableHeader().setReorderingAllowed(true);
+			expressionTable.getTableHeader().setReorderingAllowed(false);
+			
+//			expressionTable = new JTable();
+//			myCellRenderer = new ExpressionFileTableCellRenderer();
+//			//expressionTable.setSize(300, 300);
+//			expressionTable.setDefaultRenderer(Object.class, myCellRenderer);
+//			expressionTable.setGridColor(Color.LIGHT_GRAY);
+//			expressionTable.setCellSelectionEnabled(true);
+//			expressionTable.setColumnSelectionAllowed(false);
+//			expressionTable.setRowSelectionAllowed(false);
+//			expressionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//			expressionTable.getTableHeader().setReorderingAllowed(true);
 			expressionTable.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent event) {
 				    setSelectedCell(expressionTable.rowAtPoint(event.getPoint()), expressionTable.columnAtPoint(event.getPoint()));
@@ -507,15 +532,15 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 			tablePanel = new JPanel();
 			tablePanel.setLayout(new GridBagLayout());
 			tablePanel.setBorder(new TitledBorder(new EtchedBorder(), "Expression Table"));
-			gba.add(tablePanel, tableScrollPane, 		0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(tablePanel, tableScrollPane, 0, 0, 1, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
 			fileLoaderPanel = new JPanel();
 			fileLoaderPanel.setLayout(new GridBagLayout());
 
 			gba.add(fileLoaderPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(fileLoaderPanel, tablePanel, 		0, 7, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(fileLoaderPanel, tablePanel, 0, 7, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
-			gba.add(this, fileLoaderPanel,				0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+			gba.add(this, fileLoaderPanel,0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 
 
 

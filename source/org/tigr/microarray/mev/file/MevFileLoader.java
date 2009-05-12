@@ -48,10 +48,12 @@ import org.tigr.microarray.file.AnnFileParser;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.*;
 
 public class MevFileLoader extends ExpressionFileLoader {
@@ -69,9 +71,12 @@ public class MevFileLoader extends ExpressionFileLoader {
 	boolean loadMedianIntensities = false;
 
 	private boolean haveAnnMatch = false;
+	private MultipleArrayViewer mav;
 
 	public MevFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
+		this.mav=superLoader.getArrayViewer();
+		
 		gba = new GBA();
 		mflp = new MevFileLoaderPanel();
 		mflp.validate();
@@ -252,7 +257,9 @@ public class MevFileLoader extends ExpressionFileLoader {
 				maxRow = Math.max(maxRow, Integer.parseInt(data[i][3]));
 				maxCol = Math.max(maxCol, Integer.parseInt(data[i][4]));
 			}
-			slideData = new SlideData(maxRow, maxCol);
+			SampleAnnotation sampAnn=new SampleAnnotation();
+			slideData = new SlideData(maxRow, maxCol, sampAnn);
+			//slideData = new SlideData(maxRow, maxCol);
 			setLinesCount(data.length);
 			for (int i = 0; i < data.length; i++) {
 				rows = new int[3];
@@ -305,9 +312,12 @@ public class MevFileLoader extends ExpressionFileLoader {
 			if (mflp.saveSpotInfoBox.isSelected()
 					&& !mflp.noAnnFileBox.isSelected())
 				slideData.setSpotInformationData(mfp.getSpotInformation());
-
+			
+			slideData.setSampleAnnotationLoaded(true);
+			slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
 			slideData.setSlideDataName(currentFile.getName());
 			slideData.setSlideFileName(currentFile.getPath());
+			this.mav.getData().setSampleAnnotationLoaded(true);
 		}
 		return slideData;
 	}
@@ -343,7 +353,9 @@ public class MevFileLoader extends ExpressionFileLoader {
 
 		MevParser mfp = new MevParser();
 		mfp.loadFile(currentFile);
-		FloatSlideData slideData = new FloatSlideData(metaData);
+		SampleAnnotation sampAnn=new SampleAnnotation();
+		FloatSlideData  slideData = new FloatSlideData(metaData, sampAnn);
+	
 		if (mfp.isMevFileLoaded()) {
 
 			Vector headers = mfp.getColumnHeaders();
@@ -389,6 +401,10 @@ public class MevFileLoader extends ExpressionFileLoader {
 					&& !mflp.noAnnFileBox.isSelected())
 				slideData.setSpotInformationData(mfp.getSpotInformation());
 		}
+		
+		slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
 		slideData.setSlideDataName(currentFile.getName());
 		slideData.setSlideFileName(currentFile.getPath());
 		return slideData;
