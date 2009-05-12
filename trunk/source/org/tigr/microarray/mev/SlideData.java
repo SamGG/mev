@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -326,7 +327,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
      * @return
      */
     public void updateFilledAnnFields() {
-	    Vector<String> filledFields = new Vector<String>();
+	    HashMap<String,String> filledFields = new HashMap<String,String>();
 	    IAnnotation anno;
 	    Field[] temp = AnnotationFieldConstants.class.getFields();
 	    for(int i=0; i<temp.length; i++) {
@@ -334,13 +335,13 @@ public class SlideData implements ISlideData, ISlideMetaData {
 		    for(int j=0; j<allSlideDataElements.size(); j++) {
 			    anno = ((ISlideDataElement)allSlideDataElements.get(j)).getElementAnnotation();
 			    if(anno != null && !anno.getAttribute(thisFieldName)[0].equals(ChipAnnotationFieldConstants.NOT_AVAILABLE)) {
-				    filledFields.add(thisFieldName);
+				    filledFields.put(thisFieldName, "");
 				    break;
 			    }
 		    }
 	    }
-
-	    this.loadedAnnotationFields = filledFields.toArray(new String[filledFields.size()]);
+		
+	    this.loadedAnnotationFields = filledFields.keySet().toArray(new String[filledFields.keySet().size()]);
     }
     
     /**

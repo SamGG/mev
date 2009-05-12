@@ -10,6 +10,7 @@ package org.tigr.microarray.mev.persistence;
 import java.beans.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.util.FloatMatrix;
@@ -23,7 +24,7 @@ public class FloatMatrixPersistenceDelegate extends PersistenceDelegate {
 			File outputFile = File.createTempFile("floatmatrix", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 	        outputFile.deleteOnExit();
 	        PersistenceObjectFactory.writeMatrix(outputFile, fm);
-			return new Expression((FloatMatrix) oldInstance, new PersistenceObjectFactory().getClass(), "readFloatMatrix",
+	        return new Expression((FloatMatrix) oldInstance, new PersistenceObjectFactory().getClass(), "readFloatMatrix",
 					new Object[]{outputFile.getName()});
 		} catch (IOException ioe){
 			System.out.println("Can't write to file to save FloatMatrix");

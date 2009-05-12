@@ -9,6 +9,7 @@ package org.tigr.microarray.mev.persistence;
 
 import java.awt.image.BufferedImage;
 import java.beans.*;
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +26,7 @@ public class BufferedImagePersistenceDelegate extends PersistenceDelegate {
 		try {
 			File outputFile = File.createTempFile("bufferedimage", ".jpg", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 	        outputFile.deleteOnExit();
-	        DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
+	        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 	        PersistenceObjectFactory.writeBufferedImage(dos, bi);
 	        dos.close();
 			return new Expression((BufferedImageWrapper) oldInstance, new PersistenceObjectFactory().getClass(), "readBufferedImage",

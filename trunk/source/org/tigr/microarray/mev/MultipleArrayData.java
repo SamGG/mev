@@ -107,7 +107,6 @@ public class MultipleArrayData implements IData {
     private boolean useGCOSPercentCutoff = false;
     
     private boolean useVarianceFilter = false;
-    private Properties varianceFilterProps;
 
     private float lowerCY3Cutoff = 0f;
     private float lowerCY5Cutoff = 0f;
@@ -235,6 +234,7 @@ public class MultipleArrayData implements IData {
 			String currentSampleLabelKey, ArrayList featuresList, Integer dataType,
 			int[] samplesOrder, Boolean hasDyeSwap, Boolean CGHData, Boolean log2Data, ArrayList clones, Integer cgh_Sp, 
 			MultipleArrayDataState mads){
+    	this.mads = mads;	
     	this.experiment = experiment;
     	this.setFeaturesList(featuresList);
     	this.alternateExperiment = alternateExperiment;
@@ -258,7 +258,6 @@ public class MultipleArrayData implements IData {
         this.experimentColors = experimentColors;
         this.spotColors = spotColors;
         setSampleLabelKey(currentSampleLabelKey);
-//        System.out.println("MAD Cons() currentSampleLabelKey: " + currentSampleLabelKey);
         try{
         	setDataType(dataType.intValue());
         } catch (Exception e){e.printStackTrace();}
@@ -574,7 +573,7 @@ public class MultipleArrayData implements IData {
     
     
     public void setVarianceFilter(Properties props) {
-        this.varianceFilterProps = props; 
+		this.mads.setVarianceFilterProps(props); 
         if(props.getProperty("Filter Enabled").equals("true"))
             this.useVarianceFilter = true;
         else
@@ -2372,20 +2371,20 @@ public class MultipleArrayData implements IData {
     
     public ArrayList imposeVarianceFilter( ArrayList listOfIndices) {
 
-        String mode = varianceFilterProps.getProperty("Filter Mode");
+        String mode = mads.getVarianceFilterProps().getProperty("Filter Mode");
         float [] sds = getStandardDeviations();
         boolean [] retentionList = new boolean[sds.length];
 
         ArrayList newList = new ArrayList();
         
         if(mode.equals("sd value mode")) { //cutoff = hard
-            float sdCut = Float.parseFloat(varianceFilterProps.getProperty("Value"));
+            float sdCut = Float.parseFloat(mads.getVarianceFilterProps().getProperty("Value"));
             for(int i = 0; i < sds.length; i++) {
                 if(sds[i] >= sdCut && listOfIndices.contains(new Integer(i)))
                     newList.add(new Integer(i));
             }            
         } else if(mode.equals("percent mode")) { //top x percent
-            float percent = Float.parseFloat(varianceFilterProps.getProperty("Value"));            
+            float percent = Float.parseFloat(mads.getVarianceFilterProps().getProperty("Value"));            
             QSort sorter = new QSort(sds);
             float [] sortedSDs = sorter.getSorted();
             int [] origOrder = sorter.getOrigIndx();
@@ -2397,7 +2396,7 @@ public class MultipleArrayData implements IData {
             }
             
         } else {
-            int targetSize = Integer.parseInt(varianceFilterProps.getProperty("Value"));
+            int targetSize = Integer.parseInt(mads.getVarianceFilterProps().getProperty("Value"));
             QSort sorter = new QSort(sds);
             float [] sortedSDs = sorter.getSorted();
             int [] origOrder = sorter.getOrigIndx();

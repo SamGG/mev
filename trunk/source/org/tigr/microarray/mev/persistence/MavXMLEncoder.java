@@ -36,6 +36,9 @@ public class MavXMLEncoder extends XMLEncoder {
 	    		ExceptionListener el = getExceptionListener();
 	    		el.exceptionThrown(new Exception("Object " + o.getClass() + " could not be saved:", e));
 
+	    	} catch (OutOfMemoryError oome) {
+	    		System.out.println("Out of memory error when saving object " + o.getClass() + " " + o.toString());
+	    		throw oome;
 	    	}
 	    else 
 	    	close();

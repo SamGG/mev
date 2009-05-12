@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui;
 
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.util.FloatMatrix;
 
 /**
@@ -35,12 +36,30 @@ public class Experiment {
     //full dataset back to a row index in the MultipleArrayData.
     private int[] rowMapping;
     private int id;
-    
+
+    /**
+     * State-saving constructor for v4.0 - 4.3. Kept for backwards-compatibility with
+     * older saved state files.
+     * @param columns
+     * @param rows
+     * @param id
+     * @param fm
+     */
     public Experiment(int[] columns, int[] rows, int id, FloatMatrix fm) {
     	this(null, columns, rows);
     	this.matrix = fm;
     }
-   
+    /**
+     * State-saving constructor for v4.4 and up
+     * @param columns
+     * @param rows
+     * @param id
+     * @param fm
+     */
+    public Experiment(FloatMatrix columns, FloatMatrix rows, int id, FloatMatrix fm) {
+    	this(null, Cluster.getIndices(columns), Cluster.getIndices(rows));
+    	this.matrix = fm;
+    }
 
     /**
      * Constructs an <code>Experiment</code> with specified

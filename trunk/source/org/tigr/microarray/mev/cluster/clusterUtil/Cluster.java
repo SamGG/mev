@@ -22,6 +22,7 @@ import java.util.HashSet;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.util.FloatMatrix;
 //import org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMExperimentHeader;
 
 /** The Cluster class encapsulates information required to define a cluster.
@@ -117,7 +118,25 @@ public class Cluster {
     }
     
     /**
-     * State-saving constructor. 
+     * State-saving constructor for v4.0b - v4.3
+     * @param indices
+     * @param source
+     * @param clusterLabel
+     * @param algorithmName
+     * @param clusterID
+     * @param clusterDescription
+     * @param index
+     * @param serialNumber
+     * @param clusterColor
+     * @param node
+     * @param experiment
+     */
+    public Cluster(FloatMatrix fm, String source, String clusterLabel, String algorithmName, String clusterID, String clusterDescription, Integer index, Integer serialNumber, Color clusterColor, DefaultMutableTreeNode node, Experiment experiment) {
+    	this(getIndices(fm), source, clusterLabel, algorithmName, clusterID, clusterDescription, index.intValue(), serialNumber.intValue(), clusterColor, null, experiment);
+    }    
+
+    /**
+     * state-saving cluster v4.4 and higher
      * @param indices
      * @param source
      * @param clusterLabel
@@ -329,8 +348,13 @@ public class Cluster {
     
 		protected Expression instantiate(Object o, Encoder encoder) {
 			Cluster oldInstance = (Cluster)o;
+			float[] findices = new float[oldInstance.indices.length];
+			for(int i=0; i<oldInstance.indices.length; i++) {
+				findices[i] = (float)oldInstance.indices[i];
+			}
+			FloatMatrix fm = new FloatMatrix(findices, findices.length);
 			return new Expression(oldInstance, oldInstance.getClass(), "new", 
-				new Object[]{oldInstance.indices, oldInstance.source, oldInstance.clusterLabel,
+				new Object[]{fm, oldInstance.source, oldInstance.clusterLabel,
 				oldInstance.algorithmName, oldInstance.clusterID, oldInstance.clusterDescription, 
 				new Integer(oldInstance.algorithmIndex), new Integer(oldInstance.serialNumber), oldInstance.clusterColor, 
 				oldInstance.node, oldInstance.experiment
@@ -346,5 +370,12 @@ public class Cluster {
 	 */
 	public static PersistenceDelegate getPersistenceDelegate() {
 		return new ClusterPersistenceDelegate();
+    }
+    public static int[] getIndices(FloatMatrix fm) {
+    	int[] temp = new int[fm.m];
+    	for(int i=0; i<temp.length; i++) {
+    		temp[i] = (int)fm.A[i][0];
+    	}
+    	return temp;
     }
 }
