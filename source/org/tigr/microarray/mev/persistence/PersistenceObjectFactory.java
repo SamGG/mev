@@ -8,15 +8,17 @@
 package org.tigr.microarray.mev.persistence;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -34,7 +36,6 @@ import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
 import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.sampleannotation.ISampleAnnotation;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.util.FloatMatrix;
 
@@ -70,39 +71,51 @@ public class PersistenceObjectFactory {
 	 * @throws IOException
 	 */
     public static void writeMatrix(File outputFile, FloatMatrix fm) throws IOException {
-        
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
-        
-		int numRows = fm.getRowDimension();
-		int numCols = fm.getColumnDimension();
-		
-		dos.writeInt(numRows);
-		dos.writeInt(numCols);
-		for(int i=0; i<numRows; i++){
-			for(int j=0; j<numCols; j++){
-				dos.writeFloat(fm.A[i][j]);
+    	
+		DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+        try {
+    	
+			int numRows = fm.getRowDimension();
+			int numCols = fm.getColumnDimension();
+			dos.writeInt(numRows);
+			dos.writeInt(numCols);
+			for(int i=0; i<numRows; i++){
+				for(int j=0; j<numCols; j++){
+					dos.writeFloat(new Float(fm.A[i][j]).byteValue());
+				}
 			}
-		}
-		dos.close();
+    	} catch (Exception e) {
+    		System.out.println("Error in writing floatmatrix "+ outputFile.getName());
+    		e.printStackTrace();
+
+    	} finally {
+    		dos.flush();
+    		dos.close();
+    	}
     }
-    
 
     private static float[][] readMatrix(File binFile) throws IOException{
 
-    	DataInputStream dis = new DataInputStream(new FileInputStream(binFile));
-        
-		int id, numRows, numCols;
-		float[][] matrix;
-		numRows = dis.readInt();
-		numCols = dis.readInt();
-		matrix = new float[numRows][numCols];
-		for(int i=0; i<numRows; i++){
-			for(int j=0; j<numCols; j++){
-				matrix[i][j] = dis.readFloat();
-			}
-		}    	
-		dis.close();
+    	DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(binFile)));
+		float[][] matrix = new float[1][1];
+		try {
+			int numRows, numCols;
+			numRows = dis.readInt();
+			numCols = dis.readInt();
+			matrix = new float[numRows][numCols];
+			for(int i=0; i<numRows; i++){
+				for(int j=0; j<numCols; j++){
+					matrix[i][j] = dis.readFloat();
+				}
+			}    	
+		} catch (IOException e) {
+			System.out.println("Couldn't read floatmatrix from file " + binFile.getName());
+			e.printStackTrace();
+		} finally {
+			dis.close();
+		}
     	return matrix;
+    	
     }
     /**
      * 
@@ -147,7 +160,7 @@ public class PersistenceObjectFactory {
 				dataType, ismd);
 
     	File filePath = new File(MultipleArrayViewer.CURRENT_TEMP_DIR, intensityFileName);
-    	DataInputStream dis = new DataInputStream(new FileInputStream(filePath));
+    	DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
     	
     	float[] currentCY3 = new float[dis.readInt()];
     	for(int i=0; i<currentCY3.length; i++){
@@ -316,13 +329,12 @@ public class PersistenceObjectFactory {
 				fieldNames, dataType);
     	
     	//load annotation
-    	DataInputStream dis = new DataInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, annotationFileName)));
+    	DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, annotationFileName))));
     	Vector allSlideDataElements = loadSlideDataAnnotation(dis, dataType.intValue());
     	dis.close();
 
     	Vector<IAnnotation> allIAnnotations = new Vector<IAnnotation>();
     	if(iAnnotationFileName != null) {
-	    	//load IAnnotation
 	    	File iAnnotFile=new File(MultipleArrayViewer.CURRENT_TEMP_DIR, iAnnotationFileName);
 	    	FileReader fr=new FileReader(iAnnotFile);
 	    	try {
@@ -331,10 +343,10 @@ public class PersistenceObjectFactory {
 	    	} catch(Exception e) {
 	    		e.printStackTrace();
 	    	}
-    	}
+	    }
 
     	//load intensities
-    	dis = new DataInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, dataFile)));
+    	dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(MultipleArrayViewer.CURRENT_TEMP_DIR, dataFile))));
     	ISlideDataElement sde;
     	int numSlideDataElements = dis.readInt();
     	for(int i=0; i<numSlideDataElements; i++){
@@ -354,11 +366,11 @@ public class PersistenceObjectFactory {
     	
 		aSlideData.setAllElements(allSlideDataElements);
 		aSlideData.updateFilledAnnFields();
-		//Added the loop for setting sample Annotation to slideData 
 		if(sampAnn!=null){
 			aSlideData.setSampleAnnotation(sampAnn);
 			
 		}
+
     	return aSlideData;
     }
     
@@ -401,6 +413,14 @@ public class PersistenceObjectFactory {
     		}
 			isNull = dis.readBoolean();
 			isNonZero = dis.readBoolean();
+			//Make sure extraFields contains unique values
+			
+			HashMap<String, String> temphash = new HashMap<String,String>();
+			for(String fieldName: extraFields) {
+				temphash.put(fieldName, "");
+			}
+			extraFields = temphash.keySet().toArray(new String[temphash.keySet().size()]);
+			
 			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
 				if(isCGHData){
 					allSlideDataElements.add(i, new CGHSlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
@@ -508,6 +528,7 @@ public class PersistenceObjectFactory {
 	 * @param fsd
 	 */
 	public static void writeFloatSlideDataIntensities(DataOutputStream dos, FloatSlideData fsd) throws IOException {
+		
 		float[] currentCY3 = fsd.getCurrentCY3();
     	if(currentCY3 != null){
     		dos.writeInt(currentCY3.length);
@@ -568,7 +589,7 @@ public class PersistenceObjectFactory {
 	public static BufferedImageWrapper readBufferedImage(String inputFile) throws IOException {
 		File binFile = new File(MultipleArrayViewer.CURRENT_TEMP_DIR, inputFile);
 		
-		DataInputStream dis = new DataInputStream(new FileInputStream(binFile));
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(binFile)));
 		BufferedImage bi = ImageIO.read(binFile);
 		dis.close();
 		return new BufferedImageWrapper(bi);
@@ -594,7 +615,6 @@ public class PersistenceObjectFactory {
 			AnnotationStateSavingParser fileParser = new AnnotationStateSavingParser();
 			if(annotationVector.size()>1)
 			fileParser.writeAnnotationFile(annotationVector, pw);
-			//System.out.println("writeSlideDataIAnnotation");
 		}
 	}
 	
@@ -609,32 +629,3 @@ public class PersistenceObjectFactory {
 		return allAnnotations;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 

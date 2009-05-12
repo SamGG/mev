@@ -6,6 +6,8 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.persistence;
 
+import java.util.Properties;
+
 import org.tigr.microarray.mev.sampleannotation.MageIDF;
 
 public class MultipleArrayDataState{
@@ -14,6 +16,16 @@ public class MultipleArrayDataState{
 	public boolean isAnnotationLoaded=false;
 	public boolean isSampleAnnotationLoaded=false;
 	protected MageIDF mageIDFObject=null;
+	protected Properties varianceFilterProps; 
+	
+	public Properties getVarianceFilterProps() {
+		if(varianceFilterProps == null) 
+			varianceFilterProps = new Properties();
+		return varianceFilterProps;
+	}
+	public void setVarianceFilterProps(Properties varianceFilterProps) {
+		this.varianceFilterProps = varianceFilterProps;
+	}
 	/**
 	 * @return Returns the maxCY3.
 	 */

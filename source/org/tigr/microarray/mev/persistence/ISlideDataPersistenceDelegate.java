@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.persistence;
 import java.beans.Encoder;
 import java.beans.Expression;
 import java.beans.PersistenceDelegate;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -22,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.AffySlideDataElement;
@@ -52,10 +55,9 @@ public class ISlideDataPersistenceDelegate extends
 				
 				File outputFile = File.createTempFile("floatslidedata", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 		        outputFile.deleteOnExit();
-		        DataOutputStream dos = new DataOutputStream(new FileOutputStream(outputFile));
-		        PersistenceObjectFactory.writeFloatSlideDataIntensities(dos, fsd);
+		        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+				PersistenceObjectFactory.writeFloatSlideDataIntensities(dos, fsd);
 		        dos.close();
-		        
 				e = new Expression((FloatSlideData) oldInstance, new PersistenceObjectFactory().getClass(), "makeFloatSlideData",
 						new Object[]{fsd.getSlideDataKeys(), fsd.getSlideDataLabels(), fsd.getFullSlideFileName(), 
 							fsd.getSlideDataName(), new Boolean(fsd.getIsNonZero()), new Integer(fsd.getNormalizedState()), 
@@ -66,29 +68,34 @@ public class ISlideDataPersistenceDelegate extends
 				
 				File annotationFile = File.createTempFile("slidedataannotation", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				annotationFile.deleteOnExit();
-				DataOutputStream dos = new DataOutputStream(new FileOutputStream(annotationFile));
+				DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(annotationFile)));
+				
 				PersistenceObjectFactory.writeSlideDataAnnotation(dos, sd);
 				dos.close();
-
 				File iAnnotationFile = File.createTempFile("iannotation", ".txt", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				annotationFile.deleteOnExit();
 				PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(iAnnotationFile)));
-							
+
 				PersistenceObjectFactory.writeSlideDataIAnnotation(pw, sd);
 				pw.close();
 				
 
 				File outputFile = File.createTempFile("slidedata", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				outputFile.deleteOnExit();
-				dos = new DataOutputStream(new FileOutputStream(outputFile));
+				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 				PersistenceObjectFactory.writeSlideDataIntensities(dos, sd);
 				dos.close();
 				
+				String[] extraFieldNames;
+				HashMap<String, String> temp = new HashMap<String,String>();
+				for(String fieldName: sd.getFieldNames()) 
+					temp.put(fieldName, "");
+				extraFieldNames = temp.keySet().toArray(new String[temp.keySet().size()]);
 				
 				e = new Expression((SlideData)oldInstance, new PersistenceObjectFactory().getClass(), "makeSlideData",
 						new Object[]{sd.getSlideDataName(), sd.getSlideDataKeys(), sd.getSampleLabelKey(),
 							sd.getSlideDataLabels(), sd.getSlideFileName(), new Boolean(sd.isNonZero()), new Integer(sd.getRows()), new Integer(sd.getColumns()),
-							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), sd.getFieldNames(), new Integer(sd.getDataType()),
+							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), extraFieldNames, new Integer(sd.getDataType()),
 							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName(), sd.getSampleAnnotation()/*, progBar*/});
 //				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
 			}
