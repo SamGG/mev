@@ -458,9 +458,6 @@ public class MageIDF implements IDFInterface{
 
 	
 	public void setProtocolSoftware(List<String> temp) {
-		tabspaces.add(IDFConstants.TAB_CHAR);
-		tabspaces.add(IDFConstants.SPACE_CHAR);
-		temp.removeAll(tabspaces);
 		idfHash.put(IDFConstants.PROTOCOL_SOFTWARE, temp);
 		
 	}

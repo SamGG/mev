@@ -49,6 +49,7 @@ import org.tigr.microarray.file.AgilentMevFileParser;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.ISlideMetaData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
@@ -60,6 +61,7 @@ import org.tigr.microarray.mev.file.FileTreePaneListener;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SlideLoaderProgressBar;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -77,9 +79,11 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
     boolean loadMedianIntensities = false;
     
     private boolean haveAnnMatch = false;
+    private MultipleArrayViewer mav;
     
     public AgilentMevFileLoader(SuperExpressionFileLoader superLoader) {
         super(superLoader);
+        this.mav=superLoader.getArrayViewer();
         gba = new GBA();
         amflp = new AgilentMevFileLoaderPanel();
     }
@@ -181,6 +185,8 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
         }
     }
     
+    
+    
     public ISlideData loadSlideData(File currentFile) throws IOException {
         SlideData slideData = null;
         AgilentMevFileParser mfp = new AgilentMevFileParser();
@@ -230,7 +236,9 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
                 maxRow = Math.max(maxRow, Integer.parseInt(data[i][3]));
                 maxCol = Math.max(maxCol, Integer.parseInt(data[i][4]));
             }
-            slideData = new SlideData(maxRow, maxCol);
+            
+            SampleAnnotation sampAnn=new SampleAnnotation();
+            slideData = new SlideData(maxRow, maxCol, sampAnn);
             setLinesCount(data.length);
             for(int i = 0; i < data.length; i++){
                 rows = new int[3];
@@ -273,8 +281,13 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
             if(amflp.saveSpotInfoBox.isSelected() && !amflp.noAnnFileBox.isSelected())
                 slideData.setSpotInformationData(mfp.getSpotInformation());
             
-            slideData.setSlideDataName(currentFile.getName());
-            slideData.setSlideFileName(currentFile.getPath());
+            
+            slideData.setSampleAnnotationLoaded(true);
+			slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
+			slideData.setSlideDataName(currentFile.getName());
+			slideData.setSlideFileName(currentFile.getPath());
+			this.mav.getData().setSampleAnnotationLoaded(true);
+          
         }
         return slideData;
     }
@@ -311,7 +324,9 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
         
     	AgilentMevFileParser mfp = new AgilentMevFileParser();
         mfp.loadFile(currentFile);
-        FloatSlideData slideData = new FloatSlideData(metaData);
+        
+        SampleAnnotation sampAnn=new SampleAnnotation();
+        FloatSlideData slideData = new FloatSlideData(metaData, sampAnn);
         if (mfp.isMevFileLoaded()) {
             
             Vector headers = mfp.getColumnHeaders();
@@ -343,8 +358,15 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
             if(amflp.saveSpotInfoBox.isSelected() && !amflp.noAnnFileBox.isSelected())
                 slideData.setSpotInformationData(mfp.getSpotInformation());
         }
+        
+        
+        slideData.setSampleAnnotationLoaded(true);
+		slideData.getSampleAnnotation().setAnnotation("Default Slide Name", currentFile.getName());
+		this.mav.getData().setSampleAnnotationLoaded(true);
+		slideData.setSlideDataName(currentFile.getName());
+		slideData.setSlideFileName(currentFile.getPath());
         slideData.setSlideDataName(currentFile.getName());
-        slideData.setSlideFileName(currentFile.getPath());
+      
         return slideData;
     }
     
@@ -589,7 +611,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			selectFilePanel = new JPanel();
 			selectFilePanel.setLayout(new GridBagLayout());
 
-			selectFile = new JLabel("Select directory containing Agilent Design files");
+			selectFile = new JLabel("Select directory containing Agilent Feature Extraction Files");
 
 			browseButton1 = new JButton("Browse");
 			browseButton1.setSize(new Dimension(100, 30));
@@ -616,7 +638,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			mevSelectionPanel.setLayout(new GridBagLayout());
 
 			mevSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(),
-					"File    (Agilent Design Files(*.txt)"));
+					"Agilent Feature Extraction Files (*.txt)"));
 
 			mevAvailableLabel = new JLabel("Available Files");
 			mevSelectedLabel = new JLabel("Selected Files");
@@ -749,7 +771,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			browseButton2.setSize(new Dimension(100, 30));
 			browseButton2.setPreferredSize(new Dimension(100, 30));
 
-			selectAnnotation = new JLabel("Select directory containing Agilent Feature Extraction Files");
+			selectAnnotation = new JLabel("Select directory containing Agilent Design files");
 
 			annFileListTextField = new JTextField();
 			annFileListTextField.setEditable(false);
@@ -766,7 +788,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			annSelectionPanel.setLayout(new GridBagLayout());
 
 			annSelectionPanel.setBorder(new TitledBorder(new EtchedBorder(),
-					"Agilent Feature Extraction Files (*.txt)"));
+					"File    (Agilent Design Files(*.txt)"));
 			annAvailableLabel = new JLabel("Available Files");
 			annSelectedLabel = new JLabel("Selected Files");
 			annAvailableList = new JList(new DefaultListModel());
@@ -821,14 +843,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			annButtonPanel = new JPanel();
 			annButtonPanel.setLayout(new GridBagLayout());
 
-		/*	gba.add(annButtonPanel, annAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annButtonPanel, annAddAllButton, 0, 1, 1, 1, 0, 0, GBA.N,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annButtonPanel, annRemoveButton, 0, 2, 1, 1, 0, 0, GBA.N,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annButtonPanel, annRemoveAllButton, 0, 3, 1, 1, 0, 0,
-					GBA.N, GBA.C, new Insets(5, 5, 5, 5), 0, 0);*/
+		
 			
 			gba.add(annButtonPanel, annAddButton, 0, 0, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -842,43 +857,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 			annListPanel = new JPanel();
 			annListPanel.setLayout(new GridBagLayout());
 
-			/*gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annListPanel, annSelectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annListPanel, annAvailableScrollPane, 0, 1, 1, 4, 5, 1,
-					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annListPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-					new Insets(0, 0, 0, 0), 0, 0);
-			gba.add(annListPanel, annButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(annListPanel, annSelectedScrollPane, 2, 1, 1, 4, 5, 1,
-					GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-			// Added by Sarita
-
-			gba.add(annSelectionPanel, buttonPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			//
-			gba.add(annSelectionPanel, selectAnnotationPanel, 0, 2, 1, 1, 1, 1,
-					GBA.B, GBA.C, new Insets(5, 0, 5, 0), 0, 0);
-			gba.add(annSelectionPanel, annListPanel, 0, 3, 1, 2, 1, 1, GBA.B,
-					GBA.C, new Insets(5, 5, 0, 5), 0, 0);
 			
-			selectionPanel = new JPanel();
-			selectionPanel.setLayout(new GridBagLayout());
-			gba.add(selectionPanel, annSelectionPanel, 0, 1, 2, 2, 1, 1, GBA.B,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(selectionPanel, mevSelectionPanel, 0, 5, 2, 2, 1, 1, GBA.B,
-					GBA.C, new Insets(0, 5, 0, 5), 0, 0);
-
-			fileLoaderPanel = new JPanel();
-			fileLoaderPanel.setLayout(new GridBagLayout());
-
-			gba.add(fileLoaderPanel, selectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,
-					GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-			gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C,
-					new Insets(5, 5, 5, 5), 0, 0);*/
 			
 			
 			gba.add(annListPanel, annAvailableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
@@ -1206,6 +1185,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 				if (source == mevAddButton) {
 					onMevAdd();
 				} else if (source == browseButton1) {
+				//	onAnnFileBrowse();
 					onMevFileBrowse();
 				}else if (source == mevAddAllButton) {
 					onMevAddAll();
@@ -1225,6 +1205,7 @@ public class AgilentMevFileLoader extends ExpressionFileLoader {
 					onUseMevAnn();
 				} else if (source == browseButton2) {
 					onAnnFileBrowse();
+					//onMevFileBrowse();
 				}
 
 			}

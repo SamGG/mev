@@ -47,8 +47,10 @@ import javax.swing.table.TableModel;
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 
 /**
@@ -88,10 +90,12 @@ public class SOFT_AffymetrixFileLoader extends ExpressionFileLoader {
 	    private Vector platformHeaders=new Vector();
 	    private boolean IntensitywithDetection=false;
 	    private boolean OnlyIntensity=false;
+	    private MultipleArrayViewer mav;
 	    
    public SOFT_AffymetrixFileLoader(SuperExpressionFileLoader superLoader) {
 	 
 	   super(superLoader);
+	   this.mav=superLoader.getArrayViewer();
        gba = new GBA();
        softflp = new SOFT_AffymetrixFileLoaderPanel();
 	   
@@ -257,13 +261,15 @@ public Vector loadExpressionFiles() throws IOException {
 
 		  ISlideData[]slideData=new ISlideData[sampleNames.size()];
 		  AffySlideDataElement affysde=null;
-
-		  slideData[0]=new SlideData(spotCount, rColumns);
+		  
+		  SampleAnnotation sampAnn=new SampleAnnotation();
+	      slideData[0] = new SlideData(spotCount, rColumns, sampAnn);
 		  slideData[0].setSlideFileName(file.getAbsolutePath());
 
 
 		  for (int i=1; i<slideData.length; i++) {
-			  slideData[i] = new FloatSlideData(slideData[0].getSlideMetaData(), spotCount);
+			  sampAnn=new SampleAnnotation();
+			  slideData[i] = new FloatSlideData(slideData[0].getSlideMetaData(), spotCount, sampAnn);
 			  slideData[i].setSlideFileName(file.getPath());
 
 		  }
@@ -274,7 +280,11 @@ public Vector loadExpressionFiles() throws IOException {
 		  slideData[0].getSlideMetaData().appendFieldNames(fieldNames);
 
 		  for(int i=0; i<slideData.length;i++) {
+			  slideData[i].setSampleAnnotationLoaded(true);
+			  slideData[i].getSampleAnnotation().setAnnotation("Default Slide Name",(String)sampleNames.get(i));
+							
 			  slideData[i].setSlideDataName((String)sampleNames.get(i));
+			  this.mav.getData().setSampleAnnotationLoaded(true);
 
 		  }
 

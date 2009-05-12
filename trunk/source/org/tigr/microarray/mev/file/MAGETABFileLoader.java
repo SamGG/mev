@@ -82,9 +82,11 @@ import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.IDF;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.MAGETABInvestigation;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.SDRF;
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.HybridizationNode;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.SDRFNode;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.SourceNode;
 import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.CharacteristicsAttribute;
+import uk.ac.ebi.arrayexpress2.magetab.datamodel.sdrf.node.attribute.FactorValueAttribute;
 import uk.ac.ebi.arrayexpress2.magetab.exception.ParseException;
 import uk.ac.ebi.arrayexpress2.magetab.handler.sdrf.node.attribute.CharacteristicsHandler;
 import uk.ac.ebi.arrayexpress2.magetab.parser.MAGETABParser;
@@ -1752,6 +1754,7 @@ for(int k=0;k<dataTypes.length;k++) {
     //	SDRF sdrfObj=investigation.SDRF;
     	
     	List<SourceNode> sourcenodes= (List<SourceNode>)((SDRF)investigation.SDRF).sourceNodes;
+    	
 		//Number of source nodes should be equal to the number of samples in the file
 		for(int i=0; i<sourcenodes.size(); i++){
 			SourceNode src=sourcenodes.get(i);
@@ -1766,15 +1769,17 @@ for(int k=0;k<dataTypes.length;k++) {
 				//System.out.println();
 			}
 		}
-/*		
-	/*	for(int k=0; k<sourcenodes.size(); k++){
-			SourceNode src=sourcenodes.get(k);
-			List<String> childNodes=src.getChildNodeValues();
-			
-			for(int m=0; m<childNodes.size(); m++){
-			//	System.out.println("ChildNode"+childNodes.get(m));
-			}
-		}*/
+		
+		
+		//FactorValueAttribute fValueAttrib=new FactorValueAttribute();
+//		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
+//		
+//		for(int index=0; index<nodes.size(); index++){
+//	
+//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
+//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
+//		}
+		
 
     }
 

@@ -1,0 +1,220 @@
+^DATABASE = Geo
+!Database_name = Gene Expression Omnibus (GEO)
+!Database_institute = NCBI NLM NIH
+!Database_web_link = http://www.ncbi.nlm.nih.gov/projects/geo
+!Database_email = geo@ncbi.nlm.nih.gov
+!Database_ref = Nucleic Acids Res. 2005 Jan 1;33 Database Issue:D562-6
+^DATASET = GDS2926
+!dataset_title = Megakaryocytic differentiation: time course
+!dataset_description = Temporal analysis of phorbol ester-treated CHRF-288-11 megakaryoblastic cells induced to undergo megakaryocytic (Mk) differentiation and primary Mk (PriMk) cells derived from cytokine-treated CD34+ peripheral blood cells. Results provide insight into molecular mechanisms underlying megakaryopoiesis.
+!dataset_type = gene expression array-based
+!dataset_platform = GPL887
+!dataset_platform_organism = Homo sapiens
+!dataset_platform_technology_type = in situ oligonucleotide
+!dataset_feature_count = 22575
+!dataset_sample_organism = Homo sapiens
+!dataset_sample_type = RNA
+!dataset_channel_count = 2
+!dataset_sample_count = 77
+!dataset_value_type = log e ratio
+!dataset_reference_series = GSE8914
+!dataset_order = none
+!dataset_update_date = Aug 30 2007
+^SUBSET = GDS2926_1
+!subset_dataset_id = GDS2926
+!subset_description = CHRF-288-11 
+"!subset_sample_id = GSM87964,GSM87965,GSM87966,GSM87985,GSM87986,GSM87961,GSM87967,GSM87968,GSM87987,GSM87969,GSM87988,GSM87989,GSM87970,GSM87971,GSM87990,GSM87991,GSM87972,GSM87992,GSM87973,GSM87993,GSM87974,GSM87994,GSM87962,GSM87963,GSM87975,GSM87983,GSM87995,GSM87976,GSM87977,GSM87996,GSM87997,GSM87978,GSM87979,GSM87998,GSM87999,GSM87980,GSM87984,GSM88000,GSM87981,GSM87982,GSM88001"
+!subset_type = cell line
+^SUBSET = GDS2926_2
+!subset_dataset_id = GDS2926
+!subset_description = peripheral blood CD34plus
+"!subset_sample_id = GSM88002,GSM88003,GSM88023,GSM88026,GSM88028,GSM88035,GSM88014,GSM88022,GSM88034,GSM88004,GSM88015,GSM88005,GSM88006,GSM88016,GSM88007,GSM88017,GSM88029,GSM88008,GSM88009,GSM88018,GSM88024,GSM88030,GSM88036,GSM88010,GSM88011,GSM88019,GSM88027,GSM88031,GSM88012,GSM88020,GSM88032,GSM88037,GSM88013,GSM88021,GSM88025,GSM88033"
+!subset_type = cell line
+^SUBSET = GDS2926_3
+!subset_dataset_id = GDS2926
+"!subset_description =  cytokines (TPO, IL-3, Flt3-L)"
+"!subset_sample_id = GSM88014,GSM88022,GSM88034,GSM88004,GSM88015,GSM88005,GSM88006,GSM88016,GSM88007,GSM88017,GSM88029,GSM88008,GSM88009,GSM88018,GSM88024,GSM88030,GSM88036,GSM88010,GSM88011,GSM88019,GSM88027,GSM88031,GSM88012,GSM88020,GSM88032,GSM88037,GSM88013,GSM88021,GSM88025,GSM88033"
+!subset_type = agent
+^SUBSET = GDS2926_4
+!subset_dataset_id = GDS2926
+!subset_description = DMSO
+"!subset_sample_id = GSM87961,GSM87962,GSM87963,GSM87983,GSM87984"
+!subset_type = agent
+^SUBSET = GDS2926_5
+!subset_dataset_id = GDS2926
+!subset_description = phorbol ester (PMA)
+"!subset_sample_id = GSM87967,GSM87968,GSM87987,GSM87969,GSM87988,GSM87989,GSM87970,GSM87971,GSM87990,GSM87991,GSM87972,GSM87992,GSM87973,GSM87993,GSM87974,GSM87994,GSM87975,GSM87995,GSM87976,GSM87977,GSM87996,GSM87997,GSM87978,GSM87979,GSM87998,GSM87999,GSM87980,GSM88000,GSM87981,GSM87982,GSM88001"
+!subset_type = agent
+^SUBSET = GDS2926_6
+!subset_dataset_id = GDS2926
+!subset_description = untreated
+"!subset_sample_id = GSM87964,GSM87965,GSM87966,GSM87985,GSM87986,GSM88002,GSM88003,GSM88023,GSM88026,GSM88028,GSM88035"
+!subset_type = agent
+^SUBSET = GDS2926_7
+!subset_dataset_id = GDS2926
+!subset_description = control
+"!subset_sample_id = GSM87964,GSM87965,GSM87966,GSM87985,GSM87986,GSM88002,GSM88003,GSM88023,GSM88026,GSM88028,GSM88035"
+!subset_type = time
+^SUBSET = GDS2926_8
+!subset_dataset_id = GDS2926
+!subset_description = 1 hr
+"!subset_sample_id = GSM87970,GSM87971,GSM87990,GSM87991"
+!subset_type = time
+^SUBSET = GDS2926_9
+!subset_dataset_id = GDS2926
+!subset_description = 3 hr
+"!subset_sample_id = GSM87974,GSM87994"
+!subset_type = time
+^SUBSET = GDS2926_10
+!subset_dataset_id = GDS2926
+!subset_description = 6 hr
+"!subset_sample_id = GSM87978,GSM87979,GSM87998,GSM87999"
+!subset_type = time
+^SUBSET = GDS2926_11
+!subset_dataset_id = GDS2926
+!subset_description = 12 hr
+"!subset_sample_id = GSM87968,GSM87987"
+!subset_type = time
+^SUBSET = GDS2926_12
+!subset_dataset_id = GDS2926
+!subset_description = 1 day
+"!subset_sample_id = GSM88004,GSM88015,GSM87969,GSM87988,GSM87989"
+!subset_type = time
+^SUBSET = GDS2926_13
+!subset_dataset_id = GDS2926
+!subset_description = 2 days
+"!subset_sample_id = GSM88005,GSM88006,GSM88016,GSM87972,GSM87992"
+!subset_type = time
+^SUBSET = GDS2926_14
+!subset_dataset_id = GDS2926
+!subset_description = 3 days
+"!subset_sample_id = GSM88007,GSM88017,GSM88029,GSM87973,GSM87993"
+!subset_type = time
+^SUBSET = GDS2926_15
+!subset_dataset_id = GDS2926
+!subset_description = 4 days
+"!subset_sample_id = GSM88008,GSM88009,GSM88018,GSM88024,GSM88030,GSM88036,GSM87962,GSM87963,GSM87983,GSM87975,GSM87995"
+!subset_type = time
+^SUBSET = GDS2926_16
+!subset_dataset_id = GDS2926
+!subset_description = 5 days
+"!subset_sample_id = GSM88010,GSM88011,GSM88019,GSM88027,GSM88031,GSM87976,GSM87977,GSM87996,GSM87997"
+!subset_type = time
+^SUBSET = GDS2926_17
+!subset_dataset_id = GDS2926
+!subset_description = 7 days
+"!subset_sample_id = GSM88012,GSM88020,GSM88032,GSM88037,GSM87984,GSM87980,GSM88000"
+!subset_type = time
+^SUBSET = GDS2926_18
+!subset_dataset_id = GDS2926
+!subset_description = 9 days
+"!subset_sample_id = GSM88013,GSM88021,GSM88025,GSM88033,GSM87981,GSM87982,GSM88001"
+!subset_type = time
+^SUBSET = GDS2926_19
+!subset_dataset_id = GDS2926
+!subset_description = 12 days
+"!subset_sample_id = GSM88014,GSM88022,GSM88034,GSM87961,GSM87967"
+!subset_type = time
+^DATASET = GDS2926
+#ID_REF = Platform reference identifier
+#IDENTIFIER = identifier
+"#GSM87962 = Value for GSM87962: CHRF_Expt3_DMSO_4d_rep1; src: CHRF cells, DMSO 4d; src: Universal Reference RNA"
+"#GSM87963 = Value for GSM87963: CHRF_Expt3_DMSO_4d_rep2; src: CHRF cells, DMSO 4d; src: Universal Reference RNA"
+"#GSM87983 = Value for GSM87983: CHRF_Expt4_DMSO_4d_rep1; src: CHRF cells, DMSO 4d; src: Universal Reference RNA"
+"#GSM87984 = Value for GSM87984: CHRF_Expt4_DMSO_7d_rep1; src: CHRF cells, DMSO 7d; src: Universal Reference RNA"
+"#GSM87961 = Value for GSM87961: CHRF_Expt3_DMSO_12d_rep1; src: CHRF cells, DMSO 12d; src: Universal Reference RNA"
+"#GSM87970 = Value for GSM87970: CHRF_Expt3_PMA_1h_rep1; src: CHRF cells, PMA 1h; src: Universal Reference RNA"
+"#GSM87971 = Value for GSM87971: CHRF_Expt3_PMA_1h_rep2; src: CHRF cells, PMA 1h; src: Universal Reference RNA"
+"#GSM87990 = Value for GSM87990: CHRF_Expt4_PMA_1h_rep1; src: CHRF cells, PMA 1h; src: Universal Reference RNA"
+"#GSM87991 = Value for GSM87991: CHRF_Expt4_PMA_1h_rep2; src: CHRF cells, PMA 1h; src: Universal Reference RNA"
+"#GSM87974 = Value for GSM87974: CHRF_Expt3_PMA_3h_rep1; src: CHRF cells, PMA 3h; src: Universal Reference RNA"
+"#GSM87994 = Value for GSM87994: CHRF_Expt4_PMA_3h_rep1; src: CHRF cells, PMA 3h; src: Universal Reference RNA"
+"#GSM87978 = Value for GSM87978: CHRF_Expt3_PMA_6h_rep1; src: CHRF cells, PMA 6h; src: Universal Reference RNA"
+"#GSM87979 = Value for GSM87979: CHRF_Expt3_PMA_6h_rep2; src: CHRF cells, PMA 6h; src: Universal Reference RNA"
+"#GSM87998 = Value for GSM87998: CHRF_Expt4_PMA_6h_rep1; src: CHRF cells, PMA 6h; src: Universal Reference RNA"
+"#GSM87999 = Value for GSM87999: CHRF_Expt4_PMA_6h_rep2; src: CHRF cells, PMA 6h; src: Universal Reference RNA"
+"#GSM87968 = Value for GSM87968: CHRF_Expt3_PMA_12h_rep1; src: CHRF cells, PMA 12h; src: Universal Reference RNA"
+"#GSM87987 = Value for GSM87987: CHRF_Expt4_PMA_12h_rep1; src: CHRF cells, PMA 12h; src: Universal Reference RNA"
+"#GSM87969 = Value for GSM87969: CHRF_Expt3_PMA_1d_rep1; src: CHRF cells, PMA 1d; src: Universal Reference RNA"
+"#GSM87988 = Value for GSM87988: CHRF_Expt4_PMA_1d_rep1; src: CHRF cells, PMA 1d; src: Universal Reference RNA"
+"#GSM87989 = Value for GSM87989: CHRF_Expt4_PMA_1d_rep2; src: CHRF cells, PMA 1d; src: Universal Reference RNA"
+"#GSM87972 = Value for GSM87972: CHRF_Expt3_PMA_2d_rep1; src: CHRF cells, PMA 2d; src: Universal Reference RNA"
+"#GSM87992 = Value for GSM87992: CHRF_Expt4_PMA_2d_rep1; src: CHRF cells, PMA 2d; src: Universal Reference RNA"
+"#GSM87973 = Value for GSM87973: CHRF_Expt3_PMA_3d_rep1; src: CHRF cells, PMA 3d; src: Universal Reference RNA"
+"#GSM87993 = Value for GSM87993: CHRF_Expt4_PMA_3d_rep1; src: CHRF cells, PMA 3d; src: Universal Reference RNA"
+"#GSM87975 = Value for GSM87975: CHRF_Expt3_PMA_4d_rep1; src: CHRF cells, PMA 4d; src: Universal Reference RNA"
+"#GSM87995 = Value for GSM87995: CHRF_Expt4_PMA_4d_rep1; src: CHRF cells, PMA 4d; src: Universal Reference RNA"
+"#GSM87976 = Value for GSM87976: CHRF_Expt3_PMA_5d_rep1; src: CHRF cells, PMA 5d; src: Universal Reference RNA"
+"#GSM87977 = Value for GSM87977: CHRF_Expt3_PMA_5d_rep2; src: CHRF cells, PMA 5d; src: Universal Reference RNA"
+"#GSM87996 = Value for GSM87996: CHRF_Expt4_PMA_5d_rep1; src: CHRF cells, PMA 5d; src: Universal Reference RNA"
+"#GSM87997 = Value for GSM87997: CHRF_Expt4_PMA_5d_rep2; src: CHRF cells, PMA 5d; src: Universal Reference RNA"
+"#GSM87980 = Value for GSM87980: CHRF_Expt3_PMA_7d_rep1; src: CHRF cells, PMA 7d; src: Universal Reference RNA"
+"#GSM88000 = Value for GSM88000: CHRF_Expt4_PMA_7d_rep1; src: CHRF cells, PMA 7d; src: Universal Reference RNA"
+"#GSM87981 = Value for GSM87981: CHRF_Expt3_PMA_9d_rep1; src: CHRF cells, PMA 9d; src: Universal Reference RNA"
+"#GSM87982 = Value for GSM87982: CHRF_Expt3_PMA_9d_rep2; src: CHRF cells, PMA 9d; src: Universal Reference RNA"
+"#GSM88001 = Value for GSM88001: CHRF_Expt4_PMA_9d_rep1; src: CHRF cells, PMA 9d; src: Universal Reference RNA"
+"#GSM87967 = Value for GSM87967: CHRF_Expt3_PMA_12d_rep1; src: CHRF cells, PMA 12d; src: Universal Reference RNA"
+"#GSM87964 = Value for GSM87964: CHRF_Expt3_None_0_rep1; src: CHRF cells, untreated; src: Universal Reference RNA"
+"#GSM87965 = Value for GSM87965: CHRF_Expt3_None_0_rep2; src: CHRF cells, untreated; src: Universal Reference RNA"
+"#GSM87966 = Value for GSM87966: CHRF_Expt3_None_0_rep3; src: CHRF cells, untreated; src: Universal Reference RNA"
+"#GSM87985 = Value for GSM87985: CHRF_Expt4_None_0_rep1; src: CHRF cells, untreated; src: Universal Reference RNA"
+"#GSM87986 = Value for GSM87986: CHRF_Expt4_None_0_rep2; src: CHRF cells, untreated; src: Universal Reference RNA"
+#GSM88004 = Value for GSM88004: PriMk_Expt1_Day1_rep1; src: PriMk_Expt1_Day1; src: Universal Reference RNA
+#GSM88015 = Value for GSM88015: PriMk_Expt2_Day1_rep1; src: PriMk_Expt2_Day1; src: Universal Reference RNA
+#GSM88005 = Value for GSM88005: PriMk_Expt1_Day2_rep1; src: PriMk_Expt1_Day2; src: Universal Reference RNA
+#GSM88006 = Value for GSM88006: PriMk_Expt1_Day2_rep2; src: PriMk_Expt1_Day2; src: Universal Reference RNA
+#GSM88016 = Value for GSM88016: PriMk_Expt2_Day2_rep1; src: PriMk_Expt2_Day2; src: Universal Reference RNA
+#GSM88007 = Value for GSM88007: PriMk_Expt1_Day3_rep1; src: PriMk_Expt1_Day3; src: Universal Reference RNA
+#GSM88017 = Value for GSM88017: PriMk_Expt2_Day3_rep1; src: PriMk_Expt2_Day3; src: Universal Reference RNA
+#GSM88029 = Value for GSM88029: PriMk_Expt3_Day3_rep1; src: PriMk_Expt3_Day3; src: Universal Reference RNA
+#GSM88008 = Value for GSM88008: PriMk_Expt1_Day4_rep1; src: PriMk_Expt1_Day4; src: Universal Reference RNA
+#GSM88009 = Value for GSM88009: PriMk_Expt1_Day4_rep2; src: PriMk_Expt1_Day4; src: Universal Reference RNA
+#GSM88018 = Value for GSM88018: PriMk_Expt2_Day4_rep1; src: PriMk_Expt2_Day4; src: Universal Reference RNA
+#GSM88024 = Value for GSM88024: PriMk_Expt2_Day4_rep2; src: PriMk_Expt2_Day4; src: Universal Reference RNA
+#GSM88030 = Value for GSM88030: PriMk_Expt3_Day4_rep1; src: PriMk_Expt3_Day4; src: Universal Reference RNA
+#GSM88036 = Value for GSM88036: PriMk_Expt3_Day4_rep2; src: PriMk_Expt3_Day4; src: Universal Reference RNA
+#GSM88010 = Value for GSM88010: PriMk_Expt1_Day5_rep1; src: PriMk_Expt1_Day5; src: Universal Reference RNA
+#GSM88011 = Value for GSM88011: PriMk_Expt1_Day5_rep2; src: PriMk_Expt1_Day5; src: Universal Reference RNA
+#GSM88019 = Value for GSM88019: PriMk_Expt2_Day5_rep1; src: PriMk_Expt2_Day5; src: Universal Reference RNA
+#GSM88027 = Value for GSM88027: PriMk_Expt2_Day5_rep2; src: PriMk_Expt2_Day5; src: Universal Reference RNA
+#GSM88031 = Value for GSM88031: PriMk_Expt3_Day5_rep1; src: PriMk_Expt3_Day5; src: Universal Reference RNA
+#GSM88012 = Value for GSM88012: PriMk_Expt1_Day7_rep1; src: PriMk_Expt1_Day7; src: Universal Reference RNA
+#GSM88020 = Value for GSM88020: PriMk_Expt2_Day7_rep1; src: PriMk_Expt2_Day7; src: Universal Reference RNA
+#GSM88032 = Value for GSM88032: PriMk_Expt3_Day7_rep1; src: PriMk_Expt3_Day7; src: Universal Reference RNA
+#GSM88037 = Value for GSM88037: PriMk_Expt3_Day7_rep2; src: PriMk_Expt3_Day7; src: Universal Reference RNA
+#GSM88013 = Value for GSM88013: PriMk_Expt1_Day9_rep1; src: PriMk_Expt1_Day9; src: Universal Reference RNA
+#GSM88021 = Value for GSM88021: PriMk_Expt2_Day9_rep1; src: PriMk_Expt2_Day9; src: Universal Reference RNA
+#GSM88025 = Value for GSM88025: PriMk_Expt2_Day9_rep2; src: PriMk_Expt2_Day9; src: Universal Reference RNA
+#GSM88033 = Value for GSM88033: PriMk_Expt3_Day9_rep1; src: PriMk_Expt3_Day9; src: Universal Reference RNA
+#GSM88014 = Value for GSM88014: PriMk_Expt1_Day12_rep1; src: PriMk_Expt1_Day12; src: Universal Reference RNA
+#GSM88022 = Value for GSM88022: PriMk_Expt2_Day12_rep1; src: PriMk_Expt2_Day12; src: Universal Reference RNA
+#GSM88034 = Value for GSM88034: PriMk_Expt3_Day12_rep1; src: PriMk_Expt3_Day12; src: Universal Reference RNA
+#GSM88002 = Value for GSM88002: PriMk_Expt1_Day0_rep1; src: PriMk_Expt1_Day0; src: Universal Reference RNA
+#GSM88003 = Value for GSM88003: PriMk_Expt1_Day0_rep2; src: PriMk_Expt1_Day0; src: Universal Reference RNA																																																																														
+#GSM88023 = Value for GSM88023: PriMk_Expt2_Day0_rep1; src: PriMk_Expt2_Day0; src: Universal Reference RNA																																																																														
+#GSM88026 = Value for GSM88026: PriMk_Expt2_Day0_rep2; src: PriMk_Expt2_Day0; src: Universal Reference RNA																																																																														
+#GSM88028 = Value for GSM88028: PriMk_Expt3_Day0_rep1; src: PriMk_Expt3_Day0; src: Universal Reference RNA																																																																														
+#GSM88035 = Value for GSM88035: PriMk_Expt3_Day0_rep2; src: PriMk_Expt3_Day0; src: Universal Reference RNA																																																																														
+!dataset_table_begin																																																																														
+ID_REF	IDENTIFIER	GSM87962	GSM87963	GSM87983	GSM87984	GSM87961	GSM87970	GSM87971	GSM87990	GSM87991	GSM87974	GSM87994	GSM87978	GSM87979	GSM87998	GSM87999	GSM87968	GSM87987	GSM87969	GSM87988	GSM87989	GSM87972	GSM87992	GSM87973	GSM87993	GSM87975	GSM87995	GSM87976	GSM87977	GSM87996	GSM87997	GSM87980	GSM88000	GSM87981	GSM87982	GSM88001	GSM87967	GSM87964	GSM87965	GSM87966	GSM87985	GSM87986	GSM88004	GSM88015	GSM88005	GSM88006	GSM88016	GSM88007	GSM88017	GSM88029	GSM88008	GSM88009	GSM88018	GSM88024	GSM88030	GSM88036	GSM88010	GSM88011	GSM88019	GSM88027	GSM88031	GSM88012	GSM88020	GSM88032	GSM88037	GSM88013	GSM88021	GSM88025	GSM88033	GSM88014	GSM88022	GSM88034	GSM88002	GSM88003	GSM88023	GSM88026	GSM88028	GSM88035
+1	BrightCorner	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+2	NegativeControl	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+3	GBGT1	1.526	null	0.965	null	null	null	0.099	null	-0.498	null	1.373	1.09	null	null	0.729	null	null	null	0.714	null	null	1.045	null	1.103	0.973	null	null	1.181	0.469	1.165	0.652	null	1.041	null	1.358	1.071	null	null	0.67	0.621	0.971	1.143	1.237	1.267	1.324	null	1.095	0.32	0.122	1.008	0.742	null	0.998	0.585	0.909	null	1.243	-0.756	null	0.662	null	null	1.008	0.499	null	null	0.447	0.451	0.857	null	0.293	0.924	0.632	-0.334	1.162	0.66	0.716
+4	A_23_P125016	null	null	-0.812	null	null	null	-0.392	null	-1.11	null	-0.764	-0.302	null	null	null	null	null	null	null	null	null	-1.249	null	-1.331	0.14	null	null	-0.342	null	-1.029	-0.723	null	-0.082	null	null	-0.69	null	null	-1.106	null	-0.622	-0.159	null	null	-0.526	null	-0.497	-0.62	-0.618	-0.257	-0.553	null	-0.583	-1.803	null	null	0.295	-0.632	null	-0.927	null	null	null	-0.525	null	null	-0.777	-1.107	-0.674	null	-1.871	0.336	null	null	0.34	0.219	0.083
+5	STAMBP	0.166	null	0.057	null	null	null	0.073	null	-0.202	null	-0.185	0.229	null	-0.451	-0.294	null	0.476	0.307	0.377	null	null	0.187	0.199	0.243	0.956	0.213	null	0.426	0.219	0.356	0.398	null	0.805	null	0.25	0.193	null	null	-0.448	-0.072	0.019	-0.182	0.513	null	-0.172	null	null	0.488	0.656	null	0.133	0.42	0.38	-0.054	0.105	null	0.546	0.243	0.264	0.258	null	null	0.302	0.231	null	null	0.413	0.514	0.102	null	0.748	-0.155	-0.089	-0.129	-0.075	-0.234	null
+6	E1A_r60_n9	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+7	Pro25G	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+8	PKN2	-0.044	null	null	null	null	null	0.152	null	-0.235	null	0.013	0.168	-0.124	-0.499	-0.155	null	null	-0.007	-0.147	null	null	0.012	-0.5	-0.212	0.241	-0.456	null	0.002	-0.288	-0.364	-0.23	null	0.068	-0.165	-0.595	-0.263	null	null	-0.589	-0.379	-0.439	-0.439	-0.244	-0.408	-0.439	null	null	-0.059	0.099	-0.323	-0.435	null	-0.459	0.632	0.554	null	-0.337	-0.613	-0.705	-0.6	null	null	-0.51	-0.457	null	null	-0.448	-0.265	-0.575	-0.922	0.423	-0.397	-0.293	-0.575	-0.654	-0.216	-0.319
+9	FLJ25476	0.1	null	-0.002	null	null	null	-0.184	null	0.006	0.033	-0.019	-0.29	-0.543	null	-0.508	null	null	-0.287	null	-0.362	null	-0.36	-0.499	-0.218	0.094	-0.161	null	-0.393	-0.323	-0.295	-0.133	null	0.228	-0.31	-0.162	-0.335	null	null	-0.255	0.036	0.235	0.459	0.337	0.549	0.479	null	null	0.364	0.042	0.532	0.325	0.178	0.355	null	0.253	null	0.572	0.283	0.502	-0.043	-0.081	null	0.155	null	0.351	null	0.124	0.018	0.277	0.127	0.22	0.688	0.454	0.053	0.288	0.083	0.121
+10	KCNJ16	null	null	0.481	null	null	null	-0.512	null	0.029	0.723	-0.018	-0.499	-0.089	-0.218	-0.694	null	null	0.388	null	-0.245	null	-0.141	null	-0.468	null	0.834	null	-0.111	-0.163	-0.621	-0.633	null	null	null	0.032	-0.266	null	null	-0.544	-0.508	-0.104	-0.194	null	null	-0.518	null	0.207	-0.687	-0.187	null	-0.131	null	null	-0.178	-0.314	null	null	null	null	-0.151	null	null	0.169	-0.167	null	null	-0.453	0.015	null	null	-0.047	0.532	-0.03	null	0.201	-0.086	0.074
+11	MED13	-0.229	-0.573	0.39	null	null	null	-0.291	null	-0.72	0.289	-0.079	-0.062	-1.144	-0.232	-0.633	null	null	0.259	0.229	-0.629	null	-0.176	0.017	-0.024	0.154	0.783	-0.512	0.268	-0.657	0.095	0.014	null	null	null	-0.132	0.154	null	null	-0.789	-0.118	-0.309	-0.242	-0.627	-0.58	-0.379	-0.454	0.012	-0.904	-0.202	null	-0.22	null	-0.419	-0.167	0.034	null	0.491	-0.833	-0.44	0.124	-0.319	null	0.233	0.196	null	null	0.037	0.024	-0.153	null	-0.18	null	0.024	-0.78	-0.094	0.027	0.06
+12	OSR1	-1.362	-1.69	0.083	-0.429	null	null	-1.647	null	-0.898	-1.245	-1.075	-1.423	-1.274	-0.951	-1.063	null	null	-0.856	0.069	-1.142	null	-1.245	null	-1.206	-1.012	-0.411	-1.401	-1.854	-0.936	-1.734	-1.136	null	-0.572	null	-0.854	-1.329	null	null	-1.71	null	-0.91	-0.173	-1.653	-0.542	-0.226	null	-0.157	-1.045	-0.839	-0.525	-0.299	-0.789	null	-0.23	-0.198	null	-0.448	-1.19	-1.406	-1.143	null	null	-0.828	-0.941	null	null	-0.454	-0.922	-0.531	-0.604	-0.682	-0.072	-0.229	-1.718	-0.64	-0.964	-0.708
+13	ACCN5	-0.061	-0.412	0.346	null	null	null	-0.123	null	-0.533	-0.608	0.046	-0.034	-0.774	-0.261	-0.699	null	-0.992	0.11	0.637	-0.528	null	-0.386	-0.04	-0.394	-0.132	0.37	-0.751	-0.214	-0.686	-0.357	-0.238	null	null	-0.746	-0.451	-0.415	null	0.12	-1.18	-0.406	-0.188	-0.184	-0.445	0.177	-0.356	null	-0.005	-0.666	0.258	0.036	-0.307	-0.77	null	-0.081	-0.34	null	null	-0.738	-0.463	-0.069	0.072	null	-0.429	-0.155	-0.196	null	-0.544	0.039	-0.005	null	0.434	-0.132	-0.242	null	-0.234	0.102	0.043
+14	Pro25G	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+15	C2orf28	null	-0.716	-0.635	null	null	-0.647	-0.542	null	-0.783	-0.442	-0.663	-0.649	-0.917	null	-0.933	null	-0.86	-0.675	-0.589	-0.597	null	-0.502	null	-0.543	-0.227	null	null	null	null	-0.332	-0.684	null	-0.235	-0.604	-0.442	-0.542	0.248	-0.718	-0.997	-0.722	-0.543	-0.494	-0.48	-0.26	-0.612	-0.717	null	-0.853	-1.033	-0.455	-0.549	-0.819	null	-1.123	null	null	-0.973	-0.737	-0.532	-0.75	-0.806	null	-0.651	-0.679	-0.855	null	-0.675	-0.93	-0.693	-0.875	-1.269	-0.379	-0.3	-0.512	-0.373	-0.4	-0.609
+16	A_23_P96529	-0.036	-0.637	0.24	0.226	null	null	-0.115	null	-1.297	-0.154	0.0008	0.022	-1.626	null	-0.674	-0.03	-1.02	-0.057	0.409	-0.541	null	-0.437	-0.552	-0.258	0.056	0.29	-0.963	-0.168	-0.918	-0.297	-0.178	null	-0.461	-0.663	-0.259	-0.22	0.429	-0.442	-0.814	-0.015	-0.647	0.237	-0.101	0.383	0.203	null	0.109	-0.086	0.326	-0.084	-0.296	-0.236	0.068	0.058	-0.092	null	0.517	-1.302	-0.38	null	null	-0.159	-0.011	-0.339	-0.024	null	-0.3	-0.059	0.017	null	0.01	0.64	0.088	0.516	0.236	0.512	0.448
+17	TSPAN19	null	null	0.378	0.011	-0.281	null	-0.662	null	-0.114	null	-0.525	-0.328	-0.53	-0.905	-0.966	-0.106	-0.607	-0.643	0.432	-0.545	null	-0.147	null	-0.57	null	-0.138	null	null	-0.425	-0.481	-0.931	null	null	-0.343	-0.238	-0.694	null	0.033	-1.022	-0.351	-0.065	0.198	null	null	-0.399	null	-0.132	null	-0.211	null	null	null	-0.104	-0.432	-0.397	null	null	null	-0.02	-0.729	null	null	0.296	-0.157	null	null	-0.407	-0.48	0.021	null	-0.296	1.045	null	null	-0.125	-0.307	-0.43
+18	RORC	-0.219	-0.194	-0.29	-0.218	-0.285	null	-0.278	null	-0.432	-0.053	-0.199	-0.249	-0.547	null	-0.499	-0.205	-0.56	-0.276	-0.191	-0.158	null	-0.43	-0.627	-0.385	0.305	-0.138	-0.7	-0.25	-0.368	-0.339	-0.154	null	0.422	-0.156	-0.218	-0.348	0.706	0.025	-0.574	-0.278	-0.316	0.09	-0.137	0.269	-0.042	null	-0.05	-0.049	-0.081	-0.157	0.061	-0.098	0.006	0.478	0.486	null	0.106	-0.499	-0.275	-0.094	null	null	0.023	0.092	0.047	null	-0.007	0.045	0.214	-0.819	0.445	0.15	0.166	-0.352	-0.107	-0.148	0.008
+19	NA	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null
+20	TEKT5	null	null	1.215	null	null	null	null	null	null	null	0.056	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	-0.012	null	null	null	null	null	null	null	null	null	null	null	null	null	null	1.053	null	null	0.854	null	1.495	null	null	0.303	0.906	null	0.886	null	0.623	null	null	null	null	0.565	1.031	null	null	null	0.73	null	1.274	null	0.891	null	0.436	null	null	null	1.157	0.458	0.223
+!dataset_table_end

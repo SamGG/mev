@@ -155,8 +155,7 @@ public class FloatSlideData implements ISlideData {
         this.sampAnn=sampAnn;
     }
   
-     
-    
+   
     
     
     
