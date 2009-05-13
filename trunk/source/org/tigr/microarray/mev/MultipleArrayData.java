@@ -1363,13 +1363,12 @@ public class MultipleArrayData implements IData {
     		int i=0;  
     		while (true){
     			i++;
+    			if (i>geneClusterRepository.getClusterSerialCounter()) 
+    				return 0;
     			if (geneClusterRepository.getCluster(i)==null)
     				continue;
     			if( geneClusterRepository.getCluster(i).getClusterColor()==color)
     				break;
-    			
-    			if (i>geneClusterRepository.getClusterSerialCounter()) 
-    				return -1;
     		}
     		return i;
     	}else{
@@ -1377,12 +1376,12 @@ public class MultipleArrayData implements IData {
     		int i=0;  
     		while (true){
     			i++;
+    			if (i>expClusterRepository.getClusterSerialCounter()) 
+    				return 0;
     			if (expClusterRepository.getCluster(i)==null)
     				continue;
     			if (expClusterRepository.getCluster(i).getClusterColor()==color)
     				break;
-    			if (i>expClusterRepository.getClusterSerialCounter()) 
-    				return -1;
     		}
     		return i;
     	}
