@@ -276,7 +276,7 @@ public class AnnotationDownloadHandler {
 
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			selectedFile = fileChooser.getSelectedFile();
-			annFileLocation.setText(selectedFile.getAbsolutePath());
+			setAnnFilePath(selectedFile.getAbsolutePath());
 			this.annotationSelected = true;
 			updateLabel();
 		}
