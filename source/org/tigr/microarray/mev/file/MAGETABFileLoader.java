@@ -1494,6 +1494,7 @@ for(int k=0;k<dataTypes.length;k++) {
 				String textS = "";
         		if(fileType.equalsIgnoreCase("IDF")) {
     				selectedIDF.setText(fileName);
+    				selectedIDF.setForeground(Color.BLACK);
     				if(fileName.endsWith("idf.txt")) {
     					textS = "idf.txt";
     				} else if(fileName.endsWith("IDF.txt")) {
@@ -1501,25 +1502,9 @@ for(int k=0;k<dataTypes.length;k++) {
     				}
     				if(selectedFile.exists())
     					setIDFFilePath(selectedFile.getAbsolutePath());
-//    				if(selectedFile.exists()){
-//    					
-//    					URL fileURL;
-//						try {
-//							fileURL = new URL("file:///" +selectedFile.getAbsolutePath());
-//							investigation=mageTabParser.parse(fileURL);
-//							populateIDFObject(investigation.IDF);
-//							
-//							
-//							
-//							
-//						} catch (Exception e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//    					
-//    				}
         		} else if(fileType.equalsIgnoreCase("SDRF")) {
     				selectedSDRF.setText(selectedFile.getAbsolutePath());
+    				selectedSDRF.setForeground(Color.BLACK);
     				if(fileName.endsWith("sdrf.txt")) {
     					textS = "sdrf.txt";
     				} else if(fileName.endsWith("SDRF.txt")) {
@@ -1527,6 +1512,7 @@ for(int k=0;k<dataTypes.length;k++) {
     				}
         		} else if(fileType.equalsIgnoreCase("ADF")) {
     				selectedADF.setText(selectedFile.getAbsolutePath());
+    				selectedADF.setForeground(Color.BLACK);
     				if(fileName.endsWith("adf.txt")) {
     					textS = "adf.txt";
     				} else if(fileName.endsWith("ADF.txt")) {
@@ -1534,52 +1520,76 @@ for(int k=0;k<dataTypes.length;k++) {
     				}
         		} else if(fileType.equalsIgnoreCase("DATA")) {
         			selectedDataMatrix.setText(selectedFile.getAbsolutePath());
+        			selectedDataMatrix.setForeground(Color.BLACK);
     				if(fileName.endsWith("data.txt")) {
     					textS = "data.txt";
     				} else if(fileName.endsWith("DATA.txt")) {
     					textS = "DATA.txt";
     				}
-    				if(selectedFile.exists()) {
-    					processAffyGCOSFile(selectedFile);
-    					setLoadEnabled(true);
-    				}
+//    				if(selectedFile.exists()) {
+//    					processAffyGCOSFile(selectedFile);
+//    					setLoadEnabled(true);
+//    				}
         		} else {
         			baseName = new String("Logic error; you will have to select each file .");
         		}
+        		//basename is the common name string of the MAGE-TAB files
 				baseName = fileName.substring(0,fileName.lastIndexOf(textS)); 
 
-        		if(selectedSDRF.getText().equals("")) {
+				//If field is null or color is red, then process, otherwise the file exists
+        		if(selectedSDRF.getText().equals("") || selectedSDRF.getForeground().equals(Color.RED)) {
+        			//look for filename with sdrf.txt ending (per spec.)
         			String testName = baseName + "sdrf.txt";
 					selectedSDRF.setText(testName);
 					File testSDRF = new File(testName);
 	        		if(! testSDRF.exists()) {
 	        			selectedSDRF.setText("File " + testName + " does not exist.");
+	        			selectedSDRF.setForeground(Color.RED);
 	        			setLoadEnabled(false);
+	        		} else {
+	        			selectedSDRF.setForeground(Color.BLACK);
 	        		}
         		}
 
-        		if(selectedIDF.getText().equals("")) { 
+        		if(selectedIDF.getText().equals("") || selectedIDF.getForeground().equals(Color.RED)) { 
+        			//look for filename with idf.txt ending (per spec.)
         			String testName = baseName + "idf.txt";
         			selectedIDF.setText(testName);
         			File testIDF = new File(testName);
         			if(! testIDF.exists()) {
         				selectedIDF.setText("File " + testName + " does not exist.");
+	        			selectedIDF.setForeground(Color.RED);
         				setLoadEnabled(false);
+	        		} else {
+	        			selectedIDF.setForeground(Color.BLACK);
         			}
-        				
 				}
 
-        		if(selectedDataMatrix.getText().equals("")) {
+        		if(selectedDataMatrix.getText().equals("") || selectedDataMatrix.getForeground().equals(Color.RED)) {
+        			//look for filename with data.txt ending (per spec.)
 					String testName = baseName + "data.txt";
 					selectedDataMatrix.setText(testName);
         			File dataFile = new File(testName);
         			if(! dataFile.exists()) {
         				selectedDataMatrix.setText("File " + testName + " does not exist.");
+	        			selectedDataMatrix.setForeground(Color.RED);
         				setLoadEnabled(false);
         			} else {
-        				setLoadEnabled(true);
-        				processAffyGCOSFile(dataFile);
+        				selectedDataMatrix.setForeground(Color.BLACK);
         			}
+				} else {
+    				//process here; should work in all circumstances
+					File dataFile = new File(selectedDataMatrix.getText());
+    				processAffyGCOSFile(dataFile);
+					//check for SOME form of 'signal' in the comboboxes
+					if(sflp.signalComboBox.equals("none") && 
+    						sflp.ratioComboBox.equals("none") &&
+    						sflp.dye1ComboBox.equals("none") &&
+    						sflp.dye2ComboBox.equals("none")) {
+    						setLoadEnabled(false);
+    				} else {
+    					setLoadEnabled(true);
+    				}
 				}
         	}
         	dir = fileChooser.getCurrentDirectory();
