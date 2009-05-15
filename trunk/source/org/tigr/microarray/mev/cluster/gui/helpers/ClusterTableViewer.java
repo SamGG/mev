@@ -178,7 +178,7 @@ public class ClusterTableViewer implements IViewer {
 //        }
         
     }    
-    
+
     public JTable getTable(){
     	return clusterTable;
     }
@@ -206,10 +206,15 @@ public class ClusterTableViewer implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-				new Object[]{this.experiment, this.clusters, this.data, this.auxTitles, this.auxData});
+				new Object[]{this.experiment, this.clusters, this.data, this.auxTitles, this.auxData/*new PersistableArray(strings)*/});
+	}
 
+    protected Object[][] getAuxData() {
+    	return auxData;
     }
-	
+    protected String[] getAuxTitles() {
+    	return auxTitles;
+    }	
 	public void setExperiment(Experiment e) {
 		this.experiment = e;
 		this.exptID = e.getId();

@@ -19,6 +19,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -28,6 +30,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.util.FloatMatrix;
 
 /**
  *
@@ -53,11 +56,39 @@ public class SAMGraphViewer extends JPanel implements IViewer {
     
     public SAMGraphViewer(double[] xArray, double[] yArray, Integer studyDesign, Double delta){
     	this(xArray, yArray, studyDesign.intValue(), delta.doubleValue());
+    }    
+    public SAMGraphViewer(float[] xArray, float[] yArray, Integer studyDesign, Double delta){
+    	this(convert(xArray), convert(yArray), studyDesign.intValue(), delta.doubleValue());
+    }
+    public SAMGraphViewer(FloatMatrix xArray, FloatMatrix yArray, Integer studyDesign, Double delta){
+    	this(xArray.A[0], yArray.A[0], studyDesign.intValue(), delta.doubleValue());
+    }
+    public static double[] convert(float[] temp) {
+    	double[] returnArray = new double[temp.length];
+    	for(int i=0;i<temp.length; i++) {
+    		returnArray[i] = (double)temp[i];
+    	}
+    	return returnArray;
     }
     public Expression getExpression() {
+    	float[] xes = new float[xArray.length];
+    	int i=0;
+    	for(double xtemp: xArray) {
+    		xes[i] = (float)xtemp;
+    		i++;
+    	}
+    	FloatMatrix xFloatMatrix = new FloatMatrix(xes, 1);
+    	float[] yes = new float[yArray.length];
+    	i=0;
+    	for(double ytemp: yArray) {
+    		yes[i] = (float)ytemp;
+    		i++;
+    	}
+    	FloatMatrix yFloatMatrix = new FloatMatrix(yes, 1);
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{xArray, yArray, new Integer(studyDesign), new Double(delta)});
+    			new Object[]{xFloatMatrix, yFloatMatrix, new Integer(studyDesign), new Double(delta)});
     }
+
     public void paint(Graphics g) {
         super.paint(g);
         if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
