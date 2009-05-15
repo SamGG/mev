@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleName</key>
-	<string>MeV_4_3</string>
+	<string>MeV_4_4</string>
 	<key>CFBundleVersion</key>
 	<string>10.2</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -59,6 +59,7 @@
 			 <string>$JAVAROOT/jsch-0.1.39.jar</string>
 			 <string>$JAVAROOT/JSciCore.jar</string>
 			 <string>$JAVAROOT/JSciPartial.jar</string>
+			 <string>$JAVAROOT/magetab-parser.jar</string>
 			 <string>$JAVAROOT/mail.jar</string>
 			 <string>$JAVAROOT/mev-algorithm-impl.jar</string>
 			 <string>$JAVAROOT/mev-algorithm-support.jar</string>
