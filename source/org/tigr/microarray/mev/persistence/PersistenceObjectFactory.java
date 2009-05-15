@@ -63,6 +63,7 @@ public class PersistenceObjectFactory {
 		return fm;
 	}
 	
+
 	/**
 	 * Writes a FloatMatrix out to a binary file specified by the name outputFile.  
 	 * @param outputFile This file is assumed to be located in the System temp directory
@@ -81,7 +82,7 @@ public class PersistenceObjectFactory {
 			dos.writeInt(numCols);
 			for(int i=0; i<numRows; i++){
 				for(int j=0; j<numCols; j++){
-					dos.writeFloat(new Float(fm.A[i][j]).byteValue());
+					dos.writeFloat(fm.A[i][j]);
 				}
 			}
     	} catch (Exception e) {

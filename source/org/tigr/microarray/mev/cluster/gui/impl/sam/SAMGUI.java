@@ -82,7 +82,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     private double[] deltaGrid, medNumFalse, false90th, FDRMedian, FDR90th;
     private int[] numSig;
     private String[] auxTitles;
-    private Object[][] auxData;
+    private float[][] auxData;
     //private String[] allTitles;
     
     int[] groupAssignments;
@@ -660,7 +660,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 auxTitles[i] = (String)(allFields.get(i));
             }
             
-            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            auxData = new float[experiment.getNumberOfGenes()][auxTitles.length];
             for (int i = 0; i < auxData.length; i++) {
                 int counter = 0;
                 auxData[i][counter++] = new Float(dBarMatrixX.A[i][0]);
@@ -844,7 +844,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     
     private void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode tabNode = new DefaultMutableTreeNode("Table Views");
-        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        IViewer tabViewer = new SAMClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
         if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             for (int i=0; i<this.clusters.length; i++) {
                 if (i == 0) {
@@ -1631,7 +1631,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 auxTitles[i] = (String)(allFields.get(i));
             }
             
-            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            auxData = new float[experiment.getNumberOfGenes()][auxTitles.length];
             for (int i = 0; i < auxData.length; i++) {
                 int counter = 0;
                 auxData[i][counter++] = new Float(dValues[i]);

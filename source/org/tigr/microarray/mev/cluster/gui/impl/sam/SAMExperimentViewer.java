@@ -47,7 +47,7 @@ public class SAMExperimentViewer extends ExperimentViewer {
      * experiment and clusters.
      */
     public SAMExperimentViewer(Experiment experiment, int[][] clusters, int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
-	super(experiment, clusters);
+    	super(experiment, clusters);
 	 	initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
 	}
     
@@ -65,10 +65,10 @@ public class SAMExperimentViewer extends ExperimentViewer {
     } 
     
     public Expression getExpression(){
-    	Object[] temp = super.getExpression().getArguments();
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{temp[0], temp[1],
-    			new Integer(studyDesign), dValues, rValues, foldChangeArray, qLowestFDR, new Boolean(calculateQLowestFDR)});
+    			new Object[]{getExperiment(), getClusters(), new Integer(studyDesign), dValues, 
+    		rValues, foldChangeArray, qLowestFDR, 
+    		new Boolean(calculateQLowestFDR)});
     }
 
     private void initialize(int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR){
