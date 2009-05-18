@@ -1253,7 +1253,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 setLayout(new GridBagLayout());
 
                 adh = new AnnotationDownloadHandler(superLoader.viewer.getResourceManager(), superLoader.annotationLists, superLoader.defaultSpeciesName, superLoader.defaultArrayName);
-
+                
                 IDFeventListener=new EventListener();
                 SDRFeventListener=new EventListener();
                 eventListener=new EventListener();
@@ -1318,7 +1318,7 @@ for(int k=0;k<dataTypes.length;k++) {
         		gba.add(fileSelectionPanel, browseButton1, 2, 2, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
                 annotationPanel = adh.getAnnotationLoaderPanel(gba);
-                adh.setDownloadEnabled(true);
+              //  adh.setDownloadEnabled(true);--commented by Sarita
                 
                 /**@author jwhite
                  * NOTES:
