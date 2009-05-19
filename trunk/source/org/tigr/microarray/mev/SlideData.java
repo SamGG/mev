@@ -201,8 +201,13 @@ public class SlideData implements ISlideData, ISlideMetaData {
 
     }
       
-      
-   
+    /**
+	* Returns the list of "old data model" field names loaded as part of 
+	* outside of the MevAnnotation objects.
+	**/  
+    public String[] getOldModelFieldNames() {
+    	return fieldNames;
+    }
       
     
 
