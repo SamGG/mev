@@ -86,16 +86,10 @@ public class ISlideDataPersistenceDelegate extends
 				PersistenceObjectFactory.writeSlideDataIntensities(dos, sd);
 				dos.close();
 				
-				String[] extraFieldNames;
-				HashMap<String, String> temp = new HashMap<String,String>();
-				for(String fieldName: sd.getFieldNames()) 
-					temp.put(fieldName, "");
-				extraFieldNames = temp.keySet().toArray(new String[temp.keySet().size()]);
-				
 				e = new Expression((SlideData)oldInstance, new PersistenceObjectFactory().getClass(), "makeSlideData",
 						new Object[]{sd.getSlideDataName(), sd.getSlideDataKeys(), sd.getSampleLabelKey(),
 							sd.getSlideDataLabels(), sd.getSlideFileName(), new Boolean(sd.isNonZero()), new Integer(sd.getRows()), new Integer(sd.getColumns()),
-							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), extraFieldNames, new Integer(sd.getDataType()),
+							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), sd.getOldModelFieldNames(), new Integer(sd.getDataType()),
 							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName(), sd.getSampleAnnotation()/*, progBar*/});
 //				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
 			}
