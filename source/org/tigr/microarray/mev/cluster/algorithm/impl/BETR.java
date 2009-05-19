@@ -37,14 +37,17 @@ import javax.swing.JOptionPane;
 public class BETR extends AbstractAlgorithm{
     private int progress;
     private FloatMatrix expMatrix;
+    private FloatMatrix filteredExpMatrix;
     private boolean stop = false;
     private int[] timeAssignments;
     private int[] conditionAssignments;
     private int[][] conditionsMatrix;  
     private int[][] sigGenesArrays= new int[2][];
-    private int[] errorGenesArray;
+    private int[] errorGenesArray = new int[0];
+    private int[] errorGenesArray2 = new int[0];
+    private int[] mapping, mapping2;
 
-    private int numGenes, numExps, numTimePoints;
+    private int numGenes, numExps, numTimePoints, iteration;
     private boolean  drawSigTreesOnly;
     private int hcl_function;
     private boolean hcl_absolute;
@@ -68,6 +71,14 @@ public class BETR extends AbstractAlgorithm{
      */
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
     	expMatrix = data.getMatrix("experiment");
+    	mapping = new int[expMatrix.getRowDimension()];
+    	for (int i=0; i<mapping.length; i++){
+    		mapping[i]=i;
+    	}
+    	mapping2 = new int[expMatrix.getRowDimension()];
+    	for (int i=0; i<mapping2.length; i++){
+    		mapping2[i]=i;
+    	}
     	timeAssignments = data.getIntArray("time_assignments");
     	conditionAssignments = data.getIntArray("condition_assignments");
     	AlgorithmParameters map = data.getParams();
@@ -80,8 +91,6 @@ public class BETR extends AbstractAlgorithm{
         numTimePoints = map.getInt("numTimePoints");
         if (dataDesign==1)
         	numTimePoints--;
-        numGenes= expMatrix.getRowDimension();
-        numExps = expMatrix.getColumnDimension();
         alpha = map.getFloat("alpha-value");
     	boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
             if (hierarchical_tree) {
@@ -102,6 +111,11 @@ public class BETR extends AbstractAlgorithm{
     	
     	initializeExperiments();
     	runAlg();
+    	if (stop) {
+    		throw new AbortException();
+	    }
+        numGenes= expMatrix.getRowDimension();
+        numExps = expMatrix.getColumnDimension();
 
         if (dataDesign==1)
         	numTimePoints++;
@@ -132,11 +146,37 @@ public class BETR extends AbstractAlgorithm{
                 }                
     	    }
     	}
+    	//remap genes to expmatrix
+    	int[][]sigReturn = new int[sigGenesArrays.length][];
+    	for (int i=0; i<sigGenesArrays.length; i++){
+    		sigReturn[i]=new int[sigGenesArrays[i].length];
+    		for (int j=0; j<sigGenesArrays[i].length; j++){
+    			sigReturn[i][j]=mapping2[mapping[sigGenesArrays[i][j]]];
+    		}
+    	}
+    	ArrayList<Integer>tmpal = new ArrayList<Integer>();
+    	
+    	for (int i=0; i<errorGenesArray.length; i++){
+    		if (!tmpal.contains(mapping2[errorGenesArray[i]]))
+    			tmpal.add(mapping2[errorGenesArray[i]]);
+    	}
+    	for (int i=0; i<errorGenesArray2.length; i++){
+    		if (!tmpal.contains(errorGenesArray2[i]))
+    			tmpal.add(errorGenesArray2[i]);
+    	}
+    	int[]errReturn = new int[tmpal.size()];
+    	for (int i=0; i<errReturn.length; i++){
+    		errReturn[i]=tmpal.get(i);
+    	}
+    	
     	
     	// prepare the result
-    	result.addIntMatrix("sigGenesArrays", sigGenesArrays);
-    	result.addParam("error-length", String.valueOf(errorGenesArray.length));
-    	result.addIntArray("error-genes", errorGenesArray);
+    	
+    	
+    	result.addIntMatrix("sigGenesArrays", sigReturn);
+    	result.addParam("error-length", String.valueOf(errorGenesArray.length+errorGenesArray2.length));
+    	result.addParam("iterations", String.valueOf(iteration));
+    	result.addIntArray("error-genes", errReturn);
     	result.addCluster("cluster", result_cluster);
     	result.addParam("number-of-clusters", "1"); //String.valueOf(clusters.length));    
     	result.addMatrix("clusters_means", means);
@@ -425,8 +465,9 @@ public class BETR extends AbstractAlgorithm{
     
     private FloatMatrix getPValues(){
     	FloatMatrix pvals = new FloatMatrix(numGenes, 1);
-    	for (int i=0; i<pvals.getRowDimension(); i++){
-    		pvals.A[i][0] =1-I[i]; 
+    	for (int i=0; i<mapping.length; i++){
+    		
+    		pvals.A[mapping2[mapping[i]]][0] =1-I[i]; 
     	}
     	return pvals;
     }
@@ -546,6 +587,9 @@ public class BETR extends AbstractAlgorithm{
  	private Experiment Y = new Experiment(null, null, null);
  	
 	public void initializeExperiments(){
+		filteredExpMatrix = expMatrix.getMatrix(mapping2, 0, expMatrix.getColumnDimension()-1).getMatrix(mapping, 0, expMatrix.getColumnDimension()-1);
+        numGenes= filteredExpMatrix.getRowDimension();
+        numExps = filteredExpMatrix.getColumnDimension();
 		if (dataDesign==1){
 			FloatMatrix XTreatAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){  //i=1 to skip t0.
@@ -555,7 +599,7 @@ public class BETR extends AbstractAlgorithm{
 					int totals=0;
 					for (int k=0; k<timeAssignments.length; k++){
 						if ((timeAssignments[k]-1)==(i+1)){
-							value = expMatrix.get(j,k); 
+							value = filteredExpMatrix.get(j,k); 
 							if (!Float.isNaN(value)) {
 								s=s+value;
 								totals++;
@@ -573,7 +617,7 @@ public class BETR extends AbstractAlgorithm{
 					int totals=0;
 					for (int k=0; k<timeAssignments.length; k++){
 						if ((timeAssignments[k]-1)==0){//gathers all t0 assignments, creates full matrix using only t0
-							value = expMatrix.get(j,k); 
+							value = filteredExpMatrix.get(j,k); 
 							if (!Float.isNaN(value)) {
 								s=s+value;
 								totals++;
@@ -596,7 +640,7 @@ public class BETR extends AbstractAlgorithm{
 					int totals=0;
 					for (int k=0; k<timeAssignments.length; k++){
 						if ((timeAssignments[k]-1)==i){
-							value = expMatrix.get(j,k); 
+							value = filteredExpMatrix.get(j,k); 
 							if (!Float.isNaN(value)) {
 								s=s+value;
 								totals++;
@@ -609,8 +653,8 @@ public class BETR extends AbstractAlgorithm{
 			Y.fillMatrix(XTreatAve);
 		}
 		if (dataDesign==2){
-			XTreat.fillMatrix(expMatrix.getMatrix(0, numGenes-1, conditionsMatrix[0]));
-			XControl.fillMatrix(expMatrix.getMatrix(0, numGenes-1, conditionsMatrix[1]));
+			XTreat.fillMatrix(filteredExpMatrix.getMatrix(0, numGenes-1, conditionsMatrix[0]));
+			XControl.fillMatrix(filteredExpMatrix.getMatrix(0, numGenes-1, conditionsMatrix[1]));
 			FloatMatrix XTreatAve=new FloatMatrix(numGenes, numTimePoints);
 			for (int i=0; i<numTimePoints; i++){
 				for (int j=0; j<numGenes; j++){
@@ -619,7 +663,7 @@ public class BETR extends AbstractAlgorithm{
 					float value;
 					for (int k=0; k<timeAssignments.length; k++){
 						if ((timeAssignments[k]-1)==i&&(conditionAssignments[k]-1)==0){
-							value = expMatrix.get(j,k); 
+							value = filteredExpMatrix.get(j,k); 
 							if (!Float.isNaN(value)) {
 								s=s+value;
 								totals++;
@@ -637,7 +681,7 @@ public class BETR extends AbstractAlgorithm{
 					int totals=0;
 					for (int k=0; k<timeAssignments.length; k++){
 						if ((timeAssignments[k]-1)==i&&(conditionAssignments[k]-1)==1){
-							value = expMatrix.get(j,k); 
+							value = filteredExpMatrix.get(j,k); 
 							if (!Float.isNaN(value)) {
 								s=s+value;
 								totals++;
@@ -654,6 +698,10 @@ public class BETR extends AbstractAlgorithm{
 	}
 	
 	public void runAlg(){
+		if (mapping.length<2){
+			stop=true;
+			JOptionPane.showMessageDialog(null, "Not enough valid genes", "Error", JOptionPane.WARNING_MESSAGE);
+		}
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue(10);
@@ -665,6 +713,8 @@ public class BETR extends AbstractAlgorithm{
 	 	varianceMean = new FloatMatrix[numGenes];
 	 	Sheg = new FloatMatrix[numGenes];
 	 	Shmg = new FloatMatrix[numGenes];
+	 	boolean foundBadData=false;
+	 	ArrayList<Integer> badData = new ArrayList<Integer>();
 	 	for (int i=0; i<numGenes; i++) {
 	 		varianceError[i] = new FloatMatrix(numTimePoints,numTimePoints);
 	 		varianceMean[i] = new FloatMatrix(numTimePoints,numTimePoints);
@@ -672,29 +722,29 @@ public class BETR extends AbstractAlgorithm{
 	 			for (int sample=0; sample<numExps; sample++){
 	 				
 	 				if (timeAssignments[sample]-1==ii){
-	 					float value =expMatrix.get(i, sample);
+	 					float value =filteredExpMatrix.get(i, sample);
 	 					if (Float.isNaN(value))
 	 						continue;
 	 					//1-Cond. scenario
 	 					if (dataDesign==1){
 		 					if (timeAssignments[sample]-1==0){
-		 						seg = seg + (float)Math.pow((expMatrix.get(i,sample)-XControlAverage.get(i, ii)),2);
+		 						seg = seg + (float)Math.pow((filteredExpMatrix.get(i,sample)-XControlAverage.get(i, ii)),2);
 		 					}else{
-		 						seg = seg + (float)Math.pow((expMatrix.get(i,sample)-XTreatAverage.get(i, ii-1)),2);
+		 						seg = seg + (float)Math.pow((filteredExpMatrix.get(i,sample)-XTreatAverage.get(i, ii-1)),2);
 		 					}
 	 					}
 	 					//2-Cond. scenario
 	 					if (dataDesign==2){
 		 					if (conditionAssignments[sample]==1){
-		 						seg = seg + (float)Math.pow((expMatrix.get(i,sample)-XTreatAverage.get(i, ii)),2);
+		 						seg = seg + (float)Math.pow((filteredExpMatrix.get(i,sample)-XTreatAverage.get(i, ii)),2);
 		 					}
 		 					if (conditionAssignments[sample]==2){
-		 						seg = seg + (float)Math.pow((expMatrix.get(i,sample)-XControlAverage.get(i, ii)),2);
+		 						seg = seg + (float)Math.pow((filteredExpMatrix.get(i,sample)-XControlAverage.get(i, ii)),2);
 		 					}
 	 					}
 	 					//Paired-Data scenario
 	 					if (dataDesign==3){
-	 						seg = seg + (float)Math.pow((expMatrix.get(i,sample)-Y.get(i, ii)),2);
+	 						seg = seg + (float)Math.pow((filteredExpMatrix.get(i,sample)-Y.get(i, ii)),2);
 	 					}
 	 				}
 	 			}
@@ -702,6 +752,10 @@ public class BETR extends AbstractAlgorithm{
 	 		for (int ii=0; ii<numTimePoints; ii++) {
 	 			for (int iii=0; iii<numTimePoints; iii++) { 
 	 				varianceMean[i].set(ii, iii, Y.get(i,ii)*Y.get(i,iii));
+	 				if (Float.isNaN(Y.get(i,ii)*Y.get(i,iii))){
+	 		 			badData.add(i);
+	 		 			foundBadData=true;
+	 		 		}
 	 				
 	 				//change this to adjust to complete error variance matrix
 	 				varianceError[i].set(ii, iii, 0);
@@ -717,15 +771,47 @@ public class BETR extends AbstractAlgorithm{
 	 			seg = seg/(numTimePoints*((numTreatReps-1)));
 	 		}
 	 		if (seg==0){
-	 		    JOptionPane.showMessageDialog(null, "Invalid Data!", "Error", JOptionPane.WARNING_MESSAGE);
-                stop = true;
+	 			badData.add(i);
+	 			foundBadData=true;
 	 		}
+	 		
 	 		for (int ii=0; ii<numTimePoints; ii++) {
 	 			varianceError[i].set(ii, ii, seg);
 	 		}
 	 		seg = 0f;
 	 	}
+	 	if (foundBadData){
+	 		    String[] options = {"Continue","Cancel"};
+	 		    if(JOptionPane.showOptionDialog(null, "The data you are running contains groups of NaNs.\n" +
+	 		    		"To remove these genes and restart the analysis, click 'Continue'",
+	 		    		"Warning",1, JOptionPane.WARNING_MESSAGE, null,options,options[0])==1){
+	 		    	stop=true;
+	 		    }
+	 		    if (stop)
+	 		    	return;
+	 		    
+ 				ArrayList<Integer> map = new ArrayList<Integer>();
+ 				for (int i=0; i<this.numGenes; i++){
+ 					map.add(i);
+ 				}
+ 				map.removeAll(badData);
+ 				mapping2 = new int[map.size()];
+ 				mapping = new int[mapping2.length];
+ 				for (int i=0; i<map.size(); i++){
+ 					mapping2[i]=map.get(i);
+ 					mapping[i]=i;
+ 				}
+ 		 		errorGenesArray2 = new int[badData.size()];
+ 		 		for (int i=0; i<errorGenesArray2.length; i++){
+ 		 			errorGenesArray2[i] = badData.get(i);
+ 		 		}
+ 		    	initializeExperiments();
+ 		    	runAlg();
+ 		    	return;
+	 	}
 
+		if (stop)
+			return;
 
  		//Estimate gene-specific variance components, ~Seg.
 		//Find SBar:
@@ -820,7 +906,7 @@ public class BETR extends AbstractAlgorithm{
  		//diffGenes.add(6);
  		
  		ArrayList<Integer> diffGenesOld = new ArrayList<Integer>();
- 		int iteration = 1;
+ 		iteration = 1;
  		while (true){
  			event.setDescription("Running Shrinkage Loop. Iteration #"+iteration);
 			updateProgressBar();
@@ -919,17 +1005,45 @@ public class BETR extends AbstractAlgorithm{
  			diffGenes.clear();
  			nonDiffGenes.clear();
  			errorGenes.clear();
-
+ 			boolean founderror=false;
  			for (int i=0; i<numGenes; i++) {
  				if (1-I[i]<alpha){
  					diffGenes.add(i);
  				}else{
  					if(Float.isNaN(I[i])){
  						errorGenes.add(i);
+ 						founderror=true;
  					}else{
  						nonDiffGenes.add(i);
  					}
  				}
+ 			}
+ 			if (founderror){
+	 		    String[] options = {"Continue","Cancel"};
+	 		    if(JOptionPane.showOptionDialog(null, "The data you are running contains invalid data.\n" +
+	 		    		"To remove the invalid genes and re-run the analysis, click 'Continue'",
+	 		    		"Warning",1, JOptionPane.WARNING_MESSAGE, null,options,options[0])==1){
+	 		    	stop=true;
+	 		    }
+	 		    if (stop)
+	 		    	return;
+	 		    
+ 				ArrayList<Integer> map = new ArrayList<Integer>();
+ 				for (int i=0; i<this.numGenes; i++){
+ 					map.add(i);
+ 				}
+ 				map.removeAll(errorGenes);
+ 				mapping = new int[map.size()];
+ 				for (int i=0; i<map.size(); i++){
+ 					mapping[i]=map.get(i);
+ 				}
+ 		 		errorGenesArray = new int[errorGenes.size()];
+ 		 		for (int i=0; i<errorGenesArray.length; i++){
+ 		 			errorGenesArray[i] = errorGenes.get(i);
+ 		 		}
+ 		    	initializeExperiments();
+ 		    	runAlg();
+ 		    	return;
  			}
  			boolean sameresult=false;
  			if (diffGenes.size()==diffGenesOld.size()){
@@ -941,6 +1055,8 @@ public class BETR extends AbstractAlgorithm{
 	 				}
 	 			}
  			}
+ 			if (diffGenes.size()==0)
+ 				break;
  			if (sameresult){
  				break;
  			}
@@ -951,20 +1067,16 @@ public class BETR extends AbstractAlgorithm{
  			for (int i=0; i<diffGenes.size(); i++) {
  					diffGenesOld.add(diffGenes.get(i));
  			}
- 			p=(float)diffGenesOld.size()/(float)numGenes;
+ 			p=Math.max((float)diffGenesOld.size()/(float)numGenes, 1f/(float)numGenes);
  		}
  		sigGenesArrays[0]=new int[diffGenes.size()];
  		sigGenesArrays[1]=new int[nonDiffGenes.size()];
- 		errorGenesArray = new int[errorGenes.size()];
  		
  		for (int i=0; i<sigGenesArrays[0].length; i++){
  			sigGenesArrays[0][i] = diffGenes.get(i);
  		}
  		for (int i=0; i<sigGenesArrays[1].length; i++){
  			sigGenesArrays[1][i] = nonDiffGenes.get(i);
- 		}
- 		for (int i=0; i<errorGenesArray.length; i++){
- 			errorGenesArray[i] = errorGenes.get(i);
  		}
 	}
 	

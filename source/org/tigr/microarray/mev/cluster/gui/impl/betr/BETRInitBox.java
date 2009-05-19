@@ -473,9 +473,9 @@ public class BETRInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(dataTypeLabel, constraints);
                 this.add(dataTypeLabel);
                 
-                oneCondition=new JRadioButton("1 Condition", false);
                 twoConditions=new JRadioButton("2 Conditions", true);
-                pairedData=new JRadioButton("Paired Data", false);
+                oneCondition=new JRadioButton("1 Condition", false);
+                pairedData=new JRadioButton("Paired", false);
                 oneCondition.setBackground(Color.white);
                 oneCondition.setBorder(null);
                 twoConditions.setBackground(Color.white);

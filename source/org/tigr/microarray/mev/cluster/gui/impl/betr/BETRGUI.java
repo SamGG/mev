@@ -86,6 +86,7 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
     protected IData data;
     protected int numTimePoints, numPerms, dataDesign;
     protected boolean errorGenes;
+    protected int iterations;
     /** Creates new BETRGUI */
     public BETRGUI() {
     }
@@ -254,7 +255,7 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
             	geneConditionSDsMatrix = result.getMatrix("geneConditionSDsMatrix");
             }
             FloatMatrix pValues = result.getMatrix("pValues");
-            
+            iterations = result.getParams().getInt("iterations");
             rawPValues = new Vector<Float>();
             adjPValues = new Vector<Float>();
             fValues = new Vector<Float>();
@@ -306,7 +307,7 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
                     titlesVector.add("Condition " + (i+1) + " std.dev");
                 }
             }
-            titlesVector.add("p-Values");
+            titlesVector.add("significance-values");
             
             auxTitles = new String[titlesVector.size()];
             for (int i = 0; i < auxTitles.length; i++) {
@@ -750,14 +751,15 @@ public class BETRGUI implements IClusterGUI, IScriptGUI {
         if (info.correctionMethod.startsWith("False")) {
             node.add(new DefaultMutableTreeNode("Confidence (1 - alpha) : "+(1d - info.alpha)*100 + " %"));
         } else {
-            node.add(new DefaultMutableTreeNode("Alpha (overall threshold p-value): "+info.alpha));
+            node.add(new DefaultMutableTreeNode("Alpha (overall threshold significance-value): "+info.alpha));
         }  
         if (info.correctionMethod.startsWith("False")) {
            node.add(new DefaultMutableTreeNode(info.correctionMethod)); 
         } else {
             node.add(new DefaultMutableTreeNode("Significance determined by: "+info.correctionMethod));
-        }        
+        }
         node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
+        node.add(new DefaultMutableTreeNode("Iterations: "+iterations));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
