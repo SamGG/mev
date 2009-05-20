@@ -1337,7 +1337,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
         		channelPanel = new JPanel();
                 channelPanel.setLayout(new GridBagLayout());
-                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Channels"));
+                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Select Channel Data"));
                 channelButtonGroup = new ButtonGroup();
                 oneChannelRadioButton = new JRadioButton("1 Channel", true);
                 oneChannelRadioButton.addActionListener(new EventListener());
@@ -1432,7 +1432,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
                 instructionsLabel = new JLabel();
                 instructionsLabel.setForeground(java.awt.Color.red);
-                String instructions = "<html>Click the upper-leftmost expression value. Click the <b>Load</b> button to finish.</html>";
+                String instructions = "<html>Select the appropriate number of channels, then select appropriate data columns from the dropdown lists.</html>";
                 instructionsLabel.setText(instructions);
                 
                 tablePanel = new JPanel();
