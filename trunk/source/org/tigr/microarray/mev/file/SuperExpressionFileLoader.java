@@ -238,6 +238,9 @@ public class SuperExpressionFileLoader {
 		} catch (IOException ioe) {
 			this.annotationLists = null;
 			return false;
+		} catch (Exception e) {
+			this.annotationLists = null;
+			return false;
 		}
 	}
 	public File getAnnotationFile(String organismName, String arrayName) throws SupportFileAccessError {
