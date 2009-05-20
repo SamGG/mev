@@ -38,7 +38,7 @@ public class AvailableAnnotationsFileDefinition extends ISupportFileDefinition {
 
 	@Override
 	public String getUniqueName() {
-		return "resourcerer_supported_annotations.txt";
+		return "kingdom_species_cloneset_list.txt";
 	}
 
 	@Override

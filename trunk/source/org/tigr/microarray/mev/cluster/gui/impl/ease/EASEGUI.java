@@ -549,7 +549,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 	            while(allAnnotations.hasMoreElements()) {
 	            	String thisKey = allAnnotations.nextElement();
 	            	org.tigr.microarray.mev.annotation.IAnnotation thisAnnotation = annotations.get(thisKey);
-	            	annot[i] = thisAnnotation.getTgiTC();
+	            	annot[i] = thisAnnotation.getAttributeObj(annotationKeyType).getAttributeAt(0).toString();
 	            	i++;
 	            }
 	            return annot;

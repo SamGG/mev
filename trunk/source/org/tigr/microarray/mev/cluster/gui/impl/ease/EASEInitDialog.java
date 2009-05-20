@@ -115,7 +115,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected Hashtable<String, Vector<String>> speciestoarrays;
     protected IResourceManager resourceManager;
     
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
     protected boolean useLoadedAnnotationFile = false;
     File annotationFile;
     protected String defaultFileBaseLocation;
@@ -1209,12 +1209,12 @@ public class EASEInitDialog extends AlgorithmDialog {
 					getEaseSupportFileButton.setText("Download");
 				}
 				getEaseSupportFileButton.setEnabled(true);
-			        try {
-			        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
-			        	annotationFile = resourceManager.getSupportFile(def, false);
-			        } catch (SupportFileAccessError sfae) {
-			        	useLoadedAnnotationFile = false;
-			        }
+				try {
+		        	ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
+		        	annotationFile = resourceManager.getSupportFile(def, false);
+		        } catch (SupportFileAccessError sfae) {
+		        	useLoadedAnnotationFile = false;
+		        }
 			} else {
 				getEaseSupportFileButton.setEnabled(false);
 			}
