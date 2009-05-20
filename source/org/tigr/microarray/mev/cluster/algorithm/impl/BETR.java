@@ -175,7 +175,7 @@ public class BETR extends AbstractAlgorithm{
     	
     	result.addIntMatrix("sigGenesArrays", sigReturn);
     	result.addParam("error-length", String.valueOf(errorGenesArray.length+errorGenesArray2.length));
-    	result.addParam("iterations", String.valueOf(iteration));
+    	result.addParam("iterations", String.valueOf(iteration-1));
     	result.addIntArray("error-genes", errReturn);
     	result.addCluster("cluster", result_cluster);
     	result.addParam("number-of-clusters", "1"); //String.valueOf(clusters.length));    

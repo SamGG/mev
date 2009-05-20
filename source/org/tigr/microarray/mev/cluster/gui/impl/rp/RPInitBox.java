@@ -1097,7 +1097,8 @@ public class RPInitBox extends AlgorithmDialog {
             scroll.getHorizontalScrollBar().setUnitIncrement(20);
             scroll.getVerticalScrollBar().setUnitIncrement(20);
             
-            buildConstraints(constraints, 0, 0, 1, 1, 40, 100);
+            buildConstraints(constraints, 0, 0, 2, 1, 40, 100);
+            constraints.insets = new Insets(5,5,5,5);
             constraints.fill =GridBagConstraints.BOTH;
             gridbag.setConstraints(scroll, constraints);
             this.add(scroll);
@@ -1226,7 +1227,7 @@ public class RPInitBox extends AlgorithmDialog {
             //constraints.ipady = 0;
             constraints.fill = GridBagConstraints.NONE;
             
-            buildConstraints(constraints, 1, 0, 1, 1, 10, 0);
+            buildConstraints(constraints, 1, 1, 1, 1, 10, 0);
             //constraints.fill = GridBagConstraints.HORIZONTAL;
             //constraints.ipadx = 200;
             gridbag.setConstraints(currentSelectionPanel, constraints);
@@ -1245,11 +1246,11 @@ public class RPInitBox extends AlgorithmDialog {
             grid3.setConstraints(removeABPairButton, constraints);
             pairButtonsPanel.add(removeABPairButton);            
             
-            buildConstraints(constraints, 2, 0, 1, 1, 5, 0);
+            buildConstraints(constraints, 2, 1, 1, 1, 5, 0);
             gridbag.setConstraints(pairButtonsPanel, constraints);
             this.add(pairButtonsPanel);  
             
-            buildConstraints(constraints, 3, 0, 1, 1, 45, 0);
+            buildConstraints(constraints, 2, 0, 1, 1, 45, 0);
             constraints.fill = GridBagConstraints.BOTH;
             JScrollPane pairScroll = new JScrollPane(pairedExptsList);
             pairScroll.setBorder(new TitledBorder("Paired Samples"));
