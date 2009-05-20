@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import org.tigr.util.StringSplitter;
@@ -61,21 +62,25 @@ public class AvailableAnnotationsFileDefinition extends ISupportFileDefinition {
 		String currentLine;
 		StringSplitter ss = new StringSplitter('\t');
 
-		while ((currentLine = breader.readLine()) != null) {
-			ss.init(currentLine);
-			while (ss.hasMoreTokens()) {
-				ss.nextToken();
-				String orgName = (String) ss.nextToken();
-				String chipType = (String) ss.nextToken();
-				if (!orgToChipMap.containsKey(orgName)) {
-					Vector<String> chipTypes = new Vector<String>();
-					chipTypes.add(chipType);
-					orgToChipMap.put(orgName, chipTypes);
-				} else {
-					orgToChipMap.get(orgName).add(chipType);
+		try {
+			while ((currentLine = breader.readLine()) != null) {
+				ss.init(currentLine);
+				while (ss.hasMoreTokens()) {
+					ss.nextToken();
+					String orgName = (String) ss.nextToken();
+					String chipType = (String) ss.nextToken();
+					if (!orgToChipMap.containsKey(orgName)) {
+						Vector<String> chipTypes = new Vector<String>();
+						chipTypes.add(chipType);
+						orgToChipMap.put(orgName, chipTypes);
+					} else {
+						orgToChipMap.get(orgName).add(chipType);
+					}
 				}
 			}
+			return orgToChipMap;
+		} catch (NoSuchElementException nsee) {
+			throw new IOException(nsee);
 		}
-		return orgToChipMap;
 	}
 }
