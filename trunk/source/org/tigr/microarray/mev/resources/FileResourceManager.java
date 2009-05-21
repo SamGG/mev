@@ -60,7 +60,7 @@ public class FileResourceManager implements IResourceManager {
 	private boolean allowedOnline = true;
 	private Vector<ISupportFileDefinition> filesCheckedThisSession = new Vector<ISupportFileDefinition>();
 
-	private boolean fileHasBeenCheckedRecently(ISupportFileDefinition def) {
+	private synchronized boolean fileHasBeenCheckedRecently(ISupportFileDefinition def) {
 		Enumeration<ISupportFileDefinition> _checkedDefs = filesCheckedThisSession.elements();
 		while(_checkedDefs.hasMoreElements()) {
 			if(_checkedDefs.nextElement().matches(def)) {
@@ -114,7 +114,7 @@ public class FileResourceManager implements IResourceManager {
 		
 	}
 	
-	public File getSupportFile(ISupportFileDefinition def, boolean getOnline) throws SupportFileAccessError {
+	public synchronized File getSupportFile(ISupportFileDefinition def, boolean getOnline) throws SupportFileAccessError {
 		Vector<ISupportFileDefinition> v = new Vector<ISupportFileDefinition>();
 		v.add(def);
 		File f = getSupportFiles(v, getOnline).get(def);
@@ -122,7 +122,7 @@ public class FileResourceManager implements IResourceManager {
 			throw new SupportFileAccessError("Unable to download support file.");
 		return f;
 	}
-	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError {
+	public synchronized Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError {
 		boolean getOnlineFlag = getOnline;
 		Hashtable<ISupportFileDefinition, File> returnMap = new Hashtable<ISupportFileDefinition, File>();
 		
@@ -212,7 +212,7 @@ public class FileResourceManager implements IResourceManager {
 		return false;
 	}
 	
-	private Hashtable<ISupportFileDefinition, File> getUpdatesIfAvailable(Vector<ISupportFileDefinition> defs, Hashtable<ISupportFileDefinition, File> defToCachedFileMap) throws SupportFileAccessError {
+	private synchronized Hashtable<ISupportFileDefinition, File> getUpdatesIfAvailable(Vector<ISupportFileDefinition> defs, Hashtable<ISupportFileDefinition, File> defToCachedFileMap) throws SupportFileAccessError {
 		Hashtable<ISupportFileDefinition, File> tempMap = new Hashtable<ISupportFileDefinition, File>();
 		
 		//hash defs on url host+protocol 
@@ -319,7 +319,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @return the file handle of the newly-copied file in the repository
 	 * @throws SupportFileAccessError if an error in copying occurs.
 	 */
-	private File validateAndCopyToRepository(File temporaryDownloadedFile, ISupportFileDefinition def, Date serverLastModifiedDate) throws SupportFileAccessError {
+	private synchronized File validateAndCopyToRepository(File temporaryDownloadedFile, ISupportFileDefinition def, Date serverLastModifiedDate) throws SupportFileAccessError {
 		try {
 			File temporaryUncompressedFile = null;
 			if (def.fileNeedsUnzipping())
@@ -408,7 +408,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @param def a definition of the type of file to be selected and downloaded
 	 * @return a Hashtable mapping the results
 	 */
-	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
+	public synchronized Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
 		//For testing
 		try {
 			URL url = def.getURL();
@@ -457,7 +457,7 @@ public class FileResourceManager implements IResourceManager {
 	 * Returns true if the file described by def is already stored in the
 	 * local repository.
 	 */
-	public boolean fileIsInRepository(ISupportFileDefinition def) {
+	public synchronized boolean fileIsInRepository(ISupportFileDefinition def) {
 		try {
 			if(getLatestVersionFromRepository(def) == null)
 				return false;
@@ -481,7 +481,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @throws IOException
 	 *                 if there is a problem writing to the temp directory
 	 */
-	private File unzipFile(File zippedFile) throws ZipException, IOException {
+	private synchronized File unzipFile(File zippedFile) throws ZipException, IOException {
 		if (zippedFile == null || !zippedFile.exists()) {
 			System.out.println("couldn't find file to unzip");
 			throw new IOException("Could not find file to unzip.");
@@ -734,7 +734,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @throws IOException
 	 *                 if unable to copy.
 	 */
-	private static void copyFiles(File src, File dest) throws IOException {
+	private synchronized static void copyFiles(File src, File dest) throws IOException {
 		//Check to ensure that the source is valid...
 		if (!src.exists()) {
 			throw new IOException("copyFiles: Can not find source: " + src.getAbsolutePath() + ".");
