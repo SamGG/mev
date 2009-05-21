@@ -12,8 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.tigr.microarray.mev.TMEV;
@@ -117,8 +122,23 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 		if(lastIndex <= 0)
 			lastIndex = uniqueName.length();
 		String prefix = uniqueName.substring(0, lastIndex);
-		return (name.startsWith(prefix));
+
+		try {
+			Date temp;
+			DateFormat df = new SimpleDateFormat("_yyyy-MM-dd", new Locale("en"));
+			
+			if(name.contains(".".subSequence(0, 1))) {
+				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length()+1, name.lastIndexOf('.')));
+			} else {
+				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length()+1, name.length()));
+			}
+			
+			return true;
+		} catch (ParseException pe) {
+			return false;
+		}
 	}
+
 	/**
 	 * Checks that the requested file is allowable to be downloaded. No executables
 	 * can be downloaded. 
