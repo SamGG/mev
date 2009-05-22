@@ -5,13 +5,6 @@
  * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
-/*
- * $RCSfile: AffyGCOSFileLoader.java,v $
- * $Revision: 1.12 $
- * $Date: 2007-12-20 19:55:12 $
- * $Author: eleanorahowe $
- * $State: Exp $
- */
 
 package org.tigr.microarray.mev.file;
 
@@ -713,7 +706,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
         				text+="<br><br></body></html>";
         				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-//                		e.printStackTrace();
+                		e.printStackTrace();
         			}
         		}
         	}
@@ -1781,16 +1774,20 @@ for(int k=0;k<dataTypes.length;k++) {
 		}
 		
 		
-		//FactorValueAttribute fValueAttrib=new FactorValueAttribute();
-//		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
-//		
-//		for(int index=0; index<nodes.size(); index++){
-//	
-//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
-//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
-//		}
+		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
 		
-
+		for(int index=0; index<nodes.size(); index++){
+	
+			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
+			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
+		    HybridizationNode node = (HybridizationNode)nodes.get(index);
+		    FactorValueAttribute fva = node.factorValue;
+		    fva.getNodeName();
+		    System.out.print("factorvalue:"+fva.getNodeName());
+		}
+	
+		
+		
     }
 
     public void populateIDFObject(IDF idfObj){

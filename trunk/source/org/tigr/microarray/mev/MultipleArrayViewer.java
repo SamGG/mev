@@ -285,8 +285,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
 
 	
-	//Added by sarita
-	private ClusterRepository clusterRepository;
+	
 	private Experiment experiment;
 	private int[][]clusters;
 	private int clusterIndex;
@@ -2113,7 +2112,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     }
     
     private void onExperimentLabelAdded() {
-      
+     // System.out.println("onExperimentLabelAdded");
         boolean safeToReorderExperiments = false;
         
         //make sure no results exist and cluster repositories are null, then safe to reorder.
@@ -2122,7 +2121,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         
         //get the longest key set from loaded samples
         Vector featureAttributes = this.data.getSlideNameKeyVectorUnion();
-      
+              
         ExperimentLabelEditor editor = new ExperimentLabelEditor(this.getFrame(), featureAttributes, this.data, safeToReorderExperiments);
         
         //return if not OK
@@ -2134,12 +2133,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         String [] keys = editor.getLabelKeys();
         
         //add/update features
-        for(int i=0; i < keys.length; i++)
-            this.data.addNewExperimentLabel(keys[i], data[i]);
+        for(int i=0; i < keys.length; i++){
+           	this.data.addNewExperimentLabel(keys[i], data[i]);
+        }
         
         //add the new label to the experiment label menu
         this.menubar.replaceExperimentLabelMenuItems(keys);
-        
+      
         //now the data has been updated, check for reordering request
         if(safeToReorderExperiments && editor.isReorderedSelected()) {
             int [] order = editor.getNewOrderScheme();

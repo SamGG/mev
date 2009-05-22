@@ -70,6 +70,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
     JMenuItem mergeRowsItem;
     JMenuItem delRowsPopItem;
     JMenuItem delRowsItem;
+    JMenuItem copyRowsItem;
     JCheckBoxMenuItem enableReorderItem;
     JCheckBoxMenuItem enableReorderPopItem;
     
@@ -231,6 +232,11 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         delRowsItem.setActionCommand("del-rows-command");
         delRowsItem.addActionListener(listener);
         
+        
+       /* copyRowsItem = new JMenuItem("Copy Selected Rows");
+        copyRowsItem.setActionCommand("copy-rows-command");
+        copyRowsItem.addActionListener(listener);*/
+        
         enableReorderItem = new JCheckBoxMenuItem("Enable Sample Reordering", false);
         enableReorderItem.setActionCommand("reorder-command");        
         enableReorderItem.setEnabled(allowReordering);
@@ -239,6 +245,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         
         editMenu.add(addRowItem);
         editMenu.add(mergeRowsItem);
+        editMenu.add(copyRowsItem);
         editMenu.add(delRowsItem);
         editMenu.add(new javax.swing.JSeparator());
         editMenu.add(enableReorderItem);
@@ -259,6 +266,11 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         mergeRowsPopItem.setActionCommand("merge-rows-command");
         mergeRowsPopItem.addActionListener(listener);
         
+        /*Added by Sarita
+        copyRowsItem = new JMenuItem("Copy Selected Rows");
+        copyRowsItem.setActionCommand("copy-rows-command");
+        copyRowsItem.addActionListener(listener);*/
+        
         delRowsPopItem = new JMenuItem("Delete Selected Rows");
         delRowsPopItem.setActionCommand("del-rows-command");
         delRowsPopItem.addActionListener(listener);
@@ -271,6 +283,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         
         popup.add(addRowPopItem);
         popup.add(mergeRowsPopItem);
+      //  popup.add(copyRowsItem);
         popup.add(delRowsPopItem);
         popup.addSeparator();
         popup.add(enableReorderPopItem);
@@ -353,6 +366,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         }
         
         public void initializeRows(int rowCount) {
+        	
             rows = new Row[rowCount];
             for(int i = 0; i < rows.length; i++){
                 rows[i] = new Row();
@@ -458,6 +472,8 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
             fireTableRowsInserted(dataObject.length-1, dataObject.length-1);          
         }
         
+        
+        
         public void addNewRow(String [] newRow) {
             String [][] newData = new String[dataObject.length+1][columnCount];
             for(int i = 0; i < newData.length-1; i++) {
@@ -472,6 +488,32 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
             
             //fireTableDataChanged();
             fireTableRowsInserted(dataObject.length-1, dataObject.length-1);          
+        }
+        
+        
+        //Added by Sarita to allow copying contents of a row to another
+        
+        public void addNewRow(int [] newRow) {
+        	int count=0;
+            String [][] newData = new String[dataObject.length+newRow.length][columnCount];
+            for(int i = 0; i < dataObject.length; i++) {
+                newData[i] = dataObject[i];
+            }
+            
+            for(int j=dataObject.length; j<newData.length; j++){
+            	newData[j]=dataObject[newRow[count]];
+            	if(count<newRow.length)
+            		count=count+1;
+            }
+            //might have to fill row data with " " ?
+            dataObject = newData;
+            initializeRows(dataObject.length);
+
+            //set new data
+          //  dataObject[dataObject.length-1] = newRow;
+            
+            //fireTableDataChanged();
+            fireTableRowsInserted(dataObject.length, dataObject.length);          
         }
                 
         
@@ -523,6 +565,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         }
         
         public void deleteRows(int [] selectedRows) {
+        	
             boolean [] delRows = new boolean[dataObject.length];
             int rowsToDelete = 0;
             
@@ -541,6 +584,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
                     newRowCnt++;
                 }
             }
+        	
             initializeRows(newData.length);
             dataObject = newData;
             fireTableDataChanged();
@@ -664,7 +708,14 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
                 if(selectedRows.length < 1)
                     return;
                 model.deleteRows(selectedRows);
-            } else if( allowReordering && command.equals("reorder-command")) {
+            }/* else if(command.equals("copy-rows-command")){//Added by Sarita to let people copy contents of one row to another
+            	int[]selectedRows=table.getSelectedRows();
+            	if(selectedRows.length <1)
+            		return;
+            	else
+            		model.addNewRow(selectedRows);
+            
+            }*/else if( allowReordering && command.equals("reorder-command")) {
                 if(ae.getSource() == enableReorderItem)
                     enableReorderPopItem.setSelected(enableReorderItem.isSelected());
                 else 

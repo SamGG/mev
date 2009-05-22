@@ -1226,13 +1226,18 @@ public class FloatSlideData implements ISlideData {
 
 			// Add the Key and value to the new Sample Annotation model
 
-			if (getSampleAnnotation() != null)
+			/*if (getSampleAnnotation() != null)
 				getSampleAnnotation().setAnnotation(label, value);
-			else {
+			else {*/
+//			 System.out.println("Key:"+label);
+//             System.out.println("Data:"+value);
 				SampleAnnotation ann = new SampleAnnotation();
+				
+				this.isSampleAnnotationLoaded=true;
+				 ann.setAnnotation(IData.DEFAULT_SAMPLE_ANNOTATION_KEY, getSampleAnnotation().getAnnotation(IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
+				ann.setAnnotation(label, value);
 				this.setSampleAnnotation(ann);
-				getSampleAnnotation().setAnnotation(label, value);
-			}
+			//}
 		}
 
     }

@@ -947,8 +947,9 @@ public class MultipleArrayData implements IData {
 
     public void addNewExperimentLabel(String key, String [] values) {
         ISlideData slideData;
-
+        System.out.println("MAD: addNewExperimentLabel");
         for(int i = 0; i < featuresList.size(); i++) {
+        	
             getFeature(i).addNewSampleLabel(key, values[i]);
         }
     }

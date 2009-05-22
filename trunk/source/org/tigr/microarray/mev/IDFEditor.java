@@ -386,19 +386,20 @@ public class IDFEditor extends AlgorithmDialog {
 				try{
 				String temp=(String)fields[index1].get(new IDFConstants());
 				flag=false;
-				//System.out.println(temp);
+				//System.out.println("Field:"+temp);
 				//Loop through all the keys
 				for(int index2=0; index2<keys.length; index2++){
 					//If current field is also present in the keys, set flag to true 
+				//	System.out.println("Key:"+keys[index2]);
 					if(temp.equalsIgnoreCase(keys[index2])){
 						flag=true;
-						return;
+						
 					}
 					
 				}
 				
 				if(flag==false){
-					System.out.println("Field to add:"+temp);
+					//System.out.println("Field to add:"+temp);
 						rows_to_add.add(temp);
 					
 				}
