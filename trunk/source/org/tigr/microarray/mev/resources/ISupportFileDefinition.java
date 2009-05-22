@@ -128,13 +128,15 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 			DateFormat df = new SimpleDateFormat("_yyyy-MM-dd", new Locale("en"));
 			
 			if(name.contains(".".subSequence(0, 1))) {
-				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length()+1, name.lastIndexOf('.')));
+				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length(), name.lastIndexOf('.')));
 			} else {
-				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length()+1, name.length()));
+				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length(), name.length()));
 			}
 			
 			return true;
 		} catch (ParseException pe) {
+			return false;
+		} catch (ArrayIndexOutOfBoundsException aioobe) {
 			return false;
 		}
 	}
