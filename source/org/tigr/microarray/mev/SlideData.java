@@ -1424,7 +1424,9 @@ public class SlideData implements ISlideData, ISlideMetaData {
      */
     public void addNewSampleLabel(String label, String value) {
     	
+    	System.out.println("SlideData:addNewSampleLabel");
     	if (!this.isSampleAnnotationLoaded) {
+    		
 			if (!sampleLabelKeys.contains(label))
 				this.sampleLabelKeys.addElement(label);
 			this.sampleLabels.put(label, value);
@@ -1433,13 +1435,21 @@ public class SlideData implements ISlideData, ISlideMetaData {
 
 			// Add the Key and value to the new Sample Annotation model
 
-			if (getSampleAnnotation() != null)
-				getSampleAnnotation().setAnnotation(label, value);
-			else {
-				SampleAnnotation ann = new SampleAnnotation();
-				this.setSampleAnnotation(ann);
+			/*if (getSampleAnnotation() != null){
+				
+				getSampleAnnotation().getSampleAnnoHash().clear();//Added to take care of insatnce where values are delted from the table
 				getSampleAnnotation().setAnnotation(label, value);
 			}
+			else {*/
+				SampleAnnotation ann = new SampleAnnotation();
+				this.isSampleAnnotationLoaded=true;
+				
+				 ann.setAnnotation(IData.DEFAULT_SAMPLE_ANNOTATION_KEY, getSampleAnnotation().getAnnotation(IData.DEFAULT_SAMPLE_ANNOTATION_KEY));
+//				 System.out.println("Key:"+label);
+//	             System.out.println("Data:"+value);
+				ann.setAnnotation(label, value);
+				this.setSampleAnnotation(ann);
+			//}
 		}
     
 
