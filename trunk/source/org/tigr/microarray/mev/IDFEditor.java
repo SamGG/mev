@@ -61,8 +61,8 @@ public class IDFEditor extends AlgorithmDialog {
 	int result = JOptionPane.OK_OPTION;
 	JPopupMenu popup;
 
-	JMenuItem mergeRowsPopItem;
-	JMenuItem mergeRowsItem;
+	//JMenuItem mergeRowsPopItem;
+	//JMenuItem mergeRowsItem;
 	JMenuItem delRowsPopItem;
 	JMenuItem delRowsItem;
 	JCheckBoxMenuItem enableReorderItem;
@@ -661,9 +661,9 @@ public class IDFEditor extends AlgorithmDialog {
 		addRowItem.addActionListener(listener);
 
 		
-		mergeRowsItem = new JMenuItem("Merge Selected Rows");
+	/*	mergeRowsItem = new JMenuItem("Merge Selected Rows");
 		mergeRowsItem.setActionCommand("merge-rows-command");
-		mergeRowsItem.addActionListener(listener);
+		mergeRowsItem.addActionListener(listener);*/
 
 		delRowsItem = new JMenuItem("Delete Selected Rows");
 		delRowsItem.setActionCommand("del-rows-command");
@@ -679,7 +679,7 @@ public class IDFEditor extends AlgorithmDialog {
 		
 	
 		editMenu.add(addRowItem);
-		editMenu.add(mergeRowsItem);
+		//editMenu.add(mergeRowsItem);
 		editMenu.add(delRowsItem);
 		editMenu.add(new javax.swing.JSeparator());
 		editMenu.add(enableReorderItem);
@@ -719,7 +719,7 @@ public class IDFEditor extends AlgorithmDialog {
 		
 		popup.add(addRowPopItem);
 		popup.add(addIDFFields);
-		popup.add(mergeRowsPopItem);
+//		popup.add(mergeRowsPopItem);
 		popup.add(delRowsPopItem);
 		popup.addSeparator();
 		popup.add(enableReorderPopItem);
@@ -800,13 +800,7 @@ public class IDFEditor extends AlgorithmDialog {
 				popup.show(table, me.getX(), me.getY());
 				return;
 			}
-			if (table.getSelectedRowCount() > 1) {
-				mergeRowsItem.setEnabled(true);
-				mergeRowsPopItem.setEnabled(true);
-			} else {
-				mergeRowsItem.setEnabled(false);
-				mergeRowsPopItem.setEnabled(false);
-			}
+			
 			if (table.getSelectedRowCount() > 0) {
 				delRowsItem.setEnabled(true);
 				delRowsPopItem.setEnabled(true);
