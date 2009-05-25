@@ -70,7 +70,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
     JMenuItem mergeRowsItem;
     JMenuItem delRowsPopItem;
     JMenuItem delRowsItem;
-    JMenuItem copyRowsItem;
+   // JMenuItem copyRowsItem;
     JCheckBoxMenuItem enableReorderItem;
     JCheckBoxMenuItem enableReorderPopItem;
     
@@ -245,7 +245,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
         
         editMenu.add(addRowItem);
         editMenu.add(mergeRowsItem);
-        editMenu.add(copyRowsItem);
+//        editMenu.add(copyRowsItem);
         editMenu.add(delRowsItem);
         editMenu.add(new javax.swing.JSeparator());
         editMenu.add(enableReorderItem);

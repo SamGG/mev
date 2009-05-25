@@ -186,6 +186,7 @@ public class FloatSlideData implements ISlideData {
         sampleLabelKey = "Default Slide Name";
         sampleLabelKeys = new Vector();
         sampleLabels = new Hashtable();
+        
     }
     
     public void setCurrentCY3(float[] f){this.currentCY3=f;}
