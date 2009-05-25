@@ -98,7 +98,7 @@ public class IDFEditor extends AlgorithmDialog {
 		table.setDefaultRenderer(JTextField.class, new CellRenderer());
 		table.setDefaultRenderer(Object.class, new CellRenderer());
 		table.setRowSelectionAllowed(true);
-
+	   
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 	
 		/*table.getColumn("Label Key").setMinWidth(130);--commented by Sarita
@@ -701,9 +701,9 @@ public class IDFEditor extends AlgorithmDialog {
 		addRowPopItem.setActionCommand("add-row-command");
 		addRowPopItem.addActionListener(listener);
 
-		mergeRowsPopItem = new JMenuItem("Merge Selected Rows");
+		/*mergeRowsPopItem = new JMenuItem("Merge Selected Rows");
 		mergeRowsPopItem.setActionCommand("merge-rows-command");
-		mergeRowsPopItem.addActionListener(listener);
+		mergeRowsPopItem.addActionListener(listener);*/
 
 		delRowsPopItem = new JMenuItem("Delete Selected Rows");
 		delRowsPopItem.setActionCommand("del-rows-command");
@@ -734,12 +734,12 @@ public class IDFEditor extends AlgorithmDialog {
 			// menu actions
 			if (command.equals("add-row-command")) {
 				model.addNewRow();
-			} else if (command.equals("merge-rows-command")) {
+			} /*else if (command.equals("merge-rows-command")) {
 				int[] selectedRows = table.getSelectedRows();
 				if (selectedRows.length < 2)
 					return;
 				model.mergeRows(selectedRows);
-			} else if (command.equals("del-rows-command")) {
+			}*/ else if (command.equals("del-rows-command")) {
 				int[] selectedRows = table.getSelectedRows();
 				if (selectedRows.length < 1)
 					return;

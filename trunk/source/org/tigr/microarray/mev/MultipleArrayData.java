@@ -136,7 +136,7 @@ public class MultipleArrayData implements IData {
 
     private boolean isMedianIntensities = false;
     
-    //fields for maintaining the 'experiment to use' statu
+    //fields for maintaining the 'experiment to use' status
     private boolean useMainData = true;
     private Experiment alternateExperiment = null;
 
@@ -925,6 +925,7 @@ public class MultipleArrayData implements IData {
      * Returns the key vector for the sample with the longest sample name key list
      */
     public String [] getSlideNameKeyArray() {
+    //	System.out.println("MAD:getSlideNameKeyArray");
         Vector keyVector;
         Vector fullKeyVector = new Vector();
         String key;
@@ -940,6 +941,7 @@ public class MultipleArrayData implements IData {
         String [] keys = new String[fullKeyVector.size()];
         for(int i = 0 ; i < keys.length; i++) {
             keys[i] = (String)(fullKeyVector.elementAt(i));
+           // System.out.println("Key:"+keys[i]);
         }
         return keys;
     }
@@ -947,7 +949,7 @@ public class MultipleArrayData implements IData {
 
     public void addNewExperimentLabel(String key, String [] values) {
         ISlideData slideData;
-        System.out.println("MAD: addNewExperimentLabel");
+      //  System.out.println("MAD: addNewExperimentLabel");
         for(int i = 0; i < featuresList.size(); i++) {
         	
             getFeature(i).addNewSampleLabel(key, values[i]);
@@ -3147,6 +3149,7 @@ public class MultipleArrayData implements IData {
     }
     
     public String[][] getSampleAnnotationMatrix(){
+    //	System.out.println("MAD:getSampleAnnotaionMatrix");
     	String[] s = getSlideNameKeyArray();
     	String[][] m = new String[getFeaturesCount()][s.length];
     	for (int i=0; i<s.length; i++){
@@ -3186,10 +3189,13 @@ public class MultipleArrayData implements IData {
     /** Returns the slected sample annotation
      */
     public String getSampleAnnotation(int column, String key) {
-    	
+    	//System.out.println("MAD:getSampleAnnotation");
         
-    	if(this.getFeature(0).isSampleAnnotationLoaded())
+    	if(this.getFeature(0).isSampleAnnotationLoaded()){
+    	  //  System.out.println("sampleAnnotation for key"+key+"is:::"+(this.getFeature(column).getSampleAnnotation().getAnnotation(key)));
     		return (String)(this.getFeature(column).getSampleAnnotation().getAnnotation(key));
+    		
+    	}
     	else
     		return (String)(this.getFeature(column).getSlideDataLabels().get(key));
     	

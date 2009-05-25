@@ -5,6 +5,13 @@
  * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
+/*
+ * $RCSfile: AffyGCOSFileLoader.java,v $
+ * $Revision: 1.12 $
+ * $Date: 2007-12-20 19:55:12 $
+ * $Author: eleanorahowe $
+ * $State: Exp $
+ */
 
 package org.tigr.microarray.mev.file;
 
@@ -430,6 +437,8 @@ System.out.println("expt cnt: " + experimentCount + " ; tokens: "
             		break;
             	}
 System.out.println("matrixState" + matrixState.toString());
+	System.out.println("Sample size:"+sampleNames.size());
+	System.out.println("Experiment Count:"+experimentCount);
                 ss.nextToken();//parse the blank on header
                 int numqts = dataTypes.length;
                 for (int i=0; i<experimentCount; i++) {
@@ -706,7 +715,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
         				text+="<br><br></body></html>";
         				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-                		e.printStackTrace();
+//                		e.printStackTrace();
         			}
         		}
         	}
@@ -826,6 +835,7 @@ for(int k=0;k<dataTypes.length;k++) {
                	if(! previous.equalsIgnoreCase(current)) {
                		if(i > 0) {
                			sampleNames.add(current);
+               			System.out.println("sample name:"+current);
                		}
                	}
                	previous = current;
@@ -1330,7 +1340,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
         		channelPanel = new JPanel();
                 channelPanel.setLayout(new GridBagLayout());
-                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Select Channel Data"));
+                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Channels"));
                 channelButtonGroup = new ButtonGroup();
                 oneChannelRadioButton = new JRadioButton("1 Channel", true);
                 oneChannelRadioButton.addActionListener(new EventListener());
@@ -1425,7 +1435,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
                 instructionsLabel = new JLabel();
                 instructionsLabel.setForeground(java.awt.Color.red);
-                String instructions = "<html>Select the appropriate number of channels, then select appropriate data columns from the dropdown lists.</html>";
+                String instructions = "<html>Click the upper-leftmost expression value. Click the <b>Load</b> button to finish.</html>";
                 instructionsLabel.setText(instructions);
                 
                 tablePanel = new JPanel();
@@ -1774,6 +1784,7 @@ for(int k=0;k<dataTypes.length;k++) {
 		}
 		
 		
+		//FactorValueAttribute fValueAttrib=new FactorValueAttribute();
 		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
 		
 		for(int index=0; index<nodes.size(); index++){
@@ -1785,9 +1796,8 @@ for(int k=0;k<dataTypes.length;k++) {
 		    fva.getNodeName();
 		    System.out.print("factorvalue:"+fva.getNodeName());
 		}
-	
 		
-		
+
     }
 
     public void populateIDFObject(IDF idfObj){

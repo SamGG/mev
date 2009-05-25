@@ -1760,6 +1760,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             this.viewer.onDeselected();
         }
         this.viewer = viewer;
+      
         /* Raktim Nov 15, 2005 - CGH Specific
          * Special case to handle CGHPositionGraphViewer.
 		 * CGHPositionGraphViewer needs onSelected called before setting the viewport
@@ -1873,16 +1874,19 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      * Creates an image for specified viewer.
      */
     private BufferedImage createDefaultImage(IViewer viewer) {
+    	
         JComponent content = viewer.getContentComponent();
         JComponent header  = viewer.getHeaderComponent();
         int width  = content.getWidth();
         int height = content.getHeight();
+      
         if (header != null) {
             width = Math.max(width, header.getWidth());
             height += header.getHeight();
         }
         // BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);  //need to use this type for image creation
+        
         Graphics2D g = image.createGraphics();
         g.setColor(Color.white);
         g.fillRect(0, 0, image.getWidth(), image.getHeight());
@@ -1896,6 +1900,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         } else {
             g.setClip(0, 0, width, height);
         }
+        
+     
+        
         content.paint(g);
         return image;
     }
@@ -2057,6 +2064,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
      */
     private void onExperimentLabelChanged(Action action) {
         String key = (String)action.getValue(ActionManager.PARAMETER);
+     
         //menubar.setExperimentLabelIndex(Integer.parseInt(index));
         this.data.setSampleLabelKey(key);
         fireMenuChanged();
@@ -2093,11 +2101,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         Hashtable<String, ArrayList<String>> temp=new Hashtable<String, ArrayList<String>>();
       
         for(int index=0; index<keyes.length; index++){
-        	//System.out.println("keyes:"+keyes[index]);
+        	
             ArrayList l=new ArrayList();
             for(int j=0; j<data[index].length; j++){
-           // 	System.out.println("value:"+data[index][j]);
-            	l.add(data[index][j]);
+                      	l.add(data[index][j]);
             }
         	temp.put(keyes[index], l);
         

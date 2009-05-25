@@ -1059,6 +1059,7 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         private void initializeData(Vector data){
+        	
             int cnt = 0;
             rowData = new Object[(int)(data.size()/columnNames.length)][columnNames.length];
             while(cnt < data.size()){
