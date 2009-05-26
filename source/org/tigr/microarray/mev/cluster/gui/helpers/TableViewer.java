@@ -329,6 +329,10 @@ public class TableViewer extends JPanel implements IViewer {
             	}
             	return linkComponent;
             } else {
+            	if(obj != null)
+            		textArea.setText(obj.toString());
+            	else 
+            		textArea.setText("null");
             	textArea.setText(obj.toString());
                 if(table.isRowSelected(row))
                     textArea.setBackground(table.getSelectionBackground());
