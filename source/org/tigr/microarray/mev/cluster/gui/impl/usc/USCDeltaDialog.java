@@ -472,7 +472,9 @@ public class USCDeltaDialog extends AlgorithmDialog {
 			bg.add( row.getButton() );
 			vReturn.add( row );
 		}//r
-		
+		if(vReturn.size() >0 && vReturn.get(0) != null)
+			((USCRow)vReturn.get(0)).getButton().setSelected(true);
+			
 		return vReturn;
 	}//createRows()
 	private Vector createRows( USCXValResult xValResults ) {
