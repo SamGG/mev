@@ -271,7 +271,9 @@ public class HelpWindow extends JDialog {
             return "GW.html";
     	if(key.equals("GCOS"))
             return "GCOS.html";
-    	if(key.equals("bioconductor"))
+    	if(key.equals("MAGE"))
+            return "magetab.html";
+       	if(key.equals("bioconductor"))
             return "bioconductor.html";
     	if(key.equals("softAffy"))
             return "softAffy.html";
