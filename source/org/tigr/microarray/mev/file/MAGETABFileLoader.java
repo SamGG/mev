@@ -32,6 +32,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Enumeration;
@@ -556,7 +557,10 @@ for(int k=0;k<dataTypes.length;k++) {
                     	case INTENSITY_DETECT_PVAL:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:signal")) -1]);
         					extraFields[0] = currData[quantTypes.get(columnDataTypes.get("MEV:detection")) -1];
-            				extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:pvalue")) -1];
+        					System.out.println("detection:"+extraFields[0]);
+        					extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:pvalue")) -1];
+        					
+            				System.out.println("p value:"+extraFields[1]);
                     		break;
                     	case LOG_CHANNELS:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]);
@@ -605,7 +609,11 @@ for(int k=0;k<dataTypes.length;k++) {
                     	switch (matrixState) {
                     	case INTENSITY_DETECT_PVAL:
             				sde.setDetection(extraFields[0]);
-            				sde.setPvalue(new Float(extraFields[1]).floatValue());
+            				try{
+            				sde.setPvalue(new Float((NumberFormat.getInstance()).parse(extraFields[1]).floatValue()));
+            				}catch(Exception e){
+            					
+            				}
                     		break;
                     	case INTENSITY_DETECTION:
             				sde.setDetection(extraFields[0]);
@@ -622,7 +630,12 @@ for(int k=0;k<dataTypes.length;k++) {
                     	switch (matrixState) {
                     	case INTENSITY_DETECT_PVAL:
             				((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
-            				((FloatSlideData)slideDataArray[i]).setPvalue(counter-preSpotRows,new Float(extraFields[1]).floatValue());
+            				try{
+            					((FloatSlideData)slideDataArray[i]).setPvalue(counter-preSpotRows,new Float((NumberFormat.getInstance()).parse(extraFields[1]).floatValue()));
+            				}catch(Exception e){
+                					
+                				}
+            				
                     		break;
                     	case INTENSITY_DETECTION:
             				((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
@@ -677,7 +690,7 @@ for(int k=0;k<dataTypes.length;k++) {
           		  String text=
           		  "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
                     text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
-                    text += "2. Check the column names of SDRF file. If Protocol Ref has any prefixes, delete the prefix.<br><br>";
+                    text += "2. If the IDF file contains a fields ExperimentalDesignTermSourceRef, delete it<br><br>";
                     text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
                     text+="<br><br></body></html>";
           		  JOptionPane.showMessageDialog(null,text , "Loader Parse failure", JOptionPane.WARNING_MESSAGE);
@@ -699,7 +712,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
         				text+="<br><br></body></html>";
         				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-//            			e.printStackTrace();
+            			e.printStackTrace();
         			}
         		}
         		try {
@@ -715,7 +728,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
         				text+="<br><br></body></html>";
         				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-//                		e.printStackTrace();
+                		e.printStackTrace();
         			}
         		}
         	}
