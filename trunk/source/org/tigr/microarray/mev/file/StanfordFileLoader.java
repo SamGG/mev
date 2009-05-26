@@ -668,7 +668,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 			return adh.annotationSelected;
 		}
 		public String getAnnFilePath() {
-			System.out.println("annotation file path:"+adh.getAnnFilePath());
 			return adh.getAnnFilePath();
 		}
         private void setSelectedCell(int xR, int xC) {
