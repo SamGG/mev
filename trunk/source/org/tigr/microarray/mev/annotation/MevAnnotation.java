@@ -592,7 +592,7 @@ public class MevAnnotation implements IAnnotation, Comparable {
 			if (_temp == null) {
 				_temp = new String[1];
 				_temp[0] = ChipAnnotationFieldConstants.NOT_AVAILABLE;
-				//	System.out.println("getAttribute():MevAnnotation "+_temp[0] );
+				//System.out.println("getAttribute():MevAnnotation "+_temp[0] );
 
 			}
 			return _temp;
