@@ -11,8 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,8 +38,6 @@ import org.tigr.graph.GraphElement;
 import org.tigr.graph.GraphLine;
 import org.tigr.graph.GraphPoint;
 import org.tigr.graph.GraphTick;
-
-import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -50,7 +46,6 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.BoundariesDialog;
-import org.tigr.util.awt.Drawable;
 import org.tigr.util.awt.GBA;
 import org.tigr.util.awt.PValueCutoff;
 
@@ -109,46 +104,66 @@ public class PValueGraphViewer extends JPanel implements IViewer {
     private int contentWidth = 0;
     
     
-	public PValueGraphViewer(double graphstartx, double graphstopx,
-			double graphstarty, double graphstopy, String title, String xLabel, String yLabel,LinkedHashMap pvalues) {
-		this.graphstartx = graphstartx;
-		this.graphstopx = graphstopx;
-		this.graphstarty = graphstarty;
-		this.graphstopy = graphstopy;
-		this.xLabel=xLabel;
-		this.yLabel=yLabel;
-		this.title=title;
-		this.pValueMapping=pvalues;
-		
-		eventListener = new EventListener();
-		this.addMouseMotionListener(eventListener);
-		this.addMouseListener(eventListener);
-		 coordinateFormat = new DecimalFormat();
-	     coordinateFormat.setMaximumFractionDigits(3);
-	   
-		
-		initComponents();
-		initializePopupMenu();
-		// TODO Auto-generated constructor stub
-	}
+    public PValueGraphViewer( String title, String xLabel, String yLabel,LinkedHashMap pvalues) {
+    	//X axis label
+    	this.xLabel=xLabel;
+    	//Y axis label
+    	this.yLabel=yLabel;
+    	//Title of the graph
+    	this.title=title;
 
-	private void initComponents() {
+    	this.pValueMapping=pvalues;
+    	//Copy all gene set names into an Object array
+    	geneSetNames=pValueMapping.keySet().toArray();
 
-		//setLayout(new java.awt.BorderLayout());
-		setBackground(java.awt.Color.white);
-		super.setBackground(java.awt.Color.white);
-		//Using default  "monospace" font set in upDateSize() causes wierd spacing
-		setTickFont("SansSerif", Font.BOLD, 10);
-	    setLabelFont("SansSerif", Font.BOLD, 12);
-	   setTitleFont("SansSerif", Font.BOLD, 16);
-	    setTitle(this.title);
-	    setXLabel(this.xLabel);
-	    setYLabel(this.yLabel);
-	    graphElements=new Vector();
-	       
+    	//Copy all p values into an Object array
+    	pValueArray=pValueMapping.values().toArray();
 
-	}
-	
+    	//The x axis will always start from zero
+    	this.graphstartx = 0;
+    	//The length of x axis will be equal to the number of gene sets
+    	this.graphstopx = geneSetNames.length;
+    	//The defualt Y axis will span from 0-1 (Possible range of p values)
+    	this.graphstarty = 0;
+    	this.graphstopy = 1;
+
+
+    	eventListener = new EventListener();
+    	this.addMouseMotionListener(eventListener);
+    	this.addMouseListener(eventListener);
+
+    	//If p value is 0.000008, will show 0.000
+    	coordinateFormat = new DecimalFormat();
+    	coordinateFormat.setMaximumFractionDigits(3);
+
+
+    	initComponents();
+    	initializePopupMenu();
+    	
+    }
+
+    
+    
+    private void initComponents() {
+
+
+    	setBackground(java.awt.Color.white);
+    	super.setBackground(java.awt.Color.white);
+    	//Using default  "monospace" font set in upDateSize() causes wierd spacing
+    	setTickFont("SansSerif", Font.BOLD, 10);
+    	setLabelFont("SansSerif", Font.BOLD, 12);
+    	setTitleFont("SansSerif", Font.BOLD, 16);
+    	setTitle(this.title);
+    	setXLabel(this.xLabel);
+    	setYLabel(this.yLabel);
+    	graphElements=new Vector();
+
+
+    }
+	/**
+	 * Initializes the pop up menu that appears on right click
+	 * 
+	 */
 	
 	 protected void initializePopupMenu(){
 	        popup = new JPopupMenu();
@@ -161,11 +176,11 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	        item.setActionCommand("Reference Lines");
 	        item.addActionListener(eventListener);
 	        popup.add(item);
-	        popup.addSeparator();
+	      /*  popup.addSeparator();
 	        item = new JMenuItem("Set p-value cutoff");
 	        item.setActionCommand("p-value cutoff");
 	        item.addActionListener(eventListener);
-	        popup.add(item);
+	        popup.add(item);*/
 	        
 	    }
 	   
@@ -176,28 +191,19 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		Graphics2D g2 =  (Graphics2D)g;
 		GraphElement e;
 		FontMetrics metrics = g2.getFontMetrics();
+		
+		
 		//Try setting these values here. You have pretty much all required info now.
 		this.preXSpacing=getLeftMargin(g2);
 		this.postYSpacing=getBottomMargin(g2);
 		this.postXSpacing=20;
 		//Space where the Title of the graph is displayed
 		this.preYSpacing=50;
-		//Copy p values into the object array
-		pValueArray=this.pValueMapping.values().toArray();
-		//Copy gene set names in to object array
-		geneSetNames=this.pValueMapping.keySet().toArray();
 		
 		
 		updateSize();
-		
-			
-		/*Rectangle bounds=g.getClipBounds();
-		this.startx=
-		this.stopx=
-		this.starty=
-		this.stopy=*/
-		
 	
+		
 		gl = new GraphLine(0, 0, graphstopx, 0, Color.BLACK);
 		graphElements.add(gl);
 
@@ -223,7 +229,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 			// }
 		}
 
-		for (int i = 0; i < this.pValueArray.length; i++) {
+		for (int i = 0; i < graphstopx; i++) {
 			// GraphPoint is used to draw the actual data points in the graph
 			// (blue colored dots)
 		//	System.out.println("GraphPoint:"+pVals[i][1]);
@@ -254,9 +260,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 			
 		}
 
-
-	//	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		//		RenderingHints.VALUE_ANTIALIAS_OFF);
+	
 	
 		//drawSystem draws x and y axis in an L shape
 		drawSystem(g2, SYSTEM_BOUNDS);
@@ -317,17 +321,13 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 					g2.drawString("Geneset: "+(String)geneSetNames[(int)xVal] + ", "
 								+ "Pvalue:"+pValueArray[(int)xVal], x + 5, y - 3);
 					
-					//g2.drawString(coordinateFormat.format(xVal) + ", "
-						//	+ coordinateFormat.format(yVal), x + 5, y - 3);
+					
 				}
 			} else {
 				this.setCursor(Cursor.DEFAULT_CURSOR);
 			}
 		}
 
-		// enforceGraphBounds(g);
-
-	//	Commented by sarita
 		drawXLabel(g2, xLabel, Color.black);
 		drawYLabel(g2, yLabel, Color.black);
 		drawTitle(g2, title, Color.black);
@@ -343,22 +343,13 @@ public class PValueGraphViewer extends JPanel implements IViewer {
     private void updateSize() {
         setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
         Graphics2D g = (Graphics2D)getGraphics();
-        //Wonder if i need to add the size of Y label here?
-       // int width = elementSize.width*this.pVals.length + 1 + insets.left;--commented by Sarita
+        
+       // int width = elementSize.width*this.pVals.length + 1 + insets.left;
         int width = this.pValueMapping.size()*10 + 1 + insets.left;
-      /*  if (isDrawAnnotations) {
-            this.annotationWidth = getMaxWidth(g);
-            width += 20+this.annotationWidth;
-        }
-        if (maxColorWidth < colorWidth){
-        	maxColorWidth = colorWidth;
-        }
-        if(haveColorBar)
-            width += this.elementSize.width*colorWidth + 10;*/
         this.contentWidth = width;
         
         //Height would be more importtant here, since the gene set labels are shown vertically
-        //int height = elementSize.height*this.pVals.length+1;---commented by Sarita
+        //int height = elementSize.height*this.pVals.length+1;
         int height = getBottomMargin(g)+100*5+1+20;
         setSize(width, height);
      
