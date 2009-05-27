@@ -1,0 +1,42 @@
+Investigation Title	K.Yamada-Arabidopsis-Heat shock No.1
+Experimental Design	physiological_process_design
+Experimental Factor Name	temperature	compound	dose
+Experimental Factor Type	temperature	compound	dose
+Experimental Factor Term Source REF
+Person Last Name	Yamada
+Person First Name	Kenji
+Person Mid Initials
+Person Email	kyamada@nibb.ac.jp
+Person Phone	+81-564-55-7504
+Person Fax
+Person Address	Nishigo-naka 38, Okazaki, Aichi, 444-8585, Japan
+Person Affiliation	Cell Biology, National Institute for Basic Biology
+Person Roles	submitter
+Person Roles Term Source REF	MGED Ontology
+Quality Control Type
+Quality Control Term Source REF
+Replicate Type
+Replicate Term Source REF
+Normalization Type
+Normalization Term Source REF
+Date of Experiment
+Public Release Date	2007-06-01
+PubMed ID	17965410
+Publication DOI	17965410
+Publication Author List	Yamada, Kenji; Fukao, Yoichiro; Hayashi, Makoto; Fukazawa, Mitsue; Suzuki, Iku; Nishimura, Mikio
+Publication Title	Cytosolic HSP90 regulates the heat shock response that is responsible for heat acclimation in Arabidopsis thaliana
+Publication Status	journal_article
+Publication Status Term Source REF
+Experiment Description	Effect of heat shock or HSP90 inhibitors (geldanamycin and radicicol) on wild type Arabidopsis thaliana.
+Protocol Name	P-CAGE-25352	P-CAGE-25364	P-CAGE-25354	P-CAGE-25353	P-CAGE-25365	P-CAGE-25363	P-CAGE-25359	P-CAGE-25356	P-CAGE-25358	P-CAGE-25357	P-CAGE-25360	P-CAGE-25470
+Protocol Type	grow	specified_biomaterial_action	specified_biomaterial_action	specified_biomaterial_action	specified_biomaterial_action	specified_biomaterial_action	pool	nucleic_acid_extraction	labeling	hybridization	image_acquisition	bioassay_data_transformation
+Protocol Description	Each well of 96-well microtiter plates received 10 surface-sterilized seeds in 150 µl of liquid medium [0.5 x Murashige and Skoog salts, 1.3 mM 2-(4-morpholino)ethanesulfonic acid (MES)-KOH, pH 5.7]. After stratification (4 d at 4°C), the plates were transferred to an orbital shaker with a 16-h light cycle at 22°C. After 5 days of growth, the medium was replaced with appropriate treatment media.	Treated with 2.8% (v/v) dimethylsulfoxyde (solvent). A control for HSP90 inhibitors treatment.	For geldanamycin (GDA, HSP90 inhibitor) treatment, the seedlings were incubated in medium containing 50 µM GDA (Sigma-Aldrich, St. Louis, MO, USA). Stock solutions of GDA (1 mg/ml) was prepared by dissolving the drugs in dimethylsulfoxyde.	For heat shock treatment, the seedlings were incubated at 37°C for 2 h. 	For radicicol (RAD, HSP90 inhibitor) treatment, the seedlings were incubated in medium containing 50 µM RAD (Sigma-Aldrich, St. Louis, MO, USA). Stock solutions of RAD (1 mg/ml) was prepared by dissolving the drugs in dimethylsulfoxyde.	No treatment. A control for heat shock treatment.	Total RNA was extracted from 40 seedlings.	Total RNA extracted by using Isogen (Nippon Gene, Toyama, Japan) was dissolved in 25 µl of distilled water. 	Cy-5 labeled cRNA was synthesized using Low RNA Input Linear Amplification Kit (Agilent, product # 5184-3523) from total RNA and fragmented according to the manufacturer`s instructions.	Hybridization using In situ Hybridization Kit Plus (Agilent, product #5184-3568) according to the manufacturer's instructions (protocol: Part #G4140-96010)	PMT 100%	Per chip: normalize to 50th percentile. GeneSpring ver 7.2 (Agilent Technologies, Palo Alto, CA, USA) was used for processing.
+Protocol Parameters	light hours;day humidity;night humidity;light intensity;light source;media;night temperature;day temperature							Amplification;Extracted product	Used Label;Amount of nucleic acid labeled;Amplification	Temperature;Quantity of label target used;Chamber type;Time;Volume
+Protocol Hardware
+Protocol Software											Feature Extraction Software [Agilent]
+Protocol Contact
+Protocol Term Source REF	MGED Ontology	The MGED Ontology	The MGED Ontology	The MGED Ontology	The MGED Ontology	The MGED Ontology	MGED Ontology	MGED Ontology	The MGED Ontology	MGED Ontology	MGED Ontology	MGED Ontology
+SDRF File	E-ATMX-12.sdrf.txt
+Term Source Name	Arabidopsis Biological Resource Center		ArrayExpress
+Term Source File			http://www.ebi.ac.uk/arrayexpress/
+Term Source Version			
