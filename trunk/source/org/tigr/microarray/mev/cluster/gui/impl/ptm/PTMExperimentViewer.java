@@ -30,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -56,8 +57,21 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	private Vector templateVector;
 	
 	/**
+     * State-saving constructor for MeV v4.4.
 	 * Constructs a <code>PTMExperimentViewer</code> with specified
 	 * experiment, clusters and templateVector.
+	 */
+	public PTMExperimentViewer(Experiment experiment, ClusterWrapper clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
+		this(experiment, clusters.getClusters(), templateVector, auxTitles, auxData);
+	}
+	/**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
+	 * @param experiment
+	 * @param clusters
+	 * @param templateVector
+	 * @param auxTitles
+	 * @param auxData
+	 * @deprecated
 	 */
 	public PTMExperimentViewer(Experiment experiment, int[][] clusters, Vector templateVector, String[] auxTitles, Object[][] auxData) {
 		
@@ -72,7 +86,7 @@ public class PTMExperimentViewer extends ExperimentViewer implements IViewer {
 	}
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-    			new Object[]{this.expViewer.getExperiment(), this.clusters, this.templateVector, this.auxTitles, this.auxData});
+    			new Object[]{this.expViewer.getExperiment(), ClusterWrapper.wrapClusters(this.clusters), this.templateVector, this.auxTitles, this.auxData});
     }
 	public void setExperiment(Experiment e){expViewer.setExperiment(e);}
 	public void setExperimentID(int i){expViewer.setExperimentID(i);}

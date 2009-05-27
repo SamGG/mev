@@ -22,6 +22,7 @@ import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -33,12 +34,18 @@ public class NonparExperimentViewer extends ExperimentViewer {
 	private String [][] auxData;
 		
     /**
-     * Reconstitute a saved instance of this class from an XML file.
-     * 
-     * TODO 
-     * Save clusters as a long, tab-delimited string rather than an int[][].  Same for samplesOrder.
-     * 
+     * State-saving constructor for MeV v4.4.
      * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public NonparExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations, String [] auxTitles, String [][] auxData) {
+    	this(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue(), auxTitles, auxData);
+    }
+    /**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
+     * @param e
      * @param clusters
      * @param samplesOrder
      * @param drawAnnotations
@@ -46,6 +53,7 @@ public class NonparExperimentViewer extends ExperimentViewer {
      * @param insets
      * @param auxData results in String form //supports cluster saves
      * @param auxTitles String array of titles //supports cluster saves
+     * @deprecated
      */
     public NonparExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder,
     		Boolean drawAnnotations, String [] auxTitles, String [][] auxData){//, ExperimentHeader header, Insets insets) {

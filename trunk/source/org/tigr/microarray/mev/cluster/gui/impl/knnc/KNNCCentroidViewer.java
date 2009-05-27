@@ -19,6 +19,7 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.knnc;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -33,7 +34,23 @@ public class KNNCCentroidViewer extends CentroidViewer {
 	super(experiment, clusters);       
     }
     /**
-     * @inheritDoc
+     * 
+     * MeV v4.4 and higher state-saving constructor
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     */
+    public KNNCCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	this(e, clusters.getClusters());
+    }
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
      */
     public KNNCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);

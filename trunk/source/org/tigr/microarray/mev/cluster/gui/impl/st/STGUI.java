@@ -347,7 +347,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
     }
     
     private IViewer createHCLSupportViewer(Experiment experiment, AlgorithmData genes_result, AlgorithmData samples_result, DefaultMutableTreeNode root) {
-        return new HCLSupportViewer(experiment, null, getHCLTreeData(genes_result), getHCLTreeData(samples_result), getGeneTreeSupportVector(genes_result), getExptTreeSupportVector(samples_result), root);
+        return new HCLSupportViewer(experiment, (int[])null, getHCLTreeData(genes_result), getHCLTreeData(samples_result), getGeneTreeSupportVector(genes_result), getExptTreeSupportVector(samples_result), root);
     }
     
     

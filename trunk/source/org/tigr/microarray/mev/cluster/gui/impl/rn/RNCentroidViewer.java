@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.rn;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -25,6 +26,23 @@ public class RNCentroidViewer extends CentroidViewer {
     public RNCentroidViewer(Experiment experiment, int[][] clusters) {
 		super(experiment, clusters);
     }
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
+     */
+    public RNCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	this(e, clusters.getClusters());
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     **/
     public RNCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
     }

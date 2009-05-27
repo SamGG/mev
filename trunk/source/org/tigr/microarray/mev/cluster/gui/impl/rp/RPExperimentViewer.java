@@ -30,6 +30,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
@@ -79,32 +80,16 @@ public class RPExperimentViewer extends ExperimentViewer {
 	        this.dfNumValues = dfNumValues;
 	        this.dfDenomValues = dfDenomValues;
     }
-	/**
-	 * @inheritDoc
-	 */
-	public Expression getExpression(){
-
-		Object[] parentExpressionArgs = super.getExpression().getArguments();
-		Object[] temp2 = new Object[parentExpressionArgs.length + 9];
-		int i=0;
-		for (i=0; i<parentExpressionArgs.length; i++){
-			temp2[i] = parentExpressionArgs[i];
-		}
-		temp2[i] = geneGroupMeans;
-		temp2[++i] = geneGroupSDs;
-		temp2[++i] = rawPValues;
-		temp2[++i] = adjPValues;
-		temp2[++i] = fValues;
-		temp2[++i] = ssGroups;
-		temp2[++i] = ssError;
-		temp2[++i] = dfNumValues;
-		temp2[++i] = dfDenomValues;
-
-		return new Expression(this, this.getClass(), "new", temp2);
-	}
-
-    
-    
+    /**
+     * MeV v4.4 and higher state-saving constructor.
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public RPExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, boolean drawAnnotations) {
+    	super(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations);
+    }
     
     /**
      * Saves all the clusters.

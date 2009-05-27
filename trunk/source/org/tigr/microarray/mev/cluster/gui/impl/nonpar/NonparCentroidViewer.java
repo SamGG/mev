@@ -18,6 +18,7 @@ import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
@@ -37,12 +38,23 @@ public class NonparCentroidViewer extends CentroidViewer {
 	    this.auxData = auxData;
     }
     /**
-     * Used by XMLDecoder when reconstructing this class from saved file.  Signature
-     * specified by CentroidViewer.getPersistenceDelegateArgs().
      * 
-     * @param experiment
+     * MeV v4.4 and higher state-saving constructor
+     * @param e
      * @param clusters
      * @param variances
+     * @param means
+     * @param codes
+     */
+    public NonparCentroidViewer(Experiment e, ClusterWrapper clusters, float[][] variances, float[][] means, float[][] codes, String [] auxTitles, String [][] auxData) {
+    	this(e, clusters.getClusters(), variances, means, codes, auxTitles, auxData);
+    }
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
      */
     public NonparCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, String [] auxTitles, String [][] auxData) {
     	super(e, clusters, variances, means, codes);

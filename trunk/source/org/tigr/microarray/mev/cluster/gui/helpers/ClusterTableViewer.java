@@ -30,6 +30,7 @@ import org.tigr.microarray.mev.annotation.ChipAnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.InsufficientArgumentsException;
 import org.tigr.microarray.mev.annotation.PublicURL;
 import org.tigr.microarray.mev.annotation.URLNotFoundException;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -104,7 +105,17 @@ public class ClusterTableViewer implements IViewer {
         this(experiment, clusters, data, new String[0], new Object[0][0]);
     }
     
-    
+    /**
+     * State-saving constructor for MEV v4.4 and higher
+     * @param experiment
+     * @param clusters
+     * @param data
+     * @param auxTitles
+     * @param auxData
+     */
+    public ClusterTableViewer(Experiment experiment, ClusterWrapper clusters, IData data, String[] auxTitles, Object[][] auxData) {
+        this(experiment, clusters.getClusters(), data, auxTitles, auxData);
+    }
     public ClusterTableViewer(Experiment experiment, int[][] clusters, IData data, String[] auxTitles, Object[][] auxData) {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
@@ -206,7 +217,7 @@ public class ClusterTableViewer implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-				new Object[]{this.experiment, this.clusters, this.data, this.auxTitles, this.auxData/*new PersistableArray(strings)*/});
+				new Object[]{this.experiment, ClusterWrapper.wrapClusters(this.clusters), this.data, this.auxTitles, this.auxData/*new PersistableArray(strings)*/});
 	}
 
     protected Object[][] getAuxData() {

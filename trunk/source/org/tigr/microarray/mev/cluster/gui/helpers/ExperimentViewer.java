@@ -51,6 +51,7 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 
 /**
  * This class is used to render a heatmap of experiment values. 
@@ -145,7 +146,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    		new Object[]{this.experiment, this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations)});
+    		new Object[]{this.experiment, 
+    		ClusterWrapper.wrapClusters(this.clusters), 
+    		ClusterWrapper.wrapClusters(new int[][]{this.samplesOrder}), 
+    		new Boolean(this.isDrawAnnotations)});
     }
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
@@ -178,6 +182,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public ExperimentViewer(Experiment experiment, int[][] clusters, boolean drawAnnotations) {
         this(experiment, clusters, null, drawAnnotations);
     }
+
     /**
      * State-saving constructor
      * @param experiment
@@ -188,6 +193,17 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public ExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations) {
     	this(experiment, clusters, samplesOrder, drawAnnotations.booleanValue());
     }
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public ExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations) {
+    	this(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue());
+    }
+
     /**
      * Constructs an <code>ExperimentViewer</code> with specified
      * experiment, clusters, samples order and draw annotations attribute.

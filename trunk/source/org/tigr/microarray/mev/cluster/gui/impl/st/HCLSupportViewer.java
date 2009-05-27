@@ -30,6 +30,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -55,10 +56,22 @@ public class HCLSupportViewer extends HCLViewer {
     
     Vector geneTreeSupportVector, exptTreeSupportVector;
     
+    /**
+     * MeV v4.4 and higher state-saving constructor.
+     * @param experiment
+     * @param features
+     * @param genes_result
+     * @param samples_result
+     * @param geneTreeSupportVector
+     * @param exptTreeSupportVector
+     * @param node
+     */
+    public HCLSupportViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result, Vector geneTreeSupportVector, Vector exptTreeSupportVector, DefaultMutableTreeNode node) {
+    	this(experiment, features.getClusters()[0], genes_result, samples_result, geneTreeSupportVector, exptTreeSupportVector, node);
+    }
     
-    
-    public HCLSupportViewer(Experiment Experiment, int[] Features, HCLTreeData genes_result, HCLTreeData samples_result, Vector geneTreeSupportVector, Vector exptTreeSupportVector, DefaultMutableTreeNode node) {
-        super(Experiment, Features, genes_result, samples_result, node); 
+    public HCLSupportViewer(Experiment experiment, int[] Features, HCLTreeData genes_result, HCLTreeData samples_result, Vector geneTreeSupportVector, Vector exptTreeSupportVector, DefaultMutableTreeNode node) {
+        super(experiment, Features, genes_result, samples_result, node); 
         setLayout(new GridBagLayout());
         setBackground(Color.white);
         
@@ -79,13 +92,27 @@ public class HCLSupportViewer extends HCLViewer {
             this.sampleTree.setListener(listener);            
             this.sampleTree.addMouseListener(listener);
         }
-        //   super.numberOfSamples = experiment.getNumberOfSamples();
         super.removeAll();
         super.validate();
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.addMouseListener(listener);
         addSTMenuItems(popup);
     }
+    /**
+     * State-saving constructor for versions 4.0-4.3. 
+     * @param e
+     * @param features
+     * @param genesResult
+     * @param samplesResult
+     * @param sampleClusters
+     * @param isExperimentCluster
+     * @param genesTree
+     * @param sampleTree
+     * @param offset
+     * @param expViewer
+     * @param geneTreeSupportVector
+     * @param exptTreeSupportVector
+     */
     public HCLSupportViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer, Vector geneTreeSupportVector, Vector exptTreeSupportVector) {
     	super(e, features, genesResult, samplesResult, sampleClusters, isExperimentCluster, genesTree, sampleTree, offset, expViewer);
 
@@ -95,15 +122,9 @@ public class HCLSupportViewer extends HCLViewer {
     }
 
     public Expression getExpression(){
-    	Expression e = super.getExpression();
-    	int superArgsLength = e.getArguments().length;
-    	Object[] temp = new Object[superArgsLength + 2];
-    	for(int i=0; i<superArgsLength; i++){
-    		temp[i] = e.getArguments()[i];
-    	}
-    	temp[temp.length-2] = geneTreeSupportVector;
-    	temp[temp.length-1] = exptTreeSupportVector;
-		return new Expression(this, this.getClass(), "new", temp);
+    	if(features == null)
+    		features = createDefaultFeatures(experiment);
+    	return new Expression(this, this.getClass(), "new", new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), genes_result, samples_result, geneTreeSupportVector, exptTreeSupportVector, node});
 		
     }
 

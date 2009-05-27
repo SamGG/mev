@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.Vector;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -40,7 +41,21 @@ public class PTMSubCentroidViewer extends CentroidViewer {
 		this.templateVector = templateVector;
     }
     /**
-     * @inheritDoc
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
+     */
+    public PTMSubCentroidViewer(Experiment e, ClusterWrapper clusters, float[][] variances, float[][] means, float[][] codes) {
+    	this(e, clusters.getClusters(), variances, means, codes);
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
      */
     public PTMSubCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);

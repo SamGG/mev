@@ -31,6 +31,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
@@ -61,7 +62,20 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     }
     
     /**
-     * @inheritDoc
+     * Used to recreate a KMCExperimentCentroidViewer from saved data written by 
+     * XMLEncoder. For MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param clusterIndex
+     * @param means
+     * @param variances
+     * @param codes
+     */
+    public PTMExperimentCentroidViewer(Experiment e, ClusterWrapper clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes, Vector templateVector, String[] auxTitles, String[][] auxData) {
+    	this(e, clusters.getClusters(), clusterIndex, means, variances, codes, templateVector, auxTitles, auxData);
+    }
+    /**
+     * Used to load saved analysis files from MeV v4.0-4.3.
      */
     public PTMExperimentCentroidViewer(Experiment experiment, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes, 
     		Vector templateVector, String[] auxTitles, Object[][] auxData){
@@ -75,7 +89,7 @@ public class PTMExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     }    
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.clusters, new Integer(this.getExperimentID()), new Integer(this.clusterIndex), this.means, this.variances, this.codes, this.templateVector, this.auxTitles, this.auxData});
+    			new Object[]{this.getExperiment(), ClusterWrapper.wrapClusters(this.clusters), new Integer(this.clusterIndex), this.means, this.variances, this.codes, this.templateVector, this.auxTitles, this.auxData});
     }
     public void setExperiment(Experiment e){
     	super.setExperiment(e);

@@ -17,6 +17,7 @@ import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
@@ -36,6 +37,23 @@ public class TFACentroidViewer extends CentroidViewer {
     	initialize(auxTitles, auxData);
     }
     /**
+     * State-saving constructor for loading saved analyses from MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
+     */
+    public TFACentroidViewer(Experiment e, ClusterWrapper clusters, String[] auxTitles, Object[][] auxData) {
+    	this(e, clusters.getClusters(), auxTitles, auxData);
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     **/
+    /**
      * @inheritDoc
      */
     public TFACentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, String[] auxTitles, Object[][] auxData) {
@@ -45,7 +63,7 @@ public class TFACentroidViewer extends CentroidViewer {
 	public Expression getExpression(){
 		Object[] parentConstructorArgs = super.getExpression().getArguments();
 		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], parentConstructorArgs[2], parentConstructorArgs[3], parentConstructorArgs[4], 
+				new Object[]{parentConstructorArgs[0], parentConstructorArgs[1], 
 				auxTitles, auxData});
 	}
     public void initialize(String[] auxTitles, Object[][] auxData){	        

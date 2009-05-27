@@ -15,21 +15,20 @@ package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 
 public class KMCExperimentViewer extends ExperimentViewer {
     
     /**
-     * Reconstitute a saved instance of this class from an XML file.
-     * 
-     * TODO 
-     * Save clusters as a long, tab-delimited string rather than an int[][].  Same for samplesOrder.
-     * 
+     * Reconstitute a saved instance of this class from an XML file. Used 
+     * for backwards compatibility with files saved by MeV v4.0-4.3.
      * @param experiment
      * @param clusters
      * @param samplesOrder
      * @param drawAnnotations
      * @param header
      * @param insets
+     * @deprecated
      */
     public KMCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder,
     		Boolean drawAnnotations){
@@ -37,6 +36,18 @@ public class KMCExperimentViewer extends ExperimentViewer {
  
     } 
 
+    /**
+     * State-saving constructor for MEV v4.4 and higher.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public KMCExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder,
+    		Boolean drawAnnotations){
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue());
+    } 
+    
     /**
      * Constructs a <code>KMCExperimentViewer</code> with specified
      * experiment and clusters.

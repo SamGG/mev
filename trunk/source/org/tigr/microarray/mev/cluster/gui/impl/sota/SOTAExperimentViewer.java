@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -114,6 +115,27 @@ public class SOTAExperimentViewer extends ExperimentViewer implements IViewer {
         viewPanel.add(infoPanel, new GridBagConstraints(1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
         add(viewPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
     }
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param experiment
+     * @param clusters
+     * @param codes
+     * @param clusterDiv
+     * @param sotaTreeData
+     * @param clusterGenes
+     */
+    public SOTAExperimentViewer(Experiment experiment, ClusterWrapper clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, Boolean clusterGenes) {
+    	this(experiment, clusters.getClusters(), codes, clusterDiv, sotaTreeData, clusterGenes.booleanValue());
+    } 
+    /**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
+     * @param experiment
+     * @param clusters
+     * @param codes
+     * @param clusterDiv
+     * @param sotaTreeData
+     * @param clusterGenes
+     */
     public SOTAExperimentViewer(Experiment experiment, int[][] clusters, FloatMatrix codes, FloatMatrix clusterDiv, SOTATreeData sotaTreeData, Boolean clusterGenes) {
     	this(experiment, clusters, codes, clusterDiv, sotaTreeData, clusterGenes.booleanValue());
     }   

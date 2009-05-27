@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.svm;
 
 import java.awt.Insets;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -33,5 +34,17 @@ public class SVMExperimentViewer extends ExperimentViewer {
      */ 
     public SVMExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
+    }
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @param header
+     * @param insets
+     */
+    public SVMExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations, header, insets);
     }
 }

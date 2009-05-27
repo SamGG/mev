@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
@@ -30,19 +31,23 @@ public class HCLExperimentClusterViewer extends ExperimentClusterViewer {
 	super(experiment, clusters);
     }
     /**
-     * @inheritDoc
-     * @author eleanorahowe
-     * 
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param experiment
      * @param clusters
      * @param genesOrder
      * @param drawAnnotations
      * @param offset
-     * @param header
-     * @param hasCentroid
-     * @param centroids
-     * @param elementSize
-     * @param labelIndex
-     * @param exptID
+     */
+    public HCLExperimentClusterViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper genesOrder, Boolean drawAnnotations, Integer offset){
+    	this(experiment, clusters.getClusters(), genesOrder.getClusters()[0], drawAnnotations.booleanValue(), offset.intValue());
+    }
+    /**
+     * State-saving constructor for loading analyses saved by MeV versions v4.0-4.3.
+     * @param e
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
      */
     public HCLExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){

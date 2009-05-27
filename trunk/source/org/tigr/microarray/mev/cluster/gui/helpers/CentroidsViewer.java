@@ -80,7 +80,6 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
      */    
 	public CentroidsViewer(CentroidViewer cv) {
 		this.centroidViewer = cv;
-		this.exptID = centroidViewer.getExperimentID();
 		setBackground(Color.white);
 		setFont(new Font("monospaced", Font.BOLD, 10));
 
@@ -98,7 +97,6 @@ public class CentroidsViewer extends JPanel implements IViewer, java.io.Serializ
 	}
 	public void setExperiment(Experiment e) {
 		this.centroidViewer.setExperiment(e);
-		this.exptID = e.getId();
 	}
 	
     public CentroidViewer getCentroidViewer(){

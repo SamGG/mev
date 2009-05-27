@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -34,6 +35,14 @@ public class QTCExperimentViewer extends ExperimentViewer {
     public QTCExperimentViewer(Experiment experiment, int[][] clusters) {
 	super(experiment, clusters);
     }
+
+    /**
+     * State-saving constructor for MeV v4.4.
+     * 
+     **/
+    public QTCExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder, boolean drawAnnotations) {
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations, new ExperimentHeader(e, clusters.getClusters()), new Insets(0,10,0,0));
+    }
     /**
      * This constructor is used to re-create an ExperimentViewer from information
      * stored in a saved analysis file by XMLEncoder.  
@@ -44,6 +53,7 @@ public class QTCExperimentViewer extends ExperimentViewer {
      * @param drawAnnotations
      * @param header
      * @param insets
+     * @deprecated
      */
     public QTCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
     	super(e, clusters, samplesOrder, drawAnnotations, new ExperimentHeader(e, clusters), new Insets(0,10,0,0));

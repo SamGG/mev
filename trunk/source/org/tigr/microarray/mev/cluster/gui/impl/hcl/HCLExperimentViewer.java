@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 
@@ -39,5 +40,11 @@ public class HCLExperimentViewer extends ExperimentViewer {
     public HCLExperimentViewer(Experiment experiment, int[][] clusters) {
         super(experiment, clusters);
     }
-    
+
+	/**
+	 * MeV v4.4 and higher state-saving constructor.
+	 **/
+	public HCLExperimentViewer(Experiment experiment, ClusterWrapper clusters) {
+		this(experiment, clusters.getClusters());
+	}
 }

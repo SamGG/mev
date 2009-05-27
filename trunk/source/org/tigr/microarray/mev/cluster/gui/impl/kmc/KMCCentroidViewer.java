@@ -13,8 +13,10 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.util.FloatMatrix;
 
 public class KMCCentroidViewer extends CentroidViewer {
     
@@ -26,8 +28,8 @@ public class KMCCentroidViewer extends CentroidViewer {
 	super(experiment, clusters);
     }
     /**
-     * Used by XMLDecoder when reconstructing this class from saved file.  Signature
-     * specified by CentroidViewer.getPersistenceDelegateArgs().
+     * Used by XMLDecoder when reconstructing this class from saved file. For
+     * files saved by MeV v4.0 - 4.3.
      * 
      * @param experiment
      * @param clusters
@@ -36,7 +38,19 @@ public class KMCCentroidViewer extends CentroidViewer {
     public KMCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
     }
-       
+    
+    /**
+     * State-saving constructor for MeV versions 4.4 and up
+     * @param experiment
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     */
+    public KMCCentroidViewer(Experiment experiment, ClusterWrapper clusters) {
+    	super(experiment, clusters);
+    }
+
 
     
 }

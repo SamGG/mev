@@ -25,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
@@ -53,10 +54,25 @@ public class TtestCentroidViewer extends CentroidViewer {
         this.sdA = sdA; 
         this.sdB =sdB;
     }
-
     /**
-     * @inheritDoc
+     * State-saving constructor for loading saved analyses from MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
      */
+    public TtestCentroidViewer(Experiment e, ClusterWrapper clusters, float[][] variances, float[][] means, float[][] codes,
+   		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+    	this(e, clusters.getClusters(), variances, means, codes,
+       		 tTestDesign, oneClassMeans, oneClassSDs, meansA, meansB, sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     **/
     public TtestCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
     	super(e, clusters, variances, means, codes);

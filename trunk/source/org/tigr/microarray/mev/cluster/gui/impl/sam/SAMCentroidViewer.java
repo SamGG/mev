@@ -29,6 +29,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
@@ -53,10 +54,24 @@ public class SAMCentroidViewer extends CentroidViewer {
 	super(experiment, clusters);
 		initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
     }
-    
     /**
-     * @inheritDoc
+     * State-saving constructor for loading saved analyses for MeV v4.4
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
      */
+    public SAMCentroidViewer(Experiment e, ClusterWrapper clusters, 
+		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
+    	this(e, clusters.getClusters(), studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     **/
     public SAMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		Integer studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, Boolean calculateQLowestFDR) {
     	super(e, clusters, variances, means, codes);
@@ -66,7 +81,7 @@ public class SAMCentroidViewer extends CentroidViewer {
     public Expression getExpression(){
     	Object[] temp = super.getExpression().getArguments();
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{temp[0], temp[1], temp[2], temp[3], temp[4],
+    			new Object[]{temp[0], temp[1],
     			new Integer(studyDesign), dValues, rValues, foldChangeArray, qLowestFDR, new Boolean(calculateQLowestFDR)});
     }
     

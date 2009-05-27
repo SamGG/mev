@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -37,8 +38,26 @@ public class CASTExperimentViewer extends ExperimentViewer {
     public CASTExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }
+    /**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @deprecated
+     */
     public CASTExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations) {
     	super(e, clusters, samplesOrder, drawAnnotations, new ExperimentHeader(e, clusters), new Insets(0, 10, 0, 0));
     }
-    
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public CASTExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations) {
+    	this(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue());
+    }
+
 }

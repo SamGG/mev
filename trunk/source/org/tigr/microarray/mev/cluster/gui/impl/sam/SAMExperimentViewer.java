@@ -28,6 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
@@ -43,6 +44,7 @@ public class SAMExperimentViewer extends ExperimentViewer {
     private boolean calculateQLowestFDR;
     //private Vector geneNamesVector;    
     /**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
      * Constructs a <code>KMCExperimentViewer</code> with specified
      * experiment and clusters.
      */
@@ -50,7 +52,21 @@ public class SAMExperimentViewer extends ExperimentViewer {
     	super(experiment, clusters);
 	 	initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
 	}
-    
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param experiment
+     * @param clusters
+     * @param studyDesign
+     * @param dValues
+     * @param rValues
+     * @param foldChangeArray
+     * @param qLowestFDR
+     * @param calculateQLowestFDR
+     */
+    public SAMExperimentViewer(Experiment experiment, ClusterWrapper clusters, int studyDesign, float[] dValues, float[] rValues, float[] foldChangeArray, float[] qLowestFDR, boolean calculateQLowestFDR) {
+    	super(experiment, clusters.getClusters());
+	 	initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
+	}
     /**
      * @inheritDoc
      */ 
