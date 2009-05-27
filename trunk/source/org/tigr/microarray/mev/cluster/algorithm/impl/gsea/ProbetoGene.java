@@ -80,7 +80,7 @@ public class ProbetoGene {
 	 */
 	public GeneData[] convertProbeToGene(String geneIdentifier,
 			String conversionCriteria, String SDcutoff) {
-		
+	//	System.out.println("ProbetoGene():"+geneIdentifier);
 		int count = 0;
 		// Number of rows in the loaded expression data
 		int arrayRows = data.getFeaturesSize();

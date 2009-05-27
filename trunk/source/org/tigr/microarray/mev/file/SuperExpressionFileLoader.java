@@ -467,7 +467,8 @@ public class SuperExpressionFileLoader {
 		menuItem[5].addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (st == "File Format Hint") {
-					helpWindow("MAGE");
+					HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("MAGE"));
+					
 				} else {
 					changeSelectedFileFilterAndLoader(15);
 

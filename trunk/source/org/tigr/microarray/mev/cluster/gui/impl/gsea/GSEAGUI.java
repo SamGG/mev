@@ -102,6 +102,7 @@ public class GSEAGUI implements IClusterGUI {
 			
 			//If extension is gmt or gmx, the gene identifier defaults to GENE_SYMBOL.
 			if(extension.equalsIgnoreCase("gmt")||extension.equalsIgnoreCase("gmx")){
+				
 				gData=ptg.convertProbeToGene(AnnotationFieldConstants.GENE_SYMBOL, collapsemode, cutoff);
 							
 			}
@@ -264,7 +265,7 @@ public class GSEAGUI implements IClusterGUI {
 		
 		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
-		//	addPValueGraphImage(node, result, (String[][])result.getObjectMatrix("geneset-pvals"));--commented for testing
+			addPValueGraphImage(node, result);
 			addTableViews(node, result, experiment, idata);
 			addExpressionImages(node, result, this.experiment);
 		
@@ -274,8 +275,11 @@ public class GSEAGUI implements IClusterGUI {
 	
    private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result){
 	   
-	 //  PValueGraphViewer pvg=new PValueGraphViewer(0, , 0,1, "P Value graph","Genesets", "p-Values", pValues);
-	   //root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
+	   LinkedHashMap overenriched=result.getMappings("over-enriched");
+	   
+	   PValueGraphViewer pvg=new PValueGraphViewer("P Value graph","Genesets", "p-Values", overenriched);
+	 
+	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
 	   
    }
    
@@ -520,7 +524,7 @@ public class GSEAGUI implements IClusterGUI {
    	
    	
   //Display Collapse Probe to Gene 
-   	System.out.println("max columns:"+this.max_columns);
+   //	System.out.println("max columns:"+this.max_columns);
    String[]header2=new String[this.max_columns+1];
     header2[0]="Gene";
    	for(int i=0; i<max_columns; i++){
