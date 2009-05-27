@@ -1951,6 +1951,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	<target name="signjars">
 		<unsignjar jar="${package.dir}/webstart/mev/lib/goose.jar"/>
 		<unsignjar jar="${package.dir}/webstart/mev/lib/mail.jar"/>
+		<unsignjar jar="${package.dir}/webstart/mev/lib/magetab-parser.jar"/>
 
 		<input
 		    message="Please enter jarsigner password:"
