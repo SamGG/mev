@@ -163,7 +163,7 @@ public class ReadGeneSet {
 
 	public Geneset[] read_GMTformatfile(String filePath)throws Exception{
 
-
+//		System.out.println("read_GMTformatfiles");
 		String temp;
 
 		parseGenesetNamesfromGMT(filePath);
@@ -426,7 +426,7 @@ public class ReadGeneSet {
 			count++;
 		}
 		reader.close();
-		System.out.println("line count:"+count);
+	
 		return count;
 	}
 
@@ -625,13 +625,13 @@ public class ReadGeneSet {
 
 		// Rowsize is equal to the number of genesets
 		int rowSize=gSets[0].getAllGenesetNames().size();
-
+	
 		//Colsize is equal to the number of genes in the data set
 		int colSize=unique_genes_in_dataset.size();
 
 		//Initial Association Matrix
 		FloatMatrix _tempMatrix=new FloatMatrix(rowSize, colSize);
-		//Final matrix after we remove gene sets NOT conatining minimum number of genes
+		//Final matrix after we remove gene sets NOT containing minimum number of genes
 		FloatMatrix aMatrix=null;
 		Vector _tempgeneset=new Vector();
 		int rowIndex=0;
@@ -657,6 +657,7 @@ public class ReadGeneSet {
 					for(int k=0; k<colSize; k++){
 						String uniq_genes=(String)unique_genes_in_dataset.get(k);
 						uniq_genes=uniq_genes.trim();
+						//Set the matrix cell to 1 if gene in the gene set also present in data set
 						if(uniq_genes.equals(Gene)){
 							_tempMatrix.set(rowIndex, k, 1);
 
@@ -686,6 +687,8 @@ public class ReadGeneSet {
 		Vector rowSums=matrixFunc.getRowSums(_tempMatrix);
 		int geneSetIndex=0;
 		int index=0;
+		
+		
 		//Loops through the rowSums vector and populates the excluded genes vector
 		while(index<rowSums.size()){
 			//If rowSums < min_genes, do not include the row in the aMat. Move on
@@ -718,6 +721,7 @@ public class ReadGeneSet {
 		_tempMatrix=null;
 
 		//Sets the excluded gene sets in the vector
+		
 		setExcludedGeneSets(_tempgeneset);
 		//Return the Association matrix which has only those genesets, having minimum number of genes, as specified by user.
 		return aMatrix;
