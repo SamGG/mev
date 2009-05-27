@@ -172,6 +172,18 @@ public class HelpWindowDialog extends JDialog implements java.awt.print.Printabl
             html +=" is a standard file format. Please get detail information from web link.";
             html += "</body></html>";	
         }
+        
+        if(st=="MAGE"){
+        	html += "<html><body>";
+            html += "<p><font size = +1><b>MAGE-TAB File Format</b></font><br><br>";
+            html +="<a href=\"\"";
+            html +=">";
+            html += "MAGE TAB File Format";
+            html +="</a>";
+            html +=" is a standard file format. For more details, please refer the MeV manual.";
+            html += "</body></html>";	
+        }
+       
         return html;
     }
     
