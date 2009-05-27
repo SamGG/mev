@@ -437,9 +437,9 @@ System.out.println("expt cnt: " + experimentCount + " ; tokens: "
             	default:
             		break;
             	}
-System.out.println("matrixState" + matrixState.toString());
-	System.out.println("Sample size:"+sampleNames.size());
-	System.out.println("Experiment Count:"+experimentCount);
+//System.out.println("matrixState" + matrixState.toString());
+	//System.out.println("Sample size:"+sampleNames.size());
+	//System.out.println("Experiment Count:"+experimentCount);
                 ss.nextToken();//parse the blank on header
                 int numqts = dataTypes.length;
                 for (int i=0; i<experimentCount; i++) {
@@ -557,10 +557,10 @@ for(int k=0;k<dataTypes.length;k++) {
                     	case INTENSITY_DETECT_PVAL:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:signal")) -1]);
         					extraFields[0] = currData[quantTypes.get(columnDataTypes.get("MEV:detection")) -1];
-        					System.out.println("detection:"+extraFields[0]);
+        					//System.out.println("detection:"+extraFields[0]);
         					extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:pvalue")) -1];
         					
-            				System.out.println("p value:"+extraFields[1]);
+            				//System.out.println("p value:"+extraFields[1]);
                     		break;
                     	case LOG_CHANNELS:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]);
@@ -568,7 +568,8 @@ for(int k=0;k<dataTypes.length;k++) {
             				extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:channel2")) -1];
             				break;
                     	case LOG_RATIO:
-            				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]);
+            			//	intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]);
+            				intensities[1]= new Float((NumberFormat.getInstance()).parse(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]).floatValue());
             				/**
             				 * Notes:
             				 * fieldNames = column header names
@@ -694,12 +695,14 @@ for(int k=0;k<dataTypes.length;k++) {
                     text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
                     text+="<br><br></body></html>";
           		  JOptionPane.showMessageDialog(null,text , "Loader Parse failure", JOptionPane.WARNING_MESSAGE);
+          		  e.printStackTrace();
         	  } else if(e instanceof IOException) {
         		  String text= "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
         		  text += "<font face=arial size=4>The IDF or SDRF file could not be located. <br>";
         		  text += "Check that both files are in the same directory.<br><br>";
         		  text+="<br><br></body></html>";
                   JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
+                  e.printStackTrace();
           	  }
         	}
         	if(investigation != null) {
@@ -1785,7 +1788,7 @@ for(int k=0;k<dataTypes.length;k++) {
 		for(int i=0; i<sourcenodes.size(); i++){
 			SourceNode src=sourcenodes.get(i);
 			List<CharacteristicsAttribute> characteristicsList = src.characteristics;
-			
+			if(characteristicsList.size()!=0){
 			for(int j=0; j<characteristicsList.size(); j++){
 				slideDataArray[i].getSampleAnnotation().setAnnotation(characteristicsList.get(j).type, characteristicsList.get(j).getNodeName());
 				
@@ -1794,6 +1797,10 @@ for(int k=0;k<dataTypes.length;k++) {
 				//System.out.print(characteristicsList.get(j).getNodeName());
 				//System.out.println();
 			}
+			}
+			   
+			
+			
 		}
 		
 		
@@ -1802,12 +1809,21 @@ for(int k=0;k<dataTypes.length;k++) {
 		
 		for(int index=0; index<nodes.size(); index++){
 	
-			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
-			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
+		//	System.out.println("Hybridization node type:"+((HybridizationNode)nodes.get(index)).getNodeType());
+			//System.out.println("Hybridization Node Name:"+((HybridizationNode)nodes.get(index)).getNodeName());
 		    HybridizationNode node = (HybridizationNode)nodes.get(index);
-		    FactorValueAttribute fva = node.factorValue;
-		    fva.getNodeName();
-		    System.out.print("factorvalue:"+fva.getNodeName());
+		    List<FactorValueAttribute> fvalist = node.factorValues;
+		    for(int i=0; i<fvalist.size(); i++){
+		    	
+		    	FactorValueAttribute fva=(FactorValueAttribute)fvalist.get(i);
+		    	System.out.println("Factor value node type"+fva.getNodeType());
+		    	System.out.println("Factor value node name:"+fva.getNodeName());
+		    	
+		    	slideDataArray[index].getSampleAnnotation().setAnnotation(fvalist.get(i).getNodeType(), fvalist.get(i).getNodeName());
+		    	
+		    	
+		    }
+		    //System.out.print("factorvalue:"+fva.getNodeName());
 		}
 		
 
