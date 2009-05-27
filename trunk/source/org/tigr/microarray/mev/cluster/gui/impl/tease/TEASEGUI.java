@@ -39,8 +39,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
@@ -172,14 +172,14 @@ public class TEASEGUI implements IClusterGUI {
         String speciesName = null; 
     	Hashtable<String, Vector<String>> speciestoarrays = null;
     	Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
-    	EASESupportDataFile edf = null;
+    	EASEEntrezSupportDataFile edf = null;
     	String chipType = null;
         File defaultTEASEDirectory = null;
         if(framework.getData().isAnnotationLoaded()) {
         	chipType = framework.getData().getChipAnnotation().getChipType();
         	String filename = framework.getData().getChipAnnotation().getAnnFileName();
     		String species = framework.getData().getChipAnnotation().getSpeciesName();
-    		edf = new EASESupportDataFile(species, chipType);
+    		edf = new EASEEntrezSupportDataFile(species, chipType);
     		defs.add(edf);
         	
         	File annotationFile = new File(filename);
@@ -195,14 +195,14 @@ public class TEASEGUI implements IClusterGUI {
         }	
         
 
-    	AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+    	PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
     	defs.add(aafd);
         EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();
         defs.add(eiudf);        
         if (framework.getData().isAnnotationLoaded()) {
     		chipType = framework.getData().getChipAnnotation().getChipType();
     		speciesName = framework.getData().getChipAnnotation().getSpeciesName();
-    		edf = new EASESupportDataFile(speciesName, chipType);
+    		edf = new EASEEntrezSupportDataFile(speciesName, chipType);
     		defs.add(edf);
     	} 
         try {

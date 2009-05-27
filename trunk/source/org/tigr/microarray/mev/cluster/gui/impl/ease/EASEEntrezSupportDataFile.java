@@ -6,15 +6,15 @@ import java.net.URL;
 
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 
-public class EASESupportDataFile extends ISupportFileDefinition {
+public class EASEEntrezSupportDataFile extends ISupportFileDefinition {
 	private static String easeFileRoot;
 	private String species;
 	private String array;
 	
-	public EASESupportDataFile(String species, String array) {
+	public EASEEntrezSupportDataFile(String species, String array) {
 		this.species = species;
 		this.array = array;
-		easeFileRoot =  getBaseResourceURL("ease_support_file_location");
+		easeFileRoot =  getBaseResourceURL("ease_entrez_support_file_location");
 	} 
 	@Override
 	public URL getURL() throws MalformedURLException {
@@ -35,7 +35,7 @@ public class EASESupportDataFile extends ISupportFileDefinition {
 	}
 	@Override
 	public boolean isValid(File f) {
-		return EASESupportDataFile.isValidFile(f);
+		return EASEEntrezSupportDataFile.isValidFile(f);
 	}
 	public static boolean isValidFile(File f) {
 		// TODO Auto-generated method stub

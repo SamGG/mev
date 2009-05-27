@@ -96,7 +96,7 @@ public class FileResourceManager implements IResourceManager {
 		Properties mevUrls = new Properties();
 		try {
 			//TODO always check for an update online. Need to implement that forceUpdate().
-			File urlPropertiesFile = getSupportFile(new SupportFileUrlsPropertiesDefinition(), true);
+			File urlPropertiesFile = getSupportFile(new PipelinedUrlsPropertiesDefinition(), true);
 			try {
 				InputStream in = new FileInputStream(urlPropertiesFile);
 				if (in != null) {

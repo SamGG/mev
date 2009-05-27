@@ -58,7 +58,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.BNClassificationEditor.BNClas
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 import org.tigr.microarray.mev.cluster.gui.impl.lm.LMGUI;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.xml.sax.SAXException;
@@ -126,7 +126,7 @@ public class BNGUI implements IClusterGUI {
 		}
 		
 		Hashtable<String, Vector<String>> speciestoarrays = null;
-		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 		defs.add(aafd);
         try {
         	Hashtable<ISupportFileDefinition, File> supportFiles = framework.getSupportFiles(defs, true);

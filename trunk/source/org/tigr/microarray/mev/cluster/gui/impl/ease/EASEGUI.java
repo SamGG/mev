@@ -44,7 +44,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.GOTreeViewer;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
@@ -136,19 +136,19 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 		String species = null;
 		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
 	
-		EASESupportDataFile edf = null;
+		EASEEntrezSupportDataFile edf = null;
 	
 		
 		if (framework.getData().isAnnotationLoaded()) {
 			chipType = framework.getData().getChipAnnotation().getChipType();
 			species = framework.getData().getChipAnnotation().getSpeciesName();
-			edf = new EASESupportDataFile(species, chipType);
+			edf = new EASEEntrezSupportDataFile(species, chipType);
 			defs.add(edf);
 	
 		}
 		
 		Hashtable<String, Vector<String>> speciestoarrays = null;
-		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 		defs.add(aafd);
         
 	    EASEImpliesAndURLDataFile eiudf = new EASEImpliesAndURLDataFile();

@@ -136,7 +136,9 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 			return true;
 		} catch (ParseException pe) {
 			return false;
-		} catch (ArrayIndexOutOfBoundsException aioobe) {
+		} catch (StringIndexOutOfBoundsException aioobe) {
+			return false;
+		} catch (Exception e) {
 			return false;
 		}
 	}

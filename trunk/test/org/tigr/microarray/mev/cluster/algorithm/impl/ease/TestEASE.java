@@ -45,6 +45,21 @@ public class TestEASE extends EASE {
 			fail("Couldn't write test file.");
 		}
 		
+		sampleList = new String[]{};
+		popList = new String[]{};
+		File convertfile = writeClassPathToTempFile("entrez_convertfile.txt");
+		String convertfileName = convertfile.getAbsolutePath();
+		File classFile = writeClassPathFileToTempFile("entrez_convertfile.txt");
+		String[] classFiles = new String[]{classFile.getAbsolutePath()};
+		AlgorithmData resultData = genericTestEase(sampleList, popList, convertfileName, classFiles, fm);
+		if(resultData == null)
+			fail("Null Result Data");
+		Object[][] results = resultData.getObjectMatrix("result-matrix");
+		if(!results[1][2].equals("class2"))
+			fail();
+		if(!results[0][7].equals("6.667E-01"))
+			fail();			
+		
 	}
 	
 	
