@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -32,8 +33,17 @@ public class QTCCentroidViewer extends CentroidViewer {
      */
     public QTCCentroidViewer(Experiment experiment, int[][] clusters) {
 	super(experiment, clusters);
-    }
+    }    
     /**
+     * State-saving constructor for loading saved analyses from MeV v4.4 and higher.
+     * @param e
+     * @param clusters
+     */
+    public QTCCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	this(e, clusters.getClusters());
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
      * This constructor is used by XMLEncoder/Decoder to store and retreive a 
      * CentroidViewer object to/from and xml file.  This constructor must 
      * always exist, with its current method signature, for purposes of 
@@ -44,7 +54,6 @@ public class QTCCentroidViewer extends CentroidViewer {
      * @param variances
      * @param means
      * @param codes
-     * @param id
      */
     public QTCCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);

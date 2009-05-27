@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.sota;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -26,6 +27,21 @@ public class SOTACentroidViewer extends CentroidViewer {
     	super(experiment, clusters);
     }
     /**
+     * State-saving constructor for loading saved analyses for MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
+     */
+    public SOTACentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	this(e, clusters.getClusters());
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
      * This constructor is used by XMLEncoder/Decoder to store and retreive a 
      * CentroidViewer object to/from and xml file.  This constructor must 
      * always exist, with its current method signature, for purposes of 

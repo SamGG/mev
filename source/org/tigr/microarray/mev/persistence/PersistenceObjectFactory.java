@@ -36,6 +36,7 @@ import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
 import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.util.FloatMatrix;
 
@@ -118,6 +119,52 @@ public class PersistenceObjectFactory {
     	return matrix;
     	
     }
+    public static void writeIntMatrix(File outputFile, int[][] matrix) throws IOException {
+    	DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+        try {
+			int numRows = matrix.length;
+			dos.writeInt(numRows);
+			for(int i=0; i<numRows; i++) {
+				dos.writeInt(matrix[i].length);
+				for(int j=0; j<matrix[i].length; j++) {
+					dos.writeInt(matrix[i][j]);
+				}
+			}
+    	} catch (Exception e) {
+    		System.out.println("Error in writing intmatrix "+ outputFile.getName());
+    		e.printStackTrace();
+
+    	} finally {
+    		dos.flush();
+    		dos.close();
+    	}
+    	dos.close();
+    }
+	public static ClusterWrapper readIntMatrix(String inputFile) throws IOException{
+		File binFile = new File(MultipleArrayViewer.CURRENT_TEMP_DIR , inputFile);
+		DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(binFile)));
+		int[][] matrix = new int[1][1];
+		try {
+			int numRows, numCols;
+			numRows = dis.readInt();
+			matrix = new int[numRows][];
+			for(int i=0; i<numRows; i++){
+				numCols = dis.readInt();
+				matrix[i] = new int[numCols];
+				for(int j=0; j<numCols; j++){
+					matrix[i][j] = dis.readInt();
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("Couldn't read floatmatrix from file " + binFile.getName());
+			e.printStackTrace();
+		} finally {
+			dis.close();
+		}
+		ClusterWrapper fm = ClusterWrapper.wrapClusters(matrix);
+		return fm;
+	}
+
     /**
      * 
      * Constructor to maintain backwards compatibility with version 4.3 and lower

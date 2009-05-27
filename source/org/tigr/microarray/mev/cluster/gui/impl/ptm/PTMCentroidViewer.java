@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
@@ -46,7 +47,21 @@ public class PTMCentroidViewer extends CentroidViewer {
         this.auxData = auxData;
     }
     /**
-     * @inheritDoc
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     * @param templateVector
+     * @param auxTitles
+     * @param auxData
+     */
+    public PTMCentroidViewer(Experiment e, ClusterWrapper clusters, float[][] variances, float[][] means, float[][] codes, Vector templateVector, String[] auxTitles, Object[][] auxData) {
+    	this(e, clusters.getClusters(), variances, means, codes, templateVector, auxTitles, auxData);
+    }    
+    /**
+     * State-saving constructor for loading saved analyses from MeV v4.0-4.3
      */
     public PTMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, Vector templateVector, String[] auxTitles, Object[][] auxData) {
     	super(e, clusters, variances, means, codes);

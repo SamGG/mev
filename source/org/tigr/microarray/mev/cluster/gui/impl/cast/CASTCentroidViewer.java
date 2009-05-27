@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.cast;
 
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -28,6 +29,7 @@ public class CASTCentroidViewer extends CentroidViewer {
     public CASTCentroidViewer(Experiment experiment, int[][] clusters) {
 	super(experiment, clusters);
     }
+
     /**
      * This constructor is used by XMLEncoder/Decoder to store and retreive a 
      * CentroidViewer object to/from and xml file.  This constructor must 
@@ -39,10 +41,17 @@ public class CASTCentroidViewer extends CentroidViewer {
      * @param variances
      * @param means
      * @param codes
-     * @param id
      */
     public CASTCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
     }
-
+    /**
+     * 
+     * MeV v4.4 state-saving constructor
+     * @param e
+     * @param clusters
+     */
+    public CASTCentroidViewer(Experiment experiment, ClusterWrapper clusters) {
+    	super(experiment, clusters.getClusters());
+    }
 }

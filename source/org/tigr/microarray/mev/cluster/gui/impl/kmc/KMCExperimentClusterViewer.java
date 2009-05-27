@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
@@ -27,9 +28,13 @@ public class KMCExperimentClusterViewer extends ExperimentClusterViewer {
     public KMCExperimentClusterViewer(Experiment experiment, int[][] clusters) {
 		super(experiment, clusters);
     }
+    public KMCExperimentClusterViewer(Experiment experiment, ClusterWrapper clusters) {
+		super(experiment, clusters.getClusters());
+    }
     /**
      * Used to reconstruct a KMCExperimentClusterViewer from saved xml data written 
-     * by XMLEncoder.  
+     * by XMLEncoder.  Retained for backwards compatibility with saved analysis files
+     * from MeV v4.0-4.3.
      * 
      * @param clusters
      * @param genesOrder
@@ -37,10 +42,22 @@ public class KMCExperimentClusterViewer extends ExperimentClusterViewer {
      * @param offset
      * @param header
      * @param exptID
+     * @deprecated
      */
     public KMCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
-    	super(e, clusters, genesOrder, drawAnnotations, offset);//, header, hasCentroid, centroids, elementSize, labelIndex);
+    	super(e, clusters, genesOrder, drawAnnotations, offset);
 
     }
+    /**
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param e
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     */
+    public KMCExperimentClusterViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
+    	this(e, clusters.getClusters(), genesOrder.getClusters()[0], drawAnnotations, offset);
 
+    }
 }

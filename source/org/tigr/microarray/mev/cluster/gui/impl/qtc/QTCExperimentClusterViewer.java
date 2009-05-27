@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.qtc;
 
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 
@@ -29,7 +30,25 @@ public class QTCExperimentClusterViewer extends ExperimentClusterViewer {
     public QTCExperimentClusterViewer(Experiment experiment, int[][] clusters) {
 	super(experiment, clusters);
     }
-    //XMLEncoder/Decoder constructor
+    /**
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param experiment
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     */
+    public QTCExperimentClusterViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper genesOrder, Boolean drawAnnotations, Integer offset){
+    	this(experiment, clusters.getClusters(), genesOrder.getClusters()[0], drawAnnotations.booleanValue(), offset.intValue());
+    }
+    /**
+     * State-saving constructor for loading analyses saved by MeV versions v4.0-4.3.
+     * @param e
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     */
     public QTCExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
     		Integer offset){
     	super(e, clusters, genesOrder, drawAnnotations, offset);

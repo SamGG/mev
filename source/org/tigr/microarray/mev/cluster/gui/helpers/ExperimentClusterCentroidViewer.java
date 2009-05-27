@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -98,9 +99,21 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     private int exptID = 0;
 	protected JPopupMenu popup;
     
-    /**
+	/**
+	 * State-saving constructor for MeV v4.4 and higher. 
+	 * @param e
+	 * @param clusters
+	 * @param clusterIndex
+	 * @param means
+	 * @param variances
+	 * @param codes
+	 */
+    public ExperimentClusterCentroidViewer(Experiment e, ClusterWrapper clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
+    	this(e,clusters.getClusters(), clusterIndex, means, variances, codes);
+    }
+   	/**
      * This constructor is used by XMLEncoder/Decoder and IViewerPersistenceDelegate
-     * to re-create an ExperimentClusterCentroidViewer from a saved xml file
+     * to re-create an ExperimentClusterCentroidViewer from a saved xml file. MeV versions v4.0-4.3
      * @param e 
      */
     public ExperimentClusterCentroidViewer(Experiment e, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes){
@@ -202,7 +215,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-    			new Object[]{this.experiment, this.clusters, new Integer(this.clusterIndex), this.means, this.variances, this.codes});  
+    			new Object[]{this.experiment, ClusterWrapper.wrapClusters(this.clusters), new Integer(this.clusterIndex), this.means, this.variances, this.codes});  
     }
 
     
@@ -662,7 +675,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         }
         // draw genes info
         g.setColor(bColor);
- /*      if (drawMarks) {
+       if (drawMarks) {
             FontMetrics metrics = g.getFontMetrics();
             String str;
             int strWidth;
@@ -683,7 +696,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
             }
             g.rotate(Math.PI/2.0);
         }
-  */
+  
         if (getCluster() != null && getCluster().length > 0 && this.drawVariances) {
             // draw points
             g.setColor(bColor);

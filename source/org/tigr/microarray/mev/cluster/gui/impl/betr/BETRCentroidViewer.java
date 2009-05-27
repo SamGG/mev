@@ -25,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
@@ -52,30 +53,16 @@ public class BETRCentroidViewer extends CentroidViewer {
      */
     public BETRCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
     	super(e, clusters, variances, means, codes);
-    	initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    }    
+    /**
+     * MeV v4.4 state-saving constructor
+     * @param e
+     * @param clusters
+     */
+    public BETRCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	super(e, clusters.getClusters());
     }
-	/**
-	 * @inheritDoc
-	 */
-	public Expression getExpression(){
-		Object[] parentExpressionArgs = super.getExpression().getArguments();
-		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentExpressionArgs[0], parentExpressionArgs[1], parentExpressionArgs[2], parentExpressionArgs[3], parentExpressionArgs[4], geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
-	}
-    public void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-        PopupListener listener = new PopupListener();
-        this.popup = createJPopupMenu(listener);
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.fValues = fValues;
-        this.ssGroups = ssGroups;
-        this.ssError = ssError;
-        this.geneGroupMeans = geneGroupMeans;
-        this.geneGroupSDs = geneGroupSDs;
-        this.dfNumValues = dfNumValues;
-        this.dfDenomValues = dfDenomValues;
-        getContentComponent().addMouseListener(listener);        
-    }
+
     
     /**
      * Saves all clusters.

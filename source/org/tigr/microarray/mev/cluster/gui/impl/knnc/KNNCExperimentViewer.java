@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -35,8 +36,23 @@ public class KNNCExperimentViewer extends ExperimentViewer {
     }
     
     /**
-     * @inheritDoc
-     */ 
+     * State-saving constructor for MeV v4.4.
+     * @param experiment
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public KNNCExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations) {
+    	super(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue());
+    }
+    /**
+     * State-saving constructor used to load saved analysis files from MeV v4.0-4.3.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @deprecated
+     */
     public KNNCExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
     	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
     }

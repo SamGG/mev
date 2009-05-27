@@ -25,6 +25,7 @@ import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.ResultContainer;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
@@ -102,7 +103,10 @@ public abstract class XMLEncoderFactory {
         
         //Below are other miscellaneous classes that need custom PersistenceDelegates to be
         //properly saved.
-
+		oos.setPersistenceDelegate(
+				ClusterWrapper.class,
+				new ClusterWrapperPersistenceDelegate()
+			);
 		oos.setPersistenceDelegate(
 				BufferedImageWrapper.class,
 				new BufferedImagePersistenceDelegate()

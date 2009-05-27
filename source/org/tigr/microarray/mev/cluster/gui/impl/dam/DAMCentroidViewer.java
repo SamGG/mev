@@ -11,6 +11,9 @@
 
 package org.tigr.microarray.mev.cluster.gui.impl.dam;
 
+import java.beans.Expression;
+
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -26,5 +29,16 @@ public class DAMCentroidViewer extends CentroidViewer {
     public DAMCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
     }
-    
+    /**
+     * 
+     * MeV v4.4 state-saving constructor
+     * @param e
+     * @param clusters
+     * @param variances
+     * @param means
+     * @param codes
+     */
+    public DAMCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    	this(e, clusters.getClusters());
+    }
 }

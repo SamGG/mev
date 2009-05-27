@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.*;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -130,17 +131,28 @@ public class ExperimentClusterTableViewer implements IViewer {
         clusterTable.addMouseListener(listener);   
         
     }*/
-    //EH testing
+   
     /**
      * @inheritdoc 
      */
     public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-//			new Object[]{clusters, auxTitles, auxData, this.sortedClusters, new Integer(this.exptID)});  
-    		new Object[]{experiment, clusters, data, auxTitles, auxData});
+    	return new Expression(this, this.getClass(), "new", 
+    		new Object[]{experiment, ClusterWrapper.wrapClusters(clusters), data, auxTitles, auxData});
     }
-    
-    /** Creates a new instance of ExperimentClusterTableViewer */
+    /**
+     * State-saving constructor for MEV v4.4 and higher.
+     * @param experiment
+     * @param clusters
+     * @param data
+     * @param auxTitles
+     * @param auxData
+     */
+    public ExperimentClusterTableViewer(Experiment experiment, ClusterWrapper clusters, IData data, String[] auxTitles, Object[][] auxData) {
+    	this(experiment, clusters.getClusters(), data, auxTitles, auxData);
+    }    
+    /**
+     * Used to load analysis results saved by MeV v4.0-4.3.
+     **/
     public ExperimentClusterTableViewer(Experiment experiment, int[][] clusters, IData data, String[] auxTitles, Object[][] auxData) {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");

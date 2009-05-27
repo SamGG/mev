@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JComponent;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -118,6 +119,7 @@ public class CentroidViewer extends JPanel implements IViewer {
      * @param variances
      * @param means
      * @param codes
+     * @deprecated Kept around for loading analyses from MEV v4.0-4.3
      */
     public CentroidViewer(Experiment experiment, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	this.experiment = experiment;
@@ -135,23 +137,15 @@ public class CentroidViewer extends JPanel implements IViewer {
     	this.popup = createJPopupMenu(listener);
     	getContentComponent().addMouseListener(listener);
     }
-
     public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-				new Object[]{experiment, clusters, variances, means, codes});
-    }
-    /*
-    copy-paste this constructor into each descendent class
-    /**
-     * @inheritDoc
-     *
-    public CentroidViewer(int[][] clusters, float[][] variances, float[][] means, float[][] codes, Integer id) {
-    	super(clusters, variances, means, codes, id);
-    }
-     */
-    
+        	return new Expression(this, this.getClass(), "new",
+    				new Object[]{experiment, ClusterWrapper.wrapClusters(clusters)});
 
-    
+    }
+
+    public CentroidViewer(Experiment experiment, ClusterWrapper clusters) {
+    	this(experiment, clusters.getClusters());
+    }
     /**
      * Constructs a <code>CentroidViewer</code> for specified
      * experiment and clusters.
@@ -172,6 +166,8 @@ public class CentroidViewer extends JPanel implements IViewer {
         this.yRangeOption = CentroidViewer.USE_EXPERIMENT_MAX;
         this.addMouseMotionListener(new GraphListener());        
 
+        this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
     	PopupListener listener = new PopupListener();
     	this.popup = createJPopupMenu(listener);
     	getContentComponent().addMouseListener(listener);

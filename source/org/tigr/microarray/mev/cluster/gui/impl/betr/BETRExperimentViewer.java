@@ -30,12 +30,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 
 /**
@@ -47,7 +49,14 @@ public class BETRExperimentViewer extends ExperimentViewer {
     
     private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;  
     private float[][] geneGroupMeans, geneGroupSDs;
-    
+    public BETRExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations) {
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations);
+    }
+    	    
+    public BETRExperimentViewer(Experiment experiment, ClusterWrapper clusters, FloatMatrix geneGroupMeans, FloatMatrix geneGroupSDs, 
+    		Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    	this(experiment, clusters.getClusters(), geneGroupMeans.A, geneGroupSDs.A, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    }
     /** Creates new BETRExperimentViewer */
     public BETRExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
 	super(experiment, clusters);
@@ -79,32 +88,7 @@ public class BETRExperimentViewer extends ExperimentViewer {
 	        this.dfNumValues = dfNumValues;
 	        this.dfDenomValues = dfDenomValues;
     }
-	/**
-	 * @inheritDoc
-	 */
-	public Expression getExpression(){
 
-		Object[] parentExpressionArgs = super.getExpression().getArguments();
-		Object[] temp2 = new Object[parentExpressionArgs.length + 9];
-		int i=0;
-		for (i=0; i<parentExpressionArgs.length; i++){
-			temp2[i] = parentExpressionArgs[i];
-		}
-		temp2[i] = geneGroupMeans;
-		temp2[++i] = geneGroupSDs;
-		temp2[++i] = rawPValues;
-		temp2[++i] = adjPValues;
-		temp2[++i] = fValues;
-		temp2[++i] = ssGroups;
-		temp2[++i] = ssError;
-		temp2[++i] = dfNumValues;
-		temp2[++i] = dfDenomValues;
-
-		return new Expression(this, this.getClass(), "new", temp2);
-	}
-
-    
-    
     
     /**
      * Saves all the clusters.

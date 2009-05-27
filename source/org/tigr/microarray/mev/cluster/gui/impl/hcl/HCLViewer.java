@@ -45,6 +45,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -125,9 +126,22 @@ public class HCLViewer extends JPanel implements IViewer {
     
     protected DefaultMutableTreeNode node;
     protected IFramework framework;
+    protected Expression saveExpression = null;
+    
+    /**
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param experiment
+     * @param features
+     * @param genes_result
+     * @param samples_result
+     */
+    public HCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result) {
+    	this(experiment, features.getClusters()[0], genes_result, samples_result);
+    }
     
     /**
      * Constructs a <code>HCLViewer</code> for specified results.
+     * Used when making a viewer from within another module's *gene* clustering
      */
     public HCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {
     	setLayout(new GridBagLayout());
@@ -146,13 +160,13 @@ public class HCLViewer extends JPanel implements IViewer {
         this.genesOrder = createGenesOrder(experiment, features, genes_result);
         this.annotationBar = new HCLAnnotationBar(this.genesOrder);
         this.annotationBar.addMouseListener(listener);
-        if (genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
+        if (genes_result != null && genes_result.node_order != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
             this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
             this.genesTree.addMouseListener(listener);
             this.genesTree.setListener(listener);
             this.genes_result = genes_result;
         }
-        if (samples_result != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
+        if (samples_result != null && samples_result.node_order != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
             this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
             this.samplesOrder = createSamplesOrder(samples_result);
             if(genes_result == null)
@@ -165,16 +179,12 @@ public class HCLViewer extends JPanel implements IViewer {
         this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
+        saveExpression = new Expression(this, this.getClass(), "new",
+    			new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), genes_result, samples_result});
     }
-    public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new",
-				new Object[]{this.experiment, this.createDefaultFeatures(this.experiment), this.genes_result, this.samples_result, this.sampleClusters, new Boolean(this.isExperimentCluster), this.genesTree, this.sampleTree, new Integer(this.offset), (ExperimentViewer)this.expViewer});
-    }
-    /**
-     * Constructs a <code>HCLViewer</code> for specified results
-     * This is the XMLEncoder/Decoder constructor
-     */
-    public HCLViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int [][] sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
+    
+
+    public HCLViewer(Experiment e, int[] features, HCLTreeData genesResult, HCLTreeData samplesResult, int[][] sampleClusters, Boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, IViewer expViewer) {
     	setLayout(new GridBagLayout());
         setBackground(Color.white);
         //this.exptID = exptID.intValue();
@@ -191,20 +201,40 @@ public class HCLViewer extends JPanel implements IViewer {
         this.sampleTree = sampleTree;
         if(genesTree != null) {
         	this.offset = 0;
-        	expViewer.setLeftInset(0);
-        	expViewer.setInsets(new Insets(0,0,0,0));        	
         } else {
         	sampleTree.setHorizontalOffset(10);
         }
         setExperiment(e);
+        
+    	HCLTreeData _genes_result = this.genes_result;
+    	HCLTreeData _samples_result = this.samples_result;
+    	if(this.genes_result == null)
+    		_genes_result = new HCLTreeData();
+    	if(this.samples_result == null)
+    		_samples_result = new HCLTreeData();
+    	saveExpression = new Expression(this, this.getClass(), "new",
+    			new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), _genes_result, _samples_result, ClusterWrapper.wrapClusters(sampleClusters), isExperimentCluster, genesTree, sampleTree, offset, expViewer});
+
     }
 
-    
     /**
      * Constructs a <code>HCLViewer</code> for specified results
+     * This is the XMLEncoder/Decoder constructor
+     * Support Tree Viewer
+     */
+    public HCLViewer(Experiment e, ClusterWrapper features, HCLTreeData genesResult, HCLTreeData samplesResult, ClusterWrapper sampleClusters, boolean isExperimentCluster, HCLTree genesTree, HCLTree sampleTree, Integer offset, ExperimentViewer expViewer) {
+    	this(e, features.getClusters()[0], genesResult, samplesResult, sampleClusters.getClusters(), isExperimentCluster, genesTree, sampleTree, offset, expViewer);
+    }
+    
+    public HCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result, ClusterWrapper sampleClusters, boolean isExperimentCluster) {
+    	this(experiment, features.getClusters()[0], genes_result, samples_result, sampleClusters.getClusters(), isExperimentCluster);
+    }
+    /**
+     * Constructs a <code>HCLViewer</code> for specified results
+     * Used when making a viewer from within another module's *sample* clustering
      */
     public HCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result, int [][] sampleClusters, boolean isExperimentCluster) {
-        setLayout(new GridBagLayout());
+    	setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
         this.exptID = experiment.getId();
@@ -221,7 +251,7 @@ public class HCLViewer extends JPanel implements IViewer {
         this.genes_result = genes_result;
         this.samples_result = samples_result;
         if(this.isExperimentCluster){
-            if(genes_result != null){
+            if(genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1){
                 offset = 0;
                 this.expViewer = new ExperimentClusterViewer(experiment, sampleClusters, genesOrder, true, offset);
             }
@@ -240,27 +270,23 @@ public class HCLViewer extends JPanel implements IViewer {
         this.colorBar.addMouseListener(listener);
         this.annotationBar = new HCLAnnotationBar(this.genesOrder);
         this.annotationBar.addMouseListener(listener);
-/*EH
-        if (genes_result != null && experiment.getNumberOfGenes() > 1) {
-            this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
-            this.genesTree.addMouseListener(listener);
-            this.genesTree.setListener(listener);
-        }
-        if (samples_result != null && experiment.getNumberOfSamples() > 1) {
-            this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
-            //           this.samplesOrder = createSamplesOrder(samples_result, sampleClusters[0]);
-            if(genes_result == null)
-                this.sampleTree.setHorizontalOffset(10);
-            this.sampleTree.addMouseListener(listener);
-            this.sampleTree.setListener(listener);
-        }
-*/
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
+
+    	HCLTreeData _genes_result = this.genes_result;
+    	HCLTreeData _samples_result = this.samples_result;
+    	if(this.genes_result == null)
+    		_genes_result = new HCLTreeData();
+    	if(this.samples_result == null)
+    		_samples_result = new HCLTreeData();
+    	saveExpression = new Expression(this, this.getClass(), "new",
+    			new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), _genes_result, _samples_result, ClusterWrapper.wrapClusters(sampleClusters), isExperimentCluster});
+
     }
-    
+
     /**
      * Constructs a <code>HCLViewer</code> for specified results.
+     * Used when making a standalone viewer from HCL module, for genes or samples.
      */
     public HCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result, DefaultMutableTreeNode node) {
     	setLayout(new GridBagLayout());
@@ -299,9 +325,22 @@ public class HCLViewer extends JPanel implements IViewer {
         this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
+
+    	HCLTreeData _genes_result = this.genes_result;
+    	HCLTreeData _samples_result = this.samples_result;
+    	if(this.genes_result == null)
+    		_genes_result = new HCLTreeData();
+    	if(this.samples_result == null)
+    		_samples_result = new HCLTreeData();
+        saveExpression = new Expression(this, this.getClass(), "new",
+    			new Object[]{this.experiment, ClusterWrapper.wrapClusters(new int[][]{this.createDefaultFeatures(this.experiment)}), _genes_result, _samples_result});
     }
     
-    
+
+    public Expression getExpression(){
+    	return saveExpression;
+    }
+
     public void setExperiment(Experiment e) {
     	this.experiment = e;
     	this.exptID = e.getId();
@@ -411,7 +450,7 @@ public class HCLViewer extends JPanel implements IViewer {
     }
     
     private int[] getLeafOrder(HCLTreeData result, int[] indices) {
-        if (result == null || result.node_order.length < 2) {
+        if (result == null || result.node_order == null || result.node_order.length < 2) {
             return null;
         }
         return getLeafOrder(result.node_order, result.child_1_array, result.child_2_array, indices);

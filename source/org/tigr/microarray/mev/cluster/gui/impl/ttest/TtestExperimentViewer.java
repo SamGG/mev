@@ -30,6 +30,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
@@ -78,12 +79,44 @@ public class TtestExperimentViewer extends ExperimentViewer {
         this.sdA = sdA; 
         this.sdB =sdB;               
      }
-         
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param e
+     * @param clusters
+     * @param tTestDesign
+     * @param oneClassMeans
+     * @param oneClassSDs
+     * @param meansA
+     * @param meansB
+     * @param sdA
+     * @param sdB
+     * @param rawPValues
+     * @param adjPValues
+     * @param tValues
+     * @param dfValues
+     */
+    public TtestExperimentViewer(Experiment e, ClusterWrapper clusters, 
+    		Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+    	super(e, clusters.getClusters());
+        this.tTestDesign = tTestDesign.intValue();
+        this.oneClassMeans = oneClassMeans;
+        this.oneClassSDs = oneClassSDs;        
+        this.rawPValues = rawPValues;
+        this.adjPValues = adjPValues;
+        this.tValues = tValues;
+        this.dfValues = dfValues;
+        this.meansA = meansA;
+        this.meansB = meansB;
+        this.sdA = sdA; 
+        this.sdB =sdB; 
+    }
     public Expression getExpression(){
     	Object[] superExpressionArgs = super.getExpression().getArguments();
     	
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], /*superExpressionArgs[2], superExpressionArgs[3], superExpressionArgs[4], superExpressionArgs[5], */new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], new Integer(this.tTestDesign), 
+    			this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, 
+    			this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
     }
          
      /**

@@ -27,6 +27,7 @@ import java.beans.Expression;
 
 import javax.swing.JOptionPane;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
@@ -51,7 +52,20 @@ public class TFAExperimentViewer extends ExperimentViewer {
     	super(e, clusters, samplesOrder, drawAnnotations);
     	initialize(auxTitles, auxData);
     } 
-    
+    /**
+     * State-saving constructor for MeV v4.4.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     * @param auxTitles
+     * @param auxData
+     */
+    public TFAExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations, 
+    		String[] auxTitles, Object[][] auxData) {
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations);
+    	initialize(auxTitles, auxData);
+    } 
 	public Expression getExpression(){
 		Object[] parentConstructorArgs = super.getExpression().getArguments();
 		Object[] temp = new Object[parentConstructorArgs.length + 2];

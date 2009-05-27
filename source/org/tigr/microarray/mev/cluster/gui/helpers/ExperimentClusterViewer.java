@@ -48,6 +48,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.annotation.MevAnnotation;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -203,12 +204,26 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     		super(clusters, genesOrder, drawAnnotations, offset, header, hasCentroid, centroids, elementSize, labelIndex, exptID);
     }
     */
+    /**
+     * 
+     */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
-    			new Object[]{experiment, clusters, genesOrder, new Boolean(isDrawAnnotations), new Integer(this.insets.left)});
+    			new Object[]{experiment, ClusterWrapper.wrapClusters(clusters), ClusterWrapper.wrapClusters(new int[][]{genesOrder}), new Boolean(isDrawAnnotations), new Integer(this.insets.left)});
     } 
     public ExperimentClusterViewer(Experiment experiment, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){
     	this(experiment, clusters, genesOrder, drawAnnotations.booleanValue(), offset.intValue());
+    }
+    /**
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param experiment
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     */
+    public ExperimentClusterViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper genesOrder, Boolean drawAnnotations, Integer offset){
+    	this(experiment, clusters.getClusters(), genesOrder.getClusters()[0], drawAnnotations.booleanValue(), offset.intValue());
     }
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
@@ -293,44 +308,6 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
 		getHeaderComponent().addMouseListener(popupListener);
     }
  
-    /**
-     * Builds an ExperimentClusterViewer in the state specified by an xml file.  Used by XMLDecoder to restore the saved
-     * state of an ExperimentClusterViewer.  This constructor must work in concert with the setExperiment() 
-     * method.  
-     * 
-     * @param clusters
-     * @param genesOrder
-     * @param drawAnnotations
-     * @param offset
-     * @param header
-     * @param hasCentroid
-     * @param centroids
-     * @param elementSize
-     * @param labelIndex
-     * @param exptID
-     
-    public ExperimentClusterViewer(int[][] clusters, int[] genesOrder, Boolean drawAnnotations, 
-    		Integer offset, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, 
-			Dimension elementSize, Integer labelIndex, Integer exptID) {
-    	this.clusters = clusters;
-        this.genesOrder = genesOrder;
-        this.insets.left = offset.intValue();
-        this.isDrawAnnotations = drawAnnotations.booleanValue();
-        this.hasCentroid = hasCentroid.booleanValue();
-        this.centroids = centroids;
-        this.elementSize = elementSize;
-        this.labelIndex = labelIndex.intValue();
-        this.header = header;
-        this.header.setData(data);
-        this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-        this.header.setLeftInset(offset.intValue());
-        this.exptID = exptID.intValue();
-        setBackground(Color.white);
-        Listener listener = new Listener();
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-    }
-*/
     public void setExperiment(Experiment e) {
     	this.experiment = e;
         this.exptID = e.getId();

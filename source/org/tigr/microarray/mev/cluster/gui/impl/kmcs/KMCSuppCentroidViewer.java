@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.kmcs;
 
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 
@@ -39,5 +40,12 @@ public class KMCSuppCentroidViewer extends CentroidViewer {
     public KMCSuppCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes) {
     	super(e, clusters, variances, means, codes);
     }
-    
+    /**
+     * State-saving constructor for MeV versions 4.4 and up
+     * @param experiment
+     * @param clusters
+     */
+    public KMCSuppCentroidViewer(Experiment experiment, ClusterWrapper clusters) {
+    	this(experiment, clusters.getClusters());
+    }
 }

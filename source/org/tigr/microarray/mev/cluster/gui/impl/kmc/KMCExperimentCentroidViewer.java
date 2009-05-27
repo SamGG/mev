@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.kmc;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 
@@ -25,10 +26,22 @@ public class KMCExperimentCentroidViewer extends ExperimentClusterCentroidViewer
     public KMCExperimentCentroidViewer(Experiment experiment, int[][] clusters) {
         super(experiment, clusters);
     }
+
     /**
      * Used to recreate a KMCExperimentCentroidViewer from saved data written by 
-     * XMLEncoder.  
-     * 
+     * XMLEncoder. For MeV v4.4 and higher
+     * @param e
+     * @param clusters
+     * @param clusterIndex
+     * @param means
+     * @param variances
+     * @param codes
+     */
+    public KMCExperimentCentroidViewer(Experiment e, ClusterWrapper clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes) {
+    	this(e, clusters.getClusters(), clusterIndex, means, variances, codes);
+    }
+    /**
+     * Used to load saved analysis files from MeV v4.0-4.3.
      * @param clusters
      * @param exptID
      * @param clusterIndex
@@ -38,8 +51,6 @@ public class KMCExperimentCentroidViewer extends ExperimentClusterCentroidViewer
      */
     public KMCExperimentCentroidViewer(Experiment e, int[][] clusters, Integer clusterIndex, float[][] means, float[][] variances, float[][] codes) {
     	super(e, clusters, clusterIndex, means, variances, codes);
-    }
-    
-    
+    }    
 }
 

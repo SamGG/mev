@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
@@ -57,5 +58,15 @@ public class KMCSuppExperimentViewer extends ExperimentViewer {
     public KMCSuppExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, Boolean drawAnnotations) {
 	super(experiment, clusters, samplesOrder, drawAnnotations);
     }
-    
+    /**
+     * State-saving constructor for MEV v4.4 and higher.
+     * @param e
+     * @param clusters
+     * @param samplesOrder
+     * @param drawAnnotations
+     */
+    public KMCSuppExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder,
+    		Boolean drawAnnotations){
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue());
+    } 
 }

@@ -25,6 +25,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
@@ -55,7 +56,18 @@ public class KMCSuppExperimentClusterViewer extends ExperimentClusterViewer {
     public KMCSuppExperimentClusterViewer(Experiment e, int[][] clusters, int[] genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
     	super(e, clusters, genesOrder, drawAnnotations, offset);
     }
+    /**
+     * State-saving constructor for MeV v4.4 and higher.
+     * @param e
+     * @param clusters
+     * @param genesOrder
+     * @param drawAnnotations
+     * @param offset
+     */
+    public KMCSuppExperimentClusterViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper genesOrder, Boolean drawAnnotations, Integer offset){//, ExperimentClusterHeader header, Boolean hasCentroid, float[][] centroids, Dimension elementSize, Integer labelIndex) {
+    	this(e, clusters.getClusters(), genesOrder.getClusters()[0], drawAnnotations, offset);
 
+    }
     
     
 
