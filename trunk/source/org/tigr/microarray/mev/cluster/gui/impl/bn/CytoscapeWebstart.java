@@ -185,6 +185,7 @@ public class CytoscapeWebstart {
     	xml += "	<jar href='" + libDir + "undo.support.jar'/>";
     	xml += "	<jar href='" + libDir + "violinstrings-1.0.2.jar'/>";
     	xml += "	<jar href='" + libDir + "wizard.jar'/>";
+    	xml += "	<jar href='" + libDir + "BrowserLauncher2-1_3.jar'/>";
 
     	xml += "	<jar href='" + pluginsDir + "AutomaticLayout.jar'/>";
     	xml += "	<jar href='" + pluginsDir + "CyGoose.jar'/>";
@@ -343,6 +344,7 @@ public class CytoscapeWebstart {
     	xml += "	<jar href='" + libDir + "undo.support.jar'/>";
     	xml += "	<jar href='" + libDir + "violinstrings-1.0.2.jar'/>";
     	xml += "	<jar href='" + libDir + "wizard.jar'/>";
+    	xml += "	<jar href='" + libDir + "BrowserLauncher2-1_3.jar'/>";
 
     	xml += "	<jar href='" + libDir + "plugins/AutomaticLayout.jar'/>";
     	xml += "	<jar href='" + libDir + "plugins/CyGoose.jar'/>";

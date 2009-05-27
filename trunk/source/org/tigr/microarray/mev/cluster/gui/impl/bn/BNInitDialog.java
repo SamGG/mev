@@ -1146,7 +1146,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			} else if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
 				System.out.println("BN Dlg. OK Cmd");
-				//Check to see if user is connected to internet
+				//Check to see if user is connected to Internet
 				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
 				String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
 				String libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
@@ -1258,7 +1258,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						} 
 					}
 
-					//Chnage species name to match KEGG file prefix
+					//Change species name to match KEGG file prefix
 					if(kegg_sp.equalsIgnoreCase("Human"))
 						kegg_sp="hsa";
 					else if (kegg_sp.equalsIgnoreCase("Mouse"))
