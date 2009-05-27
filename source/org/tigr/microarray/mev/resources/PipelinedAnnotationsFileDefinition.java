@@ -8,6 +8,7 @@ package org.tigr.microarray.mev.resources;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -18,17 +19,38 @@ import java.util.Vector;
 
 import org.tigr.util.StringSplitter;
 
-public class AvailableAnnotationsFileDefinition extends ISupportFileDefinition {
+public class PipelinedAnnotationsFileDefinition extends ISupportFileDefinition {
 	private String urlString = getBaseResourceURL("resourcerer_supported_annotations_list");
 	public static boolean isValidFile(File f) {
-		//TODO read file, check that it has the right format.
-		/*try {
-			FileReader fr = new FileReader(f);
-			return true;			
+
+		try {
+			BufferedReader breader = new BufferedReader(new FileReader(f));
+			Hashtable<String, Vector<String>> orgToChipMap = new Hashtable<String, Vector<String>>();
+			String currentLine;
+			StringSplitter ss = new StringSplitter('\t');
+			while ((currentLine = breader.readLine()) != null) {
+				ss.init(currentLine);
+				while (ss.hasMoreTokens()) {
+					ss.nextToken();
+					String orgName = (String) ss.nextToken();
+					String chipType = (String) ss.nextToken();
+					if (!orgToChipMap.containsKey(orgName)) {
+						Vector<String> chipTypes = new Vector<String>();
+						chipTypes.add(chipType);
+						orgToChipMap.put(orgName, chipTypes);
+					} else {
+						orgToChipMap.get(orgName).add(chipType);
+					}
+				}
+			}
+			return true;
+		} catch (NoSuchElementException nsee) {
+			return false;
 		} catch (IOException ioe) {
 			return false;
-		}*/
-		return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	@Override
@@ -38,13 +60,13 @@ public class AvailableAnnotationsFileDefinition extends ISupportFileDefinition {
 
 	@Override
 	public String getUniqueName() {
-		return "kingdom_species_cloneset_list.txt";
+		return "resourcerer_supported_annotations.txt";
 	}
 
 	@Override
 	public boolean isValid(File f) {
 		// TODO Auto-generated method stub
-		return AvailableAnnotationsFileDefinition.isValidFile(f);
+		return PipelinedAnnotationsFileDefinition.isValidFile(f);
 	}
 	public boolean isVersioned() {
 		return true;

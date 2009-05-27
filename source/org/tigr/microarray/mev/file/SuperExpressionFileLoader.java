@@ -67,7 +67,7 @@ import org.tigr.microarray.mev.annotation.IChipAnnotation;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindowDialog;
 import org.tigr.microarray.mev.file.agilent.AgilentMevFileLoader;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.ExpressionDataSupportDataFile;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
@@ -228,7 +228,7 @@ public class SuperExpressionFileLoader {
 	}
 	private boolean initializeAnnotationInfo() {
 		try {
-			AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+			PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 			File f = viewer.getSupportFile(aafd);
 			this.annotationLists = aafd.parseAnnotationListFile(f);
 			return true;

@@ -76,7 +76,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
@@ -115,7 +115,7 @@ public class EASEInitDialog extends AlgorithmDialog {
     protected Hashtable<String, Vector<String>> speciestoarrays;
     protected IResourceManager resourceManager;
     
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
     protected boolean useLoadedAnnotationFile = false;
     File annotationFile;
     protected String defaultFileBaseLocation;
@@ -1127,7 +1127,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			add(browseSupportFileButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
 
 			try {
-				boolean b = resourceManager.fileIsInRepository(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				boolean b = resourceManager.fileIsInRepository(new EASEEntrezSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
 				if(b) {
 					getEaseSupportFileButton.setText("Select This");
 				} else {
@@ -1142,7 +1142,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 		private void onDownloadSupportFile() {
 			String species = organismListBox.getSelectedItem().toString();
 			String array = arrayListBox.getSelectedItem().toString();
-			EASESupportDataFile esdf = new EASESupportDataFile(species, array);
+			EASEEntrezSupportDataFile esdf = new EASEEntrezSupportDataFile(species, array);
 			
 			try {
 				File f = resourceManager.getSupportFile(esdf, true);
@@ -1201,7 +1201,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			String selectedOrganism = organismListBox.getSelectedItem().toString();
 			String selectedArray = arrayListBox.getSelectedItem().toString();
 			if(selectedOrganism != null && selectedArray != null) {
-				if(resourceManager.fileIsInRepository(new EASESupportDataFile(selectedOrganism, selectedArray))) {
+				if(resourceManager.fileIsInRepository(new EASEEntrezSupportDataFile(selectedOrganism, selectedArray))) {
 					statusLabel.setText("Click to Select");
 					getEaseSupportFileButton.setText("Select");
 				} else {
@@ -1371,7 +1371,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			labels[2] = "Role";
 			
 			Hashtable<String, Vector<String>> speciestoarrays = new Hashtable<String, Vector<String>>();
-			AvailableAnnotationsFileDefinition speciestoarray = new AvailableAnnotationsFileDefinition();
+			PipelinedAnnotationsFileDefinition speciestoarray = new PipelinedAnnotationsFileDefinition();
 			try {
 				File f = rm.getSupportFile(speciestoarray, true);
 				speciestoarrays = speciestoarray.parseAnnotationListFile(f);

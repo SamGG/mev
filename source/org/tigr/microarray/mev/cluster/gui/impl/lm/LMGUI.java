@@ -36,8 +36,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.GetInteractionsModule;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
@@ -96,7 +96,7 @@ public class LMGUI implements IClusterGUI {
 		}
 		
 		Hashtable<String, Vector<String>> speciestoarrays = null;
-		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 		defs.add(aafd);
 	        
 	        try {

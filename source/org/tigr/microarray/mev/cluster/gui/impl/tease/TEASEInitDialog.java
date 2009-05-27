@@ -66,7 +66,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
@@ -102,7 +102,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
     private String sep;
     private Frame parent;
 
-    private static String ANNOTATION_LINK = AnnotationFieldConstants.TGI_TC;
+    private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
     protected boolean useLoadedAnnotationFile = false;
     protected File defaultEaseFileLocation;
     
@@ -1334,7 +1334,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
 			add(browseSupportFileButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
 
 			try {
-				boolean b = resourceManager.fileIsInRepository(new EASESupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
+				boolean b = resourceManager.fileIsInRepository(new EASEEntrezSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
 				if(b) {
 					getEaseSupportFileButton.setText("Select This");
 				} else {
@@ -1350,7 +1350,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
 			try {
 				String species = organismListBox.getSelectedItem().toString();
 				String array = arrayListBox.getSelectedItem().toString();
-				File f = resourceManager.getSupportFile(new EASESupportDataFile(species, array), true);
+				File f = resourceManager.getSupportFile(new EASEEntrezSupportDataFile(species, array), true);
 				supportFileLocationField.setText(f.getAbsolutePath());
 				getEaseSupportFileButton.setText("Select This");
 				statusLabel.setText("Selected");
@@ -1399,7 +1399,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
 			String selectedOrganism = organismListBox.getSelectedItem().toString();
 			String selectedArray = arrayListBox.getSelectedItem().toString();
 			if(selectedOrganism != null && selectedArray != null) {
-				if(resourceManager.fileIsInRepository(new EASESupportDataFile(selectedOrganism, selectedArray))) {
+				if(resourceManager.fileIsInRepository(new EASEEntrezSupportDataFile(selectedOrganism, selectedArray))) {
 					statusLabel.setText("Click to Select");
 					getEaseSupportFileButton.setText("Select");
 				} else {

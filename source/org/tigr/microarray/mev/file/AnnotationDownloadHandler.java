@@ -30,8 +30,8 @@ import javax.swing.border.TitledBorder;
 import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.ease.EASESupportDataFile;
-import org.tigr.microarray.mev.resources.AvailableAnnotationsFileDefinition;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
 import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
@@ -83,7 +83,7 @@ public class AnnotationDownloadHandler {
 	
 	public AnnotationDownloadHandler(IFramework framework) {
 		this.irm = framework.getResourceManager();
-		AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+		PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES, CHOOSE_ORGANISM);
 		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY, CHOOSE_ARRAY);
 		try {
@@ -294,7 +294,7 @@ public class AnnotationDownloadHandler {
 	 */
 	public void getAdditionalSupportFiles(String organismName, String arrayName) throws SupportFileAccessError {
 		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
-		defs.add(new EASESupportDataFile(organismName, arrayName));
+		defs.add(new EASEEntrezSupportDataFile(organismName, arrayName));
 		irm.getSupportFiles(defs, true);
 	}
 	
@@ -422,8 +422,8 @@ public class AnnotationDownloadHandler {
 			return;
 		}
 		try {
-			File taxonfile = irm.getSupportFile(new AvailableAnnotationsFileDefinition(), true);
-			AvailableAnnotationsFileDefinition aafd = new AvailableAnnotationsFileDefinition();
+			File taxonfile = irm.getSupportFile(new PipelinedAnnotationsFileDefinition(), true);
+			PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 			Hashtable<String, Vector<String>> speciestoarrays = aafd.parseAnnotationListFile(taxonfile);
 			AnnotationDownloadHandler adh = new AnnotationDownloadHandler(irm, speciestoarrays, "Human", "affy_HG-U133A");
 			JPanel annotationPanel = adh.getAnnotationLoaderPanel(gba);
