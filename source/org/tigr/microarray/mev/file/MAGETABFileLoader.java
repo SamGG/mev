@@ -692,7 +692,8 @@ for(int k=0;k<dataTypes.length;k++) {
     				text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
     				text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
     				text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
-    				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+    				text += "4. Check to make sure that there are no blank cells in your file.<br><br>";
+    				text += "5. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
     				text+="<br><br></body></html>";
     				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
         		} catch (Exception e) {
@@ -1771,18 +1772,18 @@ for(int k=0;k<dataTypes.length;k++) {
     	
     	List<SourceNode> sourcenodes= (List<SourceNode>)((SDRF)investigation.SDRF).sourceNodes;
     	
-		//Number of source nodes should be equal to the number of samples in the file
-		for(int i=0; i<sourcenodes.size(); i++){
+		//Number of source nodes should be equal to the number of samples in the file 
+		for(int i=0; i<slideDataArray.length; i++){
 			SourceNode src=sourcenodes.get(i);
 			List<CharacteristicsAttribute> characteristicsList = src.characteristics;
 			if(characteristicsList.size()!=0){
 			for(int j=0; j<characteristicsList.size(); j++){
 				slideDataArray[i].getSampleAnnotation().setAnnotation(characteristicsList.get(j).type, characteristicsList.get(j).getNodeName());
 				
-				//System.out.print("Characteristic:"+characteristicsList.get(j).type);
-				//System.out.print('\t');
-				//System.out.print(characteristicsList.get(j).getNodeName());
-				//System.out.println();
+//				System.out.print("Characteristic:"+characteristicsList.get(j).type);
+//				System.out.print('\t');
+//				System.out.print(characteristicsList.get(j).getNodeName());
+//				System.out.println();
 			}
 			}
 			   
@@ -1794,26 +1795,26 @@ for(int k=0;k<dataTypes.length;k++) {
 		//FactorValueAttribute fValueAttrib=new FactorValueAttribute();
 		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
 		
-		for(int index=0; index<nodes.size(); index++){
+	//	for(int index=0; index<nodes.size(); index++){
+		for(int index=0; index<slideDataArray.length; index++){
 	
-//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
-//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
 		    HybridizationNode node = (HybridizationNode)nodes.get(index);
-/*	Previous version;jaw
-		    FactorValueAttribute fva = node.factorValue;
-		    fva.getNodeName();
-		    System.out.print("factorvalue:"+fva.getNodeName());
- */
-		    List<FactorValueAttribute> fvalist = (List) node.factorValue;
+		    List<FactorValueAttribute> fvalist = node.factorValues;
 		    for(int i=0; i<fvalist.size(); i++){
 		    	FactorValueAttribute fva=(FactorValueAttribute)fvalist.get(i);
-		    	System.out.println("Factor value node type"+fva.getNodeType());
-		    	System.out.println("Factor value node name:"+fva.getNodeName());
-		    	
+//		    	System.out.println("Factor value node type"+fva.getNodeType());
+//		    	System.out.println("Factor value node name:"+fva.getNodeName());
+//		    	
 		    	slideDataArray[index].getSampleAnnotation().setAnnotation(fvalist.get(i).getNodeType(), fvalist.get(i).getNodeName());
+		    	
+		    	
 		    }
 		    //System.out.print("factorvalue:"+fva.getNodeName());
 		}
+       	
+    	
+    	
+
     }
 
     public void populateIDFObject(IDF idfObj){
