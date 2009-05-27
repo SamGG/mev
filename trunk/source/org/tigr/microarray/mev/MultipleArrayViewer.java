@@ -744,7 +744,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
     	//Directs XMLEncoder errors to a log file. Very useful when debugging new
    		//state-saving functions.
-        System.out.println("Any save errors will be written to saving.log");
 		oos.setExceptionListener(new ExceptionListener() {
             public void exceptionThrown(Exception exception) {
             	try {
