@@ -338,38 +338,6 @@ public class MAGETABFileLoader extends ExpressionFileLoader {
 
         		experimentCount = (ss.countTokens()+1- preExperimentColumns)/ dataTypes.length;
 /*
-        		switch (matrixState) {
-            	case INTENSITY:
-            		System.out.println("signal");
-            		experimentCount = ss.countTokens()- preExperimentColumns;            		
-            		break;
-            	case INTENSITY_DETECTION:
-            		System.out.println("detection");            		
-					experimentCount = (ss.countTokens()+1- preExperimentColumns)/2;
-            		break;
-            	case INTENSITY_DETECT_PVAL:
-            		System.out.println("pvalue");            		
-            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/3;
-            		break;
-            	case LOG_CHANNELS:
-            	case LOG_RATIO:
-            		System.out.println("log");            		
-            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/ dataTypes.length;
-            		break;
-            	case RATIO_CHANNELS:
-            	case RATIO:
-            		System.out.println("ratio");            		
-            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/ dataTypes.length;
-            		break;
-            	case CHANNELS:
-            		System.out.println("channels");            		
-            		experimentCount = (ss.countTokens()+1- preExperimentColumns)/ dataTypes.length;
-            		break;
-            	default:
-            		System.out.println("else");            		
-            		experimentCount = ss.countTokens()- preExperimentColumns;            		
-            		break;
-            	}
 System.out.println("expt cnt: " + experimentCount + " ; tokens: " 
 	+ ss.countTokens() + " ; preExpt cols: " + preExperimentColumns
     + " ; data types: " + dataTypes.length);
@@ -438,8 +406,8 @@ System.out.println("expt cnt: " + experimentCount + " ; tokens: "
             		break;
             	}
 //System.out.println("matrixState" + matrixState.toString());
-	//System.out.println("Sample size:"+sampleNames.size());
-	//System.out.println("Experiment Count:"+experimentCount);
+//	System.out.println("Sample size:"+sampleNames.size());
+//	System.out.println("Experiment Count:"+experimentCount);
                 ss.nextToken();//parse the blank on header
                 int numqts = dataTypes.length;
                 for (int i=0; i<experimentCount; i++) {
@@ -557,10 +525,7 @@ for(int k=0;k<dataTypes.length;k++) {
                     	case INTENSITY_DETECT_PVAL:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:signal")) -1]);
         					extraFields[0] = currData[quantTypes.get(columnDataTypes.get("MEV:detection")) -1];
-        					//System.out.println("detection:"+extraFields[0]);
-        					extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:pvalue")) -1];
-        					
-            				//System.out.println("p value:"+extraFields[1]);
+            				extraFields[1] = currData[quantTypes.get(columnDataTypes.get("MEV:pvalue")) -1];
                     		break;
                     	case LOG_CHANNELS:
             				intensities[1] = Float.parseFloat(currData[quantTypes.get(columnDataTypes.get("MEV:log")) -1]);
@@ -599,6 +564,9 @@ for(int k=0;k<dataTypes.length;k++) {
                     	}
             		} catch (ArrayIndexOutOfBoundsException iob) {
             			iob.printStackTrace();
+            		} catch (NumberFormatException nfe) {
+            			//do nothing
+//            			System.out.println("Cell in row " + row + ", column " + column + " is NAN");
             		} catch (Exception e) {
             			System.out.println("General exeception: " + i);
             			e.printStackTrace();
@@ -686,53 +654,49 @@ for(int k=0;k<dataTypes.length;k++) {
         	try {
         		fileURL = new URL("file:///" +getIDFFilePath());
         		investigation=mageTabParser.parse(fileURL);
-        	} catch (Exception e) {
-          	  if(e instanceof ParseException){
-          		  String text=
-          		  "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
-                    text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
-                    text += "2. If the IDF file contains a fields ExperimentalDesignTermSourceRef, delete it<br><br>";
-                    text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
-                    text+="<br><br></body></html>";
-          		  JOptionPane.showMessageDialog(null,text , "Loader Parse failure", JOptionPane.WARNING_MESSAGE);
-          		  e.printStackTrace();
-        	  } else if(e instanceof IOException) {
-        		  String text= "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
-        		  text += "<font face=arial size=4>The IDF or SDRF file could not be located. <br>";
-        		  text += "Check that both files are in the same directory.<br><br>";
-        		  text+="<br><br></body></html>";
-                  JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
-                  e.printStackTrace();
-          	  }
+        	} catch(IOException ioe) {
+        		String text= "<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
+        		text += "<font face=arial size=4>The IDF or SDRF file could not be located. <br>";
+        		text += "Check that both files are in the same directory.<br><br>";
+        		text+="<br><br></body></html>";
+        		JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
+        	} catch (ParseException pe){
+          		String text=
+          		"<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
+                text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
+                text += "2. Check the column names of SDRF file. If Protocol Ref has any prefixes, delete the prefix.<br><br>";
+                text += "3. Check if the SDRF file tag in IDF contains the correct SDRF file name" ;
+                text+="<br><br></body></html>";
+          		JOptionPane.showMessageDialog(null,text , "Loader Parse failure", JOptionPane.WARNING_MESSAGE);
+          	} catch (Exception e) {
+          		e.printStackTrace();
         	}
         	if(investigation != null) {
         		try {
         			populateIDFObject(investigation.IDF);
+        		} catch (NullPointerException npe) {
+        			String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+        			text += "<font face=arial size=4>The IDF file could not be parsed due to an incorrect MAGE-TAB version (We support v.1.0). <br>";
+        			text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+        			text+="<br><br></body></html>";
+        			JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
         		} catch (Exception e) {
-        			if(e instanceof NullPointerException) {
-        				String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
-        				text += "<font face=arial size=4>The IDF file could not be parsed due to an incorrect MAGE-TAB version (We support v.1.0). <br>";
-        				text += "Check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
-        				text+="<br><br></body></html>";
-        				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-            			e.printStackTrace();
-        			}
+        			e.printStackTrace();
         		}
         		try {
         			populateSampleAnnotationfromSDRF(slideDataArray);
+        		} catch (NullPointerException npe) {
+    				String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
+    				text += "<font face=arial size=4>The SDRF file could not be parsed due to inconsistencies between IDF <br>";
+    				text += "and SDRF files or an incorrect MAGE-TAB version (We support v.1.0). <br>";
+    				text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
+    				text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
+    				text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
+    				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
+    				text+="<br><br></body></html>";
+    				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
         		} catch (Exception e) {
-        			if(e instanceof NullPointerException) {
-        				String text= "<html><body><font face=arial size=4><b><center>Parse failure</center><b><hr size=3><br>";//<hr size=3>";
-        				text += "<font face=arial size=4>The SDRF file could not be parsed due to inconsistencies between IDF <br>";
-        				text += "and SDRF files or an incorrect MAGE-TAB version (We support v.1.0). <br>";
-        				text += "1. Check that the BioMaterial names in the SDRF file match the column headers in the data matrix.<br><br>";
-        				text += "2. Check that the Experimental Factor Values match those listed in the IDF.<br><br>";
-        				text += "3. Check that the Protocols names and Parameter names match those listed in the IDF.<br><br>";
-        				text += "4. Lastly, check the MAGE-TAB specification to ensure that the files are correctly formated.<br><br>";
-        				text+="<br><br></body></html>";
-        				JOptionPane.showMessageDialog(null,text , "Unable to parse MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);        		  
-                		e.printStackTrace();
-        			}
+               		e.printStackTrace();
         		}
         	}
         }
@@ -851,13 +815,13 @@ for(int k=0;k<dataTypes.length;k++) {
                	if(! previous.equalsIgnoreCase(current)) {
                		if(i > 0) {
                			sampleNames.add(current);
-               			System.out.println("sample name:"+current);
+//               			System.out.println("sample name:"+current);
                		}
                	}
                	previous = current;
             }
 //            System.out.println("columnHeader" + columnHeaders.toString());
-            System.out.println("sampleNames" + sampleNames.toString());
+//            System.out.println("sampleNames" + sampleNames.toString());
 
             currentLine = reader.readLine();
             while(currentLine.endsWith("\t")){
@@ -886,9 +850,9 @@ for(int k=0;k<dataTypes.length;k++) {
             	}
             }
             numDataTypes = counter;
-            System.out.println("Columns per hyb: " + numDataTypes);
+//            System.out.println("Columns per hyb: " + numDataTypes);
             String QTs = quantTypes.toString();
-            System.out.println(QTs);
+//            System.out.println(QTs);
             
             dataTypes = new String[quantTypes.keySet().size()];
 /*
@@ -994,11 +958,24 @@ for(int k=0;k<dataTypes.length;k++) {
 			sflp.dataTypePanel.remove(0);
 			sflp.dataTypePanel.add(sflp.oneChannelDataTypes,0);
 			setDataType(IData.DATA_TYPE_AFFY_ABS);
+			columnDataTypes.remove("MEV:channel1");
+			columnDataTypes.remove("MEV:channel2");
+			columnDataTypes.remove("MEV:ratio");
+			columnDataTypes.remove("MEV:log");
+			sflp.dye1ComboBox.setSelectedItem("none");
+			sflp.dye2ComboBox.setSelectedItem("none");
+			sflp.ratioComboBox.setSelectedItem("none");
 		} else if(sflp.twoChannelRadioButton.isSelected()) {
         	////System.out.println("two channel");
-        	setDataType(IData.DATA_TYPE_TWO_INTENSITY);
 			sflp.dataTypePanel.remove(0);
 			sflp.dataTypePanel.add(sflp.twoChannelDataTypes,0);
+        	setDataType(IData.DATA_TYPE_TWO_INTENSITY);
+			columnDataTypes.remove("MEV:signal");
+			columnDataTypes.remove("MEV:detection");
+			columnDataTypes.remove("MEV:pvalue");
+			sflp.signalComboBox.setSelectedItem("none");
+			sflp.detectionComboBox.setSelectedItem("none");
+			sflp.pValueComboBox.setSelectedItem("none");
         }
 		sflp.dataTypePanel.validate();
         sflp.dataTypePanel.repaint();
@@ -1128,6 +1105,8 @@ for(int k=0;k<dataTypes.length;k++) {
        	}
    		String stateStr = setListsAndButtons();
 //    	System.out.println(columnDataTypes.toString());
+//    	System.out.println("matrixState set to: " + stateStr);
+    	
     	return columnDataTypes;
     }
     
@@ -1356,7 +1335,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
         		channelPanel = new JPanel();
                 channelPanel.setLayout(new GridBagLayout());
-                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Channels"));
+                channelPanel.setBorder(new TitledBorder(new EtchedBorder(), "Select Channel Data"));
                 channelButtonGroup = new ButtonGroup();
                 oneChannelRadioButton = new JRadioButton("1 Channel", true);
                 oneChannelRadioButton.addActionListener(new EventListener());
@@ -1451,7 +1430,7 @@ for(int k=0;k<dataTypes.length;k++) {
                 
                 instructionsLabel = new JLabel();
                 instructionsLabel.setForeground(java.awt.Color.red);
-                String instructions = "<html>Click the upper-leftmost expression value. Click the <b>Load</b> button to finish.</html>";
+                String instructions = "<html>Select the appropriate number of channels, then select appropriate data columns from the dropdown lists.</html>";
                 instructionsLabel.setText(instructions);
                 
                 tablePanel = new JPanel();
@@ -1753,17 +1732,24 @@ for(int k=0;k<dataTypes.length;k++) {
     			} else if (source == ratioComboBox) {
     				String columnHeader = (String) ratioComboBox.getSelectedItem();
    					if(columnHeader != null) {
-           				if(! columnHeader.equals("none")) {
-    						columnDataTypes.put("MEV:ratio", columnHeader);
-    						columnDataTypes.put(columnHeader, "ratio");    				
-    					} else {
-    						try{
-    							String header = (String) columnDataTypes.get("MEV:ratio");
-        						columnDataTypes.put(header,"none");
-        						columnDataTypes.remove("MEV:ratio");
-    						} catch (NullPointerException npe) {
-    							//no need to do anything, just continue
-    						}
+   						if(columnHeader.contains("Log") || columnHeader.contains("log")
+   								|| columnHeader.contains("LOG")) {
+							columnDataTypes.put("MEV:log", columnHeader);
+							columnDataTypes.put(columnHeader, "log");    				
+   						} else if(! columnHeader.equals("none")) {
+							columnDataTypes.put("MEV:ratio", columnHeader);
+							columnDataTypes.put(columnHeader, "ratio");    				
+   						} else {
+   							try{
+   								String header = (String) columnDataTypes.get("MEV:log");
+   								columnDataTypes.put(header,"none");
+   								columnDataTypes.remove("MEV:log");
+   								header = (String) columnDataTypes.get("MEV:ratio");
+   								columnDataTypes.put(header,"none");
+  								columnDataTypes.remove("MEV:ratio");
+   							} catch (NullPointerException npe) {
+    						//no need to do anything, just continue
+   							}   							
     					}
 //						System.out.println(columnDataTypes.toString());
     				}
@@ -1778,6 +1764,7 @@ for(int k=0;k<dataTypes.length;k++) {
     	}
     }
 
+//getFramework.IFramework.addHistory
 
     public void populateSampleAnnotationfromSDRF(ISlideData[] slideDataArray){
     //	SDRF sdrfObj=investigation.SDRF;
@@ -1809,24 +1796,24 @@ for(int k=0;k<dataTypes.length;k++) {
 		
 		for(int index=0; index<nodes.size(); index++){
 	
-		//	System.out.println("Hybridization node type:"+((HybridizationNode)nodes.get(index)).getNodeType());
-			//System.out.println("Hybridization Node Name:"+((HybridizationNode)nodes.get(index)).getNodeName());
+//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeType());
+//			System.out.println(((HybridizationNode)nodes.get(index)).getNodeName());
 		    HybridizationNode node = (HybridizationNode)nodes.get(index);
-		    List<FactorValueAttribute> fvalist = node.factorValues;
+/*	Previous version;jaw
+		    FactorValueAttribute fva = node.factorValue;
+		    fva.getNodeName();
+		    System.out.print("factorvalue:"+fva.getNodeName());
+ */
+		    List<FactorValueAttribute> fvalist = (List) node.factorValue;
 		    for(int i=0; i<fvalist.size(); i++){
-		    	
 		    	FactorValueAttribute fva=(FactorValueAttribute)fvalist.get(i);
 		    	System.out.println("Factor value node type"+fva.getNodeType());
 		    	System.out.println("Factor value node name:"+fva.getNodeName());
 		    	
 		    	slideDataArray[index].getSampleAnnotation().setAnnotation(fvalist.get(i).getNodeType(), fvalist.get(i).getNodeName());
-		    	
-		    	
 		    }
 		    //System.out.print("factorvalue:"+fva.getNodeName());
 		}
-		
-
     }
 
     public void populateIDFObject(IDF idfObj){
