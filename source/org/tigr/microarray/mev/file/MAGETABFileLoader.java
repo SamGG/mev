@@ -9,7 +9,7 @@
  * $RCSfile: AffyGCOSFileLoader.java,v $
  * $Revision: 1.12 $
  * $Date: 2007-12-20 19:55:12 $
- * $Author: eleanorahowe $
+ * $Author: Joseph White, Sarita Nair $
  * $State: Exp $
  */
 
