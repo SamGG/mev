@@ -1771,7 +1771,8 @@ for(int k=0;k<dataTypes.length;k++) {
     //	SDRF sdrfObj=investigation.SDRF;
     	
     	List<SourceNode> sourcenodes= (List<SourceNode>)((SDRF)investigation.SDRF).sourceNodes;
-    	
+    	//System.out.println("slidedataarray length:"+slideDataArray.length);
+    	//System.out.println("sourcenodes length:"+sourcenodes.size());
 		//Number of source nodes should be equal to the number of samples in the file 
 		for(int i=0; i<slideDataArray.length; i++){
 			SourceNode src=sourcenodes.get(i);
@@ -1795,8 +1796,8 @@ for(int k=0;k<dataTypes.length;k++) {
 		//FactorValueAttribute fValueAttrib=new FactorValueAttribute();
 		List nodes=(investigation.SDRF).lookupNodes(HybridizationNode.class);
 		
-	//	for(int index=0; index<nodes.size(); index++){
-		for(int index=0; index<slideDataArray.length; index++){
+		for(int index=0; index<nodes.size(); index++){
+		//for(int index=0; index<slideDataArray.length; index++){
 	
 		    HybridizationNode node = (HybridizationNode)nodes.get(index);
 		    List<FactorValueAttribute> fvalist = node.factorValues;
