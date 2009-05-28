@@ -333,7 +333,6 @@ public class TableViewer extends JPanel implements IViewer {
             		textArea.setText(obj.toString());
             	else 
             		textArea.setText("null");
-            	textArea.setText(obj.toString());
                 if(table.isRowSelected(row))
                     textArea.setBackground(table.getSelectionBackground());
                 else
