@@ -113,7 +113,7 @@ public class MAGETABFileLoader extends ExpressionFileLoader {
     public enum matrixType {
     	NONE, INTENSITY, DETECTION, PVALUE, LOG_RATIO, RATIO, CHANNEL1,
         CHANNEL2, INTENSITY_DETECTION, INTENSITY_DETECT_PVAL,
-        LOG_CHANNELS, RATIO_CHANNELS, CHANNELS;
+        LOG_CHANNELS, RATIO_CHANNELS, CHANNELS, INTENSITY_PVAL;
     }
     private matrixType matrixState;
     /**
@@ -356,6 +356,7 @@ System.out.println("expt cnt: " + experimentCount + " ; tokens: "
                 }
                 String [] fieldNames;
             	switch (matrixState) {
+            	case INTENSITY_PVAL:
             	case INTENSITY:
                 	fieldNames = new String[1];
                 	fieldNames[0]="AffyID";
@@ -515,6 +516,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				currData[quantTypes.get(columnDataTypes.get("MEV:signal")) -1];
 */
                     	switch (matrixState) {
+                    	case INTENSITY_PVAL:
                     	case INTENSITY:
 							intensities[1] = Float.parseFloat(currData[quantTypes.get((String) columnDataTypes.get("MEV:signal")) -1]);
                     		break;
@@ -567,6 +569,8 @@ for(int k=0;k<dataTypes.length;k++) {
             		} catch (NumberFormatException nfe) {
             			//do nothing
 //            			System.out.println("Cell in row " + row + ", column " + column + " is NAN");
+            		} catch (java.text.ParseException jtp) {
+            			//do nothing
             		} catch (Exception e) {
             			System.out.println("General exeception: " + i);
             			e.printStackTrace();
@@ -576,6 +580,8 @@ for(int k=0;k<dataTypes.length;k++) {
             			slideDataArray[i].setIntensities(counter - preSpotRows, intensities[0], intensities[1]);
             			//sde.setExtraFields(extraFields);
                     	switch (matrixState) {
+                    	case INTENSITY_PVAL:
+                    		break;
                     	case INTENSITY_DETECT_PVAL:
             				sde.setDetection(extraFields[0]);
             				try{
@@ -597,6 +603,8 @@ for(int k=0;k<dataTypes.length;k++) {
             			}
             			slideDataArray[i].setIntensities(counter-preSpotRows,intensities[0],intensities[1]);
                     	switch (matrixState) {
+                    	case INTENSITY_PVAL:
+                    		break;
                     	case INTENSITY_DETECT_PVAL:
             				((FloatSlideData)slideDataArray[i]).setDetection(counter-preSpotRows,extraFields[0]);
             				try{
@@ -660,7 +668,7 @@ for(int k=0;k<dataTypes.length;k++) {
         		text += "Check that both files are in the same directory.<br><br>";
         		text+="<br><br></body></html>";
         		JOptionPane.showMessageDialog(null,text , "Unable to locate MAGE-TAB files.", JOptionPane.WARNING_MESSAGE);
-        	} catch (ParseException pe){
+        	} catch(ParseException pe){
           		String text=
           		"<html><body><font face=arial size=4><b><center>We could not load the IDF and SDRF files you provided</center><b><hr size=3><br>";//<hr size=3>";
                 text += "<font face=arial size=4>1. The IDF and SDRF files seem to be MAGE TAB version 1.1. We support 1.0<br>";
@@ -1134,9 +1142,12 @@ for(int k=0;k<dataTypes.length;k++) {
 			} else {
 				sflp.detectionComboBox.setSelectedItem("none");
 			}
-			if(columnDataTypes.containsKey("MEV:pvalue")) {
+			if(columnDataTypes.containsKey("MEV:pvalue") && columnDataTypes.containsKey("MEV:detection")) {
 				sflp.pValueComboBox.setSelectedItem(columnDataTypes.get("MEV:pvalue"));
 				setMatrixState(matrixType.INTENSITY_DETECT_PVAL);
+			} else if(columnDataTypes.containsKey("MEV:pvalue")) {
+				sflp.pValueComboBox.setSelectedItem(columnDataTypes.get("MEV:pvalue"));
+				setMatrixState(matrixType.INTENSITY_PVAL);				
 			} else {
 				sflp.pValueComboBox.setSelectedItem("none");				
 			}
