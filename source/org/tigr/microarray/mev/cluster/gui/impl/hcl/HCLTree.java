@@ -61,12 +61,13 @@ public class HCLTree extends JPanel {
     
     protected int orientation = HORIZONTAL;
     protected int min_pixels = 2;
-    protected int max_pixels = 10;
+    protected int max_pixels = 100;
     protected float zero_threshold = 0.05f;
     protected Color lineColor = new Color(0, 0, 128);
     protected Color belowThrColor = Color.lightGray;
     protected Color selectedLineColor = Color.magenta;
     protected boolean actualArms = false;
+    protected boolean useAbsoluteHeight = true;
     // initial data
     protected IData data;
     // a result data
@@ -134,7 +135,7 @@ public class HCLTree extends JPanel {
         addMouseListener(new Listener());
     }
     
-    private HCLTree() { }
+//    private HCLTree() { }
     
     /**
      * Creates a new HCLTree.  Used to restore state from a saved file.  
@@ -215,7 +216,7 @@ public class HCLTree extends JPanel {
      */
     public int [][] getClusterRowIndices(){
         
-        int k = this.getNumberOfTerminalNodes();
+//        int k = this.getNumberOfTerminalNodes();
         int index = 0;
         int [] endPoints;
         int [] rows;
@@ -288,16 +289,16 @@ public class HCLTree extends JPanel {
         this.horizontalOffset = offset;
     }
     
-    /**
-     *  finds min dist in tree, initializes zeroThreshold
-     */
-    private float findMinDistance(){
-        float min = Float.POSITIVE_INFINITY;
-        for(int i = 0; i < treeData.height.length;i++){
-            min = Math.min(min, treeData.height[i]);
-        }
-        return min;
-    }
+//    /**
+//     *  finds min dist in tree, initializes zeroThreshold
+//     */
+//    private float findMinDistance(){
+//        float min = Float.POSITIVE_INFINITY;
+//        for(int i = 0; i < treeData.height.length;i++){
+//            min = Math.min(min, treeData.height[i]);
+//        }
+//        return min;
+//    }
     
     /**
      * Sets node color.
@@ -441,14 +442,14 @@ public class HCLTree extends JPanel {
     }
     
     
-    /**
-     * Fills in an array by -1 values.
-     */
-    private void clear(int[] array) {
-        for (int i = array.length; --i >= 0;) {
-            array[i] = -1;
-        }
-    }
+//    /**
+//     * Fills in an array by -1 values.
+//     */
+//    private void clear(int[] array) {
+//        for (int i = array.length; --i >= 0;) {
+//            array[i] = -1;
+//        }
+//    }
     
     /**
      * Calculates the current scale.
@@ -492,14 +493,14 @@ public class HCLTree extends JPanel {
         return pos;
     }
     
-    /**
-     * Returns heights shifted by min distance, corrects for distance polarity change
-     */
-    private float[] shiftHeights(float [] height, float minH){
-        for(int i = 0; i < height.length; i++)
-            height[i] = height[i] - minH;
-        return height;
-    }
+//    /**
+//     * Returns heights shifted by min distance, corrects for distance polarity change
+//     */
+//    private float[] shiftHeights(float [] height, float minH){
+//        for(int i = 0; i < height.length; i++)
+//            height[i] = height[i] - minH;
+//        return height;
+//    }
     
     
     /**
@@ -515,7 +516,10 @@ public class HCLTree extends JPanel {
             child_1 = treeData.child_1_array[node];
             child_2 = treeData.child_2_array[node];
             
-            pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+            if (!this.useAbsoluteHeight)
+            	pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+            else
+            	pHeights[node] = Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
 
         }
         return pHeights;
@@ -879,7 +883,7 @@ public class HCLTree extends JPanel {
     
     public void saveGeneNodeHeights(){
         String line;
-        int nodeIndex = 0;
+//        int nodeIndex = 0;
         int child1, child2;
         
         File file = null;
@@ -931,7 +935,7 @@ public class HCLTree extends JPanel {
     
     public void saveExperimentNodeHeights(){
         String line;
-        int nodeIndex = 0;
+//        int nodeIndex = 0;
         int child1, child2;
         
         File file = null;

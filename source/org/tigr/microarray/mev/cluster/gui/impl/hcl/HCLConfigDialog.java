@@ -54,6 +54,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
     private JTextField maxTextField;
     private JTextField numTerminalsField;
     private JCheckBox armLengthBox;
+    private JCheckBox absArmLengthBox;
     
     private float zThr;
     private int minPixDist;
@@ -135,7 +136,8 @@ public class HCLConfigDialog extends AlgorithmDialog {
         
         treeDimPanel.add(new JLabel("Minimum pixel height"), new GridBagConstraints(0,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         treeDimPanel.add(new JLabel("Maximum pixel height"), new GridBagConstraints(0,1,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
-        treeDimPanel.add(new JLabel("Use true branch length structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+        treeDimPanel.add(new JLabel("Use jagged tree structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+        treeDimPanel.add(new JLabel("Use true branch length structure"), new GridBagConstraints(0,3,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         
         minTextField = new JTextField(String.valueOf(minPixelDistance), 4);
         treeDimPanel.add(minTextField, new GridBagConstraints(1,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -145,6 +147,11 @@ public class HCLConfigDialog extends AlgorithmDialog {
         armLengthBox.setBackground(Color.white);
         armLengthBox.setSelected(tree.actualArms);
         treeDimPanel.add(armLengthBox, new GridBagConstraints(1,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        absArmLengthBox = new JCheckBox();
+        absArmLengthBox.setBackground(Color.white);
+        absArmLengthBox.setSelected(tree.useAbsoluteHeight);
+        treeDimPanel.add(absArmLengthBox, new GridBagConstraints(1,3,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
         applyButton = new JButton("Apply");
         applyButton.setActionCommand("apply-tree-dimensions-command");
         applyButton.setFocusPainted(false);
@@ -152,7 +159,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
         applyButton.setSize(110, 30);
         applyButton.setPreferredSize(new Dimension(120, 30));
         applyButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.gray));
-        treeDimPanel.add(applyButton, new GridBagConstraints(2,0,1,2,0.8,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
+        treeDimPanel.add(applyButton, new GridBagConstraints(2,2,1,2,0.8,0,GridBagConstraints.CENTER,GridBagConstraints.NONE, new Insets(0,0,0,0),0,0));
         
         JPanel panel3 = new JPanel(new BorderLayout());
         panel3.setForeground(Color.white);
@@ -238,6 +245,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
                     maxPixDist = Integer.parseInt(maxTextField.getText());
                     tree.setProperties(zThr, minPixDist, maxPixDist);
                     tree.actualArms = armLengthBox.isSelected();
+                    tree.useAbsoluteHeight = absArmLengthBox.isSelected();
                     viewer.revalidateViewer();
                     viewer.repaint();
                     result = JOptionPane.OK_OPTION;
@@ -248,10 +256,12 @@ public class HCLConfigDialog extends AlgorithmDialog {
                 }
             } else if(command.equals("apply-tree-dimensions-command")){                
                 try{
+                    tree.actualArms = armLengthBox.isSelected();
+                    tree.useAbsoluteHeight = absArmLengthBox.isSelected();
                     minPixDist = Integer.parseInt(minTextField.getText());
                     maxPixDist = Integer.parseInt(maxTextField.getText());
                     tree.setPixelHeightLimits(minPixDist, maxPixDist);
-                    tree.actualArms = armLengthBox.isSelected();
+                    tree.repaint();
                     viewer.revalidateViewer();
                     viewer.repaint();
                 } catch (NumberFormatException e1) {
