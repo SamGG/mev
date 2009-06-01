@@ -67,7 +67,7 @@ public class HCLTree extends JPanel {
     protected Color belowThrColor = Color.lightGray;
     protected Color selectedLineColor = Color.magenta;
     protected boolean actualArms = false;
-    protected boolean useAbsoluteHeight = true;
+    protected boolean useAbsoluteHeight = false;
     // initial data
     protected IData data;
     // a result data
