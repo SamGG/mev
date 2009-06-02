@@ -920,21 +920,52 @@ public class RP extends AbstractAlgorithm{
 	    	ExperimentUtil.sort2(rankArray, adata[i]);
 	    }
 	    for (int i = 0; i<numGenes; i++){
-	    	double rankProductDown = 1;
-	    	double rankProductUp = 1;
+	    	double[] rankProductDownArrayTemp = new double[numGroupA];
+			for (int num=0; num<numGroupA; num++){
+				rankProductDownArrayTemp[num]=1;
+			}
 	    	if (doDown){
-		    	for (int j = 0; j<adata.length; j++){
-		    		rankProductDown = rankProductDown*adata[j][i]/numGenes;
+	    		int sampleNum=0;
+	    		for (int a=0; a<numGroupA; a++){
+	    			for (int b=0; b<numGroupB; b++){
+	    				rankProductDownArrayTemp[a] = rankProductDownArrayTemp[a]*adata[sampleNum][i]/numGenes;
+	    				sampleNum++;
+	    			}
+	    			rankProductDownArrayTemp[a] = Math.pow(rankProductDownArrayTemp[a], 1f/(float)numGroupB);
 		    	}
-		    	rankProductArrayDown[i] = numGenes*Math.pow(rankProductDown, 1f/(float)adata.length);
-		    	rankProductDown = 1;
+	    		double rankProductDownTemp = 1;
+	    		for (int c=0; c<rankProductDownArrayTemp.length; c++){
+	    			rankProductDownTemp=rankProductDownArrayTemp[c]*rankProductDownTemp;
+	    		}
+		    	rankProductArrayDown[i] = numGenes*Math.pow(rankProductDownTemp, 1f/(float)rankProductDownArrayTemp.length);
 	    	}
+
+//	    	double rankProductUp = 1;
+	    	double[] rankProductUpArrayTemp = new double[numGroupA];
+			for (int num=0; num<numGroupA; num++){
+				rankProductUpArrayTemp[num]=1;
+			}
 	    	if (doUp){
-	    		for (int j = 0; j<adata.length; j++){
-		    		rankProductUp = rankProductUp*(adata[j].length+1 - adata[j][i])/numGenes;
+
+	    		int sampleNum=0;
+	    		for (int a=0; a<numGroupA; a++){
+	    			for (int b=0; b<numGroupB; b++){
+	    				rankProductUpArrayTemp[a] = rankProductUpArrayTemp[a]*(adata[sampleNum].length+1 - adata[sampleNum][i])/numGenes;
+	    				sampleNum++;
+	    			}
+	    			rankProductUpArrayTemp[a] = Math.pow(rankProductUpArrayTemp[a], 1f/(float)numGroupB);
 		    	}
-		    	rankProductArrayUp[i] = numGenes*Math.pow(rankProductUp, 1f/(float)adata.length);
-		    	rankProductUp = 1;
+	    		double rankProductUpTemp = 1;
+	    		for (int c=0; c<rankProductUpArrayTemp.length; c++){
+	    			rankProductUpTemp=rankProductUpArrayTemp[c]*rankProductUpTemp;
+	    		}
+		    	rankProductArrayUp[i] = numGenes*Math.pow(rankProductUpTemp, 1f/(float)rankProductUpArrayTemp.length);
+	    		
+//	    		for (int j = 0; j<adata.length; j++){
+//		    		rankProductUp = rankProductUp*(adata[j].length+1 - adata[j][i])/numGenes;
+//		    	}
+//		    	rankProductArrayUp[i] = numGenes*Math.pow(rankProductUp, 1f/(float)adata.length);
+//		    	rankProductUp = 1;
 	    	}
 	    }
 	    
@@ -981,13 +1012,36 @@ public class RP extends AbstractAlgorithm{
 		    }
 
 		    for (int i = 0; i<numGenes; i++){
-		    	double permutedRankProduct = 1;
-		    	for (int j = 0; j<numOfPairs; j++){
-		    		permutedRankProduct = permutedRankProduct*(randPairs[j][i]+1)/numGenes;
+		    	
+
+		    	double[] rankProductDownArrayTemp = new double[numGroupA];
+				for (int num=0; num<numGroupA; num++){
+					rankProductDownArrayTemp[num]=1;
+				}
+	    		int sampleNum=0;
+	    		for (int a=0; a<numGroupA; a++){
+	    			for (int b=0; b<numGroupB; b++){
+	    				rankProductDownArrayTemp[a] = rankProductDownArrayTemp[a]*randPairs[sampleNum][i]/numGenes;
+	    				sampleNum++;
+	    			}
+	    			rankProductDownArrayTemp[a] = Math.pow(rankProductDownArrayTemp[a], 1f/(float)numGroupB);
 		    	}
-		    	trynewarray[ind]= numGenes*Math.pow(permutedRankProduct, 1f/(float)adata.length);
+	    		double rankProductDownTemp = 1;
+	    		for (int c=0; c<rankProductDownArrayTemp.length; c++){
+	    			rankProductDownTemp=rankProductDownArrayTemp[c]*rankProductDownTemp;
+	    		}
+	    		trynewarray[ind] = numGenes*Math.pow(rankProductDownTemp, 1f/(float)rankProductDownArrayTemp.length);
 		    	ind++;
-		    	permutedRankProduct = 1;
+		    	
+		    	
+		    	
+//		    	double permutedRankProduct = 1;
+//		    	for (int j = 0; j<numOfPairs; j++){
+//		    		permutedRankProduct = permutedRankProduct*(randPairs[j][i]+1)/numGenes;
+//		    	}
+//		    	trynewarray[ind]= numGenes*Math.pow(permutedRankProduct, 1f/(float)adata.length);
+//		    	ind++;
+//		    	permutedRankProduct = 1;
 		    }
         }
 	    Arrays.sort(trynewarray);
@@ -1194,7 +1248,7 @@ public class RP extends AbstractAlgorithm{
 		    }
 		    if (correctionMethod == RPInitBox.FALSE_PROP){
 				for (int i=0; i<rankg.length; i++){
-			    	if(qValuesUp[i]<=falseProp){
+			    	if(qValsUp[i]<=falseProp){
 			    		sigGenesArrays[1][counters] = i;
 			    		counters++;
 			    	}
