@@ -61,7 +61,7 @@ public class HCLTree extends JPanel {
     
     protected int orientation = HORIZONTAL;
     protected int min_pixels = 2;
-    protected int max_pixels = 100;
+    protected int max_pixels = 10;
     protected float zero_threshold = 0.05f;
     protected Color lineColor = new Color(0, 0, 128);
     protected Color belowThrColor = Color.lightGray;
