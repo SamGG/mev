@@ -1521,6 +1521,7 @@ public class ClusterTable extends JPanel implements IViewer {
     public class RBListener implements ActionListener{
     	public void actionPerformed(ActionEvent e){
     		updateBottomViewer();
+            iViewer.onSelected(framework);
     	}
     }
     public class MenuListener implements ActionListener{
@@ -1640,7 +1641,7 @@ public class ClusterTable extends JPanel implements IViewer {
         this.tableOfClusters.updateUI();
         tableOfClusters.repaint();
         repaint();
-        onSelected(framework);
+//        onSelected(framework);
         this.tableOfClusters.revalidate();
         this.updateUI();
         pane.updateUI();
