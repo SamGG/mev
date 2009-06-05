@@ -47,9 +47,9 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     private IData data;
     private int[] samplesOrder;
     private int[][] clusters;
-    private static ArrayList<Color> storedGeneColors;
-    private static ArrayList<Color> storedSampleColors = new ArrayList<Color>();
-    private static ArrayList<Color> savedSampleColorOrder = new ArrayList<Color>();
+    private ArrayList<Color> storedGeneColors;
+    private ArrayList<Color> storedSampleColors = new ArrayList<Color>();
+    private ArrayList<Color> savedSampleColorOrder = new ArrayList<Color>();
     private int compactedColorBarHeight = 0;
     private int clusterIndex;
     private int elementWidth;
@@ -505,7 +505,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        	int index = data.getVisibleCluster((Color)storedSampleColors.get(cluster), false);
 	        	if (index==-1) continue;
 	        	clusterName = data.getClusterLabel(index, false);
-		        g.drawString(clusterName, elementWidth*(samples+visibleClusters) + insets.left+10, -h + COLOR_BAR_HEIGHT*(numberOfClusters-(cluster)));
+	        	if (clusterName!=null)
+	        		g.drawString(clusterName, elementWidth*(samples+visibleClusters) + insets.left+10, -h + COLOR_BAR_HEIGHT*(numberOfClusters-(cluster)));
 	        }
         }
         
