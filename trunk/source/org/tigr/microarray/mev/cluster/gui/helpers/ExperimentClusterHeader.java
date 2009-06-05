@@ -45,9 +45,9 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     private Experiment experiment;
     private IData data;
     private int[][] samplesOrder;
-    private static ArrayList<Color> storedGeneColors;
-    private static ArrayList<Color> storedSampleColors = new ArrayList<Color>();
-    private static ArrayList<Color> savedSampleColorOrder = new ArrayList<Color>();
+    private ArrayList<Color> storedGeneColors;
+    private ArrayList<Color> storedSampleColors = new ArrayList<Color>();
+    private ArrayList<Color> savedSampleColorOrder = new ArrayList<Color>();
     private int compactedColorBarHeight = 0;
 
     private int elementWidth;

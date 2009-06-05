@@ -458,7 +458,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
         setDrawBorders(menu.isDrawingBorder());
         setCompactClusters(menu.isCompactClusters());
         setShowRects(menu.isShowRects());
-        setAutoArrangeColors(!menu.isAutoArrangeColors());
+        setAutoArrangeColors(menu.isAutoArrangeColors());
         header.setCompactClusters(menu.isCompactClusters());
         header.setStoredColors(storedGeneColors);
         if (isAutoArrangeColors||isCompact){
@@ -500,7 +500,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     	boolean isAutoArrangeChanged=isAutoArrangeColors;
         setDrawBorders(menu.isDrawingBorder());
         setCompactClusters(menu.isCompactClusters());
-        setAutoArrangeColors(!menu.isAutoArrangeColors());
+        setAutoArrangeColors(menu.isAutoArrangeColors());
         setShowRects(menu.isShowRects());
         header.isShowRects = isShowRects;
         header.setCompactClusters(menu.isCompactClusters());

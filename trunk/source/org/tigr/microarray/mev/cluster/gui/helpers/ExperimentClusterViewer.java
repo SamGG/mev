@@ -432,7 +432,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         setAntialiasing(menu.isAntiAliasing());
         setDrawBorders(menu.isDrawingBorder());
         setCompactClusters(menu.isCompactClusters());
-        setAutoArrangeColors(!menu.isAutoArrangeColors());
+        setAutoArrangeColors(menu.isAutoArrangeColors());
         setShowRects(menu.isShowRects());
         header.isShowRects = isShowRects;
         header.setCompactClusters(menu.isCompactClusters());
@@ -479,7 +479,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         header.setUseDoubleGradient(useDoubleGradient);    	
         setDrawBorders(menu.isDrawingBorder());
         setCompactClusters(menu.isCompactClusters());
-        setAutoArrangeColors(!menu.isAutoArrangeColors());
+        setAutoArrangeColors(menu.isAutoArrangeColors());
         setShowRects(menu.isShowRects());
         header.isShowRects = isShowRects;
         header.setCompactClusters(menu.isCompactClusters());
