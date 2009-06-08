@@ -56,7 +56,13 @@ public class PublicURL {
 		//TGI accessions are a special case in that they require a species name
 		//added to their accession. For all other accessions, multiple accession values are 
 		//added together into one string to put into the query.
-		if(!URLKey.equals(AnnotationConstants.TGI_GC) &&
+		if(URLKey.equals(AnnotationConstants.GO_TERMS)) {
+			String temp = params[0];
+			for(int i=1; i<params.length; i++) {
+				temp += " " + params[i];
+			}
+			params = new String[]{temp};
+		} else if(!URLKey.equals(AnnotationConstants.TGI_GC) &&
 				!URLKey.equals(AnnotationConstants.TGI_ORTH) &&
 						!URLKey.equals(AnnotationConstants.TGI_TC)
 				) {
