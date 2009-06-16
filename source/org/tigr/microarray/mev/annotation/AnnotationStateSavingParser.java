@@ -260,7 +260,7 @@ public class AnnotationStateSavingParser {
 	    	String strand = temp.substring(index+1, index+2).trim();
 	    	//System.out.println("Strand" + strand);
 	    	
-	    	String _temp = temp.substring(0,index-1).trim();
+	    	String _temp = temp.substring(0,index).trim();
 	    	int chrInd = _temp.indexOf(":");
 	    	String chr = _temp.substring(0, chrInd);
 	    	chr = chr.substring(3, chr.length());
