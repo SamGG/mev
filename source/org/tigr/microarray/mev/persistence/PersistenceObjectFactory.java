@@ -461,14 +461,7 @@ public class PersistenceObjectFactory {
     		}
 			isNull = dis.readBoolean();
 			isNonZero = dis.readBoolean();
-			//Make sure extraFields contains unique values
-			
-			HashMap<String, String> temphash = new HashMap<String,String>();
-			for(String fieldName: extraFields) {
-				temphash.put(fieldName, "");
-			}
-			extraFields = temphash.keySet().toArray(new String[temphash.keySet().size()]);
-			
+
 			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
 				if(isCGHData){
 					allSlideDataElements.add(i, new CGHSlideDataElement(rows, cols, extraFields, uid, isNull, isNonZero));
@@ -521,12 +514,13 @@ public class PersistenceObjectFactory {
     			dos.writeInt(sde.getColumns()[j]);
     		}
 		
-    		int numFields = sde.getExtraFields().length;
+    		String[] oldModelFields = sd.getOldModelFieldNames();
+    		int numFields = oldModelFields.length;
     		dos.writeInt(numFields);
     		for(int j=0; j<numFields; j++){
     			try {
-	    			temp = sde.getExtraFields()[j].toCharArray();
-	        		dos.writeInt(temp.length);
+    				temp = sde.getFieldAt(j).toCharArray();
+	    			dos.writeInt(temp.length);
 	        		for(int k=0; k<temp.length; k++){
 	        			dos.writeChar(temp[k]);
 	        		}
