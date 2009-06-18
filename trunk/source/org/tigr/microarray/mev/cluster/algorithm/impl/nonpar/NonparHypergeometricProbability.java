@@ -263,7 +263,7 @@ public class NonparHypergeometricProbability {
     		P=0;
     		for (R=SAMPHITS; R<(POPHITS+1); R++){
     			currP = dhyperg(R, SAMPTOT, POPHITS, POPTOT);
-    			if(currP <= probCutoff) {
+    			if((float)currP <= (float)probCutoff) {
     				//System.out.println("U currP="+currP);    			
     				P+= currP;
     			}
@@ -274,7 +274,7 @@ public class NonparHypergeometricProbability {
     		P=0;
     		for (R=SAMPHITS; R<(SAMPTOT+1); R++){
     			currP = dhyperg(R, SAMPTOT, POPHITS, POPTOT);
-    			if(currP <= probCutoff) {
+    			if((float)currP <= (float)probCutoff) {
     				//System.out.println("U currP="+currP);
     				P+= currP;
     			}
@@ -302,7 +302,7 @@ public class NonparHypergeometricProbability {
     		P=0;
     		for (R=SAMPHITS; R>=0; R--){
     			currP = dhyperg(R, SAMPTOT, POPHITS, POPTOT);
-    			if(currP <= probCutoff) {
+    			if((float)currP <= (float)probCutoff) {
     				//System.out.println("currP="+currP);
     				P+= currP;
     			}
@@ -313,7 +313,7 @@ public class NonparHypergeometricProbability {
     		P=0;
     		for (R=SAMPHITS; R>=0; R--){
     			currP = dhyperg(R, SAMPTOT, POPHITS, POPTOT);
-    			if(currP <= probCutoff) {
+    			if((float)currP <= (float)probCutoff) {
     				//System.out.println("currP="+currP);
     				P+= currP;
     			}
@@ -328,10 +328,10 @@ public class NonparHypergeometricProbability {
         //System.out.println("p = "+hgp.SumHGP(325, 19, 37, 5));
         //System.out.println("p exact= "+hgp.pExactForMatrix(2, 7, 8, 2));
         
-        int a = 3;
-        int b = 2;
-        int c = 2; 
-        int d = 3;
+        int a = 2;
+        int b = 4;
+        int c = 3; 
+        int d = 1;
         
         double uP = hgp.upperSumHGP(a+b+c+d, a+c, a+b, a);
         double lP = hgp.lowerSumHGP(a+b+c+d, a+c, a+b, a);
