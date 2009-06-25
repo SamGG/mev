@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -225,12 +227,16 @@ public class AnnotationFileReader {
     	StringSplitter ss = new StringSplitter('\t');
     	String currentLine;
     	Vector columnNames=new Vector();
+    	Pattern pattern=Pattern.compile("# *Fields:*", Pattern.CASE_INSENSITIVE);
     	while((currentLine=reader.readLine())!=null) {
-    		while(!currentLine.equals("# Fields: ")){
+    		
+    		
+    		while(!pattern.matcher(currentLine).find()){
     			currentLine=reader.readLine();
+     			
     		}
     		
-    		if(currentLine.equals("# Fields: ")) {
+    		if(pattern.matcher(currentLine).find()) {
     			String temp;
     			while((currentLine=reader.readLine()).startsWith("#")) {
     				//System.out.println("currentLine is:"+currentLine);
