@@ -1924,7 +1924,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		</copy>
 		
 		<ant target="signjars"/>
-		<ant target="copy-to-web"/>
 		
 		<!-- Zipping not necessary right now
 		<zip destfile="${package.dir}/MeV_${version}_webstart.zip"
@@ -1936,13 +1935,20 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		</zip>
 		-->
 	</target>
+	<target name="webstart-test">
+		<loadproperties srcFile="local.properties"/>
+		<input
+	    message="Please enter tm4.org password:"
+	    addproperty="pwd"
+	  />
+		<ant target="build-package"/>
+		<ant target="webstart-package"></ant>
+		<ant target="copy-to-web"/>
+	</target>
 	
 	<!-- Relies on properties loaded from local.properties as well as user input $pwd -->
 	<target name="copy-to-web">
-		<input
-		    message="Please enter tm4.org password:"
-		    addproperty="pwd"
-		  />
+
 		  <scp trust="true" todir="${username}:${pwd}@${tm4-url}:${webstart-jar-path}">
 			   <fileset dir="../deploy/webstart/mev/lib" includes="*.jar" />
 		  </scp>
