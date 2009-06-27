@@ -120,31 +120,36 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 	 */
 	public Point getFirstExpressionCell(Vector<Vector<String>> dataVector) {
 		if(firstRow == -1 || firstCol == -1) {
-		int guessCol = 0, guessRow = 0;
-		Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
-		for (int j = lastRow.size() - 1; j >= 0; j--) {
-			String thisEntry = lastRow.get(j);
-			try {
-				Float temp = new Float(thisEntry);
-			} catch (Exception e) {
-				guessCol = j + 1;
-				break;
+			int guessCol = 0, guessRow = 0;
+			Vector<String> lastRow = dataVector.get(dataVector.size() - 1);
+			for (int j = lastRow.size() - 1; j >= 0; j--) {
+				String thisEntry = lastRow.get(j);
+				try {
+					Float temp = new Float(thisEntry);
+				} catch (Exception e) {
+					guessCol = j + 1;
+					break;
+				}
 			}
-		}
-	
-		for (int i = dataVector.size() - 1; i >= 0; i--) {
-			Vector<String> thisRow = dataVector.get(i);
-			try {
-				String thisEntry = thisRow.get(guessCol);
-				Float temp = new Float(thisEntry);
-			} catch (Exception e) {
-				guessRow = i + 1;
-				break;
+		
+			for (int i = dataVector.size() - 1; i >= 0; i--) {
+				Vector<String> thisRow = dataVector.get(i);
+				try {
+					String thisEntry = thisRow.get(guessCol);
+					Float temp = new Float(thisEntry);
+				} catch (Exception e) {
+					guessRow = i + 1;
+					break;
+				}
 			}
+			if(guessCol ==0)
+				guessCol = 1;
+			return new Point(guessRow, guessCol);
+		} else {
+			//Adjust the point location provided to account for the fact
+			//that the header row is not loaded in the JTable as cells.
+			return new Point(firstRow-1, firstCol);
 		}
-		return new Point(guessRow, guessCol);
-		}
-		return new Point(firstRow, firstCol);
 	}
 
 }
