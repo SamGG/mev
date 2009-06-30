@@ -1937,10 +1937,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	</target>
 	<target name="webstart-test">
 		<loadproperties srcFile="local.properties"/>
-		<input
-	    message="Please enter tm4.org password:"
-	    addproperty="pwd"
-	  />
 		<ant target="build-package"/>
 		<ant target="webstart-package"></ant>
 		<ant target="copy-to-web"/>
@@ -1959,10 +1955,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<unsignjar jar="${package.dir}/webstart/mev/lib/mail.jar"/>
 		<unsignjar jar="${package.dir}/webstart/mev/lib/magetab-parser.jar"/>
 
-		<input
-		    message="Please enter jarsigner password:"
-		    addproperty="pwd"
-		  />
 		<signjar 
 		    alias="tm4group" keystore="${keystore-location}"
 		    storepass="${pwd}">
