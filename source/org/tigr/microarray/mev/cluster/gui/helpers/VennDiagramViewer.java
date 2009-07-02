@@ -121,13 +121,13 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 		clusterCount = Math.min(Math.max(1, clusterArray.length),4);//sets clusterCount to 1,2,3,or 4
 		if (clusterCount==1||clusterCount==4)
 			return;
-		
+		circles[2] = new Circle();//added to prevent null-pointers from 2-cluster diagrams
 		for (int i=0; i<clusterCount; i++){
 			clusters[i] = clusterArray[i].getIndices();
 			clusterColors[i] = clusterArray[i].getClusterColor();
 			clusterNames[i] = clusterArray[i].getClusterLabel();
 			if (clusterNames[i].length()<1)
-				clusterNames[i] = "(Cluster 1)";
+				clusterNames[i] = "(Cluster "+(i+1)+")";
 			circles[i] = new Circle();
 			circles[i].setTag(clusterNames[i]);
 		}
@@ -472,33 +472,26 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 		circles[0].y = zoom*12;       
 		circles[1].x = zoom*55;      
 		circles[1].y = zoom*12;
-		if (clusterCount==3){
-			circles[2].x = zoom*40;
-			circles[2].y = zoom*38;     
-		}
+		circles[2].x = zoom*40;
+		circles[2].y = zoom*38;       
 		int circleWidth = 60;
         circles[0].radius  = zoom*circleWidth;
         circles[1].radius  = zoom*circleWidth;
-        if (clusterCount==3)
-        	circles[2].radius  = zoom*circleWidth;
+        circles[2].radius  = zoom*circleWidth;
 
         circles[0].label_x = zoom*15;
-        circles[0].label_y = zoom*9;
-        circles[1].label_x = zoom*88;
-        circles[1].label_y = zoom*9;   
-        if (clusterCount==3){
-	        circles[2].label_x = zoom*50;
-	        circles[2].label_y = zoom*103;
-        }
+        circles[0].label_y = zoom*9;    // 35
+        circles[1].label_x = zoom*88;   // 266;
+        circles[1].label_y = zoom*9;    // 35;
+        circles[2].label_x = zoom*50;
+        circles[2].label_y = zoom*103;
 
-        circles[0].center_x = (circles[0].x + (circles[0].x + circles[0].radius))/2;
-        circles[0].center_y = (circles[0].y + (circles[0].y + circles[0].radius))/2;
-        circles[1].center_x = (circles[1].x + (circles[1].x + circles[1].radius))/2;
-        circles[1].center_y = (circles[1].y + (circles[1].y + circles[1].radius))/2;
-        if (clusterCount==3){
-	        circles[2].center_x = (circles[2].x + (circles[2].x + circles[2].radius))/2;
-	        circles[2].center_y = (circles[2].y + (circles[2].y + circles[2].radius))/2;
-        }
+        circles[0].center_x = (circles[0].x + (circles[0].x + circles[0].radius))/2   ;
+        circles[0].center_y = (circles[0].y + (circles[0].y + circles[0].radius))/2   ;
+        circles[1].center_x = (circles[1].x + (circles[1].x + circles[1].radius))/2   ;
+        circles[1].center_y = (circles[1].y + (circles[1].y + circles[1].radius))/2   ;
+        circles[2].center_x = (circles[2].x + (circles[2].x + circles[2].radius))/2   ;
+        circles[2].center_y = (circles[2].y + (circles[2].y + circles[2].radius))/2   ;
       }
 
 	public void paint(Graphics g) {
