@@ -1,9 +1,11 @@
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
-
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -41,7 +43,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	private boolean[] regionSelected ={false, false, false, false, false, false, false, false};
 	private Experiment experiment;
     private IFramework framework;
-	private boolean sampleVD;
 	private int totalElements;
 	private int exptID = 0;
 	private int zoom = 3;
@@ -49,17 +50,14 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	private int clusterCount=3;
 	private int[] intersects;
     Color unselected = new Color(200,200,255);
-    Color selectedRegion = new Color(180,180,255);
+    Color selectedRegion = new Color(170,170,255);
     private boolean showHighlights = true;
     
-	private Font title_font ;
+	private Font values_font ;
 	private Font class_font ;
 	private Font pval_font ;
 	
 	private Circle[] circles = new Circle[3];
-//	private Circle circle1 = new Circle();
-//	private Circle circle2 = new Circle();
-//	private Circle circles3 = new Circle();
     private static final Font ERROR_FONT = new Font("monospaced", Font.BOLD, 20);
 	protected JPopupMenu popup;
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
@@ -79,40 +77,56 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	public VennDiagramViewer(IFramework fm, boolean sampleVD, Cluster[] clusterArray) {
 		setClusters(clusterArray);
 	    framework= fm;
-        this.onSelected(framework);
-        this.sampleVD = sampleVD;
-        if (framework!=null){
-	        this.experiment = framework.getData().getExperiment();
-	    	if (this.sampleVD)
-	    		totalElements = experiment.getNumberOfSamples();
-	    	else
-	    		totalElements = experiment.getNumberOfGenes();
-        }else {
-        	totalElements = 25;
-        }
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-        this.setBackground(Color.white);
-        init();
+        this.experiment = framework.getData().getExperiment();
+    	if (sampleVD)
+    		totalElements = experiment.getNumberOfSamples();
+    	else
+    		totalElements = experiment.getNumberOfGenes();
+    	init();
     }
+	/**
+	 * Constructs a Venn Diagram Viewer
+	 *
+	 *
+	 */
+	public VennDiagramViewer(int[][] clusterArray){
+		this(clusterArray, null, null);
+	}
+	/**
+	 * Constructs a Venn Diagram Viewer
+	 *
+	 *
+	 */
+	public VennDiagramViewer(int[][] clusterArray, String[] clusterNames){
+		this(clusterArray, clusterNames, null);
+	}
 	/**
 	 * Constructs a <code>Venn Diagram Viewer</code> for testing
 	 *
 	 *
 	 */
-	public VennDiagramViewer(int[][] clusterArray) {
-		setClusters(clusterArray);
-        this.sampleVD = false;
-        totalElements = 25;
+	public VennDiagramViewer(int[][] clusterArray, String[] clusterNames, Color[] clusterColors) {
+		this(clusterArray, clusterNames, clusterColors, 25);
+    }
+
+	/**
+	 * The Master Constructor <code>Venn Diagram Viewer</code>
+	 *
+	 *
+	 */
+	public VennDiagramViewer(int[][] clusterArray, String[] clusterNames, Color[] clusterColors, int totalEls) {
+		setClusters(clusterArray, clusterNames, clusterColors);
+        totalElements = totalEls;
+        init();
+    }
+	
+	private void init(){
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
         addMouseListener(listener);
         addMouseMotionListener(listener);
-        this.setBackground(Color.white);
-        init();
-    }
+        refreshData();
+	}
 	public void setClusters(Cluster[] clusterArray){
 		if (clusterArray==null){
     		clusterCount=1;
@@ -131,117 +145,25 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 			circles[i] = new Circle();
 			circles[i].setTag(clusterNames[i]);
 		}
-		init();
+		refreshData();
 	}
-//    public void setClustersOld(Cluster[] clusterArray){
-//    	if (clusterArray==null){
-//    		clusterCount=1;
-//    		return;
-//    	}
-//    	if (clusterArray.length>3){
-//    		clusterCount=4;
-//    		//too many clusters
-//    	}
-//    	if (clusterArray.length<2){
-//    		clusterCount=1;
-//    		//too few clusters
-//    	}
-//    	if (clusterArray.length==2){
-//    		//2 circle venn-diagram
-//    		clusterCount=2;
-//    		clusters[0] = clusterArray[0].getIndices();
-//    		clusterColors[0] = clusterArray[0].getClusterColor();
-//    		clusterNames[0] = clusterArray[0].getClusterLabel();
-//    		if (clusterNames[0].length()<1)
-//    			clusterNames[0] = "(Cluster 1)";
-//    		clusters[1] = clusterArray[1].getIndices();
-//    		clusterColors[1] = clusterArray[1].getClusterColor();
-//    		clusterNames[1] = clusterArray[1].getClusterLabel();
-//    		if (clusterNames[1].length()<1)
-//    			clusterNames[1] = "(Cluster 2)";
-//    		circles[0].setTag(clusterNames[0]);
-//    		circles[1].setTag(clusterNames[1]);
-//    		init();
-//    		for (int i=0; i<7; i++)
-//    			regionSelected[i] = false;
-//    		
-//    	}
-//    	if (clusterArray.length==3){
-//    		//3 circle venn-diagram
-//    		clusterCount=3;
-//    		clusters[0] = clusterArray[0].getIndices();
-//    		clusterColors[0] = clusterArray[0].getClusterColor();
-//    		clusterNames[0] = clusterArray[0].getClusterLabel();
-//    		if (clusterNames[0].length()<1)
-//    			clusterNames[0] = "(Cluster 1)";
-//    		clusters[1] = clusterArray[1].getIndices();
-//    		clusterColors[1] = clusterArray[1].getClusterColor();
-//    		clusterNames[1] = clusterArray[1].getClusterLabel();
-//    		if (clusterNames[1].length()<1)
-//    			clusterNames[1] = "(Cluster 2)";
-//    		clusters[2] = clusterArray[2].getIndices();
-//    		clusterColors[2] = clusterArray[2].getClusterColor();
-//    		clusterNames[2] = clusterArray[2].getClusterLabel();
-//    		if (clusterNames[2].length()<1)
-//    			clusterNames[2] = "(Cluster 3)";
-//    		circles[0].setTag(clusterNames[0]);
-//    		circles[1].setTag(clusterNames[1]);
-//    		circles[2].setTag(clusterNames[2]);
-//    		init();
-//    	}
-//    }
-    public void setClusters(int[][] clusterArray){
+    public void setClusters(int[][] clusterArray, String[] names, Color[] colors){
     	if (clusterArray==null){
     		clusterCount=1;
     		return;
     	}
-    	if (clusterArray.length>3){
-    		clusterCount=4;
-    		//too many clusters
-    	}
-    	if (clusterArray.length<2){
-    		clusterCount=1;
-    		//too few clusters
-    	}
-    	if (clusterArray.length==2){
-    		//2 circle venn-diagram
-    		clusterCount=2;
-    		clusters[0] = clusterArray[0];
-    		clusterColors[0] = Color.blue;
-    		clusterNames[0] = "Cluster 1";
-    		if (clusterNames[0].length()<1)
-    			clusterNames[0] = "(Cluster 1)";
-    		clusters[1] = clusterArray[1];
-    		clusterColors[1] = Color.green;
-    		clusterNames[1] = "Two!";
-    		if (clusterNames[1].length()<1)
-    			clusterNames[1] = "(Cluster 2)";
-    		circles[0].setTag(clusterNames[0]);
-    		circles[1].setTag(clusterNames[1]);
-    		init();
-    	}
-    	if (clusterArray.length==3){
-    		//3 circle venn-diagram
-    		clusterCount=3;
-    		clusters[0] = clusterArray[0];
-    		clusterColors[0] = Color.blue;
-    		clusterNames[0] = "Cluster 1";
-    		if (clusterNames[0].length()<1)
-    			clusterNames[0] = "(Cluster 1)";
-    		clusters[1] = clusterArray[1];
-    		clusterColors[1] = Color.green;
-    		clusterNames[1] = "Two!";
-    			clusterNames[1] = "(Cluster 2)";
-    		clusters[2] = clusterArray[2];
-    		clusterColors[2] = Color.black;
-    		clusterNames[2] = "Trey";
-    		if (clusterNames[2].length()<1)
-    			clusterNames[2] = "(Cluster 3)";
-    		circles[0].setTag(clusterNames[0]);
-    		circles[1].setTag(clusterNames[1]);
-    		circles[2].setTag(clusterNames[2]);
-    		init();
-    	}
+		clusterCount = Math.min(Math.max(1, clusterArray.length),4);//sets clusterCount to 1,2,3,or 4
+		if (clusterCount==1||clusterCount==4)
+			return;
+		circles[2] = new Circle();//added to prevent null-pointers from 2-cluster diagrams
+		for (int i=0; i<clusterCount; i++){
+			clusters[i] = clusterArray[i];
+			clusterColors[i] = colors==null? Color.black:colors[i];
+			clusterNames[i] = names==null? "Cluster "+(i+1):names[i];
+			circles[i] = new Circle();
+			circles[i].setTag(clusterNames[i]);
+		}
+		refreshData();
     }
     
 	private void setTwoClusterPValue(){
@@ -448,7 +370,7 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     }
 
 	  
-	private void init(){
+	private void refreshData(){
 		for (int i=0; i<7; i++)
 			regionSelected[i] = false;
 		if (clusterCount==3){
@@ -463,37 +385,42 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 		}
 		this.setBackground(Color.white);
 		
-		title_font = new java.awt.Font("Courier", Font.BOLD, 18);
-		class_font = new java.awt.Font("Courier", Font.ITALIC, 24);
+		values_font = new java.awt.Font("Courier", Font.BOLD, 18);
+		class_font = new java.awt.Font("Courier", Font.BOLD, 24);
 		pval_font = new java.awt.Font("Courier", Font.BOLD, 12);
-		
-		// situates Circles where they need to be.
-		circles[0].x = zoom*25;
-		circles[0].y = zoom*12;       
-		circles[1].x = zoom*55;      
-		circles[1].y = zoom*12;
-		circles[2].x = zoom*40;
-		circles[2].y = zoom*38;       
-		int circleWidth = 60;
-        circles[0].radius  = zoom*circleWidth;
-        circles[1].radius  = zoom*circleWidth;
-        circles[2].radius  = zoom*circleWidth;
-
-        circles[0].label_x = zoom*15;
-        circles[0].label_y = zoom*9;    // 35
-        circles[1].label_x = zoom*88;   // 266;
-        circles[1].label_y = zoom*9;    // 35;
-        circles[2].label_x = zoom*50;
-        circles[2].label_y = zoom*103;
-
-        circles[0].center_x = (circles[0].x + (circles[0].x + circles[0].radius))/2   ;
-        circles[0].center_y = (circles[0].y + (circles[0].y + circles[0].radius))/2   ;
-        circles[1].center_x = (circles[1].x + (circles[1].x + circles[1].radius))/2   ;
-        circles[1].center_y = (circles[1].y + (circles[1].y + circles[1].radius))/2   ;
-        circles[2].center_x = (circles[2].x + (circles[2].x + circles[2].radius))/2   ;
-        circles[2].center_y = (circles[2].y + (circles[2].y + circles[2].radius))/2   ;
+		setCircles();
       }
 
+	private void setCircles(){
+		int circleWidth = 60;
+		int xloc = 25;
+		int yloc = 12;
+		
+		circles[0].x = zoom*xloc;
+		circles[0].y = zoom*yloc;       
+		circles[1].x = zoom*(xloc+(circleWidth/2));      
+		circles[1].y = zoom*yloc;
+		circles[2].x = zoom*(xloc+(circleWidth/4));
+		circles[2].y = (int)(zoom*(yloc+(float)circleWidth*0.433013f));   //sqrt(3)/2 *width/2
+        circles[0].diameter  = zoom*circleWidth;
+        circles[1].diameter  = zoom*circleWidth;
+        circles[2].diameter  = zoom*circleWidth;
+
+        circles[0].label_x = zoom*xloc;
+        circles[0].label_y = zoom*(yloc-3);
+        circles[1].label_x = zoom*(xloc+(5*circleWidth/4));  
+        circles[1].label_y = zoom*(yloc-3);
+        circles[2].label_x = zoom*(xloc+(circleWidth/2));   
+        circles[2].label_y = zoom*(yloc+(5*circleWidth/3));
+
+        circles[0].center_x = (circles[0].x + (circles[0].x + circles[0].diameter))/2   ;
+        circles[0].center_y = (circles[0].y + (circles[0].y + circles[0].diameter))/2   ;
+        circles[1].center_x = (circles[1].x + (circles[1].x + circles[1].diameter))/2   ;
+        circles[1].center_y = (circles[1].y + (circles[1].y + circles[1].diameter))/2   ;
+        circles[2].center_x = (circles[2].x + (circles[2].x + circles[2].diameter))/2   ;
+        circles[2].center_y = (circles[2].y + (circles[2].y + circles[2].diameter))/2   ;
+	}
+	
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (clusterCount==4){
@@ -525,76 +452,76 @@ public class VennDiagramViewer extends JPanel implements IViewer {
       private void draw2ClusterSelectedArcs(Graphics g){
 	        g.setColor(Color.white);
 		    int arcwidth = 6;
-		    g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,240);
-		    g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,240,240);
+		    g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,240);
+		    g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,240,240);
 		    if(posInfluence[0]>0){
 		    	g.setColor(getPosArcColor(posInfluence[0]));
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,240);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,240);
 		    }
 		    if(posInfluence[1]>0){
 		    	g.setColor(getPosArcColor(posInfluence[1]));
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,240,240);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,240,240);
 		    }
 		    if(negInfluence[0]<0){
 		    	g.setColor(getNegArcColor(negInfluence[0]));
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,240);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,240);
 		    }
 		    if(negInfluence[1]<0){
 		    	g.setColor(getNegArcColor(negInfluence[0]));
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,240,240);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,240,240);
 		    }
 		    
 		    if(negInfluence[0]<0&&posInfluence[0]>0){
 		    	g.setColor(Color.gray);
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,240);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,240);
 		    }
 		    if(negInfluence[1]<0&&posInfluence[1]>0){
 		    	g.setColor(Color.gray);
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,240,240);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,240,240);
 		    }
       }
       private void draw3ClusterSelectedArcs(Graphics g){
 	        g.setColor(Color.white);
 		    int arcwidth = 6;
-		    g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,180);
-		    g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,300,180);
-		    g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].radius+arcwidth*zoom,circles[2].radius+arcwidth*zoom,180,180);
+		    g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,180);
+		    g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,300,180);
+		    g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].diameter+arcwidth*zoom,circles[2].diameter+arcwidth*zoom,180,180);
 		    if(posInfluence[0]>0){
 		    	g.setColor(getPosArcColor(posInfluence[0]));//new Color(255,255-64*posInfluence[0]+1,255-64*posInfluence[0]+1));
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,180);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,180);
 		    }
 		    if(posInfluence[1]>0){
 		    	g.setColor(getPosArcColor(posInfluence[1]));//new Color(255,255-64*posInfluence[1]+1,255-64*posInfluence[1]+1));
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,300,180);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,300,180);
 		    }
 		    if(posInfluence[2]>0){
 		    	g.setColor(getPosArcColor(posInfluence[2]));//new Color(255,255-64*posInfluence[2]+1,255-64*posInfluence[2]+1));
-		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].radius+arcwidth*zoom,circles[2].radius+arcwidth*zoom,180,180);
+		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].diameter+arcwidth*zoom,circles[2].diameter+arcwidth*zoom,180,180);
 		    }
 		    if(negInfluence[0]<0){
 		    	g.setColor(getNegArcColor(negInfluence[0]));//new Color(255+64*negInfluence[0]+1,255+64*negInfluence[0]+1,255));
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,180);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,180);
 		    }
 		    if(negInfluence[1]<0){
 		    	g.setColor(getNegArcColor(negInfluence[1]));//new Color(255+64*negInfluence[1]+1,255+64*negInfluence[1]+1,255));
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,300,180);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,300,180);
 		    }
 		    if(negInfluence[2]<0){
 		    	g.setColor(getNegArcColor(negInfluence[2]));//new Color(255+64*negInfluence[2]+1,255+64*negInfluence[2]+1,255));
-		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].radius+arcwidth*zoom,circles[2].radius+arcwidth*zoom,180,180);
+		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].diameter+arcwidth*zoom,circles[2].diameter+arcwidth*zoom,180,180);
 		    }
 		    
 		    if(negInfluence[0]<0&&posInfluence[0]>0){
 		    	g.setColor(Color.gray);
-		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].radius+arcwidth*zoom,circles[0].radius+arcwidth*zoom,60,180);
+		    	g.fillArc(circles[0].x-(arcwidth/2)*zoom,circles[0].y-(arcwidth/2)*zoom,circles[0].diameter+arcwidth*zoom,circles[0].diameter+arcwidth*zoom,60,180);
 		    }
 		    if(negInfluence[1]<0&&posInfluence[1]>0){
 		    	g.setColor(Color.gray);
-		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].radius+arcwidth*zoom,circles[1].radius+arcwidth*zoom,300,180);
+		    	g.fillArc(circles[1].x-(arcwidth/2)*zoom,circles[1].y-(arcwidth/2)*zoom,circles[1].diameter+arcwidth*zoom,circles[1].diameter+arcwidth*zoom,300,180);
 		    }
 		    if(negInfluence[2]<0&&posInfluence[2]>0){
 		    	g.setColor(Color.gray);
-		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].radius+arcwidth*zoom,circles[2].radius+arcwidth*zoom,180,180);
+		    	g.fillArc(circles[2].x-(arcwidth/2)*zoom,circles[2].y-(arcwidth/2)*zoom,circles[2].diameter+arcwidth*zoom,circles[2].diameter+arcwidth*zoom,180,180);
 		    }
       }   
       private Color getPosArcColor(int influence){
@@ -605,83 +532,78 @@ public class VennDiagramViewer extends JPanel implements IViewer {
       }   
       private void draw2ClusterSelectedRegions(Graphics g){
 	        g.setColor(regionSelected[1]? selectedRegion:unselected);
-	        g.fillOval(circles[0].x, circles[0].y, circles[0].radius,circles[0].radius) ;
+	        g.fillOval(circles[0].x, circles[0].y, circles[0].diameter,circles[0].diameter) ;
 
 	        g.setColor(regionSelected[2]? selectedRegion:unselected);
-	        g.fillOval(circles[1].x, circles[1].y, circles[1].radius,circles[1].radius) ;
+	        g.fillOval(circles[1].x, circles[1].y, circles[1].diameter,circles[1].diameter) ;
 	        
 	        //center
 	        g.setColor((regionSelected[0])? selectedRegion:unselected);
-	        g.fillArc(circles[0].x, circles[0].y,circles[0].radius,circles[0].radius,300,120);
-	        g.fillArc(circles[1].x, circles[1].y,circles[1].radius,circles[1].radius,120,120);
+	        g.fillArc(circles[0].x, circles[0].y,circles[0].diameter,circles[0].diameter,300,120);
+	        g.fillArc(circles[1].x, circles[1].y,circles[1].diameter,circles[1].diameter,120,120);
       }
       private void draw3ClusterSelectedRegions(Graphics g){
 	        g.setColor(regionSelected[4]? selectedRegion:unselected);
-	        g.fillOval(circles[0].x, circles[0].y, circles[0].radius,circles[0].radius) ;
+	        g.fillOval(circles[0].x, circles[0].y, circles[0].diameter,circles[0].diameter) ;
 
 	        g.setColor(regionSelected[5]? selectedRegion:unselected);
-	        g.fillOval(circles[1].x, circles[1].y, circles[1].radius,circles[1].radius) ;
+	        g.fillOval(circles[1].x, circles[1].y, circles[1].diameter,circles[1].diameter) ;
 	        
 	        if (clusterCount==3){
 		        g.setColor(regionSelected[6]? selectedRegion:unselected);
-		        g.fillOval(circles[2].x, circles[2].y,circles[2].radius,circles[2].radius);
+		        g.fillOval(circles[2].x, circles[2].y,circles[2].diameter,circles[2].diameter);
 	        }
 	        //middles
 	        g.setColor((regionSelected[1])? selectedRegion:unselected);
-	        g.fillArc(circles[0].x, circles[0].y,circles[0].radius,circles[0].radius,300,120);
-	        g.fillArc(circles[1].x, circles[1].y,circles[1].radius,circles[1].radius,120,120);
+	        g.fillArc(circles[0].x, circles[0].y,circles[0].diameter,circles[0].diameter,300,120);
+	        g.fillArc(circles[1].x, circles[1].y,circles[1].diameter,circles[1].diameter,120,120);
 	        g.setColor((regionSelected[3])? selectedRegion:unselected);
-	        g.fillArc(circles[1].x, circles[1].y,circles[1].radius,circles[1].radius,180,120);
-	        g.fillArc(circles[2].x, circles[2].y,circles[2].radius,circles[2].radius,0,120);
+	        g.fillArc(circles[1].x, circles[1].y,circles[1].diameter,circles[1].diameter,180,120);
+	        g.fillArc(circles[2].x, circles[2].y,circles[2].diameter,circles[2].diameter,0,120);
 	        g.setColor((regionSelected[2])? selectedRegion:unselected);
-	        g.fillArc(circles[0].x, circles[0].y,circles[0].radius,circles[0].radius,240,120);
-	        g.fillArc(circles[2].x, circles[2].y,circles[2].radius,circles[2].radius,60,120);
+	        g.fillArc(circles[0].x, circles[0].y,circles[0].diameter,circles[0].diameter,240,120);
+	        g.fillArc(circles[2].x, circles[2].y,circles[2].diameter,circles[2].diameter,60,120);
 	        
 	        //center
 	        g.setColor((regionSelected[0])? selectedRegion:unselected);
-	        g.fillArc(circles[0].x, circles[0].y,circles[0].radius,circles[0].radius,300,60);
-	        g.fillArc(circles[1].x, circles[1].y,circles[1].radius,circles[1].radius,180,60);
-	        g.fillArc(circles[2].x, circles[2].y,circles[2].radius,circles[2].radius,60,60);
+	        g.fillArc(circles[0].x, circles[0].y,circles[0].diameter,circles[0].diameter,300,60);
+	        g.fillArc(circles[1].x, circles[1].y,circles[1].diameter,circles[1].diameter,180,60);
+	        g.fillArc(circles[2].x, circles[2].y,circles[2].diameter,circles[2].diameter,60,60);
       }
       private void drawOutlines(Graphics g){
+		  Graphics2D g2 = (Graphics2D) g;
 		  g.setColor(Color.black);
-		  g.drawOval(circles[0].x, circles[0].y, circles[0].radius,circles[0].radius) ;
-		  g.drawOval(circles[1].x, circles[1].y, circles[1].radius,circles[1].radius) ;
+		  g2.setStroke(new BasicStroke(4.0f));
+		  g2.drawOval(circles[0].x, circles[0].y, circles[0].diameter,circles[0].diameter) ;
+		  g2.drawOval(circles[1].x, circles[1].y, circles[1].diameter,circles[1].diameter) ;
 		  if (clusterCount==3)
-		        g.drawOval(circles[2].x, circles[2].y,circles[2].radius,circles[2].radius);
+		        g2.drawOval(circles[2].x, circles[2].y,circles[2].diameter,circles[2].diameter);
 		  
-		  g.setFont(class_font);
+		  g2.setFont(class_font);
 		
 		  // Draw cluster labels
-		  g.setColor(clusterColors[0]);
-		  g.drawString(circles[0].label, circles[0].label_x , circles[0].label_y );//30, 30 );
-		  g.setColor(clusterColors[1]);
-		  g.drawString(circles[1].label, circles[1].label_x , circles[1].label_y );//300, 30 );
+		  g2.setColor(clusterColors[0]);
+		  g2.drawString(circles[0].label, circles[0].label_x -getGraphics().getFontMetrics().stringWidth(circles[0].label)/2, circles[0].label_y );//30, 30 );
+		  g2.setColor(clusterColors[1]);
+		  g2.drawString(circles[1].label, circles[1].label_x -getGraphics().getFontMetrics().stringWidth(circles[1].label)/2, circles[1].label_y );//300, 30 );
 		  if (clusterCount==3){
-		        g.setColor(clusterColors[2]);
-		        g.drawString(circles[2].label, circles[2].label_x , circles[2].label_y );//150, 300 );
+		        g2.setColor(clusterColors[2]);
+		        g2.drawString(circles[2].label, circles[2].label_x -getGraphics().getFontMetrics().stringWidth(circles[2].label)/2, circles[2].label_y );//150, 300 );
 		  }
       }
       private void drawValues(Graphics g){
-	        g.setColor(Color.red);
-	        g.setFont(title_font);
+	        g.setColor(Color.black);
+	        g.setFont(values_font);
 	        if (clusterCount==3){
-	        	//draw the intersection values
-		        g.drawString(Integer.toString(intersects[4]),  zoom*40, zoom*32 );
-		        g.drawString(Integer.toString(intersects[5]), zoom*95, zoom*32 );
-		        g.drawString(Integer.toString(intersects[6]), zoom*66, zoom*83);
-		        g.drawString(Integer.toString(intersects[1]), zoom*66, zoom*31 );
-		        g.drawString(Integer.toString(intersects[2]),  zoom*48, zoom*60);
-		        g.drawString(Integer.toString(intersects[3]), zoom*87, zoom*60);
-		        g.drawString(Integer.toString(intersects[0]), zoom*66, zoom*51);
-		        g.drawString(Integer.toString(intersects[7]), zoom*125, zoom*61);
+	        	int[][] coordinates = get3ClusterValueCoordinates();
+	        	for (int i=0; i<8; i++)
+			        g.drawString(Integer.toString(intersects[i]), coordinates[0][i], coordinates[1][i]);
 	        }
 	        if (clusterCount==2){
 	        	//draw the intersection values
-		        g.drawString(Integer.toString(intersects[1]),  zoom*36, zoom*40 );
-		        g.drawString(Integer.toString(intersects[2]), zoom*87, zoom*40 );
-		        g.drawString(Integer.toString(intersects[3]), zoom*58, zoom*78);
-		        g.drawString(Integer.toString(intersects[0]), zoom*63, zoom*40 );
+	        	int[][] coordinates = get2ClusterValueCoordinates();
+	        	for (int i=0; i<4; i++)
+			        g.drawString(Integer.toString(intersects[i]), coordinates[0][i]-getGraphics().getFontMetrics().stringWidth(Integer.toString(intersects[i]))/2, coordinates[1][i]+6);
 
 	        	//draw the p-values
 		        String pvalstring;
@@ -690,10 +612,46 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 		        pvalstring = pval<.0001? "p-value < .0001":"p-value = "+Float.toString(pval).substring(0, Math.min(6, maxlength));
 		        g.setColor(Color.blue);
 		        g.setFont(pval_font);
-		        g.drawString(pvalstring, zoom*40, zoom*88 );//pvalue
+		        g.drawString(pvalstring, coordinates[0][3]-25, coordinates[1][3]+25 );//pvalue
 	        }    	  
       }
+      
+	private int[][] get3ClusterValueCoordinates(){
+		int[][]vals = new int[2][8];
+		vals[0][0] =zoom*66;	//middle x
+		vals[1][0] =zoom*51;	//middle y
+		vals[0][1] =zoom*66;	//inner top x
+		vals[1][1] =zoom*31;	//inner top y
+		vals[0][2] =zoom*48;	//inner left x
+		vals[1][2] =zoom*60;	//inner left y
+		vals[0][3] =zoom*87;	//inner right x
+		vals[1][3] =zoom*60;	//inner right y
+		vals[0][4] =zoom*40;	//outer left x
+		vals[1][4] =zoom*32;	//outer left y
+		vals[0][5] =zoom*95;	//outer right x
+		vals[1][5] =zoom*32;	//outer right y
+		vals[0][6] =zoom*66;	//outer bottom x
+		vals[1][6] =zoom*83;	//outer bottom y
+		vals[0][7] =zoom*125;	//excluded x
+		vals[1][7] =zoom*61;	//excluded y
+		return vals;
+	}
+	private int[][] get2ClusterValueCoordinates(){
+		
 
+        
+		int[][]vals = new int[2][4];
+		vals[0][0] =circles[0].center_x+circles[0].diameter/4;	//middle x
+		vals[1][0] =circles[0].center_y;	//middle y
+		vals[0][1] =circles[0].center_x-circles[0].diameter/4;	//left x
+		vals[1][1] =circles[0].center_y;	//left y
+		vals[0][2] =circles[1].center_x+circles[0].diameter/4;	//right x
+		vals[1][2] =circles[0].center_y;	//right y
+		vals[0][3] =circles[0].center_x+circles[0].diameter/4;	//excluded x
+		vals[1][3] =circles[0].center_y+3*circles[0].diameter/4;	//excluded y
+		return vals;
+	}
+      
       private static double cumulativeBinomialDistributionFunction(int total, int intersect, int cl1, int cl2){
     	  double value = 0;
     	  for (int i=0; i<intersect; i++){
@@ -720,7 +678,7 @@ public class VennDiagramViewer extends JPanel implements IViewer {
       }
 
 	private class Circle {
-	      int x,y, radius, label_x, label_y, center_x, center_y;
+	      int x,y, diameter, label_x, label_y, center_x, center_y;
 	      String label;
 	
 	      private Circle() {
@@ -734,16 +692,12 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	    	label = tag;
 	      }
 	      boolean pointInCircle(int x, int y) {
-	    	  if (((((x - center_x)*(x - center_x)) + ((y - center_y)*(y - center_y))) - (radius/2 * radius/2)) > 0 )
+	    	  if (((((x - center_x)*(x - center_x)) + ((y - center_y)*(y - center_y))) - (diameter/2 * diameter/2)) > 0 )
     		  return false;
     	  else
     		  return true;
 	      }
 	}
-    
-    
-    
-
     
     public JComponent getContentComponent(){
     	return this;
@@ -761,7 +715,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      */
     public JComponent getRowHeaderComponent(){
     	return null;
-    	
     }  
 
     /**
@@ -770,15 +723,12 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      */
     public JComponent getCornerComponent(int cornerIndex){
     	return null;
-    	
     }
-    
     
     /**
      * Invoked by the framework when this viewer is selected.
      */
     public void onSelected(IFramework framework){
-    	
     }
     
     /**
@@ -787,7 +737,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      * @see IData
      */
     public void onDataChanged(IData data){
-    	
     }
     
     /**
@@ -796,21 +745,18 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      * @see IDisplayMenu
      */
     public void onMenuChanged(IDisplayMenu menu){
-    	
     }
     
     /**
      * Invoked by the framework when this viewer was deselected.
      */
     public void onDeselected(){
-    	
     }
     
     /**
      * Invoked when the framework is going to be closed.
      */
     public void onClosed(){
-    	
     }
     
     /**
@@ -827,13 +773,11 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     	return clusters;
     }
     
-    
     /**
      *  Returns the viewer's experiment or null
      */
     public Experiment getExperiment(){
         return experiment;
-    	
     }
     
     /**
@@ -841,8 +785,7 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      * Cluster.GENE_CLUSTER, Cluster.EXPERIMENT_CLUSTER, or -1 for both or unspecified
      */
     public int getViewerType(){
-        return Cluster.GENE_CLUSTER;
-    	
+        return -1;
     }
     
     /**
@@ -851,7 +794,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
      *
      */
     public void setExperiment(Experiment e){
-    	
     }
     
     /**
@@ -860,7 +802,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     */
     public int getExperimentID(){
 		return this.exptID;
-    	
     }
     
     /**
@@ -868,7 +809,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     * Sets the ID value for the Experiment associated with this IViewer
     */
     public void setExperimentID(int id){
-    	
     }
     
     /**
@@ -880,7 +820,6 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new",
 				new Object[]{experiment, ClusterWrapper.wrapClusters(clusters)});
-    	
     }
 
 	public int getRegion(int x, int y) {
@@ -888,13 +827,13 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 			boolean circleA = circles[0].pointInCircle(x, y);
 			boolean circleB = circles[1].pointInCircle(x, y);
 			if( circleA  & circleB)
-			return 0 ;
+				return 0 ;
 			else if( circleA  & !circleB)
-			return 1;
+				return 1;
 			else if( !circleA & circleB)
-			return 2;
+				return 2;
 			else if( !circleA & !circleB)
-			return 3;
+				return 7;
 		}
 		boolean circleA = circles[0].pointInCircle(x, y);
 		boolean circleB = circles[1].pointInCircle(x, y);
@@ -925,13 +864,13 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	        String command = e.getActionCommand();
 	        if (command.equals(ZOOM_IN)){
 	        	zoom++;
-	        	init();
+	        	refreshData();
 	        	repaint();
 	        }
 	        if (command.equals(ZOOM_OUT)){
 	        	zoom--;
 	        	zoom = Math.max(1, zoom);
-	        	init();
+	        	refreshData();
 	        	repaint();
 	        }
 	        if (command.equals(SAVE_CLUSTER_CMD)){
@@ -965,6 +904,12 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	        maybeShowPopup(event);
         	if (event.isPopupTrigger())
         		return;
+        	if (getRegion(event.getX(),event.getY())==7){ //outside circles
+        		clearSelections();
+        		refreshData();
+        		repaint();
+        		return;
+        	}
         	if(circles[0].pointInCircle(event.getX(), event.getY()))
         		circleSelected[0] = !circleSelected[0];
         	if(circles[1].pointInCircle(event.getX(), event.getY()))
@@ -993,7 +938,12 @@ public class VennDiagramViewer extends JPanel implements IViewer {
 	    		repaint();
 	    	}
 	    }
-
+    }
+    private void clearSelections(){
+    	for (int i=0; i<regionSelected.length; i++)
+    		regionSelected[i]=false;
+    	for (int i=0; i<circleSelected.length; i++)
+    		circleSelected[i]=false;
     }
 	/**
 	 * Creates a popup menu.
@@ -1067,15 +1017,25 @@ public class VennDiagramViewer extends JPanel implements IViewer {
     }
 	
     public static void main(String[] args){
-    	JDialog jp = new JDialog();
-    	int[][] clustersx = { {1,2,3,5,9,11,12,13,14,15,16,17,18,19},{1,2,3,5,7,8,12},{1,2,3,4,7,11}};
-    	VennDiagramViewer vdv = new VennDiagramViewer(clustersx);
-    	jp.add(vdv);
-    	jp.setBackground(Color.white);
-    	jp.setModal(true);
-    	jp.setAlwaysOnTop(true);
-    	jp.setSize(459, 450);
-    	jp.setVisible(true);
+    	JDialog jp3 = new JDialog();
+    	JDialog jp2 = new JDialog();
+    	int[][] clusters3 = { {1,2,3,5,9,11,12,13,14,15,16,17,18,19},{1,2,3,5,7,8,12},{1,2,3,4,7,11}};
+    	int[][] clusters2 = { {1,2,3,5,9,11,12,13,14,15,16,17,18,19},{1,2,3,5,7,8,12}};
+    	String[] clnames = {"Joe", "Moe", "Snow"};
+    	VennDiagramViewer vdv3 = new VennDiagramViewer(clusters3, clnames);
+    	VennDiagramViewer vdv2 = new VennDiagramViewer(clusters2, clnames);
+    	jp2.add(vdv2);
+    	jp2.setBackground(Color.white);
+    	jp2.setModal(true);
+    	jp2.setAlwaysOnTop(true);
+    	jp2.setSize(459, 450);
+    	jp3.add(vdv3);
+    	jp3.setBackground(Color.white);
+    	jp3.setModal(true);
+    	jp3.setAlwaysOnTop(true);
+    	jp3.setSize(459, 450);
+    	jp3.setVisible(true);
+    	jp2.setVisible(true);
     	System.exit(0);
     	
     }
