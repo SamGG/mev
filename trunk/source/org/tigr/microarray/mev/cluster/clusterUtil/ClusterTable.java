@@ -77,6 +77,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.VennDiagramViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -162,7 +163,7 @@ public class ClusterTable extends JPanel implements IViewer {
         
         setInitialColumnWidths();
 
-        String[] viewerStrings = {"Table", "Expression Image", "Expression Graph", "Centroid Graph"};
+        String[] viewerStrings = {"Table", "Expression Image", "Expression Graph", "Centroid Graph", "Venn Diagram"};
         viewerCB = new JComboBox(viewerStrings);
         viewerCB.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent ae){
@@ -189,6 +190,11 @@ public class ClusterTable extends JPanel implements IViewer {
 	    	            bottomTablePane.setViewportView(((CentroidViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((CentroidViewer)iViewer).getHeaderComponent());
 	    	            break;
+	            	case 4:
+	            		iViewer = new VennDiagramViewer(framework, false, getSelectedClusters());
+	    	            bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+	    	            bottomTablePane.setColumnHeaderView(((VennDiagramViewer)iViewer).getHeaderComponent());
+	    	            break;
 	            	}
         		}else{
         			switch (viewerCB.getSelectedIndex()){
@@ -213,6 +219,11 @@ public class ClusterTable extends JPanel implements IViewer {
 	    	            bottomTablePane.setViewportView(((ExperimentClusterCentroidViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((ExperimentClusterCentroidViewer)iViewer).getHeaderComponent());
 	    	            break;
+	            	case 4:
+	            		iViewer = new VennDiagramViewer(framework, true, getSelectedClusters());
+	    	            bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+	    	            bottomTablePane.setColumnHeaderView(((VennDiagramViewer)iViewer).getHeaderComponent());
+	    	            break;	            	
 	            	}
         		}
         		if (viewerCB.getSelectedIndex()==0){
@@ -505,7 +516,7 @@ public class ClusterTable extends JPanel implements IViewer {
         tableOfClusters.setDefaultRenderer(Color.class, renderer);
         tableOfClusters.setDefaultRenderer(JLabel.class, renderer);
         tableOfClusters.setPreferredScrollableViewportSize(new Dimension(450, 175));
-        tableOfClusters.addMouseListener(new TableListener());
+//        tableOfClusters.addMouseListener(new TableListener());
         tableOfClusters.setBackground(Color.white);
         tableOfClusters.setRowHeight(tableOfClusters.getRowHeight() + 10);
         tableOfClusters.setRowSelectionAllowed(true);
@@ -513,7 +524,7 @@ public class ClusterTable extends JPanel implements IViewer {
         
         setInitialColumnWidths();
         
-        model.addTableModelListener(new TableListener());
+//        model.addTableModelListener(new TableListener());
         model.sortBy("Serial #");
         tableOfClusters.setRowHeight(30);
         tableOfClusters.updateUI();
@@ -533,6 +544,13 @@ public class ClusterTable extends JPanel implements IViewer {
     }
 
     private void upDateGeneViewer(){
+    	if (viewerCB.getSelectedIndex()==4){
+        	((VennDiagramViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+        	((VennDiagramViewer)iViewer).repaint();
+            return;
+    	}
+    		
     	int[][] mat = new int[1][];
     	if (rb1.isSelected()){		//show all
 			mat = new int[1][framework.getData().
@@ -651,10 +669,21 @@ public class ClusterTable extends JPanel implements IViewer {
         	this.bottomTablePane.setViewportView(((CentroidViewer)iViewer).getContentComponent());
         	this.bottomTablePane.setColumnHeaderView(((CentroidViewer)iViewer).getHeaderComponent());
             break;
+    	case 4:
+        	((VennDiagramViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+        	((VennDiagramViewer)iViewer).repaint();
+            break;
     	}
     }
     
     private void upDateSampleViewer(){
+    	if (viewerCB.getSelectedIndex()==4){
+        	((VennDiagramViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+        	((VennDiagramViewer)iViewer).repaint();
+            return;
+    	}
     	int[][] mat = new int[1][];
     	if (rb1.isSelected()){
 			mat = new int[1][framework.getData().getExperiment().getNumberOfSamples()];
@@ -767,6 +796,11 @@ public class ClusterTable extends JPanel implements IViewer {
         	this.bottomTablePane.setViewportView(((ExperimentClusterCentroidViewer)iViewer).getContentComponent());
         	this.bottomTablePane.setColumnHeaderView(((ExperimentClusterCentroidViewer)iViewer).getHeaderComponent());
             break;
+    	case 4:
+        	((VennDiagramViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
+        	((VennDiagramViewer)iViewer).repaint();
+            break;
     	}
     }
     
@@ -775,27 +809,36 @@ public class ClusterTable extends JPanel implements IViewer {
      */
     private void setButtons(){
     	storeRows.setEnabled(tableOfElements.getSelectedRowCount()>0&&viewerCB.getSelectedIndex()==0);
-    	storeAll.setEnabled(tableOfElements.getRowCount()!=0||viewerCB.getSelectedIndex()!=0);
+    	storeAll.setEnabled((tableOfElements.getRowCount()!=0||viewerCB.getSelectedIndex()!=0)&&viewerCB.getSelectedIndex()!=4);
     	
     }
     /** Sets the state (enabled or disabled) for the radio buttons.
      * 
      */
     private void setRadioButtons(){
-    	if (repository.getTotalClusters()==0){
+    	if (viewerCB.getSelectedIndex()==4){
+    		rb1.setEnabled(false);
     		rb2.setEnabled(false);
     		rb3.setEnabled(false);
     		rb4.setEnabled(false);
     		rb5.setEnabled(false);
-    	} else{
-    		rb2.setEnabled(true);
-    		rb5.setEnabled(true);
-	    	if (this.tableOfClusters.getSelectedRowCount()<2){
+    	}else{
+    		rb1.setEnabled(true);
+	    	if (repository.getTotalClusters()==0){
+	    		rb2.setEnabled(false);
 	    		rb3.setEnabled(false);
 	    		rb4.setEnabled(false);
-	    	} else {
-	    		rb3.setEnabled(true);
-	    		rb4.setEnabled(true);
+	    		rb5.setEnabled(false);
+	    	} else{
+	    		rb2.setEnabled(true);
+	    		rb5.setEnabled(true);
+		    	if (this.tableOfClusters.getSelectedRowCount()<2){
+		    		rb3.setEnabled(false);
+		    		rb4.setEnabled(false);
+		    	} else {
+		    		rb3.setEnabled(true);
+		    		rb4.setEnabled(true);
+		    	}
 	    	}
     	}
     }
@@ -1335,6 +1378,9 @@ public class ClusterTable extends JPanel implements IViewer {
         }
         
         public void keyReleased(KeyEvent ke){
+    		bottomTablePane.updateUI();
+    		bottomTablePane.repaint();
+    		bottomTablePane.validate();
             updateBottomViewer();
         }
         
@@ -1361,6 +1407,9 @@ public class ClusterTable extends JPanel implements IViewer {
                 else if(tableOfClusters.getColumnClass(col) == Boolean.class)
                     modifyShowColor(row, col);
             	topTablePane.updateUI();
+        		bottomTablePane.updateUI();
+        		bottomTablePane.repaint();
+        		bottomTablePane.validate();
                 updateBottomViewer();
             } else {
                 if(mouseEvent.isPopupTrigger()){
@@ -1411,6 +1460,9 @@ public class ClusterTable extends JPanel implements IViewer {
         
         public void mousePressed(MouseEvent mouseEvent) {
         	topTablePane.updateUI();
+    		bottomTablePane.updateUI();
+    		bottomTablePane.repaint();
+    		bottomTablePane.validate();
             updateBottomViewer();
             Component component;
             if(mouseEvent.isPopupTrigger()){
@@ -1520,6 +1572,9 @@ public class ClusterTable extends JPanel implements IViewer {
     
     public class RBListener implements ActionListener{
     	public void actionPerformed(ActionEvent e){
+    		bottomTablePane.updateUI();
+    		bottomTablePane.repaint();
+    		bottomTablePane.validate();
     		updateBottomViewer();
             iViewer.onSelected(framework);
     	}
@@ -1818,10 +1873,10 @@ public class ClusterTable extends JPanel implements IViewer {
             ClusterAttributesDialog dialog;
             while (true){
 	            dialog = new ClusterAttributesDialog("Modify Cluster Attributes", cluster.getAlgorithmName(), cluster.getClusterID(),
-            cluster.getClusterLabel(), cluster.getClusterDescription(), cluster.getClusterColor());
-            if(dialog.showModal() != JOptionPane.OK_OPTION){
-                return;
-            }
+	            cluster.getClusterLabel(), cluster.getClusterDescription(), cluster.getClusterColor());
+	            if(dialog.showModal() != JOptionPane.OK_OPTION){
+	                return;
+	            }
                 if (repository.clusterColors.contains(dialog.getColor())&&(origColor!=dialog.getColor())){
         	        Object[] optionst = { "OK", "CANCEL" };
         	        int option = JOptionPane.showOptionDialog(null, "Cluster Color is already being used. Please select another Color.", "Duplicate Color Error", 
