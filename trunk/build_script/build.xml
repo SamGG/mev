@@ -1845,7 +1845,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		</copy>
 
 		
-		<copy file="${home.dir}/Artistic_License.pdf" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
@@ -1862,7 +1862,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
-			<include name="${mev_version.dir}/Artistic_License.pdf"/>
+			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/TMEV.bat"/>
 			<exclude name=".svn"/>
 		</zip>	
@@ -1874,7 +1874,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
-			<include name="${mev_version.dir}/Artistic_License.pdf"/>
+			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/tmev.sh"/>
 			<exclude name=".svn"/>
 		</zip>	
