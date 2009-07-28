@@ -18,3 +18,4 @@ TGI_TC	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&t
 TGI_GC	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&tc=FIELD	TIGR Gene Indices
 TGI_ORTH	http://compbio.dfci.harvard.edu/tgi/cgi-bin/tgi/tc_report.pl?gudb=FIELD&tc=FIELD	TIGR Gene Indices
 GENE_TITLE	http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=search&term=FIELD1	NCBI free text search
+CHR_LOCATION	http://genome.ucsc.edu/cgi-bin/hgTracks?org=FIELD&position=FIELD	UCSC Genome Browser

@@ -64,7 +64,8 @@ public class PublicURL {
 			params = new String[]{temp};
 		} else if(!URLKey.equals(AnnotationConstants.TGI_GC) &&
 				!URLKey.equals(AnnotationConstants.TGI_ORTH) &&
-						!URLKey.equals(AnnotationConstants.TGI_TC)
+				!URLKey.equals(AnnotationConstants.TGI_TC) &&
+				!URLKey.equals(AnnotationConstants.CHR_LOCATION)
 				) {
 			String temp = params[0];
 			for(int i=1; i<params.length; i++) {

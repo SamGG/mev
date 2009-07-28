@@ -37,4 +37,5 @@ public class AnnotationConstants {
 	public static final String TGI_TC = "TGI_TC";
 	public static final String TGI_GC = "TGI_GC";
 	public static final String TGI_ORTH = "TGI_ORTH";
+	public static final String CHR_LOCATION = "CHR_LOCATION";
 }
