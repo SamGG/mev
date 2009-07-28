@@ -1334,7 +1334,9 @@ public class ClusterTableViewer implements IViewer {
             	try {
             		if(((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_TC) ||
             				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_GC) ||
-            				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_ORTH)		
+            				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.TGI_ORTH) ||
+            				((AnnoAttributeObj)value).getAttribName().equalsIgnoreCase(AnnotationConstants.CHR_LOCATION) 
+            				
             			) {
             			String[] newString = new String[attribvalue.length+1];
             			newString[0] = framework.getData().getChipAnnotation().getSpeciesName().toString();

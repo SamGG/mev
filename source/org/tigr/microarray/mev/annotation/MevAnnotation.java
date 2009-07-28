@@ -152,7 +152,29 @@ public class MevAnnotation implements IAnnotation, Comparable {
 
 		//return (String)annotHash.get(AnnotationFieldConstants.CYTOBAND);
 	}
-	
+
+	public String getChrLocation(){
+		String _temp=(String)annotHash.get(AnnotationFieldConstants.CYTOBAND);
+		if(_temp == null) {
+			String chr;
+			String chrLocation = "";
+			int start, end;
+			chr = "chr" + getProbeChromosome();
+			if(chr.equals(ChipAnnotationFieldConstants.NOT_AVAILABLE))
+				return ChipAnnotationFieldConstants.NOT_AVAILABLE;
+			chrLocation = chr + ":";
+			try {
+				start = getProbeTxStartBP();
+				end = getProbeTxEndBP();
+				chrLocation += start + "-" + end;
+			} catch (Exception e) {
+				//Failed to get start and end values, leave them off
+			}
+			return chrLocation;
+		}
+		return _temp;
+	}
+
 	public String getCloneID() {
 		return (String)annotHash.get(AnnotationFieldConstants.PROBE_ID);
 	}
@@ -570,7 +592,9 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	 * 
 	 */
 	public String[] getAttribute(String attr) {
-		
+		if(attr == AnnotationFieldConstants.CHR_LOCATION) {
+			return new String[]{getChrLocation()};
+		}
 	//	if(annotHash.size()>1) {
 		if((annotHash.get(attr)) instanceof String) {
 			//System.out.println("getAttribute():"+annotHash.get(attr).getClass().getName());
@@ -611,6 +635,9 @@ public class MevAnnotation implements IAnnotation, Comparable {
 	 * 
 	 */
 	public AnnoAttributeObj getAttributeObj(String attr) {
+		if(attr.equals(AnnotationFieldConstants.CHR_LOCATION))
+			return new AnnoAttributeObj(AnnotationFieldConstants.CHR_LOCATION, new String[]{getChrLocation()});
+		
 		String[] _temp;
 		AnnoAttributeObj _tempAttr;
 		try {
