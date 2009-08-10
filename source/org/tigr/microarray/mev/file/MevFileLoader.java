@@ -934,9 +934,8 @@ public class MevFileLoader extends ExpressionFileLoader {
 			// Currently, a minimum of one mev file must be selected to enable
 			// loading
 
-			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0) {
-				markLoadEnabled(true);
-			}else if (((DefaultListModel) annSelectedList.getModel()).size() > 0) {
+			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0 &&
+					((DefaultListModel) annSelectedList.getModel()).size() > 0) {
 				markLoadEnabled(true);
 			}else {
 				markLoadEnabled(false);
