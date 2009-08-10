@@ -54,7 +54,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
     private boolean isNonZero = true;
     private boolean abbrName = false;
     private int dataType = IData.DATA_TYPE_TWO_INTENSITY;
-    private String[] fieldNames; 
+    private String[] fieldNames = new String[0]; 
 
     //Support multiple sample labels
     private String sampleLabelKey = IData.DEFAULT_SAMPLE_ANNOTATION_KEY;

@@ -71,7 +71,7 @@ public class TMEV {
     public static final String PROMPT_TO_SAVE_ANALYSIS = "prompt-for-save";
     public static final String PROMPT_TO_GET_ONLINE = "prompt-to-get-online";
     public static final String ALLOWED_ONLINE = "allow-internet-connections";
-    public static final String ANNOTATION_URLS_FILE = "annotation-urls-mapping-file";
+    public static final String CUSTOM_ANNOTATION_URLS_FILE = "annotation-urls-mapping-file";
     
     public final static int ANALYSIS_LOADED = 101;
     
@@ -206,35 +206,25 @@ public class TMEV {
         	    rie.printStackTrace();
             }
             
-            File _urlsFile;
-    	    boolean _hasurlsloaded = false;
-    	    String _urlfilename = TMEV.getSettingForOption(ANNOTATION_URLS_FILE, null);
-    	    if(_urlfilename != null) {
-	    	_urlsFile = new File(_urlfilename);
-	    	if(_urlsFile.exists()) {
-	    		try {
-        	    	loadAnnotationsURLs(_urlsFile);
-        	    	_hasurlsloaded = true;
-        	    } catch (FileNotFoundException fnfe) {
-        	    	fnfe.printStackTrace();
-        	    }
-        	 } 
-    	    }
-
-	    	if(!_hasurlsloaded && resourceManager != null) {
-    	        try {
-        	    	_urlsFile = resourceManager.getSupportFile(new AnnotationURLsFileDefinition(), true);
-        	    	loadAnnotationsURLs(_urlsFile);
-        	    	_hasurlsloaded = true;
-        	    } catch (SupportFileAccessError sfae) {
-        	    } catch (NullPointerException npe) {
-        	    }
-	    	}
-	    	if(!_hasurlsloaded) {
+        	File _urlsFile;
+            if(resourceManager != null) {
+       	        try {
+           	    	_urlsFile = resourceManager.getSupportFile(new AnnotationURLsFileDefinition(), true);
+           	    	loadAnnotationsURLs(_urlsFile);
+           	    } catch (SupportFileAccessError sfae) {
+           	    } catch (NullPointerException npe) {
+           	    }
+            } else {
     	    	_urlsFile = getConfigurationFile("annotation_URLs.txt");
     	    	loadAnnotationsURLs(_urlsFile);
-	    	}
-	    	
+            }
+            if(TMEV.getSettingForOption(CUSTOM_ANNOTATION_URLS_FILE, null) != null) {
+            	try {
+            		String _urlfilename = TMEV.getSettingForOption(CUSTOM_ANNOTATION_URLS_FILE, null);
+        	    	loadAnnotationsURLs(new File(_urlfilename));
+            	} catch (Exception e) {}
+            }
+            
             if (os.indexOf("Apple") != -1 || os.indexOf("Mac") != -1 ) {
                 manager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());              
             }
@@ -242,29 +232,13 @@ public class TMEV {
 		if(so.getDataFile() != null && so.getFileType() != null) {
             try {
             	FileLoadInfo fileInfo = new FileLoadInfo(so);
-//            	boolean isMultifile = so.getFileType().isMultifile();
 
 				Manager.createNewMultipleArrayViewer(fileInfo);
             } catch(InvalidFileArgumentsException ifae) {
             	ShowThrowableDialog.show(new JFrame(), "", true, ShowThrowableDialog.ERROR, ifae, "MeV was unable to understand the arguments supplied to it: \n" + so.toString());
     			Manager.createNewMultipleArrayViewer();
-            }			
-//			ExpressionDataSupportDataFile def = new ExpressionDataSupportDataFile(so.getDataFile(), isMultifile, so.getFileType());
-//			try {
-//				File file = resourceManager.getSupportFile(def, true);
-//				
-//				if (file != null) {
-//					Manager.createNewMultipleArrayViewer(file, so.getFileType(), so.getArrayType());
-//				} else { //downloaded file is null
-//					JOptionPane.showMessageDialog(new JFrame(),
-//							"No files were detected in the download directory. ",
-//							"Empty Download", JOptionPane.INFORMATION_MESSAGE);
-//					Manager.createNewMultipleArrayViewer();
-//				}
-//			} catch (SupportFileAccessError sfae) {
-//				ShowThrowableDialog.show(new JFrame(), "Error downloading data file", false, 0, sfae, "Unable to download the requested data file. Please check your internet connection and try again.");
-//			    Manager.createNewMultipleArrayViewer();
-//			}
+            }
+
 		} else {
 			Manager.createNewMultipleArrayViewer();
 		}
@@ -288,7 +262,6 @@ public class TMEV {
     	if (PublicURL.loadURLs(urlsFile) != 0) {
     		throw new InvalidAnnMappingFileException();
     	}
-    	TMEV.storeProperty(ANNOTATION_URLS_FILE, urlsFile.getAbsolutePath());
     }
 
 

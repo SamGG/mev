@@ -594,6 +594,7 @@ public class Manager {//A class to keep track of viewers
         			File urlsFile = chooser.getSelectedFile();
 	            	try {
 	            		TMEV.loadAnnotationsURLs(urlsFile);
+	            		TMEV.storeProperty(TMEV.CUSTOM_ANNOTATION_URLS_FILE, urlsFile.getAbsolutePath());
 	            	} catch (InvalidAnnMappingFileException iamfe) {
 	            		JOptionPane.showMessageDialog(frame, "MeV was unable to read the URL mappings from the file " + urlsFile.toString() + ". The MeV manual contains details about this type of file. ", "Error", JOptionPane.ERROR_MESSAGE);            		
 	            	} catch (FileNotFoundException fnfe) {

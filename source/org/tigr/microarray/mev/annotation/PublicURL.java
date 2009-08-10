@@ -391,12 +391,18 @@ public class PublicURL {
 	public static boolean isUrlLoaded() {
 		return urlLoaded;
 	}
-	
+	public static void clearURLs() {
+        urlHash = null;
+		urlLoaded = false;
+	}
 	public static int loadURLs(File configFile) throws FileNotFoundException {
 		Hashtable<String, String> tempHash = new Hashtable<String, String>();
+		FileReader fr = null;
+		BufferedReader buff = null;
+		
         try {
-            FileReader fr = new FileReader(configFile);
-            BufferedReader buff = new BufferedReader(fr);
+            fr = new FileReader(configFile);
+            buff = new BufferedReader(fr);
             StringSplitter st = new StringSplitter((char)0x09);
             boolean eof = false;
             while (!eof) {
@@ -410,14 +416,26 @@ public class PublicURL {
                     tempHash.put(_tempKey.trim(), _tempURL);
                 }
             }
-            buff.close();
         } catch (Exception e) {
+        	e.printStackTrace();
         	return -1;
+        } finally {
+        	try {
+        		if(buff != null)
+        			buff.close();
+        	} catch (Exception e1){}
+        	try {
+        		if(fr != null)
+        			fr.close();
+        	} catch (Exception e1){}
         }
         
         if(tempHash.size() < 1) 
         	return -1;
-        urlHash = tempHash;
+        if(urlHash == null)
+        	urlHash = tempHash;
+        else 
+        	urlHash.putAll(tempHash);
 		urlLoaded = true;
 		return 0; 
 	}
