@@ -1207,7 +1207,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	    </target>
 
 	    <target name="GSEA-GUI">
-	        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/GSEA" destdir="${dest.dir}">
+	        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/gsea" destdir="${dest.dir}">
 	            <classpath refid="module.build.class.path"/>
 		  </javac>
 		  <propertyfile file="${gui.properties.file}">
