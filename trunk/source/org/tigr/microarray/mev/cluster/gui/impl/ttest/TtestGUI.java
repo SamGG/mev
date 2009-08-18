@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.NodeValueList;
@@ -71,19 +72,19 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     protected String[] auxTitles;
     protected Object[][] auxData;
     
-    //protected Vector sigTValues, nonSigTValues, sigPValues, nonSigPValues, additionalHeaders, additionalSigOutput, additionalNonSigOutput;
-    protected Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    protected Vector<Float> tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     protected Vector pairedGroupAExpts, pairedGroupBExpts;
     protected IData data;
-    protected Vector exptNamesVector;
+    protected Vector<String> exptNamesVector;
     protected int[] groupAssignments;
     public int tTestDesign, falseNum;
     protected double oneClassMean, falseProp;
     protected boolean isPermutations, useWelchDf, drawSigTreesOnly, doFastFDRApprox, calculateAdjFDRPVals;
     protected boolean[] isSig;
     protected double[] diffMeansBA, negLog10PValues;
-    //JFrame tTestFrame;
+//    JFrame tTestFrame;
     public static JFrame TtestFrame;
+    protected TTestResults ttestResult;
     public TtestGUI() {
     }
     
@@ -102,7 +103,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         
         this.experiment = framework.getData().getExperiment();
         //tTestFrame = (JFrame)framework.getFrame();
-        exptNamesVector = new Vector();
+        exptNamesVector = new Vector<String>();
         this.data = framework.getData();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
@@ -275,10 +276,6 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-            FloatMatrix sigPValuesMatrix = result.getMatrix("sigPValues");
-            FloatMatrix sigTValuesMatrix = result.getMatrix("sigTValues");
-            FloatMatrix nonSigPValuesMatrix = result.getMatrix("nonSigPValues");
-            FloatMatrix nonSigTValuesMatrix = result.getMatrix("nonSigTValues");
             FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
             FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
             FloatMatrix tValuesMatrix = result.getMatrix("tValues");
@@ -290,17 +287,30 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             FloatMatrix isSigMatrix = result.getMatrix("isSigMatrix");
             FloatMatrix oneClassMeansMatrix = result.getMatrix("oneClassMeansMatrix");
             FloatMatrix oneClassSDsMatrix = result.getMatrix("oneClassSDsMatrix");
+            ttestResult = new TTestResults();
+            ttestResult.setTTestDesign(tTestDesign);
+            ttestResult.setRawPValuesMatrix(result.getMatrix("rawPValues"));
+            ttestResult.setAdjPValuesMatrix(result.getMatrix("adjPValues"));
+            ttestResult.setTValuesMatrix(result.getMatrix("tValues"));
+            ttestResult.setDfMatrix(result.getMatrix("dfValues"));
+            ttestResult.setMeansAMatrix(result.getMatrix("meansAMatrix"));
+            ttestResult.setMeansBMatrix(result.getMatrix("meansBMatrix"));
+            ttestResult.setSdAMatrix(result.getMatrix("sdAMatrix"));
+            ttestResult.setSdBMatrix(result.getMatrix("sdBMatrix"));
+            ttestResult.setOneClassMeansMatrix(result.getMatrix("oneClassMeansMatrix"));
+            ttestResult.setOneClassSDsMatrix(result.getMatrix("oneClassSDsMatrix"));
             
-            rawPValues = new Vector();
-            adjPValues = new Vector();
-            tValues = new Vector();
-            dfValues = new Vector();
-            meansA = new Vector();
-            meansB = new Vector();
-            sdA = new Vector();
-            sdB = new Vector();
-            oneClassMeans = new Vector();
-            oneClassSDs = new Vector();
+        
+            rawPValues = new Vector<Float>();
+            adjPValues = new Vector<Float>();
+            tValues = new Vector<Float>();
+            dfValues = new Vector<Float>();
+            meansA = new Vector<Float>();
+            meansB = new Vector<Float>();
+            sdA = new Vector<Float>();
+            sdB = new Vector<Float>();
+            oneClassMeans = new Vector<Float>();
+            oneClassSDs = new Vector<Float>();
             
             for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
                 rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
@@ -393,7 +403,12 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
                 return null; //for now
             }
              */
-            
+
+            ttestResult.setIsSig(isSig);
+            ttestResult.setDiffMeansBA(diffMeansBA);
+            ttestResult.setNegLog10PValues(negLog10PValues);
+            ttestResult.setCalculateAdjFDRPVals(calculateAdjFDRPVals);
+            ttestResult.setSignificanceMethod(significanceMethod);
             
             GeneralInfo info = new GeneralInfo();
             
@@ -411,56 +426,6 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             info.hcl_genes = hcl_genes;
             info.hcl_samples = hcl_samples;
             info.hcl_method = hcl_method;
-            
-            Vector titlesVector = new Vector();
-            if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {
-                titlesVector.add("GroupA mean");
-                titlesVector.add("GroupA std.dev.");
-                titlesVector.add("GroupB mean");
-                titlesVector.add("GroupB std.dev.");
-                titlesVector.add("Absolute t value");
-            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                titlesVector.add("Gene mean");
-                titlesVector.add("Gene std.dev.");
-                titlesVector.add("t value");
-            }
-            titlesVector.add("Degrees of freedom");
-            titlesVector.add("Raw p value");
-            //titlesVector.add("Adj p value");
-            if ((significanceMethod == TtestInitDialog.FALSE_NUM)||(significanceMethod == TtestInitDialog.FALSE_PROP)) {
-                if (calculateAdjFDRPVals)
-                    titlesVector.add("Adj p value");
-            } else {
-                titlesVector.add("Adj p value");
-            }            
-            
-            auxTitles = new String[titlesVector.size()];
-            for (int i = 0; i < auxTitles.length; i++) {
-                auxTitles[i] = (String)(titlesVector.get(i));
-            }
-            
-            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
-            for (int i = 0; i < auxData.length; i++) {
-                int counter = 0;
-                if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {
-                    auxData[i][counter++] = meansA.get(i);
-                    auxData[i][counter++] = sdA.get(i);
-                    auxData[i][counter++] = meansB.get(i);
-                    auxData[i][counter++] = sdB.get(i);
-                } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                    auxData[i][counter++] = oneClassMeans.get(i);
-                    auxData[i][counter++] = oneClassSDs.get(i);
-                }
-                auxData[i][counter++] = tValues.get(i);
-                auxData[i][counter++] = dfValues.get(i);
-                auxData[i][counter++] = rawPValues.get(i);
-                if ((significanceMethod == TtestInitDialog.FALSE_NUM)||(significanceMethod == TtestInitDialog.FALSE_PROP)) {
-                    if (calculateAdjFDRPVals)
-                        auxData[i][counter++] = adjPValues.get(i);
-                } else {
-                    auxData[i][counter++] = adjPValues.get(i);
-                }
-            }
             
             return createResultTree(result_cluster, info);
             
@@ -490,7 +455,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     
     public AlgorithmData getScriptParameters(IFramework framework) {
         this.experiment = framework.getData().getExperiment();
-        exptNamesVector = new Vector();
+        exptNamesVector = new Vector<String>();
         this.data = framework.getData();
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
@@ -677,7 +642,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             this.isPermutations = algData.getParams().getBoolean("is-permut");
             this.useWelchDf = algData.getParams().getBoolean("useWelchDf");
             this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");
-            this.exptNamesVector = new Vector();
+            this.exptNamesVector = new Vector<String>();
             int number_of_samples = experiment.getNumberOfSamples();
             for (int i = 0; i < number_of_samples; i++) {
                 exptNamesVector.add(this.data.getSampleName(i));
@@ -702,8 +667,8 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             if (this.tTestDesign == TtestInitDialog.PAIRED) {
                 FloatMatrix pairedAExptsMatrix = algData.getMatrix("pairedAExptsMatrix");
                 FloatMatrix pairedBExptsMatrix = algData.getMatrix("pairedBExptsMatrix");
-                pairedGroupAExpts = new Vector();
-                pairedGroupBExpts = new Vector();
+                pairedGroupAExpts = new Vector<Integer>();
+                pairedGroupBExpts = new Vector<Integer>();
                 
                 for (int i = 0; i < pairedAExptsMatrix.A.length; i++) {
                     pairedGroupAExpts.add(new Integer((int)pairedAExptsMatrix.A[i][0]));
@@ -727,12 +692,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             for (int i=0; i<k; i++) {
                 clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
             }
-            this.means = result.getMatrix("clusters_means");
-            this.variances = result.getMatrix("clusters_variances");
-            FloatMatrix sigPValuesMatrix = result.getMatrix("sigPValues");
-            FloatMatrix sigTValuesMatrix = result.getMatrix("sigTValues");
-            FloatMatrix nonSigPValuesMatrix = result.getMatrix("nonSigPValues");
-            FloatMatrix nonSigTValuesMatrix = result.getMatrix("nonSigTValues");
+            TTestResults ttestResult = new TTestResults();
             FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
             FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
             FloatMatrix tValuesMatrix = result.getMatrix("tValues");
@@ -744,17 +704,31 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             FloatMatrix isSigMatrix = result.getMatrix("isSigMatrix");
             FloatMatrix oneClassMeansMatrix = result.getMatrix("oneClassMeansMatrix");
             FloatMatrix oneClassSDsMatrix = result.getMatrix("oneClassSDsMatrix");
+
+            ttestResult.setTTestDesign(tTestDesign);
+            ttestResult.setRawPValuesMatrix(result.getMatrix("rawPValues"));
+            ttestResult.setAdjPValuesMatrix(result.getMatrix("adjPValues"));
+            ttestResult.setTValuesMatrix(result.getMatrix("tValues"));
+            ttestResult.setDfMatrix(result.getMatrix("dfValues"));
+            ttestResult.setMeansAMatrix(result.getMatrix("meansAMatrix"));
+            ttestResult.setMeansBMatrix(result.getMatrix("meansBMatrix"));
+            ttestResult.setSdAMatrix(result.getMatrix("sdAMatrix"));
+            ttestResult.setSdBMatrix(result.getMatrix("sdBMatrix"));
+            ttestResult.setOneClassMeansMatrix(result.getMatrix("oneClassMeansMatrix"));
+            ttestResult.setOneClassSDsMatrix(result.getMatrix("oneClassSDsMatrix"));
             
-            rawPValues = new Vector();
-            adjPValues = new Vector();
-            tValues = new Vector();
-            dfValues = new Vector();
-            meansA = new Vector();
-            meansB = new Vector();
-            sdA = new Vector();
-            sdB = new Vector();
-            oneClassMeans = new Vector();
-            oneClassSDs = new Vector();
+            
+            
+            rawPValues = new Vector<Float>();
+            adjPValues = new Vector<Float>();
+            tValues = new Vector<Float>();
+            dfValues = new Vector<Float>();
+            meansA = new Vector<Float>();
+            meansB = new Vector<Float>();
+            sdA = new Vector<Float>();
+            sdB = new Vector<Float>();
+            oneClassMeans = new Vector<Float>();
+            oneClassSDs = new Vector<Float>();
             
             for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
                 rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
@@ -841,7 +815,12 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
                     //System.out.println("i = " + i + ", currentP = " + currentP + ", negLog10P = " + negLog10PValues[i]);
                 }                
             }
-            
+
+            ttestResult.setIsSig(isSig);
+            ttestResult.setDiffMeansBA(diffMeansBA);
+            ttestResult.setNegLog10PValues(negLog10PValues);
+            ttestResult.setCalculateAdjFDRPVals(calculateAdjFDRPVals);
+            ttestResult.setSignificanceMethod(significanceMethod);
             
             GeneralInfo info = new GeneralInfo();
             
@@ -890,7 +869,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
                 info.hcl_samples = params.getBoolean("calculate-experiments");
                 info.hcl_method = params.getInt("method-linkage");
             }
-            Vector titlesVector = new Vector();
+            Vector<String> titlesVector = new Vector<String>();
             if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {
                 titlesVector.add("GroupA mean");
                 titlesVector.add("GroupA std.dev.");
@@ -1015,7 +994,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     
     protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
-        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        IViewer tabViewer = new TTestClusterTableViewer(this.experiment, ClusterWrapper.wrapClusters(clusters), this.data, ttestResult);
         for (int i=0; i<this.clusters.length; i++) {
             if (i < this.clusters.length - 1) {
                 node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
@@ -1105,7 +1084,8 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     protected void addCentroidViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-        TtestCentroidViewer centroidViewer = new TtestCentroidViewer(this.experiment, clusters, tTestDesign, oneClassMeans, oneClassSDs, meansA, meansB, sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+        TtestCentroidViewer centroidViewer = new TtestCentroidViewer(this.experiment, ClusterWrapper.wrapClusters(this.clusters), ttestResult);
+        
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<this.clusters.length; i++) {
@@ -1145,12 +1125,13 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     
     protected void addVolcanoPlot(DefaultMutableTreeNode root) {
         //DefaultMutableTreeNode vNode = new DefaultMutableTreeNode("Volcano plot");
-        IViewer volcanoPlotViewer = new TTestVolcanoPlotViewer(this.experiment, diffMeansBA, negLog10PValues, isSig,  tTestDesign, oneClassMean, oneClassMeans, oneClassSDs, meansA, meansB, sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+//    	IViewer volcanoPlotViewer = new TTestVolcanoPlotViewer(this.experiment, diffMeansBA, negLog10PValues, isSig,  tTestDesign, oneClassMean, oneClassMeans, oneClassSDs, meansA, meansB, sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+    	IViewer volcanoPlotViewer = new TTestVolcanoPlotViewer(this.experiment, ttestResult);
         root.add(new DefaultMutableTreeNode(new LeafInfo("Volcano Plot", volcanoPlotViewer)));
     }
     
     /**
-     * Adds node with general iformation.
+     * Adds node with general information.
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");

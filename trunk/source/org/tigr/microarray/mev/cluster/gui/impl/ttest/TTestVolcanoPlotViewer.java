@@ -69,6 +69,9 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.BooleanArray;
+import org.tigr.util.DoubleArray;
+import org.tigr.util.FloatMatrix;
 import org.tigr.util.awt.ActionInfoDialog;
 
 /**
@@ -91,24 +94,48 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
     private JCheckBoxMenuItem useRefLinesBox, projectClustersBox;
     int currentXSliderPosition, currentYSliderPosition;
     double currentP, currentMean, oneClassMean;
-    int tTestDesign;
-    private Vector rawPValues, adjPValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     private int exptID;
+    private TTestResults results;
     
-    /** Creates new TTestVolcanoPlotViewer */
+    public TTestVolcanoPlotViewer(Experiment experiment, TTestResults results) {
+    	this.experiment = experiment;
+    	this.results = results;
+    	initialize();
+    }
+    /** Legacy state-saving constructor for MeV v4.0-4.4.
+     * Creates new TTestVolcanoPlotViewer 
+     * */
     public TTestVolcanoPlotViewer(Experiment experiment, double[] xArray, double[] yArray, 
     		boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, 
 			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
 			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
-        //System.out.println("Created Volcano plot");
-        //this.tTestFrame = tTestFrame;
         this.experiment = experiment;
         setExperimentID(experiment.getId());
-        initialize(xArray, yArray, isSig, tTestDesign, oneClassMean, oneClassMeans, 
-        		oneClassSDs, meansA, meansB, sdA, sdB, 
-				rawPValues, adjPValues, tValues, dfValues);
+    	results = new TTestResults();
+    	results.setAdjPValuesMatrix(toFloatMatrix(adjPValues));
+    	results.setDfMatrix(toFloatMatrix(dfValues));
+    	results.setMeansAMatrix(toFloatMatrix(meansA));
+    	results.setMeansBMatrix(toFloatMatrix(meansB));
+    	results.setOneClassMeansMatrix(toFloatMatrix(oneClassMeans));
+    	results.setOneClassSDsMatrix(toFloatMatrix(oneClassSDs));
+    	results.setRawPValuesMatrix(toFloatMatrix(rawPValues));
+    	results.setSdAMatrix(toFloatMatrix(sdA));
+    	results.setSdBMatrix(toFloatMatrix(sdB));
+    	results.setTTestDesign(tTestDesign);
+    	results.setTValuesMatrix(toFloatMatrix(tValues));
+        results.setIsSig(new BooleanArray(isSig));
+        results.setDiffMeansBA(xArray);
+        results.setNegLog10PValues(yArray);
+        initialize();
     }
- 
+
+    private static FloatMatrix toFloatMatrix(Vector<Float> temp){
+    	float[] test = new float[temp.size()];
+    	for(int j=0; j<temp.size(); j++) {
+    		test[j] = temp.get(j);
+    	}
+    	return new FloatMatrix(new float[][]{test});
+    }  
     public TTestVolcanoPlotViewer(Experiment e, double[] xArray, double[] yArray, 
     		boolean[] isSig, Integer tTestDesign, Double oneClassMean, Vector oneClassMeans, 
 			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
@@ -119,32 +146,20 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
     }
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.experiment, this.xArray, this.yArray,
-    			this.isSig, new Integer(tTestDesign), new Double(oneClassMean), oneClassMeans, 
-				oneClassSDs, meansA, meansB, sdA, sdB,
-				rawPValues, adjPValues, tValues, dfValues});
+    			new Object[]{this.experiment, this.results});
+
     }
     
-    private void initialize(double[] xArray, double[] yArray, 
-    		boolean[] isSig, int tTestDesign, double oneClassMean, Vector oneClassMeans, 
-			Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, 
-			Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues){
-        this.xArray = xArray;
-        this.yArray = yArray;
-        this.isSig = isSig;
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.tValues = tValues;
-        this.dfValues = dfValues;
-        this.meansA = meansA;
-        this.meansB = meansB;
-        this.tTestDesign = tTestDesign;
-        this.oneClassMeans = oneClassMeans;
-        this.oneClassMean = oneClassMean;
-        this.oneClassSDs = oneClassSDs;
-        this.sdA = sdA;
-        this.sdB =sdB;
-        //this.tTestDesign =TtestInitDialog.BETWEEN_SUBJECTS;  //for now
+    private void initialize(){
+    	try {
+        xArray = results.getDiffMeansBA().toArray();
+        yArray = results.getNegLog10PValues().toArray();
+    	} catch (NullPointerException npe) {
+    		xArray = new double[1];
+    		yArray = new double[1];
+    	}
+
+        isSig = results.getIsSig().toArray();
         useRefLines = true;
         projectClusters = false;
         usePosAndNeg = true;
@@ -426,7 +441,7 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
             g2D.drawString("-" + nf.format((double)xIntervalArray[i]), this.getWidth()/2 - (int)Math.round(xIntervalArray[i]*xScalingFactor) - 10, this.getHeight() - 30);
         }
         
-        if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+        if (results.getTTestDesign() == TtestInitDialog.ONE_CLASS) {
             g2D.drawString("Gene Mean - Hypothesized Mean (" + oneClassMean + ")", this.getWidth()/2 - 85, this.getHeight() - 15);
         } else {
             g2D.drawString("Mean(GroupB) - Mean(GroupA)", this.getWidth()/2 - 85, this.getHeight() - 15);
@@ -702,14 +717,14 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
             out.print("\t");
             //}
         }
-        if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
+        if (results.getTTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
             out.print("GroupA mean\t");
             out.print("GroupA std.dev.\t");
             out.print("GroupB mean\t");
             out.print("GroupB std.dev.\t");
             out.print("Absolute t value");
             
-        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+        } else if (results.getTTestDesign() == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
             out.print("t value");
@@ -738,23 +753,22 @@ public class TTestVolcanoPlotViewer extends JPanel implements IViewer /*, MouseM
                 out.print("\t");
                 //}
             }
-            if (tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) {
-                out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)sdB.get(rows[i])).floatValue() + "\t");
-            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                out.print(((Float)oneClassMeans.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)oneClassSDs.get(rows[i])).floatValue() + "\t");
+            if (results.getTTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) {
+            	out.print(results.getMeansAMatrix().get(rows[i], 0) + "\t");
+            	out.print(results.getSdAMatrix().get(rows[i], 0) + "\t");
+            	out.print(results.getMeansBMatrix().get(rows[i], 0) + "\t");
+            	out.print(results.getSdBMatrix().get(rows[i], 0) + "\t");
+            } else if (results.getTTestDesign() == TtestInitDialog.ONE_CLASS) {
+            	out.print(results.getOneClassMeansMatrix().get(rows[i], 0) + "\t");
+            	out.print(results.getOneClassSDsMatrix().get(rows[i], 0) + "\t");
             }
-            //out.print("\t");
-            out.print("" + ((Float)tValues.get(rows[i])).floatValue());
+        	out.print(results.getTValuesMatrix().get(rows[i], 0));
             out.print("\t");
-            out.print("" + ((Float)dfValues.get(rows[i])).intValue());
+        	out.print(results.getDfMatrix().get(rows[i], 0));
             out.print("\t");
-            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());
+        	out.print(results.getRawPValuesMatrix().get(rows[i], 0));
             out.print("\t");
-            out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
+        	out.print(results.getAdjPValuesMatrix().get(rows[i], 0));           
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
                 out.print(Float.toString(experiment.get(rows[i], j)));

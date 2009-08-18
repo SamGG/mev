@@ -35,6 +35,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 public class SAMExperimentViewer extends ExperimentViewer {
 
@@ -67,6 +68,10 @@ public class SAMExperimentViewer extends ExperimentViewer {
     	super(experiment, clusters.getClusters());
 	 	initialize(studyDesign, dValues, rValues, foldChangeArray, qLowestFDR, calculateQLowestFDR);
 	}
+    public SAMExperimentViewer(Experiment experiment, ClusterWrapper clusters, int studyDesign, FloatMatrix dValues, FloatMatrix rValues, FloatMatrix foldChangeArray, FloatMatrix qLowestFDR, boolean calculateQLowestFDR) {
+    	super(experiment, clusters.getClusters());
+	 	initialize(studyDesign, dValues.A[0], rValues.A[0], foldChangeArray.A[0], qLowestFDR.A[0], calculateQLowestFDR);
+	}
     /**
      * @inheritDoc
      */ 
@@ -82,8 +87,8 @@ public class SAMExperimentViewer extends ExperimentViewer {
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{getExperiment(), getClusters(), new Integer(studyDesign), dValues, 
-    		rValues, foldChangeArray, qLowestFDR, 
+    			new Object[]{getExperiment(), ClusterWrapper.wrapClusters(getClusters()), new Integer(studyDesign), new FloatMatrix(new float[][]{dValues}), 
+    		new FloatMatrix(new float[][]{rValues}), new FloatMatrix(new float[][]{foldChangeArray}), new FloatMatrix(new float[][]{qLowestFDR}), 
     		new Boolean(calculateQLowestFDR)});
     }
 

@@ -25,12 +25,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 public class TtestCentroidsViewer extends CentroidsViewer {
 
@@ -73,10 +75,68 @@ public class TtestCentroidsViewer extends CentroidsViewer {
         this.sdA = sdA;
         this.sdB = sdB;     
      }
- 
+    public TtestCentroidsViewer(CentroidViewer cv, Integer tTestDesign, 
+    		FloatMatrix oneClassMeans,
+    		FloatMatrix oneClassSDs,
+    		FloatMatrix rawPValues,
+    		FloatMatrix adjPValues,
+    		FloatMatrix tValues,
+    		FloatMatrix dfValues,
+    		FloatMatrix meansA,
+    		FloatMatrix meansB,
+    		FloatMatrix sdA,
+    		FloatMatrix sdB) {
+		super(cv);
+        this.tTestDesign = tTestDesign.intValue();
+        	if(oneClassMeans != null && oneClassMeans.A != null && oneClassMeans.A[0] != null)
+        		this.oneClassMeans = toVector(oneClassMeans.A[0]);
+        	if(oneClassSDs != null && oneClassSDs.A != null && oneClassSDs.A[0] != null)
+        		this.oneClassSDs = toVector(oneClassSDs.A[0]);   
+        	if(rawPValues != null && rawPValues.A != null && rawPValues.A[0] != null)  
+        		this.rawPValues = toVector(rawPValues.A[0]);
+        	if(adjPValues != null && adjPValues.A != null && adjPValues.A[0] != null)
+        		this.adjPValues = toVector(adjPValues.A[0]);
+        	if(tValues != null && tValues.A != null && tValues.A[0] != null)
+        		this.tValues = toVector(tValues.A[0]);
+        	if(dfValues != null && dfValues.A != null && dfValues.A[0] != null)
+        		this.dfValues = toVector(dfValues.A[0]);
+        	if(meansA != null && meansA.A != null && meansA.A[0] != null)
+        		this.meansA = toVector(meansA.A[0]);
+        	if(meansB != null && meansB.A != null && meansB.A[0] != null)
+        		this.meansB = toVector(meansB.A[0]);
+        	if(sdA != null && sdA.A != null && sdA.A[0] != null)
+        		this.sdA = toVector(sdA.A[0]);
+        	if(sdB != null && sdB.A != null && sdB.A[0] != null)
+        		this.sdB = toVector(sdB.A[0]);
+    }
+
+    private static Vector<Float> toVector(float[] temp) {
+    	Vector<Float> returnVector = new Vector<Float>(temp.length);
+    	for(int i=0; i<temp.length; i++)
+    		returnVector.add(i, temp[i]);
+    	return returnVector;
+    }
+    private static FloatMatrix toFloatMatrix(Vector<Float> temp){
+    	float[] test = new float[temp.size()];
+    	for(int j=0; j<temp.size(); j++) {
+    		test[j] = temp.get(j);
+    	}
+    	return new FloatMatrix(new float[][]{test});
+    }    
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.centroidViewer, new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    			new Object[]{this.centroidViewer, new Integer(this.tTestDesign), //this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+		toFloatMatrix(oneClassMeans), 
+		toFloatMatrix(oneClassSDs), 
+		toFloatMatrix(rawPValues), 
+		toFloatMatrix(adjPValues),
+		toFloatMatrix(tValues), 
+		toFloatMatrix(dfValues),  
+		toFloatMatrix(meansA), 
+		toFloatMatrix(meansB), 
+		toFloatMatrix(sdA), 
+		toFloatMatrix(sdB), 
+		});
     }
     /**
      * Saves all clusters.
