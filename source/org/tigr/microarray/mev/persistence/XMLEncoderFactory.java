@@ -35,6 +35,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTree;
 import org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.impl.sota.*;
 import org.tigr.microarray.mev.cluster.gui.impl.st.HCLSupportTree;
+import org.tigr.util.BooleanArray;
+import org.tigr.util.DoubleArray;
 import org.tigr.util.FloatMatrix;
 import org.tigr.util.awt.Viewer;
 
@@ -103,6 +105,14 @@ public abstract class XMLEncoderFactory {
         
         //Below are other miscellaneous classes that need custom PersistenceDelegates to be
         //properly saved.
+		oos.setPersistenceDelegate(
+				DoubleArray.class,
+				new DoubleArrayPersistenceDelegate()
+			);
+		oos.setPersistenceDelegate(
+				BooleanArray.class,
+				new BooleanArrayPersistenceDelegate()
+			);
 		oos.setPersistenceDelegate(
 				ClusterWrapper.class,
 				new ClusterWrapperPersistenceDelegate()

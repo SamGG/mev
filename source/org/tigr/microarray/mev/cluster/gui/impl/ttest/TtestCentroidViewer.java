@@ -31,31 +31,51 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 public class TtestCentroidViewer extends CentroidViewer {
+    private TTestResults results;
     
-    private Vector rawPValues, adjPValues, tValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
-    private int tTestDesign;
+    /**
+     * Create new viewer from ttestResultData
+     */
+    public TtestCentroidViewer(Experiment experiment, ClusterWrapper clusters, TTestResults results) {
+    	super(experiment, clusters);
+    	this.results = results;
+    }
     /**
      * Construct a <code>TtestCentroidViewer</code> with specified experiment
      * and clusters.
      */
-    public TtestCentroidViewer(Experiment experiment, int[][] clusters, int tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+    public TtestCentroidViewer(Experiment experiment, int[][] clusters, int tTestDesign, 
+    		Vector<Float> oneClassMeans, Vector<Float> oneClassSDs, Vector<Float> meansA, 
+    		Vector<Float> meansB, Vector<Float> sdA, Vector<Float> sdB, Vector<Float> rawPValues, 
+    		Vector<Float> adjPValues, Vector<Float> tValues, Vector<Float> dfValues) {
         super(experiment, clusters);
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.tValues = tValues;
-        this.dfValues = dfValues;
-        this.meansA = meansA;
-        this.meansB = meansB;
-        this.tTestDesign = tTestDesign;
-        this.oneClassMeans = oneClassMeans;
-        this.oneClassSDs = oneClassSDs;
-        this.sdA = sdA; 
-        this.sdB =sdB;
+        results = createResults(tTestDesign, oneClassMeans, oneClassSDs, meansA, meansB,
+        		sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+    }
+    private TTestResults createResults(int tTestDesign, Vector<Float> oneClassMeans, 
+    		Vector<Float> oneClassSDs, Vector<Float> meansA, Vector<Float> meansB,
+    		Vector<Float> sdA, Vector<Float> sdB, Vector<Float> rawPValues, 
+    		Vector<Float> adjPValues, Vector<Float> tValues, Vector<Float> dfValues) {
+    	TTestResults temp = new TTestResults();
+    	temp = new TTestResults();
+    	temp.setAdjPValuesMatrix(toFloatMatrix(adjPValues));
+    	temp.setDfMatrix(toFloatMatrix(dfValues));
+    	temp.setMeansAMatrix(toFloatMatrix(meansA));
+    	temp.setMeansBMatrix(toFloatMatrix(meansB));
+    	temp.setOneClassMeansMatrix(toFloatMatrix(oneClassMeans));
+    	temp.setOneClassSDsMatrix(toFloatMatrix(oneClassSDs));
+    	temp.setRawPValuesMatrix(toFloatMatrix(rawPValues));
+    	temp.setSdAMatrix(toFloatMatrix(sdA));
+    	temp.setSdBMatrix(toFloatMatrix(sdB));
+    	temp.setTTestDesign(tTestDesign);
+    	temp.setTValuesMatrix(toFloatMatrix(tValues));
+    	return temp;
     }
     /**
-     * State-saving constructor for loading saved analyses from MeV v4.4 and higher
+     * State-saving constructor for loading saved analyses from MeV v4.4 - v4.4.1
      * @param e
      * @param clusters
      * @param variances
@@ -66,9 +86,17 @@ public class TtestCentroidViewer extends CentroidViewer {
      * @param auxData
      */
     public TtestCentroidViewer(Experiment e, ClusterWrapper clusters, float[][] variances, float[][] means, float[][] codes,
-   		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
+   		 Integer tTestDesign, Vector<Float> oneClassMeans, Vector<Float> oneClassSDs, Vector<Float> meansA, Vector<Float> meansB, Vector<Float> sdA, Vector<Float> sdB, Vector<Float> rawPValues, Vector<Float> adjPValues, Vector<Float> tValues, Vector<Float> dfValues) {
     	this(e, clusters.getClusters(), variances, means, codes,
        		 tTestDesign, oneClassMeans, oneClassSDs, meansA, meansB, sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
+    } 
+
+    private static FloatMatrix toFloatMatrix(Vector<Float> temp){
+    	float[] test = new float[temp.size()];
+    	for(int j=0; j<temp.size(); j++) {
+    		test[j] = temp.get(j);
+    	}
+    	return new FloatMatrix(new float[][]{test});
     }    
     /**
      * State-saving constructor for loading saved analyses from MeV v4.0-4.3
@@ -76,23 +104,13 @@ public class TtestCentroidViewer extends CentroidViewer {
     public TtestCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes,
     		 Integer tTestDesign, Vector oneClassMeans, Vector oneClassSDs, Vector meansA, Vector meansB, Vector sdA, Vector sdB, Vector rawPValues, Vector adjPValues, Vector tValues, Vector dfValues) {
     	super(e, clusters, variances, means, codes);
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.tValues = tValues;
-        this.dfValues = dfValues;
-        this.meansA = meansA;
-        this.meansB = meansB;
-        this.tTestDesign = tTestDesign.intValue();
-        this.oneClassMeans = oneClassMeans;
-        this.oneClassSDs = oneClassSDs;
-        this.sdA = sdA; 
-        this.sdB =sdB;
+        results = createResults(tTestDesign, oneClassMeans, oneClassSDs, meansA, meansB,
+        		sdA, sdB, rawPValues, adjPValues, tValues, dfValues);
      }
- 
     public Expression getExpression(){
+    	Object[] superExpressionArgs = super.getExpression().getArguments();
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.experiment, this.clusters, this.variances, this.means, this.codes,  
-    			new Integer(this.tTestDesign), this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    			new Object[]{superExpressionArgs[0], superExpressionArgs[1], results});
     }
     
     /**
@@ -155,17 +173,15 @@ public class TtestCentroidViewer extends CentroidViewer {
         out.print("\t");
         for (int i = 0; i < fieldNames.length; i++) {
             out.print(fieldNames[i]);
-            //if (i < fieldNames.length - 1) {
-                out.print("\t");
-            //}
+            out.print("\t");
         }
-        if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {        
+        if ((results.getTTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) || (results.getTTestDesign() == TtestInitDialog.PAIRED)) {        
             out.print("GroupA mean\t");
             out.print("GroupA std.dev.\t");
             out.print("GroupB mean\t");
             out.print("GroupB std.dev.\t");
             out.print("Absolute t value");
-        } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
+        } else if (results.getTTestDesign() == TtestInitDialog.ONE_CLASS) {
             out.print("Gene mean\t");
             out.print("Gene std.dev.\t");
             out.print("t value");
@@ -194,23 +210,23 @@ public class TtestCentroidViewer extends CentroidViewer {
                     out.print("\t");
                 //}
             }
-            if ((tTestDesign == TtestInitDialog.BETWEEN_SUBJECTS) || (tTestDesign == TtestInitDialog.PAIRED)) {            
-                out.print(((Float)meansA.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)sdA.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)meansB.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)sdB.get(rows[i])).floatValue() + "\t");
-            } else if (tTestDesign == TtestInitDialog.ONE_CLASS) {
-                out.print(((Float)oneClassMeans.get(rows[i])).floatValue() + "\t");
-                out.print(((Float)oneClassSDs.get(rows[i])).floatValue() + "\t");
+            if ((results.getTTestDesign() == TtestInitDialog.BETWEEN_SUBJECTS) || (results.getTTestDesign() == TtestInitDialog.PAIRED)) {            
+                out.print(results.getMeansAMatrix().get(rows[i], 0) + "\t");
+                out.print(results.getSdAMatrix().get(rows[i],0) + "\t");
+                out.print(results.getMeansBMatrix().get(rows[i],0) + "\t");
+                out.print(results.getSdBMatrix().get(rows[i],0) + "\t");
+            } else if (results.getTTestDesign() == TtestInitDialog.ONE_CLASS) {
+                out.print(results.getOneClassMeansMatrix().get(rows[i],0) + "\t");
+                out.print(results.getOneClassSDsMatrix().get(rows[i],0) + "\t");
             } 
             //out.print("\t");
-            out.print("" + ((Float)tValues.get(rows[i])).floatValue());
+            out.print("" + results.getTValuesMatrix().get(rows[i],0));
             out.print("\t");
-            out.print("" + ((Float)dfValues.get(rows[i])).intValue());
+            out.print("" + results.getDfMatrix().get(rows[i],0));
             out.print("\t");            
-            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());
+            out.print("" + results.getRawPValuesMatrix().get(rows[i], 0));
             out.print("\t");            
-            out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
+            out.print("" + results.getAdjPValuesMatrix().get(rows[i],0));
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
                 out.print("\t");
                 out.print(Float.toString(experiment.get(rows[i], j)));

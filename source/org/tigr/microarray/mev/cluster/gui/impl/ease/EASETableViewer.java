@@ -38,6 +38,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -67,7 +68,20 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected JMenuItem launchMenuItem;
     protected Object[][] data;
     protected boolean isEaseConsolidatedResult = false;
-
+    /**
+     * Kept for state-saving backwards-compatibility
+     * @param headerNames
+     * @param data
+     * @param analysisNode
+     * @param experiment
+     * @param clusters
+     * @param haveAccessionNumbers
+     * @param clusterAnalysis
+     */
+    public EASETableViewer(String [] headerNames, Object [][] data, DefaultMutableTreeNode analysisNode, Experiment experiment, ClusterWrapper clusters, boolean haveAccessionNumbers, boolean clusterAnalysis, boolean isEaseConsolidatedResult) {
+    	this(headerNames, data, analysisNode, experiment, clusters.getClusters(), haveAccessionNumbers, clusterAnalysis, isEaseConsolidatedResult);
+    }
+    
     /**
      * Kept for state-saving backwards-compatibility
      * @param headerNames
@@ -391,7 +405,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.headerNames, this.data, this.easeRoot, this.experiment, this.clusters, this.haveAccessionNumbers, this.clusterAnalysis});
+    			new Object[]{this.headerNames, this.data, this.easeRoot, this.experiment, ClusterWrapper.wrapClusters(this.clusters), this.haveAccessionNumbers, this.clusterAnalysis, this.isEaseConsolidatedResult});
     }  
     
     /** Handles events

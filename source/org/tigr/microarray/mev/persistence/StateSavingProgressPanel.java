@@ -105,7 +105,10 @@ import org.tigr.microarray.mev.MultipleArrayViewer;
     			progressBar.setString("Cleaning Up...");
             }
 	    }
-
+	    public void dispose() {
+	    	mav.cancelLoadState();
+	    	super.dispose();
+	    }
 	    public void onClose(){
 	    	mav.cancelLoadState();
 	    }

@@ -15,11 +15,6 @@
 package org.tigr.microarray.mev.cluster.gui.impl.ttest;
 
 import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,14 +28,14 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
 
 public class TtestExperimentViewer extends ExperimentViewer {
 
-    private Vector tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    private Vector<Float> tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     private int tTestDesign;    
     
     /**
@@ -110,15 +105,71 @@ public class TtestExperimentViewer extends ExperimentViewer {
         this.sdA = sdA; 
         this.sdB =sdB; 
     }
+    public TtestExperimentViewer(Experiment e, ClusterWrapper clusters, 
+    		Integer tTestDesign, 
+    		FloatMatrix oneClassMeans,
+    		FloatMatrix oneClassSDs,
+    		FloatMatrix rawPValues,
+    		FloatMatrix adjPValues,
+    		FloatMatrix tValues,
+    		FloatMatrix dfValues,
+    		FloatMatrix meansA,
+    		FloatMatrix meansB,
+    		FloatMatrix sdA,
+    		FloatMatrix sdB) {
+    	super(e, clusters.getClusters());
+    		this.tTestDesign = tTestDesign.intValue();
+        	if(oneClassMeans != null && oneClassMeans.A != null && oneClassMeans.A[0] != null)
+        		this.oneClassMeans = toVector(oneClassMeans.A[0]);
+        	if(oneClassSDs != null && oneClassSDs.A != null && oneClassSDs.A[0] != null)
+        		this.oneClassSDs = toVector(oneClassSDs.A[0]);   
+        	if(rawPValues != null && rawPValues.A != null && rawPValues.A[0] != null)  
+        		this.rawPValues = toVector(rawPValues.A[0]);
+        	if(adjPValues != null && adjPValues.A != null && adjPValues.A[0] != null)
+        		this.adjPValues = toVector(adjPValues.A[0]);
+        	if(tValues != null && tValues.A != null && tValues.A[0] != null)
+        		this.tValues = toVector(tValues.A[0]);
+        	if(dfValues != null && dfValues.A != null && dfValues.A[0] != null)
+        		this.dfValues = toVector(dfValues.A[0]);
+        	if(meansA != null && meansA.A != null && meansA.A[0] != null)
+        		this.meansA = toVector(meansA.A[0]);
+        	if(meansB != null && meansB.A != null && meansB.A[0] != null)
+        		this.meansB = toVector(meansB.A[0]);
+        	if(sdA != null && sdA.A != null && sdA.A[0] != null)
+        		this.sdA = toVector(sdA.A[0]);
+        	if(sdB != null && sdB.A != null && sdB.A[0] != null)
+        		this.sdB = toVector(sdB.A[0]);
+    }
+    
     public Expression getExpression(){
     	Object[] superExpressionArgs = super.getExpression().getArguments();
-    	
     	return new Expression(this, this.getClass(), "new", 
     			new Object[]{superExpressionArgs[0], superExpressionArgs[1], new Integer(this.tTestDesign), 
-    			this.oneClassMeans, this.oneClassSDs, this.meansA, this.meansB, this.sdA, this.sdB, 
-    			this.rawPValues, this.adjPValues, this.tValues, this.dfValues});
+    		toFloatMatrix(oneClassMeans), 
+    		toFloatMatrix(oneClassSDs), 
+    		toFloatMatrix(rawPValues), 
+    		toFloatMatrix(adjPValues),
+    		toFloatMatrix(tValues), 
+    		toFloatMatrix(dfValues),  
+    		toFloatMatrix(meansA), 
+    		toFloatMatrix(meansB), 
+    		toFloatMatrix(sdA), 
+    		toFloatMatrix(sdB), 
+    		});
     }
-         
+    private static Vector<Float> toVector(float[] temp) {
+    	Vector<Float> returnVector = new Vector<Float>(temp.length);
+    	for(int i=0; i<temp.length; i++)
+    		returnVector.add(i, temp[i]);
+    	return returnVector;
+    }
+    private static FloatMatrix toFloatMatrix(Vector<Float> temp){
+    	float[] test = new float[temp.size()];
+    	for(int j=0; j<temp.size(); j++) {
+    		test[j] = temp.get(j);
+    	}
+    	return new FloatMatrix(new float[][]{test});
+    }    
      /**
      * Saves all the clusters.
      */
