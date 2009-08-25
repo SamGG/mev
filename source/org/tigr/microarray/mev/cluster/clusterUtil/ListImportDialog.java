@@ -277,6 +277,8 @@ public class ListImportDialog extends AlgorithmDialog {
         for (int i=0; i<annFields.size(); i++){
         	theList.add(fieldNames[i]);
         }
+        theList.setMultipleMode(true);
+        otherList.setMultipleMode(true);
 
         paramPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0)); 
         paramPanel.add(otherListLabel, new GridBagConstraints(2,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0)); 
@@ -424,17 +426,25 @@ public class ListImportDialog extends AlgorithmDialog {
                 }            
             }
             else if (command.equals("select-command")){  
-            	if (theList.getSelectedItem()==null)
+            	if (theList.getSelectedIndexes()==null){
             		return;
-            	otherList.add(theList.getSelectedItem());
-            	theList.remove((theList.getSelectedIndex()));
+            	}
+            	String[] selected = theList.getSelectedItems();
+            	for (int i=0; i<selected.length; i++){
+            		otherList.add(selected[i]);
+            		theList.remove(selected[i]);
+            	}
+            	
             	return;
             }
             else if (command.equals("unselect-command")){ 
-            	if (otherList.getSelectedItem()==null)
+            	if (otherList.getSelectedIndexes()==null)
             		return;
-            	theList.add(otherList.getSelectedItem());
-            	otherList.remove((otherList.getSelectedIndex()));
+            	String[] selected = otherList.getSelectedItems();
+            	for (int i=0; i<selected.length; i++){
+            		theList.add(selected[i]);
+            		otherList.remove(selected[i]);
+            	}
             	return;
             }
             dispose();
@@ -447,8 +457,8 @@ public class ListImportDialog extends AlgorithmDialog {
         
     }
     public static void main(String[] args){
-    	String[] qwe ={"qwe","werhjkhjkhjk"};
-    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, false, false, false);
+    	String[] qwe ={"qwe","werhjkhjkhjk", "sdfsdf", "qqqq", "eevsf"};
+    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, false, false);
     	if(lid.showModal() == JOptionPane.OK_OPTION) {
     		for (int i=0; i< lid.getUpperLimit().length;i++){
     			
