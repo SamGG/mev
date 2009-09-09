@@ -1883,7 +1883,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 -->		
 		<!-- Build Mac distribution --> 
 		<copy todir="${package.dir}/${mev_version.dir}">
-			<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn"/>
+			<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn, mac_distro_readme.txt"/>
 		</copy>
 		<move todir="${package.dir}/${mev_version.dir}/MeV.app/Contents/Resources/Java/">
 			<fileset dir="${package.dir}/${mev_version.dir}/lib">
