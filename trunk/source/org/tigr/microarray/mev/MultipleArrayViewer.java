@@ -653,37 +653,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
                             ioe.printStackTrace();
                         }
                     } else {
-                    	if(dialog == null)
+                    	if(dialog != null)
                     		dialog.dispose();
                     }
                 }
             });
             
-            
             javax.swing.JTextPane pane = new javax.swing.JTextPane();
             pane.setContentType("text/html");
             pane.setEditable(false);
-            
-            String text = "<html><body><font face=arial size=4><b><center>Analysis Save and Restoration Warning</center><b><hr size=3><br>";//<hr size=3>";
-            text += "<font face=arial size=4>Proper restoration of analysis files is dependent on the Java and Java Virtual Machine versions used to open the file. ";
-            text += "Analysis files should be opened using Java and Java Virtual Machine versions that match the versions used to save the file.<br><br>";
-            
-            text += "If version inconsistencies are found when loading an analysis file the saved and current versions " ;
-            text +=  "will be reported at that time.  This problem only arises when moving analysis files between computers ";
-            text += "running different versions of Java.<br><br></body></html>";
-            
-            pane.setMargin(new Insets(10,10,10,10));
-            pane.setFont(new java.awt.Font("arial", java.awt.Font.PLAIN, 4));
-            pane.setText(text);
-            
-            JPanel panePanel = new JPanel(new GridBagLayout());
-            panePanel.setBorder(BorderFactory.createLineBorder(Color.black));
-            panePanel.add(pane,  new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(2,2,2,2), 0, 0) );
-            panePanel.setPreferredSize(new Dimension(chooser.getPreferredSize().width,((int)(chooser.getPreferredSize().height/1.4))));
-            
-            panel.add(panePanel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5,5,5,5), 0, 0));
             panel.add(chooser, new GridBagConstraints(0,1,1,1,0,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5), 0, 0));
-            
             
             dialog.getContentPane().add(panel);
             dialog.pack();
