@@ -78,7 +78,7 @@ public class SuperExpressionFileLoader {
 
 	public static String DATA_PATH = TMEV.getDataPath();
 
-	public static String ANNOTATION_PATH = TMEV.getSettingForOption("current-annotation-path");
+	public static String ANNOTATION_PATH = TMEV.getSettingForOption(TMEV.CURRENT_ANNOTATION_PATH);
 
 	public final static ImageIcon ICON_COMPUTER = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
 			Thread.currentThread().getContextClassLoader().getResource("org/tigr/images/PCIcon.gif")));
