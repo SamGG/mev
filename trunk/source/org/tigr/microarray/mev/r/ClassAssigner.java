@@ -246,7 +246,7 @@ public class ClassAssigner {
 	public void onSaveAssignments() {
     	int numGroups = comboNames.length;	
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");	
+		JFileChooser fileChooser = new JFileChooser(TMEV.getSettingForOption(TMEV.CURRENT_DATA_PATH, "./data"));	
 		
 		if(fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -319,7 +319,7 @@ public class ClassAssigner {
 		 */
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");
+		JFileChooser fileChooser = new JFileChooser(TMEV.getSettingForOption(TMEV.CURRENT_DATA_PATH, "./data"));
 		
 		if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 		

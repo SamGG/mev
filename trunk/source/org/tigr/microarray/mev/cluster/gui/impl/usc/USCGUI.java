@@ -202,7 +202,7 @@ public class USCGUI implements IClusterGUI {
 				panel.add( bar );
 				jf.getContentPane().add( panel );
 				jf.setSize( 150, 100 );
-				jf.show();
+				jf.setVisible(false);
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 				jf.setLocation((screenSize.width - 200)/2, (screenSize.height - 100)/2);
 				
@@ -214,42 +214,52 @@ public class USCGUI implements IClusterGUI {
 						uniqueClassArray, bar, iRho );
 				
 				jf.dispose();
-			
-				//USCOrder[] has relevant gene info
-				USCOrder[] order = this.finalResult.getOrder();
-			
-				//have all requisite info to save the training to a file if desired
-				if( deltaDialog.saveTraining() ) {
-					this.saveTraining( trainSet.getHybs(), row, order, data, 
-							framework.getFrame(), trainSet.getGenes() );
-				}
 				
-				//create a new Experiment to represent this analysis (subset of genes used)
-				Experiment newExp = this.createNewExperiment( data.getExperiment(), 
-						this.finalResult.getNumGenesUsed(), order );
-				
+
 				DefaultMutableTreeNode returnNode = new DefaultMutableTreeNode( "USC" );
 				
-				String[] testHybNames = new String[ testArray.length ];
-				for( int h = 0; h < testArray.length; h ++ ) {
-					testHybNames[ h ] = testArray[ h ].getHybName();
-				}
+				if(this.finalResult.getNumGenesUsed() <= 0) {
+					
+					LeafInfo li = new LeafInfo("No results returned");
+					returnNode.add(new DefaultMutableTreeNode(li));
+					
+				} else {
 				
-				//add the summary
-				USCSummaryViewer summaryViewer = new USCSummaryViewer( 
-						testHybNames, this.finalResult, this.uniqueClassArray, this.params,
-						this.getGenes( testSet.getGenes(), finalResult ), framework );
-				LeafInfo summaryLeaf = new LeafInfo( "Summary", summaryViewer );
-				returnNode.add( new DefaultMutableTreeNode( summaryLeaf ) );
+					//USCOrder[] has relevant gene info
+					USCOrder[] order = this.finalResult.getOrder();
 				
-				//add a node to display all the hybs and the genes used for analysis
-				returnNode.add( new DefaultMutableTreeNode( 
-						this.createFullCluster( data, newExp, finalResult ) ) );
-				
-				//add the class results
-				for( int c = 0; c < this.numClasses; c ++ ) {
-					LeafInfo li = this.createClassCluster( c, newExp, finalResult, trainSet, testSet );
-					returnNode.add( new DefaultMutableTreeNode( li ) );
+					//have all requisite info to save the training to a file if desired
+					if( deltaDialog.saveTraining() ) {
+						this.saveTraining( trainSet.getHybs(), row, order, data, 
+								framework.getFrame(), trainSet.getGenes() );
+					}
+					
+					//create a new Experiment to represent this analysis (subset of genes used)
+					Experiment newExp = this.createNewExperiment( data.getExperiment(), 
+							this.finalResult.getNumGenesUsed(), order );
+					
+					
+					String[] testHybNames = new String[ testArray.length ];
+					for( int h = 0; h < testArray.length; h ++ ) {
+						testHybNames[ h ] = testArray[ h ].getHybName();
+					}
+					
+					//add the summary
+					USCSummaryViewer summaryViewer = new USCSummaryViewer( 
+							testHybNames, this.finalResult, this.uniqueClassArray, this.params,
+							this.getGenes( testSet.getGenes(), finalResult ), framework );
+					LeafInfo summaryLeaf = new LeafInfo( "Summary", summaryViewer );
+					returnNode.add( new DefaultMutableTreeNode( summaryLeaf ) );
+					
+					//add a node to display all the hybs and the genes used for analysis
+					returnNode.add( new DefaultMutableTreeNode( 
+							this.createFullCluster( data, newExp, finalResult ) ) );
+					
+					//add the class results
+					for( int c = 0; c < this.numClasses; c ++ ) {
+						LeafInfo li = this.createClassCluster( c, newExp, finalResult, trainSet, testSet );
+						returnNode.add( new DefaultMutableTreeNode( li ) );
+					}
 				}
 				
 				return returnNode;
