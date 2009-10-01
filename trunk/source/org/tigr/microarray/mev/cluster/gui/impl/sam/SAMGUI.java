@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
@@ -533,9 +534,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             if ((!usePreviousGraph) && (saveImputedMatrix)) {
                 FloatMatrix imputedMatrix = result.getMatrix("imputedMatrix");
-                final JFileChooser fc = new JFileChooser();
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 fc.setDialogTitle("Save imputed matrix");
-                fc.setCurrentDirectory(new File("Data"));
                 int returnVal = fc.showSaveDialog((JFrame) framework.getFrame());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();

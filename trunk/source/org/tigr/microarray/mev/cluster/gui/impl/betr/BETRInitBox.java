@@ -58,6 +58,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JSeparator;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
@@ -752,8 +753,7 @@ public class BETRInitBox extends AlgorithmDialog {
                     }
                 });
                 
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 
                 saveButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
@@ -817,7 +817,7 @@ public class BETRInitBox extends AlgorithmDialog {
         	private void saveAssignments() {
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");	
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
         		
         		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
         			file = fileChooser.getSelectedFile();			
@@ -906,7 +906,7 @@ public class BETRInitBox extends AlgorithmDialog {
         		 */
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
         		
         		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         		

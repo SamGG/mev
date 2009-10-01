@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
@@ -175,8 +176,7 @@ public class SAMDeltaInfoViewer extends ViewerAdapter {
         area.setText(sb.toString());
 	area.setCaretPosition(0);
 
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));   
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.setDialogTitle("Save delta table");
         
         popup = new JPopupMenu();

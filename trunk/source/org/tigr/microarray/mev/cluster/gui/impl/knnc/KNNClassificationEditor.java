@@ -51,6 +51,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.util.StringSplitter;
@@ -154,8 +155,7 @@ public class KNNClassificationEditor extends javax.swing.JDialog {// JFrame {
         saveOrNot.add(saveButton);
         saveOrNot.add(doNotSaveButton);
         
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.setDialogTitle("Save classification");
         
         nextButton = new JButton("Next >");

@@ -20,6 +20,8 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.table.TableModel;
 
+import org.tigr.microarray.mev.TMEV;
+
 /**
  *
  * @author  Adam Margolin
@@ -33,7 +35,7 @@ public class TableDataWriter {
     }
 
     public void writeTable(TableModel model){
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(TMEV.getDataPath());
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION){
             File outputFile = chooser.getSelectedFile();

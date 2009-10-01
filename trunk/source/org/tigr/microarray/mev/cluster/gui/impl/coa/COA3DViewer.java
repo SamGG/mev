@@ -34,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -886,7 +887,7 @@ public class COA3DViewer  extends ViewerAdapter {
     	
     	JFileChooser fileChooser;
     	
-    	fileChooser = new JFileChooser();
+    	fileChooser = new JFileChooser(TMEV.getDataPath());
     	
     	String [] annFields;
     	Vector sampleAnnFields;

@@ -26,6 +26,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.ChARM;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.PValue;
 import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDataViewer.CharmGUI;
@@ -197,7 +198,7 @@ public class ExportResultsDialog extends JDialog {
         }
 
         if(getExportType() == ExportResultsDialog.EXPORT_IMAGE) {
-          JFileChooser fileDialog = new JFileChooser();
+          JFileChooser fileDialog = new JFileChooser(TMEV.getDataPath());
           //add all supported image types
           String[] imageWriters = javax.imageio.ImageIO.getWriterFormatNames();
           HashMap typeHash = new HashMap();
@@ -230,7 +231,7 @@ public class ExportResultsDialog extends JDialog {
         }
 
         else {
-          JFileChooser fileDialog = new JFileChooser();
+          JFileChooser fileDialog = new JFileChooser(TMEV.getDataPath());
 
           int returnVal = fileDialog.showSaveDialog(ExportResultsDialog.this);
 

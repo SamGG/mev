@@ -371,7 +371,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
     private void loadTableSVC() throws IOException{
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
 		
 		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 		
@@ -561,7 +561,7 @@ public class SVMClassificationEditor extends javax.swing.JDialog {//javax.swing.
    	private void saveAssignments(boolean saveas) {
    		
    		File file;		
-   		JFileChooser fileChooser = new JFileChooser("./data");	
+   		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
    		if (saveas){
 	   		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 	   			file = fileChooser.getSelectedFile();		

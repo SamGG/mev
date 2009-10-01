@@ -41,6 +41,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.util.StringSplitter;
 
 /**
@@ -168,8 +169,7 @@ public class GroupExperimentsPanel extends JPanel {
             }
         });
 
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
 
         saveButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {

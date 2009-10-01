@@ -61,6 +61,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputAdapter;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 /**
@@ -378,7 +379,7 @@ public class TwoWaySelectionPanel extends JPanel implements IWizardParameterPane
 	private void saveAssignments() {
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");	
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
 		
 		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -457,7 +458,7 @@ public class TwoWaySelectionPanel extends JPanel implements IWizardParameterPane
 		//Wow, that was easy :)
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
 		
 		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 		

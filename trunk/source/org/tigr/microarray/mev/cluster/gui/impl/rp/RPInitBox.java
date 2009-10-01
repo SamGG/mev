@@ -57,6 +57,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSigOnlyPanel;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
@@ -402,8 +403,7 @@ public class RPInitBox extends AlgorithmDialog {
                     }
                 });
                 
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 
                 saveButton.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent evt) {
@@ -469,7 +469,7 @@ public class RPInitBox extends AlgorithmDialog {
         	private void saveOneClassAssignments() {
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");	
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
         		
         		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
         			file = fileChooser.getSelectedFile();			
@@ -521,7 +521,7 @@ public class RPInitBox extends AlgorithmDialog {
      	   	private void saveTwoClassAssignments() {
      	   		
      	   		File file;		
-     	   		JFileChooser fileChooser = new JFileChooser("./data");	
+     	   		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
      	   		
      	   		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
      	   			file = fileChooser.getSelectedFile();			
@@ -596,7 +596,7 @@ public class RPInitBox extends AlgorithmDialog {
         		 */
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
         		
         		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         		
@@ -754,7 +754,7 @@ public class RPInitBox extends AlgorithmDialog {
         	private void loadTwoClassAssignments() {
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
         		
         		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         		
@@ -955,8 +955,7 @@ public class RPInitBox extends AlgorithmDialog {
             
             saveButton = new JButton("Save pairings");
             
-            final JFileChooser fc = new JFileChooser();
-            fc.setCurrentDirectory(new File("Data"));
+            final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
             
             saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {

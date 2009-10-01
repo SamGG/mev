@@ -38,6 +38,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
@@ -126,8 +127,7 @@ public class PTMExpStatsTableViewer extends ViewerAdapter {
         gridbag.setConstraints(pAndRValuesTable, constraints);
         panel.add(pAndRValuesTable);
         
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.setDialogTitle("Save p and R values");
         
         popup = new JPopupMenu();
