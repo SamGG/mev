@@ -72,6 +72,8 @@ public class TMEV {
     public static final String PROMPT_TO_GET_ONLINE = "prompt-to-get-online";
     public static final String ALLOWED_ONLINE = "allow-internet-connections";
     public static final String CUSTOM_ANNOTATION_URLS_FILE = "annotation-urls-mapping-file";
+    public static final String CURRENT_DATA_PATH = "current-data-path";
+    public static final String CURRENT_ANNOTATION_PATH = "current-annotation-path";
     
     public final static int ANALYSIS_LOADED = 101;
     
@@ -584,7 +586,7 @@ public class TMEV {
             algorithmFactory = new TMEVAlgorithmFactory(cfg);
             
             TMEV.permitSavePrompt = cfg.getBoolean("prompt-for-save", true);
-            TMEV.setDataPath(cfg.getProperty("current-data-path"));
+            TMEV.setDataPath(cfg.getProperty(CURRENT_DATA_PATH));
 
             
             //read the Rserve connection path
@@ -605,10 +607,10 @@ public class TMEV {
     }
     
     public static String getDataPath() {
-		File f = new File(getSettingForOption("current-data-path"));
+		File f = new File(getSettingForOption(CURRENT_DATA_PATH));
 		if(!f.isDirectory()) 
 			return f.getParent();
-    		return getSettingForOption("current-data-path");
+    		return getSettingForOption(CURRENT_DATA_PATH);
     }
     
     public static void updateRPath( String rPath ) {
@@ -631,8 +633,8 @@ public class TMEV {
     
     public static void setDataPath(String newPath) {
 		if(!new File(newPath).isDirectory())
-			storeProperty("current-data-path", new File(newPath).getParent());
-		storeProperty("current-data-path", new File(newPath).getAbsolutePath());
+			storeProperty(CURRENT_DATA_PATH, new File(newPath).getParent());
+		storeProperty(CURRENT_DATA_PATH, new File(newPath).getAbsolutePath());
     }
     
     public static AlgorithmFactory getAlgorithmFactory() {
