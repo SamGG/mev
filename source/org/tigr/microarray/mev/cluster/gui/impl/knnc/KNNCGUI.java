@@ -23,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
@@ -132,8 +133,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             if (kDialog.createNewTrgSet()) {
                 kcEditor.showModal(true);
             } else {
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 int returnVal = fc.showOpenDialog(framework.getFrame());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     kcEditor.loadFromFile(fc.getSelectedFile());
@@ -330,8 +330,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
                 //kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses);
                 kcEditor.showModal(true);
             } else {
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 int returnVal = fc.showOpenDialog(framework.getFrame());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     //kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses);
@@ -561,8 +560,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             if (kDialog.createNewTrgSet()) {
                 kcEditor.showModal(true);
             } else {
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 int returnVal = fc.showOpenDialog(framework.getFrame());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     kcEditor.loadFromFile(fc.getSelectedFile());
@@ -712,8 +710,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
                 //kcEditor = new KNNClassificationEditor(framework, classifyGenes, numClasses);
                 kcEditor.showModal(true);
             } else {
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
+                final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
                 int returnVal = fc.showOpenDialog(framework.getFrame());
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     kcEditor.loadFromFile(fc.getSelectedFile());

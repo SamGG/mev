@@ -52,6 +52,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.knnc.KNNClassificationEditor;
@@ -163,8 +164,7 @@ public class DAMClassificationEditor extends JFrame {
         saveOrNot.add(saveButton);
         saveOrNot.add(doNotSaveButton);
         
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.setDialogTitle("Save classification");
         
 
@@ -280,8 +280,7 @@ public class DAMClassificationEditor extends JFrame {
             classItem[i].addActionListener(new AssignListener());
         }
 
-        final JFileChooser fc1 = new JFileChooser();
-        fc1.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc1 = new JFileChooser(TMEV.getDataPath());
         fc1.setDialogTitle("Open Classification");
         
         fileMenu = new JMenu("File");

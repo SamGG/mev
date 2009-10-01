@@ -42,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.ChARM;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.PValue;
 import org.tigr.microarray.mev.cgh.CGHAlgorithms.Charm.TestSignificanceDialog;
@@ -1048,7 +1049,7 @@ public class CharmGUI extends JPanel implements IViewer {
   private class ExportGenesListener implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
-      JFileChooser fileDialog = new JFileChooser();
+      JFileChooser fileDialog = new JFileChooser(TMEV.getDataPath());
       int returnVal = fileDialog.showSaveDialog(CharmGUI.this);
 
       if (returnVal == JFileChooser.APPROVE_OPTION) {

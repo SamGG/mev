@@ -58,6 +58,7 @@ import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -1464,7 +1465,7 @@ public class GDMExpViewer extends JPanel implements IViewer {
     
     
     private void onSaveMatrix(){
-    	JFileChooser chooser = new JFileChooser();
+    	JFileChooser chooser = new JFileChooser(TMEV.getDataPath());
     	if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
     		try {
     			PrintWriter bw = new PrintWriter(new FileWriter(chooser.getSelectedFile()));

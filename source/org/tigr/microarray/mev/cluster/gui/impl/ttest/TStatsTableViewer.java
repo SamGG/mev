@@ -39,6 +39,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -145,8 +146,7 @@ public class TStatsTableViewer extends ViewerAdapter {
         gridbag.setConstraints(tValuesTable, constraints);
         panel.add(tValuesTable);
         
-        final JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(new File("Data"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.setDialogTitle("Save gene t-statistics");
         
         popup = new JPopupMenu();

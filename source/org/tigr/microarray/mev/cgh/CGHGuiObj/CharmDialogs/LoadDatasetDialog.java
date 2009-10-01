@@ -25,6 +25,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
+
 import com.borland.jbcl.layout.BoxLayout2;
 import com.borland.jbcl.layout.VerticalFlowLayout;
 
@@ -133,7 +135,7 @@ public class LoadDatasetDialog extends JDialog {
     jButton2.setText("Browse...");
     jButton2.addActionListener(new ActionListener () {
                                public void actionPerformed(ActionEvent e) {
-      JFileChooser fileDialog = new JFileChooser();
+      JFileChooser fileDialog = new JFileChooser(TMEV.getDataPath());
       int returnVal = fileDialog.showOpenDialog(parent);
 
       if (returnVal == JFileChooser.APPROVE_OPTION) {

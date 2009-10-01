@@ -53,6 +53,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 
 
@@ -536,7 +537,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 	private void saveAssignments() {
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");	
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
 		
 		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -604,7 +605,7 @@ public class GroupSelectionColorPanel extends JPanel implements IWizardParameter
 		//Wow, that was easy :)
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
 		
 		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 		

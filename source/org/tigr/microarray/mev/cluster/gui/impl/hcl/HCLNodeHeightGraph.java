@@ -38,6 +38,7 @@ import org.tigr.graph.GraphLine;
 import org.tigr.graph.GraphPoint;
 import org.tigr.graph.GraphTick;
 import org.tigr.graph.GraphViewer;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -194,7 +195,7 @@ public class HCLNodeHeightGraph extends JPanel implements IViewer {
     }
     
     private void onSaveGraphData(){
-    	JFileChooser chooser = new JFileChooser();
+    	JFileChooser chooser = new JFileChooser(TMEV.getDataPath());
     	if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
     		try {
     			PrintWriter bw = new PrintWriter(new FileWriter(chooser.getSelectedFile()));
