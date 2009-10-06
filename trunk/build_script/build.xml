@@ -1,4 +1,4 @@
-<project name="mev" default="build-all" basedir="./">
+<project name="mev_r" default="build-all" basedir="./">
     
     <description>
        
@@ -73,6 +73,7 @@
 	<property name="GSEA" value="y"/>
     <property name="BETR" value="y"/>
     <property name="RP" value="y"/>
+    <property name="NMF" value="y"/>
     <property name="SVM" value="y"/>
     <property name="KNNC" value="y"/>
     <property name="DAM" value="n"/>
@@ -118,7 +119,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -140,7 +141,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -1292,6 +1293,42 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         </propertyfile>
     </target>
 
+
+    <target name="NMF" depends="NMF-GUI" if="NMF">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="NMF.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="NMF" value="org.tigr.microarray.mev.cluster.algorithm.impl.NMF"/>
+        </propertyfile>
+    </target>
+
+    <target name="NMF-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/nmf" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="NMF:" operation="+"/>
+            <entry key="NMF.name" value="NMF"/>
+            <entry key="NMF.class" value="org.tigr.microarray.mev.cluster.gui.impl.nmf.NMFGUI"/>
+	  	<entry key="NMF.category" value="${STATISTICS}"/> 
+	  	<entry key="NMF.smallIcon" value="analysis16.gif"/>
+            <entry key="NMF.largeIcon" value="NMF_button.gif"/>
+            <entry key="NMF.tooltip" value="Non-Negative Matrix Factorization"/>
+        </propertyfile>
+    </target>
+	
     <target name="SVM" depends="SVM-GUI" if="SVM">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
