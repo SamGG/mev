@@ -119,7 +119,6 @@ public class BETR extends AbstractAlgorithm{
 
         if (dataDesign==1)
         	numTimePoints++;
-    	AlgorithmData result = new AlgorithmData();
     	FloatMatrix means =getMeans(sigGenesArrays);       
     	FloatMatrix variances = getVariances(sigGenesArrays, means); 
     	Cluster result_cluster = new Cluster();
@@ -171,8 +170,7 @@ public class BETR extends AbstractAlgorithm{
     	
     	
     	// prepare the result
-    	
-    	
+    	AlgorithmData result = new AlgorithmData();
     	result.addIntMatrix("sigGenesArrays", sigReturn);
     	result.addParam("error-length", String.valueOf(errorGenesArray.length+errorGenesArray2.length));
     	result.addParam("iterations", String.valueOf(iteration-1));

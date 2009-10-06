@@ -102,7 +102,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     private boolean useDoubleGradient = true;
     
   
-    protected void setIData(IData d) {this.data = d;}
+    public void setIData(IData d) {this.data = d;}
     
     
     /**

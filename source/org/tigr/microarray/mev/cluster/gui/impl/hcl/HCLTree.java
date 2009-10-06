@@ -67,7 +67,7 @@ public class HCLTree extends JPanel {
     protected Color belowThrColor = Color.lightGray;
     protected Color selectedLineColor = Color.magenta;
     protected boolean actualArms = false;
-    protected boolean useAbsoluteHeight = false;
+	protected boolean useAbsoluteHeight = false;
     // initial data
     protected IData data;
     // a result data
@@ -153,7 +153,10 @@ public class HCLTree extends JPanel {
     public static PersistenceDelegate getPersistenceDelegate(){
     	return new HCLTreePersistenceDelegate();
     }
-    
+
+    public void setAbsoluteHeight(boolean abhght) {
+		this.useAbsoluteHeight = abhght;
+	}
     /**
      * Sets specified listener to be notified by tree events.
      */
@@ -517,7 +520,7 @@ public class HCLTree extends JPanel {
             child_2 = treeData.child_2_array[node];
             
             if (!this.useAbsoluteHeight)
-            	pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+            pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
             else
             	pHeights[node] = Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
 
