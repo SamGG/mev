@@ -28,18 +28,25 @@ import javax.swing.JFrame;
 public class HCL extends AbstractAlgorithm {
     
     private boolean stop = false;
+    private boolean nmf = false; //for use with NMF module, which uses no data matrix and imports its own similarity matrix
     
     private int parentless;
     private double TreeHeight;
     private int Assigned;
     private int OptProgress;
+    private float[][] nmfSimMat;
     
     public HCL() {}
     
     public void abort() {
 	stop = true;
     }
-    
+
+    public AlgorithmData executeNMF(AlgorithmData data, float[][] simMat) throws AlgorithmException {
+    	nmf = true;
+    	nmfSimMat = simMat;
+    	return execute(data);
+    }
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	
 	FloatMatrix expMatrix = data.getMatrix("experiment");
@@ -144,40 +151,50 @@ public class HCL extends AbstractAlgorithm {
 	    factor = 1.0f;
 	}
        */
+	if (!nmf){
+		factor = (float)1.0;  //factor is used as an optional scaling factor
+		for (i=1; i<n; ++i) {
+		    CurrentProgress=(int)(i*Factor);
+		    if (CurrentProgress>OldCurrentProgress) {
+			event.setIntValue(CurrentProgress);
+			fireValueChanged(event);
+			OldCurrentProgress=CurrentProgress;
+		    }
+		    if (!optimizeOrdering)
+		    	SimilarityMatrix[i] = new float[i];
 	
-	factor = (float)1.0;  //factor is used as an optional scaling factor
-	for (i=1; i<n; ++i) {
-	    CurrentProgress=(int)(i*Factor);
-	    if (CurrentProgress>OldCurrentProgress) {
-		event.setIntValue(CurrentProgress);
-		fireValueChanged(event);
-		OldCurrentProgress=CurrentProgress;
-	    }
-	    if (!optimizeOrdering)
-	    	SimilarityMatrix[i] = new float[i];
-
-	    Min[i] = Float.POSITIVE_INFINITY;
-	    for (int j=0; j<i; ++j) {
-		if (stop) {
-		    throw new AbortException();
+		    Min[i] = Float.POSITIVE_INFINITY;
+		    for (int j=0; j<i; ++j) {
+				if (stop) {
+				    throw new AbortException();
+				}
+				
+				if (genes) {
+				    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
+				} else {
+				    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
+				}
+					if (optimizeOrdering){
+						SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
+						//squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
+					}
+				if (SimilarityMatrix[i][j] < Min[i]) {
+				    Min[i] = SimilarityMatrix[i][j];
+				    MinIndex[i] = j;
+				}
+		    }
 		}
-		
-		if (genes) {
-		    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
-		} else {
-		    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
+	} else {
+		SimilarityMatrix = nmfSimMat;
+		for (i=1; i<n; ++i) {
+		    for (int j=0; j<i; ++j) {
+				if (SimilarityMatrix[i][j] < Min[i]) {
+				    Min[i] = SimilarityMatrix[i][j];
+				    MinIndex[i] = j;
+				}
+		    }
 		}
-			if (optimizeOrdering){
-				SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
-				//squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
-			}
-		if (SimilarityMatrix[i][j] < Min[i]) {
-		    Min[i] = SimilarityMatrix[i][j];
-		    MinIndex[i] = j;
-		}
-	    }
 	}
-	
 	
 	//========================================
 	
@@ -389,7 +406,6 @@ public class HCL extends AbstractAlgorithm {
 			OptimizeLeafOrder(two_n - 2, NumberOfChildren, LeavesUnder, Child1, Child2, OptimalSum, bestU, bestW, n);	
 		}
 	}
-
 	//========================================
 	AlgorithmData result = new AlgorithmData();
 	//FloatMatrix similarity_matrix = new FloatMatrix(0, 0);
