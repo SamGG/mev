@@ -746,6 +746,22 @@ public class ClusterRepository extends Vector {
 	    return createClusterFromList(null);
     }
         
+    public Cluster storeClusterWithoutDialog(int[]clusterIndices, String label, String node){    
+        Experiment experiment = framework.getData().getExperiment();                    
+        Color nextColor = getNextDefaultColor();
+      	clusterColors.add(nextColor);
+        ClusterList list = getClusterOperationsList();
+        Color clusterColor = nextColor;
+        String clusterDescription = null;
+        this.clusterSerialCounter++;
+        Cluster cluster = new Cluster(clusterIndices, "Algorithm", label, "N/A", node, clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+//        addCluster(list, cluster);
+
+        list.addCluster(cluster);
+        updateClusterMembership(cluster);
+    	return cluster;
+    }
+    
     /** Creates a cluster by importing a gene list         
      */
     public Cluster createClusterFromList(String[] genelist) {

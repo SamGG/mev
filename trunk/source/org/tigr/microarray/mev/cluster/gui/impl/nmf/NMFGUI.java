@@ -32,6 +32,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -58,6 +59,7 @@ import org.tigr.util.FloatMatrix;
 public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     protected Algorithm algorithm;
+    protected IFramework framework;
     protected Progress progressBar;
     protected Experiment experiment;
     protected Experiment connectivityMatrix;
@@ -79,7 +81,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     protected IData data;
     
     int rvalue, numRuns, maxIters;
-    boolean divergence, doSamples;
+    boolean divergence, doSamples, storeClusters;
     
     /** Creates new NMFGUI */
     public NMFGUI() {
@@ -96,7 +98,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * @see IFramework
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        System.out.println("init in GUI -1");
+        System.out.println("init in GUI blarg");
+        this.framework = framework;
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         
@@ -125,6 +128,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             maxIters = initNMF.getMaxIterations();
             divergence = initNMF.getDivergence();
             doSamples = initNMF.isDoSamples();
+            storeClusters = initNMF.getStoreClusters();
+            System.out.println("store the clusters? " + storeClusters);
             
             data.addMatrix("experiment", experiment.getMatrix());
             data.addParam("r-value", String.valueOf(rvalue));
@@ -142,6 +147,11 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
             clusters = result.getIntMatrix("clusters");
+            means = result.getMatrix("clusters_means");
+            variances = result.getMatrix("clusters_variances");
+            if (storeClusters)
+            	storeClusters();
+            
             connectivityMatrix= new Experiment(result.getMatrix("connectivity-matrix"), experiment.getColumns());
 
         	W = new FloatMatrix[numRuns];
@@ -169,7 +179,12 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     }
     
     
-    public AlgorithmData getScriptParameters(IFramework framework) {
+    private void storeClusters() {
+		for (int i=0; i<clusters.length; i++)
+			framework.storeClusterWithoutDialog(clusters[i], "NMF - Cluster "+ (i+1), Integer.toString((i+1)), ClusterRepository.EXPERIMENT_CLUSTER);
+	}
+
+	public AlgorithmData getScriptParameters(IFramework framework) {
         
         this.experiment = framework.getData().getExperiment();
         
@@ -314,7 +329,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
-//        addCentroidViews(root);
+        addCentroidViews(root);
 //        addTableViews(root);
 //        addClusterInfo(root);
         addWHFactors(root);
@@ -430,21 +445,18 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * Adds nodes to display centroid charts.
      */
     protected void addCentroidViews(DefaultMutableTreeNode root) {
+    	System.out.println("Adding centroids");
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-        //NMFCentroidViewer centroidViewer = new NMFCentroidViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
-        NMFCentroidViewer centroidViewer = new NMFCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
+        NMFExperimentCentroidViewer centroidViewer = new NMFExperimentCentroidViewer(this.experiment, clusters);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<this.clusters.length; i++) {
-            if (i == 0) {
-                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            } else if (i == 1) {
-                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            }
-        }
+            centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+       }
+//        root.add(centroidNode);
+        root.add(expressionNode);
         
 //        NMFCentroidsViewer centroidsViewer = new NMFCentroidsViewer(this.experiment, clusters, geneTimeMeans, geneTimeSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
 //
@@ -453,8 +465,6 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 //        
 //        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
 //        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
-//        root.add(centroidNode);
-//        root.add(expressionNode);
     }
     
     

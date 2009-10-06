@@ -24,6 +24,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,6 +50,7 @@ public class NMFDialog extends AlgorithmDialog {
     private SampleSelectionPanel clusteringSelectionPanel;
     JTextField numRunsField, numClustersField, numItersField;
     JRadioButton divergenceButton1, clusterBySamples;
+    JCheckBox clustercb;
     
     /** Creates new NMFDialog */
     public NMFDialog(Frame frame) {
@@ -180,6 +182,14 @@ public class NMFDialog extends AlgorithmDialog {
         gridbag.setConstraints(divergencePanel, constraints);
         pane.add(divergencePanel); 
         
+        clustercb = new JCheckBox("Store results as clusters");
+        clustercb.setBackground(Color.white);
+        clustercb.setSelected(false);
+        buildConstraints(constraints, 0, 5, 1, 1, 50, 100);
+        grid.setConstraints(clustercb, constraints);
+        pane.add(clustercb);  
+        
+        
         setActionListeners(new EventListener());
         addContent(pane);
         pack();
@@ -224,6 +234,10 @@ public class NMFDialog extends AlgorithmDialog {
         return !divergenceButton1.isSelected();
     }   
 
+    public boolean getStoreClusters() {
+        return clustercb.isSelected();
+    } 
+    
     public int getRValue() {
         return Integer.parseInt(numClustersField.getText());
     }   

@@ -3410,7 +3410,124 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     	tree.repaint();
     	return clusterColor;
     }
+    
+    private void storeClusterWithoutDialog(int[]clusterIndices, String label, String node, int clusterType){
 
+		Cluster cluster;
+    	if (clusterType == ClusterRepository.GENE_CLUSTER) {
+    		cluster = geneClusterRepository.storeClusterWithoutDialog(clusterIndices, label, node);
+    		if (cluster != null)
+    			geneClusterManager.onRepositoryChanged(geneClusterRepository);
+    		geneClusterRepository.printRepository();
+    	} else {
+    		cluster = experimentClusterRepository.storeClusterWithoutDialog(clusterIndices, label, node);
+    		if (cluster != null)
+    			experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
+    		experimentClusterRepository.printRepository();
+    	}
+
+    	if (cluster != null) {
+    		int serNum = cluster.getSerialNumber();
+    		String algName = cluster.getAlgorithmName();
+
+    		if (clusterType == Cluster.GENE_CLUSTER)
+    			addHistory("Save Gene Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + node);
+    		else
+    			addHistory("Save Experiment Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + node);
+    	}
+
+    	fireDataChanged();
+    	tree.repaint();
+    }
+    /**
+     * Stores a cluster with specified indices.
+     */
+    private Color storeCluster(int[] indices, Experiment experiment, int clusterType, Color color) {
+     	DefaultTreeModel model = (DefaultTreeModel) this.tree.getModel();
+    	TreePath path = this.tree.getSelectionPath();
+    	DefaultMutableTreeNode clusterNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+    	Object leafInfo = clusterNode.getUserObject();
+    	if (!(leafInfo instanceof LeafInfo))
+    		return null;
+    	if (path.getPathCount() < 3)
+    		return null;
+    	Cluster cluster;
+    	Color clusterColor = null;
+    	String clusterID = ((LeafInfo) clusterNode.getUserObject()).toString();
+    	DefaultMutableTreeNode algorithmNode = (DefaultMutableTreeNode) path.getPathComponent(2);
+    	String algorithmName = (String) algorithmNode.getUserObject().toString();
+    	if (clusterType == ClusterRepository.GENE_CLUSTER) {
+    		if (this.geneClusterRepository == null) {
+    			this.geneClusterRepository = new ClusterRepository(data
+    					.getFeaturesSize(), framework, true);
+    			this.data.setGeneClusterRepository(this.geneClusterRepository);
+    		}
+    		cluster = geneClusterRepository.storeCluster(this.resultCount - 1,
+    				algorithmName, clusterID, indices, clusterNode, experiment);
+    		if (cluster != null) {
+    			clusterColor = cluster.getClusterColor();
+    			if (geneClusterManager == null) {
+    				this.geneClusterManager = new ClusterTable(
+    						this.geneClusterRepository, framework);
+    				DefaultMutableTreeNode genesNode = new DefaultMutableTreeNode(
+    						new LeafInfo("Gene Clusters",
+    								this.geneClusterManager), false);
+    				addNode(this.clusterNode, genesNode);
+    			} else {
+    				geneClusterManager
+    				.onRepositoryChanged(geneClusterRepository);
+    			}
+    		}
+    		geneClusterRepository.printRepository();
+    	} else {
+    		if (this.experimentClusterRepository == null) {
+    			this.experimentClusterRepository = new ClusterRepository(data
+    					.getFeaturesCount(), framework);
+    			this.data
+    			.setExperimentClusterRepository(this.experimentClusterRepository);
+    		}
+    		cluster = experimentClusterRepository.storeCluster(
+    				this.resultCount - 1, algorithmName, clusterID, indices,
+    				clusterNode, experiment);
+    		if (cluster != null) {
+    			clusterColor = cluster.getClusterColor();
+    			if (experimentClusterManager == null) {
+    				this.experimentClusterManager = new ClusterTable(
+    						this.experimentClusterRepository, framework);
+    				DefaultMutableTreeNode experimentNode = new DefaultMutableTreeNode(
+    						new LeafInfo("Sample Clusters",
+    								this.experimentClusterManager), false);
+    				addNode(this.clusterNode, experimentNode);
+    			} else {
+    				experimentClusterManager
+    				.onRepositoryChanged(experimentClusterRepository);
+    			}
+    		}
+    		experimentClusterRepository.printRepository();
+    	}
+
+    	if (cluster != null) {
+    		int serNum = cluster.getSerialNumber();
+    		String algName = cluster.getAlgorithmName();
+
+    		if (clusterType == Cluster.GENE_CLUSTER)
+    			addHistory("Save Gene Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + clusterID);
+    		else
+    			addHistory("Save Experiment Cluster: Serial #: "
+    					+ String.valueOf(serNum) + ", Algorithm: " + algName
+    					+ ", Cluster: " + clusterID);
+    	}
+
+    	fireDataChanged();
+    	tree.repaint();
+    	return clusterColor;
+    }
     /**
 	 * Stores cluster with provieded indices, allows storage if indices are a
 	 * subset of the displayed clusters (as in <code>HCLViewer</code>
@@ -5772,7 +5889,15 @@ private void appendResourcererGeneAnnotation() {
         public Color storeCluster(int[] indices, Experiment experiment, int clusterType){
             return MultipleArrayViewer.this.storeCluster(indices, experiment, clusterType);
         }
+
+        public void storeClusterWithoutDialog(int[] indices, String string, String string2, int clusterType){
+            MultipleArrayViewer.this.storeClusterWithoutDialog(indices, string, string2, clusterType);
+        }
         
+    	public Color storeCluster(int[] indices, Experiment experiment, int clusterType, Color color){
+            return MultipleArrayViewer.this.storeCluster(indices, experiment, clusterType, color);
+    	}
+    	
         public void autoStoreClusters(int clusterType, int index){
         	MultipleArrayViewer.this.onAutoImportList(clusterType, index);
         }
@@ -6117,6 +6242,8 @@ private void appendResourcererGeneAnnotation() {
     	public IResourceManager getResourceManager() {
     		return TMEV.getResourceManager();
     	}
+
+
 	public File getSupportFile(ISupportFileDefinition def) throws SupportFileAccessError {
 		return framework.getSupportFile(def, true);
 	}
