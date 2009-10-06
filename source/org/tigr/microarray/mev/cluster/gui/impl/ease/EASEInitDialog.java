@@ -1359,8 +1359,15 @@ public class EASEInitDialog extends AlgorithmDialog {
 		}
 	}
     
-
-
+	/**
+	 * Prints the currently-selected options to the console. 
+	 * For testing purposes. 
+	 */
+    public String summarizeSelections() {
+    	String returnString = "";
+    	returnString += easeParamPanel.useAnnBox.getText() + ": " + easeParamPanel.useAnnBox.isSelected();
+    	return returnString;
+    }
     
     public static void main(String[] args) {
 		try {
@@ -1403,10 +1410,13 @@ public class EASEInitDialog extends AlgorithmDialog {
 			EASEInitDialog eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays, false);
 
 			eid.showModal();
+			System.out.println(eid.summarizeSelections());
 			
 			eid = new EASEInitDialog(new JFrame(), new ClusterRepository(0), labels, "", rm, "Human", "HG_U133A", speciestoarrays, true);
 
 			eid.showModal();
+			System.out.println(eid.summarizeSelections());
+			
 		} catch (RepositoryInitializationError rie) {
 			rie.printStackTrace();
 		}
