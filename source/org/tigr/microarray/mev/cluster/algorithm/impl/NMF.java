@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class NMF extends AbstractAlgorithm{
 	private static boolean standalone = false;
@@ -49,6 +50,7 @@ public class NMF extends AbstractAlgorithm{
 	float[] costsIndex = new float[numRuns];
 	boolean divergence = true;
 	boolean doSamples = true;
+    FloatMatrix expMatrix;
 	FloatMatrix[] W = new FloatMatrix[numRuns];
 	FloatMatrix[] H = new FloatMatrix[numRuns];
 	int[][] clusters;
@@ -67,7 +69,7 @@ public class NMF extends AbstractAlgorithm{
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 
     	AlgorithmParameters map = data.getParams();
-    	FloatMatrix expMatrix = data.getMatrix("experiment");
+    	expMatrix = data.getMatrix("experiment");
     	r = map.getInt("r-value");
     	numRuns = map.getInt("runs");
     	maxIterations = map.getInt("iterations");
@@ -104,20 +106,66 @@ public class NMF extends AbstractAlgorithm{
     	for (int i=0; i<clusters.length; i++){
     		for (int j=0; j<clusters[i].length; j++)
     			System.out.print(clusters[i][j]+"\t");
-    		System.out.println();
+    		System.out.println("cluster ass");
     	}
-    	System.out.println("here2");
-    	
+
+        FloatMatrix means = getMeans(clusters);
+        FloatMatrix variances = getVariances(clusters, means);
     	result.addMatrix("connectivity-matrix", new FloatMatrix(this.connectivityMatrix));
     	for (int i=0; i<numRuns; i++)
     		result.addMatrix("W"+i, W[(int)costsIndex[i]]);
     	for (int i=0; i<numRuns; i++)
     		result.addMatrix("H"+i, H[(int)costsIndex[i]]);
     	result.addMatrix("costs", new FloatMatrix(costs, costs.length));
+        result.addMatrix("clusters_means", means);
+        result.addMatrix("clusters_variances", variances);
     	
     	return result;
     }
+
+    protected FloatMatrix getMeans(int[][] clusters) {
+        FloatMatrix means = new FloatMatrix(clusters.length, this.numSamples);
+        FloatMatrix mean;
+        for (int i=0; i<clusters.length; i++) {
+            mean = getMean(clusters[i]);
+            means.A[i] = mean.A[0];
+        }
+        return means;
+    }
     
+    protected FloatMatrix getMean(int[] cluster) {
+        FloatMatrix mean = new FloatMatrix(1, numGenes);
+        float sum = 0;
+        for (int i=0; i<numGenes; i++){
+        	for (int j=0; j<cluster.length; j++){
+        		sum = sum + this.expMatrix.get(i, cluster[j]);
+        	}
+        	mean.set(0, i, sum/cluster.length);
+        }
+        return mean;
+    }
+
+    protected FloatMatrix getVariances(int[][] clusters, FloatMatrix means) {
+//        FloatMatrix means = new FloatMatrix(clusters.length, this.numSamples);
+        FloatMatrix mean;
+        for (int i=0; i<clusters.length; i++) {
+            mean = getVariance(clusters[i]);
+            means.A[i] = mean.A[0];
+        }
+        return means;
+    }
+    
+    protected FloatMatrix getVariance(int[] cluster) {
+        FloatMatrix mean = new FloatMatrix(1, numGenes);
+        float sum = 0;
+        for (int i=0; i<numGenes; i++){
+        	for (int j=0; j<cluster.length; j++){
+        		sum = sum + this.expMatrix.get(i, cluster[j]);
+        	}
+        	mean.set(0, i, 0);
+        }
+        return mean;
+    }
     private int[][] getClusters(Node node) {
     	int[][] clusters = new int[r][];
     	HCLTreeData hcltd = getResult(node,0);

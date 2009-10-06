@@ -129,6 +129,11 @@ public interface IFramework {
 	public Color storeCluster(int[] indices, Experiment experiment, int clusterType);
 
 	/**
+	 * Stores the indices into the cluster repository with a preselected color
+	 */
+	public Color storeCluster(int[] indices, Experiment experiment, int clusterType, Color color);
+
+	/**
 	 * Automatically stores clusters based on annotation
 	 */
 	public void autoStoreClusters(int clusterType, int index);
@@ -250,5 +255,7 @@ public interface IFramework {
 	public IResourceManager getResourceManager();
 
 	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError;
+
+	public void storeClusterWithoutDialog(int[] is, String string,	String string2, int clusterType);
 
 }
