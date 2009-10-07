@@ -74,14 +74,13 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     protected String[] auxTitles;
     protected Object[][] auxData;
     
-    protected boolean drawSigTreesOnly;
     
-    //protected boolean usePerms;
     
     protected IData data;
     
     int rvalue, numRuns, maxIters;
     boolean divergence, doSamples, storeClusters;
+	private float cophen;
     
     /** Creates new NMFGUI */
     public NMFGUI() {
@@ -98,19 +97,14 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * @see IFramework
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-        System.out.println("init in GUI blarg");
         this.framework = framework;
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         
         NMFDialog initNMF = new NMFDialog((JFrame)framework.getFrame());
-        System.out.println("init in GUI");
-        System.out.println("init in GUI 2");
 
         if (initNMF.showModal()==JOptionPane.CANCEL_OPTION) 
         	return null;
-        System.out.println("init in GUI 3");
-        
         
         Listener listener = new Listener();
         
@@ -149,6 +143,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             clusters = result.getIntMatrix("clusters");
             means = result.getMatrix("clusters_means");
             variances = result.getMatrix("clusters_variances");
+
+            cophen = result.getParams().getFloat("cophen");
             if (storeClusters)
             	storeClusters();
             
@@ -227,8 +223,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         
         Listener listener = new Listener();
         this.experiment = experiment;
-        this.data = framework.getData();
-        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
+        this.data = framework.getData();    
  
         try {
             algData.addMatrix("experiment", experiment.getMatrix());
@@ -293,27 +288,6 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         }
     }
     
-//    
-//    protected String getSigMethod(int sigMethod) {
-//        String methodName = "";
-//        
-//        if (sigMethod == NMFDialog.JUST_ALPHA) {
-//            methodName = "Just alpha (uncorrected)";
-//        } else if (sigMethod == NMFDialog.STD_BONFERRONI) {
-//            methodName = "Standard Bonferroni correction";
-//        } else if (sigMethod == NMFDialog.ADJ_BONFERRONI) {
-//            methodName = "Adjusted Bonferroni correction";
-//        } else if (sigMethod == NMFDialog.MAX_T) {
-//            methodName = "Westfall Young stepdown - MaxT";
-//        } else if (sigMethod == NMFDialog.FALSE_NUM) {
-//            methodName = "False significant number: " + falseNum + " or less";
-//        } else if (sigMethod == NMFDialog.FALSE_PROP) {
-//            methodName = "False significant proportion: " + falseProp + " or less";
-//        }
-//        
-//        return methodName;
-//    }
-    
     /**
      * Creates a result tree to be inserted into the framework analysis node.
      */
@@ -327,8 +301,9 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * Adds result nodes into the tree root.
      */
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+        root.add(new DefaultMutableTreeNode("Cophenetic Correlation = " + (cophen)));
+        addConsensusMatrix(root, result_cluster, info);
         addExpressionImages(root);
-        addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
 //        addTableViews(root);
 //        addClusterInfo(root);
@@ -387,21 +362,20 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display hierarchical trees.
      */
-    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+    protected void addConsensusMatrix(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         NodeList nodeList = result_cluster.getNodeList();
-        if (!drawSigTreesOnly) {        
-            for (int i=0; i<nodeList.getSize(); i++) {
-                if (i < nodeList.getSize() - 1 ) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == nodeList.getSize() - 1) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                }
-            }
-        } else {
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
-        }
-        root.add(node);
+//        if (!drawSigTreesOnly) {        
+//            for (int i=0; i<nodeList.getSize(); i++) {
+//                if (i < nodeList.getSize() - 1 ) {
+//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+//                } else if (i == nodeList.getSize() - 1) {
+//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+//                }
+//            }
+//        } else {
+//            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
+//        }
+        root.add(new DefaultMutableTreeNode(new LeafInfo("Consensus Matrix with HCL ", createHCLViewer(nodeList.getNode(0), info))));
     }
     
     /**
