@@ -63,6 +63,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";   
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
  
     protected Experiment experiment;
     protected IData data;
@@ -851,6 +852,11 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+
+        menuItem = new JMenuItem("Broadcast Matrix to Genome Browser", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GENOME_BROWSER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
     }
     
     /** Returns a component to be inserted into the scroll pane row header
@@ -910,7 +916,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
 	        e.printStackTrace();
 	    }
 	}
-
+    public void broadcastGeneClusterToGenomeBrowser() {
+    	framework.broadcastGeneClusterToGenomeBrowser(getExperiment(), getCluster(), null);
+    }
 
 	/**
 	 * Removes a public color.
@@ -981,6 +989,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
                 broadcastClusterGaggle();
     	    } else if(command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)){
                 broadcastNamelistGaggle();
+	        } else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
+	        	broadcastGeneClusterToGenomeBrowser();
             }
             
         }

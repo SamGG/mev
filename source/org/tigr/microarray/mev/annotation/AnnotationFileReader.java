@@ -25,7 +25,7 @@ public class AnnotationFileReader {
 	String[] fieldNames=new String[0];
 	Vector<String> columnNames=new Vector<String>();
 	Hashtable<String, MevAnnotation> annoHash;
-	IChipAnnotation chipAnnotation;
+	IChipAnnotation chipAnnotation = new MevChipAnnotation();
 
 	
 	public static AnnotationFileReader createAnnotationFileReader(File affyFile) throws IOException {
@@ -66,7 +66,6 @@ public class AnnotationFileReader {
     	int numLines = this.getCountOfLines(affyFIle);
     	BufferedReader reader = new BufferedReader(new FileReader(affyFIle));
     	annoHash = new Hashtable<String, MevAnnotation>(numLines);
-    	chipAnnotation = new MevChipAnnotation();
     	chipAnnotation.setAnnFileName(affyFIle.getAbsolutePath());
     	StringSplitter ss = new StringSplitter('\t');
     	String currentLine, probeID;

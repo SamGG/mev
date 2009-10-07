@@ -74,6 +74,7 @@ public class ActionManager implements java.io.Serializable {
     private void initActions() {
         actions.put(LOAD_ACTION, new DefaultAction(this, LOAD_NAME, LOAD_COMMAND, getIcon(LOAD_FILE_SMALLICON), getIcon(LOAD_FILE_LARGEICON)));
         actions.put(LOAD_ANALYSIS_ACTION, new DefaultAction(this, LOAD_ANALYSIS_NAME, LOAD_ANALYSIS_COMMAND, getIcon(LOAD_ANALYSIS_SMALLICON), getIcon(LOAD_ANALYSIS_LARGEICON)));
+        actions.put(CLEAR_DATA_ACTION, new DefaultAction(this, CLEAR_DATA_NAME, CLEAR_DATA_COMMAND, getIcon(CLEAR_DATA_SMALLICON), getIcon(CLEAR_DATA_LARGEICON)));
         actions.put(SAVE_ANALYSIS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_NAME, SAVE_ANALYSIS_COMMAND, getIcon(SAVE_ANALYSIS_SMALLICON), getIcon(SAVE_ANALYSIS_LARGEICON)));
         actions.put(SAVE_ANALYSIS_AS_ACTION, new DefaultAction(this, SAVE_ANALYSIS_AS_NAME, SAVE_ANALYSIS_AS_COMMAND, getIcon(SAVE_ANALYSIS_AS_SMALLICON), getIcon(SAVE_ANALYSIS_AS_LARGEICON)));
         actions.put(NEW_SCRIPT_ACTION, new DefaultAction(this, NEW_SCRIPT_NAME, NEW_SCRIPT_COMMAND, getIcon(NEW_SCRIPT_SMALLICON), getIcon(NEW_SCRIPT_LARGEICON)));
@@ -247,6 +248,13 @@ public class ActionManager implements java.io.Serializable {
     public static final String  LOAD_ANALYSIS_NAME    = "Open Analysis...";
     private static final String LOAD_ANALYSIS_SMALLICON = "addmultiple16.gif";
     private static final String LOAD_ANALYSIS_LARGEICON = "addmultiple.gif";
+    
+    //Clear loaded data action
+    public static final String  CLEAR_DATA_ACTION  = "action-clear-data";
+    public static final String  CLEAR_DATA_COMMAND = "command-clear-data";
+    public static final String  CLEAR_DATA_NAME    = "Clear Loaded Data";
+    private static final String CLEAR_DATA_SMALLICON = "addmultiple16.gif";
+    private static final String CLEAR_DATA_LARGEICON = "addmultiple.gif";
     
     //save analysis action
     public static final String  SAVE_ANALYSIS_ACTION  = "action-save-analysis";

@@ -233,6 +233,7 @@ public interface IFramework {
 
 	public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals);
 
+	public void broadcastGeneClusterToGenomeBrowser(Experiment experiment, int[] cluster, int[] expcluster);
 	/**
      * Generic function for Gaggle to Broadcast any Network
      * @author raktim

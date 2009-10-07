@@ -1,4 +1,4 @@
-<project name="mev_r" default="build-all" basedir="./">
+<project name="mev" default="build-all" basedir="./">
     
     <description>
        
@@ -326,8 +326,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/impl/util/*.java, 
 			mev/cluster/gui/*.java,
 			mev/cluster/clusterUtil/**, 
-			mev/microarray/annotation/**, 
-			mev/microarray/resources/**, 
+			mev/annotation/**, 
+			mev/resources/**, 
+			mev/gaggle/**, 
 			mev/cluster/gui/helpers/**">
         	
             <classpath>
@@ -387,6 +388,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	    		<include name="kingdom_species_cloneset_list.txt"/>
     		</fileset>
     	</copy>
+    	<copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/helpers/">
+    		<fileset dir="${source.dir}/org/tigr/microarray/mev/cluster/gui/helpers/">
+    	    	<include name="genomebrowser_jnlp_template.txt"/>
+    		</fileset>
+    	</copy>
     	<copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/clusterUtil/submit/">
     		<fileset dir="${source.dir}/org/tigr/microarray/mev/cluster/clusterUtil/submit/">
     	    	<include name="archive_submission_config.xml"/>
@@ -431,6 +437,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             basedir="${dest.dir}"
 	      includes="org/tigr/microarray/mev/cluster/gui/*.class,                        
   		        org/tigr/microarray/mev/cluster/gui/helpers/*.class,
+		        org/tigr/microarray/mev/cluster/gui/helpers/*.txt,
  		        org/tigr/microarray/mev/cluster/gui/helpers/ktree/*.class"                    
         />
     </target>
@@ -513,6 +520,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         	org/tigr/microarray/mev/annotation/**,
         	org/tigr/microarray/mev/sampleannotation/**,
         	org/tigr/microarray/mev/resources/**,
+        	org/tigr/microarray/mev/gaggle/**,
 			org/tigr/microarray/mev/cluster/clusterUtil/**"
         	update="true"
         />

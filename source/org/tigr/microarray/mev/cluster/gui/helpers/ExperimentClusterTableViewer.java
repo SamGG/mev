@@ -57,6 +57,7 @@ public class ExperimentClusterTableViewer implements IViewer {
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -872,6 +873,11 @@ public class ExperimentClusterTableViewer implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Broadcast Matrix to Genome Browser", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GENOME_BROWSER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
     }    
     
     private void onSaveClusters() {
@@ -959,6 +965,8 @@ public class ExperimentClusterTableViewer implements IViewer {
             broadcastSelectedClusterGaggle();
 	    } else if(command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)){
             broadcastNamelistGaggle();
+		} else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
+	       	broadcastGeneClusterToGenomeBrowser();
         }
 	}
 	   
@@ -1115,5 +1123,7 @@ public class ExperimentClusterTableViewer implements IViewer {
     public void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getExperiment().getRows());
     }
-    
+    public void broadcastGeneClusterToGenomeBrowser() {
+    	framework.broadcastGeneClusterToGenomeBrowser(getExperiment(), getCluster(), null);
+}
 }

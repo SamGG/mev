@@ -19,6 +19,7 @@ import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -129,11 +130,16 @@ public class FileResourceManager implements IResourceManager {
 		//Check each ISupportFileDefinition and remove it from request list if 
 		//the file isn't allowed.
 		Iterator<ISupportFileDefinition> it = defs.iterator();
+		ArrayList<ISupportFileDefinition> toremove = new ArrayList<ISupportFileDefinition>();
 		while(it.hasNext()) {
 			ISupportFileDefinition isdf = it.next();
 			if(!isdf.isAllowed()) {
-				defs.remove(isdf);
+				toremove.add(isdf);
 			}
+		}
+		it = toremove.iterator();
+		while(it.hasNext()) {
+			defs.remove(it.next());
 		}
 		
 		File[] cachedFiles = new File[defs.size()];
