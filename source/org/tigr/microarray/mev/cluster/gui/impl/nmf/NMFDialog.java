@@ -50,7 +50,7 @@ public class NMFDialog extends AlgorithmDialog {
     private SampleSelectionPanel clusteringSelectionPanel;
     JTextField numRunsField, numClustersField, maxNumClustersField, numItersField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
-    JCheckBox clustercb, multiFactors;
+    JCheckBox clustercb, multiClusters;
     JLabel numClustersLabel;
     
     /** Creates new NMFDialog */
@@ -106,18 +106,18 @@ public class NMFDialog extends AlgorithmDialog {
                 new java.awt.Font("Dialog", 1, 12), Color.black));  
         runParams.setLayout(grid);
 
-        multiFactors = new JCheckBox("Run Multiple Factors");
-        multiFactors.setBackground(Color.white);
-        multiFactors.setSelected(false);
-        multiFactors.addActionListener(new ActionListener(){
+        multiClusters = new JCheckBox("Run Multiple Factors");
+        multiClusters.setBackground(Color.white);
+        multiClusters.setSelected(false);
+        multiClusters.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent ae){
-    			maxNumClustersField.setEnabled(multiFactors.isSelected());
-    			numClustersLabel.setText(multiFactors.isSelected() ? "Cluster range :":"Number of clusters :");
+    			maxNumClustersField.setEnabled(multiClusters.isSelected());
+    			numClustersLabel.setText(multiClusters.isSelected() ? "Cluster range :":"Number of clusters :");
         	}
         });
         buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
-        grid.setConstraints(multiFactors, constraints);
-        runParams.add(multiFactors);  
+        grid.setConstraints(multiClusters, constraints);
+        runParams.add(multiClusters);  
         
         JLabel numRunsLabel= new JLabel("Number of runs : ");
         buildConstraints(constraints, 0, 1, 1, 1, 50, 100);
@@ -292,12 +292,20 @@ public class NMFDialog extends AlgorithmDialog {
         return !divergenceButton1.isSelected();
     }   
 
-    public boolean getStoreClusters() {
+    public boolean isStoreClusters() {
         return clustercb.isSelected();
+    } 
+
+    public boolean isMultiClusters() {
+        return multiClusters.isSelected();
     } 
     
     public int getRValue() {
         return Integer.parseInt(numClustersField.getText());
+    }   
+
+    public int getMaxRValue() {
+        return this.multiClusters.isSelected()? Integer.parseInt(maxNumClustersField.getText()): getRValue();
     }   
 
 	public boolean isDoSamples() {
