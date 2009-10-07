@@ -34,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class NMF extends AbstractAlgorithm{
 	private static boolean standalone = false;
@@ -75,7 +74,6 @@ public class NMF extends AbstractAlgorithm{
     	maxIterations = map.getInt("iterations");
     	divergence = map.getBoolean("divergence");
     	doSamples = map.getBoolean("doSamples");
-    	System.out.println("divergence? "+ divergence);
     	if (expMatrix == null) {
     	    throw new AlgorithmException("Input data is absent.");
     	}
@@ -97,17 +95,21 @@ public class NMF extends AbstractAlgorithm{
         node.setValues(calculateHierarchicalTree());
 	    nodeList.addNode(node);
 	    clusters = getClusters(node);
+	    float cophen = getCopheneticCorrelation();
+	    float cophen2 = getCopheneticCorrelation2();
+	    System.out.println("getCopheneticCorrelation = "+cophen);
+	    System.out.println("getCopheneticCorrelation2 = "+cophen2);
         
         
         // prepare the result
     	AlgorithmData result = new AlgorithmData();
     	result.addCluster("cluster", result_cluster);
     	result.addIntMatrix("clusters", clusters);
-    	for (int i=0; i<clusters.length; i++){
-    		for (int j=0; j<clusters[i].length; j++)
-    			System.out.print(clusters[i][j]+"\t");
-    		System.out.println("cluster ass");
-    	}
+//    	for (int i=0; i<clusters.length; i++){
+//    		for (int j=0; j<clusters[i].length; j++)
+//    			System.out.print(clusters[i][j]+"\t");
+//    		System.out.println("cluster ass");
+//    	}
 
         FloatMatrix means = getMeans(clusters);
         FloatMatrix variances = getVariances(clusters, means);
@@ -119,11 +121,99 @@ public class NMF extends AbstractAlgorithm{
     	result.addMatrix("costs", new FloatMatrix(costs, costs.length));
         result.addMatrix("clusters_means", means);
         result.addMatrix("clusters_variances", variances);
+        result.addParam("cophen", String.valueOf(cophen));
     	
     	return result;
     }
 
-    protected FloatMatrix getMeans(int[][] clusters) {
+    private float getCopheneticCorrelation2() {
+    	//revert connectivity matrix back to "higher is closer"
+    	for (int i=0; i<connectivityMatrix.length; i++){
+    		for (int j=0; j<connectivityMatrix[i].length; j++){
+    			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
+    		}
+    	}
+    	
+    	
+    	float[][] hclMatrix = new float[connectivityMatrix.length][connectivityMatrix.length];
+    	for (int i=0; i<hclMatrix.length; i++){
+    		for (int j=0; j<hclMatrix[i].length; j++){
+    			hclMatrix[i][j] = 0f;
+    		}
+    	}
+    	for (int i=0; i<clusters.length; i++){
+    		for (int j=0; j<clusters[i].length; j++){
+        		for (int k=0; k<clusters[i].length; k++){
+        			hclMatrix[clusters[i][j]][clusters[i][k]] = 1f;
+        		}
+    		}
+    	}
+    	float[][] mat = new float[connectivityMatrix.length*connectivityMatrix.length][2];
+    	int index = 0;
+    	for (int i=0; i<connectivityMatrix.length; i++){
+    		for (int j=0; j<connectivityMatrix[i].length; j++){
+    			mat[index][0] = connectivityMatrix[i][j];
+    			mat[index][1] = hclMatrix[i][j];
+    			index++;
+    		}
+		}
+    	FloatMatrix fm = new FloatMatrix(mat);
+    	System.out.println("fm");
+    	printMat(fm.transpose());
+    	return ExperimentUtil.pearsonUncentered(fm, 0, 1, 1);
+
+	}
+	private float getCopheneticCorrelation() {
+    	//revert connectivity matrix back to "higher is closer"
+    	for (int i=0; i<connectivityMatrix.length; i++){
+    		for (int j=0; j<connectivityMatrix[i].length; j++){
+    			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
+    		}
+    	}
+    	
+    	
+    	float[][] hclMatrix = new float[connectivityMatrix.length][connectivityMatrix.length];
+    	for (int i=0; i<hclMatrix.length; i++){
+    		for (int j=0; j<hclMatrix[i].length; j++){
+    			hclMatrix[i][j] = 0f;
+    		}
+    	}
+    	for (int i=0; i<clusters.length; i++){
+    		for (int j=0; j<clusters[i].length; j++){
+        		for (int k=0; k<clusters[i].length; k++){
+        			hclMatrix[clusters[i][j]][clusters[i][k]] = 1f;
+        		}
+    		}
+    	}
+    	//We now have two matrices, the connectivity matrix and the matrix derived from clustering based off the connectivity matrix
+    	float x = 0;
+    	float t = 0;
+    	float cTop = 0;
+    	float cBottomL = 0;
+    	float cBottomR = 0;
+    	for (int i=0; i<hclMatrix.length; i++){
+    		for (int j=0; j<hclMatrix[i].length; j++){
+    			x = x + connectivityMatrix[i][j];
+    			t = t + hclMatrix[i][j];
+    		}
+    	}
+    	x = x/((float)hclMatrix.length*(float)hclMatrix.length);
+    	t = t/((float)hclMatrix.length*(float)hclMatrix.length);
+    	
+		for (int j=0; j<hclMatrix.length; j++){
+			for (int i=0; i<j; i++){
+    			cTop = cTop + (connectivityMatrix[i][j]-x)*(hclMatrix[i][j]-t);
+    			cBottomL = cBottomL + (connectivityMatrix[i][j]-x)*(connectivityMatrix[i][j]-x);
+    			cBottomR = cBottomR + (hclMatrix[i][j]-t)*(hclMatrix[i][j]-t);
+    		}
+		}
+    	System.out.println("cTop = "+cTop);
+    	System.out.println("cBottomL = "+cBottomL);
+    	System.out.println("cBottomR = "+cBottomR);
+    	
+		return cTop/(float)Math.sqrt(cBottomL*cBottomR);
+	}
+	protected FloatMatrix getMeans(int[][] clusters) {
         FloatMatrix means = new FloatMatrix(clusters.length, this.numSamples);
         FloatMatrix mean;
         for (int i=0; i<clusters.length; i++) {
@@ -361,7 +451,7 @@ public class NMF extends AbstractAlgorithm{
     				}
     				previousCost= cost;
     			}
-    			printMat(H[runcount]);
+//    			printMat(H[runcount]);
 //    			this is my technique for removing bad solutions
 //    			if (cost>costSum/totalTries){
 //    				runcount--;
@@ -409,9 +499,9 @@ public class NMF extends AbstractAlgorithm{
     		for (int i=0; i<numSamples; i++){
     			for (int j=0; j<numSamples; j++){
     				connectivityMatrix[i][j]=1-connectivityMatrix[i][j]/numRuns;
-    				System.out.print(connectivityMatrix[i][j]+"\t");
+//    				System.out.print(connectivityMatrix[i][j]+"\t");
     			}
-    			System.out.println();
+//    			System.out.println();
     		}
     	}
 	
@@ -555,6 +645,11 @@ public class NMF extends AbstractAlgorithm{
     	 */
     private void getLeavesFromNode(HCLTreeData hcltd, int node){
     	System.out.print("gnfl "+node);
+    	if (node<numSamples){
+    		leaves.add(node);
+    		return;
+    	}
+    		
     	if (hcltd.child_1_array[node]<numSamples)
     		leaves.add(hcltd.child_1_array[node]);
     	else

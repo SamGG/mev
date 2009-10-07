@@ -186,7 +186,7 @@ public class NMFDialog extends AlgorithmDialog {
         clustercb.setBackground(Color.white);
         clustercb.setSelected(false);
         buildConstraints(constraints, 0, 5, 1, 1, 50, 100);
-        grid.setConstraints(clustercb, constraints);
+        gridbag.setConstraints(clustercb, constraints);
         pane.add(clustercb);  
         
         
