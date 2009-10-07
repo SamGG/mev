@@ -42,6 +42,8 @@ public class NMF extends AbstractAlgorithm{
 	float[][] connectivityMatrix;
 	boolean stop = false;
 	int r=2;
+//	private int maxR = 4;
+//	private boolean multiClusters;
 	int numRuns = 10;
 	int maxIterations = 10000;
 	int numSamples, numGenes;
@@ -70,10 +72,12 @@ public class NMF extends AbstractAlgorithm{
     	AlgorithmParameters map = data.getParams();
     	expMatrix = data.getMatrix("experiment");
     	r = map.getInt("r-value");
+//    	maxR = map.getInt("max-r-value");
     	numRuns = map.getInt("runs");
     	maxIterations = map.getInt("iterations");
     	divergence = map.getBoolean("divergence");
     	doSamples = map.getBoolean("doSamples");
+//    	multiClusters = map.getBoolean("multiClusters");
     	if (expMatrix == null) {
     	    throw new AlgorithmException("Input data is absent.");
     	}
