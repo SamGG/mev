@@ -26,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.annotation.IChipAnnotation;
+import org.tigr.microarray.mev.annotation.MevChipAnnotation;
 
 public abstract class ExpressionFileLoader extends SlideLoaderProgressBar { 
 
@@ -33,7 +34,7 @@ public abstract class ExpressionFileLoader extends SlideLoaderProgressBar {
 	protected SlideLoaderProgressBar progress;
 	protected boolean stop = false;
 
-	protected IChipAnnotation chipAnno = null;
+	protected IChipAnnotation chipAnno = new MevChipAnnotation();
 
 	protected int firstRow = -1;
 	protected int firstCol = -1;

@@ -64,6 +64,7 @@ public class ClusterTableViewer implements IViewer {
     protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     protected static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
     protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
     
     public static final int INTEGER_TYPE = 10;
     public static final int FLOAT_TYPE = 11;
@@ -957,6 +958,11 @@ public class ClusterTableViewer implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
 
+        menuItem = new JMenuItem("Broadcast Matrix to Genome Browser", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GENOME_BROWSER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+       
     }    
     
     /**
@@ -1061,6 +1067,8 @@ public class ClusterTableViewer implements IViewer {
                 broadcastSelectedClusterGaggle();
             } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
                 broadcastNamelistGaggle();
+			} else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
+	        	broadcastGeneClusterToGenomeBrowser();
             }
 	}
 	   
@@ -1208,7 +1216,9 @@ public class ClusterTableViewer implements IViewer {
     protected void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());
     }
-
+    public void broadcastGeneClusterToGenomeBrowser() {
+    	framework.broadcastGeneClusterToGenomeBrowser(getExperiment(), getCluster(), null);
+    }
     public class LinkRenderer extends DefaultTableCellRenderer {
         public void setValue(Object pValue) {
         		if(pValue instanceof AnnoAttributeObj && PublicURL.hasUrlForKey(((AnnoAttributeObj)pValue).getAttribName())) {

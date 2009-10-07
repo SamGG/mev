@@ -65,6 +65,7 @@ public class CentroidViewer extends JPanel implements IViewer {
     protected static final String TOGGLE_REF_LINE_CMD = "toggle-ref-line-cmd";   
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+    public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
         
     protected Color centroidColor = Color.magenta;
     
@@ -905,6 +906,11 @@ public class CentroidViewer extends JPanel implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Broadcast Matrix to Genome Browser", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GENOME_BROWSER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
     }
     
     /** Returns a component to be inserted into the scroll pane row header
@@ -1030,7 +1036,9 @@ public class CentroidViewer extends JPanel implements IViewer {
     public void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());
     }
-
+    public void broadcastGeneClusterToGenomeBrowser() {
+    	framework.broadcastGeneClusterToGenomeBrowser(getExperiment(), getCluster(), null);
+    }
 	/**
      * The class to listen to mouse and action events.
      */
@@ -1065,6 +1073,8 @@ public class CentroidViewer extends JPanel implements IViewer {
 	        broadcastClusterGaggle();
 	    } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
 	        broadcastNamelistGaggle();
+	    } else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
+	      	broadcastGeneClusterToGenomeBrowser();
         }
 
 

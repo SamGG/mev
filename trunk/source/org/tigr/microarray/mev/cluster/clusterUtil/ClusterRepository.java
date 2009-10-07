@@ -762,6 +762,37 @@ public class ClusterRepository extends Vector {
     	return cluster;
     }
     
+	/**
+	* Creates a new cluster from a list of genes without user input.
+	* fails quietly if the identifier does not match a current field name
+	* or if no genes in genelist match identifiers in the loaded annotation
+	* in the field identifier.
+	**/
+    public Cluster quietlyCreateClusterFromList(String[] genelist, String identifier, String label, String description) {
+    	String key = identifier;
+    	String[] ids = genelist;
+        String clusterLabel = label;
+        String clusterDescription = description;
+    	boolean[] matches = new boolean[ids.length];
+    	Experiment experiment = framework.getData().getExperiment();
+    	int[] newIndices = getMatchingIndices(experiment, key, ids, matches, true);
+    	if(newIndices != null && newIndices.length > 0) {
+    		int [] selectedIndices = newIndices;
+    		if(selectedIndices == null || selectedIndices.length < 1) {
+                return null;//throw warning?
+            }
+    		//create the cluster
+    		Color clusterColor = getNextDefaultColor();
+            this.clusterSerialCounter++;
+            ClusterList list = getClusterOperationsList();
+            Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
+
+            addCluster(list, cluster);
+          	clusterColors.add(clusterColor);
+            return cluster;
+    	}
+    	return null;
+    }
     /** Creates a cluster by importing a gene list         
      */
     public Cluster createClusterFromList(String[] genelist) {
@@ -773,7 +804,6 @@ public class ClusterRepository extends Vector {
         Experiment experiment = framework.getData().getExperiment();
         if(this.isGeneClusterRepository()) {
                 dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getAllFilledAnnotationFields(), true, genelist);
-//                dialog = new ListImportDialog(framework.getFrame(), this.framework.getData().getFieldNames(), true, genelist);
             if(dialog.showModal() == JOptionPane.OK_OPTION) {
                 key = dialog.getFieldName();
                 ids = dialog.getList();

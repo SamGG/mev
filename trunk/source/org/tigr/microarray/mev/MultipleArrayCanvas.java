@@ -143,15 +143,18 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.posColorImage = framework.getDisplayMenu().getPositiveGradientImage();
         this.header.setNegativeAndPositiveColorImages(this.negColorImage, this.posColorImage);
         popup = createPopupMenu(listener);
+    }
+    private void setDefaultLabel() {
+    	if(emptyMacLabel == null) {
         if(framework.isGaggleConnected()) {
     	    emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file, or broadcast a matrix from the Gaggle network.";     
     	} else {
 	    emptyMacLabelText = "Use the File menu to load data from text files or a saved analysis file. Use the Utilities menu to connect to the Gaggle network";     
         }	    
         emptyMacLabel = new JLabel(emptyMacLabelText);
+    	}
         add(emptyMacLabel);
     }
-    
     /**
      * Overriden to have focus. (deprecated as of 1.4, use isFocusable()
      */
@@ -185,7 +188,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.framework = framework;
         this.data = framework.getData();
 
-        if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+        if (data != null && data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             expressionBarItem.setEnabled(false);
             overlayItem.setEnabled(false);
         }
@@ -212,7 +215,12 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
      */
     public void onDataChanged(IData data) {
         this.data = data;
-        if(data.getFeaturesSize() > 0)
+        if(data == null || data.getFeaturesSize() <= 0) {
+        	probes = 0;
+        	features = 0;
+            setDefaultLabel();
+	        thumbnail.onDataChanged(data);
+        } else {
         	remove(emptyMacLabel);
         features = data.getFeaturesCount();
         probes   = data.getFeaturesSize();
@@ -220,6 +228,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         updateSize();
         header.setData(data);
         thumbnail.onDataChanged(data);
+    }
     }
     
     /**

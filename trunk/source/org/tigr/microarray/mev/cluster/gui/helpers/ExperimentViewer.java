@@ -89,7 +89,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
-    
+    public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
     private ExperimentHeader header;
     private Experiment experiment;
     private IFramework framework;
@@ -305,23 +305,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
         getHeaderComponent().addMouseListener(popListener);
     }
 
-    /*
-    copy-paste this constructor into descendent classes
-    /**
-     * @inheritDoc
-     * 
-    public ExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
-    	super(e, clusters, samplesOrder, drawAnnotations, header, insets);
-    } 
-    */
-    
-    /**
-     * @inheritdoc
-     */
-//    public Expression getExpression(){
-//    	return new Expression(this, this.getClass(), "new",
-//				new Object[]{this.clusters, this.samplesOrder, new Boolean(this.isDrawAnnotations), this.header, this.insets, new Integer(this.exptID)});  
-//    }
     
     public void setExperiment(Experiment e) {
     	this.experiment = e;
@@ -334,21 +317,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     	}
    		this.header.setIData(data);
     }
-    /*
-    public ExperimentHeader getHeader() {
-    	return header;
-    }
-    public int[] getSamplesOrder(){
-    	return samplesOrder;
-    }
-    public boolean getIsDrawAnnotations(){return isDrawAnnotations;}
 
-    public Insets getInsets() {return insets;}
-
-    public void setInsets(Insets i) {
-    	this.insets = i;
-    }    
-    */
     private static int[] defSamplesOrder(int size) {
         int[] order = new int[size];
         for (int i=0; i<order.length; i++) {
@@ -884,41 +853,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
     }
 
     
-    /**
-     * Calculates color for passed value.
-     */
-    /*
       
      private Color getColor(float value) {
-        if (Float.isNaN(value)) {
-            return missingColor;
-        }
-        
-        float maximum;
-        int colorIndex, rgb;
-        
-        if(useDoubleGradient) {
-        	maximum = value < 0 ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * value / maximum);
-			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < 0 ? negColorImage.getRGB(255 - colorIndex, 0)
-					: posColorImage.getRGB(colorIndex, 0);
-        } else {
-        	float span = this.maxValue - this.minValue;
-        	if(value <= minValue)
-        		colorIndex = 0;
-        	else if(value >= maxValue)
-        		colorIndex = 255;
-        	else
-        		colorIndex = (int)(((value - this.minValue)/span) * 255);
-         	
-        	rgb = posColorImage.getRGB(colorIndex,0);
-        }
-        return new Color(rgb);
-    }
-    */
-    
-    private Color getColor(float value) {
         if (Float.isNaN(value)) {
             return missingColor;
         }
@@ -1323,6 +1259,12 @@ public class ExperimentViewer extends JPanel implements IViewer {
         menuItem.setActionCommand(BROADCAST_NAMELIST_GAGGLE_CMD);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Broadcast Matrix to Genome Browser", GUIFactory.getIcon("gaggle_icon_16.gif"));
+        menuItem.setActionCommand(BROADCAST_MATRIX_GENOME_BROWSER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
     }
     
     
@@ -1582,6 +1524,9 @@ public class ExperimentViewer extends JPanel implements IViewer {
     public void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(getExperiment(), getCluster());
     }
+    public void broadcastGeneClusterToGenomeBrowser() {
+    	framework.broadcastGeneClusterToGenomeBrowser(getExperiment(), getCluster(), null);
+    }
     public void setFramework(IFramework framework) {
     	this.framework = framework;
     }
@@ -1660,6 +1605,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	            broadcastClusterGaggle();
 	        } else if (command.equals(BROADCAST_NAMELIST_GAGGLE_CMD)) {
 	            broadcastNamelistGaggle();
+	        } else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
+	        	broadcastGeneClusterToGenomeBrowser();
 	        }
 	    }
 	    

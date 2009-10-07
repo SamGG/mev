@@ -183,6 +183,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableSearchDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.GenomeBrowserWebstart;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
@@ -195,6 +196,10 @@ import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
 import org.tigr.microarray.mev.file.FileLoadInfo;
 import org.tigr.microarray.mev.file.FileType;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.gaggle.GaggleConstants;
+import org.tigr.microarray.mev.gaggle.GaggleListener;
+import org.tigr.microarray.mev.gaggle.GaggleTranslater;
+import org.tigr.microarray.mev.gaggle.GooseImpl;
 import org.tigr.microarray.mev.persistence.BufferedImageWrapper;
 import org.tigr.microarray.mev.persistence.MEVSessionPrefs;
 import org.tigr.microarray.mev.persistence.MavXMLDecoder;
@@ -226,7 +231,7 @@ import org.tigr.util.swing.TIFFFileFilter;
 
 import com.sun.media.jai.codec.ImageEncodeParam;
 
-public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose, GaggleConnectionListener {
+public class MultipleArrayViewer extends ArrayViewer implements Printable {
     
 
     private MultipleArrayMenubar menubar;
@@ -275,21 +280,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 	
 	public static String CURRENT_TEMP_DIR = "mev_temp";
 
-	private static final String ORIGINAL_GAGGLE_NAME= "Multiple Array Viewer";
-	String myGaggleName = ORIGINAL_GAGGLE_NAME;
-	Boss gaggleBoss;
-	String targetGoose = "Boss";
-	String[] gooseNames;
-	RmiGaggleConnector gaggleConnector;
-	private boolean isConnected = false;
-
-
-	
-	
-	private Experiment experiment;
-	private int[][]clusters;
-	private int clusterIndex;
-	private ClusterTableSearchDialog searchDialog;  
+	private GooseImpl gooseImpl= new GooseImpl();
 
 	//Dan's time saver
 	private static boolean firstLoad = true;
@@ -309,6 +300,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
         manager = new ActionManager(eventListener, new String[0], TMEV.getGUIFactory());
+        gooseImpl.setListener(eventListener);
         
         menubar = new MultipleArrayMenubar(manager);
        
@@ -337,7 +329,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 
         //GaggleInit must happen after menubar is created.
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	connectToGaggle();
+        	gooseImpl.connectToGaggle();
         }
         
         /** Dan's time saver. To use, uncomment this line and change the path to a valid dataset.
@@ -361,12 +353,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         initSessionMetaData();
         
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	connectToGaggle();
+        	gooseImpl.connectToGaggle();
         }        
         // listener
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
         manager = new ActionManager(eventListener, arrayData.getFieldNames(), TMEV.getGUIFactory());
+        gooseImpl.setListener(eventListener);
         
         data = arrayData;
         
@@ -442,13 +435,14 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         EventListener eventListener = new EventListener();
         mainframe.addWindowListener(eventListener);
         manager = new ActionManager(eventListener, arrayData.getFieldNames(), TMEV.getGUIFactory());
+        gooseImpl.setListener(eventListener);
         
         data = arrayData;
         
         menubar = new MultipleArrayMenubar(origMenubar, manager);
 
         if(TMEV.GAGGLE_CONNECT_ON_STARTUP)  {
-        	connectToGaggle();
+        	gooseImpl.connectToGaggle();
         }
         
         //jcb 7/10/06 the Manager constructor takes care of adding field names
@@ -1825,7 +1819,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         TMEV.setDataType(TMEV.DATA_TYPE_TWO_DYE);  //default type
         DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
         fireOnCloseEvent((DefaultMutableTreeNode)model.getRoot());
-        disconnectFromGaggle();
+        gooseImpl.disconnectFromGaggle();
         mainframe.dispose();
         Manager.removeComponent(this);
     }
@@ -2050,15 +2044,13 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
     
     private void onChangeGaggleTarget(Action action) {
     	String key = (String)action.getValue(ActionManager.PARAMETER);
-   // 	System.out.println("Changing Gaggle target to " + key);
-        this.targetGoose = key;
+        gooseImpl.setTargetGoose(key);
         fireMenuChanged();
     }
     private void onShowGoose(Action action) {
     	String key = (String)action.getValue(ActionManager.PARAMETER);
-//    	System.out.println("Showing goose " + key);
     	try {
-    		gaggleBoss.show(key);
+    		gooseImpl.show(key);
         	fireMenuChanged();
     	} catch (RemoteException re) {
     		System.err.println("Couldn't show Goose " + key);
@@ -3883,14 +3875,9 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             return;
         data.addFeatures(features);
         data.setDataType(dataType);
+        chipAnnotation.setDataType(new Integer(dataType).toString());
         data.setChipAnnotation(chipAnnotation);
         
-        if(chipAnnotation != null) {
-        	if(chipAnnotation.getSpeciesName() != null)
-                	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, chipAnnotation.getSpeciesName());
-                if(chipAnnotation.getChipType() != null)
-                	TMEV.storeProperty(TMEV.LAST_LOADED_ARRAY, chipAnnotation.getChipType());
-        }
         if(this.data.getFieldNames() != null && this.data.getFeaturesCount() > 0){
         	//Raktim - Modified to display the fileds from Annotation Model
         
@@ -3920,7 +3907,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
             //pcahan
             //TODO change this to get the Data Type from an IData 
             //first need to make sure that IData has that information.  Don't know yet.
-            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
+            if (data.getDataType() == IData.DATA_TYPE_AFFY_ABS ||
+            		data.getDataType() == IData.DATA_TYPE_AFFY_MEAN ||
+            		data.getDataType() == IData.DATA_TYPE_AFFY_MEDIAN ||
+            		data.getDataType() == IData.DATA_TYPE_AFFY_REF){
                 this.menubar.addAffyFilterMenuItems();
             }
             /**
@@ -4082,6 +4072,24 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
         SuperExpressionFileLoader loader = new SuperExpressionFileLoader(this, fileLoadInfo);
         
     }
+    /**
+     * Clears all data in the viewer and resets the viewer to a clean slate.
+     */
+
+    private void onClearData(){
+    	if (JOptionPane.showConfirmDialog(this, "Are you sure? This cannot be undone!", "Delete all loaded data", JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
+	        removeChildren(mainViewerNode);
+	        clusterNode.removeAllChildren();
+	        analysisNode.removeAllChildren();
+	        scriptNode.removeAllChildren();
+	        historyLog = new HistoryViewer();
+			tree.updateUI();
+	        tree.repaint();
+	        this.data = new MultipleArrayData();
+	        initSessionMetaData();
+	        this.viewer.onSelected(framework);
+    	}
+    }
 
     /**
      *  Loads data using <code>SuperExpressionFileLoader</code>.
@@ -4215,21 +4223,30 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable, Goose
 //            }
 //        }
     }
-    
     /** Imports a list of gene or sample identifiers based on matching an annotation key
      * Imported cluster will be added to the proper repository.
      */
     private void onImportList(int clusterType) {
 	    onImportList(clusterType, null);
     }
+    
     /** Imports a list of gene or sample identifiers based on matching an annotation key
      * Imported cluster will be added to the proper repository.
      */
     private void onImportList(int clusterType, String[] genelist) {
+	    onImportList(clusterType, genelist, null, true, null);
+    }
+        
+    /** Imports a list of gene or sample identifiers based on matching an annotation key
+     * Imported cluster will be added to the proper repository.
+     */
+    public void onImportList(int clusterType, String[] genelist, String identifier, boolean askUser, String label) {
         ClusterRepository cr = getClusterRepository(clusterType);
-        
-        Cluster cluster = cr.createClusterFromList(genelist);
-        
+        Cluster cluster;
+        if(askUser)
+        	cluster = cr.createClusterFromList(genelist);
+        else 
+        	cluster = cr.quietlyCreateClusterFromList(genelist, identifier, label, "");
         String source;
         if(genelist != null)
         	source = "Gaggle Broadcast";
@@ -5258,12 +5275,14 @@ private void appendResourcererGeneAnnotation() {
      * The listener to listen to mouse, action, tree, keyboard and window events.
      */
     
-    private class EventListener extends MouseAdapter implements ActionListener, TreeSelectionListener, KeyListener, WindowListener, java.io.Serializable, IDataRegionSelectionListener, ICGHListener  {
+    private class EventListener extends MouseAdapter implements GaggleListener, ActionListener, TreeSelectionListener, KeyListener, WindowListener, java.io.Serializable, IDataRegionSelectionListener, ICGHListener  {
 
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
             if (command.equals(ActionManager.CLOSE_COMMAND)) {
                 onClose();
+            } else if (command.equals(ActionManager.CLEAR_DATA_COMMAND)) {
+                onClearData();
             } else if (command.equals(ActionManager.LOAD_FILE_COMMAND)) {
                 onLoadFile();
             } else if (command.equals(ActionManager.LOAD_EXPRESSION_COMMAND)) {
@@ -5588,14 +5607,16 @@ private void appendResourcererGeneAnnotation() {
 
             /* End CGH Command Handlers  */   
                 
+            /* Gaggle event handlers */
             }else if(command.equals(ActionManager.GAGGLE_CONNECT_ACTION)){
-            	connectToGaggle();
+            	gooseImpl.connectToGaggle();
             }else if(command.equals(ActionManager.GAGGLE_DISCONNECT_ACTION)){
-            	disconnectFromGaggle();
+            	gooseImpl.disconnectFromGaggle();
             }else if(command.equals(ActionManager.SELECT_TARGET_GOOSE_CMD)){
             	onChangeGaggleTarget((Action)event.getSource());
             }else if(command.equals(ActionManager.SHOW_GOOSE_CMD)){
             	onShowGoose((Action)event.getSource());
+            /* End Gaggle event handlers */
             	
             }
             /* Raktim - Annotation Demo Only */
@@ -5835,6 +5856,66 @@ private void appendResourcererGeneAnnotation() {
         	onLoadDirectory();
         	//ctl.onLoadDirectory();
         }        
+
+
+        public void onUpdateConnected(boolean isConnected) {
+            if(isConnected) {
+    	        try {
+    	        	getMenubar().gaggleMenu.getMenuComponent(0).setEnabled(false);
+    	        	getMenubar().gaggleMenu.getMenuComponent(1).setEnabled(true);
+    	        	getMenubar().gaggleMenu.getMenuComponent(2).setEnabled(true);
+    	    	    getMenubar().gaggleMenu.getMenuComponent(3).setEnabled(true);
+    	        } catch (NullPointerException npe) {
+    	        	//Suppress exception if menubar doesn't exist.
+    }
+            } else {
+        	    getMenubar().gaggleMenu.getMenuComponent(0).setEnabled(true);
+        	    getMenubar().gaggleMenu.getMenuComponent(1).setEnabled(false);
+        	    getMenubar().gaggleMenu.getMenuComponent(2).setEnabled(false);
+        	    getMenubar().gaggleMenu.getMenuComponent(3).setEnabled(false);
+            }
+    
+        }
+
+		public void onExit() {
+			mainframe.dispose();
+		}
+		
+		public void onHide() {
+			mainframe.setVisible(false);
+		}
+
+		public void onShow() {
+			mainframe.toFront ();
+			MiscUtil.setJFrameAlwaysOnTop (mainframe, true);
+			mainframe.setVisible (true);
+			MiscUtil.setJFrameAlwaysOnTop (mainframe, false);
+		}
+		public void onNameChange(String newGooseName) {
+			mainframe.setTitle(newGooseName);
+		}
+		public void onUpdate(String[] gooseNames) {
+			getMenubar().replaceGaggleTargetMenuItems(gooseNames);
+		}
+
+		public void nameListReceived(String[] names, String identifier, boolean interactive, String label) {
+	       final String[] nl = names;
+	       final String id = identifier;
+	       final boolean iactive = interactive;
+	       final String lab = label;
+	       Thread thread = new Thread(new Runnable(){
+	           public void run(){
+	        	   onImportList(Cluster.GENE_CLUSTER, nl, id, iactive, lab);
+	           }
+	       });
+	       thread.start();
+		}
+
+		public void expressionDataReceived(ISlideData[] slideDataArray, IChipAnnotation chipAnno, int dataType) {
+			if(getData().getFeaturesCount() <=0 ) {
+				fireDataLoaded(slideDataArray, chipAnno, dataType);
+			}
+		}        
     }
     
     /**
@@ -6004,38 +6085,74 @@ private void appendResourcererGeneAnnotation() {
          * @author eleanora
          */
         public void broadcastGeneClusters(Cluster[] clusters) {
-        	if(!isGaggleConnected()) {
-        		gaggleConnectWarning();
+			GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+			String fieldname = data.getFieldNames()[getMenubar().getDisplayMenu().getLabelIndex()];
+        	ClusterWorker cw = new ClusterWorker(getClusterRepository(ClusterRepository.GENE_CLUSTER));
+        	int[] indices = cw.getUniqueIndices(clusters);
+        	DataMatrix dm = gt.createMatrix(indices, fieldname, data.getChipAnnotation().getSpeciesName(), clusters[0].getAlgorithmName());
+	    	int rowCount = dm.getRowCount();
+			if (rowCount > 100) {
+				String title = "Broadcast matrix warning";
+				String msg = "Do you really wish to broadcast " + rowCount + " records?";
+				int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+			                                                      JOptionPane.YES_NO_OPTION);
+				if (dialogResult != JOptionPane.YES_OPTION)  
         		return;
         	}
-        	DataMatrix m = new DataMatrix();
-        	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository); 
-        	int[] rows = cw.getUniqueIndices(clusters);
-        	FloatMatrix f = data.getExperiment().getMatrix();
-        	String[] rowTitles = new String[rows.length];
-        	m.setSize(rows.length, f.getColumnDimension());
-        	for (int i=0; i<rows.length; i++) {
-        		for (int j=0; j<f.getColumnDimension(); j++) {
-                    m.set(i, j, data.getRatio(j, rows[i], IData.LOG));
+        	gooseImpl.doBroadcastMatrix(dm, null);
         		}
-        	}
-        	String fieldname = data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()];
-        	rowTitles = data.getAnnotationList(fieldname, rows);
-        	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
-	    	String[] temp = new String[f.getColumnDimension()];
-	    	for(int i=0; i<temp.length; i++) {
-	    		temp[i] = data.getSampleAnnotation(i, data.getCurrentSampleLabelKey());
-	    		if(temp[i] == null || temp[i].equalsIgnoreCase("na"))
-	    			temp[i] = "Sample " + i+1;
-	    	}
-	    	m.setColumnTitles(temp);
-	    	m.setSpecies(getCurrentSpecies());
-	    	m.setName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
-	    	m.setShortName ("MeV matrix (" + m.getRowCount() +  " x " + m.getColumnCount() +") from algorithm " + clusters[0].getAlgorithmName());
-        	MultipleArrayViewer.this.doBroadcastMatrix(m);
-        }
         
+
+        /**
+         * Builds a Gaggle DataMatrix data object containing the expression values from 
+         * experiment in the locations specified by rows and columns. Broadcasts this matrix
+         * to the Gaggle network.
+         * @author eleanora
+         * 
+         */
+		public void broadcastGeneClusterToGenomeBrowser(Experiment experiment, int[] rows, int[] columns) {
+			GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+		    
+			//filter out all "bad" chromosomal locations. (Incomplete data)
+	    	ArrayList<Integer> goodLocations = new ArrayList<Integer>();
+	    	String[] chrLocations = data.getAnnotationList(AnnotationFieldConstants.CHR_LOCATION, rows);
+	    	for(int i=0; i<chrLocations.length; i++) {
+	    		if(GenomeBrowserWebstart.isCompleteChrLocation(chrLocations[i])) {
+	    			goodLocations.add(rows[i]);
+        	}
+			}
+	    	if(goodLocations.size() < rows.length) {
+	    		int[] filteredIndices = new int[goodLocations.size()];
+	    		int j=0;
+	    		for(Integer i: goodLocations) {
+	    			filteredIndices[j] = i;
+	    			j++;
+        	}
+	    		rows = filteredIndices;
+	            }
+	    	if(rows.length <= 0 ) {
+		        JOptionPane.showMessageDialog(new JFrame(), 
+		        		"No chromosomal location data is loaded for this selection.\n" +
+		        		"The genome browser cannot map this data without chromosomal coordinate information.", 
+		        		"No chromosomal coordinate information", 
+		        		JOptionPane.ERROR_MESSAGE);
+		        return;
+	        }
+			DataMatrix dm = gt.createMatrix(rows, AnnotationFieldConstants.CHR_LOCATION, data.getChipAnnotation().getSpeciesName(), null);
+	    	int rowCount = dm.getRowCount();
+			if (rowCount > 100) {
+				String title = "Broadcast matrix warning";
+				String msg = "Do you really wish to broadcast " + rowCount + " records?";
+				int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+			                                                      JOptionPane.YES_NO_OPTION);
+				if (dialogResult != JOptionPane.YES_OPTION)  
+					return;
+	    	}
+			String genomeBrowserName = gooseImpl.getGenomeBrowserGoose(dm.getSpecies());
+			if(genomeBrowserName == null) 
+				return;
+			gooseImpl.doBroadcastMatrix(dm, genomeBrowserName);
+	    	}
         /**
          * Builds a Gaggle DataMatrix data object containing the expression values from 
          * experiment in the locations specified by rows and columns. Broadcasts this matrix
@@ -6044,97 +6161,54 @@ private void appendResourcererGeneAnnotation() {
          * 
          */
 		public void broadcastGeneCluster(Experiment experiment, int[] rows, int[] columns) {
-        	if(!isGaggleConnected()) {
-        		gaggleConnectWarning();
-        		return;
-        	}
-			if(rows == null) 
-				rows = experiment.getRows();
-			if(columns == null) {
-				columns = experiment.getColumnIndicesCopy();
-			}
-			
-			int[] indices = new int[rows.length];
-        	for(int i=0; i<rows.length; i++) {
-        		indices[i] = experiment.getGeneIndexMappedToData(rows[i]);
-        	}
-        	
-	    	DataMatrix m = new DataMatrix();
-	        m.setSize(rows.length, experiment.getNumberOfSamples());
-	        for (int i=0; i<rows.length; i++) {
-	            for(int j=0; j<columns.length; j++) {
-	            	m.set(i, j, experiment.get(rows[i], columns[j]));
-	            }
-	        }
-	        String fieldname = data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()];
-	        String[] rowTitles = data.getAnnotationList(fieldname, indices);
-
-	    	m.setRowTitles(rowTitles);
-	    	m.setRowTitlesTitle(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()]);
-
-	    	String[] columnTitles = new String[columns.length];
-	    	for(int i=0; i<columnTitles.length; i++) {
-	    		columnTitles[i] = data.getSampleName(columns[i]);
-	    		if(columnTitles[i] == null)
-	    			columnTitles[i] = "Sample " + i+1;
-	    	}
-	    	m.setColumnTitles(columnTitles);
-	    	m.setSpecies(getCurrentSpecies());
-	    	if(((ISlideData)data.getFeaturesList().get(0)).getSlideFileName() != null) {
-	    		String tempname = ((ISlideData)data.getFeaturesList().get(0)).getSlideFileName();
-	    		tempname = "MeV: " + tempname.substring(tempname.length()-25);
-	    		m.setName(tempname);
-	    		m.setShortName(tempname);
-	    	} else {
-	    		m.setName("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
-	    		m.setShortName("MeV matrix (" + m.getRowCount() + " x " + m.getColumnCount() + ")");
-	    	}
-	
-	        doBroadcastMatrix(m);
+			GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+	    	String fieldname = data.getFieldNames()[getMenubar().getDisplayMenu().getLabelIndex()];
+			DataMatrix dm = gt.createMatrix(rows, fieldname, data.getChipAnnotation().getSpeciesName(), null);
+	    	int rowCount = dm.getRowCount();
+			if (rowCount > 100) {
+				String title = "Broadcast matrix warning";
+				String msg = "Do you really wish to broadcast " + rowCount + " records?";
+				int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+			                                                      JOptionPane.YES_NO_OPTION);
+				if (dialogResult != JOptionPane.YES_OPTION)  
+					return;
+	    }
+			gooseImpl.doBroadcastMatrix(dm, null);
 	    }
 
 	    /**
 	     * @author eleanora
 	     */
         public void broadcastNamelist(Cluster[] clusters) {
-        	if(!isGaggleConnected()) {
-        		gaggleConnectWarning();
-        		return;
-        	}
-        	Namelist nl = new Namelist();
-        	ClusterWorker cw = new ClusterWorker(MultipleArrayViewer.this.geneClusterRepository);
+        	ClusterWorker cw = new ClusterWorker(getClusterRepository(ClusterRepository.GENE_CLUSTER));
         	int[] indices = cw.getUniqueIndices(clusters);
-        	String[] names = new String[indices.length];
-        	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
+        	GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+        	Namelist nl = gt.createNamelist(data.getExperiment(), indices);
+	    	int rowCount = nl.getNames().length;
+			if (rowCount > 100) {
+				String title = "Broadcast names warning";
+				String msg = "Do you really wish to broadcast " + rowCount + " records?";
+				int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+			                                                      JOptionPane.YES_NO_OPTION);
+				if (dialogResult != JOptionPane.YES_OPTION)  
+        		return;
         	}
-        	nl.setName("MeV Namelist (" + names.length + ") from algorithm " + clusters[0].getAlgorithmName());
-    		nl.setNames(names);
-	    	nl.setSpecies(getCurrentSpecies());
-        	MultipleArrayViewer.this.doBroadcastNamelist(nl);
-        }
+        	gooseImpl.doBroadcastNamelist(nl);
+       	}
         
-        //TODO remove Experiment parameter? 
         public void broadcastNamelist(Experiment e, int[] rows) {
-        	if(!isGaggleConnected()) {
-        		gaggleConnectWarning();
+        	GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+        	Namelist nl = gt.createNamelist(e, rows);
+        	int rowCount = nl.getNames().length;
+			if (rowCount > 100) {
+				String title = "Broadcast names warning";
+				String msg = "Do you really wish to broadcast " + rowCount + " records?";
+				int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+			                                                      JOptionPane.YES_NO_OPTION);
+				if (dialogResult != JOptionPane.YES_OPTION)  
         		return;
         	}
-        	if(e == null || rows == null)
-        		return;
-        	int[] indices = new int[rows.length];
-        	for(int i=0; i<rows.length; i++) {
-        		indices[i] = e.getGeneIndexMappedToData(rows[i]);
-        	}
-	        Namelist nl = new Namelist();
-        	String[] names = new String[indices.length];
-        	for(int i=0; i<names.length; i++) {
-        		names[i] = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{indices[i]})[0];
-        	}
-        	nl.setName("MeV Namelist (" + names.length + ")");
-    		nl.setNames(names);
-	    	nl.setSpecies(getCurrentSpecies());
-        	MultipleArrayViewer.this.doBroadcastNamelist(nl);
+        	gooseImpl.doBroadcastNamelist(nl);
         }
         
         /**
@@ -6142,57 +6216,32 @@ private void appendResourcererGeneAnnotation() {
          * Should be called by Network-broadcasting components.
          * @author eleanora
          */
-    public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals) {
-    	if(!isGaggleConnected()) {
-    		gaggleConnectWarning();
+        public void broadcastNetwork(Vector<int[]> interactions, Vector<String> types, Vector<Boolean> directionals) {
+        	GaggleTranslater gt = new GaggleTranslater(MultipleArrayViewer.this);
+        	Network nt = gt.createNetwork(interactions, types, directionals);
+    		int networkSize = nt.getNodes().length;
+    		if (networkSize > 100) {
+    			String title = "Broadcast names warning";
+    			String msg = "Do you really wish to broadcast " + networkSize + " nodes?";
+    			int dialogResult = JOptionPane.showConfirmDialog (MultipleArrayViewer.this, msg, title,
+    		                                                      JOptionPane.YES_NO_OPTION);
+    			if (dialogResult != JOptionPane.YES_OPTION)  
     		return;
+    		} // if warning dialog
+    		broadcastNet(nt);
     	}
-		Network nt = new Network();		
-    	nt.setSpecies(getCurrentSpecies());
-    	Hashtable<String, String[]> nodeAnnotations = new Hashtable<String, String[]>();
-    	String[] allFields = data.getFieldNames();
-    	for(int i=0; i<interactions.size(); i++) {
-    		String source = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[0]})[0];
-    		String target = data.getAnnotationList(data.getFieldNames()[menubar.getDisplayMenu().getLabelIndex()], new int[]{interactions.get(i)[1]})[0];
     		
-    		Interaction tempInt = new Interaction(source, target, types.get(i), directionals.get(i));
-    		
-    		nt.add(tempInt);
-    		
-    		if(!nodeAnnotations.containsKey(source)) {
-    			nodeAnnotations.put(source, new String[0]);
-    			for(String field: allFields) {
-        			nt.addNodeAttribute(source, field, data.getElementAnnotation(interactions.get(i)[0], field)[0]);
-    			}
-    		}
-    		if(!nodeAnnotations.containsKey(target)) {
-    			nodeAnnotations.put(target, new String[0]);
-    			for(String field: allFields) {
-    				nt.addNodeAttribute(target, field, data.getElementAnnotation(interactions.get(i)[1], field)[0]);
-    			}
-    		}
-    	}
-
-    	nt.setName("MeV Network (" + nt.getNodes().length + ")");
-    	MultipleArrayViewer.this.doBroadcastNetwork(nt);
-    }
-    
     /**
      * Generic function for Gaggle to Broadcast any Network
      * @author raktim
      * @param nt Network as defined by Gaggle datatypes
      */
     public void broadcastNet(Network nt) {
-    	if(!isGaggleConnected()) {
-    		gaggleConnectWarning();
-    		return;
+	    	gooseImpl.doBroadcastNetwork(nt);
     	}
 		
-    	MultipleArrayViewer.this.doBroadcastNetwork(nt);
-    }
-
     public boolean isGaggleConnected() {
-		return isConnected;
+			return gooseImpl.isConnected();
     }
     
     /**
@@ -6200,7 +6249,7 @@ private void appendResourcererGeneAnnotation() {
      * @return 
      */
     public boolean requestGaggleConnect() {
-    	return MultipleArrayViewer.this.connectToGaggle();
+	    	return gooseImpl.connectToGaggle();
     }
     
 	public File getSupportFile(ISupportFileDefinition def) throws SupportFileAccessError {
@@ -6216,7 +6265,6 @@ private void appendResourcererGeneAnnotation() {
 	public Hashtable<ISupportFileDefinition, File> getMultipleSupportFiles(IMultiSupportFileDefinition def) throws SupportFileAccessError {
 		if(isResourceManagerAvailable()) {
 			return TMEV.getResourceManager().getMultipleSupportFiles(def);
-//			return temp.toArray(new File[temp.size()]);
 		}
 		throw new SupportFileAccessError("ResourceManager is not available");
 	}	
@@ -6259,352 +6307,8 @@ private void appendResourcererGeneAnnotation() {
 	public boolean isResourceManagerAvailable() {
 		return framework.isResourceManagerAvailable();
 	}
-    /**
-     * @author eleanora
-     * @param nl
-     */
-    public void doBroadcastNamelist(Namelist nl){
-
-		int rowCount = nl.getNames().length;
-		if (rowCount > 100) {
-			String title = "Broadcast names warning";
-			String msg = "Do you really wish to broadcast " + rowCount + " names?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-		                                                      JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-		} // if warning dialog needed
-    	try {
-    		gaggleBoss.broadcastNamelist(myGaggleName, targetGoose, nl);
-    	} catch (RemoteException rex) {
-    		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
-			disconnectFromGaggle();
-    	}
-    }
 
     /**
-     * @author eleanora
-     * @param nt
-     */
-    public void doBroadcastNetwork(Network nt) {
-		int networkSize = nt.getNodes().length;
-		if (networkSize > 100) {
-			String title = "Broadcast names warning";
-			String msg = "Do you really wish to broadcast " + networkSize + " nodes?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-		                                                      JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-		} // if warning dialog needed
-    	try {
-    		gaggleBoss.broadcastNetwork(myGaggleName, targetGoose, nt);
-    	} catch (RemoteException rex) {
-    		System.err.println("doBroadcastNamelist: rmi error calling boss.broadcast");
-			disconnectFromGaggle();
-    	}
-    }
-
-    /**
-     * @author eleanora
-     * @param matrix
-     */
-    public void doBroadcastMatrix(DataMatrix matrix) {
-    	int rowCount = matrix.getRowCount();
-		if (rowCount > 100) {
-			String title = "Broadcast names warning";
-			String msg = "Do you really wish to broadcast " + rowCount + " records?";
-			int dialogResult = JOptionPane.showConfirmDialog (this, msg, title,
-		                                                      JOptionPane.YES_NO_OPTION);
-			if (dialogResult != JOptionPane.YES_OPTION)  
-				return;
-		}
-		try {	//here is where an exception is thrown if gaggle is not connected. 
-			gaggleBoss.broadcastMatrix(myGaggleName, targetGoose, matrix);
-		} catch (RemoteException rex) {
-			JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable. Please use Utilities -> Connect to Gaggle.");
-			disconnectFromGaggle();
-		}
-	}
-
-    
-    private void gaggleConnectWarning() {
-		String title = "Not connected to Gaggle";
-		String msg = "Please connect to Gaggle using the Utilities -> Gaggle menu.";
-		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.OK_OPTION);
-		disconnectFromGaggle();
-    }
-    
-    /**
-     * @author eleanora
-     * @return
-     */
-    private boolean connectToGaggle() {
-    	TMEV.GAGGLE_CONNECT_ON_STARTUP = true;
-    	if(gaggleConnector == null) {
-    		gaggleInit();
-    	}
-        try {
-            gaggleConnector.connectToGaggle();
-        } catch (Exception ex0) {
-            //System.err.println("MAV.connectToGaggle(): Failed to connect to gaggle: " + ex0.getMessage());
-        }
-        gaggleBoss = gaggleConnector.getBoss();
-        if(gaggleBoss != null) {
-	        return true;
-        } else {
-        	//System.out.println("MAV.connectToGaggle(): Couldn't connect to Gaggle");
-			//JOptionPane.showMessageDialog(mainframe, "Gaggle unavailable.");
-        	return false;
-        }
-    }
-
-    private void gaggleInit(){
-    	if(gaggleConnector == null) {
-	        gaggleConnector = new RmiGaggleConnector(this);
-	    	gaggleConnector.setAutoStartBoss(true);
-	        new GooseShutdownHook(gaggleConnector);
-	        gaggleConnector.addListener(this);
-    	}
-	}
-    
-    /**
-     * @author eleanora
-     */
-    public void disconnectFromGaggle() {
-    	if(isConnected)
-    		gaggleConnector.disconnectFromGaggle(true);
-
-    }
-    /**
-     * @author eleanora
-     */
-    public String getName() {
-    	return myGaggleName;
-    }
-    
-    /**
-     * @author eleanora
-     */
-    public void setName(String gaggleName){
-    	this.myGaggleName = gaggleName;
-    	this.mainframe.setTitle(myGaggleName);
-    }
-
-
-	/**
-	 * Taken from Paul Shannon's MeV 3.1 Goose implementation
-	 */
-	public void doExit() throws RemoteException, UnmarshalException {
-		disconnectFromGaggle();
-		mainframe.dispose();	
-	}
-
-
-	/**
-	 * Taken from Paul Shannon's MeV 3.1 Goose implementation
-	 */
-	public void doHide() throws RemoteException {
-		mainframe.hide ();
-	}
-
-
-	/**
-	 * Taken from Paul Shannon's MeV 3.1 Goose implementation
-	 */
-	public void doShow() throws RemoteException {
-		mainframe.toFront ();
-		MiscUtil.setJFrameAlwaysOnTop (mainframe, true);
-		mainframe.setVisible (true);
-		MiscUtil.setJFrameAlwaysOnTop (mainframe, false);
-	}
-
-
-	/**
-	 * Taken from Paul Shannon's MeV 3.1 Goose implementation
-	 * His notes are below: 
-	 * this, the GaggledMev implementation of Goose.handleMatrix () is inspired by the
-	 * org/tigr/microarray/mev/file/StanfordFileLoader class.
-	 * it reads a file of (typically) log10 ratio values, and returns a vector version
-	 * of an array it constructs out of SlideData objects, one for each column found
-	 * in the incoming data.  
-	 *
-	 *  ---- ISlideData [] slideDataArray = new ISlideData [experimentCount]
-	 *       slideDataArray [0] = new SlideData (rRows == spotCount == # of genes, rColumn=1);
-	 *       for (int i=1; i < slideDataArray.length; i++) {
-	 *          slideDataArray[i] = new FloatSlideData (slideDataArray[0].getSlideMetaData(), spotCount);
-	 *   
-	 *  the above suggests that the 0th slideDataArray element is metadata
-	 *  and that 1-n+1 elements are the actual data
-	 *
-	 *    int experimentCount = ss.countTokens () + 1 - preExperimentColumns;  // numerical columns + 1
-	 *    slideDataArray = new ISlideData [experimentCount];
-	 *
-	 *  upon reading first row of file -- the title line -- these things occur,
-	 *  creating & initializing a structure to hold a column's worth (a condition) of data
-	 *
-	 *     slideDataArray = new ISlideData [experimentCount];
-	 *     slideDataArray [0] = new SlideData (rRows == spotCount == # of genes, rColumn=1);
-	 *     slideDataArray [0].setSlideFileName (f.getPath());
-	 *     for (int i=1; i < slideDataArray.length; i++) {
-	 *       slideDataArray[i] = new FloatSlideData (slideDataArray[0].getSlideMetaData(), spotCount);
-	 *       slideDataArray[i].setSlideFileName (f.getPath());
-	 *       }
-	 *
-	 *  then, looping through all rows in the input matrix (or file) these things occur:
-	 *    a  SlideDataElement 'sde' is created, and added to SlideDataArray [0]
-	 *    i am not sure what this accomplishes
-	 *
-	 *  then looping through the columns, 
-	 *     slideDataArray [columnNumber].setIntensities (rowNumber, cy3=0, cy5=ration)
-	 *
-	 * SlideDataElement sde:  constructed with these arguments:
-	 *           String UID 
-	 *           int [] rows
-	 *           int [] columns
-	 *           float [] intensities
-	 *           String [] values)
-	 *
-	 * Vector slideDataList: a vector form of the slideDataArray
-	 */
-	public void handleMatrix(String sourceGoose, DataMatrix matrix) throws RemoteException {
-		//Load broadcast data if there is no data already loaded into this MAV.
-
-		if(data.getFeaturesCount() <= 0) {
-			data.setGaggleOrganismName(matrix.getSpecies());
-			
-			float cy3, cy5;
-			String [] moreFields = new String [1];
-			final int rColumns = 1;
-			  
-			int row, column;
-			row = column = 1;
-			  
-			// ----------------------------------
-			// make header assignments
-			// ----------------------------------
-	
-			int experimentCount = matrix.getColumnCount ();  // no kidding!
-			  
-			// each element slideDataArray seems to be storage for one column of data
-	
-			ISlideData [] slideDataArray = new ISlideData [experimentCount];
-			slideDataArray [0] = new SlideData (matrix.getRowCount (), 1);
-			slideDataArray[0].setSlideFileName ("Broadcast via Gaggle from " + sourceGoose + " " + matrix.getShortName ());
-			for (int i=1; i < experimentCount; i++) {
-				slideDataArray [i] = new FloatSlideData (slideDataArray[0].getSlideMetaData(), matrix.getRowCount ());
-				slideDataArray [i].setSlideFileName ("Broadcast via Gaggle from " + sourceGoose + " " + matrix.getShortName ());
-			} // for i
-	
-			//get Field Names
-			String [] fieldNames = new String [1];
-			fieldNames [0] = matrix.getRowTitlesTitle ();
-			
-			if(fieldNames == null || fieldNames[0] == null)
-				fieldNames = new String[] {"untitled annotation"};
-			slideDataArray[0].getSlideMetaData().setFieldNames(fieldNames);
-			for (int i=0; i < experimentCount; i++) {
-				slideDataArray[i].setSlideDataName (matrix.getColumnTitles()[i]);
-			}
-			// ----------------------------------
-			// assign the data
-			// ----------------------------------
-	
-			double matrixData [][] = matrix.get ();
-			String [] rowTitles = matrix.getRowTitles ();
-			double maxval =Double.NEGATIVE_INFINITY, minval = Double.POSITIVE_INFINITY;
-			
-			for (int r=0; r < matrix.getRowCount (); r++) {
-				int [] rows = new int [] {0, 1, 0};
-				int [] columns = new int [] {0, 1, 0};
-				rows [0] = rows [2] = row;
-				columns [0] = columns [2] = column;
-				if (column == rColumns) {
-					column = 1;
-					row++;
-				} else {
-					column++;
-				}
-			
-				moreFields [0] = rowTitles [r];
-				SlideDataElement sde = new SlideDataElement (String.valueOf (row+1), rows, columns, 
-			                                                 new float[2], moreFields);
-				slideDataArray[0].addSlideDataElement (sde);
-	
-				for (int i=0; i < slideDataArray.length; i++) {
-					cy3 = 1f;  //set cy3 to a default value of 1.
-					cy5 = (new Double (matrixData [r][i])).floatValue ();
-					slideDataArray[i].setIntensities (r, cy3, cy5);
-					if(cy5<minval)
-						minval = cy5;
-					if(cy5 > maxval)
-						maxval = cy5;
-				} // for i
-			} // for r
-			IChipAnnotation chipAnno = new MevChipAnnotation();
-			chipAnno.setSpeciesName(matrix.getSpecies());
-	         	
-			this.menubar.setMinRatioScale(new Float(minval));
-	         this.menubar.setMidRatioValue(new Float((maxval-minval) / 2 + minval));
-	         this.menubar.setMaxRatioScale(new Float(maxval));    	
-
-	         fireDataLoaded(slideDataArray, chipAnno, IData.DATA_TYPE_RATIO_ONLY);
-			//Set heatmap min/max intensities to min/maxvals
-
-		} else {
-			System.out.println("Cannot accept broadcast matrix to " + myGaggleName + ": data is already loaded.");
-		}
-	}
-      
-    /**
-     * @author eleanora
-     */
-	public void update(String[] gooseNames) throws RemoteException {
-		this.gooseNames = gooseNames;
-	
-    	Vector<String> menuNames = new Vector<String>();
-    	menuNames.add("Boss");
-    	for(int i=0; i<gooseNames.length; i++) {
-    		if(!gooseNames[i].equals(myGaggleName))
-    			menuNames.add(gooseNames[i]);
-    	}
-    	String[] temp = new String[menuNames.size()];
-    	for(int i=0; i<temp.length; i++) {
-        	temp[i] = (String)menuNames.get(i);
-    	}
-    	
-		this.menubar.replaceGaggleTargetMenuItems(temp);
-	}
-
-        
-	/**
-	 * This method is for the GaggleConnectionListener implementation.
-	 * @author eleanora
-	 * @param connected
-	 * @param boss
-	 */
-    public void setConnected(boolean connected, Boss boss) {
-        this.gaggleBoss = boss;
-        this.isConnected = connected;
-        //System.out.println("Received Gaggle connection status: " + connected);
-        if(connected) {
-	        try {
-	        	this.menubar.gaggleMenu.getMenuComponent(0).setEnabled(false);
-	        	this.menubar.gaggleMenu.getMenuComponent(1).setEnabled(true);
-	    	    this.menubar.gaggleMenu.getMenuComponent(2).setEnabled(true);
-	    	    this.menubar.gaggleMenu.getMenuComponent(3).setEnabled(true);
-	        } catch (NullPointerException npe) {
-	        	//Suppress exception if menubar doesn't exist.
-	        }
-        } else {
-    	    this.menubar.gaggleMenu.getMenuComponent(0).setEnabled(true);
-    	    this.menubar.gaggleMenu.getMenuComponent(1).setEnabled(false);
-    	    this.menubar.gaggleMenu.getMenuComponent(2).setEnabled(false);
-    	    this.menubar.gaggleMenu.getMenuComponent(3).setEnabled(false);
-    	    myGaggleName = ORIGINAL_GAGGLE_NAME;
-        }
-        
-    }
-	/**
 	 * Check if there is a species name loaded, and if not, get one from the user and save it for later.
 	 */
     public String getCurrentSpecies() {
@@ -6627,37 +6331,6 @@ private void appendResourcererGeneAnnotation() {
         	data.setGaggleOrganismName(speciesName);
         return speciesName;
     }
-
-	public void handleCluster(String arg0, org.systemsbiology.gaggle.core.datatypes.Cluster arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * Handles an incoming broadcast of a namelist and attempts to create a cluster based on it.
-	 */
-	public void handleNameList(String sourceGoose, Namelist nl) throws RemoteException {
-		nl.getName();
-                onImportList(Cluster.GENE_CLUSTER, nl.getNames());
- 	}
-
-	public void handleNetwork(String arg0, Network arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @Deprecated
-	 * In place only to fulfill Goose interface requirements.
-	 */
-	public void doBroadcastList() throws RemoteException {
-		//Deprecated. Does nothing
-		
-	}
-
-	public void handleTuple(String arg0, GaggleTuple arg1) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
 
    public void setIDF(MageIDF idfObj){
 	   this.data.setIDF(idfObj);

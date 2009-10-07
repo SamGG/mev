@@ -1,8 +1,6 @@
 package org.tigr.microarray.mev.file;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -19,7 +17,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -243,6 +240,8 @@ public class AnnotationDownloadHandler {
 								getAdditionalSupportFiles(organismName, arrayName);
 								annotationSelected = true;
 								inProgress = false;
+						       	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, organismName);
+						       	TMEV.storeProperty(TMEV.LAST_LOADED_ARRAY, arrayName);
 								updateLabel();
 							} catch (Exception e) {
 								annotationSelected = false;
@@ -334,6 +333,8 @@ public class AnnotationDownloadHandler {
 			proceedLoadingAnnotation.setSelected(true);
 
 	}
+
+
 	private void onSelectBrowseFile() {
 		annFileLocation.setEnabled(true);
 		browseAnnFileButton.setEnabled(true);

@@ -58,7 +58,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     private ButtonGroup experimentLabelGroup;
 
     JMenu fileMenu;
-    JMenuItem loadDataMenuItem, loadAnalysisItem;
+    JMenuItem loadDataMenuItem, loadAnalysisItem, clearDataItem;
 
     /**
      * Raktim
@@ -107,6 +107,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         fileMenu.addSeparator();
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.PRINT_IMAGE_ACTION)));
         fileMenu.addSeparator();
+        clearDataItem = createJMenuItem(manager.getAction(ActionManager.CLEAR_DATA_ACTION));
+        fileMenu.add(clearDataItem);
         fileMenu.add(createJMenuItem(manager.getAction(ActionManager.CLOSE_ACTION)));
         add(fileMenu);
         
@@ -377,6 +379,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     public void setDataLoadersEnabled(boolean enabled) {
 	    loadDataMenuItem.setEnabled(enabled);
 	    loadAnalysisItem.setEnabled(enabled);
+	    clearDataItem.setEnabled(enabled);
     }
 
     public void synchronizeSettings(MultipleArrayMenubar origMenuBar) {
