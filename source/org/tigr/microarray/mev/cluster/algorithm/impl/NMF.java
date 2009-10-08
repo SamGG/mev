@@ -42,8 +42,6 @@ public class NMF extends AbstractAlgorithm{
 	float[][] connectivityMatrix;
 	boolean stop = false;
 	int r=2;
-//	private int maxR = 4;
-//	private boolean multiClusters;
 	int numRuns = 10;
 	int maxIterations = 10000;
 	int numSamples, numGenes;
@@ -51,10 +49,13 @@ public class NMF extends AbstractAlgorithm{
 	float[] costsIndex = new float[numRuns];
 	boolean divergence = true;
 	boolean doSamples = true;
+	boolean expScale = false;
+	boolean adjustData = false;
     FloatMatrix expMatrix;
 	FloatMatrix[] W = new FloatMatrix[numRuns];
 	FloatMatrix[] H = new FloatMatrix[numRuns];
 	int[][] clusters;
+	private float tinyNumber = .0001f;
     /**
      * This method should interrupt the calculation.
      */
@@ -72,12 +73,12 @@ public class NMF extends AbstractAlgorithm{
     	AlgorithmParameters map = data.getParams();
     	expMatrix = data.getMatrix("experiment");
     	r = map.getInt("r-value");
-//    	maxR = map.getInt("max-r-value");
     	numRuns = map.getInt("runs");
     	maxIterations = map.getInt("iterations");
     	divergence = map.getBoolean("divergence");
     	doSamples = map.getBoolean("doSamples");
-//    	multiClusters = map.getBoolean("multiClusters");
+    	expScale = map.getBoolean("expScale");
+    	adjustData = map.getBoolean("adjustData");
     	if (expMatrix == null) {
     	    throw new AlgorithmException("Input data is absent.");
     	}
@@ -89,7 +90,7 @@ public class NMF extends AbstractAlgorithm{
     	W = new FloatMatrix[numRuns];
     	H = new FloatMatrix[numRuns];
     	costs = new float[numRuns];
-    	NMFMultiplicativeUpdate(expMatrix.A);
+    	NMFMultiplicativeUpdate(dataPreProcessing(expMatrix.A));
     	Cluster result_cluster = new Cluster();
     	NodeList nodeList = result_cluster.getNodeList();
 	    if (stop) {
@@ -109,12 +110,6 @@ public class NMF extends AbstractAlgorithm{
     	AlgorithmData result = new AlgorithmData();
     	result.addCluster("cluster", result_cluster);
     	result.addIntMatrix("clusters", clusters);
-//    	for (int i=0; i<clusters.length; i++){
-//    		for (int j=0; j<clusters[i].length; j++)
-//    			System.out.print(clusters[i][j]+"\t");
-//    		System.out.println("cluster ass");
-//    	}
-
         FloatMatrix means = getMeans(clusters);
         FloatMatrix variances = getVariances(clusters, means);
     	result.addMatrix("connectivity-matrix", new FloatMatrix(this.connectivityMatrix));
@@ -126,6 +121,7 @@ public class NMF extends AbstractAlgorithm{
         result.addMatrix("clusters_means", means);
         result.addMatrix("clusters_variances", variances);
         result.addParam("cophen", String.valueOf(cophen));
+        result.addParam("adjustData", String.valueOf(adjustData));
     	
     	return result;
     }
@@ -137,7 +133,6 @@ public class NMF extends AbstractAlgorithm{
     			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
     		}
     	}
-    	
     	
     	float[][] hclMatrix = new float[connectivityMatrix.length][connectivityMatrix.length];
     	for (int i=0; i<hclMatrix.length; i++){
@@ -308,226 +303,245 @@ public class NMF extends AbstractAlgorithm{
     	System.out.println("here1");
 		return clusters;
 	}
-	private void NMFMultiplicativeUpdate(float[][] datav){
+    private float[][] dataPreProcessing(float[][] datav){
     	float[][] v = new float[datav.length][];
     	for (int i=0; i<v.length; i++){
     		v[i] = new float[datav[i].length];
     		for (int j=0; j<v[i].length; j++){
     			v[i][j] = datav[i][j];
+    			if (v[i][j] < 0)
+    		    	adjustData = true;
     		}
     	}
-    	System.out.println(divergence);
-    	FloatMatrix V, Wt, Ht;
-    	
-    		//checking for negative values...
+    	//handling negative values...
+    	if (!adjustData)
+    		return v;
+    	if (expScale){
+			for (int i=0; i<v.length; i++){
+				for (int j=0; j<v[0].length; j++){
+					if (Float.isNaN(v[i][j]))
+						v[i][j] = 0f;
+					v[i][j] = (float)Math.exp(v[i][j]);
+				}
+			}
+    	} else {
+    		float minVal = Float.POSITIVE_INFINITY;
     		for (int i=0; i<v.length; i++){
-    			for (int j=0; j<v[0].length; j++){
-    				if (v[i][j]<0||Float.isNaN(v[i][j])){
-    					System.out.println(i + " " + j + " : " + v[i][j]);
-    					v[i][j] = 0.0001f; //cheap fix
+				for (int j=0; j<v[0].length; j++){
+					if (v[i][j]<minVal){
+						minVal = v[i][j];
+					}
+				}
+			}
+			for (int i=0; i<v.length; i++)
+				for (int j=0; j<v[0].length; j++)
+					v[i][j] = v[i][j] - minVal + tinyNumber;
+    	}
+    	return v;
+    }
+    
+	private void NMFMultiplicativeUpdate(float[][] v){
+		
+		//Initiating variables...
+    	FloatMatrix V, Wt, Ht;
+		V = new FloatMatrix(v);
+		numGenes = v.length;
+		numSamples = v[0].length;
+		float[][] w = new float[numGenes][r];
+		float[][] h = new float[r][numSamples];
+		connectivityMatrix = new float[numSamples][numSamples];
+		int totalTries = 0;
+		float costSum = 0;
+		float costBest = Float.POSITIVE_INFINITY;
+		
+		for (int runcount=0; runcount<numRuns; runcount++){
+			if(!standalone)
+				event.setDescription("Evaluating "+r+" factors, run "+ (runcount +1)+" of " + numRuns);
+            fireValueChanged(event);
+    	    if (stop) 
+    	    	return;
+			totalTries++;
+			if (totalTries%25==0)
+				System.out.println(totalTries);
+			//seeding random matrices, creating corresponding transposes for ease of calculation
+			for (int i=0; i<numGenes; i++){
+				for (int j=0; j<r; j++){
+					w[i][j] = (int)(Math.random()*6)+1;
+				}
+			}
+			for (int i=0; i<numSamples; i++){
+				for (int j=0; j<r; j++){
+					h[j][i] = (int)(Math.random()*6)+1;
+				}
+			}
+			W[runcount] = new FloatMatrix(w);
+			H[runcount] = new FloatMatrix(h);
+			Wt = W[runcount].transpose();
+			Ht = H[runcount].transpose();
+			
+			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
+			float previousCost = Float.POSITIVE_INFINITY;
+			float cost=0;
+			for(int iter = 0; iter<maxIterations; iter++){
+    			updateProgressBar(iter);
+				if (!divergence){//use euclidean
+    				FloatMatrix WtV = Wt.times(V);
+    				FloatMatrix WtWH = Wt.times(W[runcount]).times(H[runcount]);
+    				float h1[][]=new float[r][numSamples];
+    				for (int i=0; i<r; i++){
+    					for (int j=0; j<numSamples; j++){
+    						h1[i][j] = H[runcount].get(i, j)*WtV.get(i, j)/WtWH.get(i, j);
+    					}
     				}
-    			}
-    		}
-    		
-    		//Initiating variables...
-    		V = new FloatMatrix(v);
-    		numGenes = v.length;
-    		numSamples = v[0].length;
-    		float[][] w = new float[numGenes][r];
-    		float[][] h = new float[r][numSamples];
-    		connectivityMatrix = new float[numSamples][numSamples];
-    		int totalTries = 0;
-    		float costSum = 0;
-    		float costBest = Float.POSITIVE_INFINITY;
-    		
-    		for (int runcount=0; runcount<numRuns; runcount++){
-    			if(!standalone)
-    				event.setDescription("Run "+ (runcount +1)+" of " + numRuns);
-                fireValueChanged(event);
-        	    if (stop) 
-        	    	return;
-    			totalTries++;
-    			if (totalTries%25==0)
-    				System.out.println(totalTries);
-    			//seeding random matrices, creating corresponding transposes for ease of calculation
-    			for (int i=0; i<numGenes; i++){
-    				for (int j=0; j<r; j++){
-    					w[i][j] = (int)(Math.random()*6)+1;
-    				}
-    			}
-    			for (int i=0; i<numSamples; i++){
-    				for (int j=0; j<r; j++){
-    					h[j][i] = (int)(Math.random()*6)+1;
-    				}
-    			}
-    			W[runcount] = new FloatMatrix(w);
-    			H[runcount] = new FloatMatrix(h);
-    			Wt = W[runcount].transpose();
-    			Ht = H[runcount].transpose();
-    			
-    			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
-    			float previousCost = Float.POSITIVE_INFINITY;
-    			float cost=0;
-    			for(int iter = 0; iter<maxIterations; iter++){
-        			updateProgressBar(iter);
-    				if (!divergence){//use euclidean
-	    				FloatMatrix WtV = Wt.times(V);
-	    				FloatMatrix WtWH = Wt.times(W[runcount]).times(H[runcount]);
-	    				float h1[][]=new float[r][numSamples];
-	    				for (int i=0; i<r; i++){
-	    					for (int j=0; j<numSamples; j++){
-	    						h1[i][j] = H[runcount].get(i, j)*WtV.get(i, j)/WtWH.get(i, j);
-	    					}
-	    				}
-	    				H[runcount] = new FloatMatrix(h1);
-	    				FloatMatrix VHt = V.times(Ht);
-	    				FloatMatrix WHHt = W[runcount].times(H[runcount]).times(Ht);
-	    				
-	    				for (int i=0; i<numGenes; i++){
-	    					for (int j=0; j<r; j++){
-	    						w[i][j] = W[runcount].get(i, j)*VHt.get(i, j)/WHHt.get(i, j);
-	    					}
-	    				}
-	    				W[runcount] = new FloatMatrix(w);
-	    				cost = 0;
-	    				FloatMatrix WH = W[runcount].times(H[runcount]);
-
-	    				for (int i=0; i<numGenes; i++){
-	    					for (int j=0; j<numSamples; j++){
-	    						cost = cost + (float)Math.pow(V.A[i][j]-WH.A[i][j], 2);
-	    					}
-	    				}
-    				} else { //use divergence
-	    				FloatMatrix WH = W[runcount].times(H[runcount]);
-	    				float h1[][]=new float[r][numSamples];
-	    				for (int i=0; i<r; i++){
-    						float sumk = 0;
-    						for (int k=0; k<numGenes; k++)
-    							sumk = sumk + W[runcount].get(k, i);
-	    					for (int j=0; j<numSamples; j++){
-	    						float sumi = 0;
-	    						for (int k=0; k<numGenes; k++)
-	    							sumi = sumi + W[runcount].get(k, i) * V.get(k, j) / WH.get(k, j);
-	    						h1[i][j] = H[runcount].get(i, j)*sumi/sumk;
-	    					}
-	    				}
-	    				H[runcount] = new FloatMatrix(h1);
-	    				WH = W[runcount].times(H[runcount]);
-
-	    				float w1[][]=new float[numGenes][r];
+    				H[runcount] = new FloatMatrix(h1);
+    				FloatMatrix VHt = V.times(Ht);
+    				FloatMatrix WHHt = W[runcount].times(H[runcount]).times(Ht);
+    				
+    				for (int i=0; i<numGenes; i++){
     					for (int j=0; j<r; j++){
-    						float sumk = 0;
+    						w[i][j] = W[runcount].get(i, j)*VHt.get(i, j)/WHHt.get(i, j);
+    					}
+    				}
+    				W[runcount] = new FloatMatrix(w);
+    				cost = 0;
+    				FloatMatrix WH = W[runcount].times(H[runcount]);
+
+    				for (int i=0; i<numGenes; i++){
+    					for (int j=0; j<numSamples; j++){
+    						cost = cost + (float)Math.pow(V.A[i][j]-WH.A[i][j], 2);
+    					}
+    				}
+				} else { //use divergence
+    				FloatMatrix WH = W[runcount].times(H[runcount]);
+    				float h1[][]=new float[r][numSamples];
+    				for (int i=0; i<r; i++){
+						float sumk = 0;
+						for (int k=0; k<numGenes; k++)
+							sumk = sumk + W[runcount].get(k, i);
+    					for (int j=0; j<numSamples; j++){
+    						float sumi = 0;
+    						for (int k=0; k<numGenes; k++)
+    							sumi = sumi + W[runcount].get(k, i) * V.get(k, j) / WH.get(k, j);
+    						h1[i][j] = H[runcount].get(i, j)*sumi/sumk;
+    					}
+    				}
+    				H[runcount] = new FloatMatrix(h1);
+    				WH = W[runcount].times(H[runcount]);
+
+    				float w1[][]=new float[numGenes][r];
+					for (int j=0; j<r; j++){
+						float sumk = 0;
+						for (int k=0; k<numSamples; k++)
+							sumk = sumk + H[runcount].get(j, k);
+						for (int i=0; i<numGenes; i++){
+    						float sumi = 0;
     						for (int k=0; k<numSamples; k++)
-    							sumk = sumk + H[runcount].get(j, k);
-    						for (int i=0; i<numGenes; i++){
-	    						float sumi = 0;
-	    						for (int k=0; k<numSamples; k++)
-	    							sumi = sumi + H[runcount].get(j, k) * V.get(i, k) / WH.get(i, k);
-	    						w1[i][j] = W[runcount].get(i, j)*sumi/sumk;
-	    					}
-	    				}
-	    				W[runcount] = new FloatMatrix(w1);
-	    				cost = 0;
-	    				
-	    				WH = W[runcount].times(H[runcount]);
-	    				
-	    				for (int i=0; i<numGenes; i++){
-	    					for (int j=0; j<numSamples; j++){
-	    						float aij = V.A[i][j];
-	    						float bij = WH.A[i][j];
-	    						cost = cost + (float)(aij*Math.log(aij/bij)- aij + bij);
-	    						if (Float.isNaN(cost)){
-	    							System.out.println("cost is NaN");
-	    							System.out.println("i " + i + "  j " + j);
-	    							System.out.println("V.A[i][j] " + V.A[i][j]);
-	    							System.out.println("WH.A[i][j] " + WH.A[i][j]);
-	    							stop = true;
-	    							return;
-	    						}
-	    							
-	    					}
-	    				}
+    							sumi = sumi + H[runcount].get(j, k) * V.get(i, k) / WH.get(i, k);
+    						w1[i][j] = W[runcount].get(i, j)*sumi/sumk;
+    					}
     				}
+    				W[runcount] = new FloatMatrix(w1);
+    				cost = 0;
+    				
+    				WH = W[runcount].times(H[runcount]);
+    				
+    				for (int i=0; i<numGenes; i++){
+    					for (int j=0; j<numSamples; j++){
+    						float aij = V.A[i][j];
+    						float bij = WH.A[i][j];
+    						cost = cost + (float)(aij*Math.log(aij/bij)- aij + bij);
+    						if (Float.isNaN(cost)){
+    							System.out.println("cost is NaN");
+    							System.out.println("i " + i + "  j " + j);
+    							System.out.println("V.A[i][j] " + V.A[i][j]);
+    							System.out.println("WH.A[i][j] " + WH.A[i][j]);
+    							stop = true;
+    							return;
+    						}
+    							
+    					}
+    				}
+				}
 //    				System.out.println("iteration = " +iter+", cost = "+ cost);
-    				if (cost>=previousCost){
-    					costSum = costSum+cost;
-    					break;
-    				}
-    				previousCost= cost;
-    			}
+				if (cost>=previousCost){
+					costSum = costSum+cost;
+					break;
+				}
+				previousCost= cost;
+			}
 //    			printMat(H[runcount]);
 //    			this is my technique for removing bad solutions
 //    			if (cost>costSum/totalTries){
 //    				runcount--;
 //    				continue;
 //    			}
-    			
-    			if (cost<costBest){
-    				costBest= cost;
-    			}
-				costs[runcount] = cost;
-    			
-    			//Assigns m samples to r classes
-    			int[] classes = new int[numSamples];
-    			for (int i=0; i<numSamples; i++){
-    				float best = 0;
-    				for (int j=0; j<r; j++){
-    					if (H[runcount].A[j][i]>best){
-    						best = H[runcount].A[j][i];
-    						classes[i]=j;
-    					}
-    				}
-    			}
-    			for (int i=0; i<numSamples; i++){
-    				System.out.print(classes[i]+"\t");
-    			}
-    			System.out.println(cost);
-    			//Adds to connectivity matrix
-    			for (int i=0; i<numSamples; i++){
-    				for (int j=0; j<numSamples; j++){
-    					if (classes[i]==classes[j])
-    						connectivityMatrix[i][j]++;
-    				}
-    			}
-    		}
-    	    costsIndex = new float[costs.length];
-    	    for (int i=0; i<costsIndex.length; i++){
-    	    	costsIndex[i]=i;
-    	    }
-    	    ExperimentUtil.sort2(costs, costsIndex);
-    		System.out.println();
-    		System.out.println(costSum/totalTries);
-    		System.out.println(costBest);
-    		System.out.println(totalTries);
-    		System.out.println("Conn Matrix ");
-    		for (int i=0; i<numSamples; i++){
-    			for (int j=0; j<numSamples; j++){
-    				connectivityMatrix[i][j]=1-connectivityMatrix[i][j]/numRuns;
-//    				System.out.print(connectivityMatrix[i][j]+"\t");
-    			}
-//    			System.out.println();
-    		}
-    	}
-	
-		public void updateProgressBar(int iter){
-			if (standalone)
-				return;
-			event.setId(AlgorithmEvent.PROGRESS_VALUE);
-			event.setIntValue((100*iter)/(maxIterations));
-	    	fireValueChanged(event);
+			
+			if (cost<costBest){
+				costBest= cost;
+			}
+			costs[runcount] = cost;
+			
+			//Assigns m samples to r classes
+			int[] classes = new int[numSamples];
+			for (int i=0; i<numSamples; i++){
+				float best = 0;
+				for (int j=0; j<r; j++){
+					if (H[runcount].A[j][i]>best){
+						best = H[runcount].A[j][i];
+						classes[i]=j;
+					}
+				}
+			}
+			for (int i=0; i<numSamples; i++){
+				System.out.print(classes[i]+"\t");
+			}
+			System.out.println(cost);
+			//Adds to connectivity matrix
+			for (int i=0; i<numSamples; i++){
+				for (int j=0; j<numSamples; j++){
+					if (classes[i]==classes[j])
+						connectivityMatrix[i][j]++;
+				}
+			}
 		}
-    	private void printMat(FloatMatrix fm){
-    		System.out.println("start  " + fm);
-    		System.out.println("Dimensions: " +fm.getColumnDimension() +" X "+ fm.getRowDimension());
-    		for (int i=0; i<fm.getRowDimension(); i++){
-    			for (int j=0; j<fm.getColumnDimension(); j++){
-    				System.out.print(fm.get(i, j)+"\t");
-    			}
-    			System.out.println();
-    		}
-    		System.out.println("end \n");
-    	}
-    	
+	    costsIndex = new float[costs.length];
+	    for (int i=0; i<costsIndex.length; i++){
+	    	costsIndex[i]=i;
+	    }
+	    ExperimentUtil.sort2(costs, costsIndex);
+//		System.out.println();
+//		System.out.println(costSum/totalTries);
+//		System.out.println(costBest);
+//		System.out.println(totalTries);
+//		System.out.println("Conn Matrix ");
+		for (int i=0; i<numSamples; i++){
+			for (int j=0; j<numSamples; j++){
+				connectivityMatrix[i][j]=1-connectivityMatrix[i][j]/numRuns;
+//    				System.out.print(connectivityMatrix[i][j]+"\t");
+			}
+//    			System.out.println();
+		}
+	}
+
+	public void updateProgressBar(int iter){
+		if (standalone)
+			return;
+		event.setId(AlgorithmEvent.PROGRESS_VALUE);
+		event.setIntValue((100*iter)/(maxIterations));
+    	fireValueChanged(event);
+	}
+	private void printMat(FloatMatrix fm){
+		System.out.println("start  " + fm);
+		System.out.println("Dimensions: " +fm.getColumnDimension() +" X "+ fm.getRowDimension());
+		for (int i=0; i<fm.getRowDimension(); i++){
+			for (int j=0; j<fm.getColumnDimension(); j++){
+				System.out.print(fm.get(i, j)+"\t");
+			}
+			System.out.println();
+		}
+		System.out.println("end \n");
+	}
+	
 
 	/**
 	 * @param args

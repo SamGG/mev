@@ -77,27 +77,18 @@ public class NMFInfoViewer extends ViewerAdapter {
     /**
      * Creates the viewer content component.
      */
-    private JTextArea createContent(int[][] clusters, int genes) {
+    private JTextArea createContent(int[][] clusters, int samples) {
 	JTextArea area = new JTextArea(clusters.length*3, 20);
 	area.setEditable(false);        
         area.setMargin(new Insets(0, 10, 0, 0));        
 	StringBuffer sb = new StringBuffer(clusters.length*3*10);
 	for (int counter = 0; counter < clusters.length; counter++) {
-	    if (counter == 0) {
-		sb.append("Significant genes ");
+		sb.append("Cluster " + (counter+1));
 		sb.append("\t");
-		sb.append("# of Significant Genes: " +clusters[counter].length);
-		sb.append("\n\t\t");
-		sb.append("% of Genes that are Signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
+		sb.append("# of Samples: " +clusters[counter].length);
+		sb.append("\n\t");
+		sb.append("% of Samples: "+Math.round((float)clusters[counter].length/(float)samples*100f)+"%");
 		sb.append("\n\n");
-	    } else {
-		sb.append("Non-significant genes ");
-		sb.append("\t");
-		sb.append("# of non-significant Genes: " +clusters[counter].length);
-		sb.append("\n\t\t");
-		sb.append("% of Genes that are not signficant: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
-		sb.append("\n\n");
-	    }
 	}
 	area.setText(sb.toString());
 	area.setCaretPosition(0);
