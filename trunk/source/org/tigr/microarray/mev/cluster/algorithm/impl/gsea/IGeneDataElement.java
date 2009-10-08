@@ -3,10 +3,17 @@ package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 /**
  * @author Sarita Nair
  * 
- * 
+ * IGeneDataElement interface provides a means to represent all
+ * information pertaining to a gene 
+ * 1. Names of all probes mapping to that gene
+ * 2. True intensity values of the probes
+ * 3. Processed "current" intensity value of the gene, obtained after collapsing all probe intensities
+ * 4. Position of the probes on the chip
+ * 5. The gene identifier corresponding to this gene
  * 
  */
-import java.util.Vector;
+import java.util.ArrayList;
+
 
 public interface IGeneDataElement {
 
@@ -14,11 +21,11 @@ public interface IGeneDataElement {
 
 	public float getCurrentIntensity();
 
-	public Vector getTrueIntensity();
+	public ArrayList getTrueIntensity();
 
-	public Vector getProbePosition();
+	public ArrayList getProbePosition();
 
-	public Vector getProbeID();
+	public ArrayList<String> getProbeID();
 
 	//Setters
 

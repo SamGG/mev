@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -8,17 +9,14 @@ import java.util.Vector;
  *
  */
 
-public class Geneset implements IGeneSet{
+public class Geneset  implements IGeneSet{
 
 
-	public String geneSetName;
-	public Vector geneSetNames;
-	//Unique list of genes across the gene sets
-	public Vector genes;
-	//Would be useful to have as a Vector because, in the .gmt format files it is difficult to predetermine the
-	//number of genes (rows) per gene set
-	public Vector geneSetElements;
-
+	private String geneSetName;
+	
+	//Gene set has to have more than one gene. Default minimum number of genes in gene set is 5, so smaller gene sets get discarded.
+	private ArrayList<IGeneSetElement> geneSetElements;
+	private ArrayList<String> genes_in_geneset;
 
 	/**
 	 * Helpful when you do not have the gene set size in advance. One instance is where 
@@ -27,29 +25,8 @@ public class Geneset implements IGeneSet{
 	 * 
 	 */
 	public Geneset(){
-		this.geneSetElements=new Vector();
-		this.genes=new Vector();
-		this.geneSetNames=new Vector();
-	}
-
-
-	/**
-	 * getAllGenesets returns a vector containing the names of all gene sets
-	 * @return Vector
-	 */
-
-	public Vector getAllGenesetNames() {
-		return geneSetNames;
-	}
-
-	/**
-	 * getAllGenesinGeneset returns a vector containing the unique genes 
-	 * present across all the genesets.
-	 *  @return Vector
-	 *  
-	 */
-	public Vector getGenesinGeneset() {
-		return genes;
+		this.geneSetElements=new ArrayList();
+	
 	}
 
 
@@ -65,51 +42,50 @@ public class Geneset implements IGeneSet{
 	}
 
 
-	public void setAllGenesetNames(Vector genesets) {
-		this.geneSetNames=genesets;
-
-	}
-
-	/**
-	 * setGenesinGeneset function is used to keep a track of 
-	 * what genes are present in a gene set. Order does not matter.
-	 * 
-	 */
-	public void setGenesinGeneset(String gene) {
-		this.genes.add(gene);
-
-	}
-
+	
 
 	public IGeneSetElement getGeneSetElement(int index) {
 		return (IGeneSetElement)this.geneSetElements.get(index);
 	}
 
 
-	public String getGeneSetName(int index) {
-		return (String)this.geneSetNames.get(index);
-	}
-
-
 	public void setGeneSetElement(IGeneSetElement element, int index) {
-		this.geneSetElements.add(index, element);
+		geneSetElements.add(index, element);
 
 	}
 
-	public Vector getGenesetElements(){
-		return this.geneSetElements;
+	public ArrayList<IGeneSetElement> getGenesetElements(){
+		return geneSetElements;
 	}
 
 
 
 	public void setGeneSetName(String name) {
-		this.geneSetName=name;
+		geneSetName=name;
 
 	}
 
 
+	
+	public String getGeneSetName() {
+		return geneSetName;
+	}
+
+	
+	public ArrayList<String> getGenesinGeneset(){
+		genes_in_geneset=new ArrayList<String>();
+		for(int index=0; index<this.getGenesetElements().size(); index++){
+			if(!genes_in_geneset.contains(((GeneSetElement)this.getGeneSetElement(index)).getGene()));
+			genes_in_geneset.add(index, ((GeneSetElement)this.getGeneSetElement(index)).getGene());
+		}
 
 
+
+		return genes_in_geneset;
+
+	}
+	
+	
 
 
 

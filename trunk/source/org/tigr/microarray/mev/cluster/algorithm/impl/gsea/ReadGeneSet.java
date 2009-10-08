@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -93,7 +97,7 @@ public class ReadGeneSet {
 			set[i].setGeneSetName(gsetName);
 		}
 
-		set[0].setAllGenesetNames(genesetNames);
+	//	set[0].setAllGenesetNames(genesetNames);
 		bread.readLine();//Ignore the second line, which contains description
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
 
@@ -107,8 +111,8 @@ public class ReadGeneSet {
 				temp=split.nextToken().trim();
 				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("")&&!temp.equalsIgnoreCase("na")){
 					gsElement=new GeneSetElement(String.valueOf(curpos), temp);
-					if(!set[index].getGenesinGeneset().contains(temp))
-						set[index].setGenesinGeneset(temp);
+//					if(!set[index].getGenesinGeneset().contains(temp))//Commented this. IGeneset does NOT have this functionality any more.
+//						set[index].setGenesinGeneset(temp);
 
 				}else{
 					gsElement=new GeneSetElement(String.valueOf(curpos), "NA");
@@ -184,7 +188,7 @@ public class ReadGeneSet {
 			//System.out.println("gene set name:"+set[i].geneSetName+":"+i);
 		}
 
-		set[0].setAllGenesetNames(genesetNames);
+	//	set[0].setAllGenesetNames(genesetNames);
 
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
 		while((currentLine=bread.readLine())!=null&&currentLine.trim().length()!=0){
@@ -204,9 +208,9 @@ public class ReadGeneSet {
 					//System.out.println("index:"+index);
 					//System.out.println("curpos:"+curpos);
 					set[index].setGeneSetElement(gsElement, curpos);
-					if(!set[index].getGenesinGeneset().contains(temp)){
-						set[index].setGenesinGeneset(temp);
-					}
+//					if(!set[index].getGenesinGeneset().contains(temp)){--commented because IGeneset does NOT have this functionality any more 
+//						set[index].setGenesinGeneset(temp);
+//					}
 					curpos=curpos+1;
 				}
 
@@ -247,7 +251,7 @@ public class ReadGeneSet {
 
 		int index=0;
 		int num_geneSets=this.genesetNames.size();
-		//System.out.println("gene set size:"+num_geneSets);
+		
 
 		set=new Geneset[num_geneSets];
 
@@ -260,7 +264,7 @@ public class ReadGeneSet {
 			//System.out.println("gene set name:"+set[i].geneSetName+":"+i);
 		}
 		 getCountOfLines(new File(filePath));
-		set[0].setAllGenesetNames(genesetNames);
+//		set[0].setAllGenesetNames(genesetNames);
 
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
 		while((currentLine=bread.readLine())!=null && currentLine.trim().length()!=0){
@@ -273,7 +277,7 @@ public class ReadGeneSet {
 
 
 			while(split.hasMoreTokens()&& genesetNames.contains(geneSetName)){
-				//System.out.println("Gene setname:"+set[index].geneSetName);
+			//	System.out.println("gene set name:"+geneSetName);
 				//System.out.println("index:"+index);
 				//Remove any leading/trailing white spaces.
 				temp=split.nextToken().trim();
@@ -290,9 +294,6 @@ public class ReadGeneSet {
 
 					//System.out.println("curpos:"+curpos);
 					set[index].setGeneSetElement(gsElement, curpos);
-					if(!set[index].getGenesinGeneset().contains(temp)){
-						set[index].setGenesinGeneset(temp);
-					}
 					curpos=curpos+1;
 				}
 
@@ -307,7 +308,92 @@ public class ReadGeneSet {
 	
 		return set;
 	}
+	
+	/**
+	 * Reads multiple gene set files. The files can be a mix of gmt and gmx OR multiple txt formats.
+	 * Each type is associated with a different gene identifier and so cannot be mixed
+	 * Returns an array of gene sets
+	 * @param fileList (Names of files)
+	 * @param dirPath (Directory path)
+	 * @return
+	 */
+	public Geneset[] readMultipleFiles(String[] fileList, String dirPath)throws Exception{
+		
+		HashMap<String,Geneset> geneSetList=new HashMap<String, Geneset>();
+		int num_genesets=0;
+		Geneset[]gSet;
+		for(int index=0; index<fileList.length; index++){
+			String fileExtension=checkFileNameExtension((String)fileList[index]);
+			String filePath=dirPath+"/"+(String)fileList[index];
+			//System.out.println("filePath:"+filePath);
+			if(fileExtension.equalsIgnoreCase("gmt")){
+				gSet=read_GMTformatfile(filePath);
 
+			}else if(fileExtension.equalsIgnoreCase("gmx")){
+				gSet=read_GMXformatfile(filePath);
+			}else{
+				//System.out.println("Read TXT format files");
+				gSet=read_TXTformatfile(filePath);
+			}
+			//Add individual gene set to arraylists		
+			for(int i=0; i<gSet.length; i++){
+				
+				if(!geneSetList.containsKey(gSet[i].getGeneSetName()))
+						geneSetList.put(gSet[i].getGeneSetName(), gSet[i]);
+			}
+
+			
+		}
+		
+
+		gSet=new Geneset[geneSetList.size()];
+		Iterator it=geneSetList.keySet().iterator();
+		int index=0;
+		
+		while(it.hasNext()){
+            
+			gSet[index]=(Geneset)geneSetList.get(it.next());
+			index=index+1;
+			
+		}
+	/*	System.out.println("Gene set array size:"+gSet.length);
+		System.out.println("Printing Gene sets. in readMultipleFile function......................");
+		for(int i=0; i<gSet[0].getAllGenesetNames().size(); i++){
+			System.out.println("Gene set is:"+gSet[0].getGeneSetName());
+			for(int j=0; j<gSet[i].getGenesinGeneset().size(); j++){
+				System.out.println("Gene in gene set is:"+(String)gSet[i].getGenesinGeneset().get(j));
+			}
+		}
+		System.out.println("Printing Gene sets...............ENDS........");*/
+
+		
+		
+		
+		
+        return(gSet);
+
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 
@@ -318,7 +404,7 @@ public class ReadGeneSet {
 		int max=0;
 
 		for(int i=0; i<gset.length;i++){
-			int length=gset[i].geneSetElements.size();
+			int length=gset[i].getGenesinGeneset().size();
 			if(length>max)
 				max=length;
 
@@ -357,14 +443,21 @@ public class ReadGeneSet {
 		while(split.hasMoreTokens()&&(temp=split.nextToken())!=null&&temp.trim().length()!=0){
 			//Remove any leading or trailing spaces.
 			temp=temp.trim();
-			if(!_tempGeneset.contains(temp)){
-				_tempGeneset.add(index,temp);
+//			if(!_tempGeneset.contains(temp)){
+//				_tempGeneset.add(index,temp);
+//				index=index+1;
+//			}
+//			
+			if(!genesetNames.contains(temp)){
+				genesetNames.add(index,temp);
 				index=index+1;
-			}
-		}
-		this.genesetNames.clear();
-		this.genesetNames=_tempGeneset;
 
+			}
+
+			
+			
+		}
+	
 
 	}
 
@@ -394,22 +487,19 @@ public class ReadGeneSet {
 
 
 			if(_temp!=null){
-				if(!_tempGeneset.contains(_temp)){
-					_tempGeneset.add(index,_temp);
+
+				if(!genesetNames.contains(_temp)){
+					genesetNames.add(index,_temp);
 					index=index+1;
 
 				}
-
 
 			}
 
 		}
 
 		bread.close();
-		this.genesetNames.clear();
-		this.genesetNames=_tempGeneset;
-		//System.out.println("Gene set size in parseGenesetNamesFromGMT:"+this.genesetNames.size());
-
+		
 	}
 
 	/**
@@ -448,7 +538,7 @@ public class ReadGeneSet {
 	public Geneset[] removeGenesNotinExpressionData(Geneset[]gset, Vector genesInExpressionData){
 		Geneset[]newGeneSet=new Geneset[gset.length];
 		Vector geneSetElement;
-		Vector geneSetNames=gset[0].getAllGenesetNames();
+		//Vector geneSetNames=gset[0].getAllGenesetNames();
 		int setIndex=0;
 	/*	System.out.println("Printing original gene set");
     	for(int i=0; i<gset.length; i++){
@@ -467,30 +557,23 @@ public class ReadGeneSet {
 		while(setIndex<gset.length){
 
 			//Get the gene set name 
-			String gsetName=(String)gset[setIndex].geneSetName;
+			String gsetName=(String)gset[setIndex].getGeneSetName();
 			//Initialize the new gene sets
 			newGeneSet[setIndex]=new Geneset();
 			newGeneSet[setIndex].setGeneSetName(gsetName);
 
-			if(setIndex==0){
-				//Set the gene set names vector
-				newGeneSet[0].setAllGenesetNames(geneSetNames);
-
-			}
-
-
-
+		
 			//Check if the gene set is empty OR name of gene set is NA/null/"". If so, add the gene set
 			//to the new list, with zeroth gene set element set to null
 			if(gset[setIndex].getGenesetElements()==null||gsetName.equalsIgnoreCase("na")||gsetName.equalsIgnoreCase("null")||gsetName.length()<1 ){
 				GeneSetElement gsElement=null;
 
 				newGeneSet[setIndex].setGeneSetElement(gsElement, 0);
-				newGeneSet[setIndex].setGenesinGeneset(null);
+			//	newGeneSet[setIndex].setGenesinGeneset(null);--deprecated function
 
 			} else{
 				//Get the gene set elements coRresponding to that gene set
-				Vector temp=gset[setIndex].getGenesetElements();
+				ArrayList<IGeneSetElement> temp=gset[setIndex].getGenesetElements();
 
 				int geneindex=0;
 				//Go through each element to check if it (gene represented by it)exists in the expression data. If so, create a genesetElement and add it to the vector
@@ -503,8 +586,7 @@ public class ReadGeneSet {
 
 
 						newGeneSet[setIndex].setGeneSetElement(gsElement, geneindex);
-						newGeneSet[setIndex].setGenesinGeneset(gene);
-
+						
 						//increment the gene index
 						geneindex=geneindex+1;
 					}
@@ -521,7 +603,7 @@ public class ReadGeneSet {
 
 	/*		System.out.println("Printing gene sets after removing unwanted genes");
     	for(int i=0; i<newGeneSet.length; i++){
-    		System.out.print(newGeneSet[i].geneSetName+":");
+    		System.out.print(newGeneSet[i].getGeneSetName()+":");
     		System.out.print('\t');
     		for(int j=0; j<newGeneSet[i].getGenesinGeneset().size(); j++){
     			System.out.print((String)newGeneSet[i].getGenesinGeneset().get(j));
@@ -565,11 +647,11 @@ public class ReadGeneSet {
 
 		while(oldIndex <oldGenesets.length){
 			//Get the gene set name 
-			String gsetName=(String)oldGenesets[oldIndex].geneSetName;
+			String gsetName=(String)oldGenesets[oldIndex].getGeneSetName();
 			if(!excludedgeneSets.contains(gsetName)){
 				geneSetNames.add(newIndex, gsetName);
 				//Get the gene set elements coRresponding to that gene set
-				Vector temp=oldGenesets[oldIndex].getGenesetElements();
+				ArrayList<IGeneSetElement> temp=oldGenesets[oldIndex].getGenesetElements();
 				newGenesets[newIndex]=new Geneset();
 				int geneindex=0;
 				// Each GeneSetElement corresponds to a gene
@@ -581,7 +663,7 @@ public class ReadGeneSet {
 
 					newGenesets[newIndex].setGeneSetName(gsetName);
 					newGenesets[newIndex].setGeneSetElement(gsElement, j);
-					newGenesets[newIndex].setGenesinGeneset(gene);
+				//	newGenesets[newIndex].setGenesinGeneset(gene);
 
 
 				}
@@ -592,16 +674,15 @@ public class ReadGeneSet {
 
 
 		}//While ends
-		if(!geneSetNames.isEmpty())
-			newGenesets[0].setAllGenesetNames(geneSetNames);
-
-		else{
+		if(geneSetNames.isEmpty()){
+			//newGenesets[0].setAllGenesetNames(geneSetNames);--deprecated
+	
 			String eMsg="<html>All the gene sets FAIL to pass the minimum genes cutoff. <br>"+ 
 			"<html>You can try lowering the cutoff and running the analysis. </html>";
 			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 
+		
 		}
-
 
 		return newGenesets;
 	}
@@ -622,13 +703,15 @@ public class ReadGeneSet {
 	 */
 	public FloatMatrix createAssociationMatrix(Geneset[]gSets, Vector unique_genes_in_dataset, int min_genes){
 
-
+		
 		// Rowsize is equal to the number of genesets
-		int rowSize=gSets[0].getAllGenesetNames().size();
-	
+		int rowSize=(new GSEAUtils().getGeneSetNames(gSets)).size();
+		//	System.out.println("row size of Amat:"+rowSize);
+		
 		//Colsize is equal to the number of genes in the data set
 		int colSize=unique_genes_in_dataset.size();
-
+		//System.out.println("col size of Amat:"+colSize);
+		
 		//Initial Association Matrix
 		FloatMatrix _tempMatrix=new FloatMatrix(rowSize, colSize);
 		//Final matrix after we remove gene sets NOT containing minimum number of genes
@@ -646,7 +729,7 @@ public class ReadGeneSet {
 					_tempMatrix.set(rowIndex, j, 0);
 			}else{
 
-				Vector _genesinGeneset=new Vector();
+				ArrayList<String> _genesinGeneset=new ArrayList<String>();
 				_genesinGeneset=gSets[rowIndex].getGenesinGeneset();
 
 				for(int j=0; j<_genesinGeneset.size(); j++){
@@ -664,10 +747,6 @@ public class ReadGeneSet {
 						}
 
 					}
-
-
-
-
 
 
 				}
@@ -693,7 +772,7 @@ public class ReadGeneSet {
 		while(index<rowSums.size()){
 			//If rowSums < min_genes, do not include the row in the aMat. Move on
 			if(((Float)rowSums.get(index)).floatValue()<min_genes){
-				_tempgeneset.add(gSets[index].geneSetName);
+				_tempgeneset.add(gSets[index].getGeneSetName());
 
 			}
 			index=index+1;
@@ -753,7 +832,18 @@ public class ReadGeneSet {
 	}
 
 
-
+	/**
+	 * checkFileNameExtension returns the extension of the file.
+	 * @param fileName
+	 * @return
+	 */
+	
+	public String checkFileNameExtension(String fileName){
+		String extension=fileName.substring(fileName.lastIndexOf('.')+1, fileName.length());
+		//System.out.println("Extension:"+extension);	
+		return extension;
+	}
+	
 
 
 

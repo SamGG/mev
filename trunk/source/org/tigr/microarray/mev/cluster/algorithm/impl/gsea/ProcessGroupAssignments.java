@@ -26,13 +26,13 @@ public class ProcessGroupAssignments {
 
 	// GUI based grouping
 	private String[] factornames = null;
-	private int[][] factorAssignments = null;
+	private int[][] fAssignments = null;
 	private int[] factorLevels = null;
 
 	public ProcessGroupAssignments(String[] factorNames, int[] factorLevels,
 			int[][] factorAssignments, boolean removeNA, int num_samples) {
 		this.factornames = factorNames;
-		this.factorAssignments = factorAssignments;
+		this.fAssignments = factorAssignments;
 		this.removeNA = removeNA;
 		this.nSamples = num_samples;
 	}
@@ -48,11 +48,12 @@ public class ProcessGroupAssignments {
 
 	public void findUnassignedSamples(String[] factorNames, int[] factorLevels,
 			int[][] factorAssignments) {
-		this.factorAssignments = factorAssignments;
+		
+		this.fAssignments = factorAssignments;
 		for (int num_factors = 0; num_factors < factorNames.length; num_factors++) {
 			// Extract assignments
-			int[] tempAssignments = this.factorAssignments[num_factors];
-
+			int[] tempAssignments = this.fAssignments[num_factors];
+			
 			for (int col = 0; col < tempAssignments.length; col++) {
 				// Add to the exluded columns list any samples that are
 				// unassigned
@@ -104,11 +105,11 @@ public class ProcessGroupAssignments {
 			int[] factorLevels, int[][] factorAssignments) {
 
 		int cols = calculateFactorMatrixColumns(factorNames, factorLevels);
-
+		
 		int matColStart = 1;
 		int matColEnd = 1;
 		int unassigned = ((Vector) getUnassignedColumns()).size();
-
+		
 		// In the R function model.matrix, after which this is modeled, if there
 		// are samples which are unassigned to any factors OR
 		// unassigned to one of the factors; The function removes those samples
@@ -116,7 +117,7 @@ public class ProcessGroupAssignments {
 		// So, the rows of the resulting matrix will always be (number of
 		// samples-unassigned).
 		factor_matrix = new FloatMatrix(nSamples - unassigned, cols);
-
+		
 		// Setting values of the "Intercept Column". This is the first column of
 		// the factor matrix and all rows will always be equal to 1
 		for (int i = 0; i < factor_matrix.getRowDimension(); i++) {
@@ -133,8 +134,7 @@ public class ProcessGroupAssignments {
 			int factorlevel = 2;
 			int[] rowVector = factorAssignments[i];
 			// System.out.println("rowVector size:"+rowVector.length);
-			// System.out.println("number of
-			// samples:"+factor_matrix.getRowDimension());
+			// System.out.println("number of samples:"+factor_matrix.getRowDimension());
 			int current_factor_level = factorLevels[i];
 			FloatMatrix tempMatrix = new FloatMatrix(factor_matrix
 					.getRowDimension(), current_factor_level - 1);
@@ -144,7 +144,7 @@ public class ProcessGroupAssignments {
 				// System.out.println("factorlevel"+factorlevel);
 				while (samples < nSamples - 1) {
 					// System.out.println("factor-Assignment"+rowVector[samples]);
-					// System.out.println("level"+factorlevel);
+					 //System.out.println("level"+factorlevel);
 					if (this.excludedColumns.contains(samples)) {
 						// System.out.println("excluded column:"+samples);
 						if (samples < nSamples - 1)
@@ -172,7 +172,7 @@ public class ProcessGroupAssignments {
 			}// End of factor level for loop
 			matColEnd = matColStart + (current_factor_level - 1) - 1;
 			// System.out.println("FloatMatrix col start:"+matColStart);
-			// System.out.println("FloatMatrix col end:"+matColEnd);
+			 //System.out.println("FloatMatrix col end:"+matColEnd);
 
 			factor_matrix.setMatrix(0, factor_matrix.getRowDimension() - 1,
 					matColStart, matColEnd, tempMatrix);
@@ -184,7 +184,7 @@ public class ProcessGroupAssignments {
 		return factor_matrix;
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		Hashtable fHash = new Hashtable();
@@ -209,6 +209,6 @@ public class ProcessGroupAssignments {
 		}
 
 		
-	}
+	}*/
 
 }

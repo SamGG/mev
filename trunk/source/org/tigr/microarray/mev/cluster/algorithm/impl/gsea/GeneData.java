@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -17,32 +18,17 @@ import java.util.Vector;
 
 public class GeneData implements IGeneData{
 	
-	private int row;
-	private int col;
-	private Vector geneDataElement;
+	private ArrayList geneDataElement;
 	private String slideName;
 	
 	//This is useful when trying to display all the probes mapping to a gene using tableviewer.
 	private int max_num_of_probes_mappingtoGene=0;
-	
-	public GeneData(int rows, int cols){
-		this.col=cols;
-		this.row=rows;
-		this.geneDataElement=new Vector(rows);
 		
-		
-	}
-	
-	
 	public GeneData(){
-		this.geneDataElement=new Vector();
+		geneDataElement=new ArrayList();
 	}
 	
-	
-	public String getCollapseMode() {
-		return null;
-	}
-	
+		
 	//Function to return genesetelement, provided gene name
 	public IGeneDataElement getGeneDataElement(String Gene){
 		for(int i=0; i<this.geneDataElement.size(); i++){
@@ -63,6 +49,19 @@ public class GeneData implements IGeneData{
 			return null;
 	}
 
+	
+	public int getPosition(String Gene){
+		for(int i=0; i<this.geneDataElement.size(); i++){
+			GeneDataElement gde=(GeneDataElement)this.geneDataElement.get(i);
+			
+			if(gde.getGeneIdentifier().equalsIgnoreCase(Gene))
+				return i;
+		}
+		return -1;
+
+	}
+	
+	
 	
 	public String getSlideName() {
 		return this.slideName;
@@ -94,8 +93,8 @@ public class GeneData implements IGeneData{
 		
 	}
 	
-	public Vector getAllGeneDataElement(){
-		return this.geneDataElement;
+	public ArrayList getAllGeneDataElement(){
+		return geneDataElement;
 	}
 
 	/**
@@ -105,41 +104,41 @@ public class GeneData implements IGeneData{
 	 * @param gData
 	 * @return
 	 */
-	public String[][]getProbetoGeneMapping(GeneData[]gData){
+	public String[][]getProbetoGeneMapping(IGeneData[]gData){
 		int maxprobe=0;
-		String[][]gDataArray=new String[gData[0].getAllGeneDataElement().size()][];
+		String[][]gDataArray=new String[((GeneData)gData[0]).getAllGeneDataElement().size()][];
 
-		for(int gene=0; gene<gData[0].getAllGeneDataElement().size(); gene++){
+		for(int gene=0; gene< ((GeneData)gData[0]).getAllGeneDataElement().size(); gene++){
 			GeneDataElement gde = (GeneDataElement) gData[0].getGeneDataElement(gene);
 			gDataArray[gene]=new String[gde.getProbeID().size()+1];
 			gDataArray[gene][0]=gde.getGeneIdentifier();
 		//	System.out.print(gDataArray[gene][0]);
 			//System.out.print('\t');
-			Vector pVector=gde.getProbeID();
-			if(pVector.size()>maxprobe){
-				maxprobe=pVector.size();
+			ArrayList pList=gde.getProbeID();
+			if(pList.size()>maxprobe){
+				maxprobe=pList.size();
 			}
 
-			for(int probes=0; probes<pVector.size(); probes++){
-				gDataArray[gene][probes+1]=(String)pVector.get(probes);
+			for(int probes=0; probes<pList.size(); probes++){
+				gDataArray[gene][probes+1]=(String)pList.get(probes);
 				//System.out.print(gDataArray[gene][probes+1]);
 				//System.out.print('\t');
 
 			}
 			//	System.out.println();
-			pVector=null;
+			pList=null;
 		}
-		//Added Mar 17, 09
+		
 		set_max_num_probes_mapping_to_gene(maxprobe);
 		return gDataArray;
 	}
 
 	public void set_max_num_probes_mapping_to_gene(int max){
-		this.max_num_of_probes_mappingtoGene=max;
+		max_num_of_probes_mappingtoGene=max;
 	}
 	
 	public int get_max_num_probes_mapping_to_gene(){
-		return this.max_num_of_probes_mappingtoGene;
+		return max_num_of_probes_mappingtoGene;
 	}
 	
 }

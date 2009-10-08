@@ -335,7 +335,7 @@ public class InfoDisplay extends ActionInfoDialog  {
         int maxCy5 = Integer.MIN_VALUE;
         
         int workingRatio = 0;
-        
+        //Loop assigns minCy5 and maxCy5 values.
         for (int i = 0; i < targets.length; i++) {
             sde = targets[i];
 
@@ -352,18 +352,20 @@ public class InfoDisplay extends ActionInfoDialog  {
         int yGap = (int)(maxCy5 - minCy5);
         
         graphFrame = new JFrame("Sample vs. Log Ratio");
+      //  graph = new GraphViewer(graphFrame, 0, 500, 0, 500, minCy3, maxCy3, minCy5, maxCy5, 100, 100, 100, 100, "Sample vs. Log Ratio", "Sample Name", "Log2 (Cy5 / Cy3)");
         graph = new GraphViewer(graphFrame, 0, 500, 0, 500, minCy3, maxCy3, minCy5, maxCy5, 100, 100, 100, 100, "Sample vs. Log Ratio", "Sample Name", "Log2 (Cy5 / Cy3)");
-        
         graph.setXAxisValue(0);
         graph.setYAxisValue(minCy3);
         
         for (int i = minCy3 + 1; i <= maxCy3; i++) {
+        	//GraphLine is used here to construct the yellow colored grid (horizontal bars)
             gl = new GraphLine(i, minCy5, i, maxCy5, Color.yellow);
             graph.addGraphElement(gl);
         }
         
         for (int i = minCy5; i <= maxCy5; i++) {
             if (i != 0) {
+            	//GraphLine is used here to construct the yellow colored grid (vertical bars)
                 gl = new GraphLine(minCy3, i, maxCy3, i, Color.yellow);
                 graph.addGraphElement(gl);
             }
@@ -393,6 +395,7 @@ public class InfoDisplay extends ActionInfoDialog  {
             else
                 logCy5b = Xcon.log2((double) cy5b / (double) cy3b);
             if(!Double.isNaN(logCy5) && !Double.isNaN(logCy5b)){
+            	//GraphLine here joins the data points
                 gl = new GraphLine(logCy3, logCy5, logCy3b, logCy5b, Color.blue);
                 graph.addGraphElement(gl);
             }
@@ -408,6 +411,7 @@ public class InfoDisplay extends ActionInfoDialog  {
             else
                 logCy5 = Xcon.log2((double) cy5 / (double) cy3);
             if(!Double.isNaN(logCy5)){
+            	//GraphPoint is used to draw the actual data points in the graph (blue colored dots)
                 gp = new GraphPoint(logCy3, logCy5, Color.blue, 3);
                 graph.addGraphElement(gp);
             }

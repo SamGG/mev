@@ -18,8 +18,8 @@ public class GSEAInitWizard extends GSEAWizard {
 	 */
 
 	private StepsPanel stepsPanel;
-	private GSEADataPanel dataPanel;
-	private GSEAParameterPanel parameterPanel;
+	private DataPanel dataPanel;
+	private ParameterPanel parameterPanel;
 
 	private IWizardParameterPanel currentPanel;
 	private IData idata;
@@ -40,11 +40,11 @@ public class GSEAInitWizard extends GSEAWizard {
 		super(parent, title, modal, algData, stepTitles, stepCount, initPanel);
 
 		this.idata = idata;
-		dataPanel = new GSEADataPanel(idata, algData, parent,
+		dataPanel = new DataPanel(idata, algData, parent,
 				clusterRepository, framework);
 		currentPanel = dataPanel;
 		super.setInitialPanel(dataPanel);
-		parameterPanel = new GSEAParameterPanel(algData, this);
+		parameterPanel = new ParameterPanel(algData, parent, framework);
 
 	}
 
@@ -66,17 +66,26 @@ public class GSEAInitWizard extends GSEAWizard {
 		currentPanel.populateAlgorithmData();
 
 		if (currentStepIndex == 0) {
-
+			
+			if(currAlgData.getIntMatrix("factor-assignments")!=null){
 			nextPanel = parameterPanel;
-			//nextPanel.populateAlgorithmData();
-
-			pack();
 			currentPanel = nextPanel;
+			}else{
+				String eMsg=new String();
+				eMsg="<html>You have to specify factor levels and sample group assignments before you " +
+						"can proceed further <br></html>";
+			
+				JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.INFORMATION_MESSAGE);
+				
+
+			}
+			
+			//validate();
 		}
 		if (currentStepIndex == 1) {
-			super.result = JOptionPane.OK_OPTION;
+			//super.result = JOptionPane.OK_OPTION;
 		}
-
+		
 		return nextPanel;
 	}
 
@@ -100,14 +109,19 @@ public class GSEAInitWizard extends GSEAWizard {
 			prevPanel = dataPanel;
 			currentPanel = prevPanel;
 		}
-
+		
+		
 		return prevPanel;
 	}
 
 	protected boolean nextStep() {
-		if (!super.nextStep())
+		
+		//Added additional AND condition, to make sure that the wizard does not close, if user has not
+		//entered all the requisite parameters
+		if (!super.nextStep() && super.showModal()==JOptionPane.OK_OPTION)
 			dispose();
 
+		
 		return true;
 	}
 

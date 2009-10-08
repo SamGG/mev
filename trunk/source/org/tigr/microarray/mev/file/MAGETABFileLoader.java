@@ -1780,17 +1780,31 @@ for(int k=0;k<dataTypes.length;k++) {
 
     public void populateSampleAnnotationfromSDRF(ISlideData[] slideDataArray){
     //	SDRF sdrfObj=investigation.SDRF;
-    	
+    	int srcNodeIndex=0;
     	List<SourceNode> sourcenodes= (List<SourceNode>)((SDRF)investigation.SDRF).sourceNodes;
+    	
     	//System.out.println("slidedataarray length:"+slideDataArray.length);
     	//System.out.println("sourcenodes length:"+sourcenodes.size());
 		//Number of source nodes should be equal to the number of samples in the file 
 		for(int i=0; i<slideDataArray.length; i++){
+			/*SourceNode src=null;
+			srcNodeIndex=0;
+			while(srcNodeIndex<slideDataArray.length){
+				src=sourcenodes.get(srcNodeIndex);
+				System.out.println("slide data name:"+slideDataArray[i].getSlideDataName());
+				System.out.println("source node name:"+src.getNodeName());
+				if(src.getNodeName().equalsIgnoreCase(slideDataArray[i].getSlideDataName())){
+					System.out.println("slide data name:"+slideDataArray[i].getSlideDataName());
+					System.out.println("source node name:"+src.getNodeName());
+					return;
+				}
+				srcNodeIndex=srcNodeIndex+1;
+			}*/
 			SourceNode src=sourcenodes.get(i);
 			List<CharacteristicsAttribute> characteristicsList = src.characteristics;
 			if(characteristicsList.size()!=0){
 			for(int j=0; j<characteristicsList.size(); j++){
-				slideDataArray[i].getSampleAnnotation().setAnnotation(characteristicsList.get(j).type, characteristicsList.get(j).getNodeName());
+					slideDataArray[i].getSampleAnnotation().setAnnotation(characteristicsList.get(j).type, characteristicsList.get(j).getNodeName());
 				
 //				System.out.print("Characteristic:"+characteristicsList.get(j).type);
 //				System.out.print('\t');
