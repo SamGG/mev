@@ -257,6 +257,6 @@ public interface IFramework {
 
 	public Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError;
 
-	public void storeClusterWithoutDialog(int[] is, String string,	String string2, int clusterType);
+	public void storeClusterWithoutDialog(int[]clusterIndices, String source, String factor, String node, String label, String clusterDescription, int clusterType);
 
 }
