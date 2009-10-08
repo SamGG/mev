@@ -96,7 +96,11 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 			}
 		
 			incrementalSum[j]=Float.parseFloat(coordinateFormat.format(tempSum/Math.sqrt(j+1)));
-			temp=Math.max(temp, incrementalSum[j]);
+			if(incrementalSum[j]==Math.max(temp, incrementalSum[j])) {
+				temp=incrementalSum[j];
+				setPeakGeneIndex(j);
+			}
+			
 //			System.out.println("Key:"+key);
 //			System.out.println("incremental sum:"+incrementalSum[j]);
 		}
@@ -422,12 +426,12 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 					
 					g.drawLine(xcoord,ycoord,xcoord,ycoord);
 					
-					if(tStat==getmaxYValue()) {
-						g.setColor(Color.RED);
-						g.setStroke(dashed);
-						g.drawLine(xcoord,ycoord,xcoord,(top+height));
-						//g.drawString(index + " Genes make up your leading edge set", left + 10, top + 40);
-					}
+//					if(tStat==getmaxYValue()) {
+//						g.setColor(Color.RED);
+//						g.setStroke(dashed);
+//						g.drawLine(xcoord,ycoord,xcoord,(top+height));
+//						//g.drawString(index + " Genes make up your leading edge set", left + 10, top + 40);
+//					}
 					
 					}
 					
@@ -452,9 +456,16 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 				oldxcoord=xcoord;
 				oldycoord=ycoord;
 			}
-			
+			//Draw the red vertical line that denotes peak
+			if(index==(getPeakGeneIndex()+1)) {
+				g.setColor(Color.RED);
+				g.setStroke(dashed);
+				g.drawLine(xcoord,ycoord,xcoord,(top+height));
+			}
 		
 		}
+		
+		
 		
 		if (referenceLinesOn) { // Grid tracing is active
 			int x = getXOldEvent();
