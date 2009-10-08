@@ -42,12 +42,14 @@ import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.pca.PCInfoViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.pca.PlotViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.util.FloatMatrix;
 
@@ -80,7 +82,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     protected IData data;
     
     int rvalue, maxrvalue, numRuns, maxIters;
-    boolean divergence, doSamples, storeClusters, multiClusters;
+    boolean divergence, doSamples, storeClusters, multiClusters, expScale, adjustData;
     
     /** Creates new NMFGUI */
     public NMFGUI() {
@@ -123,6 +125,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             maxIters = initNMF.getMaxIterations();
             divergence = initNMF.getDivergence();
             doSamples = initNMF.isDoSamples();
+            expScale = initNMF.isExpScale();
+            adjustData = initNMF.isAdjustData();
             storeClusters = initNMF.isStoreClusters();
             multiClusters = initNMF.isMultiClusters();
             
@@ -144,6 +148,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             data.addParam("iterations", String.valueOf(maxIters));
             data.addParam("divergence", String.valueOf(divergence));
             data.addParam("doSamples", String.valueOf(doSamples));
+            data.addParam("expScale", String.valueOf(expScale));
+            data.addParam("adjustData", String.valueOf(adjustData));
             data.addParam("multiClusters", String.valueOf(multiClusters));
             
             long start = System.currentTimeMillis();
@@ -175,6 +181,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 	        	for (int i=0; i<numRuns; i++)
 	        		H[factorIndex][i] = result.getMatrix("H"+i);
 	            costs[factorIndex] = result.getMatrix("costs").transpose().A[0];
+	        	adjustData = result.getParams().getBoolean("adjustData");
             }
             GeneralInfo info = new GeneralInfo();
             
@@ -320,17 +327,29 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * Adds result nodes into the tree root.
      */
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster[] result_cluster, GeneralInfo info) {
-    	DefaultMutableTreeNode[] factorRoot = new DefaultMutableTreeNode[result_cluster.length];
-    	for (int i=0; i<result_cluster.length; i++){
-    		factorRoot[i] = new DefaultMutableTreeNode(""+rvalue+i+" Cluster NMF");
-    		factorRoot[i].add(new DefaultMutableTreeNode("Cophenetic Correlation = " + (cophen[i])));
-	        addConsensusMatrix(factorRoot[i], result_cluster[i], info, i);
-	        addExpressionImages(factorRoot[i], i);
-	        addCentroidViews(factorRoot[i], i);
-	//        addTableViews(root, i);
-	//        addClusterInfo(root, i);
-	        addWHFactors(factorRoot[i], i);
-	        root.add(factorRoot[i]);
+    	if (this.multiClusters){
+	    	DefaultMutableTreeNode[] factorRoot = new DefaultMutableTreeNode[result_cluster.length];
+	    	for (int i=0; i<result_cluster.length; i++){
+	    		factorRoot[i] = new DefaultMutableTreeNode(""+(rvalue+i)+" Cluster NMF");
+	    		factorRoot[i].add(new DefaultMutableTreeNode("Cophenetic Correlation = " + (cophen[i])));
+		        addConsensusMatrix(factorRoot[i], result_cluster[i], info, i);
+		        addExpressionImages(factorRoot[i], i);
+		        addCentroidViews(factorRoot[i], i);
+		        addTableViews(factorRoot[i], i);
+		        addClusterInfo(factorRoot[i], i);
+		        addWHFactors(factorRoot[i], i);
+		        root.add(factorRoot[i]);
+	    	}
+//	        root.add(new DefaultMutableTreeNode(new LeafInfo("Cophenetic correlation graph", new NMFPlotViewer(new FloatMatrix(cophen, 1)))));
+    	} else {
+    		root.add(new DefaultMutableTreeNode("Cophenetic Correlation = " + (cophen[0])));
+	        addConsensusMatrix(root, result_cluster[0], info, 0);
+	        addExpressionImages(root, 0);
+	        addCentroidViews(root, 0);
+	        addTableViews(root, 0);
+	        addClusterInfo(root, 0);
+	        addWHFactors(root, 0);
+    		
     	}
         addGeneralInfo(root, info);
     }
@@ -339,12 +358,12 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metagenes (W)");
         DefaultMutableTreeNode HNode = new DefaultMutableTreeNode("Metagenes (H)");
         NMFFactorViewer wfv = new NMFFactorViewer(W[factorIndex]);
-        for (int i=0; i<W.length; i++) {
-        	WNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[i], wfv, new Integer(i))));
+        for (int i=0; i<W[factorIndex].length; i++) {
+        	WNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], wfv, new Integer(i))));
         }
         NMFFactorViewer hfv = new NMFFactorViewer(H[factorIndex]);
-        for (int i=0; i<H.length; i++) {
-        	HNode.add(new DefaultMutableTreeNode(new LeafInfo("H Factor "+(i+1) + ", cost = "+costs[i], hfv, new Integer(i))));
+        for (int i=0; i<H[factorIndex].length; i++) {
+        	HNode.add(new DefaultMutableTreeNode(new LeafInfo("H Factor "+(i+1) + ", cost = "+costs[factorIndex][i], hfv, new Integer(i))));
         }
         root.add(WNode);
         root.add(HNode);
@@ -353,13 +372,9 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 
 	protected void addTableViews(DefaultMutableTreeNode root, int factorIndex) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
-        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters[factorIndex], this.data, this.auxTitles, this.auxData);
-        for (int i=0; i<this.clusters.length; i++) {
-            if (i < this.clusters.length - 1) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", tabViewer, new Integer(i))));
-            } else if (i == this.clusters.length - 1) {
-                node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", tabViewer, new Integer(i))));
-            }
+        IViewer tabViewer = new ExperimentClusterTableViewer(this.experiment, this.clusters[factorIndex], this.data);
+        for (int i=0; i<this.clusters[factorIndex].length; i++) {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), tabViewer, new Integer(i))));
         }
         root.add(node);
     }
@@ -368,16 +383,16 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      * Adds nodes to display clusters data.
      */
     protected void addExpressionImages(DefaultMutableTreeNode root, int factorIndex) {
-    	for (int i=0; i<clusters.length; i++){
-    		for (int j=0; j<clusters[i].length; j++)
-    			System.out.print(clusters[i][j]+"\t");
-    		System.out.println();
-    	}
-    	System.out.println("here3");
+//    	for (int i=0; i<clusters[factorIndex].length; i++){
+//    		for (int j=0; j<clusters[factorIndex][i].length; j++)
+//    			System.out.print(clusters[factorIndex][i][j]+"\t");
+//    		System.out.println();
+//    	}
+//    	System.out.println("here3");
     	
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
         IViewer expViewer = new NMFExperimentClusterViewer(this.experiment, clusters[factorIndex]);
-        for (int i=0; i<this.clusters.length; i++) {
+        for (int i=0; i<this.clusters[factorIndex].length; i++) {
             node.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), expViewer, new Integer(i))));
         }
         root.add(node);
@@ -438,7 +453,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         NMFExperimentCentroidViewer centroidViewer = new NMFExperimentCentroidViewer(this.experiment, clusters[factorIndex]);
         centroidViewer.setMeans(this.means[factorIndex].A);
         centroidViewer.setVariances(this.variances[factorIndex].A);
-        for (int i=0; i<this.clusters.length; i++) {
+        for (int i=0; i<this.clusters[factorIndex].length; i++) {
             centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
             expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
        }
@@ -461,11 +476,18 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(new DefaultMutableTreeNode("Cluster by " + (doSamples ? "Samples": "Genes")));
-        node.add(new DefaultMutableTreeNode("Number of clusters: "+String.valueOf(rvalue)));
+        node.add(new DefaultMutableTreeNode(multiClusters ? "Cluster range: "+String.valueOf(rvalue)+" - "+String.valueOf(maxrvalue) : "Number of clusters: "+String.valueOf(rvalue)));
+//        if (this.multiClusters){
+//            node.add(new DefaultMutableTreeNode("Cluster range: "+String.valueOf(rvalue)+" - "+String.valueOf(maxrvalue)));
+//        } else {
+//        	node.add(new DefaultMutableTreeNode("Number of clusters: "+String.valueOf(rvalue)));
+//        }
         node.add(new DefaultMutableTreeNode("Number of runs: " + String.valueOf(numRuns)));
         node.add(new DefaultMutableTreeNode("Maximum iterations: "+String.valueOf(maxIters)));
-        node.add(new DefaultMutableTreeNode("Cost measurement: " + (divergence ? "Divergence" : "Euclidean distance")));
-        node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
+        node.add(new DefaultMutableTreeNode("Update rules and cost measurement: " + (divergence ? "Divergence" : "Euclidean distance")));
+        node.add(new DefaultMutableTreeNode("Negative value removal: "+(adjustData ? (expScale ? "Exponentially scale" : "Subtract minimum") : "No adjustment")));
+        node.add(new DefaultMutableTreeNode("Cluster storage: " + this.storeClusters));
+        node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(((double)(info.time-1))/(double)1000)+" s"));
         root.add(node);
     }
     

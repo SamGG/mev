@@ -50,8 +50,9 @@ public class NMFDialog extends AlgorithmDialog {
     private SampleSelectionPanel clusteringSelectionPanel;
     JTextField numRunsField, numClustersField, maxNumClustersField, numItersField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
-    JCheckBox clustercb, multiClusters;
+    JCheckBox clustercb, multiClusters, adjustCB;
     JLabel numClustersLabel;
+
     
     /** Creates new NMFDialog */
     public NMFDialog(Frame frame) {
@@ -216,18 +217,26 @@ public class NMFDialog extends AlgorithmDialog {
         normalizationPanel.add(noNegs1);     
         normalizationPanel.add(noNegs2);     
         
+
+        adjustCB = new JCheckBox("Always adjust data");
+        adjustCB.setBackground(Color.white);
+        adjustCB.setSelected(false);
+        buildConstraints(constraints, 0, 2, 2, 1, 50, 100);
+        grid.setConstraints(adjustCB, constraints);
+        normalizationPanel.add(adjustCB);  
+        
         constraints.insets = new Insets(10,0,10,0);
         JRadioButton subtractMin= new JRadioButton("Subtract minimum value");
         subtractMin.setBackground(Color.white);
         subtractMin.setSelected(true);
-        buildConstraints(constraints, 0, 2, 1, 1, 50, 100);
+        buildConstraints(constraints, 0, 3, 1, 1, 50, 100);
         grid.setConstraints(subtractMin, constraints);
         normalizationPanel.add(subtractMin);  
 
         expScale = new JRadioButton("Exponentially scale");
         expScale.setSelected(false);
         expScale.setBackground(Color.white);
-        buildConstraints(constraints, 1, 2, 1, 1, 50, 100);
+        buildConstraints(constraints, 1, 3, 1, 1, 50, 100);
         grid.setConstraints(expScale, constraints);
         normalizationPanel.add(expScale);  
         constraints.insets = new Insets(0,0,0,0);
@@ -310,6 +319,10 @@ public class NMFDialog extends AlgorithmDialog {
 
 	public boolean isDoSamples() {
 		return clusterBySamples.isSelected();
+	}
+
+	public boolean isAdjustData() {
+		return adjustCB.isSelected();
 	}
 	
 	public boolean isExpScale() {
