@@ -38,7 +38,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 import org.tigr.microarray.mev.file.GBA;
 
 
-public abstract class GSEAWizard extends GSEADialog {
+public abstract class GSEAWizard extends AlgorithmDialog {
 
 	/**
 	 * Current step in the process
@@ -81,12 +81,9 @@ public abstract class GSEAWizard extends GSEADialog {
 	public GSEAWizard(JFrame parent, String title, boolean modal, AlgorithmData params, String[] stepTitles,
 			 int stepCount, JPanel initialPanel) {
 		super(parent, title, modal);
-
+		 setBounds(0,0, 1000, 850);
 		mainPanel = new JPanel(new GridBagLayout());
-		//For Testing
-		mainPanel.setSize(800, 680);
-		//Testing ENDS
-		
+		mainPanel.setPreferredSize(new Dimension(1000, 850));
 		//stepTitles = steps;		
 		algData = params;		
 		//create the ProcessDisplayPanel
@@ -95,11 +92,11 @@ public abstract class GSEAWizard extends GSEADialog {
 		totSteps = stepCount;
 		//build a custom button bar to supplant into parent
 		wButtonPanel = new WizardButtonBar();
-		mainPanel.add(new JScrollPane(processPanel), new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));			
+		mainPanel.add(processPanel, new GridBagConstraints(0,0,1,1,0,0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5,5,5,5),0,0));			
 		super.addContent(mainPanel);		
 		supplantButtonPanel(wButtonPanel);				
 		validate();
-		pack();
+		//pack();
 		
 		
 		
@@ -112,15 +109,14 @@ public abstract class GSEAWizard extends GSEADialog {
 	 * @param initialPanel
 	 */
 	public void setInitialPanel(JPanel initialPanel) {
-		mainPanel.add(initialPanel, new GridBagConstraints(1,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		pack();
-	}
+		mainPanel.add(initialPanel, new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	}	
 	
 	/**
 	 * Packs the wizard after making panel changes
 	 */
 	public void updateWizard() {
-		pack();
+	//	pack();
 	}
 
 	
@@ -176,12 +172,25 @@ public abstract class GSEAWizard extends GSEADialog {
      * 
      */
     public int showModal() {
-    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-        show();
-        return result;
+    	  return result;
     }
 	
+    
+    public void setVisible(boolean visible) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
+        
+        super.setVisible(visible);
+        
+        if (visible) {
+            //bPanel.okButton.requestFocus(); //UNCOMMMENT THIS LATER
+        }
+    }
+    
+    
+    
+    
+    
 	
 	  /**
      * Advances to the next step in the process
@@ -196,10 +205,6 @@ public abstract class GSEAWizard extends GSEADialog {
 		if(nextPanel == null)
 			return false;
 		
-		
-		
-		//setVisible(false);
-		
 		//advance the index
 		
 		currentStepIndex++;
@@ -208,10 +213,15 @@ public abstract class GSEAWizard extends GSEADialog {
 		processPanel.setHighlight(currentStepIndex);
 				
 		//post the next panel...
-		Component comp = mainPanel.getComponentAt(mainPanel.getWidth()-5, 5);
-		//Component comp = mainPanel.getComponentAt(mainPanel.getWidth(), mainPanel.getHeight());//sARITA--Testing
+	
+		//Zeroth component will be the process display panel.
+		Component comp = mainPanel.getComponent(1);
 		mainPanel.remove(comp);
-		mainPanel.add(nextPanel, new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		validate();
+		
+		//The "Process Panel" is no longer on the side of the screen. So coordinates for the panel after process panel will be as below
+		mainPanel.add(nextPanel, new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		validate();
 		
 		if(currentStepIndex >= totSteps) {
 			wButtonPanel.setNextText("Execute");
@@ -224,12 +234,12 @@ public abstract class GSEAWizard extends GSEADialog {
 		//update for viewing, if needed
 		((IWizardParameterPanel)nextPanel).onDisplayed();
 
-		pack();
-		
+		pack();	
 	    //recenter
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();	    
 		setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
-
+		
+	
 		return true;
 	}
 	
@@ -248,22 +258,33 @@ public abstract class GSEAWizard extends GSEADialog {
 		processPanel.setHighlight(currentStepIndex);
 				
 		//post the next panel...
-		Component comp = mainPanel.getComponentAt(mainPanel.getWidth()-5, 5);
+		//Replace the second component and so on of main panel, first component is always process panel
+		
+		Component comp = mainPanel.getComponent(1);
 		mainPanel.remove(comp);
-		mainPanel.add((JPanel)prevPanel, new GridBagConstraints(2,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+			
 	
+		
+		mainPanel.add((JPanel)prevPanel, new GridBagConstraints(0,1,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	
+		mainPanel.revalidate();
+		//mainPanel.updateUI();
+	    
 		if(currentStepIndex < totSteps) {
 			wButtonPanel.setNextText("Next >");
 		}
 		
-		if(currentStepIndex == 1) {
+		if(currentStepIndex < 1) {
 			wButtonPanel.setEnableBackButton(false);			
 		}
 		
-		pack();
+//		//update for viewing, if needed
+//		((IWizardParameterPanel)prevPanel).onDisplayed();
 
+		pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();	    
-		setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);	     		
+		setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
+		
 	}
 	
 	
@@ -309,22 +330,23 @@ public abstract class GSEAWizard extends GSEADialog {
 				for(int i = 0; i < stepTitles.length; i++) {
 					stepDescription += String.valueOf(i+1);
 					stepDescription += ".) ";
-					stepDescription += stepTitles[i]+"<br><br>";
+				//	stepDescription += stepTitles[i]+"<br><br>";
+					stepDescription += stepTitles[i]+"    ";
 				}
 				stepDescription += "</font></html>";			
 				processPane.setText(stepDescription);
 			} catch (BadLocationException ble) {
 				ble.printStackTrace();
 			}
-			setHighlight(0);			
+			setHighlight(0);	
 			add(processPane, new GridBagConstraints(0,0,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5,5,5,5),0,0));
-
 			
 			
 		}
 		
 		
 		private void setHighlight(int step) {
+		//	System.out.println("step to be highlighted in GSEAWizard:"+step);
 			try {				
 				Document doc = processPane.getDocument();			
 				String text = doc.getText(0, doc.getLength());			
@@ -476,22 +498,25 @@ public abstract class GSEAWizard extends GSEADialog {
 				JButton button = (JButton)(e.getSource());
 				
 				if(button.getText().equals("Execute")) {
-				
-					String eMsg=new String();
-					if(algData.getParams().getString("gene-set-file").equals("")||algData.getParams().getString("annotation-file").equals("")){
-					eMsg="<html>MeV is missing some of the required files, so you cannot execute...just yet<br>" +
-						"<html>Please make sure that you loaded the gene set file AND the annotation file.<br></html>";
 					
-					JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
+					nextStep();
+					String eMsg=new String();
+					if(algData.getParams().getString("gene-identifier").equals("")||algData.getParams().getString("gene-set-directory").equals("")||algData.getParams().getString("annotation-file").equals("")){
+					eMsg="<html>MeV is missing some required parameters, so you cannot execute...just yet<br>" +
+						"<html>Please make sure that you <br>" +
+						"1. Selected gene identifer present in your gene set file from the drop down list<br>"+
+						"2. Loaded the gene set file AND the annotation file.<br></html>";
+					
+					JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else{
+						
 					result = JOptionPane.OK_OPTION;
-					nextStep();
 					dispose();
 					}
+				
 				} else {
-									
-					nextStep();
+						nextStep();
 				}	
 			} else if(command.equals("back-command")) {
 				prevStep();

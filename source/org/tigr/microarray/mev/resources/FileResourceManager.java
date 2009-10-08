@@ -41,6 +41,8 @@ import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationURLsFileDefinition;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
 import org.tigr.microarray.mev.file.FileType;
 
 /**
@@ -141,7 +143,7 @@ public class FileResourceManager implements IResourceManager {
 		while(it.hasNext()) {
 			defs.remove(it.next());
 		}
-		
+
 		File[] cachedFiles = new File[defs.size()];
 
 		Hashtable<ISupportFileDefinition, File> defsToCachedFiles = new Hashtable<ISupportFileDefinition, File>();
@@ -833,6 +835,52 @@ public class FileResourceManager implements IResourceManager {
 	protected void finalize() throws Throwable {
 	}
 
+	/**
+	 * Example code for GSEA downloads
+	 */
+	private void testGSEADownloads() {
+		try {
+			//Get the file containing the list of available geneset files.
+			File geneSetList = getSupportFile(new BroadGeneSetList(), true);
+			try {
+				//Parse the list of geneset files into filename strings
+				ArrayList<String> genesetFilenames = BroadGeneSetList.getFileNames(geneSetList);
+
+				//get email address from user
+				String email = "whatever@wherever.com";
+				String genesetFileName;				
+				
+				ArrayList<ISupportFileDefinition> defs = new ArrayList<ISupportFileDefinition>();
+				Iterator<String> it = genesetFilenames.iterator();
+				//Add each geneset file definition to the container
+				while(it.hasNext()) {
+					genesetFileName = it.next();
+					//Create a definition for each geneset file
+					defs.add(new BroadGeneSet(genesetFileName, email));
+				}
+				//Ask the resource manager to download a file for each definition
+				Hashtable<ISupportFileDefinition, File> results = getSupportFiles(defs, true);
+				
+				//Check each file for validity, print a list of the valid downloaded files
+				Enumeration<ISupportFileDefinition> e = results.keys();
+				while(e.hasMoreElements()) {
+					ISupportFileDefinition thisDef = e.nextElement();
+					File temp = results.get(thisDef);
+					if(thisDef.isValid(temp))
+						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
+					else 
+						System.out.println("support file not downloaded " + temp.getAbsolutePath());
+				}
+				
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			sfae.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) {
 		FileResourceManager frm;
 
@@ -884,7 +932,7 @@ public class FileResourceManager implements IResourceManager {
 					System.out.println("Found file " + thisDef.getUniqueName());
 			}
 		}
-		
+		frm.testGSEADownloads();
 		
 		//Test retrieving of definitions
 		Enumeration<ISupportFileDefinition> temp = defs.elements();

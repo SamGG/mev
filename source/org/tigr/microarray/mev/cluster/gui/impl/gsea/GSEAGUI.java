@@ -3,6 +3,8 @@ package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Vector;
 
@@ -16,10 +18,14 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GSEAUtils;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneData;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneDataElement;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneSetElement;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.Geneset;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.IGeneData;
+import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.IGeneSetElement;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ProbetoGene;
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ReadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -42,13 +48,15 @@ public class GSEAGUI implements IClusterGUI {
 	    private GSEAExperiment gseaExperiment;
 	    private IData idata;
 	    private Logger logger;
-	    protected Listener listener;
-	    protected String[][]geneToProbeMapping;
+	    private Listener listener;
+	    private String[][]geneToProbeMapping;
 	    //max_columns decides the number of columns to display in the
 	    //table viewer
 	    int max_columns;
 	    private int[][]geneset_clusters;
-	    
+	    private  AlgorithmData algData = new AlgorithmData();
+	    private HashMap<String, LinkedHashMap<String, Float>>orderedTestStats=new HashMap<String, LinkedHashMap<String, Float>>();
+	    private HashMap<String, LinkedHashMap<String, Float>>descendingSortedTStats=new HashMap<String, LinkedHashMap<String, Float>>();
 	 	
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
 	
@@ -57,22 +65,22 @@ public class GSEAGUI implements IClusterGUI {
         FloatMatrix matrix = experiment.getMatrix();
 		int number_of_samples = experiment.getNumberOfSamples();
 		
-        AlgorithmData algData = new AlgorithmData();
+       
         DefaultMutableTreeNode resultNode = null;
 		
 		
 		Geneset[]gset=null;
 		Geneset[]geneset=null;
-		GeneData[]gData=null;
+		IGeneData[]gData=null;
 		
 		algData.addMatrix("matrix",matrix);
 					
 		JFrame mainFrame = (JFrame)(framework.getFrame());
 		//Need the "." after the step names, to keep track of the highlighting
-		String [] steps = {"Data Selection.","Parameter Selection.", "Execute."};		
+		String [] steps = {"Data Selection.", "Parameter Selection.", "Execute."};		
 		
 		GSEAInitWizard wiz=new GSEAInitWizard(idata, mainFrame, "GSEA Initialization", true, algData,steps,  1, new StepsPanel(), framework.getClusterRepository(1), framework);
-		
+		 wiz.setVisible(true);
 		 listener = new Listener();
 	     logger = new Logger(framework.getFrame(), "Gene Set Enrichment Analysis", listener);
 	         
@@ -81,8 +89,11 @@ public class GSEAGUI implements IClusterGUI {
 		if(wiz.showModal() == JOptionPane.OK_OPTION) {
 			logger.show();
 					
+			//Multiple files can be uploaded ONLY if they are in the same directory.
+			String genesetFilePath=algData.getParams().getString("gene-set-directory");
 			
-			String genesetFilePath=algData.getParams().getString("gene-set-file");
+			//Assuming there are multiple file uploads, need to check the extensions of each uploaded file
+			//and make sure they have same gene identifiers
 			String extension=checkFileNameExtension(genesetFilePath);
 			
 			//Get the collapse mode; MAX_PROBE OR MEDIAN_PROBE
@@ -100,16 +111,9 @@ public class GSEAGUI implements IClusterGUI {
 			ProbetoGene ptg=new ProbetoGene(algData, idata);
 			logger.append("Collapsing probes to genes \n");
 			
-			//If extension is gmt or gmx, the gene identifier defaults to GENE_SYMBOL.
-			if(extension.equalsIgnoreCase("gmt")||extension.equalsIgnoreCase("gmx")){
-				
-				gData=ptg.convertProbeToGene(AnnotationFieldConstants.GENE_SYMBOL, collapsemode, cutoff);
-							
-			}
-			//If extension is .txt, gene identifier is ENTREZ_ID as of now. 
-			else if(extension.equalsIgnoreCase("txt")){
-				gData=ptg.convertProbeToGene(AnnotationFieldConstants.ENTREZ_ID, collapsemode, cutoff);
-			}
+			//Get the gene identifier from AlgorithmData and use it to collapse the probes
+			gData=ptg.convertProbeToGene(algData.getParams().getString("gene-identifier"), collapsemode, cutoff);
+			
 			
 			gseaExperiment=ptg.returnGSEAExperiment();
 			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
@@ -124,15 +128,11 @@ public class GSEAGUI implements IClusterGUI {
 			
 			ReadGeneSet rgset=new ReadGeneSet(extension, genesetFilePath);
 			try{
-				if(extension.equalsIgnoreCase("gmx"))
-					gset=rgset.read_GMXformatfile(genesetFilePath);
-				else if(extension.equalsIgnoreCase("gmt"))
-					gset=rgset.read_GMTformatfile(genesetFilePath);
-				else if(extension.equalsIgnoreCase("txt"))
-					gset=rgset.read_TXTformatfile(genesetFilePath);
-			
-				Geneset[] gene_set=rgset.removeGenesNotinExpressionData(gset, genesInExpressionData);//--commented for testing
-				//Geneset[] gene_set=gset;//Added for Testing to see, if removeGenes is screwing up 
+				
+				gset=rgset.readMultipleFiles(algData.getStringArray("gene-set-files"), genesetFilePath);
+				//System.out.println("gene set size after raedMultipleFiles in GSEAGUI:"+gset.length);
+				Geneset[] gene_set=rgset.removeGenesNotinExpressionData(gset, genesInExpressionData);
+				 
 				
 
 			//Third step is to generate Association Matrix. The Association Matrix generated, does not include gene set
@@ -143,14 +143,14 @@ public class GSEAGUI implements IClusterGUI {
 			algData.addGeneMatrix("association-matrix", amat);
 					
 			
-			//System.out.println("size of excluded gene set is:"+rgset.getExcludedGeneSets().size());
+			//Create a gene set array to hold the gene sets after excluding ones which do not pass cutoff
 			geneset=new Geneset[gene_set.length-rgset.getExcludedGeneSets().size()];
 			
 			logger.append("Removing gene sets that do not pass the minimum genes criteria \n");
 			geneset=rgset.removeGenesetsWithoutMinimumGenes(rgset.getExcludedGeneSets(), gene_set);
 			
 			//Add the Gene set names to AlgorithmData
-			algData.addVector("gene-set-names", geneset[0].getAllGenesetNames());
+			algData.addVector("gene-set-names", new GSEAUtils().getGeneSetNames(geneset));
 			
 						
 			//Add to Algorithm Data, so that can access from viewers
@@ -177,21 +177,25 @@ public class GSEAGUI implements IClusterGUI {
 			logger.append("Algorithm excecution ends...\n");
 			logger.dispose();
 			
-		
-		//String array containing Gene to Probe mapping, which will be used in the table viewers	
-			geneToProbeMapping=gData[0].getProbetoGeneMapping(gData);
+			//Populate the test statistic in to gene sets
+			geneset=(new GSEAUtils()).populateTestStatistic(gData, geneset, algData.getGeneMatrix("lmPerGene-coefficients"));
+			
+			orderedTestStats=(new GSEAUtils()).getSortedTestStats(geneset);
+			descendingSortedTStats=(new GSEAUtils()).getDescendingSortedTestStats(geneset);
+			
+			//String array containing Gene to Probe mapping, which will be used in the table viewers	
+			geneToProbeMapping=((GeneData)gData[0]).getProbetoGeneMapping(gData);
 		
 			//Decides the number of columns in the table viewer. 
 			//The reason being one Gene may map to one probe and another to ten. 
 			 
-			this.max_columns=gData[0].get_max_num_probes_mapping_to_gene();
+			this.max_columns=((GeneData)gData[0]).get_max_num_probes_mapping_to_gene();
 			
 			//Add code to generate a 2-d integer array 
-		//	geneset_clusters=new int [geneset.length][max_columns];
 			geneset_clusters=GenesettoProbeMapping(gData, geneset);
 			
 			
-			//add clusters, means, and variances---Move it to gesa.java 
+			//add clusters, means, and variances---Move it to gesa util.java 
 			FloatMatrix clusterMeans = this.getMeans(matrix, geneset_clusters);
 			FloatMatrix clusterVars = this.getVariances(matrix, clusterMeans, geneset_clusters);
 			algData.addIntMatrix("clusters", geneset_clusters);
@@ -211,14 +215,16 @@ public class GSEAGUI implements IClusterGUI {
 				System.out.println();
 			}*/
 			
+			if(result.getMappings("over-enriched") == null)
+	            resultNode = createEmptyResultNode(result);
+			else
+			resultNode = createResultNode(result, idata, null);
 			
-			resultNode = createResultNode(result, idata, null);//--commented for Testing
-				
+			return resultNode;	
 		
 		}
 		
-		
-		return resultNode;
+		return null;
 			
 		}
 				
@@ -259,6 +265,26 @@ public class GSEAGUI implements IClusterGUI {
        }
    }
 	
+   
+   /** creates an empty result if the result is null.
+    * @param result
+    * @return  */
+   protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result){
+   	return createEmptyResultNode(result, "GSEA");
+   }
+   
+   /** creates an empty result with label label if the result is null.
+    * @param result
+    * @param label the label to apply to the treenode
+    * @return 
+    */
+   protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result, String label){
+       DefaultMutableTreeNode root = new DefaultMutableTreeNode(label);
+       root.add(new DefaultMutableTreeNode("No results found"));
+       addGeneralInfo(root, result);
+       return root;
+   }
+ 
 	
    private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
 		DefaultMutableTreeNode node = null;
@@ -268,18 +294,20 @@ public class GSEAGUI implements IClusterGUI {
 			addPValueGraphImage(node, result);
 			addTableViews(node, result, experiment, idata);
 			addExpressionImages(node, result, this.experiment);
-		
+			
+			
 			
 		return node;
 	}
 	
+   
+   
+   
    private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result){
 	   
 	   LinkedHashMap overenriched=result.getMappings("over-enriched");
-	   
 	   PValueGraphViewer pvg=new PValueGraphViewer("P Value graph","Genesets", "p-Values", overenriched);
-	 
-	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-Value Graph", pvg)));
+	   root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset p-value graph", pvg)));
 	   
    }
    
@@ -291,7 +319,7 @@ public class GSEAGUI implements IClusterGUI {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
 		GSEAExperimentViewer expViewer = new GSEAExperimentViewer(experiment, geneset_clusters);
 		GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, geneset_clusters);
-		
+	
 		float [][] means = result.getMatrix("cluster-means").A;
     	float [][] vars = result.getMatrix("cluster-variances").A;
         centroidViewer.setMeans(means);
@@ -306,17 +334,69 @@ public class GSEAGUI implements IClusterGUI {
 		  for (int i=0; i<gene_set_names.size(); i++) {
 	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names.get(i));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
-	            //Will be uncommented when Centroid and expression graph viewers are implemented in GSEA
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-	        //    clusterNode.add(new DefaultMutableTreeNode(resultMatrix[i][1]));
-	            
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names.get(i))))));
+	           // System.out.println("Gene set name:"+gene_set_names.get(i)); 
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("J-G statistic for incremental gene subsets", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names.get(i))))));
+	        
 	            node.add(clusterNode);
 	        }
 	 	 		
 		root.add(node);
 	}
+   
+   /** Adds general algorithm information.
+    * @param root root node
+    * @param result
+    */
+   protected void addGeneralInfo(DefaultMutableTreeNode root, AlgorithmData result){
+	   DefaultMutableTreeNode generalInfo = new DefaultMutableTreeNode("General Information");
 
+	   DefaultMutableTreeNode newNode;
+
+
+	   newNode = new DefaultMutableTreeNode("Analysis Options");
+	   DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode("Selected Annotation and Geneset Files");
+
+	   String annotationFileName = result.getParams().getString("annotation-file");
+	   fileNode.add(new DefaultMutableTreeNode("Annotation file selected: "+annotationFileName));
+	   DefaultMutableTreeNode genesetFileNode = new DefaultMutableTreeNode("Geneset Files");
+	   String [] genesetFiles = this.algData.getStringArray("gene-set-files");
+	   if(genesetFiles != null)
+		   for(int i = 0; i < genesetFiles.length; i++)
+			   genesetFileNode.add(new DefaultMutableTreeNode("File: "+genesetFiles[i]));
+	   fileNode.add(genesetFileNode);
+	   newNode.add(fileNode);
+	   AlgorithmParameters params = this.algData.getParams();
+
+	   DefaultMutableTreeNode statNode = new DefaultMutableTreeNode("Algorithm Parameters");
+
+	   statNode.add(new DefaultMutableTreeNode("Probe to Gene collapse mode:"+  params.getString("probe_value")));
+	   if(params.getString("probe_value").equals(GSEAConstants.SD))
+		   statNode.add(new DefaultMutableTreeNode("Standard Deviation Cutoff:"+ params.getString("standard-deviation-cutoff")));
+	   statNode.add(new DefaultMutableTreeNode("Minimum number of genes that must be presen in a geneset: " + params.getString("gene-number")));
+	   statNode.add(new DefaultMutableTreeNode("Number of permutations: "+params.getString("permutations")));
+	   statNode.add(new DefaultMutableTreeNode("Identifier used to annotate genes in the geneset: "+params.getString("gene-identifier")));
+	   
+	   String[]factorNames=this.algData.getStringArray("factor-names");
+	   for(int index=0; index<factorNames.length; index++){
+		statNode.add(new DefaultMutableTreeNode("Factorname:"+ factorNames[index]));   
+	   }
+	   
+	   int[]factorLevels=this.algData.getIntArray("factor-levels");
+	   for(int i=0; i<factorLevels.length; i++){
+		   statNode.add(new DefaultMutableTreeNode("FactorLevel:"+factorLevels[i]));
+	   }
+	   
+	   newNode.add(statNode);
+
+	   generalInfo.add(newNode);
+
+	   root.add(generalInfo);
+   }
+   
+ 
    
    /**
     * @TO DO: Move to GSEA.java
@@ -411,6 +491,13 @@ public class GSEAGUI implements IClusterGUI {
    }
    
    
+   public HashMap<String,LinkedHashMap<String, Float> > getOrderedTestStats(){
+	   return orderedTestStats;
+   }
+   
+   public HashMap<String,LinkedHashMap<String, Float> > getDescendingSortedTStats(){
+	   return descendingSortedTStats;
+   }
    
    
    /**
@@ -418,13 +505,12 @@ public class GSEAGUI implements IClusterGUI {
     * 
     * 
     */
-   private int[][]GenesettoProbeMapping(GeneData[] gData, Geneset[]gset){
+   private int[][]GenesettoProbeMapping(IGeneData[] gData, Geneset[]gset){
 	   
 	   int genesetIndex=0;
 	 
 	   int geneDataElementIndex=0;
-	 //  Vector geneDataElement=gData[0].getAllGeneDataElement();
-	   
+		   
 	   //The size of geneset_clusters would be equal to the number of gene sets 
 	   geneset_clusters=new int[gset.length][];
 	   
@@ -437,17 +523,17 @@ public class GSEAGUI implements IClusterGUI {
 	   //Iterate over gene sets
 	   while(genesetIndex<gset.length){
 		   int genesetElementIndex=0;
-		   //Fetch the vector containing  gene set elements
-		   Vector gsElementVector=gset[genesetIndex].getGenesetElements();
+		   //Fetch the array list containing  gene set elements
+		   ArrayList<IGeneSetElement> gsElementList=gset[genesetIndex].getGenesetElements();
 		   probe_mappings=new Vector();
 		   //Iterate over the elements in the gene sets
-		   while(genesetElementIndex<gsElementVector.size()){
+		   while(genesetElementIndex<gsElementList.size()){
 			   //Retrieve the gene name from the gene set
-			   GeneSetElement gselement=(GeneSetElement)gsElementVector.get(genesetElementIndex);
+			   GeneSetElement gselement=(GeneSetElement)gsElementList.get(genesetElementIndex);
 			   String Gene=(String)gselement.getGene();
 		//	   System.out.println("Gene:"+Gene);
 			   //Retrieve the index of this gene from Gene Data Element 
-			   GeneDataElement gde=(GeneDataElement)gData[0].getGeneDataElement(Gene);
+			   GeneDataElement gde=(GeneDataElement)((GeneData)gData[0]).getGeneDataElement(Gene);
 			   
 			   //Populate the probe_mappings vector here
 			   for(int index=0; index<gde.getProbePosition().size(); index++){
@@ -495,10 +581,6 @@ public class GSEAGUI implements IClusterGUI {
    	}
    	
    	
-   	
-   	
-   	
-   	
    
    	String[]headernames={"Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
    	
@@ -540,9 +622,8 @@ public class GSEAGUI implements IClusterGUI {
    }
 
    
-		
-	
-	/**
+   
+   /**
 	 * checkFileNameExtension returns the extension of the file.
 	 * @param fileName
 	 * @return
@@ -553,6 +634,9 @@ public class GSEAGUI implements IClusterGUI {
 		//System.out.println("Extension:"+extension);	
 		return extension;
 	}
+	
+		
+	
 	
 	public static void main(String[] args){
 		

@@ -10,12 +10,13 @@ import org.tigr.microarray.mev.cluster.gui.IGeneSet;
 public class GeneSetElement implements IGeneSetElement{
 
 	
-	protected String gene;
-	protected String uID;
+	private String gene;
+	private String UID;
+	private float testStat;
 	
-	public GeneSetElement(String UID, String gene){
-		this.uID=UID;
-		this.gene=gene;
+	public GeneSetElement(String ID, String geneName){
+		UID=ID;
+		gene=geneName;
 	}
 	
 	
@@ -25,7 +26,20 @@ public class GeneSetElement implements IGeneSetElement{
 
 	
 	public void setGene(String parameter) {
-		this.gene=parameter;
+		gene=parameter;
+		
+	}
+
+
+	
+	public float getTestStat() {
+		return testStat;
+	}
+
+
+	
+	public void setTestStat(float tstat) {
+		testStat=tstat;
 		
 	}
 

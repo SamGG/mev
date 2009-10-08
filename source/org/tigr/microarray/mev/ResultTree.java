@@ -497,6 +497,14 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** Table Icon
          */
         private Icon tableIcon = GUIFactory.getIcon("TableViewerResult.gif");
+        /** P Value graph Icon
+         */
+        private Icon pValueIcon = GUIFactory.getIcon("TableViewerResult.gif");
+        /** Test statistic viewer icon
+         */
+        private Icon testStatValueIcon = GUIFactory.getIcon("TestStatViewer.gif");
+        
+        
         /** PCA 3D icon
          */
         private Icon pca3DIcon = GUIFactory.getIcon("PCA3DResult.gif");
@@ -676,7 +684,13 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(mainViewIcon);
                 } else if(text.equals("Experiment Viewer")){
                     setIcon(mainViewIcon);
-                } /* CGH Icons */ else if(text.equals("Chromosome Views")){
+                } else if(text.equals("Geneset p-value graph")){
+                	setIcon(pValueIcon);
+                } else if(text.equals("Test statistics graph")){
+                	setIcon(testStatValueIcon);
+                } 	/* CGH Icons */ 
+                else if(text.equals("Chromosome Views")){
+                
                     setIcon(chrViewIcon);
                 } else if(text.equals("Chromosome 1") | text.equals("Chromosome 2") | text.equals("Chromosome 3")
                 		 |text.equals("Chromosome 4") | text.equals("Chromosome 5") | text.equals("Chromosome 6")
@@ -794,6 +808,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(dataSelectionIcon);
                     } else if(text.indexOf("LEM Viewer") != -1) {
                     	setIcon(lemViewerIcon);
+                    } else if(text.indexOf("Geneset p-value graph") != -1){
+                        setIcon(pValueIcon);
+                    }else if(text.indexOf("Test statistics graph") != -1){
+                        setIcon(testStatValueIcon);
                     } /* CGH Icons */else if (text.equals("Experiment Views")) {
                         setIcon(exprViewIcon);
                     } else if(parentText.equals("Experiment Views")) {

@@ -1,10 +1,6 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.tigr.microarray.mev.ISlideDataElement;
@@ -49,7 +45,7 @@ import org.tigr.util.FloatMatrix;
 public class ProbetoGene {
 	private AlgorithmData aData;
 	private IData data;
-	private Vector unique_genes_in_data = new Vector();
+	private Vector<String> unique_genes_in_data = new Vector<String>();
 	// GeneDataMatrix is a FloatMatrix containing the Gene expression values.
 	// This would be used for downstream analysis (lmPerGene etc).
 	private FloatMatrix geneDataMatrix;
@@ -57,17 +53,11 @@ public class ProbetoGene {
 	private int[] columns;
 	private FloatMatrix experiment_matrix;
 	private GeneDataElement gde;
-	private GeneData[] gene_data;
+	private FloatGeneDataElement fgde;
+	private IGeneData[] gene_data;
 
-	/**
-	 * 
-	 * @param algData
-	 * @param idata
-	 * @param gset
-	 * While calling the ProbetoGene constructor, pass the first
-	 * Geneset element.
-	 * 
-	 */
+	
+	
 	public ProbetoGene(AlgorithmData algData, IData idata) {
 		this.aData = algData;
 		this.data = idata;
@@ -78,9 +68,9 @@ public class ProbetoGene {
 	/**
 	 * 
 	 */
-	public GeneData[] convertProbeToGene(String geneIdentifier,
+	public IGeneData[] convertProbeToGene(String geneIdentifier,
 			String conversionCriteria, String SDcutoff) {
-	//	System.out.println("ProbetoGene():"+geneIdentifier);
+		
 		int count = 0;
 		// Number of rows in the loaded expression data
 		int arrayRows = data.getFeaturesSize();
@@ -88,7 +78,7 @@ public class ProbetoGene {
 		// Number of samples in the expression dataset
 		int cols = data.getFeaturesCount();
 
-		GeneData[] gdata = new GeneData[cols];
+		IGeneData[] gdata = new IGeneData[cols];
 
 		/*
 		 * Initialize the gene data and GeneDataElement. Each of the geneData
@@ -104,7 +94,7 @@ public class ProbetoGene {
 			String[] temp = (ann.getAttribute(geneIdentifier));
 			String currentID = temp[0];
 			currentID = currentID.toUpperCase();
-
+			//System.out.println("current id:"+currentID);
 			if (!unique_genes_in_data.contains(currentID)
 					&& !currentID.equalsIgnoreCase("NA")) {
 				unique_genes_in_data.add(count, currentID);
@@ -119,20 +109,37 @@ public class ProbetoGene {
 		int geneRows = unique_genes_in_data.size();
 
 		geneDataMatrix = new FloatMatrix(geneRows, cols);
-
+	
+		
 		for (int i = 0; i < cols; i++) {
-
-			gdata[i] = new GeneData(geneRows, 1);
+			
+			if(i==0){
+				//The first element is always GeneData, rest are FloatGeneData
+				gdata[0] = new GeneData();
+			}
+			else
+				gdata[i] = new FloatGeneData();
+			
+			
 			String slideName = data.getFeature(i).getSlideDataName();
-			String slideFile = data.getFeature(i).getSlideFileName();
-
 			gdata[i].setSlideName(slideName);
 
 			for (int index = 0; index < unique_genes_in_data.size(); index++) {
 				String requiredID = (String) unique_genes_in_data.get(index);
-				gde = new GeneDataElement(index, requiredID);
-				gdata[i].setGeneDataElement(gde, index);
+				
+				//If at the first slide, create GeneDataElement, else create FloatGeneDataElement
+				if(i==0){
+					gde = new GeneDataElement(index, requiredID);
+					gdata[i].setGeneDataElement(gde, index);
 
+				}else{
+					fgde = new FloatGeneDataElement(index, requiredID);
+					gdata[i].setGeneDataElement(fgde, index);
+
+				}
+				
+				
+				
 			}
 
 		}
@@ -180,8 +187,8 @@ public class ProbetoGene {
 					// matches >1gene
 					// break;
 					found = true;
-					if(gde.getProbeID().size()>gdata[0].get_max_num_probes_mapping_to_gene()){
-						gdata[0].set_max_num_probes_mapping_to_gene(gde.getProbeID().size());
+					if(gde.getProbeID().size()>((GeneData)gdata[0]).get_max_num_probes_mapping_to_gene()){
+						((GeneData)gdata[0]).set_max_num_probes_mapping_to_gene(gde.getProbeID().size());
 					}
 
 				}
@@ -220,7 +227,7 @@ public class ProbetoGene {
 				count = 0;
 				int num_probes = (gdata[0].getGeneDataElement(j).getProbeID()
 						.size());
-				Vector probePos = (gdata[0].getGeneDataElement(j)
+				ArrayList probePos = (gdata[0].getGeneDataElement(j)
 						.getProbePosition());
 
 				while (count < cols) {
@@ -251,7 +258,7 @@ public class ProbetoGene {
 
 						}
 
-						Vector intensity = gdata[count].getGeneDataElement(j)
+						ArrayList intensity = gdata[count].getGeneDataElement(j)
 								.getTrueIntensity();
 						// System.out.println("gene:"+gdata[0].getGeneDataElement(j).getGeneIdentifier());
 						// System.out.println("Number of probes corr to the
@@ -262,7 +269,7 @@ public class ProbetoGene {
 							gdata[count].getGeneDataElement(j)
 									.setCurrentIntensity(max_probe);
 							geneDataMatrix.set(j, count, max_probe);
-							intensity = new Vector();
+							intensity = new ArrayList();
 						}
 						if (conversionCriteria
 								.equalsIgnoreCase(GSEAConstants.MEDIAN_PROBE)) {
@@ -270,7 +277,7 @@ public class ProbetoGene {
 							gdata[count].getGeneDataElement(j)
 									.setCurrentIntensity(med_probe);
 							geneDataMatrix.set(j, count, med_probe);
-							intensity = new Vector();
+							intensity = new ArrayList();
 						}
 
 					}
@@ -317,9 +324,9 @@ public class ProbetoGene {
 	 * @return
 	 */
 
-	public GeneData[] remove_lowVar_probes(GeneData[] gdata, String SDcutoff) {
+	public IGeneData[] remove_lowVar_probes(IGeneData[] gdata, String SDcutoff) {
 
-		GeneData[] gene_data;
+		IGeneData[] gene_data;
 		// List of genes (subset of the unique ones in the expression data) which
 		// pass the SD cutoff
 		Vector genes = new Vector();
@@ -367,7 +374,7 @@ public class ProbetoGene {
 					.size());
 			// Extract the exact position (corresponding to the expression data)
 			// of the probes mapping to the current gene
-			Vector probePos = (gdata[0].getGeneDataElement(index)
+			ArrayList probePos = (gdata[0].getGeneDataElement(index)
 					.getProbePosition());
 			// Extract the gene corresponding to this entry
 			String Gene = gdata[0].getGeneDataElement(index)
@@ -462,8 +469,13 @@ public class ProbetoGene {
 		geneDataMatrix = new FloatMatrix(geneRows, cols);
 
 		for (int i = 0; i < cols; i++) {
-
-			gene_data[i] = new GeneData(geneRows, 1);
+			
+			if(i==0){
+			gene_data[i] = new GeneData();
+			}else{
+				gene_data[i]=new FloatGeneData();
+				
+			}
 			String slideName = data.getFeature(i).getSlideDataName();
 			String slideFile = data.getFeature(i).getSlideFileName();
 
@@ -472,9 +484,17 @@ public class ProbetoGene {
 			for (int index = 0; index < geneRows; index++) {
 				String Gene = (String) genes.get(index);
 				int gIndex = unique_genes_in_data.indexOf(Gene);
-
-				gde = new GeneDataElement(index, Gene);
-				gene_data[i].setGeneDataElement(gde, index);
+				
+				if(i==0){
+					gde = new GeneDataElement(index, Gene);
+					gene_data[i].setGeneDataElement(gde, index);
+				}else{
+					fgde = new FloatGeneDataElement(index, Gene);	
+					gene_data[i].setGeneDataElement(fgde, index);
+				}
+				
+				
+			
 
 			}
 		}// col for loop ends
@@ -493,9 +513,9 @@ public class ProbetoGene {
 			int maxProbePos = ((Integer) probes_passing_cutoff.elementAt(row))
 					.intValue();
 
-			Vector probe_id = (Vector) gdata[0].getGeneDataElement(gIndex)
+			ArrayList probe_id = (ArrayList) gdata[0].getGeneDataElement(gIndex)
 					.getProbeID();
-			Vector probe_pos = (Vector) gdata[0].getGeneDataElement(gIndex)
+			ArrayList probe_pos = (ArrayList) gdata[0].getGeneDataElement(gIndex)
 					.getProbePosition();
 
 			for (int index = 0; index < probe_id.size(); index++) {
@@ -507,11 +527,11 @@ public class ProbetoGene {
 			}
 			// Set the true intensity across samples
 			for (int col = 0; col < data.getFeaturesCount(); col++) {
-				Vector trueIntensity = gdata[col].getGeneDataElement(gIndex)
+				ArrayList trueIntensity = gdata[col].getGeneDataElement(gIndex)
 						.getTrueIntensity();
 				for (int j = 0; j < trueIntensity.size(); j++) {
 					gene_data[col].getGeneDataElement(row).setTrueIntensity(
-							((Float) trueIntensity.elementAt(j)).floatValue());
+							((Float) trueIntensity.get(j)).floatValue());
 				}
 				// current intensity is equal to the intensity of the probe with
 				// max SD
@@ -538,7 +558,7 @@ public class ProbetoGene {
 	 * @return Maximum of the intensity values
 	 */
 
-	public float getMaxProbe(Vector intensity) {
+	public float getMaxProbe(ArrayList intensity) {
 		float max = ((Float) intensity.get(0)).floatValue();
 
 		if (intensity.size() == 1)
@@ -559,9 +579,9 @@ public class ProbetoGene {
 	 * @return median intensity value
 	 */
 
-	public float getMedianProbe(Vector intensity) {
+	public float getMedianProbe(ArrayList intensity) {
 
-		Vector temp = new Vector();
+		ArrayList temp = new ArrayList();
 
 		for (int i = 0; i < intensity.size(); i++) {
 			if (!((Float) intensity.get(i)).isNaN())

@@ -1,5 +1,6 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -14,63 +15,63 @@ import java.util.Vector;
 
 public class GeneDataElement implements IGeneDataElement {
 
-	protected int row;
-	protected String UID;
-	protected float intensity;
-	protected Vector trueIntensities;
-	protected Vector probeID;
-	protected Vector probePosition;
+	private int row;
+	private String UID;
+	private float intensity;
+	private ArrayList trueIntensities;
+	private ArrayList<String> probeID;
+	private ArrayList probePosition;
 
 	public GeneDataElement(int row, String UID) {
 		this.row = row;
 		this.UID = UID;
-		this.trueIntensities = new Vector();
-		this.probeID = new Vector();
-		this.probePosition = new Vector();
+		trueIntensities = new ArrayList();
+		probeID = new ArrayList<String>();
+		probePosition = new ArrayList();
 
 	}
 
 	public String getGeneIdentifier() {
-		return this.UID;
+		return UID;
 	}
 
-	public Vector getProbeID() {
-		return this.probeID;
+	public ArrayList getProbeID() {
+		return probeID;
 	}
 
-	public Vector getProbePosition() {
-		return this.probePosition;
+	public ArrayList getProbePosition() {
+		return probePosition;
 	}
 
 	public void setGeneIdentifier(String geneID) {
-		this.UID = geneID;
+		UID = geneID;
 
 	}
 
-	public void setProbeID(String probeID) {
-		this.probeID.add(probeID);
+	public void setProbeID(String probeid) {
+		probeID.add(probeid);
 
 	}
 
 	public void setProbePosition(int pos) {
-		this.probePosition.add(pos);
+		probePosition.add(pos);
 
 	}
 
 	public float getCurrentIntensity() {
-		return this.intensity;
+		return intensity;
 	}
 
-	public Vector getTrueIntensity() {
-		return this.trueIntensities;
+	public ArrayList getTrueIntensity() {
+		return trueIntensities;
 	}
 
-	public void setCurrentIntensity(float intensity) {
-		this.intensity = intensity;
+	public void setCurrentIntensity(float intensityVal) {
+		intensity = intensityVal;
 	}
 
 	public void setTrueIntensity(float val) {
-		this.trueIntensities.add(val);
+		trueIntensities.add(val);
 
 	}
 

@@ -29,6 +29,8 @@ public class Utils {
     public final static String bmp = "bmp";
     public final static String tree = "tree";
     public final static String tiff = "tiff";
+    public final static String gmt = "gmt";
+    public final static String gmx = "gmx";
     /*
      * Get the extension of a file.
      */

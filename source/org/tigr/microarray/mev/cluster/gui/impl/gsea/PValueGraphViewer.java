@@ -277,9 +277,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 				drawLine(g2, (GraphLine) e);
 		}
 
-	/**	
-	 * Commented for now by Sarita
-	 */ 
+	 
 	 if (referenceLinesOn) { // Grid tracing is active
 			int x = getXOldEvent();
 			int y = getYOldEvent();
@@ -381,7 +379,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
            int max = 0;
            String str;
            
-          for (int i=0; i<this.geneSetNames.length; i++) {//For loop commented temporarily by sarita
+          for (int i=0; i<this.geneSetNames.length; i++) {
           	 str = (String) this.geneSetNames[i];
               max = Math.max(max, fm.stringWidth(str));
            }
