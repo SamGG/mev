@@ -779,7 +779,7 @@ public class ClusterRepository extends Vector {
     		if(selectedIndices == null || selectedIndices.length < 1) {
                 return null;//throw warning?
             }
-    		return storeClusterWithoutDialog(newIndices, "Gaggle", null, "Gene List Import", clusterLabel, clusterDescription);
+    		return storeClusterWithoutDialog(newIndices, "Gaggle", key, "Gene List Import", clusterLabel, clusterDescription);
     	}
     	return null;
     }
