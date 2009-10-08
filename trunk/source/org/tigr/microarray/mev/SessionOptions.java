@@ -39,8 +39,8 @@ public class SessionOptions {
 		
 			"-arrayType \n" +
 			"This value specifies the name of the array that the data in -fileUrl came from. The  \n" +
-			"string must exactly match one of the list of currently-supported arrays, found at " +
-			"ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/kingdom_species_cloneset_list.txt. \n" +
+			"string must exactly match one of the list of currently-supported arrays, by default found at " +
+			"ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/pipeline/supported_arrays.txt. \n" +
 			"The species name is not required. \n";
 
 	public SessionOptions(){}
