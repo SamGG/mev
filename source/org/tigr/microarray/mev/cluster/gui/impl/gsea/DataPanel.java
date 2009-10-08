@@ -454,8 +454,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 
         
         tabbedSelectors=new JTabbedPane();
-		tabbedSelectors.insertTab("Button Selection", null, gPanel, null, 0);    
-		tabbedSelectors.insertTab("Cluster Selection",null,clusterSelectorPanel, null, 1);
+		tabbedSelectors.insertTab("Cluster Selection",null,clusterSelectorPanel, null, 0);
+		tabbedSelectors.insertTab("Button Selection", null, gPanel, null, 1);  
      
 		constraints=buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
 		constraints.fill=GridBagConstraints.BOTH;
@@ -723,7 +723,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
         
         
         public boolean isButtonSelectionMethod(){
-        	if(tabbedSelectors.getSelectedIndex()==0)
+        	if(tabbedSelectors.getSelectedIndex()==1)
         		return true;
         	return false;
         		

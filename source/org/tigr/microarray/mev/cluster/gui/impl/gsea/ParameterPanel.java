@@ -36,6 +36,7 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
+import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.util.FileLoaderUtility;
 import org.tigr.util.swing.GeneMatrixFileFilter;
 import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
@@ -549,7 +550,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	public void onBrowse(){
 		FileLoaderUtility fileLoad=new FileLoaderUtility();
 		Vector retrievedFileNames=new Vector();
-		JFileChooser fileChooser = new JFileChooser();
+		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.addChoosableFileFilter(new TXTFileFilter());
 		fileChooser.addChoosableFileFilter(new GeneMatrixFileFilter());
