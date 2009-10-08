@@ -746,16 +746,14 @@ public class ClusterRepository extends Vector {
 	    return createClusterFromList(null);
     }
         
-    public Cluster storeClusterWithoutDialog(int[]clusterIndices, String label, String node){    
+    public Cluster storeClusterWithoutDialog(int[]clusterIndices, String source, String factor, String node, String label, String clusterDescription){    
         Experiment experiment = framework.getData().getExperiment();                    
         Color nextColor = getNextDefaultColor();
       	clusterColors.add(nextColor);
         ClusterList list = getClusterOperationsList();
         Color clusterColor = nextColor;
-        String clusterDescription = null;
         this.clusterSerialCounter++;
-        Cluster cluster = new Cluster(clusterIndices, "Algorithm", label, "N/A", node, clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-//        addCluster(list, cluster);
+        Cluster cluster = new Cluster(clusterIndices, source, factor, node, label, clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
 
         list.addCluster(cluster);
         updateClusterMembership(cluster);
@@ -768,7 +766,7 @@ public class ClusterRepository extends Vector {
 	* or if no genes in genelist match identifiers in the loaded annotation
 	* in the field identifier.
 	**/
-    public Cluster quietlyCreateClusterFromList(String[] genelist, String identifier, String label, String description) {
+    public Cluster storeClusterQuietlyFromList(String[] genelist, String identifier, String label, String description) {
     	String key = identifier;
     	String[] ids = genelist;
         String clusterLabel = label;
@@ -781,15 +779,7 @@ public class ClusterRepository extends Vector {
     		if(selectedIndices == null || selectedIndices.length < 1) {
                 return null;//throw warning?
             }
-    		//create the cluster
-    		Color clusterColor = getNextDefaultColor();
-            this.clusterSerialCounter++;
-            ClusterList list = getClusterOperationsList();
-            Cluster cluster = new Cluster(selectedIndices, "Cluster Op.", clusterLabel, "List Import", "N/A", clusterDescription, list.getAlgorithmIndex(), this.clusterSerialCounter, clusterColor, experiment);
-
-            addCluster(list, cluster);
-          	clusterColors.add(clusterColor);
-            return cluster;
+    		return storeClusterWithoutDialog(newIndices, "Gaggle", null, "Gene List Import", clusterLabel, clusterDescription);
     	}
     	return null;
     }

@@ -196,7 +196,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     private void storeClusters(int[][]clusters) {
 		for (int i=0; i<clusters.length; i++)
-			framework.storeClusterWithoutDialog(clusters[i], "NMF - Cluster "+ (i+1), Integer.toString((i+1)), ClusterRepository.EXPERIMENT_CLUSTER);
+			framework.storeClusterWithoutDialog(clusters[i], "Algorithm", "NMF - Cluster "+ (i+1), "Cluster "+Integer.toString((i+1)),"NMF - Cluster "+ (i+1), null, ClusterRepository.EXPERIMENT_CLUSTER);
 	}
 
 	public AlgorithmData getScriptParameters(IFramework framework) {

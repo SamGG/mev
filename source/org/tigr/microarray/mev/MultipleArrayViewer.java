@@ -3403,16 +3403,16 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	return clusterColor;
     }
     
-    private void storeClusterWithoutDialog(int[]clusterIndices, String label, String node, int clusterType){
+    private void storeClusterWithoutDialog(int[]clusterIndices, String source, String factor, String node, String label, String clusterDescription, int clusterType){    
 
 		Cluster cluster;
     	if (clusterType == ClusterRepository.GENE_CLUSTER) {
-    		cluster = geneClusterRepository.storeClusterWithoutDialog(clusterIndices, label, node);
+    		cluster = geneClusterRepository.storeClusterWithoutDialog(clusterIndices, source, factor, node, label, clusterDescription);
     		if (cluster != null)
     			geneClusterManager.onRepositoryChanged(geneClusterRepository);
     		geneClusterRepository.printRepository();
     	} else {
-    		cluster = experimentClusterRepository.storeClusterWithoutDialog(clusterIndices, label, node);
+    		cluster = experimentClusterRepository.storeClusterWithoutDialog(clusterIndices, source, factor, node, label, clusterDescription);
     		if (cluster != null)
     			experimentClusterManager.onRepositoryChanged(experimentClusterRepository);
     		experimentClusterRepository.printRepository();
@@ -4246,7 +4246,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(askUser)
         	cluster = cr.createClusterFromList(genelist);
         else 
-        	cluster = cr.quietlyCreateClusterFromList(genelist, identifier, label, "");
+        	cluster = cr.storeClusterQuietlyFromList(genelist, identifier, label, "");
         String source;
         if(genelist != null)
         	source = "Gaggle Broadcast";
@@ -5971,8 +5971,8 @@ private void appendResourcererGeneAnnotation() {
             return MultipleArrayViewer.this.storeCluster(indices, experiment, clusterType);
         }
 
-        public void storeClusterWithoutDialog(int[] indices, String string, String string2, int clusterType){
-            MultipleArrayViewer.this.storeClusterWithoutDialog(indices, string, string2, clusterType);
+        public void storeClusterWithoutDialog(int[]clusterIndices, String source, String factor, String node, String label, String clusterDescription, int clusterType){    
+            MultipleArrayViewer.this.storeClusterWithoutDialog(clusterIndices, source, factor, node, label, clusterDescription, clusterType);   
         }
         
     	public Color storeCluster(int[] indices, Experiment experiment, int clusterType, Color color){
