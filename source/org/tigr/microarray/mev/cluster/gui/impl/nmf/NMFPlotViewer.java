@@ -35,11 +35,13 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
      * Constructs a <code>PlotViewer</code> for specified S-matrix.
      */
     public NMFPlotViewer(float[] data, String[] labels) {
-    	float minValue = 1.0f;
+    	float minValue = Float.POSITIVE_INFINITY;
     	float maxValue = 1.0f;
     	for (int i=0; i<data.length; i++){
     		if (data[i]<minValue)
     			minValue = data[i];
+    		if (data[i]>maxValue)
+    			maxValue = data[i];
     	}
     	content = createContent(data, labels, minValue-.05f, maxValue);
     	this.data = data;
@@ -80,7 +82,7 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 
 	    double maxValue = 1.0;
 	    double minValue = 0.7;
-		private static final int left = 40;
+		private static final int left = 80;
 		private static final int top  = 40;
 		private float[] data;
 		private String[] labels;
@@ -113,16 +115,9 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 		    
 		    int steps = 10;
 		    double stepValue = (maxValue-minValue)/steps;
-		    if (Double.isNaN(maxValue)) {
-			return;
-		    }
-		    int counter = 1;
-		    while (maxValue >= 10) {
-				maxValue /= 10.0;
-				counter *= 10;
-		    }
-		    float scale = (float)(maxValue-minValue)/(float)maxValue;
-		    System.out.println("scale "+scale);
+		    if (Double.isNaN(maxValue))
+		    	return;
+		    float scale = (float)(maxValue-minValue);
 		    // drawing left marks
 		    double stepY = plotHeight/(double)(steps);
 		    for (int i=1; i<steps; i++) {
@@ -135,7 +130,6 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 		    }
 		    g.setColor(Color.magenta);
 		    double factor = (double)plotHeight;///(double)(scale);
-		    System.out.println("factor "+factor);
 		    int prevValue = -(int)Math.round((data[0]-minValue)*factor/scale);
 		    int curValue;
 		    int zeroValue = top+plotHeight;

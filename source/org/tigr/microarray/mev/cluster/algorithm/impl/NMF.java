@@ -157,8 +157,8 @@ public class NMF extends AbstractAlgorithm{
     		}
 		}
     	FloatMatrix fm = new FloatMatrix(mat);
-    	System.out.println("fm");
-    	printMat(fm.transpose());
+//    	System.out.println("fm");
+//    	printMat(fm.transpose());
     	return ExperimentUtil.pearsonUncentered(fm, 0, 1, 1);
 
 	}
