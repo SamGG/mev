@@ -647,6 +647,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(centroidGraphIcon);
                 } else if(text.indexOf("Expression Graph") != -1){
                     setIcon(expressionGraphIcon);
+                } else if(text.indexOf("Cophenetic Correllation Graph") != -1){
+                    setIcon(expressionGraphIcon);
                 } else if(text.equals("Analysis Results")){
                     setIcon(analysisIcon);
                 } else if(text.equals("Cluster Manager")){

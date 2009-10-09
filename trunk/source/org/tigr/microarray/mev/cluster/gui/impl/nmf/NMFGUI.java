@@ -18,6 +18,7 @@ import java.awt.event.WindowEvent;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -328,6 +329,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster[] result_cluster, GeneralInfo info) {
     	if (this.multiClusters){
+    		addCopheneticCorrelationCoefficientGraph(root);
 	    	DefaultMutableTreeNode[] factorRoot = new DefaultMutableTreeNode[result_cluster.length];
 	    	for (int i=0; i<result_cluster.length; i++){
 	    		factorRoot[i] = new DefaultMutableTreeNode(""+(rvalue+i)+" Cluster NMF");
@@ -340,7 +342,6 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 		        addWHFactors(factorRoot[i], i);
 		        root.add(factorRoot[i]);
 	    	}
-//	        root.add(new DefaultMutableTreeNode(new LeafInfo("Cophenetic correlation graph", new NMFPlotViewer(new FloatMatrix(cophen, 1)))));
     	} else {
     		root.add(new DefaultMutableTreeNode("Cophenetic Correlation = " + (cophen[0])));
 	        addConsensusMatrix(root, result_cluster[0], info, 0);
@@ -353,7 +354,13 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     	}
         addGeneralInfo(root, info);
     }
-    
+    private void addCopheneticCorrelationCoefficientGraph(DefaultMutableTreeNode root) {
+    	String[] ccLabels = new String[cophen.length];
+    	for (int i=0; i<ccLabels.length; i++){
+    		ccLabels[i] = "Rank = "+(this.rvalue+i);
+    	}
+        root.add(new DefaultMutableTreeNode(new LeafInfo("Cophenetic Correlation Graph", new NMFPlotViewer(cophen, ccLabels))));
+    }
     private void addWHFactors(DefaultMutableTreeNode root, int factorIndex) {
         DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metagenes (W)");
         DefaultMutableTreeNode HNode = new DefaultMutableTreeNode("Metagenes (H)");
@@ -477,11 +484,6 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         node.add(new DefaultMutableTreeNode("Cluster by " + (doSamples ? "Samples": "Genes")));
         node.add(new DefaultMutableTreeNode(multiClusters ? "Cluster range: "+String.valueOf(rvalue)+" - "+String.valueOf(maxrvalue) : "Number of clusters: "+String.valueOf(rvalue)));
-//        if (this.multiClusters){
-//            node.add(new DefaultMutableTreeNode("Cluster range: "+String.valueOf(rvalue)+" - "+String.valueOf(maxrvalue)));
-//        } else {
-//        	node.add(new DefaultMutableTreeNode("Number of clusters: "+String.valueOf(rvalue)));
-//        }
         node.add(new DefaultMutableTreeNode("Number of runs: " + String.valueOf(numRuns)));
         node.add(new DefaultMutableTreeNode("Maximum iterations: "+String.valueOf(maxIters)));
         node.add(new DefaultMutableTreeNode("Update rules and cost measurement: " + (divergence ? "Divergence" : "Euclidean distance")));
@@ -527,6 +529,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             progressBar.dispose();
         }
     }
+    
     
     protected class GeneralInfo {
 
