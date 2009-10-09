@@ -37,9 +37,9 @@ public class NMFInfoViewer extends ViewerAdapter {
     private JComponent header;
     private JTextArea  content;
     /** Creates new NMFInfoViewer */
-    public NMFInfoViewer(int[][] clusters, int genes) {
+    public NMFInfoViewer(int[][] clusters, int samples) {
 	header  = createHeader();
-	content = createContent(clusters, genes);
+	content = createContent(clusters, samples);
 	setMaxWidth(content, header);        
     }
     public NMFInfoViewer(JTextArea content, JComponent header){

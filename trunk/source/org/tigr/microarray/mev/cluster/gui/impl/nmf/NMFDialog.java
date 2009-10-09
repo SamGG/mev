@@ -48,10 +48,10 @@ public class NMFDialog extends AlgorithmDialog {
 	private int result = JOptionPane.CANCEL_OPTION;
     
     private SampleSelectionPanel clusteringSelectionPanel;
-    JTextField numRunsField, numClustersField, maxNumClustersField, numItersField;
+    JTextField numRunsField, rankField, maxRankField, numItersField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
-    JCheckBox clustercb, multiClusters, adjustCB;
-    JLabel numClustersLabel;
+    JCheckBox clustercb, multiRanks, adjustCB;
+    JLabel rankLabel;
 
     
     /** Creates new NMFDialog */
@@ -107,18 +107,18 @@ public class NMFDialog extends AlgorithmDialog {
                 new java.awt.Font("Dialog", 1, 12), Color.black));  
         runParams.setLayout(grid);
 
-        multiClusters = new JCheckBox("Run Multiple Factors");
-        multiClusters.setBackground(Color.white);
-        multiClusters.setSelected(false);
-        multiClusters.addActionListener(new ActionListener(){
+        multiRanks = new JCheckBox("Run Multiple Ranks");
+        multiRanks.setBackground(Color.white);
+        multiRanks.setSelected(false);
+        multiRanks.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent ae){
-    			maxNumClustersField.setEnabled(multiClusters.isSelected());
-    			numClustersLabel.setText(multiClusters.isSelected() ? "Cluster range :":"Number of clusters :");
+    			maxRankField.setEnabled(multiRanks.isSelected());
+    			rankLabel.setText(multiRanks.isSelected() ? "Rank range :":"Rank value :");
         	}
         });
         buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
-        grid.setConstraints(multiClusters, constraints);
-        runParams.add(multiClusters);  
+        grid.setConstraints(multiRanks, constraints);
+        runParams.add(multiRanks);  
         
         JLabel numRunsLabel= new JLabel("Number of runs : ");
         buildConstraints(constraints, 0, 1, 1, 1, 50, 100);
@@ -133,29 +133,29 @@ public class NMFDialog extends AlgorithmDialog {
         grid.setConstraints(numRunsField, constraints);
         runParams.add(numRunsField);    
         
-        numClustersLabel= new JLabel("Number of clusters : ");
+        rankLabel= new JLabel("Rank value :");
         constraints.fill = GridBagConstraints.NONE;       
         buildConstraints(constraints, 0, 2, 1, 1, 50, 100);
-        grid.setConstraints(numClustersLabel, constraints);
-        runParams.add(numClustersLabel);     
+        grid.setConstraints(rankLabel, constraints);
+        runParams.add(rankLabel);     
         constraints.fill = GridBagConstraints.HORIZONTAL;  
         
-        numClustersField = new JTextField("2", 7);
+        rankField = new JTextField("2", 7);
         buildConstraints(constraints, 1, 2, 1, 1, 50, 100);
-        grid.setConstraints(numClustersField, constraints);
-        runParams.add(numClustersField);    
+        grid.setConstraints(rankField, constraints);
+        runParams.add(rankField);    
 
-        JLabel maxNumClustersLabel= new JLabel(" - ");
-        maxNumClustersLabel.setEnabled(false);
+        JLabel maxRankLabel= new JLabel(" - ");
+        maxRankLabel.setEnabled(false);
         buildConstraints(constraints, 2, 2, 1, 1, 50, 100);
-        grid.setConstraints(maxNumClustersLabel, constraints);
-        runParams.add(maxNumClustersLabel);   
+        grid.setConstraints(maxRankLabel, constraints);
+        runParams.add(maxRankLabel);   
 
-        maxNumClustersField = new JTextField("4", 7);
-        maxNumClustersField.setEnabled(false);
+        maxRankField = new JTextField("4", 7);
+        maxRankField.setEnabled(false);
         buildConstraints(constraints, 3, 2, 1, 1, 50, 100);
-        grid.setConstraints(maxNumClustersField, constraints);
-        runParams.add(maxNumClustersField);    
+        grid.setConstraints(maxRankField, constraints);
+        runParams.add(maxRankField);    
         
         JLabel numItersLabel= new JLabel("Maximum iterations : ");
         constraints.fill = GridBagConstraints.NONE;       
@@ -218,7 +218,7 @@ public class NMFDialog extends AlgorithmDialog {
         normalizationPanel.add(noNegs2);     
         
 
-        adjustCB = new JCheckBox("Always adjust data");
+        adjustCB = new JCheckBox("Adjust data if non-negative");
         adjustCB.setBackground(Color.white);
         adjustCB.setSelected(false);
         buildConstraints(constraints, 0, 2, 2, 1, 50, 100);
@@ -285,7 +285,7 @@ public class NMFDialog extends AlgorithmDialog {
     }
     
     public void resetControls(){
-        clusteringSelectionPanel.setClusterGenesSelected(true);
+
     }
     
     public int getNumRuns() {
@@ -305,16 +305,16 @@ public class NMFDialog extends AlgorithmDialog {
         return clustercb.isSelected();
     } 
 
-    public boolean isMultiClusters() {
-        return multiClusters.isSelected();
+    public boolean isMultiRank() {
+        return multiRanks.isSelected();
     } 
     
     public int getRValue() {
-        return Integer.parseInt(numClustersField.getText());
+        return Integer.parseInt(rankField.getText());
     }   
 
     public int getMaxRValue() {
-        return this.multiClusters.isSelected()? Integer.parseInt(maxNumClustersField.getText()): getRValue();
+        return this.multiRanks.isSelected()? Integer.parseInt(maxRankField.getText()): getRValue();
     }   
 
 	public boolean isDoSamples() {
@@ -334,16 +334,31 @@ public class NMFDialog extends AlgorithmDialog {
             String command = event.getActionCommand();
             if (command.equals("ok-command")) {
                try {
-                    int numNeibs = getNumRuns();
-                    if (numNeibs <= 0) {
-                        JOptionPane.showMessageDialog(null, "Invalid number of iterations", "Error", JOptionPane.ERROR_MESSAGE);
+                    int numRuns = getNumRuns();
+                    int maxR = getMaxRValue();
+                    int minR = getRValue();
+                    int iterations = getMaxIterations();
+                    if (numRuns <= 0) {
+                        JOptionPane.showMessageDialog(null, "Invalid number of runs.", "Error", JOptionPane.ERROR_MESSAGE);
                         return;                        
-                    } else {
-                        result = JOptionPane.OK_OPTION;
-                        dispose();
                     }
+                    if (maxR <= minR && isMultiRank()) {
+                        JOptionPane.showMessageDialog(null, "The maximum number of runs must be greater than the minimum number of runs, obviously.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;                        
+                    }
+                    if (minR <= 1) {
+                        JOptionPane.showMessageDialog(null, "The NMF rank must be at least 2.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;                        
+                    }
+                    if (iterations <= 0) {
+                        JOptionPane.showMessageDialog(null, "Invalid number of iterations.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;                        
+                    }
+                    result = JOptionPane.OK_OPTION;
+                    dispose();
+                    
                }  catch (NumberFormatException nfe){
-                    JOptionPane.showMessageDialog(null, "Invalid number of iterations", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Invalid input.\n\nPlease check your parameters and try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             } else if (command.equals("cancel-command")){

@@ -647,7 +647,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(centroidGraphIcon);
                 } else if(text.indexOf("Expression Graph") != -1){
                     setIcon(expressionGraphIcon);
-                } else if(text.indexOf("Cophenetic Correllation Graph") != -1){
+                } else if(text.indexOf("Cophenetic Correlation Graph") != -1){
                     setIcon(expressionGraphIcon);
                 } else if(text.equals("Analysis Results")){
                     setIcon(analysisIcon);
@@ -750,6 +750,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(centroidGraphIcon);
                     } else if(parentText.indexOf("Expression Graph") != -1){
                         setIcon(expressionGraphIcon);
+                    } else if(parentText.indexOf("Cophenetic Correlation Graph") != -1){
+                        setIcon(expressionGraphIcon);
                     } else if(parentText.indexOf("Cluster Manager") != -1){
                         setIcon(tableIcon);
                     } else if(parentText.indexOf("F-Ratio") != -1 ||
@@ -777,6 +779,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
                     } else if(text.equals("Expression Graph")){
+                        setIcon(expressionGraphIcon);
+                    } else if(text.equals("Cophenetic Correlation Graph")){
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Centroid Graph")){
                         setIcon(centroidGraphIcon);
