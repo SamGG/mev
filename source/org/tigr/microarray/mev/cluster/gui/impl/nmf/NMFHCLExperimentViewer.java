@@ -120,7 +120,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
     private int firstSelectedColumn = -1;
     private int lastSelectedColumn  = -1;
     public BufferedImage posColorImage = createGradientImage(Color.black, Color.red);
-    public BufferedImage negColorImage = createGradientImage(Color.green, Color.black);
+    public BufferedImage negColorImage = createGradientImage(Color.blue, Color.black);
     private int annotationWidth;
     private Insets insets = new Insets(0, 10, 0, 0);
     private int contentWidth = 0;
@@ -257,6 +257,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.insets.left = offset;
         this.header.setLeftInset(offset);
+	    header.setValues(0f,.5f,1f);
         setBackground(Color.white);
         Listener listener = new Listener();
         addMouseListener(listener);
@@ -291,6 +292,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
 	    this.samplesOrder = samplesOrder;
 	    this.isDrawAnnotations = drawAnnotations;
 	    this.header = header;
+	    header.setValues(0f,.5f,1f);
 
 	    setBackground(Color.white);
 	    
@@ -438,8 +440,8 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
         else
             haveColorBar = false;
         updateSize();        
-        this.posColorImage = menu.getPositiveGradientImage();
-        this.negColorImage = menu.getNegativeGradientImage();
+        this.posColorImage = createGradientImage(Color.black, Color.red);
+        this.negColorImage = createGradientImage(Color.blue, Color.black);
         this.useDoubleGradient = menu.getUseDoubleGradient();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.header.setUseDoubleGradient(useDoubleGradient);
@@ -471,8 +473,8 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
         }
         header.updateSizes(header.getSize().width, elementSize.width);
         updateSize();
-        this.posColorImage = menu.getPositiveGradientImage();
-        this.negColorImage = menu.getNegativeGradientImage();
+        this.posColorImage = createGradientImage(Color.black, Color.red);
+        this.negColorImage = createGradientImage(Color.blue, Color.black);
         this.useDoubleGradient = menu.getUseDoubleGradient();
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.header.setUseDoubleGradient(useDoubleGradient);
@@ -947,13 +949,17 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
 	            	}
                 int annY;
                 String[]annot=new String[] {""};
-                int fieldNamesLength=data.getFieldNames().length-1;
+                int fieldNamesLength=data.getFieldNames().length-1; 
+                String[] names = new String[experiment.getNumberOfGenes()];
+                for (int i=0; i<names.length; i++){
+                    names[this.clusters[0][i]] = data.getSampleName(i);
+                }
                 for (int row=top; row<bottom; row++) {
                     if (labelIndex >= 0) {
                     	annot = data.getElementAnnotation(getMultipleArrayDataRow(row), data.getFieldNames()[labelIndex]);
                     }
                     annY = (row+1)*elementSize.height;
-                    g.drawString(annot[0], uniqX + insets.left, annY-1);
+                    g.drawString(names[row], uniqX + insets.left, annY-1);
                 }
             }
         }
@@ -1323,13 +1329,13 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
                 if (isShowRects)
                 	drawClusterRectsAt(g, row, column, Color.gray);
                 framework.setStatusText(
-                		"Gene: "+
-                		data.getUniqueId(getMultipleArrayDataRow(row))
-                		+" Sample: "+
+                		"Sample #1: "+
+                		data.getSampleName(experiment.getSampleIndex(getColumn(row)))
+                		+" Sample #2: "+
                 		data.getSampleName(experiment.getSampleIndex(getColumn(column)))
-                		+" Value: "+
+                		+" Value: "+ (1f-
                 		experiment.get(getExperimentRow(row),
-                				getColumn(column)));
+                				getColumn(column))));
             }
             //mouse on different rectangle, but still on the map
             if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){

@@ -359,20 +359,28 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         root.add(new DefaultMutableTreeNode(new LeafInfo("Cophenetic Correlation Graph", new NMFPlotViewer(cophen, ccLabels))));
     }
     private void addWHFactors(DefaultMutableTreeNode root, int factorIndex) {
-        DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metagenes (W)");
+        DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metasamples (W)");
+        DefaultMutableTreeNode WGraphNode = new DefaultMutableTreeNode("Metasample graphs (W)");
         DefaultMutableTreeNode HNode = new DefaultMutableTreeNode("Metagenes (H)");
+        DefaultMutableTreeNode HGraphNode = new DefaultMutableTreeNode("Metagene graphs (H)");
         NMFFactorViewer wfv = new NMFFactorViewer(W[factorIndex]);
         for (int i=0; i<W[factorIndex].length; i++) {
         	WNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], wfv, new Integer(i))));
-//        	HNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], new NMFPlotViewer(W[factorIndex][i].A[0], framework.getData().getAllFilledAnnotationFields()))));
+        	WGraphNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], new NMFPlotViewer(W[factorIndex][i].transpose().A, framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[0])))));
         }
         NMFFactorViewer hfv = new NMFFactorViewer(H[factorIndex]);
+        String[] names = new String[H[factorIndex][0].getColumnDimension()];
+        for (int i=0; i<names.length; i++){
+            names[i] = data.getSampleName(i);
+        }
         for (int i=0; i<H[factorIndex].length; i++) {
         	HNode.add(new DefaultMutableTreeNode(new LeafInfo("H Factor "+(i+1) + ", cost = "+costs[factorIndex][i], hfv, new Integer(i))));
-        	HNode.add(new DefaultMutableTreeNode(new LeafInfo("H Factor "+(i+1) + ", cost = "+costs[factorIndex][i], new NMFPlotViewer(H[factorIndex][i].A[0], framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[0])))));
+        	HGraphNode.add(new DefaultMutableTreeNode(new LeafInfo("H Factor "+(i+1) + ", cost = "+costs[factorIndex][i], new NMFPlotViewer(H[factorIndex][i].A, names))));
         }
         root.add(WNode);
+        root.add(WGraphNode);
         root.add(HNode);
+        root.add(HGraphNode);
         
 		
 	}

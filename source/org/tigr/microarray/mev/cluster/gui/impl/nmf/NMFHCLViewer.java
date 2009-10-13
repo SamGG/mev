@@ -1426,15 +1426,15 @@ public class NMFHCLViewer extends JPanel implements IViewer {
             if (!e.isPopupTrigger()) {
                 return;
             }
-            int node = NMFHCLViewer.this.selectedCluster == null ? -1 : NMFHCLViewer.this.selectedCluster.root;
-            setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
-            setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
-            //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
-            setEnableMenuItem(ROTATE_NODE_CMD, node >= 0);
-            setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
-            setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
-            setEnableMenuItem(SAVE_CLUSTER_CMD, NMFHCLViewer.this.selectedCluster != null && NMFHCLViewer.this.selectedCluster.root != -1);
-            popup.show(e.getComponent(), e.getX(), e.getY());
+//            int node = NMFHCLViewer.this.selectedCluster == null ? -1 : NMFHCLViewer.this.selectedCluster.root;
+//            setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
+//            setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
+//            //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
+//            setEnableMenuItem(ROTATE_NODE_CMD, node >= 0);
+//            setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
+//            setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
+//            setEnableMenuItem(SAVE_CLUSTER_CMD, NMFHCLViewer.this.selectedCluster != null && NMFHCLViewer.this.selectedCluster.root != -1);
+//            popup.show(e.getComponent(), e.getX(), e.getY());
         }
         
         
