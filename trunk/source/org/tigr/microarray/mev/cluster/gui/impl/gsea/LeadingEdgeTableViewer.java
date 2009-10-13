@@ -21,7 +21,6 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.GSEAURLLinkDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer.DefaultViewerTableModel;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 
 public class LeadingEdgeTableViewer extends TableViewer {

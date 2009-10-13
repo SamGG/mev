@@ -36,9 +36,14 @@ public class GSEATableViewer extends TableViewer implements Serializable {
 	private static final String SAVE_GSEA_TABLE_COMMAND = "save-gsea-table-command";
 	private static final String SAVE_PVALUES_TABLE_COMMAND ="save_pvalues_table_command";
 	private static final String STORE_CLUSTER_COMMAND="store_cluster_command";
-	protected static final String LINK_TO_URL_COMMAND = "link-to-url-command";
-	protected static final String CLEAR_ALL_COMMAND = "clear-all-cmd";
-	protected static final String SELECT_ALL_COMMAND = "select-all-cmd";
+	private static final String LINK_TO_URL_COMMAND = "link-to-url-command";
+	private static final String CLEAR_ALL_COMMAND = "clear-all-cmd";
+	private static final String SELECT_ALL_COMMAND = "select-all-cmd";
+	private static final String LAUNCH_EXPRESSION_GRAPH_COMMAND = "launch-expression-graph-command";
+	private static final String LAUNCH_CENTROID_GRAPH_COMMAND = "launch-centroid-graph-command";
+	private static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
+	private static final String LAUNCH_TEST_STATISTIC_GRAPH_COMMAND = "launch-test-statistic-graph-command";
+	private static final String LAUNCH_LEADING_EDGE_STATISTIC_GRAPH_COMMAND = "launch-leading-edge-statistic-graph-command";
 	 
 	
 	protected DefaultMutableTreeNode gseaRoot;
@@ -95,6 +100,39 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         menu.add(item);
         
         menu.addSeparator();
+        
+  JMenu launchMenu = new JMenu("Open Viewer");
+        
+        item = new JMenuItem("Expression Image");
+        item.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
+        item.addActionListener(listener);
+        launchMenu.add(item);
+        
+        item = new JMenuItem("Centroid Graph");
+        item.setActionCommand(LAUNCH_CENTROID_GRAPH_COMMAND);
+        item.addActionListener(listener);
+        launchMenu.add(item);
+        
+        item = new JMenuItem("Expression Graph");
+        item.setActionCommand(LAUNCH_EXPRESSION_GRAPH_COMMAND);
+        item.addActionListener(listener);
+        launchMenu.add(item);
+        
+        item = new JMenuItem("Leading Edge Graph");
+        item.setActionCommand(LAUNCH_LEADING_EDGE_STATISTIC_GRAPH_COMMAND);
+        item.addActionListener(listener);
+        launchMenu.add(item);
+        
+        item = new JMenuItem("Test Statstic Graph");
+        item.setActionCommand(LAUNCH_TEST_STATISTIC_GRAPH_COMMAND);
+        item.addActionListener(listener);
+        launchMenu.add(item);
+        
+        
+        menu.add(launchMenu);
+        
+        menu.addSeparator();
+        
       
         
         item = new JMenuItem("Save pValues Table");
@@ -127,6 +165,46 @@ public class GSEATableViewer extends TableViewer implements Serializable {
                  
         return menu;
     }
+    
+    
+    /** Handles opening cluster viewers.
+     */
+    protected void onOpenViewer(String viewerType){
+        int index = this.table.getSelectedRow();
+       
+        if(index == -1 || gseaRoot == null)
+            return; 
+
+        //This is the node marked "Expression Viewers"
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)gseaRoot.getChildAt(2);
+
+    
+        
+       index = new Integer((String)this.table.getValueAt(index, 0)) -1;
+        
+        if(node.getChildCount() < index) {
+            return;
+        }
+        
+        //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
+       node = (DefaultMutableTreeNode)(node.getChildAt(index));
+       
+        if(viewerType.equals("expression image")){
+            node = (DefaultMutableTreeNode)(node.getChildAt(0));
+        } else if(viewerType.equals("centroid graph")){
+            node = (DefaultMutableTreeNode)(node.getChildAt(1));
+        } else if(viewerType.equals("expression graph")){
+            node = (DefaultMutableTreeNode)(node.getChildAt(2));
+        }else if(viewerType.equals("Test statistics graph")){
+            node = (DefaultMutableTreeNode)(node.getChildAt(3));
+        }else if(viewerType.equals("leading edge graph")){
+            node = (DefaultMutableTreeNode)(node.getChildAt(5));
+        }
+        
+        if(framework != null)
+            framework.setTreeNode(node);
+    }
+    
     
     
     public void onSelected(IFramework framework) {
@@ -276,6 +354,8 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         
         public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
+            
+            
             if(command.equals(LINK_TO_URL_COMMAND)){
               linkToURL2();
             } else if(command.equals(STORE_CLUSTER_COMMAND)){
@@ -286,7 +366,25 @@ public class GSEATableViewer extends TableViewer implements Serializable {
             	table.clearSelection();
             }else if(command.equals(SELECT_ALL_COMMAND)){
             	table.selectAll();
+            }else if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
+                onOpenViewer("expression image");
+            } else if(command.equals(LAUNCH_CENTROID_GRAPH_COMMAND)){
+                onOpenViewer("centroid graph");
+            } else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
+                onOpenViewer("expression graph");
+            }else if(command.equals(LAUNCH_LEADING_EDGE_STATISTIC_GRAPH_COMMAND)){
+                onOpenViewer("leading edge graph");
+            }else if(command.equals(LAUNCH_TEST_STATISTIC_GRAPH_COMMAND)){
+                onOpenViewer("Test statistics graph");
             }
+            
+            
+            
+            
+            
+            
+            
+            
         }
         
         public void mousePressed(MouseEvent me){
