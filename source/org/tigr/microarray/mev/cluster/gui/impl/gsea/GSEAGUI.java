@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Vector;
 
@@ -175,8 +176,8 @@ public class GSEAGUI implements IClusterGUI {
 			logger.append("Algorithm execution begins... \n");
 			AlgorithmData result = gsea.execute(algData);	
 			logger.append("Algorithm excecution ends...\n");
-			logger.dispose();
-			
+		
+			logger.append("Generating Viewers...\n");
 			//Populate the test statistic in to gene sets
 			geneset=(new GSEAUtils()).populateTestStatistic(gData, geneset, algData.getGeneMatrix("lmPerGene-coefficients"));
 			
@@ -219,7 +220,8 @@ public class GSEAGUI implements IClusterGUI {
 	            resultNode = createEmptyResultNode(result);
 			else
 			resultNode = createResultNode(result, idata, null);
-			
+			logger.append("Generating Viewers ends...\n");
+			logger.dispose();
 			return resultNode;	
 		
 		}
@@ -322,10 +324,10 @@ public class GSEAGUI implements IClusterGUI {
 	
 		float [][] means = result.getMatrix("cluster-means").A;
     	float [][] vars = result.getMatrix("cluster-variances").A;
+    	String[]header1= {"Gene set", "Incremental J-G score"};
+    	String[]header2= {"Gene set", "Test Statistic"};
         centroidViewer.setMeans(means);
         centroidViewer.setVariances(vars);
-
-		
 		DefaultMutableTreeNode clusterNode;
 		
 		Vector gene_set_names=result.getVector("gene-set-names");
@@ -337,9 +339,13 @@ public class GSEAGUI implements IClusterGUI {
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names.get(i))))));
-	           // System.out.println("Gene set name:"+gene_set_names.get(i)); 
+	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names.get(i))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));
+	            
+	            // System.out.println("Gene set name:"+gene_set_names.get(i)); 
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("J-G statistic for incremental gene subsets", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names.get(i))))));
-	        
+	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1, new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names.get(i))).getLeadingEdgeGenes());
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading edge genes", tabViewer)));
 	            node.add(clusterNode);
 	        }
 	 	 		
@@ -494,6 +500,26 @@ public class GSEAGUI implements IClusterGUI {
    public HashMap<String,LinkedHashMap<String, Float> > getOrderedTestStats(){
 	   return orderedTestStats;
    }
+   
+   
+   public String[][]getOrderedTestStatasStringArray(LinkedHashMap<String, Float>testStat){
+	   String[][]orderedTStat=new String[testStat.size()][2];
+	   Iterator<String> temp=testStat.keySet().iterator();
+	   int index=0;
+	   
+	   while(temp.hasNext()) {
+		   String key=temp.next();
+		   orderedTStat[index][0]=key;
+		   orderedTStat[index][1]=Float.toString(testStat.get(key));
+		   index=index+1;
+		
+		   
+	   }
+	
+	   return orderedTStat;
+	   
+   }
+   
    
    public HashMap<String,LinkedHashMap<String, Float> > getDescendingSortedTStats(){
 	   return descendingSortedTStats;

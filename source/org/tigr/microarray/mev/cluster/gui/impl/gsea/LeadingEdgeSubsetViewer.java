@@ -426,13 +426,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 					
 					g.drawLine(xcoord,ycoord,xcoord,ycoord);
 					
-//					if(tStat==getmaxYValue()) {
-//						g.setColor(Color.RED);
-//						g.setStroke(dashed);
-//						g.drawLine(xcoord,ycoord,xcoord,(top+height));
-//						//g.drawString(index + " Genes make up your leading edge set", left + 10, top + 40);
-//					}
-					
+		
 					}
 					
 					
@@ -557,6 +551,28 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
     	return maxWidth;
     }
     
+    public String[][] getLeadingEdgeGenes() {
+    	String[][] leadinggenes=new String[getPeakGeneIndex()+1][2];
+    	Iterator<String> it=sorted.keySet().iterator();
+    	for(int index=0; index<getPeakGeneIndex()+1; index++) {
+    		leadinggenes[index][0]=it.next();
+    		leadinggenes[index][1]=Float.toString(incrementalSum[index]);
+    		
+    	
+    		
+    	}
+    
+    	
+    	
+    	return leadinggenes;
+    	
+    }
+    
+    
+    
+    
+    
+    
 	public int[][] getClusters() {
 		// TODO Auto-generated method stub
 		return null;
@@ -657,10 +673,11 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 		
 	}
 	
+	
+	
 
     private class Listener implements ActionListener, MouseListener, MouseMotionListener{
-    	
-    	
+   	
     	
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
