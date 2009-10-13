@@ -330,21 +330,24 @@ public class GSEAGUI implements IClusterGUI {
         centroidViewer.setVariances(vars);
 		DefaultMutableTreeNode clusterNode;
 		
-		Vector gene_set_names=result.getVector("gene-set-names");
+	
 		
+		//Generate a 2 d string array from the over and under enriched linked hashmaps
+		Object[]gene_set_names=result.getMappings("over-enriched").keySet().toArray();
 		//Loop generates a folder for every gene set. Each folder/geneset has an experiment viewer, centroid viewer and table viewer
-		  for (int i=0; i<gene_set_names.size(); i++) {
-	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names.get(i));
+		  for (int i=0; i<gene_set_names.length; i++) {
+	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names[i]);
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names.get(i))))));
-	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names.get(i))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names[i])))));
+	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names[i])));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));
 	            
 	            // System.out.println("Gene set name:"+gene_set_names.get(i)); 
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("J-G statistic for incremental gene subsets", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names.get(i))))));
-	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1, new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names.get(i))).getLeadingEdgeGenes());
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("J-G statistic for incremental gene subsets", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])))));
+	            String[][] temp=new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])).getLeadingEdgeGenes();
+	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1,temp );
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading edge genes", tabViewer)));
 	            node.add(clusterNode);
 	        }
@@ -595,20 +598,21 @@ public class GSEAGUI implements IClusterGUI {
    	LinkedHashMap overenriched=result.getMappings("over-enriched");
    	LinkedHashMap underenriched=result.getMappings("under-enriched");
    	
-	String[][]pVals =new String[overenriched.size()][3];
+	String[][]pVals =new String[overenriched.size()][4];
    	
    	//Generate a 2 d string array from the over and under enriched linked hashmaps
 	Object[]gene_sets=overenriched.keySet().toArray();
    	
 	for(int i=0; i<overenriched.size(); i++){
-		pVals[i][0]=(String)gene_sets[i];
-		pVals[i][1]=((Float)underenriched.get(gene_sets[i])).toString();
-		pVals[i][2]=((Float)overenriched.get(gene_sets[i])).toString();
+		pVals[i][0]=Integer.toString(i+1);
+		pVals[i][1]=(String)gene_sets[i];
+		pVals[i][2]=((Float)underenriched.get(gene_sets[i])).toString();
+		pVals[i][3]=((Float)overenriched.get(gene_sets[i])).toString();
    	}
    	
    	
    
-   	String[]headernames={"Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
+   	String[]headernames={"Index", "Gene Set", "Lower-pValues (Under-Enriched)", "Upper-pValues (Over-Enriched)"};
    	
    	
    //Display Significant Gene Sets
@@ -627,6 +631,7 @@ public class GSEAGUI implements IClusterGUI {
    	}
     String[]header1={"Excluded Gene Sets"};  	
   	tabViewer = new GSEATableViewer(header1,_dummy);
+ 
    	node.add(new DefaultMutableTreeNode(new LeafInfo("Excluded Gene Sets", tabViewer, new Integer(0))));
  
    	
@@ -640,7 +645,8 @@ public class GSEAGUI implements IClusterGUI {
    	}
    	
    	
-    tabViewer=new GSEATableViewer(header2,geneToProbeMapping, root, experiment);
+    //tabViewer=new GSEATableViewer(header2,geneToProbeMapping, root, experiment);
+   	tabViewer=new GSEATableViewer(header2,geneToProbeMapping);
     node.add(new DefaultMutableTreeNode(new LeafInfo("Probe to Gene Mapping", tabViewer, new Integer(0))));
    	
    	

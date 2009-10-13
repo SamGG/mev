@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
+import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 
 public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
@@ -377,9 +378,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
             
          });
          
-         final JFileChooser fc = new JFileChooser();
-         fc.setCurrentDirectory(new File("Data"));
-         
+         final JFileChooser fc = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+      
          saveButton.addActionListener(new ActionListener(){
              public void actionPerformed(ActionEvent evt) {
              	saveAssignments();
