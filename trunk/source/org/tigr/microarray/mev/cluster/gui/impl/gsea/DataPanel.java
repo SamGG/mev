@@ -822,7 +822,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	private void saveAssignments() {
 		
 		File file;		
-		JFileChooser fileChooser = new JFileChooser("./data");	
+		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);	
 		
 		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();			
@@ -922,7 +922,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
    		 */
    		
    		File file;		
-   		JFileChooser fileChooser = new JFileChooser("./data");
+   		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
    		
    		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
    		
