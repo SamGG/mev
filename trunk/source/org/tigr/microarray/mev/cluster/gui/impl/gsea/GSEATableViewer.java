@@ -206,7 +206,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
      }
     
     
-    /** Saves the ease table to file
+    /** Saves the pvalues table to file
      */
     protected void onSavepValuesTable(){
         JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
