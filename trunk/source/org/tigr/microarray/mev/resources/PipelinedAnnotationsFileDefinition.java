@@ -102,7 +102,7 @@ public class PipelinedAnnotationsFileDefinition extends ISupportFileDefinition {
 			}
 			return orgToChipMap;
 		} catch (NoSuchElementException nsee) {
-			throw new IOException(nsee);
+			throw new IOException(nsee.getMessage());
 		}
 	}
 }
