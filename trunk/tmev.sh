@@ -23,11 +23,41 @@ do
 # make sure CLASSPATH is defined before we reference it 
 if [ -z "$CLASSPATH" ] 
 then 
-CLASSPATH=$jar 
+CLASSPATH=.:$jar 
 else 
 CLASSPATH=$jar:$CLASSPATH 
 fi 
 done 
 export CLASSPATH
 
-java -Xss1M -Xmx1024m -cp $CLASSPATH org.tigr.microarray.mev.TMEV
+#************************************
+#
+# R specific variables
+#
+#************************************
+CurrDIR=`pwd`
+echo ${CurrDIR}
+
+# Set RHOME
+R_HOME=${CurrDIR}/R-2.9.1
+
+R_SHARE_DIR=${CurrDIR}/R-2.9.1/share
+export R_SHARE_DIR
+R_INCLUDE_DIR=${CurrDIR}/R-2.9.1/include
+export R_INCLUDE_DIR
+
+# For R shared libs
+PATH=${PATH}:${CurrDIR}/R-2.9.1/bin:${CurrDIR}/R-2.9.1/lib
+JRI_LD_PATH=${CurrDIR}/lib:${CurrDIR}/R-2.9.1/lib
+if test -z "$LD_LIBRARY_PATH"; then
+  LD_LIBRARY_PATH=$JRI_LD_PATH
+else
+  LD_LIBRARY_PATH=$JRI_LD_PATH:$LD_LIBRARY_PATH
+fi
+export R_HOME
+# echo R HOME: ${R_HOME}
+export LD_LIBRARY_PATH
+# echo LD LIBRARY PATH: ${LD_LIBRARY_PATH}
+export PATH
+
+java -Djava.library.path=lib -Xss1M -Xmx1024m -cp $CLASSPATH org.tigr.microarray.mev.TMEV

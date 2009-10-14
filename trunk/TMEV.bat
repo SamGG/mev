@@ -17,6 +17,14 @@ All rights reserved.
 ***********************************************************************
 
 :CMD
+set CurrDIR=%cd%
+echo %CurrDIR%
+
+REM Set RHOME
+set R_HOME=%CurrDIR%\R-2.9.1
+
+REM For R Dlls
+set PATH=%PATH%;%CurrDIR%\R-2.9.1\bin;%CurrDIR%\R-2.9.1\lib
 
 set ClassPath=lib/*;
-java -Xss1M -Xmx512m -cp %ClassPath% org.tigr.microarray.mev.TMEV
+java -Djava.library.path=lib -Xss1M -Xmx512m -cp %ClassPath% org.tigr.microarray.mev.TMEV
