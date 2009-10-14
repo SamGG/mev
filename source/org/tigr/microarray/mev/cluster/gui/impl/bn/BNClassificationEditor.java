@@ -9,9 +9,7 @@
  *
  */
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,34 +19,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -58,20 +42,9 @@ import javax.swing.table.TableColumnModel;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cgh.CGHGuiObj.CharmDialogs.ExampleFileFilter;
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif.PrepareXMLBifModule;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.util.StringSplitter;
-import org.xml.sax.SAXException;
-
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.BayesNet;
-import weka.estimators.Estimator;
-import weka.gui.GUIChooser;
-import weka.classifiers.bayes.net.search.SearchAlgorithm;
-import weka.classifiers.bayes.net.estimate.BayesNetEstimator;
 /**
  *
  */
@@ -84,7 +57,7 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 	private boolean stopHere = true;
 	private boolean nextPressed = false;
 	private boolean incompatible = false;
-	public static GUIChooser m_chooser;
+//	public static GUIChooser m_chooser;
 	
 	private JTable BNClassTable;
 	private BNClassTableModel kModel;
