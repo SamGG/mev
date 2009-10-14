@@ -37,7 +37,11 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 
 public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable {
     
-    private JComponent content;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JComponent content;
     float[][] data;
     String[] labels;
     int[] samplesOrder;
@@ -114,7 +118,11 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
      */
     private class Plot extends JPanel {
 
-    	protected JPopupMenu popup;
+    	/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		protected JPopupMenu popup;
 	    double maxValue = 1.0;
 	    double minValue = 0.7;
 	    Color[] colors;

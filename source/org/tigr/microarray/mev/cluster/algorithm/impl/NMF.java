@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NMF extends AbstractAlgorithm{
 	private static boolean standalone = false;
@@ -47,6 +48,8 @@ public class NMF extends AbstractAlgorithm{
 	int numSamples, numGenes;
 	float[] costs = new float[numRuns];
 	float[] costsIndex = new float[numRuns];
+	float fractionDone;
+	float fractionUnit;
 	boolean divergence = true;
 	boolean doSamples = true;
 	boolean expScale = false;
@@ -73,6 +76,8 @@ public class NMF extends AbstractAlgorithm{
     	AlgorithmParameters map = data.getParams();
     	expMatrix = data.getMatrix("experiment");
     	r = map.getInt("r-value");
+    	fractionDone = ((float)map.getInt("r-value")-(float)map.getInt("min- r-value"))/(1f+(float)map.getInt("max- r-value")-(float)map.getInt("min- r-value"));
+    	fractionUnit = ((float)1)/(1f+(float)map.getInt("max- r-value")-(float)map.getInt("min- r-value"));
     	numRuns = map.getInt("runs");
     	maxIterations = map.getInt("iterations");
     	divergence = map.getBoolean("divergence");
@@ -355,8 +360,6 @@ public class NMF extends AbstractAlgorithm{
 		float costBest = Float.POSITIVE_INFINITY;
 		
 		for (int runcount=0; runcount<numRuns; runcount++){
-			if(!standalone)
-				event.setDescription("Evaluating "+r+" factors, run "+ (runcount +1)+" of " + numRuns);
             fireValueChanged(event);
     	    if (stop) 
     	    	return;
@@ -383,7 +386,7 @@ public class NMF extends AbstractAlgorithm{
 			float previousCost = Float.POSITIVE_INFINITY;
 			float cost=0;
 			for(int iter = 0; iter<maxIterations; iter++){
-    			updateProgressBar(iter);
+    			updateProgressBar(iter,runcount);
 				if (!divergence){//use euclidean
     				FloatMatrix WtV = Wt.times(V);
     				FloatMatrix WtWH = Wt.times(W[runcount]).times(H[runcount]);
@@ -523,12 +526,13 @@ public class NMF extends AbstractAlgorithm{
 		}
 	}
 
-	public void updateProgressBar(int iter){
+	public void updateProgressBar(int iter, int run){
 		if (standalone)
 			return;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue((100*iter)/(maxIterations));
+		event.setIntValue((int)(100*(fractionDone + fractionUnit*((float)run/(float)numRuns) + ((float)fractionUnit/(float)numRuns)*((float)iter)/((float)maxIterations))));
     	fireValueChanged(event);
+		event.setDescription("Evaluating "+r+" factors;  run: "+ (run +1)+" of " + numRuns+";  iteration: "+iter);
 	}
 	private void printMat(FloatMatrix fm){
 		System.out.println("start  " + fm);
@@ -547,22 +551,17 @@ public class NMF extends AbstractAlgorithm{
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Random rand = new Random();
+		Random rand2 = new Random(123);
+		System.out.println(rand.nextDouble());
+		System.out.println(rand.nextDouble());
+		System.out.println(rand.nextDouble());
+		System.out.println(rand2.nextDouble());
+		System.out.println(rand2.nextDouble());
+		System.out.println(rand2.nextDouble());
+		if (1==1)
+			return;
 		standalone = true;
-
-//		float [][] v = 
-//			{	{	1,	2,	3,	4,	5,	},
-//				{	6,	7,	8,	9,	10,	},
-//				{	2,	2,	3,	4,	5,	},
-//				{	1,	8,	4,	3,	8,	},
-//				{	3,	2,	3,	4,	5,	},
-//				{	1,	3,	3,	2,	5,	},
-//				{	1,	8,	4,	3,	8,	},
-//				{	1,	8,	4,	3,	8,	},
-//				{	1,	8,	4,	3,	8,	},
-//				{	7,	2,	1,	4,	2,	},
-//				{	1,	2,	6,	4,	2,	},
-//				{	4,	3,	1,	5,	1,	}
-//			};
 		float [][] v1 = 
 			{	{	16,	32	,72		,40	},
 				{	28,	56	,126 	,70	},
