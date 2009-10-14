@@ -31,7 +31,7 @@ public class HTTPDownloader extends FileDownloader {
 			conn.setReadTimeout(100000);
 			return true;
 		} catch (NullPointerException npe) {
-			throw new IOException(npe);
+			throw new IOException(npe.getMessage());
 		} finally {
 			//progress.dispose();
 		}

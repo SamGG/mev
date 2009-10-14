@@ -79,9 +79,9 @@ public class FTPFileDownloader extends FileDownloader {
 				}
 			}
 		} catch (FtpException ftpe) {
-			throw new IOException(ftpe);
+			throw new IOException(ftpe.getMessage());
 		} catch (NullPointerException npe) {
-			throw new IOException(npe);
+			throw new IOException(npe.getMessage());
 		}finally {
 			disposeProgress1=true;
 			if (progress!=null){
