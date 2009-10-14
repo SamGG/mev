@@ -90,8 +90,6 @@ public class NMF extends AbstractAlgorithm{
     	    throw new AlgorithmException("Input data is absent.");
     	}
     	event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Initializing...");
-    	event.setId(AlgorithmEvent.PROGRESS_VALUE);
-    	event.setIntValue(0);
     	fireValueChanged(event);
 
     	W = new FloatMatrix[numRuns];
@@ -373,7 +371,7 @@ public class NMF extends AbstractAlgorithm{
 			//seeding random matrices, creating corresponding transposes for ease of calculation
 			for (int i=0; i<numGenes; i++){
 				for (int j=0; j<r; j++){
-					w[i][j] = random.nextFloat();
+					w[i][j] = random.nextFloat()*16;
 				}
 			}
 			for (int i=0; i<numSamples; i++){
