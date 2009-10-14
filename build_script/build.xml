@@ -21,10 +21,8 @@
     <property name="plugins.dir" location="${home.dir}/plugins"/>
 	<property name="java.target.version" value="1.5"/>
 	<property name="package.dir" location="${home.dir}/deploy"/>
-	
-
-
-
+	<property name="jri.dir" location="${source.dir}/org/tigr/rhook"/>
+	<property name="r.binaries" value="RBinaries"/>
 
     <!-- This path element contains jar files to support module compilation -->
     <path id="module.build.class.path">
@@ -72,6 +70,7 @@
     <property name="NONPAR" value="y"/>
 	<property name="GSEA" value="y"/>
     <property name="BETR" value="y"/>
+	<property name="LIMMA" value="y"/>
     <property name="RP" value="y"/>
     <property name="NMF" value="y"/>
     <property name="SVM" value="y"/>
@@ -119,7 +118,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -141,7 +140,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -253,6 +252,13 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				mev/cluster/algorithm/impl/util
     -->
     <target name="algorithm-support" depends="jar-util">
+    	<javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${jri.dir}" destdir="${dest.dir}">
+    	    <include name="*.java"/>  
+    		<classpath>
+                <pathelement location="${lib.dir}/JRI.jar"/>
+    			<!-- <pathelement location="${lib.dir}/swing-layout-1.0.3.jar"/>  -->
+    		</classpath>
+    	</javac>
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}" destdir="${dest.dir}">
             <include name="*.java"/>            
         </javac>
@@ -276,10 +282,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     <target name="jar-algorithm-support" depends="algorithm-support">
         <jar destfile="${lib.dir}/mev-algorithm-support.jar"
              basedir="${dest.dir}"
-	       includes="org/tigr/microarray/mev/cluster/*.class,
-                       org/tigr/microarray/mev/cluster/algorithm/*.class,
-	                 org/tigr/microarray/mev/cluster/algorithm/impl/*.class,            
-	                 org/tigr/microarray/mev/cluster/algorithm/impl/util/*.class"            
+	       includes="org/tigr/rhook/*.class,
+    				org/tigr/microarray/mev/cluster/*.class,
+                   	org/tigr/microarray/mev/cluster/algorithm/*.class,
+                 	org/tigr/microarray/mev/cluster/algorithm/impl/*.class,            
+                 	org/tigr/microarray/mev/cluster/algorithm/impl/util/*.class"            
         /> 
     </target>
     
@@ -326,9 +333,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			mev/cluster/gui/impl/util/*.java, 
 			mev/cluster/gui/*.java,
 			mev/cluster/clusterUtil/**, 
-			mev/annotation/**, 
-			mev/resources/**, 
-			mev/gaggle/**, 
+			mev/microarray/annotation/**, 
+			mev/microarray/resources/**, 
 			mev/cluster/gui/helpers/**">
         	
             <classpath>
@@ -364,6 +370,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/goose.jar" />
 				<pathelement location="${lib.dir}/tar.jar" />
             	<pathelement location="${lib.dir}/magetab-parser.jar" />
+            	
+            	<pathelement location="${lib.dir}/JRI.jar" />
             </classpath>	    
         </javac>
         <!-- Copy html files from source to dest directory so they can
@@ -1266,9 +1274,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         </propertyfile>
     </target>
 
-    <target name="RP" depends="RP-GUI" if="RP">
+	<target name="LIMMA" depends="LIMMA-GUI" if="LIMMA">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-            <include name="RP.java"/>
+            <include name="LIMMA.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
 
@@ -1278,30 +1286,30 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
-                <pathelement location="${lib.dir}/mev-base.jar"/>            
+                <pathelement location="${lib.dir}/mev-base.jar"/>   
+            	<pathelement location="${lib.dir}/JRI.jar"/>
             </classpath>
 	  </javac>
 	  <propertyfile file="${alg.properties.file}">
-            <entry key="RP" value="org.tigr.microarray.mev.cluster.algorithm.impl.RP"/>
-        </propertyfile>
-    </target>
-
-    <target name="RP-GUI">
-        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
+            <entry key="LIMMA" value="org.tigr.microarray.mev.cluster.algorithm.impl.LIMMA"/>
+      </propertyfile>
+	</target>
+	
+	<target name="LIMMA-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/limma" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
-	  </javac>
+	    </javac>
 	  <propertyfile file="${gui.properties.file}">
-		<entry key="gui.names" value="RP:" operation="+"/>
-            <entry key="RP.name" value="RP"/>
-            <entry key="RP.class" value="org.tigr.microarray.mev.cluster.gui.impl.rp.RPGUI"/>
-	  	<entry key="RP.category" value="${STATISTICS}"/> 
-	  	<entry key="RP.smallIcon" value="analysis16.gif"/>
-            <entry key="RP.largeIcon" value="RP_button.gif"/>
-            <entry key="RP.tooltip" value="Rank Products"/>
-        </propertyfile>
-    </target>
-
-
+		<entry key="gui.names" value="LIMMA:" operation="+"/>
+            <entry key="LIMMA.name" value="LIMMA"/>
+            <entry key="LIMMA.class" value="org.tigr.microarray.mev.cluster.gui.impl.limma.LIMMAGUI"/>
+	  	<entry key="LIMMA.category" value="${STATISTICS}"/> 
+	  	<entry key="LIMMA.smallIcon" value="analysis16.gif"/>
+            <entry key="LIMMA.largeIcon" value="LIMMA1.gif"/>
+            <entry key="LIMMA.tooltip" value="Linear Models for Microarray Data"/>
+      </propertyfile>
+	</target>
+	
     <target name="NMF" depends="NMF-GUI" if="NMF">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="NMF.java"/>
@@ -1336,6 +1344,41 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             <entry key="NMF.tooltip" value="Non-Negative Matrix Factorization"/>
         </propertyfile>
     </target>
+	
+	<target name="RP" depends="RP-GUI" if="RP">
+	        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+	            <include name="RP.java"/>
+	            <classpath>
+	                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+	                <!-- jars to support module compilation -->
+	                <pathelement location="${lib.dir}/mev-util.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-base.jar"/>            
+	            </classpath>
+		  </javac>
+		  <propertyfile file="${alg.properties.file}">
+	            <entry key="RP" value="org.tigr.microarray.mev.cluster.algorithm.impl.RP"/>
+	        </propertyfile>
+	    </target>
+
+	    <target name="RP-GUI">
+	        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
+	            <classpath refid="module.build.class.path"/>
+		  </javac>
+		  <propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="RP:" operation="+"/>
+	            <entry key="RP.name" value="RP"/>
+	            <entry key="RP.class" value="org.tigr.microarray.mev.cluster.gui.impl.rp.RPGUI"/>
+		  	<entry key="RP.category" value="${STATISTICS}"/> 
+		  	<entry key="RP.smallIcon" value="analysis16.gif"/>
+	            <entry key="RP.largeIcon" value="RP_button.gif"/>
+	            <entry key="RP.tooltip" value="Rank Products"/>
+	        </propertyfile>
+	</target>
 	
     <target name="SVM" depends="SVM-GUI" if="SVM">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
@@ -1858,9 +1901,15 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 	</target>
 	
-	<!-- builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
-	Requires that all user docs be converted to .pdf already, and in the user_docs directory -->
-	<target name="build-package" depends="clean, build-all">
+	<!-- 
+		 Builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
+		 Requires that all user docs be converted to .pdf already, and in the user_docs directory
+	
+		 NOTE: This is now a legacy Target
+		 	   Using this will not include any JRI specific components.
+		 	   Use this ONLY if you want a quick build w/o JRI support.	 
+	-->
+	<target name="build-package-no-r" depends="clean, build-all">
 
 		
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
@@ -1888,7 +1937,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
 			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
 		</copy>
-
 		
 		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
@@ -1958,6 +2006,386 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		-->
 		
 		<!-- Build WebStart distribution -->
+	</target>
+	
+	<!-- 
+		 Target to build all release bundles for all OS and all 
+		 architecture. 
+		 
+		 Compiles source only once.
+		 
+		 Requires R windows binaries at this locations:
+		 	${home.dir}/${r.binaries}/R-2.9.1_win
+		 	${home.dir}/${r.binaries}/R-2.9.1_linux32
+		 	${home.dir}/${r.binaries}/R-2.9.1_linux64
+		 (ftp to): ${home.dir}/${r.binaries}/  
+		 	then unzip each
+		 
+		 External R Binary Source Locations (ftp from):
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_win.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux32.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
+	-->
+	<target name="build-package-all-os-arch" depends="clean, build-all">
+		<antcall target="build-package-win"/>
+		<antcall target="build-package-linux32"/>
+		<antcall target="build-package-linux64"/>
+	</target>
+	
+	<!--
+		 Target to build Windows release bundle only.
+		 Cleans and compiles from scratch
+		 
+		 Requires R windows binary at this location:
+		 	${home.dir}/${r.binaries}/R-2.9.1_win
+		 (ftp to): ${home.dir}/${r.binaries}/  
+		 	then unzip
+		 
+		 External R Binary Source Location:
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_win.zip
+	-->
+	<target name="build-package-win-alone" depends="clean, build-all">
+	  <antcall target="build-package-win"/>
+	</target>
+
+	<!-- 
+		 Builds distributable zipfiles for windows, mac, linux, plus a source zipfile.
+		 Requires that all user docs be converted to .pdf already, 
+		 and in the user_docs directory.
+		 
+		 NOT stand-alone. Support target for:
+		 	build-package-all-os-arch
+		 	build-package-win-alone
+	-->
+	<target name="build-package-win" >
+
+		<echo message="Building Windows Package"/>
+		
+		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+
+		<!-- Not deleting file temp soln -->
+		<!-- 
+		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+		-->
+		
+		<echo message="Please be sure that all user documentation to be included in the package
+		has been converted to pdf and placed in the user_docs directory. "/>
+		
+		<mkdir dir="${package.dir}"/>
+		
+		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
+		<property name="mev_version.dir" value="MeV_${version}"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}"/>
+
+		<!-- Make dir for RPackages -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
+		<!-- Make dir for R Binaries -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/documentation">
+			<fileset dir="${home.dir}/user_docs/">
+				<include name="*.pdf"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
+		</copy>
+		
+		<!-- OS/Arch dependent files, if they exist, before next packaging -->
+		<delete includeemptydirs="true">
+			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.dll/" />
+		</delete>
+		
+		<!-- Copy RHook files from win_distribution_support/lib -->
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/win_distribution_support/lib/" >
+				<exclude name=".svn"/> 
+			</fileset>
+		</copy>
+		
+		<!-- Copy RHook files from win_distribution_support/RPackages -->
+		<copy todir="${package.dir}/${mev_version.dir}/RPackages">
+			<fileset dir="${home.dir}/win_distribution_support/RPackages/" >
+				<exclude name=".svn"/> 
+			</fileset>
+		</copy>
+		
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_win -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_win/" />
+		</copy>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
+			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
+		</copy>
+		
+		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
+			
+		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
+		<copy todir="${package.dir}/${mev_version.dir}/data">
+			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
+		</copy>
+		
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_win.zip"
+			basedir="${package.dir}"
+			>
+			<include name="${mev_version.dir}/data/**"/>
+			<include name="${mev_version.dir}/documentation/**"/>
+			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/RPackages/**"/>
+			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/artistic_license.txt"/>
+			<include name="${mev_version.dir}/TMEV.bat"/>
+			<exclude name=".svn"/>
+		</zip>
+	</target>
+	
+	<!--
+		 Target to build Linux 32 release bundle only.
+		 Cleans and compiles from scratch
+		 
+		 Requires R Linux 32 binary at this location:
+		 	${home.dir}/${r.binaries}/R-2.9.1_linux32
+		 (ftp to): ${home.dir}/${r.binaries}/  
+		 	then unzip
+		 
+		 External R Binary Source Location:
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux32.zip
+	-->
+	<target name="build-package-linux32-alone" depends="clean, build-all">
+		<antcall target="build-package-linux32"/>
+	</target>
+	
+	<!-- 
+		 Builds distributable zipfiles for linux 32, plus a source zipfile.
+		 Requires that all user docs be converted to .pdf already, 
+		 and in the user_docs directory.
+		 
+		 NOT stand-alone. Support target for:
+		 	build-package-all-os-arch
+		 	build-package-linux32
+	-->
+	<target name="build-package-linux32">
+
+		<echo message="Building Linux32 Package"/>
+		
+		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+
+		<!-- Not deleting file temp soln -->
+		<!-- 
+		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+		-->
+		
+		<echo message="Please be sure that all user documentation to be included in the package
+		has been converted to pdf and placed in the user_docs directory. "/>
+		
+		<mkdir dir="${package.dir}"/>
+		
+		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
+		<property name="mev_version.dir" value="MeV_${version}"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}"/>
+
+		<!-- Make dir for RPackages -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
+		<!-- Make dir for R Binaries -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+				
+		<copy todir="${package.dir}/${mev_version.dir}/documentation">
+			<fileset dir="${home.dir}/user_docs/">
+				<include name="*.pdf"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
+		</copy>
+		
+		<!-- OS/Arch dependent files, if they exist, before next packaging -->
+		<delete includeemptydirs="true">
+			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.dll/" />
+		</delete>
+		
+		<!-- Copy RHook files from win_distribution_support/lib -->
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/linux32_distribution_support/lib/" >
+				<exclude name=".svn"/> 
+			</fileset>
+		</copy>
+		
+		<!-- Copy RHook files from win_distribution_support/RPackages -->
+		<copy todir="${package.dir}/${mev_version.dir}/RPackages">
+			<fileset dir="${home.dir}/linux32_distribution_support/RPackages/" >
+				<exclude name=".svn"/> 
+		</fileset>
+		</copy>
+		
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_linux32 -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_linux32/" />
+		</copy>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
+			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
+		</copy>
+		
+		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
+			
+		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
+		<copy todir="${package.dir}/${mev_version.dir}/data">
+			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
+		</copy>
+		
+    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux32.zip"
+			basedir="${package.dir}"
+			>
+			<include name="${mev_version.dir}/data/**"/>
+			<include name="${mev_version.dir}/documentation/**"/>
+			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/RPackages/**"/>
+			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/artistic_license.txt"/>
+			<include name="${mev_version.dir}/tmev.sh"/>
+			<exclude name=".svn"/>
+		</zip>
+	</target>
+	
+	<!--
+		 Target to build Linux 64 release bundle only.
+		 Cleans and compiles from scratch
+		 
+		 Requires R Linux 64 binary at this location:
+		 	${home.dir}/${r.binaries}/R-2.9.1_linux62
+		 (ftp to): ${home.dir}/${r.binaries}/  
+		 	then unzip
+		 
+		 External R Binary Source Location (ftp from):
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
+	-->
+	<target name="build-package-linux64-alone" depends="clean, build-all">
+		<antcall target="build-package-linux64"/>
+	</target>
+	
+	<!-- 
+		 Builds distributable zipfiles for linux 64, plus a source zipfile.
+		 Requires that all user docs be converted to .pdf already, 
+		 and in the user_docs directory.
+	
+		 NOT stand-alone. Support target for:
+		 	build-package-all-os-arch
+		 	build-package-linux32 
+	-->
+	<target name="build-package-linux64">
+
+		<echo message="Building Linux64 Package"/>
+		
+		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+
+		<!-- Not deleting file temp soln -->
+		<!-- 
+		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+		-->
+		
+		<echo message="Please be sure that all user documentation to be included in the package
+		has been converted to pdf and placed in the user_docs directory. "/>
+		
+		<mkdir dir="${package.dir}"/>
+		
+		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
+		<property name="mev_version.dir" value="MeV_${version}"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}"/>
+
+		<!-- Make dir for RPackages -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
+		<!-- Make dir for R Binaries -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/documentation">
+			<fileset dir="${home.dir}/user_docs/">
+				<include name="*.pdf"/>
+			</fileset>
+		</copy>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
+		</copy>
+
+		<!-- OS/Arch dependent files, if they exist, before next packaging -->
+		<delete includeemptydirs="true">
+			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
+			<fileset file="${package.dir}/${mev_version.dir}/lib/*.dll/" />
+		</delete>
+		
+		<!-- Copy RHook files from win_distribution_support/lib -->
+		<copy todir="${package.dir}/${mev_version.dir}/lib">
+			<fileset dir="${home.dir}/linux64_distribution_support/lib/" >
+				<exclude name=".svn"/> 
+			</fileset>
+		</copy>
+		
+		<!-- Copy RHook files from win_distribution_support/RPackages -->
+		<copy todir="${package.dir}/${mev_version.dir}/RPackages">
+			<fileset dir="${home.dir}/linux64_distribution_support/RPackages/" >
+				<exclude name=".svn"/> 
+			</fileset>
+		</copy>
+		
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_linux64 -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_linux64/" />
+		</copy>
+		
+		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
+			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
+		</copy>
+		
+		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
+		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
+			
+		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
+		<copy todir="${package.dir}/${mev_version.dir}/data">
+			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
+		</copy>
+		
+    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux64.zip"
+			basedir="${package.dir}"
+			>
+			<include name="${mev_version.dir}/data/**"/>
+			<include name="${mev_version.dir}/documentation/**"/>
+			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/RPackages/**"/>
+			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/artistic_license.txt"/>
+			<include name="${mev_version.dir}/tmev.sh"/>
+			<exclude name=".svn"/>
+		</zip>
 	</target>
 	
 	<target name="webstart-package">	
