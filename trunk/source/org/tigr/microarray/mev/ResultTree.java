@@ -649,6 +649,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(expressionGraphIcon);
                 } else if(text.indexOf("Cophenetic Correlation Graph") != -1){
                     setIcon(expressionGraphIcon);
+                } else if(text.indexOf("H Factor")!=-1||text.indexOf("W Factor")!=-1){
+                    setIcon(expressionGraphIcon);
                 } else if(text.equals("Analysis Results")){
                     setIcon(analysisIcon);
                 } else if(text.equals("Cluster Manager")){
@@ -752,6 +754,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(expressionGraphIcon);
                     } else if(parentText.indexOf("Cophenetic Correlation Graph") != -1){
                         setIcon(expressionGraphIcon);
+                    } else if(parentText.indexOf("Metagene")!=-1&&parentText.indexOf("graphs")!=-1){
+                        setIcon(expressionGraphIcon);
+                    } else if(parentText.indexOf("Metagene")!=-1&&parentText.indexOf("graphs")==-1){
+                        setIcon(tableIcon);
                     } else if(parentText.indexOf("Cluster Manager") != -1){
                         setIcon(tableIcon);
                     } else if(parentText.indexOf("F-Ratio") != -1 ||
@@ -781,6 +787,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     } else if(text.equals("Expression Graph")){
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Cophenetic Correlation Graph")){
+                        setIcon(expressionGraphIcon);
+                    } else if(text.indexOf("H Factor")!=-1||text.indexOf("W Factor")!=-1){
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Centroid Graph")){
                         setIcon(centroidGraphIcon);

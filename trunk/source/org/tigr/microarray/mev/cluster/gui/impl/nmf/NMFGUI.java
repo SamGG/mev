@@ -143,6 +143,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             
             data.addMatrix("experiment", experiment.getMatrix());
             data.addParam("r-value", String.valueOf(rvalue));
+            data.addParam("min- r-value", String.valueOf(rvalue));
             data.addParam("max- r-value", String.valueOf(maxrvalue));
             data.addParam("runs", String.valueOf(numRuns));
             data.addParam("iterations", String.valueOf(maxIters));
@@ -359,8 +360,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         root.add(new DefaultMutableTreeNode(new LeafInfo("Cophenetic Correlation Graph", new NMFPlotViewer(cophen, ccLabels))));
     }
     private void addWHFactors(DefaultMutableTreeNode root, int factorIndex) {
-        DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metasamples (W)");
-        DefaultMutableTreeNode WGraphNode = new DefaultMutableTreeNode("Metasample graphs (W)");
+        DefaultMutableTreeNode WNode = new DefaultMutableTreeNode("Metagene expressions (W)");
+        DefaultMutableTreeNode WGraphNode = new DefaultMutableTreeNode("Metagene expression graphs (W)");
         DefaultMutableTreeNode HNode = new DefaultMutableTreeNode("Metagenes (H)");
         DefaultMutableTreeNode HGraphNode = new DefaultMutableTreeNode("Metagene graphs (H)");
         NMFFactorViewer wfv = new NMFFactorViewer(W[factorIndex]);
