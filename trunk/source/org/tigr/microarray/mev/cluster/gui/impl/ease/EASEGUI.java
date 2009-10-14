@@ -780,8 +780,8 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 annFileNode.add(new DefaultMutableTreeNode("File: "+annFiles[i]));
         fileNode.add(annFileNode);
         newNode.add(fileNode);
-        
-        if(this.isClusterAnalysis || !(params.getString("trim-option").equals("NO_TRIM"))){
+       
+        if(this.isClusterAnalysis || !(algorithmData.getTrimOption().equals("NO_TRIM"))){
             DefaultMutableTreeNode statNode = new DefaultMutableTreeNode("Stat Parameters");
             if(this.isClusterAnalysis){
                 statNode.add(new DefaultMutableTreeNode("Reported Statistic:"+  ((params.getBoolean("report-ease-score"))?"EASE Score":"Fisher's Exact")));
@@ -796,9 +796,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             }
             if(!(params.getString("trim-option").equals("NO_TRIM"))){
                 if(params.getString("trim-option").equals("N_TRIM"))
-                    statNode.add(new DefaultMutableTreeNode("Trim out if hit number < "+params.getInt("trim-value")));
+                    statNode.add(new DefaultMutableTreeNode("Trim out if hit number < "+ algorithmData.getTrimValue()));
                 else
-                    statNode.add(new DefaultMutableTreeNode("Trim out if hit percent < "+params.getInt("trim-value")));
+                    statNode.add(new DefaultMutableTreeNode("Trim out if hit percent < "+algorithmData.getTrimValue()));
             }
             newNode.add(statNode);
         }
