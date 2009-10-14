@@ -15,10 +15,8 @@ package org.tigr.microarray.mev.cluster.gui.impl.nmf;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.util.Vector;
 
 import javax.swing.JFrame;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -32,7 +30,6 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
-import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
@@ -42,15 +39,11 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.pca.PCInfoViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.pca.PlotViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.util.FloatMatrix;
 
@@ -84,6 +77,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     int rvalue, maxrvalue, numRuns, maxIters;
     boolean divergence, doSamples, storeClusters, multiClusters, expScale, adjustData;
+    long randomSeed;
     
     /** Creates new NMFGUI */
     public NMFGUI() {
@@ -130,6 +124,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             adjustData = initNMF.isAdjustData();
             storeClusters = initNMF.isStoreClusters();
             multiClusters = initNMF.isMultiRank();
+            randomSeed = initNMF.getRandomSeed();
             
             int numFactorRuns = 1 + maxrvalue - rvalue;
             connectivityMatrix = new Experiment[numFactorRuns];
@@ -152,6 +147,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             data.addParam("expScale", String.valueOf(expScale));
             data.addParam("adjustData", String.valueOf(adjustData));
             data.addParam("multiClusters", String.valueOf(multiClusters));
+            data.addParam("randomSeed", String.valueOf(randomSeed));
+            
             
             long start = System.currentTimeMillis();
 
@@ -489,6 +486,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         node.add(new DefaultMutableTreeNode("Maximum iterations: "+String.valueOf(maxIters)));
         node.add(new DefaultMutableTreeNode("Update rules and cost measurement: " + (divergence ? "Divergence" : "Euclidean distance")));
         node.add(new DefaultMutableTreeNode("Negative value removal: "+(adjustData ? (expScale ? "Exponentially scale" : "Subtract minimum") : "No adjustment")));
+        node.add(new DefaultMutableTreeNode("Random seed: " + (randomSeed==-1 ? "None" : randomSeed)));
         node.add(new DefaultMutableTreeNode("Cluster storage: " + this.storeClusters));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(((double)(info.time-1))/(double)1000)+" s"));
         root.add(node);
@@ -512,7 +510,6 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
                     progressBar.setDescription(event.getDescription());
                     break;
                 case AlgorithmEvent.MONITOR_VALUE:
-                    int value = event.getIntValue();
                     break;
             }
         }
