@@ -54,6 +54,7 @@ public class NMF extends AbstractAlgorithm{
 	boolean doSamples = true;
 	boolean expScale = false;
 	boolean adjustData = false;
+	long randomSeed = -1;
     FloatMatrix expMatrix;
 	FloatMatrix[] W = new FloatMatrix[numRuns];
 	FloatMatrix[] H = new FloatMatrix[numRuns];
@@ -84,6 +85,7 @@ public class NMF extends AbstractAlgorithm{
     	doSamples = map.getBoolean("doSamples");
     	expScale = map.getBoolean("expScale");
     	adjustData = map.getBoolean("adjustData");
+    	randomSeed = map.getLong("randomSeed");
     	if (expMatrix == null) {
     	    throw new AlgorithmException("Input data is absent.");
     	}
@@ -358,7 +360,9 @@ public class NMF extends AbstractAlgorithm{
 		int totalTries = 0;
 		float costSum = 0;
 		float costBest = Float.POSITIVE_INFINITY;
-		
+		Random random = new Random();
+		if (randomSeed!=-1)
+			random.setSeed(randomSeed);
 		for (int runcount=0; runcount<numRuns; runcount++){
             fireValueChanged(event);
     	    if (stop) 
@@ -369,12 +373,12 @@ public class NMF extends AbstractAlgorithm{
 			//seeding random matrices, creating corresponding transposes for ease of calculation
 			for (int i=0; i<numGenes; i++){
 				for (int j=0; j<r; j++){
-					w[i][j] = (int)(Math.random()*6)+1;
+					w[i][j] = random.nextFloat();
 				}
 			}
 			for (int i=0; i<numSamples; i++){
 				for (int j=0; j<r; j++){
-					h[j][i] = (int)(Math.random()*6)+1;
+					h[j][i] = random.nextFloat();
 				}
 			}
 			W[runcount] = new FloatMatrix(w);

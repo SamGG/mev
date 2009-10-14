@@ -48,9 +48,9 @@ public class NMFDialog extends AlgorithmDialog {
 	private int result = JOptionPane.CANCEL_OPTION;
     
     private SampleSelectionPanel clusteringSelectionPanel;
-    JTextField numRunsField, rankField, maxRankField, numItersField;
+    JTextField numRunsField, rankField, maxRankField, numItersField, randomSeedField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
-    JCheckBox clustercb, multiRanks, adjustCB;
+    JCheckBox clustercb, multiRanks, adjustCB, randomSeedCB;
     JLabel rankLabel;
 
     
@@ -249,12 +249,53 @@ public class NMFDialog extends AlgorithmDialog {
         gridbag.setConstraints(normalizationPanel, constraints);
         pane.add(normalizationPanel); 
         
+        JPanel randomSeedPanel = new JPanel();
+        randomSeedPanel.setBackground(Color.white);
+        randomSeedPanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Random Number Generation", 
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, 
+                new java.awt.Font("Dialog", 1, 12), Color.black));  
+        randomSeedPanel.setLayout(grid);
+
+        randomSeedCB = new JCheckBox("Use random number generator seed:");
+        randomSeedCB.setBackground(Color.white);
+        randomSeedCB.setSelected(false);
+        randomSeedCB.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent ae){
+        		randomSeedField.setEnabled(randomSeedCB.isSelected());
+        	}
+        });
+        buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+        grid.setConstraints(randomSeedCB, constraints);
+        randomSeedPanel.add(randomSeedCB);  
+         
+        
+        randomSeedField = new JTextField("12345", 7);
+        randomSeedField.setEnabled(false);
+        buildConstraints(constraints, 1, 0, 1, 1, 50, 100);
+        grid.setConstraints(randomSeedField, constraints);
+        randomSeedPanel.add(randomSeedField);    
+        
+        
+        buildConstraints(constraints, 0, 6, 1, 1, 0, 50);
+        gridbag.setConstraints(randomSeedPanel, constraints);
+        pane.add(randomSeedPanel);  
+        
+
+        JPanel clusterPanel = new JPanel();
+        clusterPanel.setBackground(Color.white);
+        clusterPanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Clusters", 
+                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, 
+                new java.awt.Font("Dialog", 1, 12), Color.black));  
+        clusterPanel.setLayout(grid);
         clustercb = new JCheckBox("Store results as clusters");
         clustercb.setBackground(Color.white);
         clustercb.setSelected(false);
-        buildConstraints(constraints, 0, 6, 1, 1, 50, 100);
-        gridbag.setConstraints(clustercb, constraints);
-        pane.add(clustercb);  
+        buildConstraints(constraints, 0, 0, 1, 1, 50, 100);
+        grid.setConstraints(clustercb, constraints);
+        clusterPanel.add(clustercb);  
+        buildConstraints(constraints, 0, 7, 1, 1, 50, 100);
+        gridbag.setConstraints(clusterPanel, constraints);
+        pane.add(clusterPanel);  
         
         
         setActionListeners(new EventListener());
@@ -307,6 +348,13 @@ public class NMFDialog extends AlgorithmDialog {
 
     public boolean isMultiRank() {
         return multiRanks.isSelected();
+    } 
+
+    public long getRandomSeed() {
+    	if (randomSeedCB.isSelected())
+    		return Long.parseLong(this.randomSeedField.getText());
+    	else
+    		return -1;
     } 
     
     public int getRValue() {
