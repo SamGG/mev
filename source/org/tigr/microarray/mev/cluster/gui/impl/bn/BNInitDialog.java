@@ -917,7 +917,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 			chooseOrg = new JLabel("Organism");
 			chooseArray = new JLabel("Array Platform");
-			browseLabel = new JLabel("or Browse for another Ease data file system:");
+			browseLabel = new JLabel("or browse for another BN data file system:");
 			statusLabel = new JLabel("Click to download");
 
 			if(speciestoarrays == null || speciestoarrays.size() == 0) {
