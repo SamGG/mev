@@ -13,6 +13,7 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.nmf;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
@@ -41,7 +42,6 @@ import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
@@ -56,7 +56,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     protected Algorithm algorithm;
     protected IFramework framework;
-    protected Progress progressBar;
+    protected NMFProgress progressBar;
     protected Experiment experiment;
     protected Experiment connectivityMatrix[];
 	FloatMatrix[][] W;
@@ -109,7 +109,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             algorithm = framework.getAlgorithmFactory().getAlgorithm("NMF");
             algorithm.addAlgorithmListener(listener);
 
-            this.progressBar = new Progress(framework.getFrame(), "Running NMF Analysis", listener);
+            this.progressBar = new NMFProgress(framework.getFrame(), "Running NMF Analysis", listener);
             this.progressBar.show();
             
             AlgorithmData data = new AlgorithmData();
@@ -148,9 +148,10 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             data.addParam("adjustData", String.valueOf(adjustData));
             data.addParam("multiClusters", String.valueOf(multiClusters));
             data.addParam("randomSeed", String.valueOf(randomSeed));
-            
-            
             long start = System.currentTimeMillis();
+            data.addParam("startTime", String.valueOf(start));
+            
+            
 
             Cluster[] result_cluster = new Cluster[1+maxrvalue-rvalue];
             for (int factorIndex=0; factorIndex<=(maxrvalue-rvalue); factorIndex++){
@@ -361,12 +362,12 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode WGraphNode = new DefaultMutableTreeNode("Metagene expression graphs (W)");
         DefaultMutableTreeNode HNode = new DefaultMutableTreeNode("Metagenes (H)");
         DefaultMutableTreeNode HGraphNode = new DefaultMutableTreeNode("Metagene graphs (H)");
-        NMFFactorViewer wfv = new NMFFactorViewer(W[factorIndex]);
+        NMFFactorViewer wfv = new NMFFactorViewer(W[factorIndex],costs[factorIndex],true);
         for (int i=0; i<W[factorIndex].length; i++) {
         	WNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], wfv, new Integer(i))));
         	WGraphNode.add(new DefaultMutableTreeNode(new LeafInfo("W Factor "+(i+1) + ", cost = "+costs[factorIndex][i], new NMFPlotViewer(W[factorIndex][i].transpose().A, framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[0])))));
         }
-        NMFFactorViewer hfv = new NMFFactorViewer(H[factorIndex]);
+        NMFFactorViewer hfv = new NMFFactorViewer(H[factorIndex],costs[factorIndex],false);
         String[] names = new String[H[factorIndex][0].getColumnDimension()];
         for (int i=0; i<names.length; i++){
             names[i] = data.getSampleName(i);
