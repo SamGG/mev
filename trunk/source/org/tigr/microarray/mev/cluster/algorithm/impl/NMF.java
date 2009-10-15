@@ -55,6 +55,7 @@ public class NMF extends AbstractAlgorithm{
 	boolean expScale = false;
 	boolean adjustData = false;
 	long randomSeed = -1;
+	long startTime;
     FloatMatrix expMatrix;
 	FloatMatrix[] W = new FloatMatrix[numRuns];
 	FloatMatrix[] H = new FloatMatrix[numRuns];
@@ -86,6 +87,7 @@ public class NMF extends AbstractAlgorithm{
     	expScale = map.getBoolean("expScale");
     	adjustData = map.getBoolean("adjustData");
     	randomSeed = map.getLong("randomSeed");
+    	startTime = map.getLong("startTime");
     	if (expMatrix == null) {
     	    throw new AlgorithmException("Input data is absent.");
     	}
@@ -310,15 +312,20 @@ public class NMF extends AbstractAlgorithm{
 	}
     private float[][] dataPreProcessing(float[][] datav){
     	float[][] v = new float[datav.length][];
+    	float expressionAverage = 0;
     	for (int i=0; i<v.length; i++){
     		v[i] = new float[datav[i].length];
     		for (int j=0; j<v[i].length; j++){
     			v[i][j] = datav[i][j];
-    			if (v[i][j] < 0)
+    			if (v[i][j] < 0 || Float.isNaN(v[i][j]))
     		    	adjustData = true;
+    			else
+    				expressionAverage = expressionAverage+v[i][j];
     		}
     	}
-    	//handling negative values...
+    	expressionAverage = expressionAverage/((float)v.length*(float)v[0].length);
+    	
+    	//handling negative/NaN values...
     	if (!adjustData)
     		return v;
     	if (expScale){
@@ -335,6 +342,8 @@ public class NMF extends AbstractAlgorithm{
 				for (int j=0; j<v[0].length; j++){
 					if (v[i][j]<minVal){
 						minVal = v[i][j];
+					}else if(Float.isNaN(v[i][j])){
+						v[i][j] = expressionAverage;
 					}
 				}
 			}
@@ -532,9 +541,20 @@ public class NMF extends AbstractAlgorithm{
 		if (standalone)
 			return;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue((int)(100*(fractionDone + fractionUnit*((float)run/(float)numRuns) + ((float)fractionUnit/(float)numRuns)*((float)iter)/((float)maxIterations))));
+		float fract = (fractionDone + fractionUnit*((float)run/(float)numRuns) + ((float)fractionUnit/(float)numRuns)*((float)iter)/((float)maxIterations));
+		event.setIntValue((int)(100f*fract));
+    	int timeremaining = (int)((1-fract)*(((System.currentTimeMillis()- startTime)/fract)/1000));
+    	String timeUnits = " seconds";
+    	if (timeremaining>7200){
+    		timeUnits = " hours";
+    		timeremaining = timeremaining/3600+1;
+    	} else if (timeremaining>90){
+    		timeUnits = " minutes";
+    		timeremaining = timeremaining/60+1;
+    	}
+    	String desc = "Evaluating "+r+" factors;  Run: "+ (run +1)+" of " + numRuns+";  Iteration: "+iter + ";  Time remaining: "+timeremaining + timeUnits;
+		event.setDescription(desc);
     	fireValueChanged(event);
-		event.setDescription("Evaluating "+r+" factors;  run: "+ (run +1)+" of " + numRuns+";  iteration: "+iter);
 	}
 	private void printMat(FloatMatrix fm){
 		System.out.println("start  " + fm);
