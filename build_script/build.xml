@@ -118,7 +118,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -140,7 +140,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -1338,7 +1338,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<entry key="gui.names" value="NMF:" operation="+"/>
             <entry key="NMF.name" value="NMF"/>
             <entry key="NMF.class" value="org.tigr.microarray.mev.cluster.gui.impl.nmf.NMFGUI"/>
-	  	<entry key="NMF.category" value="${STATISTICS}"/> 
+	  	<entry key="NMF.category" value="${CLUSTERING}"/> 
 	  	<entry key="NMF.smallIcon" value="analysis16.gif"/>
             <entry key="NMF.largeIcon" value="NMF_button.gif"/>
             <entry key="NMF.tooltip" value="Non-Negative Matrix Factorization"/>
