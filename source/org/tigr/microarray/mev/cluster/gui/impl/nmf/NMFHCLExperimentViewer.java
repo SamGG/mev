@@ -91,7 +91,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
     
-    private ExperimentHeader header;
+    private NMFExperimentHeader header;
     private Experiment experiment;
     private IFramework framework;
     private IData data;
@@ -106,7 +106,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
     private boolean isAutoArrangeColors = true;
     private boolean isShowRects = true;
     private boolean clickedCell = false;
-    private boolean enableMoveable = true;
+    private boolean genes = true;
     private int clickedColumn = 0;
     private int clickedRow = 0;
     private boolean isDrawAnnotations = true;
@@ -144,6 +144,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
 	private boolean inColorbarDrag = false;
     private int dragRow = 0;
     private int dragColumn = 0;
+	private boolean enableMoveable;
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -243,17 +244,18 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
      * @param samplesOrder the one dimensional array with samples indices.
      * @param drawAnnotations true if this viewer must draw annotations.
      */
-    public NMFHCLExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, int offset) {
+    public NMFHCLExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, int offset, boolean genes) {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
         }
+        this.genes = genes;
         this.experiment = experiment;
         this.exptID = experiment.getId();
         this.clusters = clusters == null ? defGenesOrder(experiment.getNumberOfGenes()) : clusters;
         this.samplesOrder = samplesOrder == null ? defSamplesOrder(experiment.getNumberOfSamples()) : samplesOrder;
         setGenesOrder(samplesOrder);
         this.isDrawAnnotations = drawAnnotations;
-        this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, storedGeneColors);
+        this.header = new NMFExperimentHeader(this.experiment, this.clusters, this.samplesOrder, storedGeneColors, genes);
         this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
         this.insets.left = offset;
         this.header.setLeftInset(offset);
@@ -284,7 +286,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
      * @param insets
      * @param experiment
      */
-    public NMFHCLExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, ExperimentHeader header, Insets insets) {
+    public NMFHCLExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, NMFExperimentHeader header, Insets insets) {
 	    this.insets = insets;
 	    this.experiment = experiment;
 	    this.header = header;
@@ -312,15 +314,15 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
      */
     
     public void setExperiment(Experiment e) {
-    	this.experiment = e;
-    	this.exptID = experiment.getId();
-    	if(this.header !=null){
-    		this.header.setExperiment(e);
-    	} else{
-    		this.header = new ExperimentHeader(this.experiment, this.clusters, this.samplesOrder, this.storedGeneColors);
-            this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
-    	}
-   		this.header.setIData(data);
+//    	this.experiment = e;
+//    	this.exptID = experiment.getId();
+//    	if(this.header !=null){
+//    		this.header.setExperiment(e);
+//    	} else{
+//    		this.header = new NMFExperimentHeader(this.experiment, this.clusters, this.samplesOrder, storedGeneColors, genes);
+//            this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+//    	}
+//   		this.header.setIData(data);
     }
     private static int[] defSamplesOrder(int size) {
         int[] order = new int[size];
@@ -952,7 +954,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
                 int fieldNamesLength=data.getFieldNames().length-1; 
                 String[] names = new String[experiment.getNumberOfGenes()];
                 for (int i=0; i<names.length; i++){
-                    names[this.clusters[0][i]] = data.getSampleName(i);
+                    names[this.clusters[0][i]] = genes ? data.getGeneName(i) : data.getSampleName(i);
                 }
                 for (int row=top; row<bottom; row++) {
                     if (labelIndex >= 0) {
@@ -1328,14 +1330,19 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
                 drawRectAt(g, row, column, Color.white);
                 if (isShowRects)
                 	drawClusterRectsAt(g, row, column, Color.gray);
-                framework.setStatusText(
-                		"Sample #1: "+
-                		data.getSampleName(experiment.getSampleIndex(getColumn(row)))
-                		+" Sample #2: "+
-                		data.getSampleName(experiment.getSampleIndex(getColumn(column)))
-                		+" Value: "+ (1f-
-                		experiment.get(getExperimentRow(row),
-                				getColumn(column))));
+                String statusText;
+                if (genes){
+                	statusText = 
+                		"Gene #1: " + data.getUniqueId(getMultipleArrayDataRow(row))
+                		+" Gene #2: " + data.getUniqueId(getMultipleArrayDataRow(column))
+                		+" Value: "+ (1f - experiment.get(getExperimentRow(row),getColumn(column)));
+                }else {
+                	statusText = 
+                		"Sample #1: " + data.getSampleName(experiment.getSampleIndex(getColumn(row)))
+                		+" Sample #2: " + data.getSampleName(experiment.getSampleIndex(getColumn(column)))
+                		+" Value: "+ (1f - experiment.get(getExperimentRow(row),getColumn(column)));
+                }
+                framework.setStatusText(statusText);
             }
             //mouse on different rectangle, but still on the map
             if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){
@@ -1604,7 +1611,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
 	}
 	public void setEnableMoveable(boolean enableMoveable) {
 		this.enableMoveable = enableMoveable;
-		((ExperimentHeader)this.getHeaderComponent()).setEnableMoveable(enableMoveable);
+		((NMFExperimentHeader)this.getHeaderComponent()).setEnableMoveable(enableMoveable);
 	}
 }
 

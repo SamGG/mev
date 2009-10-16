@@ -128,6 +128,7 @@ public class NMFHCLViewer extends JPanel implements IViewer {
     protected DefaultMutableTreeNode node;
     protected IFramework framework;
     protected Expression saveExpression = null;
+	private boolean genes;
     
     /**
      * State-saving constructor for MeV v4.4 and higher.
@@ -136,23 +137,24 @@ public class NMFHCLViewer extends JPanel implements IViewer {
      * @param genes_result
      * @param samples_result
      */
-    public NMFHCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result) {
-    	this(experiment, features.getClusters()[0], genes_result, samples_result);
+    public NMFHCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result, boolean genes) {
+    	this(experiment, features.getClusters()[0], genes_result, samples_result, genes);
     }
     
     /**
      * Constructs a <code>HCLViewer</code> for specified results.
      * Used when making a viewer from within another module's *gene* clustering
      */
-    public NMFHCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {
+    public NMFHCLViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result, boolean genes) {
     	setLayout(new GridBagLayout());
         setBackground(Color.white);
         this.experiment = experiment;
         this.exptID = experiment.getId();
         listener = new Listener();
         this.addMouseListener(listener);
+        this.genes = genes;
         this.features = features == null ? createDefaultFeatures(experiment) : features;
-        this.expViewer = createNMFHCLExperimentViewer(experiment, features, genes_result, samples_result);
+        this.expViewer = createNMFHCLExperimentViewer(experiment, features, genes_result, samples_result, genes);
         this.expViewer.getContentComponent().addMouseListener(listener);
         this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
         this.header.addMouseListener(listener);
@@ -250,17 +252,17 @@ public class NMFHCLViewer extends JPanel implements IViewer {
     
     
     
-    protected IViewer createNMFHCLExperimentViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result) {
+    protected IViewer createNMFHCLExperimentViewer(Experiment experiment, int[] features, HCLTreeData genes_result, HCLTreeData samples_result, boolean genes) {
         int[][] clusters = createClusters(experiment, features, genes_result);
         int [] samples = getLeafOrder(samples_result, null);
         IViewer viewer;
         if(genes_result != null){
             offset = 0;
-            viewer = new NMFHCLExperimentViewer(experiment, clusters, samples, true, offset);
+            viewer = new NMFHCLExperimentViewer(experiment, clusters, samples, true, offset, genes);
         }
         else{
             offset = 10;
-            viewer = new NMFHCLExperimentViewer(experiment, clusters, samples, true, offset);
+            viewer = new NMFHCLExperimentViewer(experiment, clusters, samples, true, offset, genes);
         }
         ((NMFHCLExperimentViewer)viewer).setEnableMoveable(false);
         return viewer;

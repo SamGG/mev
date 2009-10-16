@@ -47,7 +47,6 @@ public class NMFDialog extends AlgorithmDialog {
 
 	private int result = JOptionPane.CANCEL_OPTION;
     
-    private SampleSelectionPanel clusteringSelectionPanel;
     JTextField numRunsField, rankField, maxRankField, numItersField, randomSeedField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
     JCheckBox clustercb, multiRanks, adjustCB, randomSeedCB;
@@ -321,10 +320,6 @@ public class NMFDialog extends AlgorithmDialog {
         return result;
     }
     
-    public boolean isClusterGenesSelected(){
-        return clusteringSelectionPanel.isClusterGenesSelected();
-    }
-    
     public void resetControls(){
 
     }
@@ -365,7 +360,7 @@ public class NMFDialog extends AlgorithmDialog {
         return this.multiRanks.isSelected()? Integer.parseInt(maxRankField.getText()): getRValue();
     }   
 
-	public boolean isDoSamples() {
+	public boolean isClusterSamples() {
 		return clusterBySamples.isSelected();
 	}
 
