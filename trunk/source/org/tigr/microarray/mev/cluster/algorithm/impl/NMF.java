@@ -118,7 +118,8 @@ public class NMF extends AbstractAlgorithm{
     	result.addCluster("cluster", result_cluster);
     	result.addIntMatrix("clusters", clusters);
         FloatMatrix means = getMeans(clusters);
-        FloatMatrix variances = getVariances(clusters, means);
+//        FloatMatrix variances = getVariances(clusters, means);
+        FloatMatrix variances = getMeans(clusters);
     	result.addMatrix("connectivity-matrix", new FloatMatrix(this.connectivityMatrix));
     	for (int i=0; i<numRuns; i++)
     		result.addMatrix("W"+i, W[(int)costsIndex[i]]);
@@ -220,7 +221,7 @@ public class NMF extends AbstractAlgorithm{
 		return cTop/(float)Math.sqrt(cBottomL*cBottomR);
 	}
 	protected FloatMatrix getMeans(int[][] clusters) {
-        FloatMatrix means = new FloatMatrix(clusters.length, this.numSamples);
+        FloatMatrix means = new FloatMatrix(clusters.length, (doSamples ? numSamples : numGenes));
         FloatMatrix mean;
         for (int i=0; i<clusters.length; i++) {
             mean = getMean(clusters[i]);
@@ -230,11 +231,14 @@ public class NMF extends AbstractAlgorithm{
     }
     
     protected FloatMatrix getMean(int[] cluster) {
-        FloatMatrix mean = new FloatMatrix(1, numGenes);
+        FloatMatrix mean = new FloatMatrix(1, (!doSamples ? numSamples : numGenes));
         float sum = 0;
-        for (int i=0; i<numGenes; i++){
+        for (int i=0; i<(!doSamples ? numSamples : numGenes); i++){
         	for (int j=0; j<cluster.length; j++){
-        		sum = sum + this.expMatrix.get(i, cluster[j]);
+        		if (doSamples)
+        			sum = sum + this.expMatrix.get(i, cluster[j]);
+        		else
+            		sum = sum + this.expMatrix.get(cluster[j], i);
         	}
         	mean.set(0, i, sum/cluster.length);
         }
@@ -256,7 +260,10 @@ public class NMF extends AbstractAlgorithm{
         float sum = 0;
         for (int i=0; i<numGenes; i++){
         	for (int j=0; j<cluster.length; j++){
-        		sum = sum + this.expMatrix.get(i, cluster[j]);
+        		if (doSamples)
+        			sum = sum + this.expMatrix.get(i, cluster[j]);
+        		else
+            		sum = sum + this.expMatrix.get(cluster[j], i);
         	}
         	mean.set(0, i, 0);
         }
@@ -363,7 +370,8 @@ public class NMF extends AbstractAlgorithm{
 		numSamples = v[0].length;
 		float[][] w = new float[numGenes][r];
 		float[][] h = new float[r][numSamples];
-		connectivityMatrix = new float[numSamples][numSamples];
+		int sampsOrGenes = doSamples? numSamples : numGenes;
+		connectivityMatrix = new float[sampsOrGenes][sampsOrGenes];
 		int totalTries = 0;
 		float costSum = 0;
 		float costBest = Float.POSITIVE_INFINITY;
@@ -494,27 +502,51 @@ public class NMF extends AbstractAlgorithm{
 				costBest= cost;
 			}
 			costs[runcount] = cost;
-			
-			//Assigns m samples to r classes
-			int[] classes = new int[numSamples];
-			for (int i=0; i<numSamples; i++){
-				float best = 0;
-				for (int j=0; j<r; j++){
-					if (H[runcount].A[j][i]>best){
-						best = H[runcount].A[j][i];
-						classes[i]=j;
+			if (doSamples){
+				//Assigns m samples to r classes
+				int[] classes = new int[numSamples];
+				for (int i=0; i<numSamples; i++){
+					float best = 0;
+					for (int j=0; j<r; j++){
+						if (H[runcount].A[j][i]>best){
+							best = H[runcount].A[j][i];
+							classes[i]=j;
+						}
 					}
 				}
-			}
-			for (int i=0; i<numSamples; i++){
-				System.out.print(classes[i]+"\t");
-			}
-			System.out.println(cost);
-			//Adds to connectivity matrix
-			for (int i=0; i<numSamples; i++){
-				for (int j=0; j<numSamples; j++){
-					if (classes[i]==classes[j])
-						connectivityMatrix[i][j]++;
+				for (int i=0; i<numSamples; i++){
+					System.out.print(classes[i]+"\t");
+				}
+				System.out.println(cost);
+				//Adds to connectivity matrix
+				for (int i=0; i<numSamples; i++){
+					for (int j=0; j<numSamples; j++){
+						if (classes[i]==classes[j])
+							connectivityMatrix[i][j]++;
+					}
+				}
+			}else{
+				//Assigns n genes to r classes
+				int[] classes = new int[numGenes];
+				for (int i=0; i<numGenes; i++){
+					float best = 0;
+					for (int j=0; j<r; j++){
+						if (W[runcount].A[i][j]>best){
+							best = W[runcount].A[i][j];
+							classes[i]=j;
+						}
+					}
+				}
+				for (int i=0; i<numGenes; i++){
+					System.out.print(classes[i]+"\t");
+				}
+				System.out.println(cost);
+				//Adds to connectivity matrix
+				for (int i=0; i<numGenes; i++){
+					for (int j=0; j<numGenes; j++){
+						if (classes[i]==classes[j])
+							connectivityMatrix[i][j]++;
+					}
 				}
 			}
 		}
@@ -528,12 +560,10 @@ public class NMF extends AbstractAlgorithm{
 //		System.out.println(costBest);
 //		System.out.println(totalTries);
 //		System.out.println("Conn Matrix ");
-		for (int i=0; i<numSamples; i++){
-			for (int j=0; j<numSamples; j++){
+		for (int i=0; i<connectivityMatrix.length; i++){
+			for (int j=0; j<connectivityMatrix.length; j++){
 				connectivityMatrix[i][j]=1-connectivityMatrix[i][j]/numRuns;
-//    				System.out.print(connectivityMatrix[i][j]+"\t");
 			}
-//    			System.out.println();
 		}
 	}
 
@@ -684,16 +714,16 @@ public class NMF extends AbstractAlgorithm{
     	 */
     private void getLeavesFromNode(HCLTreeData hcltd, int node){
     	System.out.print("gnfl "+node);
-    	if (node<numSamples){
+    	if (node< (doSamples ? numSamples : numGenes)){
     		leaves.add(node);
     		return;
     	}
     		
-    	if (hcltd.child_1_array[node]<numSamples)
+    	if (hcltd.child_1_array[node]<(doSamples ? numSamples : numGenes))
     		leaves.add(hcltd.child_1_array[node]);
     	else
     		getLeavesFromNode(hcltd, hcltd.child_1_array[node]);
-    	if (hcltd.child_2_array[node]<numSamples)
+    	if (hcltd.child_2_array[node]<(doSamples ? numSamples : numGenes))
     		leaves.add(hcltd.child_2_array[node]);
     	else
     		getLeavesFromNode(hcltd, hcltd.child_2_array[node]);

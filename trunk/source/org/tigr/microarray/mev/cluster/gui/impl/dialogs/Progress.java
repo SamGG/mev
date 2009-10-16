@@ -115,7 +115,7 @@ public class Progress extends JDialog {
     /**
      * Creates a progress bar panel.
      */
-    private JPanel createProgressPanel(JLabel description, JProgressBar progress) {
+    protected JPanel createProgressPanel(JLabel description, JProgressBar progress) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         GridBagConstraints gbc = new GridBagConstraints();
