@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
-<plist version="0.9">
+<plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>MeV_4_5</string>
+	<string>MeV_4_4</string>
 	<key>CFBundleVersion</key>
 	<string>10.2</string>
 	<key>CFBundleAllowMixedLocalizations</key>
@@ -20,6 +20,16 @@
 	<string>6.0</string>
 	<key>CFBundleIconFile</key>
 	<string>GenericJavaApp.icns</string>
+	<key>LSArchitecturePriority</key>
+	<array>
+	    <string>i386</string>
+	    <string>ppc</string>
+	</array>
+	<key>LSEnvironment</key>
+	<dict>
+		<key>R_HOME</key>
+		<string>/Library/Frameworks/R.framework/Resources</string>
+	</dict>
 	<key>Java</key>
 	<dict>
 		<key>VMOptions</key>
@@ -28,6 +38,11 @@
 		<string>org.tigr.microarray.mev.TMEV</string>
 		<key>JVMVersion</key>
 		<string>1.5+</string>
+		<key>Properties</key>
+		<dict>
+			<key>java.library.path</key>
+			<string>$JAVAROOT</string>
+		</dict>
 		<key>ClassPath</key>
 			<array>		 
 			 <string>$JAVAROOT/args4j-2.0.9.jar</string> 	 
@@ -59,6 +74,7 @@
 			 <string>$JAVAROOT/jsch-0.1.39.jar</string>
 			 <string>$JAVAROOT/JSciCore.jar</string>
 			 <string>$JAVAROOT/JSciPartial.jar</string>
+			 <string>$JAVAROOT/JRI.jar</string>
 			 <string>$JAVAROOT/magetab-parser.jar</string>
 			 <string>$JAVAROOT/mail.jar</string>
 			 <string>$JAVAROOT/mev-algorithm-impl.jar</string>
@@ -79,7 +95,6 @@
 			 <string>$JAVAROOT/tools.jar</string>
 			 <string>$JAVAROOT/vecmath.jar</string>
 			 <string>$JAVAROOT/weka.jar</string>
-			 <string>$JAVAROOT/weka_old.jar</string>
 			 <string>$JAVAROOT/xerces.jar</string>
 			 <string>$JAVAROOT/xml-apis.jar</string>
 			</array>
