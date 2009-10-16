@@ -2027,11 +2027,126 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
 	-->
 	<target name="build-package-all-os-arch" depends="clean, build-all">
-		<antcall target="build-package-win"/>
+		<antcall target="build-package-mac"/>
 		<antcall target="build-package-linux32"/>
 		<antcall target="build-package-linux64"/>
+		<antcall target="build-package-win"/>
 	</target>
 	
+	<!-- Build Mac distribution -->
+	<target name="build-package-mac-alone" depends="clean, build-all">
+		  <antcall target="build-package-mac"/>
+	</target>
+	
+	<target name="build-package-mac">
+		<echo message="Building Windows Package"/>				
+		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+				<!-- Not deleting file temp soln -->
+				<!-- 
+				<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
+				-->
+				
+		<echo message="Please be sure that all user documentation to be included in the package
+				has been converted to pdf and placed in the user_docs directory. "/>
+				
+		<mkdir dir="${package.dir}"/>
+				
+		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
+		<property name="mev_version.dir" value="MeV_${version}"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}"/>
+
+		<!-- Make dir for RPackages -->
+		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
+		
+			<copy todir="${package.dir}/${mev_version.dir}">
+				<fileset dir="${home.dir}/mac_distribution_support/" excludes="**/*.jar, .svn, mac_distro_readme.txt"/>
+			</copy>
+		
+		
+			<!--
+			<move todir="${package.dir}/${mev_version.dir}/MeV.app/Contents/Resources/Java/">
+				<fileset dir="${package.dir}/${mev_version.dir}/lib">
+					<include name="*.jar"/>
+					<exclude name=".svn"/>
+				</fileset>
+				<fileset dir="${package.dir}/${mev_version.dir}/plugins">
+					<include name="*.jar"/>
+					<exclude name=".svn"/>
+				</fileset>
+			</move>
+	    	<chmod file="${package.dir}/${mev_version.dir}/MeV.app/Contents/MacOS/JavaApplicationStub" perm="744"/>
+			<delete dir="${package.dir}/${mev_version.dir}/lib"/>
+			<delete dir="${package.dir}/${mev_version.dir}/plugins"/>
+			<delete file="${package.dir}/${mev_version.dir}/TMEV.bat"/>
+			<delete file="${package.dir}/${mev_version.dir}/tmev.sh"/>
+				
+			<echo message="Mac build (MeV_${version}_r${BUILD-REVISION}_mac.zip) must be zipped up by hand using 7-zip."/>
+			-->
+			<!-- 
+				<zip destfile="${package.dir}/MeV_${version}_mac.zip"
+					basedir="${package.dir}"
+					encoding="UTF-8"
+					>
+					<include name="${mev_version.dir}/**"/>
+					<exclude name=".svn"/>
+				</zip>
+			-->
+			<!-- No need to make dir for R Binaries -->
+						
+			<!-- Copy Doc files -->
+			<copy todir="${package.dir}/${mev_version.dir}/documentation">
+				<fileset dir="${home.dir}/user_docs/">
+					<include name="*.pdf"/>
+				</fileset>
+			</copy>
+			<!-- Copy lib/*.jar files to MeV.app/Contents/Respurces/Java -->
+			<copy todir="${package.dir}/${mev_version.dir}/MeV.app/Contents/Resources/Java/">
+				<fileset dir="${home.dir}/lib/">
+					<include name="*.jar" />
+					<exclude name=".svn"/>
+					</fileset>
+			</copy>
+				
+			<!-- OS/Arch dependent files, if they exist, before next packaging -->
+			<delete includeemptydirs="true">
+				<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
+			</delete>
+			
+			<!-- No need to Copy RHook files. The files are already in mac_distribution_support/MeV.app/Contents/Respurces/Java -->
+			
+			<!-- Copy RHook files from win_distribution_support/RPackages -->
+			<copy todir="${package.dir}/${mev_version.dir}/RPackages">
+				<fileset dir="${home.dir}/mac_distribution_support/RPackages/" >
+					<exclude name=".svn"/> 
+				</fileset>
+			</copy>
+			
+			<!-- No need to copy RBinary files. Not packing R with MAc distribution -->
+			
+			<!-- Copy cmd line app launching universal file, lic etc for Mac --> 
+			<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
+			<copy file="${home.dir}/tmev_mac.sh" todir="${package.dir}/${mev_version.dir}" />
+			<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
+				
+			<mkdir dir="${package.dir}/${mev_version.dir}/data" />
+			<copy todir="${package.dir}/${mev_version.dir}/data">
+				<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
+			</copy>
+			
+			<chmod file="${package.dir}/${mev_version.dir}/MeV.app/Contents/MacOS/JavaApplicationStub" perm="755"/>
+			<chmod file="${package.dir}/${mev_version.dir}/tmev_mac.sh" perm="755"/>
+			<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_mac.zip"
+				basedir="${package.dir}"
+				excludes="${mev_version.dir}/lib/**, ${mev_version.dir}/TMEV.bat, ${mev_version.dir}/tmev.sh">
+					<include name="${mev_version.dir}/data/**"/>
+					<include name="${mev_version.dir}/documentation/**"/>
+					<include name="${mev_version.dir}/MeV.app/**"/>
+					<include name="${mev_version.dir}/RPackages/**"/>
+					<include name="${mev_version.dir}/artistic_license.txt"/>
+					<include name="${mev_version.dir}/tmev_mac.sh"/>
+					<exclude name=".svn"/>
+			</zip>
+	</target>
 	<!--
 		 Target to build Windows release bundle only.
 		 Cleans and compiles from scratch
@@ -2253,7 +2368,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
 		
-    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
+    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="755"/>
 		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux32.zip"
 			basedir="${package.dir}"
 			>
@@ -2372,7 +2487,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
 		
-    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="711"/>
+    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="755"/>
 		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux64.zip"
 			basedir="${package.dir}"
 			>
