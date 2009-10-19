@@ -1803,7 +1803,7 @@ public class ClusterTable extends JPanel implements IViewer {
         
         Boolean bool = (Boolean)(this.model.getValueAt(row, col));
 
-        clusters[0].enableShowColor(bool.booleanValue());
+        clusters[0].enableShowColor(!bool.booleanValue());
         model.setValueAt( clusters[0].getClusterColor(),row, col-1);
       //  initializeTable();        
         model.fireTableDataChanged();
