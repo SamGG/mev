@@ -385,38 +385,29 @@ public class NMFExperimentHeader extends JPanel implements IExperimentHeader {
         contentWidth = (experiment.getNumberOfSamples()+storedGeneColors.size())*elementWidth + insets.left + 4;
         maxSampleLabelLength = maxHeight;
         maxHeight += RECT_HEIGHT + hfm.getHeight() + 10;
-//        if (!isCompact){
-//        	maxHeight += (getColorBarHeight()*storedSampleColors.size());
-//            String sampleLabel;
-//            labelLength=0;
-//            for (int feature = 0; feature < storedSampleColors.size(); feature++) {
-//                sampleLabel = data.getClusterLabel(feature, genes);
-//                if (sampleLabel != null)
-//                	labelLength = Math.max(labelLength, hfm.stringWidth(sampleLabel));
-//            }
-//            contentWidth = contentWidth + labelLength+10;
-//            if (labelLength<60)
-//            	contentWidth = contentWidth + 70;
-//        }
-//        if(isCompact){
-//    		int maxSpacesOver=-1;
-//    		for (int i=0; i<storedSampleColors.size(); i++){
-//    			if ((ColorOverlaps[i])>maxSpacesOver)
-//    				maxSpacesOver=ColorOverlaps[i];
-//    		}
-//    		maxHeight += getColorBarHeight()*(maxSpacesOver+1);
-//    		compactedColorBarHeight= maxSpacesOver+1;
-//
-////            setSize(getWidth(), maxHeight);
-////            setPreferredSize(new Dimension(getWidth(), maxHeight));
-//            setSize(this.headerWidth, maxHeight);
-//            setPreferredSize(new Dimension(this.headerWidth, maxHeight));
-//            drawHeader(g);
-//    		return;
-//    	}
-        
-//        setSize(contentWidth, maxHeight);
-//        setPreferredSize(new Dimension(contentWidth, maxHeight));
+        if (!genes){
+	        if (!isCompact){
+	        	maxHeight += (getColorBarHeight()*storedSampleColors.size());
+	            String sampleLabel;
+	            labelLength=0;
+	            for (int feature = 0; feature < storedSampleColors.size(); feature++) {
+	                sampleLabel = data.getClusterLabel(feature, false);
+	                if (sampleLabel != null)
+	                	labelLength = Math.max(labelLength, hfm.stringWidth(sampleLabel));
+	            }
+	            contentWidth = contentWidth + labelLength+10;
+	            if (labelLength<60)
+	            	contentWidth = contentWidth + 70;
+	        } else {
+	    		int maxSpacesOver=-1;
+	    		for (int i=0; i<storedSampleColors.size(); i++){
+	    			if ((ColorOverlaps[i])>maxSpacesOver)
+	    				maxSpacesOver=ColorOverlaps[i];
+	    		}
+	    		maxHeight += getColorBarHeight()*(maxSpacesOver+1);
+	    		compactedColorBarHeight= maxSpacesOver+1;
+	    	}
+        }
         setSize(this.headerWidth, maxHeight);
         setPreferredSize(new Dimension(this.headerWidth, maxHeight));
         drawHeader(g);

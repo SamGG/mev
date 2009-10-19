@@ -582,7 +582,7 @@ public class NMF extends AbstractAlgorithm{
     		timeUnits = " minutes";
     		timeremaining = timeremaining/60+1;
     	}
-    	String desc = "Evaluating "+r+" factors;  Run: "+ (run +1)+" of " + numRuns+";  Iteration: "+iter + ";  Time remaining: "+timeremaining + timeUnits;
+    	String desc = "Evaluating "+r+" factors; \tRun: "+ (run +1)+" of " + numRuns+"; \tIteration: "+iter + "; \tTime remaining: "+timeremaining + timeUnits;
 		event.setDescription(desc);
     	fireValueChanged(event);
 	}
