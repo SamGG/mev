@@ -476,26 +476,26 @@ public class NMFHCLViewer extends JPanel implements IViewer {
         menu.add(menuItem);
         
         menu.addSeparator();
-        
-        menuItem = new JMenuItem("GeneTree properties...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(this.genesTree != null);
-        menuItem.setActionCommand(GENE_TREE_PROPERTIES_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(this.sampleTree != null);
-        menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);        
-
-        menuItem = new JMenuItem("Rotate Selected Node", GUIFactory.getIcon("edit16.gif"));
-        menuItem.setEnabled(false);
-        menuItem.setActionCommand(ROTATE_NODE_CMD);
-        menuItem.addActionListener(listener);
-        menu.add(menuItem);
-        
-        menu.addSeparator();
+//        
+//        menuItem = new JMenuItem("GeneTree properties...", GUIFactory.getIcon("edit16.gif"));
+//        menuItem.setEnabled(this.genesTree != null);
+//        menuItem.setActionCommand(GENE_TREE_PROPERTIES_CMD);
+//        menuItem.addActionListener(listener);
+//        menu.add(menuItem);
+//        
+//        menuItem = new JMenuItem("SampleTree properties...", GUIFactory.getIcon("edit16.gif"));
+//        menuItem.setEnabled(this.sampleTree != null);
+//        menuItem.setActionCommand(SAMPLE_TREE_PROPERTIES_CMD);
+//        menuItem.addActionListener(listener);
+//        menu.add(menuItem);        
+//
+//        menuItem = new JMenuItem("Rotate Selected Node", GUIFactory.getIcon("edit16.gif"));
+//        menuItem.setEnabled(false);
+//        menuItem.setActionCommand(ROTATE_NODE_CMD);
+//        menuItem.addActionListener(listener);
+//        menu.add(menuItem);
+//        
+//        menu.addSeparator();
         
         menuItem = new JMenuItem("Save Gene Node Heights", GUIFactory.getIcon("save_as16.gif"));
         menuItem.setEnabled(this.genesTree != null);
@@ -765,10 +765,10 @@ public class NMFHCLViewer extends JPanel implements IViewer {
         this.selectedCluster.color = newColor;
         
         if(!this.isExperimentCluster){
-            if(!this.selectedCluster.isGeneCluster)
-                this.selectedCluster.color = ((NMFHCLExperimentViewer)(this.expViewer)).setHCLClusterColor(getSubTreeElements(),this.selectedCluster.color, this.selectedCluster.isGeneCluster);
+            if(!genes)
+                this.selectedCluster.color = ((NMFHCLExperimentViewer)(this.expViewer)).setHCLClusterColor(getSubTreeElements(),this.selectedCluster.color, genes);
             else
-                this.selectedCluster.color = ((NMFHCLExperimentViewer)(this.expViewer)).setHCLClusterColor(getArrayMappedToData(getSubTreeElements()),this.selectedCluster.color, this.selectedCluster.isGeneCluster);
+                this.selectedCluster.color = ((NMFHCLExperimentViewer)(this.expViewer)).setHCLClusterColor(getArrayMappedToData(getSubTreeElements()),this.selectedCluster.color, genes);
         }
         else{
             if(!this.selectedCluster.isGeneCluster)
@@ -1428,15 +1428,15 @@ public class NMFHCLViewer extends JPanel implements IViewer {
             if (!e.isPopupTrigger()) {
                 return;
             }
-//            int node = NMFHCLViewer.this.selectedCluster == null ? -1 : NMFHCLViewer.this.selectedCluster.root;
-//            setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
-//            setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
-//            //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
-//            setEnableMenuItem(ROTATE_NODE_CMD, node >= 0);
-//            setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
-//            setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
-//            setEnableMenuItem(SAVE_CLUSTER_CMD, NMFHCLViewer.this.selectedCluster != null && NMFHCLViewer.this.selectedCluster.root != -1);
-//            popup.show(e.getComponent(), e.getX(), e.getY());
+            int node = NMFHCLViewer.this.selectedCluster == null ? -1 : NMFHCLViewer.this.selectedCluster.root;
+            setEnableMenuItem(STORE_CLUSTER_CMD, node >= 0);
+            setEnableMenuItem(LAUNCH_NEW_SESSION_CMD, node >= 0);
+            //    setEnableMenuItem(SET_CLUSTER_TEXT_CMD, doesClusterExist() && node != -1 && HCLViewer.this.selectedCluster.isGeneCluster);
+            setEnableMenuItem(ROTATE_NODE_CMD, node >= 0);
+            setEnableMenuItem(DELETE_CLUSTER_CMD, doesClusterExist());
+            setEnableMenuItem(DELETE_ALL_CLUSTERS_CMD, doesClusterExist());
+            setEnableMenuItem(SAVE_CLUSTER_CMD, NMFHCLViewer.this.selectedCluster != null && NMFHCLViewer.this.selectedCluster.root != -1);
+            popup.show(e.getComponent(), e.getX(), e.getY());
         }
         
         

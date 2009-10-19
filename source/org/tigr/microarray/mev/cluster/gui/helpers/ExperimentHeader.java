@@ -491,7 +491,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        	if (index==0)
 	        		break;
 	        	clusterName = data.getClusterLabel(index, true);
-	        	g.drawString(clusterName, h, descent + elementWidth*(samples+cluster) + elementWidth/2 + insets.left+5);
+	        	if (clusterName!=null)
+	        		g.drawString(clusterName, h, descent + elementWidth*(samples+cluster) + elementWidth/2 + insets.left+5);
 		        visibleClusters++;
 	        }
 	        g.rotate(Math.PI/2);
