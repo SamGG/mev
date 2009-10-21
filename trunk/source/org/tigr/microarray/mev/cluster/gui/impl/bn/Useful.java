@@ -458,7 +458,19 @@ public class Useful {
 		//System.out.println(" 2. " + dateString);
 		return dateString;
 	}
-
+	
+	/**
+	 * NOT USED
+	 * Function to create arguments string for Weka using BayesNet SimpleEstimator
+	 * @param path
+	 * @param outArffFileName
+	 * @param sAlgorithm
+	 * @param useArc
+	 * @param numParents
+	 * @param sType
+	 * @param kfolds
+	 * @return
+	 */
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
 		String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";

@@ -140,7 +140,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         
         alpha = LIMMADialog.getAlpha();
         dataDesign = LIMMADialog.getExperimentalDesign();
-    	System.out.println("dataDesigngui " +dataDesign);
+    	//System.out.println("dataDesigngui " +dataDesign);
         numGroups = LIMMADialog.getNumGroups();
         numFactorAGroups = LIMMADialog.getNumFactorAGroups();
         numFactorBGroups = LIMMADialog.getNumFactorBGroups();
@@ -253,7 +253,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
             
             FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
             FloatMatrix pValues = result.getMatrix("pValues");
-            System.out.println("pval dim: " + pValues.getColumnDimension()+ " "+pValues.getRowDimension());
+            //System.out.println("pval dim: " + pValues.getColumnDimension()+ " "+pValues.getRowDimension());
             //Raktim
             FloatMatrix adjpValues = result.getMatrix("adjPValues");
             FloatMatrix lfc = result.getMatrix("lfc");
@@ -754,7 +754,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
-        System.out.println("ng "+numGroups);
+        //System.out.println("ng "+numGroups);
         for (int i = 0; i < numGroups; i++) {
             groups[i] = new DefaultMutableTreeNode("Group " + (i+1));
             
