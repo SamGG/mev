@@ -170,9 +170,9 @@ public class LIMMA extends AbstractAlgorithm{
 		}
 		//remap genes to expmatrix
 		int[][]sigReturn = new int[sigGenesArrays.length][];
-		System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
+		//System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
 		for (int i=0; i<sigGenesArrays.length; i++){
-			System.out.println("sga "+i);
+			//System.out.println("sga "+i);
 			sigReturn[i]=new int[sigGenesArrays[i].length];
 			for (int j=0; j<sigGenesArrays[i].length; j++){
 				sigReturn[i][j]=mapping2[mapping[sigGenesArrays[i][j]]];
@@ -437,8 +437,8 @@ public class LIMMA extends AbstractAlgorithm{
 
 	private FloatMatrix getLogOdds() {
 		FloatMatrix lodds = new FloatMatrix(numGenes, logOdds.length);
-		System.out.println("numGenes " + numGenes);
-		System.out.println("mapping.length " + mapping.length);
+		//System.out.println("numGenes " + numGenes);
+		//System.out.println("mapping.length " + mapping.length);
 
 		for (int i=0; i<logOdds.length; i++){
 			for (int j=0; j<mapping.length; j++){
@@ -528,9 +528,9 @@ public class LIMMA extends AbstractAlgorithm{
 		}
 
 		try {
-		System.out.println("Testing LIMMA install");
+		//System.out.println("Testing LIMMA install");
 		RHook.testPackage("limma");
-		System.out.println("Loading Lib LIMMA");
+		//System.out.println("Loading Lib LIMMA");
 		RHook.log("dataDesign = " + dataDesign);
 		RHook.log("Starting R Algorithim");
 		
@@ -553,14 +553,14 @@ public class LIMMA extends AbstractAlgorithm{
 		//TODO
 		//define design vector based on experiment. COMPLICATED
 
-		System.out.println("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
+		//System.out.println("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
 		int grp1, grp2;
 		if(numSamples % 2 == 0) grp1 = numSamples/2;
 		else grp1 = (numSamples-1)/2;
 		grp2 = numSamples - grp1;
 
 		String design = "design <- cbind(Grp1=1,Grp2vs1=c(rep(0," + grp1 + "),rep(1," + grp2 + ")))";
-		System.out.println("Study Design: " + design);
+		//System.out.println("Study Design: " + design);
 
 		if (dataDesign == 4||dataDesign == 5){
 			RHook.log(design);
@@ -571,7 +571,7 @@ public class LIMMA extends AbstractAlgorithm{
 			ts = ts.substring(0, ts.length()-1);
 			ts = ts+")";
 			RHook.evalR(ts);
-			System.out.println("ts: " + ts);
+			//System.out.println("ts: " + ts);
 
 			String levels = "c(";
 			for (int i=0; i<this.numAGroups; i++){
@@ -583,7 +583,7 @@ public class LIMMA extends AbstractAlgorithm{
 			levels = levels+"))";
 			rCmd = "TS <-factor(TS, levels = "+levels;
 			RHook.evalR(rCmd);
-			System.out.println("asdasd: " + rCmd);
+			//System.out.println("asdasd: " + rCmd);
 		}
 		
 		design = getStudyDesign();
@@ -594,7 +594,7 @@ public class LIMMA extends AbstractAlgorithm{
 			// fit with contrasts
 			rCmd = "fit <- lmFit(y,design)";
 			RHook.evalR(rCmd);
-			System.out.println("fit <- lmFit(y,design)");
+			//System.out.println("fit <- lmFit(y,design)");
 			
 			rCmd = "contrast.matrix <- makeContrasts(";
 			for (int i=0; i<numGroups; i++){
@@ -604,15 +604,15 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 			rCmd = rCmd + "levels = design)";
 			RHook.evalR(rCmd);
-			System.out.println("contrasts comm: " + rCmd);
+			//System.out.println("contrasts comm: " + rCmd);
 			
 			rCmd = "fit2 <- contrasts.fit(fit, contrast.matrix)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2 <- eBayes(fit2)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 		} else if (dataDesign == 4){
 			rCmd = "colnames(design) <-levels(TS)";
 			RHook.evalR(rCmd);
@@ -632,15 +632,15 @@ public class LIMMA extends AbstractAlgorithm{
 			rCmd += "FactorA2.B1vsB2 = "+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2,";
 			rCmd += "Diff = ("+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2) - ("+this.nameA+"1."+this.nameB+"1 - "+this.nameA+"1."+this.nameB+"2),levels = design)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2 <- contrasts.fit(fit, cont.matrix)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2 <- eBayes(fit2)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 		} else if (dataDesign == 5){
 			rCmd = "colnames(design) <-levels(TS)";
 			RHook.evalR(rCmd);
@@ -660,15 +660,15 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 			rCmd = rCmd + "levels = design)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 
 			rCmd = "fit2a <- contrasts.fit(fit, cont1.matrix)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2a <- eBayes(fit2a)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "cont2.matrix <- makeContrasts(";
 			for (int i=0; i<numGroups-1; i++){
@@ -676,15 +676,15 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 			rCmd = rCmd + "levels = design)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 
 			rCmd = "fit2b <- contrasts.fit(fit, cont2.matrix)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2b <- eBayes(fit2b)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 
 			rCmd = "cont3.matrix <- makeContrasts(";
 			for (int i=0; i<numGroups-1; i++){
@@ -693,30 +693,30 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 			rCmd = rCmd + "levels = design)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 
 			rCmd = "fit2c <- contrasts.fit(fit, cont3.matrix)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 			rCmd = "fit2c <- eBayes(fit2c)";
 			RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			
 		}else {
 			// Ordinary fit
 			rCmd = "fit <- lmFit(y,design)";
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			RHook.evalR(rCmd);
 			rCmd = "fit <- eBayes(fit)";
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			RHook.evalR(rCmd);
 		}
 
 		// Various ways of summarizing or plotting the results
 		//TODO maybe?
 		//Extract data based on study design
-		System.out.println("Summarizing LIMMA result");
+		//System.out.println("Summarizing LIMMA result");
 		//System.out.println("res <- topTable(fit,coef=2)");
 //		System.out.println("res <- toptable(fit,coef=c(2),number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)");
 
@@ -726,14 +726,14 @@ public class LIMMA extends AbstractAlgorithm{
 			case 1:{ //one-class design
 				topTabString = new String[1];
 				topTabString[0] = "res0 <- toptable(fit,number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-				System.out.println(" one class : "+topTabString[0]);
+				//System.out.println(" one class : "+topTabString[0]);
 				sigGenesArrays = new int[2][]; //sig genes	
 				break;
 			}
 			case 2:{ //two-class design
 				topTabString = new String[1];
 				topTabString[0] = "res0 <- toptable(fit, coef = 2, number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-				System.out.println(" two class : "+topTabString[0]);
+				//System.out.println(" two class : "+topTabString[0]);
 				sigGenesArrays = new int[2][]; //sig genes	
 				break;
 			}
@@ -744,7 +744,7 @@ public class LIMMA extends AbstractAlgorithm{
 				topTabString = new String[ttCases];
 				for (int i=0; i<ttCases; i++){
 					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					System.out.println(" multi class ["+i+"] : "+topTabString[i]);
+					//System.out.println(" multi class ["+i+"] : "+topTabString[i]);
 				}
 				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
 				break;
@@ -753,7 +753,7 @@ public class LIMMA extends AbstractAlgorithm{
 				topTabString = new String[3];
 				for (int i=0; i<3; i++){
 					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					System.out.println(" 2-factor ["+i+"] : "+topTabString[i]);
+					//System.out.println(" 2-factor ["+i+"] : "+topTabString[i]);
 				}
 				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
 				break;
@@ -762,11 +762,11 @@ public class LIMMA extends AbstractAlgorithm{
 				topTabString = new String[2*(numGroups-1)];
 				for (int i=0; i<numGroups-1; i++){
 					topTabString[i] = "res"+i+" <- toptable(fit2a,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
+					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
 				}
 				for (int i=numGroups-1; i<2*(numGroups-1); i++){
 					topTabString[i] = "res"+i+" <- toptable(fit2b,coef="+(i-numGroups+2)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
+					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
 				}
 				sigGenesArrays = new int[topTabString.length*2+6][]; //sig genes	
 				break;
@@ -790,8 +790,8 @@ public class LIMMA extends AbstractAlgorithm{
 			x = RHook.evalR(rCmd);
 			double rowIndices[] = x.asDoubleArray();
 	
-			System.out.println("rowIndices[] "+ rowIndices[0] + " " + rowIndices[numProbes-1]);
-			System.out.println("res$ID");
+			//System.out.println("rowIndices[] "+ rowIndices[0] + " " + rowIndices[numProbes-1]);
+			//System.out.println("res$ID");
 			rCmd = "res"+interax+"$ID";
 			x = RHook.evalR(rCmd);
 			String sigGenes[]=x.asStringArray(); //Basically all genes 
@@ -843,7 +843,7 @@ public class LIMMA extends AbstractAlgorithm{
 				else
 					nonsig.add(new Integer(i));
 			}
-			System.out.println("sig# = "+sig.size()+ "  non-sig# = "+ nonsig.size());
+			//System.out.println("sig# = "+sig.size()+ "  non-sig# = "+ nonsig.size());
 			sigGenesArrays[interax*2] = new int[sig.size()]; //sig genes
 			sigGenesArrays[interax*2+1] = new int[numProbes - sig.size()]; //non-sig genes
 	
@@ -851,8 +851,8 @@ public class LIMMA extends AbstractAlgorithm{
 			for (int i=0; i<sigGenesArrays[interax*2].length; i++){
 				sigGenesArrays[interax*2][i] = sig.get(i);
 			}
-			System.out.println(sigGenesArrays[interax*2+1].length);
-			System.out.println(nonsig.size());
+			//System.out.println(sigGenesArrays[interax*2+1].length);
+			//System.out.println(nonsig.size());
 			for (int i=0; i<sigGenesArrays[interax*2+1].length; i++){
 				sigGenesArrays[interax*2+1][i] = nonsig.get(i);
 			}
@@ -861,7 +861,7 @@ public class LIMMA extends AbstractAlgorithm{
 		if (dataDesign==3||dataDesign==4){
 			rCmd = "fit2$F.p.value";
 			x = RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			double[] tmp=x.asDoubleArray();
 			for(int i=0; i < tmp.length; i++) {
 				fValues[i] = (float)tmp[i];
@@ -886,7 +886,7 @@ public class LIMMA extends AbstractAlgorithm{
 		if (dataDesign==5){
 			rCmd = "fit2a$F.p.value";
 			x = RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			double[] tmp=x.asDoubleArray();
 			for(int i=0; i < tmp.length; i++) {
 				fValues[i] = (float)tmp[i];
@@ -910,7 +910,7 @@ public class LIMMA extends AbstractAlgorithm{
 
 			rCmd = "fit2b$F.p.value";
 			x = RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			tmp=x.asDoubleArray();
 			for(int i=0; i < tmp.length; i++) {
 				fValues[i] = (float)tmp[i];
@@ -934,7 +934,7 @@ public class LIMMA extends AbstractAlgorithm{
 
 			rCmd = "fit2c$F.p.value";
 			x = RHook.evalR(rCmd);
-			System.out.println(rCmd);
+			//System.out.println(rCmd);
 			tmp=x.asDoubleArray();
 			for(int i=0; i < tmp.length; i++) {
 				fValues[i] = (float)tmp[i];
@@ -1019,7 +1019,7 @@ public class LIMMA extends AbstractAlgorithm{
 				str = str  + ", ";
 		}
 		str = str + ")";
-		System.out.println("str design: " + str);
+		//System.out.println("str design: " + str);
 		return str;
 	}
 
@@ -1043,7 +1043,7 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 		}
 		String str = "design <- cbind(Grp1=c(" + grp1 + "),Grp2=c(" + grp2 + "))";
-		System.out.println("str design: " + str);
+		//System.out.println("str design: " + str);
 		return str;
 	}
 
@@ -1074,7 +1074,7 @@ public class LIMMA extends AbstractAlgorithm{
 			}
 		}
 		str = str +")";
-		System.out.println("str design: " + str);
+		//System.out.println("str design: " + str);
 		return str;
 	}
 
