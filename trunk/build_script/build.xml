@@ -2135,6 +2135,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			
 			<chmod file="${package.dir}/${mev_version.dir}/MeV.app/Contents/MacOS/JavaApplicationStub" perm="755"/>
 			<chmod file="${package.dir}/${mev_version.dir}/tmev_mac.sh" perm="755"/>
+		<!--
 			<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_mac.zip"
 				basedir="${package.dir}"
 				excludes="${mev_version.dir}/lib/**, ${mev_version.dir}/TMEV.bat, ${mev_version.dir}/tmev.sh">
@@ -2146,6 +2147,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 					<include name="${mev_version.dir}/tmev_mac.sh"/>
 					<exclude name=".svn"/>
 			</zip>
+			-->
+		<echo message="mac distro must be zipped by hand from ${package.dir}/${mev_version.dir} using 7-zip"/>
 	</target>
 	<!--
 		 Target to build Windows release bundle only.
