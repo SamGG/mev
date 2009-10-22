@@ -56,6 +56,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -909,7 +910,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
         	private void saveAssignments() {
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");	
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
         		
         		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
         			file = fileChooser.getSelectedFile();			
@@ -984,7 +985,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
         		 */
         		
         		File file;		
-        		JFileChooser fileChooser = new JFileChooser("./data");
+        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
         		
         		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         		

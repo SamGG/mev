@@ -192,7 +192,7 @@ public class NMFCentroidViewer extends CentroidViewer {
      */
     private static File getFile(Frame frame) {
         File file = null;
-        final JFileChooser fc = new JFileChooser(TMEV.getFile("data/"));
+        final JFileChooser fc = new JFileChooser(TMEV.getDataPath());
         fc.addChoosableFileFilter(new ExpressionFileFilter());
         fc.setFileView(new ExpressionFileView());
         int ret = fc.showSaveDialog(frame);
