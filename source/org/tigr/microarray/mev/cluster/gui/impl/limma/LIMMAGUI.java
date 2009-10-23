@@ -147,13 +147,12 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         factorAName = LIMMADialog.getFactorAName();
         factorBName = LIMMADialog.getFactorBName();
 		//logFile = LimmaLogger.getLogFileName();
-
-        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
-        	groupAssignments =LIMMADialog.getClusterGroupAssignments();
-        }
-        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.BUTTON_SELECTION){
-        	groupAssignments=LIMMADialog.getGroupAssignments();
-        } 
+//
+//        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
+//        	groupAssignments =LIMMADialog.getClusterSelectorGroupAssignments();
+//        }
+//        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.BUTTON_SELECTION){
+        groupAssignments=LIMMADialog.getGroupAssignments();
         if (groupAssignments == null)
         	return null;
         
@@ -356,12 +355,12 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         numGroups = LIMMADialog.getNumGroups();
 
 
-        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
-        	groupAssignments =LIMMADialog.getClusterGroupAssignments();
-        }
-        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.BUTTON_SELECTION){
+//        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
+//        	groupAssignments =LIMMADialog.getClusterGroupAssignments();
+//        }
+//        if (LIMMADialog.getSelectionDesign()==LIMMAInitBox.BUTTON_SELECTION){
         	groupAssignments=LIMMADialog.getGroupAssignments();
-        } 
+//        } 
         if (groupAssignments == null)
         	return null;
         
