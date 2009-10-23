@@ -752,7 +752,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
     					groupMax=this.numGroups;
     				else
     					groupMax = Math.max(this.factorAlevels,this.factorBlevels);
-    				System.out.println(groupMax+" gm");
     				for (int i=0; i<groupMax; i++){
         				pw.print("Group "+(i+1)+" Label:\t");
     					pw.println("Group "+(i+1));
@@ -1038,7 +1037,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
         					//pick up group names
         					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
         						groupNames.add(lineArray[1]);
-        						System.out.println("added "+ lineArray[1]);
         						continue;
         					}
         					if(lineArray[0].startsWith("Design")) {
@@ -1125,7 +1123,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
     					if (design==4||design==5){
 	        				condName = (String)(group2Assignments.get(fileSampleIndex));
 	        				condIndex = groupNames.indexOf(condName);
-	        				System.out.println(condIndex);
         				}
         				
         				//set state
@@ -1260,7 +1257,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
             saveButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
                 	saveAssignments();
-                	System.out.println("saved");
                 }
             });
             
@@ -1454,13 +1450,50 @@ public class LIMMAInitBox extends AlgorithmDialog {
     }
     
     public int[] getGroupAssignments() {
+    	if (getExperimentalDesign()<4)
+    		return getSimpleGroupAssignments();
     	if (getExperimentalDesign()==4)
     		return getFactorGroupAssignments();
     	if (getExperimentalDesign()==5)
     		return getTimeCourseGroupAssignments();
+        return null;
+    }  
+
+    private int[] getClusterSelectorGroupAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
+    	for (int i=0; i<mPanel.numGroups; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.groupsCS.getGroupSamples("Class "+j);
     		
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<mPanel.numGroups;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
+    
+    private int[] getSimpleGroupAssignments() {
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    		return getClusterSelectorGroupAssignments();
         int[] groupAssignments = new int[exptNames.size()];
-        
         for (int i = 0; i < exptNames.size(); i++) {
             if (mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
                 groupAssignments[i] = 0;
@@ -1474,9 +1507,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
             }
         }
         return groupAssignments;
-    }  
-    
-    public int[] getTimeCourseGroupAssignments() {
+    }
+    private int[] getTimeCourseGroupAssignments() {
     	int[]timeCourseGroupAssignments = new int[exptNames.size()];
 
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1503,7 +1535,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
     	return timeCourseGroupAssignments;
     }
     
-    public int[] getFactorGroupAssignments() {
+    private int[] getFactorGroupAssignments() {
     	int[]factorGroupAssignments = new int[exptNames.size()];
 
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1531,11 +1563,11 @@ public class LIMMAInitBox extends AlgorithmDialog {
     }
     public int[][] getGroupMatrix(){
     	int[] timeAssignments;
-    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
-    		timeAssignments = getClusterGroupAssignments();
-    	}else{
+//    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
+//    		timeAssignments = getClusterGroupAssignments();
+//    	}else{
     		timeAssignments = getGroupAssignments();
-    	}
+//    	}
     	int[] numEachTime = new int[getNumGroups()];
     	for (int i=0; i< timeAssignments.length; i++){
     		if (timeAssignments[i]!=0)
@@ -1584,37 +1616,37 @@ public class LIMMAInitBox extends AlgorithmDialog {
         return design;
     }
 
-    public int[] getClusterGroupAssignments(){
-    	boolean doubleAssigned;
-    	int[]groupAssignments = new int[exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
-    	for (int i=0; i<mPanel.numGroups; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Time "+j);
-    		
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[i] = 0;
-    		for (int j = 0;j<mPanel.numGroups;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			
-	    			groupAssignments[i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	return groupAssignments;
-    }
+//    public int[] getClusterGroupAssignments(){
+//    	boolean doubleAssigned;
+//    	int[]groupAssignments = new int[exptNames.size()];
+//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
+//    	for (int i=0; i<mPanel.numGroups; i++){
+//    		int j = i+1;
+//    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Time "+j);
+//    		
+//    	}
+//    	for (int i = 0; i < exptNames.size(); i++) {
+//    		doubleAssigned = false;
+//    		groupAssignments[i] = 0;
+//    		for (int j = 0;j<mPanel.numGroups;j++){
+//	    		if (arraylistArray[j].contains(i)){
+//	    			if (doubleAssigned){
+//	    		        Object[] optionst = { "OK" };
+//	    				JOptionPane.showOptionDialog(null, 
+//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+//	    						optionst, optionst[0]);
+//	    				return null;
+//
+//	    			}
+//	    			
+//	    			groupAssignments[i] = j+1;
+//	    			doubleAssigned = true;
+//	    		}
+//    		}
+//        }
+//    	return groupAssignments;
+//    }
     
     public int getNumGroups() {
     	if (getExperimentalDesign()==4)
