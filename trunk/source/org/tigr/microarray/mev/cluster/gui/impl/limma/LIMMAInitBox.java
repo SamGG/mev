@@ -431,11 +431,16 @@ public class LIMMAInitBox extends AlgorithmDialog {
             c.gridwidth=2;
             clusterSelectorPanel.add(clusterInstructions, c);
         	if (getExperimentalDesign()==4){
-        		FactorAESP = new ExperimentsSelectionPanel(exptNames, factorAlevels, ngPanel.getExperimentDesign(), factorAName);
-        		FactorBESP = new ExperimentsSelectionPanel(exptNames, factorBlevels, ngPanel.getExperimentDesign(), factorBName);
+        		FactorAESP = new ExperimentsSelectionPanel(exptNames, factorAlevels, ngPanel.getExperimentDesign(), factorAName, false);
+        		FactorBESP = new ExperimentsSelectionPanel(exptNames, factorBlevels, ngPanel.getExperimentDesign(), factorBName, false);
                 selectionPanel.add(FactorAESP, cnstr);
         		cnstr.gridx = 1;
         		selectionPanel.add(FactorBESP, cnstr);
+        		cnstr.gridy++;
+        		cnstr.gridx--;
+        		cnstr.gridwidth=2;
+        		cnstr.weighty = 0;
+        		selectionPanel.add(createSaveLoadPanel(), cnstr);
 
                 
                 factorACS= new ClusterSelector(repository, factorAlevels, "Level");
@@ -451,11 +456,16 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 c.gridx = 1;
                 clusterSelectorPanel.add(factorBCS, c);
         	}else if (getExperimentalDesign()==5){
-        		ConditionESP = new ExperimentsSelectionPanel(exptNames, 2, ngPanel.getExperimentDesign(), "Condition");
-        		TimePointESP = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Time");
+        		ConditionESP = new ExperimentsSelectionPanel(exptNames, 2, ngPanel.getExperimentDesign(), "Condition", false);
+        		TimePointESP = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Time", false);
                 selectionPanel.add(ConditionESP, cnstr);
         		cnstr.gridx = 1;
         		selectionPanel.add(TimePointESP, cnstr);
+        		cnstr.gridy++;
+        		cnstr.gridx--;
+        		cnstr.gridwidth=2;
+        		cnstr.weighty = 0;
+        		selectionPanel.add(createSaveLoadPanel(), cnstr);
 
                 
                 conditionCS= new ClusterSelector(repository, factorAlevels, "Condition");
@@ -471,8 +481,12 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 c.gridx = 1;
                 clusterSelectorPanel.add(timepointCS, c);
         	}else{
-        		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group");
+        		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group", true);
         		selectionPanel.add(sampleSelectionPanel, cnstr);
+        		cnstr.gridy++;
+        		cnstr.weighty = 0;
+        		selectionPanel.add(createSaveLoadPanel(), cnstr);
+        		
         		if(getExperimentalDesign()==5){
         			groupsCS= new ClusterSelector(repository, numGroups, "Timepoint");
 	            	groupsCS.setClusterType("Timepoint");
@@ -698,19 +712,127 @@ public class LIMMAInitBox extends AlgorithmDialog {
             }
             
         }
+        
+
+        /**
+    	 * Saves the assignments to file.
+    	 * 
+    	 * Comments include title, user, save date
+    	 * Design information includes factor a and b labels and the level names for each factor
+    	 * A header row is followed by sample index, sample name (primary, field index = 0),
+    	 * them factor A assignment (text label) then factor B assignment (text label)
+    	 */
+    	private void saveAssignments() {
+    		
+    		File file;		
+    		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
+    		
+    		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+    			file = fileChooser.getSelectedFile();			
+    			try {
+    				PrintWriter pw = new PrintWriter(new FileWriter(file));
+    				
+    				//comment row
+    				Date currDate = new Date(System.currentTimeMillis());			
+    				String dateString = currDate.toString();;
+    				String userName = System.getProperty("user.name");
+    				
+    				pw.println("# Assignment File");
+    				pw.println("# User: "+userName+" Save Date: "+dateString);
+    				pw.println("#");
+    				
+    				//save group names..?
+    				
+    				pw.print("Module:\t");
+    				pw.println("LIMMA");
+    				pw.print("Design:\t");
+    				pw.println(ngPanel.getExperimentDesign());
+    				int groupMax;
+    				if (ngPanel.getExperimentDesign()!=4)
+    					groupMax=this.numGroups;
+    				else
+    					groupMax = Math.max(this.factorAlevels,this.factorBlevels);
+    				System.out.println(groupMax+" gm");
+    				for (int i=0; i<groupMax; i++){
+        				pw.print("Group "+(i+1)+" Label:\t");
+    					pw.println("Group "+(i+1));
+    				}
+    								
+    				pw.println("#");
+    				
+    				pw.println("Sample Index\tSample Name\tGroup Assignment");
+
+    				
+    				if (ngPanel.getExperimentDesign()<4){
+    					int[] groupAssgn=getGroupAssignments();
+        				for(int sample = 0; sample < exptNames.size(); sample++) {
+        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+        					pw.print(exptNames.get(sample)+"\t");
+        					if (groupAssgn[sample]!=0)
+        						pw.println("Group "+(groupAssgn[sample]));
+        					else
+        						pw.println("Exclude");
+        					
+        				}
+        			}else{
+        					
+        				for(int sample = 0; sample < exptNames.size(); sample++) {
+        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+        					pw.print(exptNames.get(sample)+"\t");
+        					int a = 0;
+        		        	int b = 0;
+            				if (ngPanel.getExperimentDesign()==4){
+	        		            for (int j = 0; j < mPanel.FactorAESP.assignmentRBs.length; j++) {
+	        		                if (mPanel.FactorAESP.assignmentRBs[j][sample].isSelected()) {
+	        		                    a = j+1;
+	        		                    break;
+	        		                }
+	        		            }
+	        		            for (int j = 0; j < mPanel.FactorBESP.assignmentRBs.length; j++) {
+	        		                if (mPanel.FactorBESP.assignmentRBs[j][sample].isSelected()) {
+	        		                    b = j+1;
+	        		                    break;
+	        		                }
+	        		            }
+        					}else{
+	        		            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
+	        		                if (mPanel.ConditionESP.assignmentRBs[j][sample].isSelected()) {
+	        		                    b = j+1;
+	        		                    break;
+	        		                }
+	        		            }
+	        		            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
+	        		                if (mPanel.TimePointESP.assignmentRBs[j][sample].isSelected()) {
+	        		                    a = j+1;
+	        		                    break;
+	        		                }
+	        		            }        						
+        					}
+    						pw.println((a==0?"Exclude":("Group "+(a)))+"\t"+(b==0?"Exclude":"Group "+(b)));
+        				}
+    				}
+    				pw.flush();
+    				pw.close();			
+    			} catch (FileNotFoundException fnfe) {
+    				fnfe.printStackTrace();
+    			} catch (IOException ioe) {
+    				ioe.printStackTrace();
+    			}
+    		}
+    	}
         class ExperimentsSelectionPanel extends JPanel {
         	int design = 0;
             int numPanels = 0;
             JLabel[] expLabels;
             JRadioButton[][] assignmentRBs;
             JRadioButton[] notInTimeGroupRadioButtons;
-            ExperimentsSelectionPanel(Vector<String> exptNames, int numTimePoints, int design, String title) {
+            ExperimentsSelectionPanel(Vector<String> exptNames, int numGroups, int design, String title, boolean firstPanel) {
             	this.design = design;
                 this.setBorder(new TitledBorder(new EtchedBorder(), title+" Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
 
                 expLabels = new JLabel[exptNames.size()];
-                assignmentRBs = new JRadioButton[numTimePoints][exptNames.size()];
+                assignmentRBs = new JRadioButton[numGroups][exptNames.size()];
                 numPanels = exptNames.size()/512 + 1;
                 
                 notInTimeGroupRadioButtons = new JRadioButton[exptNames.size()];
@@ -739,12 +861,12 @@ public class LIMMAInitBox extends AlgorithmDialog {
 	                    chooseTime[i].add(assignmentRBs[0][i]);
 	                    assignmentRBs[0][i].setSelected(true);
                     }else if (design==5){
-                    	for (int j = 0; j < numTimePoints; j++) {
+                    	for (int j = 0; j < numGroups; j++) {
 		                    assignmentRBs[j][i] = new JRadioButton(title+" " + (j) + "     ", false);
 		                    chooseTime[i].add(assignmentRBs[j][i]);
 		                }
                     }else{
-		                for (int j = 0; j < numTimePoints; j++) {
+		                for (int j = 0; j < numGroups; j++) {
 		                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", false);
 		                    chooseTime[i].add(assignmentRBs[j][i]);
 		                }
@@ -758,13 +880,13 @@ public class LIMMAInitBox extends AlgorithmDialog {
                     chooseTime[i].add(notInTimeGroupRadioButtons[i]);
                     int twoCondRoom = 0;
                     
-                    for (int j = 0; j < numTimePoints; j++) {
+                    for (int j = 0; j < numGroups; j++) {
                         buildConstraints(constraints, j+twoCondRoom, i%512, 1, 1, 100, 100);
                         gridbag.setConstraints(assignmentRBs[j][i], constraints);
                         panels[currPanel].add(assignmentRBs[j][i]);
                     }
                     
-                    buildConstraints(constraints, (numTimePoints + 1+twoCondRoom), i%512, 1, 1, 100, 100);
+                    buildConstraints(constraints, (numGroups + 1+twoCondRoom), i%512, 1, 1, 100, 100);
                     gridbag.setConstraints(notInTimeGroupRadioButtons[i], constraints);
                     
                     
@@ -822,75 +944,9 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
                 
-                JPanel panel2 = new JPanel();
-                GridBagLayout gridbag3 = new GridBagLayout();
-                panel2.setLayout(gridbag3);
-                panel2.setBackground(Color.white);
-                JButton saveButton = new JButton("  Save settings  ");
-                saveButton.setFocusPainted(false);
-                saveButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
-                JButton loadButton = new JButton("  Load settings  ");
-                loadButton.setFocusPainted(false);
-                loadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
-                JButton resetButton = new JButton("  Reset  ");
-                resetButton.setFocusPainted(false);
-                resetButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
-                
-                
-                final int finNum = exptNames.size();
-                
-                resetButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        for (int i = 0; i < finNum; i++) {
-                        	notInTimeGroupRadioButtons[i].setSelected(true);
-                        }
-                    }
-                });
-                
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File("Data"));
-                
-                saveButton.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent evt) {
-                    	saveAssignments();
-                    }
-                });
-                
-                
-                //NEED TO REWORK THIS FOR MULTICLASS
-                
-                loadButton.addActionListener(new ActionListener(){
-                    public void actionPerformed(ActionEvent evt) {
-                    	loadAssignments();
-                    	
-                    }
-                });
-                
-                
-                
-                constraints.anchor = GridBagConstraints.CENTER;
-                constraints.fill = GridBagConstraints.NONE;
-                constraints.insets = new Insets(5,5,5,5);
-                buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
-                gridbag3.setConstraints(saveButton, constraints);
-                panel2.add(saveButton);
-                
-                buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
-                gridbag3.setConstraints(loadButton, constraints);
-                panel2.add(loadButton);
-                
-                buildConstraints(constraints, 2, 0, 1, 1, 34, 0);
-                gridbag3.setConstraints(resetButton, constraints);
-                panel2.add(resetButton);
-                constraints.insets = new Insets(0,0,0,0);
-                buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
-                constraints.anchor = GridBagConstraints.CENTER;
-                gridbag2.setConstraints(panel2, constraints);
-                this.add(panel2);
                 
           
             }
-            
             /**
              *  resets all group assignments
              */
@@ -899,259 +955,346 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 	notInTimeGroupRadioButtons[i].setSelected(true);
                 }
             }
-            /**
-        	 * Saves the assignments to file.
-        	 * 
-        	 * Comments include title, user, save date
-        	 * Design information includes factor a and b labels and the level names for each factor
-        	 * A header row is followed by sample index, sample name (primary, field index = 0),
-        	 * them factor A assignment (text label) then factor B assignment (text label)
-        	 */
-        	private void saveAssignments() {
-        		
-        		File file;		
-        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
-        		
-        		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-        			file = fileChooser.getSelectedFile();			
-        			try {
-        				PrintWriter pw = new PrintWriter(new FileWriter(file));
-        				
-        				//comment row
-        				Date currDate = new Date(System.currentTimeMillis());			
-        				String dateString = currDate.toString();;
-        				String userName = System.getProperty("user.name");
-        				
-        				pw.println("# Assignment File");
-        				pw.println("# User: "+userName+" Save Date: "+dateString);
-        				pw.println("#");
-        				
-        				//save group names..?
-        				
-        				pw.print("Module:\t");
-        				pw.println("LIMMA");
-        				pw.print("Conditions:\t");
-        				pw.println(ngPanel.getExperimentDesign());
-        				for (int i=0; i<numGroups; i++){
-            				pw.print("Group "+(i+1)+" Label:\t");
-        					pw.println("Time "+i);
-        				}
-        								
-        				pw.println("#");
-        				
-        				pw.println("Sample Index\tSample Name\tGroup Assignment");
-
-        				int[] timeAssgn=getGroupAssignments();
-        				
-        				for(int sample = 0; sample < exptNames.size(); sample++) {
-        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
-        					pw.print(exptNames.get(sample)+"\t");
-        					if (timeAssgn[sample]!=0)
-        						pw.println("Time "+(timeAssgn[sample]-1));
-        					else
-        						pw.println("Exclude");
-        					
-        				}
-        				pw.flush();
-        				pw.close();			
-        			} catch (FileNotFoundException fnfe) {
-        				fnfe.printStackTrace();
-        			} catch (IOException ioe) {
-        				ioe.printStackTrace();
-        			}
-        		}
-        	}
         	
-        	/**
-        	 * Loads file based assignments
-        	 */
-        	private void loadAssignments() {
-        		/**
-        		 * consider the following verifcations and policies
-        		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
-        		 *-each loaded file name should match a corresponding name in the assignment file, 1:1
-        		 *		-if names don't match, throw warning and inform that assignments are based on loaded order
-        		 *		 rather than a sample name
-        		 *-the number of levels of factor A and factor B specified previously when defining the design
-        		 *should match the number of levels in the assignment file, if not warning and quit
-        		 *-if the level names match the level names entered then the level names will be used to make assignments
-        		 *if not, then there will be a warning and the level index will be used.
-        		 *-make sure that each level label pairs to a particular level index, this is a format 
-        		 *-Note that all design labels in the assignment file will override existing labels
-        		 *this means updating the data structures in this class, and updating AlgorithmData to set appropriate fields
-        		 ***AlgorithmData modification requires a fixed vocab. for parameter names to be changed
-        		 *these fields are (factorAName, factorBName, factorANames (level names) and factorANames (level names)
-        		 *Wow, that was easy :)
-        		 */
-        		
-        		File file;		
-        		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
-        		
-        		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-        		
-        			file = fileChooser.getSelectedFile();
+        }
+
+    	/**
+    	 * Loads file based assignments
+    	 */
+    	private void loadAssignments() {
+    		/**
+    		 * consider the following verifcations and policies
+    		 *-number of loaded samples and rows in the assigment file should match, if not warning and quit
+    		 *-each loaded file name should match a corresponding name in the assignment file, 1:1
+    		 *		-if names don't match, throw warning and inform that assignments are based on loaded order
+    		 *		 rather than a sample name
+    		 *-the number of levels of factor A and factor B specified previously when defining the design
+    		 *should match the number of levels in the assignment file, if not warning and quit
+    		 *-if the level names match the level names entered then the level names will be used to make assignments
+    		 *if not, then there will be a warning and the level index will be used.
+    		 *-make sure that each level label pairs to a particular level index, this is a format 
+    		 *-Note that all design labels in the assignment file will override existing labels
+    		 *this means updating the data structures in this class, and updating AlgorithmData to set appropriate fields
+    		 ***AlgorithmData modification requires a fixed vocab. for parameter names to be changed
+    		 *these fields are (factorAName, factorBName, factorANames (level names) and factorANames (level names)
+    		 *Wow, that was easy :)
+    		 */
+    		
+    		File file;		
+    		JFileChooser fileChooser = new JFileChooser("./data");
+    		
+    		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+    		
+    			file = fileChooser.getSelectedFile();
+    			
+        		try {						
+        			//first grab the data and close the file
+        			BufferedReader br = new BufferedReader(new FileReader(file));
+        			Vector<String> data = new Vector<String>();
+        			String line;
+        			while( (line = br.readLine()) != null)
+        				data.add(line.trim());
         			
-	        		try {						
-	        			//first grab the data and close the file
-	        			BufferedReader br = new BufferedReader(new FileReader(file));
-	        			Vector<String> data = new Vector<String>();
-	        			String line;
-	        			while( (line = br.readLine()) != null)
-	        				data.add(line.trim());
-	        			
-	        			br.close();
-	        				
-	        			//build structures to capture the data for assingment information and for *validation
-	        			
-	        			//factor names
-	        			Vector<String> groupNames = new Vector<String>();
-	        			Vector<String> condNames = new Vector<String>();
-	        			
-	        			
-	        			Vector<Integer> sampleIndices = new Vector<Integer>();
-	        			Vector<String> sampleNames = new Vector<String>();
-	        			Vector<String> groupAssignments = new Vector<String>();		
-	        			Vector<String> condAssignments = new Vector<String>();		
-	        			
-	        			//parse the data in to these structures
-	        			String [] lineArray;
-	        			int cond=0;
-	        			//String status = "OK";
-	        			for(int row = 0; row < data.size(); row++) {
-	        				line = (String)(data.get(row));
-	
-	        				//if not a comment line, and not the header line
-	        				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
-	        					
-	        					lineArray = line.split("\t");
-	        					
-	        					//check what module saved the file
-	        					if(lineArray[0].startsWith("Module:")) {
-	        						if (!lineArray[1].equals("LIMMA")){
-	        							Object[] optionst = { "Continue", "Cancel" };
-	        							if (JOptionPane.showOptionDialog(null, 
-	        		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
-	        		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	        		    						optionst, optionst[0])==0)
-	        								continue;
-	        							return;
-	        						}
-	        						continue;
-	        					}
-	        					
-	        					//pick up group names
-	        					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
-	        						groupNames.add(lineArray[1]);
-	        						continue;
-	        					}
-	        					if(lineArray[0].startsWith("Cond")) {
-	        						try {
-	        							cond=Integer.parseInt(lineArray[1]);
-		        					} catch ( NumberFormatException nfe) {
-		        						//if not parsable continue
-		        						continue;
-		        					}
-	        						continue;
-	        					}
-	        					if (cond==2){
-	        						condNames.add("Condition 1");
-	        						condNames.add("Condition 2");
-	        					}
-	        						
-	
-	        					//non-comment line, non-header line and not a group label line
-	        					
-	        					try {
-	        						Integer.parseInt(lineArray[0]);
+        			br.close();
+        				
+        			//build structures to capture the data for assingment information and for *validation
+        			
+        			//factor names
+        			Vector<String> groupNames = new Vector<String>();
+//        			Vector<String> factorNames = new Vector<String>();
+        			
+        			
+        			Vector<Integer> sampleIndices = new Vector<Integer>();
+        			Vector<String> sampleNames = new Vector<String>();
+        			Vector<String> groupAssignments = new Vector<String>();		
+        			Vector<String> group2Assignments = new Vector<String>();		
+        			
+        			//parse the data in to these structures
+        			String [] lineArray;
+        			int design=0;
+        			//String status = "OK";
+        			for(int row = 0; row < data.size(); row++) {
+        				line = (String)(data.get(row));
+
+        				//if not a comment line, and not the header line
+        				if(!(line.startsWith("#")) && !(line.startsWith("SampleIndex"))) {
+        					
+        					lineArray = line.split("\t");
+        					
+        					//check what module saved the file
+        					if(lineArray[0].startsWith("Module:")) {
+        						if (!lineArray[1].equals("LIMMA")){
+        							Object[] optionst = { "Continue", "Cancel" };
+        							if (JOptionPane.showOptionDialog(null, 
+        		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
+        		    						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+        		    						optionst, optionst[0])==0)
+        								continue;
+        							return;
+        						}
+        						continue;
+        					}
+        					
+        					//pick up group names
+        					if(lineArray[0].startsWith("Group ") && lineArray[0].endsWith("Label:")) {
+        						groupNames.add(lineArray[1]);
+        						System.out.println("added "+ lineArray[1]);
+        						continue;
+        					}
+        					if(lineArray[0].startsWith("Design")) {
+        						try {
+        							design=Integer.parseInt(lineArray[1]);
 	        					} catch ( NumberFormatException nfe) {
 	        						//if not parsable continue
 	        						continue;
 	        					}
-	        					
-	        					sampleIndices.add(new Integer(lineArray[0]));
-	        					sampleNames.add(lineArray[1]);
-	        					groupAssignments.add(lineArray[2]);	
-	        					if (cond==2)
-	        						condAssignments.add(lineArray[3]);
-	        				}				
-	        			}
-	        			
-	        			//we have the data parsed, now validate, assign current data
-	
-	
-	        			if( exptNames.size() != sampleNames.size()) {
-	        				System.out.println(exptNames.size()+"  "+sampleNames.size());
-	        				//status = "number-of-samples-mismatch";
-	        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
-	        				//warn and prompt to continue but omit assignments for those not represented				
-	
-	        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
-	        						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
-	        						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
-	        				
-	        				return;
-	        			}
-	        			Vector<String> currSampleVector = new Vector<String>();
-	        			for(int i = 0; i < exptNames.size(); i++)
-	        				currSampleVector.add(exptNames.get(i));
-	        			
-	        			int fileSampleIndex = 0;
-	        			int groupIndex = 0;
-	        			String groupName;
-	        			
-	        			for(int sample = 0; sample < exptNames.size(); sample++) {
-	        				boolean doIndex = false;
-	        				for (int i=0;i<exptNames.size(); i++){
-	        					if (i==sample)
-	        						continue;
-	        					if (exptNames.get(i).equals(exptNames.get(sample))){
-	        						doIndex=true;
-	        					}
-	        				}
-	        				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
-	        				if (fileSampleIndex==-1){
-	        					doIndex=true;
-	        				}
-	        				if (doIndex){
-	        					setStateBasedOnIndex(groupAssignments,groupNames, cond,condAssignments, condNames);
-	        					break;
-	        				}
-	        				
-	        				groupName = (String)(groupAssignments.get(fileSampleIndex));
-	        				groupIndex = groupNames.indexOf(groupName);
-	        				
-	        				//set state
-	        				try{
-	        					assignmentRBs[groupIndex][sample].setSelected(true);
-	        				}catch (Exception e){
-	        					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
-	        				}
-	        			}
-	        			
-	        			repaint();			
-	        			//need to clear assignments, clear assignment booleans in sample list and re-init
-	        			//maybe a specialized inti for the sample list panel.
-	        		} catch (Exception e) {
-	        			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
-	        		}
-	        	}
-        	}
-        	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames, int cond,Vector<String>condAssignments, Vector<String>condNames){
-        		Object[] optionst = { "Continue", "Cancel" };
-        		if (JOptionPane.showOptionDialog(null, 
-						"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
-						"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-						optionst, optionst[0])==1)
-					return;
+        						continue;
+        					}
+//        					if (design==4){
+//        						factorNames.add(getFactorAName());
+//        						factorNames.add(getFactorBName());
+//        					}
+//        					if (design==5){
+//        						factorNames.add("Condition 1");
+//        						factorNames.add("Condition 2");
+//        					}
+        						
 
-        		for(int sample = 0; sample < exptNames.size(); sample++) {
-        			try{
-        				assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-        			}catch(Exception e){
-    					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+        					//non-comment line, non-header line and not a group label line
+        					
+        					try {
+        						Integer.parseInt(lineArray[0]);
+        					} catch ( NumberFormatException nfe) {
+        						//if not parsable continue
+        						continue;
+        					}
+        					
+        					sampleIndices.add(new Integer(lineArray[0]));
+        					sampleNames.add(lineArray[1]);
+        					groupAssignments.add(lineArray[2]);	
+        					if (design==4||design==5)
+        						group2Assignments.add(lineArray[3]);
+        				}				
         			}
+        			
+        			//we have the data parsed, now validate, assign current data
+
+
+        			if( exptNames.size() != sampleNames.size()) {
+        				System.out.println(exptNames.size()+"  "+sampleNames.size());
+        				//status = "number-of-samples-mismatch";
+        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+        				//warn and prompt to continue but omit assignments for those not represented				
+
+        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
+        						                                   "does not match the number of samples loaded in MeV ("+exptNames.size()+").<br>" +
+        						                                   	"Assignments are not set.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
+        				
+        				return;
+        			}
+        			Vector<String> currSampleVector = new Vector<String>();
+        			for(int i = 0; i < exptNames.size(); i++)
+        				currSampleVector.add(exptNames.get(i));
+        			
+        			int fileSampleIndex = 0;
+        			int groupIndex = 0;
+        			String groupName;
+        			String condName;
+        			int condIndex = 0;
+        			
+        			for(int sample = 0; sample < exptNames.size(); sample++) {
+        				boolean doIndex = false;
+        				for (int i=0;i<exptNames.size(); i++){
+        					if (i==sample)
+        						continue;
+        					if (exptNames.get(i).equals(exptNames.get(sample))){
+        						doIndex=true;
+        					}
+        				}
+        				fileSampleIndex = sampleNames.indexOf(exptNames.get(sample));
+        				if (fileSampleIndex==-1){
+        					doIndex=true;
+        				}
+        				if (doIndex){
+        					setStateBasedOnIndex(groupAssignments, groupNames, design, group2Assignments);
+        					break;
+        				}
+        				
+        				groupName = (String)(groupAssignments.get(fileSampleIndex));
+        				groupIndex = groupNames.indexOf(groupName);
+    					if (design==4||design==5){
+	        				condName = (String)(group2Assignments.get(fileSampleIndex));
+	        				condIndex = groupNames.indexOf(condName);
+	        				System.out.println(condIndex);
+        				}
+        				
+        				//set state
+//        				try{
+//        					exptTimeRadioButtons[groupIndex][sample].setSelected(true);
+//        				}catch (Exception e){
+//        					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+//        				}
+//        				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
+//	        				if(condIndex == 1)
+//	        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
+//	        				else
+//	        					exptConditionRadioButtons[0][sample].setSelected(true);
+//        				}
+        				//set state
+        				try{
+                        	if (getExperimentalDesign()==4){
+                        		mPanel.FactorBESP.assignmentRBs[condIndex][sample].setSelected(true);
+                        		mPanel.FactorAESP.assignmentRBs[groupIndex][sample].setSelected(true);
+                        	} else if (getExperimentalDesign()==5){
+                        		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
+                        		mPanel.TimePointESP.assignmentRBs[groupIndex][sample].setSelected(true);
+                        	} else {
+                        		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
+                        	}
+        				}catch (Exception e){
+                        	if (getExperimentalDesign()==4){
+                        		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                        		mPanel.FactorBESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                        	} else if (getExperimentalDesign()==5){
+                        		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                        		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                        	} else {
+                        		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
+                        	}
+        				}
+        			}
+        			
+        			repaint();			
+        			//need to clear assignments, clear assignment booleans in sample list and re-init
+        			//maybe a specialized inti for the sample list panel.
+        		} catch (Exception e) {
+        			e.printStackTrace();
+        			JOptionPane.showMessageDialog(this, "<html>The file format cannot be read.</html>", "File Compatibility Error", JOptionPane.ERROR_MESSAGE);
         		}
         	}
+    	}
+    	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames, int cond,Vector<String>condAssignments){
+    		Object[] optionst = { "Continue", "Cancel" };
+    		if (JOptionPane.showOptionDialog(null, 
+					"The saved file was saved using a different sample annotation or has duplicate annotation. \n Would you like MeV to try to load it by index order?", 
+					"File type warning", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+					optionst, optionst[0])==1)
+				return;
+
+			String condName;
+			int condIndex = 0;
+    		for(int sample = 0; sample < exptNames.size(); sample++) {
+    			if (cond==2){
+    				condName = (String)(condAssignments.get(sample));
+    				condIndex = groupNames.indexOf(condName);
+				}
+    			try{
+                	if (getExperimentalDesign()==4){
+                		mPanel.FactorAESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+                		mPanel.FactorBESP.assignmentRBs[condIndex][sample].setSelected(true);
+                	} else if (getExperimentalDesign()==5){
+                		mPanel.TimePointESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+                		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
+                	} else {
+                		mPanel.sampleSelectionPanel.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+                	}
+//    				exptTimeRadioButtons[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+//    				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
+//        				if(condIndex == 1)
+//        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
+//        				else
+//        					exptConditionRadioButtons[0][sample].setSelected(true);
+//    				}
+    			}catch(Exception e){
+                	if (getExperimentalDesign()==4){
+                		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                		mPanel.FactorBESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                	} else if (getExperimentalDesign()==5){
+                		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                	} else {
+                		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
+                	}
+//					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+    			}
+    		}
+    	}
+        private JPanel createSaveLoadPanel(){
+
+            JPanel panel2 = new JPanel();
+            GridBagLayout gridbag3 = new GridBagLayout();
+            panel2.setLayout(gridbag3);
+            panel2.setBackground(Color.white);
+            JButton saveButton = new JButton("  Save settings  ");
+            saveButton.setFocusPainted(false);
+            saveButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
+            JButton loadButton = new JButton("  Load settings  ");
+            loadButton.setFocusPainted(false);
+            loadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
+            JButton resetButton = new JButton("  Reset  ");
+            resetButton.setFocusPainted(false);
+            resetButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED, Color.lightGray, Color.darkGray));
+            
+            
+            final int finNum = exptNames.size();
+            
+            resetButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    for (int i = 0; i < finNum; i++) {
+                    	if (getExperimentalDesign()==4){
+                    		mPanel.FactorAESP.notInTimeGroupRadioButtons[i].setSelected(true);
+                    		mPanel.FactorBESP.notInTimeGroupRadioButtons[i].setSelected(true);
+                    	} else if (getExperimentalDesign()==5){
+                    		mPanel.TimePointESP.notInTimeGroupRadioButtons[i].setSelected(true);
+                    		mPanel.ConditionESP.notInTimeGroupRadioButtons[i].setSelected(true);
+                    	} else {
+                    		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].setSelected(true);
+                    	}
+                    }
+                }
+            });
+            
+            final JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new File("Data"));
+            
+            saveButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                	saveAssignments();
+                	System.out.println("saved");
+                }
+            });
+            
+            
+            //NEED TO REWORK THIS FOR MULTICLASS
+            
+            loadButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent evt) {
+                	loadAssignments();
+                	
+                }
+            });
+            
+            
+            
+            constraints.anchor = GridBagConstraints.CENTER;
+            constraints.fill = GridBagConstraints.NONE;
+            constraints.insets = new Insets(5,5,5,5);
+            buildConstraints(constraints, 0, 0, 1, 1, 33, 100);
+            gridbag3.setConstraints(saveButton, constraints);
+            panel2.add(saveButton);
+            
+            buildConstraints(constraints, 1, 0, 1, 1, 33, 0);
+            gridbag3.setConstraints(loadButton, constraints);
+            panel2.add(loadButton);
+            
+            buildConstraints(constraints, 2, 0, 1, 1, 34, 0);
+            gridbag3.setConstraints(resetButton, constraints);
+            panel2.add(resetButton);
+            constraints.insets = new Insets(0,0,0,0);
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
+            constraints.anchor = GridBagConstraints.CENTER;
+//            gridbag2.setConstraints(panel2, constraints);
+        	return panel2;
         }
         protected void reset(){
         	if (ngPanel.okPressed){
@@ -1504,10 +1647,10 @@ public class LIMMAInitBox extends AlgorithmDialog {
         
         LIMMAInitBox oBox = new LIMMAInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
-        int[] k = oBox.getGroupAssignments();
-        for (int i=0; i<k.length; i++){
-        	System.out.print(k[i]+"\t");
-        }
+//        int[] k = oBox.getGroupAssignments();
+//        for (int i=0; i<k.length; i++){
+//        	System.out.print(k[i]+"\t");
+//        }
         System.exit(0);
     }
 }
