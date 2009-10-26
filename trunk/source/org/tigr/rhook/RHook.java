@@ -137,12 +137,14 @@ public class RHook  {
 		}
 
 		System.out.println("Creating Rengine (with arguments)");
+		String[] args = {"--no-save"};
 		// 1) we pass the arguments from the command line
 		// 2) we won't use the main loop at first, we'll start it later
 		//    (that's the "false" as second argument)
 		// 3) the callbacks are implemented by the TextConsole class above
 		try {
-			re = new Rengine(null, false, new TextConsole());
+			//re = new Rengine(null, false, new TextConsole());
+			re = new Rengine(args, false, new TextConsole());
 		} catch (Exception e) {
 			System.out.println("Error loading R");
 			logger.writeln("Error loading R");
