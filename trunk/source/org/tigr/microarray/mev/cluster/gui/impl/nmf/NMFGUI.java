@@ -562,6 +562,8 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
                     break;
                 case AlgorithmEvent.MONITOR_VALUE:
                     break;
+                case AlgorithmEvent.SET_INDETERMINATE:
+                	progressBar.setIndeterminate(true);
             }
         }
         

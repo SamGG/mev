@@ -671,25 +671,29 @@ public class NMF extends AbstractAlgorithm{
 		}
     }
     private NodeValueList calculateHierarchicalTree() throws AlgorithmException {
+		if (standalone)
+			return null;
+		event.setId(AlgorithmEvent.SET_INDETERMINATE);
+    	fireValueChanged(event);
+		event.setId(AlgorithmEvent.PROGRESS_VALUE);
+		event.setDescription("Building Hierarchical Tree");
+		
+    	fireValueChanged(event);
+    	
     	NodeValueList nodeList = new NodeValueList();
     	AlgorithmData data = new AlgorithmData();
     	HCL hcl = new HCL();
     	AlgorithmData result;
 
     	data.addMatrix("experiment", new FloatMatrix(connectivityMatrix));
-//	    data.addParam("calculate-genes", String.valueOf(true));
-//	    data.addParam("optimize-gene-ordering", String.valueOf(false));
-//	    result = hcl.executeNMF(data, connectivityMatrix);
-//	    validate(result);
-//	    addNodeValues(nodeList, result);
 	    
 	    data.addParam("calculate-genes", String.valueOf(false));
-	    data.addParam("optimize-sample-ordering", String.valueOf(false));
+	    data.addParam("optimize-sample-ordering", String.valueOf(true));
 	    result = hcl.executeNMF(data, connectivityMatrix);
 	    validate(result);
 	    addNodeValues(nodeList, result);
     	return nodeList;
-        }
+    }
     
     private void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
     	target_list.addNodeValue(new NodeValue("child-1-array", source_result.getIntArray("child-1-array")));
