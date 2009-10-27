@@ -120,7 +120,7 @@ public class LIMMA extends AbstractAlgorithm{
 
 		progress=0;
 		event = null;
-		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Initializing...");
+		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating...");
 		// set progress limit
 		fireValueChanged(event);
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
