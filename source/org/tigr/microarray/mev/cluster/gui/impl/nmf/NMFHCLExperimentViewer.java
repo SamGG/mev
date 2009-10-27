@@ -919,9 +919,9 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
             }
         }
         Color initColor = g.getColor();
-        
-        if(haveColorBar)
-        	fillClusterColorPositions(g);
+        if (genes)
+	        if(haveColorBar)
+	        	fillClusterColorPositions(g);
         
         // draw annotations
         if (this.isDrawAnnotations) {
