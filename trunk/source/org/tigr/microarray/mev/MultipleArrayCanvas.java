@@ -221,14 +221,15 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
             setDefaultLabel();
 	        thumbnail.onDataChanged(data);
         } else {
-        	remove(emptyMacLabel);
-        features = data.getFeaturesCount();
-        probes   = data.getFeaturesSize();
-        setDrawChain(false);
-        updateSize();
-        header.setData(data);
-        thumbnail.onDataChanged(data);
-    }
+        	if (emptyMacLabel!=null)
+        		remove(emptyMacLabel);
+	        features = data.getFeaturesCount();
+	        probes   = data.getFeaturesSize();
+	        setDrawChain(false);
+	        updateSize();
+	        header.setData(data);
+	        thumbnail.onDataChanged(data);
+        }
     }
     
     /**
