@@ -48,6 +48,8 @@ public class AlgorithmEvent extends EventObject {
     public static final int WARNING        = 4;
     
     public static final int SET_VALUE = 5;
+
+    public static final int SET_INDETERMINATE = 6;
     
     private int id;
     private int intValue;
