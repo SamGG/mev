@@ -67,7 +67,7 @@ public class NMFFactorViewer extends ViewerAdapter {
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{T});
+    			new Object[]{T, cost, new Boolean(w)});
     }
     
     /**

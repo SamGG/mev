@@ -137,8 +137,8 @@ public class NMFHCLViewer extends JPanel implements IViewer {
      * @param genes_result
      * @param samples_result
      */
-    public NMFHCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result, boolean genes) {
-    	this(experiment, features.getClusters()[0], genes_result, samples_result, genes);
+    public NMFHCLViewer(Experiment experiment, ClusterWrapper features, HCLTreeData genes_result, HCLTreeData samples_result, Boolean genes) {
+    	this(experiment, features.getClusters()[0], genes_result, samples_result, genes.booleanValue());
     }
     
     /**
@@ -186,7 +186,7 @@ public class NMFHCLViewer extends JPanel implements IViewer {
         addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
         this.popup = createJPopupMenu(listener);
         saveExpression = new Expression(this, this.getClass(), "new",
-    			new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), genes_result, samples_result});
+    			new Object[]{experiment, ClusterWrapper.wrapClusters(new int[][]{features}), genes_result, samples_result, new Boolean(genes)});
     }
     
 

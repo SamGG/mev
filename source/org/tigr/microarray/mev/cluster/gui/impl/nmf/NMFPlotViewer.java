@@ -32,8 +32,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
+import org.tigr.util.FloatMatrix;
 
 public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable {
     
@@ -42,57 +45,83 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	private JComponent content;
-    float[][] data;
+	IFramework framework;
+    FloatMatrix data;
     String[] labels;
+    boolean w;
+    boolean cophen;
     int[] samplesOrder;
+	private int r;
+	private float minValue;
+	private double maxValue;
     static boolean orderedSamples = false;
     protected static final String ORDERED_SAMPLES = "order-samples";
     /**
      */
-    public NMFPlotViewer(float[] data, String[] labels) {
-    	float[][] data2 = new float[1][];
-    	data2[0] = data;
-    	float minValue = Float.POSITIVE_INFINITY;
-    	float maxValue = 1.0f;
-    	for (int i=0; i<data2.length; i++){
-        	for (int j=0; j<data2[i].length; j++){
-	    		if (data2[i][j]<minValue)
-	    			minValue = data2[i][j];
-	    		if (data2[i][j]>maxValue)
-	    			maxValue = data2[i][j];
-        	}
-    	}
-    	this.data = data2;
-    	this.labels = labels;
-    	this.samplesOrder = new int[labels.length];
-    	content = createContent(data2, labels, minValue-.05f, maxValue);
+    public NMFPlotViewer(float[] data, boolean w, boolean cophen, int r) {
+    	this(new float[][]{data}, w, cophen, r);
     }
     /**
      */
-    public NMFPlotViewer(float[][] data, String[] labels) {
-    	float minValue = Float.POSITIVE_INFINITY;
-    	float maxValue = 1.0f;
-    	for (int i=0; i<data.length; i++){
-        	for (int j=0; j<data[i].length; j++){
-	    		if (data[i][j]<minValue)
-	    			minValue = data[i][j];
-	    		if (data[i][j]>maxValue)
-	    			maxValue = data[i][j];
-        	}
-    	}
+    public NMFPlotViewer(float[][] data, boolean w, boolean cophen, int r) {
+    	this(new FloatMatrix(data), w, cophen, r);
+    }
+    /**
+     */
+    public NMFPlotViewer(FloatMatrix data, boolean w, boolean cophen, int r) {
+    	this.w = w;
+    	this.r = r;
+    	this.cophen = cophen;
     	this.data = data;
-    	this.labels = labels;
-    	this.samplesOrder = new int[labels.length];
-    	content = createContent(data, labels, minValue-.05f, maxValue);
+    	content = new JPanel();
+    	
     }
     /**
      * @inheritDoc
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{data});
+    			new Object[]{data, w, cophen, r});
     }
     
+    public void onSelected(IFramework framework){
+    	this.framework = framework;
+    	initLabels();
+    	content = createContent(data.A, labels, minValue-.05f, maxValue);
+    }
+    private void initLabels(){
+    	float minValue = Float.POSITIVE_INFINITY;
+    	float maxValue = 1.0f;
+    	for (int i=0; i<data.A.length; i++){
+        	for (int j=0; j<data.A[i].length; j++){
+	    		if (data.A[i][j]<minValue)
+	    			minValue = data.A[i][j];
+	    		if (data.A[i][j]>maxValue)
+	    			maxValue = data.A[i][j];
+        	}
+    	}
+    	this.minValue = minValue;
+    	this.maxValue = maxValue;
+    	if (cophen){
+
+        	String[] ccLabels = new String[data.A[0].length];
+        	for (int i=0; i<ccLabels.length; i++){
+        		ccLabels[i] = "Rank = "+(r+i);
+        	}
+        	labels = ccLabels;
+    	}else{
+	    	if (w)
+	    		labels = framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[0]);
+	    	else{
+	    		String[] strLabels = new String[framework.getData().getSampleAnnotationMatrix().length];
+	    		for (int i=0; i<strLabels.length; i++)
+	    			strLabels[i] = framework.getData().getSampleAnnotationMatrix()[i][0];
+	    		labels = strLabels;
+	    	}
+    	}
+    	this.samplesOrder = new int[labels.length];
+    	
+    }
     /**
      * Returns the viewer content.
      */
@@ -291,7 +320,7 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 	    protected void addMenuItems(JPopupMenu menu, ActionListener listener) {
 	        JMenuItem menuItem;
 
-	        menuItem = new JMenuItem("Arrange/reset Samples", GUIFactory.getIcon("new16.gif"));
+	        menuItem = new JMenuItem("Arrange/reset Samples order", GUIFactory.getIcon("new16.gif"));
 	        menuItem.setActionCommand(ORDERED_SAMPLES);
 	        menuItem.addActionListener(listener);
 	        menu.add(menuItem);
@@ -357,7 +386,7 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 		fm[0][0] = 20;
 		float[][] fa = {{.99f, .88f, .72f, .1f}};
 		String[]sa = {"2 Clusters", "3 Clusters", "4 Clusters", "5 Clusters"};
-    	NMFPlotViewer pv = new NMFPlotViewer(fa, sa);
+    	NMFPlotViewer pv = new NMFPlotViewer(fa, false, true, 2);
     	JDialog jd = new JDialog();
     	jd.add(pv.getContentComponent());
     	jd.setSize(800, 800);
