@@ -58,8 +58,6 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JTextField factorTextField;
 	private  int num_factors=0;
 	
-	//Panel for entering name and levels of these factors
-	private javax.swing.JLabel factorNameLabel;
 	private javax.swing.JTextField factorNameTextField;
 	private javax.swing.JPanel factorLevelPanel;
 	private javax.swing.JLabel factorLevelLabel;
@@ -112,7 +110,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		factorLabel=new javax.swing.JLabel("Enter the number of groups in your samples:");
 		
 		factorTextField=new javax.swing.JTextField(50);
-		factorTextField.setText("2");
+		factorTextField.setText("1");
 		factorTextField.setMinimumSize(new Dimension(100, 30));
 		factorTextField.addKeyListener(new Listener());
 		
@@ -166,7 +164,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	    gridbag.setConstraints(pane, constraints);
 	    this.add(pane);
 	    
-	    addRemoveFactor(2);
+	    addRemoveFactor(1);
 	    initialize();
 	    if(drawSampleGroupingsPanel()){
 	       	makeClusterSelector();
@@ -211,6 +209,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		factorNameTextField.setPreferredSize(new Dimension(100, 30));
 		factorNameTextField.setEditable(true);
 		factorNameTextField.setName(name);
+		factorNameTextField.setText("Factor "+name);
 		factorNameTextField.addKeyListener(new Listener(){
 			public void keyReleased(KeyEvent e) {
 				if(((javax.swing.JTextField)e.getSource()).getText()!= "")
@@ -271,6 +270,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	
 	public boolean validateFactorNumber(int num_factor){
+	
 		if(num_factor==0){
 			JOptionPane.showMessageDialog(this, "You cannot have zero factors!", "Factor Number Error", JOptionPane.ERROR_MESSAGE);
 			return false;
