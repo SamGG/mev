@@ -146,13 +146,21 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
     private int dragColumn = 0;
 	private boolean enableMoveable;
     
+	//public NMFHCLExperimentViewer(Experiment experiment, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, int offset, boolean genes) {
+    
     public Expression getExpression(){
-    	return new Expression(this, this.getClass(), "new", 
-    		new Object[]{this.experiment, 
-    		ClusterWrapper.wrapClusters(this.clusters), 
-    		ClusterWrapper.wrapClusters(new int[][]{this.samplesOrder}), 
-    		new Boolean(this.isDrawAnnotations)});
+//    	return new Expression(this, this.getClass(), "new", 
+//    		new Object[]{this.experiment, 
+//    		ClusterWrapper.wrapClusters(this.clusters), 
+//    		ClusterWrapper.wrapClusters(new int[][]{this.samplesOrder}), 
+//    		new Integer(0),
+//    		new Boolean(this.isDrawAnnotations), new Boolean(this.genes)});
+    	return null;
     }
+    public NMFHCLExperimentViewer(Experiment experiment, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations, Integer offset, Boolean genes) {
+    	this(experiment, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations.booleanValue(), offset.intValue(), genes.booleanValue());
+    }
+    	   
 //    /**
 //     * Constructs an <code>NMFHCLExperimentViewer</code> with specified
 //     * experiment and clusters.
