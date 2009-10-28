@@ -43,14 +43,14 @@ public class NMF extends AbstractAlgorithm{
 	float[][] connectivityMatrix;
 	boolean stop = false;
 	int r=2;
-	int numRuns = 10;
+	int numRuns = 1;
 	int maxIterations = 10000;
 	int numSamples, numGenes;
 	float[] costs = new float[numRuns];
 	float[] costsIndex = new float[numRuns];
 	float fractionDone;
 	float fractionUnit;
-	boolean divergence = false;
+	boolean divergence = true;
 	boolean doSamples = true;
 	boolean expScale = false;
 	boolean adjustData = false;
@@ -476,7 +476,7 @@ public class NMF extends AbstractAlgorithm{
     				if (cost<0)
     					return;
 				}
-//    				System.out.println("iteration = " +iter+", cost = "+ cost);
+    				System.out.println("iteration = " +iter+", cost = "+ cost);
 				if (cost>=previousCost){
 //					System.out.println("higher cost, "+cost+ ", iteration="+iter);
 					costSum = costSum+cost;
@@ -687,12 +687,15 @@ public class NMF extends AbstractAlgorithm{
     	AlgorithmData data = new AlgorithmData();
     	HCL hcl = new HCL();
     	AlgorithmData result;
+    	float[][] connMatForHCL = new float[connectivityMatrix.length][connectivityMatrix.length];
+    	for (int i=0; i<connectivityMatrix.length; i++)
+    		for (int j=0; j<connectivityMatrix[i].length; j++)
+    			connMatForHCL[i][j] = connectivityMatrix[i][j];
 
-    	data.addMatrix("experiment", new FloatMatrix(connectivityMatrix));
-	    
+    	data.addMatrix("experiment", new FloatMatrix(connMatForHCL));
 	    data.addParam("calculate-genes", String.valueOf(false));
 	    data.addParam("optimize-sample-ordering", String.valueOf(true));
-	    result = hcl.executeNMF(data, connectivityMatrix);
+	    result = hcl.executeNMF(data, connMatForHCL);
 	    validate(result);
 	    addNodeValues(nodeList, result);
     	return nodeList;
