@@ -531,12 +531,11 @@ public class TestStatisticViewer extends JPanel implements IViewer{
 
 
 	
-	public Expression getExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+	
+	 public Expression getExpression(){
+	    	return new Expression(this, this.getClass(), "new", 
+	    			new Object[]{sortedTestStats});
+	    }
 
 	
 	public JComponent getHeaderComponent() {

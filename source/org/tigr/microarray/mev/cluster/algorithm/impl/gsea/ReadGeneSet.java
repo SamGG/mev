@@ -677,7 +677,7 @@ public class ReadGeneSet {
 		if(geneSetNames.isEmpty()){
 			//newGenesets[0].setAllGenesetNames(geneSetNames);--deprecated
 	
-			String eMsg="<html>All the gene sets FAIL to pass the minimum genes cutoff. <br>"+ 
+			String eMsg="<html>All the gene sets fail to pass the minimum genes cutoff. <br>"+ 
 			"<html>You can try lowering the cutoff and running the analysis. </html>";
 			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 
@@ -779,9 +779,9 @@ public class ReadGeneSet {
 		}
 		
 		if(_tempgeneset.size()==rowSize){
-			String eMsg="<html> None of the genes in the gene set that you supplied, match the genes in the expression data. <br>"+
-					"<html> One of the things to check for would be if the expression data and gene set contain genes from the <br>"+
-					"<html>same organism. Sorry, you cannot proceed with the analysis </br></html>";
+			String eMsg="<html> Genes in the supplied gene set do not match any genes in the expression data. <br>"+
+					"<html> 1. Please check and make sure that expression data and gene set contain genes from the <br>"+
+					"<html>same organism. 2. Please make sure that the gene set you use has atleast some of the genes present in your data set </br></html>";
 			JOptionPane.showMessageDialog(new JFrame(),eMsg , "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		
