@@ -557,12 +557,16 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
                     progressBar.setDescription(event.getDescription());
                     break;
                 case AlgorithmEvent.PROGRESS_VALUE:
+                	progressBar.setIndeterminate(false);
+                	progressBar.setIndeterminantString(event.getIntValue()+"%");
                     progressBar.setValue(event.getIntValue());
                     progressBar.setDescription(event.getDescription());
                     break;
                 case AlgorithmEvent.MONITOR_VALUE:
                     break;
                 case AlgorithmEvent.SET_INDETERMINATE:
+                	progressBar.setIndeterminantString("Calculating...");
+                    progressBar.setDescription(event.getDescription());
                 	progressBar.setIndeterminate(true);
             }
         }
