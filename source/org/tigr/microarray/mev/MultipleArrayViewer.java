@@ -2608,10 +2608,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
                         addAnalysisResult(result);
                     } catch (AbortException e) {
                         // analysis was canceled by the user
-                    } catch (Exception e) {
-                        ShowThrowableDialog.show(mainframe, "Analysis Error", false, e);
                     } catch (Throwable t) {
-                    	ShowThrowableDialog.show(mainframe, "Out of Memory", false, t);
+                        ShowThrowableDialog.show(mainframe, "Analysis Error", false, t);
                     }
                 }
             });
