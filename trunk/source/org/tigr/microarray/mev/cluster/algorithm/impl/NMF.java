@@ -50,7 +50,7 @@ public class NMF extends AbstractAlgorithm{
 	float[] costsIndex = new float[numRuns];
 	float fractionDone;
 	float fractionUnit;
-	boolean divergence = true;
+	boolean divergence = false;
 	boolean doSamples = true;
 	boolean expScale = false;
 	boolean adjustData = false;
@@ -108,9 +108,9 @@ public class NMF extends AbstractAlgorithm{
 	    nodeList.addNode(node);
 	    clusters = getClusters(node);
 	    float cophen = getCopheneticCorrelation();
-	    float cophen2 = getCopheneticCorrelation2();
+//	    float cophen2 = getCopheneticCorrelation2();
 	    System.out.println("getCopheneticCorrelation = "+cophen);
-	    System.out.println("getCopheneticCorrelation2 = "+cophen2);
+//	    System.out.println("getCopheneticCorrelation2 = "+cophen2);
         
         
         // prepare the result
@@ -217,7 +217,13 @@ public class NMF extends AbstractAlgorithm{
     	System.out.println("cTop = "+cTop);
     	System.out.println("cBottomL = "+cBottomL);
     	System.out.println("cBottomR = "+cBottomR);
-    	
+
+    	//revert connectivity matrix back to "higher is closer"
+    	for (int i=0; i<connectivityMatrix.length; i++){
+    		for (int j=0; j<connectivityMatrix[i].length; j++){
+    			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
+    		}
+    	}
 		return cTop/(float)Math.sqrt(cBottomL*cBottomR);
 	}
 	protected FloatMatrix getMeans(int[][] clusters) {
@@ -466,37 +472,27 @@ public class NMF extends AbstractAlgorithm{
     				cost = 0;
     				
     				WH = W[runcount].times(H[runcount]);
-    				
-    				for (int i=0; i<numGenes; i++){
-    					for (int j=0; j<numSamples; j++){
-    						float aij = V.A[i][j];
-    						float bij = WH.A[i][j];
-    						cost = cost + (float)(aij*Math.log(aij/bij)- aij + bij);
-    						if (Float.isNaN(cost)){
-    							System.out.println("cost is NaN");
-    							System.out.println("i " + i + "  j " + j);
-    							System.out.println("V.A[i][j] " + V.A[i][j]);
-    							System.out.println("WH.A[i][j] " + WH.A[i][j]);
-    							stop = true;
-    							return;
-    						}
-    							
-    					}
-    				}
+    				cost = getCost(V,WH);
+    				if (cost<0)
+    					return;
 				}
 //    				System.out.println("iteration = " +iter+", cost = "+ cost);
 				if (cost>=previousCost){
+//					System.out.println("higher cost, "+cost+ ", iteration="+iter);
 					costSum = costSum+cost;
 					break;
 				}
 				previousCost= cost;
 			}
-//    			printMat(H[runcount]);
-//    			this is my technique for removing bad solutions
-//    			if (cost>costSum/totalTries){
-//    				runcount--;
-//    				continue;
-//    			}
+//    		printMat(H[runcount]);
+//    		this is my technique for removing bad solutions
+			costSum = costSum+cost;
+			if (Float.isNaN(cost)||cost>costSum/totalTries){
+				runcount--;
+				if (Float.isNaN(cost))
+					totalTries--;
+				continue;
+			}
 			
 			if (cost<costBest){
 				costBest= cost;
@@ -567,6 +563,25 @@ public class NMF extends AbstractAlgorithm{
 		}
 	}
 
+	private float getCost(FloatMatrix V, FloatMatrix WH) {
+		float cost = 0;
+		for (int i=0; i<numGenes; i++){
+			for (int j=0; j<numSamples; j++){
+				float aij = V.A[i][j];
+				float bij = WH.A[i][j];
+				cost = cost + (float)(aij*Math.log(aij/bij)- aij + bij);
+				if (Float.isNaN(cost)){
+					System.out.println("cost is NaN");
+					System.out.println("i " + i + "  j " + j);
+					System.out.println("V.A[i][j] " + V.A[i][j]);
+					System.out.println("WH.A[i][j] " + WH.A[i][j]);
+					stop = true;
+					return -1f;
+				}
+			}
+		}
+		return cost;
+	}
 	public void updateProgressBar(int iter, int run){
 		if (standalone)
 			return;
@@ -603,16 +618,6 @@ public class NMF extends AbstractAlgorithm{
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Random rand = new Random();
-		Random rand2 = new Random(123);
-		System.out.println(rand.nextDouble());
-		System.out.println(rand.nextDouble());
-		System.out.println(rand.nextDouble());
-		System.out.println(rand2.nextDouble());
-		System.out.println(rand2.nextDouble());
-		System.out.println(rand2.nextDouble());
-		if (1==1)
-			return;
 		standalone = true;
 		float [][] v1 = 
 			{	{	16,	32	,72		,40	},
@@ -673,11 +678,9 @@ public class NMF extends AbstractAlgorithm{
     private NodeValueList calculateHierarchicalTree() throws AlgorithmException {
 		if (standalone)
 			return null;
-		event.setId(AlgorithmEvent.SET_INDETERMINATE);
-    	fireValueChanged(event);
-		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setDescription("Building Hierarchical Tree");
 		
+		event.setId(AlgorithmEvent.SET_INDETERMINATE);
+		event.setDescription("Building Hierarchical Tree");
     	fireValueChanged(event);
     	
     	NodeValueList nodeList = new NodeValueList();
