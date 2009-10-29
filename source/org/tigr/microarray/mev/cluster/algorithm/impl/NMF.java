@@ -33,7 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import javax.swing.JDialog;
+//import javax.swing.JDialog;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -47,14 +47,17 @@ public class NMF extends AbstractAlgorithm{
 	int numRuns = 1;
 	int maxIterations = 10000;
 	int numSamples, numGenes;
+	int checkFreq = 40;
 	float[] costs = new float[numRuns];
 	float[] costsIndex = new float[numRuns];
 	float fractionDone;
 	float fractionUnit;
+	float cutoff = 10f;
 	boolean divergence = true;
 	boolean doSamples = true;
 	boolean expScale = false;
 	boolean adjustData = false;
+	boolean doMax = false;
 	long randomSeed = 33333;
 	long startTime;
     FloatMatrix expMatrix;
@@ -86,6 +89,9 @@ public class NMF extends AbstractAlgorithm{
     	divergence = map.getBoolean("divergence");
     	doSamples = map.getBoolean("doSamples");
     	expScale = map.getBoolean("expScale");
+    	doMax = map.getBoolean("doMax");
+    	checkFreq = map.getInt("checkFreq");
+    	cutoff = map.getFloat("cutoff");
     	adjustData = map.getBoolean("adjustData");
     	randomSeed = map.getLong("randomSeed");
     	startTime = map.getLong("startTime");
@@ -135,42 +141,42 @@ public class NMF extends AbstractAlgorithm{
     	return result;
     }
 
-    private float getCopheneticCorrelation2() {
-    	//revert connectivity matrix back to "higher is closer"
-    	for (int i=0; i<connectivityMatrix.length; i++){
-    		for (int j=0; j<connectivityMatrix[i].length; j++){
-    			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
-    		}
-    	}
-    	
-    	float[][] hclMatrix = new float[connectivityMatrix.length][connectivityMatrix.length];
-    	for (int i=0; i<hclMatrix.length; i++){
-    		for (int j=0; j<hclMatrix[i].length; j++){
-    			hclMatrix[i][j] = 0f;
-    		}
-    	}
-    	for (int i=0; i<clusters.length; i++){
-    		for (int j=0; j<clusters[i].length; j++){
-        		for (int k=0; k<clusters[i].length; k++){
-        			hclMatrix[clusters[i][j]][clusters[i][k]] = 1f;
-        		}
-    		}
-    	}
-    	float[][] mat = new float[connectivityMatrix.length*connectivityMatrix.length][2];
-    	int index = 0;
-    	for (int i=0; i<connectivityMatrix.length; i++){
-    		for (int j=0; j<connectivityMatrix[i].length; j++){
-    			mat[index][0] = connectivityMatrix[i][j];
-    			mat[index][1] = hclMatrix[i][j];
-    			index++;
-    		}
-		}
-    	FloatMatrix fm = new FloatMatrix(mat);
-//    	System.out.println("fm");
-//    	printMat(fm.transpose());
-    	return ExperimentUtil.pearsonUncentered(fm, 0, 1, 1);
-
-	}
+//    private float getCopheneticCorrelation2() {
+//    	//revert connectivity matrix back to "higher is closer"
+//    	for (int i=0; i<connectivityMatrix.length; i++){
+//    		for (int j=0; j<connectivityMatrix[i].length; j++){
+//    			connectivityMatrix[i][j] = 1-connectivityMatrix[i][j];
+//    		}
+//    	}
+//    	
+//    	float[][] hclMatrix = new float[connectivityMatrix.length][connectivityMatrix.length];
+//    	for (int i=0; i<hclMatrix.length; i++){
+//    		for (int j=0; j<hclMatrix[i].length; j++){
+//    			hclMatrix[i][j] = 0f;
+//    		}
+//    	}
+//    	for (int i=0; i<clusters.length; i++){
+//    		for (int j=0; j<clusters[i].length; j++){
+//        		for (int k=0; k<clusters[i].length; k++){
+//        			hclMatrix[clusters[i][j]][clusters[i][k]] = 1f;
+//        		}
+//    		}
+//    	}
+//    	float[][] mat = new float[connectivityMatrix.length*connectivityMatrix.length][2];
+//    	int index = 0;
+//    	for (int i=0; i<connectivityMatrix.length; i++){
+//    		for (int j=0; j<connectivityMatrix[i].length; j++){
+//    			mat[index][0] = connectivityMatrix[i][j];
+//    			mat[index][1] = hclMatrix[i][j];
+//    			index++;
+//    		}
+//		}
+//    	FloatMatrix fm = new FloatMatrix(mat);
+////    	System.out.println("fm");
+////    	printMat(fm.transpose());
+//    	return ExperimentUtil.pearsonUncentered(fm, 0, 1, 1);
+//
+//	}
 	private float getCopheneticCorrelation() {
     	//revert connectivity matrix back to "higher is closer"
     	for (int i=0; i<connectivityMatrix.length; i++){
@@ -414,7 +420,7 @@ public class NMF extends AbstractAlgorithm{
 			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
 			float previousCost = Float.POSITIVE_INFINITY;
 			float cost=0;
-			float cost2=0;
+//			float cost2=0;
 			for(int iter = 0; iter<maxIterations; iter++){
     			updateProgressBar(iter,runcount);
 				if (!divergence){//use euclidean
@@ -488,16 +494,22 @@ public class NMF extends AbstractAlgorithm{
     				if (cost<0)
     					return;
 				}
-//    				System.out.println("iteration = " +iter+", cost = "+ cost+ " euclidean = "+cost2);
-				if (cost>=previousCost){
-//					System.out.println("higher cost, "+cost+ ", iteration="+iter);
-//					costSum = costSum+cost;
-//					JDialog jd = new JDialog();
-//					jd.setModal(true);
-//					jd.setVisible(true);
-//					break;
-				}
-				previousCost= cost;
+    			System.out.println("iteration = " +iter+", cost = "+ cost);
+    			if (!doMax){
+    				if (iter%checkFreq==0){
+						if (cost>(previousCost-cutoff)){
+							System.out.println("stop!!");
+							break;
+		//					System.out.println("higher cost, "+cost+ ", iteration="+iter);
+		//					costSum = costSum+cost;
+		//					JDialog jd = new JDialog();
+		//					jd.setModal(true);
+		//					jd.setVisible(true);
+		//					break;
+						}
+						previousCost = cost;
+    				}
+    			}
 			}
 //    		printMat(H[runcount]);
 //    		this is my technique for removing bad solutions
@@ -724,8 +736,8 @@ public class NMF extends AbstractAlgorithm{
 		
 
 		ArrayList<String> amounts = new ArrayList<String>();
-		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
-		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
+//		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
+//		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
 		File file3 = new File("C://workspace//data//BETR_5000_genes_NoAnno.txt");
 		
 		try {
