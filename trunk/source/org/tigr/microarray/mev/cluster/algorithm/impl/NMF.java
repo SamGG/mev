@@ -116,7 +116,7 @@ public class NMF extends AbstractAlgorithm{
 	    clusters = getClusters(node);
 	    float cophen = getCopheneticCorrelation();
 //	    float cophen2 = getCopheneticCorrelation2();
-	    System.out.println("getCopheneticCorrelation = "+cophen);
+//	    System.out.println("getCopheneticCorrelation = "+cophen);
 //	    System.out.println("getCopheneticCorrelation2 = "+cophen2);
         
         
@@ -221,9 +221,9 @@ public class NMF extends AbstractAlgorithm{
     			cBottomR = cBottomR + (hclMatrix[i][j]-t)*(hclMatrix[i][j]-t);
     		}
 		}
-    	System.out.println("cTop = "+cTop);
-    	System.out.println("cBottomL = "+cBottomL);
-    	System.out.println("cBottomR = "+cBottomR);
+//    	System.out.println("cTop = "+cTop);
+//    	System.out.println("cBottomL = "+cBottomL);
+//    	System.out.println("cBottomR = "+cBottomR);
 
     	//revert connectivity matrix back to "higher is closer"
     	for (int i=0; i<connectivityMatrix.length; i++){
@@ -290,22 +290,22 @@ public class NMF extends AbstractAlgorithm{
     	int index=0;
     	int i = 0;
 		int cutoff = child1.length-r;
-		System.out.println("child1.length = "+child1.length);
-		for (int k=0; k<child1.length; k++){
-			System.out.print(child1[k]+"\t");
-		}
+//		System.out.println("child1.length = "+child1.length);
+//		for (int k=0; k<child1.length; k++){
+//			System.out.print(child1[k]+"\t");
+//		}
     	while (index<r){
     		int node1 = child1[child1.length-2-i];
-    		System.out.print("node "+node1+"\t");
+//    		System.out.print("node "+node1+"\t");
     		if (node1 < (cutoff)){
-    			System.out.print("blaahh");
+//    			System.out.print("blaahh");
     			leaves.clear();
     			getLeavesFromNode(hcltd,node1);
-    			System.out.println("Cluster "+(i+1)+" has "+leaves.size()+ " things.");
+//    			System.out.println("Cluster "+(i+1)+" has "+leaves.size()+ " things.");
     			clusters[index] = new int[leaves.size()];
     			for (int j=0; j<clusters[index].length; j++){
     				clusters[index][j] = leaves.get(j);
-        			System.out.print("blarrrrahh");
+//        			System.out.print("blarrrrahh");
     			}
     			
     			index++;
@@ -322,12 +322,12 @@ public class NMF extends AbstractAlgorithm{
     		}
     		i++;
     	}
-    	for (int b=0; b<clusters.length; b++){
-    		for (int j=0; j<clusters[b].length; j++)
-    			System.out.print(clusters[b][j]+"\t");
-    		System.out.println();
-    	}
-    	System.out.println("here1");
+//    	for (int b=0; b<clusters.length; b++){
+//    		for (int j=0; j<clusters[b].length; j++)
+//    			System.out.print(clusters[b][j]+"\t");
+//    		System.out.println();
+//    	}
+//    	System.out.println("here1");
 		return clusters;
 	}
     private float[][] dataPreProcessing(float[][] datav){
@@ -344,7 +344,7 @@ public class NMF extends AbstractAlgorithm{
     		}
     	}
     	expressionAverage = expressionAverage/((float)v.length*(float)v[0].length);
-    	System.out.println("ad = "+expressionAverage);
+//    	System.out.println("ad = "+expressionAverage);
     	//handling negative/NaN values...
     	if (!adjustData)
     		return v;
@@ -367,12 +367,12 @@ public class NMF extends AbstractAlgorithm{
 					}
 				}
 			}
-    		System.out.println("t " + minVal);
+//    		System.out.println("t " + minVal);
 			for (int i=0; i<v.length; i++)
 				for (int j=0; j<v[0].length; j++)
 					v[i][j] = v[i][j] - minVal + tinyNumber;
 			
-			System.out.println(v[1592][3]);
+//			System.out.println(v[1592][3]);
     	}
     	return v;
     }
@@ -399,8 +399,8 @@ public class NMF extends AbstractAlgorithm{
     	    if (stop) 
     	    	return;
 			totalTries++;
-			if (totalTries%25==0)
-				System.out.println(totalTries);
+//			if (totalTries%25==0)
+//				System.out.println(totalTries);
 			//seeding random matrices, creating corresponding transposes for ease of calculation
 			for (int i=0; i<numGenes; i++){
 				for (int j=0; j<r; j++){
@@ -494,11 +494,11 @@ public class NMF extends AbstractAlgorithm{
     				if (cost<0)
     					return;
 				}
-    			System.out.println("iteration = " +iter+", cost = "+ cost);
+//    			System.out.println("iteration = " +iter+", cost = "+ cost);
     			if (!doMax){
     				if (iter%checkFreq==0){
 						if (cost>(previousCost-cutoff)){
-							System.out.println("stop!!");
+//							System.out.println("stop!!");
 							break;
 		//					System.out.println("higher cost, "+cost+ ", iteration="+iter);
 		//					costSum = costSum+cost;
@@ -537,10 +537,10 @@ public class NMF extends AbstractAlgorithm{
 						}
 					}
 				}
-				for (int i=0; i<numSamples; i++){
-					System.out.print(classes[i]+"\t");
-				}
-				System.out.println(cost);
+//				for (int i=0; i<numSamples; i++){
+//					System.out.print(classes[i]+"\t");
+//				}
+//				System.out.println(cost);
 				//Adds to connectivity matrix
 				for (int i=0; i<numSamples; i++){
 					for (int j=0; j<numSamples; j++){
@@ -560,10 +560,10 @@ public class NMF extends AbstractAlgorithm{
 						}
 					}
 				}
-				for (int i=0; i<numGenes; i++){
-					System.out.print(classes[i]+"\t");
-				}
-				System.out.println(cost);
+//				for (int i=0; i<numGenes; i++){
+//					System.out.print(classes[i]+"\t");
+//				}
+//				System.out.println(cost);
 				//Adds to connectivity matrix
 				for (int i=0; i<numGenes; i++){
 					for (int j=0; j<numGenes; j++){
