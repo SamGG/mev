@@ -226,14 +226,18 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		factorLevelTextField.setEditable(true);
 		factorLevelTextField.setName(name);
 		factorLevelTextField.setText("2");
-			
 		factorLevelTextField.addKeyListener(new Listener(){
 		
 			public void keyReleased(KeyEvent e) {
 				//if(!((javax.swing.JTextField)e.getSource()).getText().isEmpty())
-				if(((javax.swing.JTextField)e.getSource()).getText() != "")
+				if(((javax.swing.JTextField)e.getSource()).getText() != "" && !((javax.swing.JTextField)e.getSource()).getText().isEmpty()) {
+					try {
 					setFactorLevel((Integer.parseInt(e.getComponent().getName())-1), Integer.parseInt(((javax.swing.JTextField)e.getSource()).getText()));
-				if(drawSampleGroupingsPanel()){
+					}catch(NumberFormatException numexception) {
+						JOptionPane.showMessageDialog(DataPanel.this, "You must enter a valid value for factor level!", "Factor Level Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+					if(drawSampleGroupingsPanel()){
 					makeClusterSelector();
 				}
 
