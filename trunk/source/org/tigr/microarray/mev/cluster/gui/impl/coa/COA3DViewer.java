@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.coa;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -32,8 +33,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -91,6 +94,8 @@ public class COA3DViewer  extends ViewerAdapter {
     private COASelectionAreaDialog dlg;
     //private int mode;    
     private int exptID = 0;
+    private static boolean enabled3D = true;
+    private JComponent renderContent = null;
     
     /** Creates a new instance of COA3DViewer */
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt) {
@@ -100,17 +105,42 @@ public class COA3DViewer  extends ViewerAdapter {
         this.exptID = experiment.getId();
         this.geneOrExpt = geneOrExpt;
         this.U = U;
-        //this.mode = mode;
-        content = createContent(U, experiment, geneOrExpt);
-        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        //content = new JPanel();
-        popup = createJPopupMenu();    
-         
-        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
-        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
-	getContentComponent().addMouseListener(listener2);        
+        if(enabled3D) {
+	        try {
+		        content = createContent(U, experiment, geneOrExpt);
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+		        //content = new JPanel();
+		        popup = createJPopupMenu();    
+		         
+		        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
+		        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
+		        getContentComponent().addMouseListener(listener2);      
+		      	enabled3D = true;
+		    	renderContent = content;
+		    } catch (UnsatisfiedLinkError ule) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    } catch (java.lang.NoClassDefFoundError ncdfe) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    }
+        } else {
+	    	renderContent = getJ3DErrorPlaceholderContent();
+        }
     }
-    
+    private JTextArea getJ3DErrorPlaceholderContent() {
+        JTextArea area = new JTextArea(20, 20);
+        area.setEditable(false);
+        area.setMargin(new Insets(0, 10, 0, 0));
+
+        area.setText("No 3D viewer is available. To view the results of this analysis, please install Java3D, available at java.sun.com. \n" +
+        		"Use the File -> Save Analysis As option to save your results. \n" +
+        		"After installing Java3D, restart MeV and load the saved analysis file to view these results in an interactive form. \n");
+        area.setCaretPosition(0);
+        return area;
+    }
     public COA3DViewer(Frame frame, FloatMatrix U, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
 
     	this.frame = frame;
@@ -122,14 +152,31 @@ public class COA3DViewer  extends ViewerAdapter {
         this.yAxis= yAxis;
         this.zAxis = zAxis;        
         //this.mode = mode;
-        content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        //content = new JPanel();
-        popup = createJPopupMenu();    
-         
-        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
-        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
-	getContentComponent().addMouseListener(listener2);        
+        if(enabled3D) {
+	        try {
+		        content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+		        //content = new JPanel();
+		        popup = createJPopupMenu();    
+		         
+		        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
+		        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
+		    	renderContent = content;
+		        getContentComponent().addMouseListener(listener2);  
+		      	enabled3D = true;
+		    } catch (UnsatisfiedLinkError ule) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    } catch (java.lang.NoClassDefFoundError ncdfe) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    }
+	
+	    } else {
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    }
     }    
     
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt) {
@@ -140,13 +187,30 @@ public class COA3DViewer  extends ViewerAdapter {
         this.geneOrExpt = geneOrExpt;
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
-        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt);
-        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());        
-        popup = createJPopupMenu(); 
-        
-        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
-        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
-	getContentComponent().addMouseListener(listener2);        
+        if(enabled3D) {
+	        try {
+		        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt);
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());        
+		        popup = createJPopupMenu(); 
+		        
+		        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
+		        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
+		        getContentComponent().addMouseListener(listener2);       
+		      	enabled3D = true;
+		    	renderContent = content;
+		    } catch (UnsatisfiedLinkError ule) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    } catch (java.lang.NoClassDefFoundError ncdfe) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    }
+	
+	    } else {
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    }
     }
     
     public COA3DViewer(Frame frame, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Experiment experiment, int geneOrExpt, int xAxis, int yAxis, int zAxis) {
@@ -159,21 +223,45 @@ public class COA3DViewer  extends ViewerAdapter {
         this.exptUMatrix = exptUMatrix;
         this.xAxis = xAxis;
         this.yAxis= yAxis;
-        this.zAxis = zAxis;        
-        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());        
-        //content = new JPanel();
-        popup = createJPopupMenu(); 
-        
-        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
-        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
-        getContentComponent().addMouseListener(listener2);        
-
+        this.zAxis = zAxis;    
+        if(enabled3D) {
+	        try {
+		        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+		        renderContent = content;
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());        
+		        //content = new JPanel();
+		        popup = createJPopupMenu(); 
+		        Listener listener2 = new Listener(); // this was an attempt to get the pop up menu to show up over the 3D viewer
+		        popup2 = createJPopupMenu(listener2); //didn't work because of the native mouse response behavior of the 3D API, but left it in for possible future use  
+		    	
+		        getContentComponent().addMouseListener(listener2);     
+		      	enabled3D = true;
+		    } catch (UnsatisfiedLinkError ule) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    } catch (java.lang.NoClassDefFoundError ncdfe) {
+		    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		    	enabled3D = false;
+		    	renderContent = getJ3DErrorPlaceholderContent();
+		    }
+        } else {
+	    	renderContent = getJ3DErrorPlaceholderContent();
+        }
     }    
     
-    
+    /**
+     * State-saving constructor. 
+     * @param e
+     * @param geneUMatrix
+     * @param exptUMatrix
+     * @param geneOrExpt
+     * @param U
+     * @param xAxis
+     * @param yAxis
+     * @param zAxis
+     */
     public COA3DViewer(Experiment e, FloatMatrix geneUMatrix, FloatMatrix exptUMatrix, Integer geneOrExpt, FloatMatrix U, Integer xAxis, Integer yAxis, Integer zAxis) {
-
     	this.geneOrExpt = geneOrExpt.intValue();
         this.geneUMatrix = geneUMatrix;
         this.exptUMatrix = exptUMatrix;
@@ -181,7 +269,26 @@ public class COA3DViewer  extends ViewerAdapter {
         this.xAxis = xAxis.intValue();
         this.yAxis = yAxis.intValue();
         this.zAxis = zAxis.intValue();   
-        setExperiment(e);
+    	this.experiment = e;
+    	this.exptID = experiment.getId();
+    	try {
+		    if (this.geneOrExpt == COAGUI.BOTH) {
+		        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());            
+		    } else {
+		        content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
+		        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+		    }  
+		    renderContent = content;
+		    popup = createJPopupMenu(); 
+		  	enabled3D = true;
+	    } catch (UnsatisfiedLinkError ule) {
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    } catch (java.lang.NoClassDefFoundError ncdfe) {
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    }
         
    	}
     /**
@@ -191,22 +298,7 @@ public class COA3DViewer  extends ViewerAdapter {
     	return new Expression(this, this.getClass(), "new", 
     			new Object[]{this.experiment, geneUMatrix, exptUMatrix, new Integer(geneOrExpt), U, new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
     }
-    /**
-     * @inheritDoc
-     */
-    public void setExperiment(Experiment e){
-    	this.experiment = e;
-    	this.exptID = experiment.getId();
-	    if (this.geneOrExpt == COAGUI.BOTH) {
-	        content = createContent(geneUMatrix, exptUMatrix, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-	        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());            
-	    } else {
-	        content = createContent(U, experiment, geneOrExpt, xAxis, yAxis, zAxis);
-	        dlg = new COASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-	    }   
-	    popup = createJPopupMenu(); 
-        
-    }
+
     public Experiment getExperiment(){return this.experiment;}
     public int getExperimentID(){return this.exptID;}
     
@@ -218,23 +310,25 @@ public class COA3DViewer  extends ViewerAdapter {
         this.frame = framework.getFrame();
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();        
-        labelIndex = menu.getLabelIndex();        
-        content.setData(this.data);
-        content.setGeneLabelIndex(labelIndex);
-        onMenuChanged(menu);
-        content.updateScene();
-        
-        //In case it is viewed after serialization
-        if(popup == null){
-            popup = createJPopupMenu(); 
-            DefaultMutableTreeNode node = framework.getCurrentNode();
-            if(node != null){
-                if(node.getUserObject() instanceof LeafInfo){
-                    LeafInfo leafInfo = (LeafInfo) node.getUserObject();
-                    leafInfo.setPopupMenu(this.popup);
-                }
-            }
-        }    
+        labelIndex = menu.getLabelIndex();
+        if(enabled3D) {
+	        content.setData(this.data);
+	        content.setGeneLabelIndex(labelIndex);
+	        onMenuChanged(menu);
+	        content.updateScene();
+	        
+	        //In case it is viewed after serialization
+	        if(popup == null){
+	            popup = createJPopupMenu(); 
+	            DefaultMutableTreeNode node = framework.getCurrentNode();
+	            if(node != null){
+	                if(node.getUserObject() instanceof LeafInfo){
+	                    LeafInfo leafInfo = (LeafInfo) node.getUserObject();
+	                    leafInfo.setPopupMenu(this.popup);
+	                }
+	            }
+	        }    
+        }
     }  
     
     public void onMenuChanged(IDisplayMenu menu) {
@@ -256,7 +350,7 @@ public class COA3DViewer  extends ViewerAdapter {
      * Returns a content of the viewer.
      */
     public JComponent getContentComponent() {
-        return content;
+        return renderContent;
     } 
     
     /**
