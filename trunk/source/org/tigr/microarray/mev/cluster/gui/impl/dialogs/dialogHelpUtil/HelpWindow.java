@@ -247,7 +247,7 @@ public class HelpWindow extends JDialog {
             pane.setPage(url);
             return true;
         } catch (IOException e){
-            JOptionPane.showMessageDialog(this, dialogName+" help page can not be found.");
+            JOptionPane.showMessageDialog(this, dialogName+" help page cannot be found.");
             //e.printStackTrace();
             //  dispose();
             return false;
@@ -341,6 +341,10 @@ public class HelpWindow extends JDialog {
             return "nmf_parameters.html";
         if(key.equals("Rank Products- Initialization Dialog"))
             return "rp_parameters.html";
+        if(key.equals("NMF Initialization Dialog"))
+            return "nmf_parameters.html";
+        if(key.equals("Linear Models for Microarray Data- Initialization Dialog"))
+            return "limma_parameters.html";
         if(key.equals("Cluster Save Dialog"))
             return "cluster_save_parameters.html";
         if(key.equals("Terrain Map Initialization Dialog"))
