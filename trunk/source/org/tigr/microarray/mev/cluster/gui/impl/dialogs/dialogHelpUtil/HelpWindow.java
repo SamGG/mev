@@ -239,7 +239,7 @@ public class HelpWindow extends JDialog {
     public boolean getWindowContent(){
         String fileName = getFileName(dialogName);
         if(fileName == null){
-            JOptionPane.showMessageDialog(this, dialogName+" help page can not be located.");
+            JOptionPane.showMessageDialog(this, dialogName+" help page cannot be located.");
             return false;
         }
         try{
