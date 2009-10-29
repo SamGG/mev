@@ -230,11 +230,11 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		
 			public void keyReleased(KeyEvent e) {
 				//if(!((javax.swing.JTextField)e.getSource()).getText().isEmpty())
-				if(((javax.swing.JTextField)e.getSource()).getText() != "" && !((javax.swing.JTextField)e.getSource()).getText().isEmpty()) {
+				if(((javax.swing.JTextField)e.getSource()).getText() != "" && !(((javax.swing.JTextField)e.getSource()).getText().length()==0)) {
 					try {
 					setFactorLevel((Integer.parseInt(e.getComponent().getName())-1), Integer.parseInt(((javax.swing.JTextField)e.getSource()).getText()));
 					}catch(NumberFormatException numexception) {
-						JOptionPane.showMessageDialog(DataPanel.this, "You must enter a valid value for factor level!", "Factor Level Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(DataPanel.this, "You must enter a numeric value for factor level!", "Factor Level Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 					if(drawSampleGroupingsPanel()){
