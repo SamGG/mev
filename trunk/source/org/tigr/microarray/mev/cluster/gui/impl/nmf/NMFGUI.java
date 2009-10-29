@@ -78,8 +78,9 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     protected IData data;
     
-    int rvalue, maxrvalue, numRuns, maxIters;
-    boolean divergence, doSamples, storeClusters, multiClusters, expScale, adjustData;
+    int rvalue, maxrvalue, numRuns, maxIters, checkFreq;
+    boolean divergence, doSamples, storeClusters, multiClusters, expScale, doMax, adjustData;
+    float cutoff;
     long randomSeed;
     
     /** Creates new NMFGUI */
@@ -121,9 +122,12 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             maxrvalue = initNMF.getMaxRValue();
             numRuns = initNMF.getNumRuns();
             maxIters = initNMF.getMaxIterations();
+            checkFreq = initNMF.getCheckFreq();
             divergence = initNMF.getDivergence();
             doSamples = initNMF.isClusterSamples();
             expScale = initNMF.isExpScale();
+            doMax = initNMF.isDoMaxIters();
+            cutoff = initNMF.getCutoff();
             adjustData = initNMF.isAdjustData();
             storeClusters = initNMF.isStoreClusters();
             multiClusters = initNMF.isMultiRank();
@@ -145,9 +149,12 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             data.addParam("max- r-value", String.valueOf(maxrvalue));
             data.addParam("runs", String.valueOf(numRuns));
             data.addParam("iterations", String.valueOf(maxIters));
+            data.addParam("checkFreq", String.valueOf(checkFreq));
             data.addParam("divergence", String.valueOf(divergence));
             data.addParam("doSamples", String.valueOf(doSamples));
             data.addParam("expScale", String.valueOf(expScale));
+            data.addParam("doMax", String.valueOf(doMax));
+            data.addParam("cutoff", String.valueOf(cutoff));
             data.addParam("adjustData", String.valueOf(adjustData));
             data.addParam("multiClusters", String.valueOf(multiClusters));
             data.addParam("randomSeed", String.valueOf(randomSeed));
@@ -531,6 +538,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         node.add(new DefaultMutableTreeNode(multiClusters ? "Rank range: "+String.valueOf(rvalue)+" - "+String.valueOf(maxrvalue) : "Rank value: "+String.valueOf(rvalue)));
         node.add(new DefaultMutableTreeNode("Number of runs: " + String.valueOf(numRuns)));
         node.add(new DefaultMutableTreeNode("Maximum iterations: "+String.valueOf(maxIters)));
+        node.add(new DefaultMutableTreeNode(doMax ? "Performed maximum iterations": "Cost convergence cutoff: "+cutoff+", checked every " + checkFreq+ " iterations"));
         node.add(new DefaultMutableTreeNode("Update rules and cost measurement: " + (divergence ? "Divergence" : "Euclidean distance")));
         node.add(new DefaultMutableTreeNode("Negative value removal: "+(adjustData ? (expScale ? "Exponentially scale" : "Subtract minimum") : "No adjustment")));
         node.add(new DefaultMutableTreeNode("Random seed: " + (randomSeed==-1 ? "None" : randomSeed)));

@@ -47,10 +47,10 @@ public class NMFDialog extends AlgorithmDialog {
 
 	private int result = JOptionPane.CANCEL_OPTION;
     
-    JTextField numRunsField, rankField, maxRankField, numItersField, randomSeedField;
+    JTextField numRunsField, rankField, maxRankField, numItersField, randomSeedField, cutoffField, checkFreqField;
     JRadioButton divergenceButton1, clusterBySamples, expScale;
-    JCheckBox clustercb, multiRanks, adjustCB, randomSeedCB;
-    JLabel rankLabel;
+    JCheckBox clustercb, multiRanks, adjustCB, randomSeedCB, doMax;
+    JLabel rankLabel, conCutoff, checkFreq;
 
     
     /** Creates new NMFDialog */
@@ -63,7 +63,7 @@ public class NMFDialog extends AlgorithmDialog {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.HORIZONTAL;       
-        constraints.insets = new Insets(5,0,5,0);
+        constraints.insets = new Insets(3,0,3,0);
         
         JPanel pane = new JPanel();
         pane.setBackground(Color.white);
@@ -72,7 +72,7 @@ public class NMFDialog extends AlgorithmDialog {
         
         JPanel clusterTypePanel = new JPanel();
         clusterTypePanel.setBackground(Color.white);
-        clusterTypePanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Samples/Genes Selection", 
+        clusterTypePanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Samples/genes selection", 
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, 
                 new java.awt.Font("Dialog", 1, 12), Color.black));  
         GridBagLayout grid = new GridBagLayout();
@@ -101,12 +101,12 @@ public class NMFDialog extends AlgorithmDialog {
         
         JPanel runParams = new JPanel();
         runParams.setBackground(Color.white);
-        runParams.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Run Parameters", 
+        runParams.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Run parameters", 
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, 
                 new java.awt.Font("Dialog", 1, 12), Color.black));  
         runParams.setLayout(grid);
 
-        multiRanks = new JCheckBox("Run Multiple Ranks");
+        multiRanks = new JCheckBox("Run multiple ranks");
         multiRanks.setBackground(Color.white);
         multiRanks.setSelected(false);
         multiRanks.addActionListener(new ActionListener(){
@@ -132,7 +132,7 @@ public class NMFDialog extends AlgorithmDialog {
         grid.setConstraints(numRunsField, constraints);
         runParams.add(numRunsField);    
         
-        rankLabel= new JLabel("Rank value :");
+        rankLabel= new JLabel("Rank value : ");
         constraints.fill = GridBagConstraints.NONE;       
         buildConstraints(constraints, 0, 2, 1, 1, 50, 100);
         grid.setConstraints(rankLabel, constraints);
@@ -167,6 +167,54 @@ public class NMFDialog extends AlgorithmDialog {
         buildConstraints(constraints, 1, 3, 1, 1, 50, 100);
         grid.setConstraints(numItersField, constraints);
         runParams.add(numItersField);    
+        
+        doMax= new JCheckBox("Always perform maximum iterations");
+        doMax.setBackground(Color.white);
+        doMax.setSelected(true);
+        doMax.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent ae){
+        		conCutoff.setEnabled(!doMax.isSelected());
+        		cutoffField.setEnabled(!doMax.isSelected());
+        		checkFreq.setEnabled(!doMax.isSelected());
+        		checkFreqField.setEnabled(!doMax.isSelected());
+        	}
+        });
+        constraints.fill = GridBagConstraints.NONE;          
+        constraints.anchor = GridBagConstraints.WEST;
+        buildConstraints(constraints, 0, 4, 1, 1, 50, 100);
+        grid.setConstraints(doMax, constraints);
+        runParams.add(doMax);     
+        constraints.fill = GridBagConstraints.HORIZONTAL;  
+
+        conCutoff= new JLabel("Cost convergence cutoff: ");   
+        conCutoff.setEnabled(false);
+        constraints.anchor = GridBagConstraints.EAST;
+        constraints.fill = GridBagConstraints.NONE;       
+        buildConstraints(constraints, 0, 5, 1, 1, 50, 100);
+        grid.setConstraints(conCutoff, constraints);
+        runParams.add(conCutoff);    
+        constraints.fill = GridBagConstraints.HORIZONTAL; 
+
+        cutoffField = new JTextField("1.0", 7);  
+        cutoffField.setEnabled(false);
+        buildConstraints(constraints, 1, 5, 1, 1, 50, 100);
+        grid.setConstraints(cutoffField, constraints);
+        runParams.add(cutoffField);   
+
+        checkFreq= new JLabel("Check Frequency: ");      
+        checkFreq.setEnabled(false); 
+        constraints.anchor = GridBagConstraints.EAST;
+        constraints.fill = GridBagConstraints.NONE;  
+        buildConstraints(constraints, 0, 6, 1, 1, 50, 100);
+        grid.setConstraints(checkFreq, constraints);
+        runParams.add(checkFreq);    
+        constraints.fill = GridBagConstraints.HORIZONTAL; 
+
+        checkFreqField = new JTextField("40", 7);  
+        checkFreqField.setEnabled(false);
+        buildConstraints(constraints, 1, 6, 1, 1, 50, 100);
+        grid.setConstraints(checkFreqField, constraints);
+        runParams.add(checkFreqField);   
         
         buildConstraints(constraints, 0, 2, 1, 1, 0, 50);
         gridbag.setConstraints(runParams, constraints);
@@ -217,7 +265,7 @@ public class NMFDialog extends AlgorithmDialog {
         normalizationPanel.add(noNegs2);     
         
 
-        adjustCB = new JCheckBox("Adjust data if non-negative");
+        adjustCB = new JCheckBox("Always adjust data");
         adjustCB.setBackground(Color.white);
         adjustCB.setSelected(false);
         buildConstraints(constraints, 0, 2, 2, 1, 50, 100);
@@ -250,7 +298,7 @@ public class NMFDialog extends AlgorithmDialog {
         
         JPanel randomSeedPanel = new JPanel();
         randomSeedPanel.setBackground(Color.white);
-        randomSeedPanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Random Number Generation", 
+        randomSeedPanel.setBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EtchedBorder(), "Random number generation", 
                 javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, 
                 new java.awt.Font("Dialog", 1, 12), Color.black));  
         randomSeedPanel.setLayout(grid);
@@ -371,6 +419,18 @@ public class NMFDialog extends AlgorithmDialog {
 	public boolean isExpScale() {
 		return expScale.isSelected();
 	}
+
+	public boolean isDoMaxIters() {
+		return doMax.isSelected();
+	}
+	
+	public float getCutoff() {
+        return Float.parseFloat(cutoffField.getText());
+    }
+
+    public int getCheckFreq() {
+        return Integer.parseInt(checkFreqField.getText());
+    }  
     
     protected class EventListener implements ActionListener, ItemListener {
         public void actionPerformed(ActionEvent event) {
