@@ -19,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -66,6 +67,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextArea;
 import javax.swing.JToolTip;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
@@ -81,6 +83,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
@@ -166,6 +169,7 @@ public class TerrainViewer extends JPanel implements IViewer {
     private UndoManager undoManager = new UndoManager();
     private Experiment experiment;
     private int exptID = 0;
+    private static boolean enabled3D = true;
 
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -184,81 +188,106 @@ public class TerrainViewer extends JPanel implements IViewer {
         this.sigma = sigma;
         setPreferredSize(new Dimension(10, 10));
         Listener listener = new Listener();
-        // create the universe 
-        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-        this.onScreenCanvas = new Canvas3D(config);
-        this.universe = new SimpleUniverse(this.onScreenCanvas);
-
-        this.offScreenCanvas = new Canvas3D(config, true);
-        Screen3D sOn = onScreenCanvas.getScreen3D();
-        Screen3D sOff = offScreenCanvas.getScreen3D();
-        sOff.setSize(sOn.getSize());
-        sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
-        sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());
-        // attach the offscreen canvas to the view
-        this.universe.getViewer().getView().addCanvas3D(this.offScreenCanvas);
-        // set its bounds
-        BoundingLeaf boundingLeaf = new BoundingLeaf(new BoundingSphere(new Point3d(), 100d));
-        boundingLeaf.setCapability(BoundingLeaf.ALLOW_REGION_READ);
-        PlatformGeometry platformGeometry = new PlatformGeometry();
-        platformGeometry.addChild(boundingLeaf);
-        platformGeometry.compile();
-        this.universe.getViewingPlatform().setPlatformGeometry(platformGeometry);
-        // set distances
-        this.universe.getViewer().getView().setFrontClipDistance(0.001);
-        this.universe.getViewer().getView().setBackClipDistance(0.5);
-        // basis point
-        Point3d basis = new Point3d(0.5, 0, 0.5);
-        this.view_tg = universe.getViewingPlatform().getViewPlatformTransform();
-        // set initilal view point
-        setInitialViewPoint(view_tg, basis);
-        // drifting
-        this.driftInterpolator = new DriftInterpolator(this.view_tg, boundingLeaf);
-        // create heights
-        float[][] heights = DomainUtil.getHeights(this.locations, this.grid_size, this.sigma);
-        // selection shape
-        this.selectionShape = new SelectionShape();
-        // the landscape
-        this.landscape = new Landscape(heights);
-        this.landscape.setPoligonMode(PolygonAttributes.POLYGON_FILL);
-        TransformGroup landTransform = new TransformGroup();
-        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        landTransform.addChild(this.landscape);
-        // links shape
-        this.linksShape = new LinksShape(clusters, weights, locations);
-        // keyboard support
-        this.keyMotionBehavior = createKeyMotionBehavior(this.view_tg, basis, boundingLeaf);
-        // control panel
-        this.controlPanel = new ControlPanel(landTransform, this.keyMotionBehavior, boundingLeaf);
-        //this.controlPanel.setVisible(false);
-        Behavior sliderBehavior = this.controlPanel.getSliderBehavior();
-        // add gene shapes
-        this.genesShape = new GenesShape(GenesShape.POINTS, this.locations, this.up_left_point, this.bottom_right_point);
-        this.genesShape.setBounds(boundingLeaf.getRegion());
-        // add labels
-        this.labelIndex = labelIndex;
-        // create scene
-        Node[] nodes = new Node[] {this.selectionShape, landTransform, sliderBehavior, this.keyMotionBehavior, this.driftInterpolator, this.genesShape, this.linksShape};
-        this.sceneGroup = createSceneGraph(nodes, boundingLeaf);
-
-        this.pickBehavior = new PickBehavior(this.sceneGroup, this.onScreenCanvas, boundingLeaf.getRegion());
-        this.pickBehavior.setPickListener(listener);
-        this.sceneGroup.addChild(this.pickBehavior);
-
-        this.sceneGroup.compile();
-        // add the canvas to this panel
-        setLayout(new BorderLayout());
-        add(this.onScreenCanvas, BorderLayout.CENTER);
-        // control panel
-        add(this.controlPanel, BorderLayout.SOUTH);
-
-        this.popup = createJPopupMenu(listener);
-        this.onScreenCanvas.addMouseListener(listener);
-        this.onScreenCanvas.addMouseMotionListener(listener);
-        this.onScreenCanvas.addKeyListener(listener);
+        // create the universe
+        if(enabled3D) {
+	        try {
+		        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+		        this.onScreenCanvas = new Canvas3D(config);
+		        this.universe = new SimpleUniverse(this.onScreenCanvas);
+		
+		        this.offScreenCanvas = new Canvas3D(config, true);
+		        Screen3D sOn = onScreenCanvas.getScreen3D();
+		        Screen3D sOff = offScreenCanvas.getScreen3D();
+		        sOff.setSize(sOn.getSize());
+		        sOff.setPhysicalScreenWidth(sOn.getPhysicalScreenWidth());
+		        sOff.setPhysicalScreenHeight(sOn.getPhysicalScreenHeight());
+		        // attach the offscreen canvas to the view
+		        this.universe.getViewer().getView().addCanvas3D(this.offScreenCanvas);
+		        // set its bounds
+		        BoundingLeaf boundingLeaf = new BoundingLeaf(new BoundingSphere(new Point3d(), 100d));
+		        boundingLeaf.setCapability(BoundingLeaf.ALLOW_REGION_READ);
+		        PlatformGeometry platformGeometry = new PlatformGeometry();
+		        platformGeometry.addChild(boundingLeaf);
+		        platformGeometry.compile();
+		        this.universe.getViewingPlatform().setPlatformGeometry(platformGeometry);
+		        // set distances
+		        this.universe.getViewer().getView().setFrontClipDistance(0.001);
+		        this.universe.getViewer().getView().setBackClipDistance(0.5);
+		        // basis point
+		        Point3d basis = new Point3d(0.5, 0, 0.5);
+		        this.view_tg = universe.getViewingPlatform().getViewPlatformTransform();
+		        // set initilal view point
+		        setInitialViewPoint(view_tg, basis);
+		        // drifting
+		        this.driftInterpolator = new DriftInterpolator(this.view_tg, boundingLeaf);
+		        // create heights
+		        float[][] heights = DomainUtil.getHeights(this.locations, this.grid_size, this.sigma);
+		        // selection shape
+		        this.selectionShape = new SelectionShape();
+		        // the landscape
+		        this.landscape = new Landscape(heights);
+		        this.landscape.setPoligonMode(PolygonAttributes.POLYGON_FILL);
+		        TransformGroup landTransform = new TransformGroup();
+		        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		        landTransform.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		        landTransform.addChild(this.landscape);
+		        // links shape
+		        this.linksShape = new LinksShape(clusters, weights, locations);
+		        // keyboard support
+		        this.keyMotionBehavior = createKeyMotionBehavior(this.view_tg, basis, boundingLeaf);
+		        // control panel
+		        this.controlPanel = new ControlPanel(landTransform, this.keyMotionBehavior, boundingLeaf);
+		        //this.controlPanel.setVisible(false);
+		        Behavior sliderBehavior = this.controlPanel.getSliderBehavior();
+		        // add gene shapes
+		        this.genesShape = new GenesShape(GenesShape.POINTS, this.locations, this.up_left_point, this.bottom_right_point);
+		        this.genesShape.setBounds(boundingLeaf.getRegion());
+		        // add labels
+		        this.labelIndex = labelIndex;
+		        // create scene
+		        Node[] nodes = new Node[] {this.selectionShape, landTransform, sliderBehavior, this.keyMotionBehavior, this.driftInterpolator, this.genesShape, this.linksShape};
+		        this.sceneGroup = createSceneGraph(nodes, boundingLeaf);
+		
+		        this.pickBehavior = new PickBehavior(this.sceneGroup, this.onScreenCanvas, boundingLeaf.getRegion());
+		        this.pickBehavior.setPickListener(listener);
+		        this.sceneGroup.addChild(this.pickBehavior);
+		
+		        this.sceneGroup.compile();
+		        // add the canvas to this panel
+		        setLayout(new BorderLayout());
+		        add(this.onScreenCanvas, BorderLayout.CENTER);
+		        // control panel
+		        add(this.controlPanel, BorderLayout.SOUTH);
+		
+		        this.popup = createJPopupMenu(listener);
+		        this.onScreenCanvas.addMouseListener(listener);
+		        this.onScreenCanvas.addMouseMotionListener(listener);
+		        this.onScreenCanvas.addKeyListener(listener);
+		        enabled3D = true;
+	        } catch (UnsatisfiedLinkError ule) {
+	        	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		        enabled3D = false;
+		        add(getJ3DErrorPlaceholderContent());
+	        } catch (java.lang.NoClassDefFoundError ncdfe) {
+	        	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+		        enabled3D = false;
+		        add(getJ3DErrorPlaceholderContent());
+	        }
+        } else {
+	        add(getJ3DErrorPlaceholderContent());
+        }
     }
+    private JTextArea getJ3DErrorPlaceholderContent() {
+        JTextArea area = new JTextArea(20, 20);
+        area.setEditable(false);
+        area.setMargin(new Insets(0, 10, 0, 0));
 
+        area.setText("No 3D viewer is available. To view the results of this analysis, please install Java3D, available at java.sun.com. \n" +
+        		"Use the File -> Save Analysis As option to save your results. \n" +
+        		"After installing Java3D, restart MeV and load the saved analysis file to view these results in an interactive form. \n");
+        area.setCaretPosition(0);
+        return area;
+    }
 
 	/**
 	 * @see org.tigr.microarray.mev.cluster.gui.IViewer#setExperiment(org.tigr.microarray.mev.cluster.gui.Experiment)
@@ -277,14 +306,16 @@ public class TerrainViewer extends JPanel implements IViewer {
     }
 
     public void onSelected(IFramework framework) {
-        this.framework = framework;
-        if(this.tipWindow == null)
-            this.tipWindow = new JWindow(framework.getFrame());
-
-        this.universe.addBranchGraph(this.sceneGroup);
-        this.data = framework.getData();
-        onDataChanged(this.data);
-        onMenuChanged(framework.getDisplayMenu());
+    	if(enabled3D) {
+	        this.framework = framework;
+	        if(this.tipWindow == null)
+	            this.tipWindow = new JWindow(framework.getFrame());
+	
+	        this.universe.addBranchGraph(this.sceneGroup);
+	        this.data = framework.getData();
+	        onDataChanged(this.data);
+	        onMenuChanged(framework.getDisplayMenu());
+    	}
     }
 
     public void onDataChanged(IData data) {
@@ -304,7 +335,9 @@ public class TerrainViewer extends JPanel implements IViewer {
     }
 
     public void onDeselected() {
-        this.sceneGroup.detach();
+    	if(enabled3D){
+    		this.sceneGroup.detach();
+    	}
     }
 
     public void onClosed() {

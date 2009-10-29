@@ -17,6 +17,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.pca;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -33,8 +34,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -76,6 +79,8 @@ public class PCA3DViewer extends ViewerAdapter {
     private int labelIndex = -1;    
     private PCASelectionAreaDialog dlg;
     private int exptID = 0;
+    private boolean enabled3D = false;
+    private JComponent renderContent;
     
     /**
      * Constructs a <code>PCA3DViewer</code> with specified mode,
@@ -88,11 +93,36 @@ public class PCA3DViewer extends ViewerAdapter {
         this.geneViewer = geneViewer;
         this.U = U;
         this.mode = mode;
-        content = createContent(mode, U, experiment, geneViewer);
-        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        popup = createJPopupMenu();
+        try {
+	        content = createContent(mode, U, experiment, geneViewer);
+	        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+	        popup = createJPopupMenu();
+        	enabled3D = true;
+        	renderContent = content;
+        } catch (UnsatisfiedLinkError ule) {
+        	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+        	//TODO create blank screen with error message. 
+        	enabled3D = false;
+        	renderContent = getJ3DErrorPlaceholderContent();
+        } catch (java.lang.NoClassDefFoundError ncdfe) {
+        	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+        	//TODO create blank screen with error message. 
+        	enabled3D = false;
+        	renderContent = getJ3DErrorPlaceholderContent();
+        	//create new content for viewer
+        }
     }
-    
+    private JTextArea getJ3DErrorPlaceholderContent() {
+        JTextArea area = new JTextArea(20, 20);
+        area.setEditable(false);
+        area.setMargin(new Insets(0, 10, 0, 0));
+
+        area.setText("No 3D viewer is available. To view the results of this analysis, please install Java3D, available at java.sun.com. \n" +
+        		"Use the File -> Save Analysis As option to save your results. \n" +
+        		"After installing Java3D, restart MeV and load the saved analysis file to view these results in an interactive form. \n");
+        area.setCaretPosition(0);
+        return area;
+    }
     public PCA3DViewer(Frame frame, int mode, FloatMatrix U, Experiment experiment, boolean geneViewer, int xAxis, int yAxis, int zAxis) {
         this.frame = frame;
         this.experiment = experiment;
@@ -103,9 +133,24 @@ public class PCA3DViewer extends ViewerAdapter {
         this.xAxis = xAxis;
         this.yAxis= yAxis;
         this.zAxis = zAxis;
-        content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);
-        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-        popup = createJPopupMenu();
+        try {
+	        content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);
+	        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+	        popup = createJPopupMenu();
+	    	enabled3D = true;
+	    	renderContent = content;
+	    } catch (UnsatisfiedLinkError ule) {
+	    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+	    	//TODO create blank screen with error message. 
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    } catch (java.lang.NoClassDefFoundError ncdfe) {
+	    	ShowThrowableDialog.show(new Frame(), "No Java 3D detected", new Exception("Java3D is not installed. The 3D viewer cannot be created."));
+	    	//TODO create blank screen with error message. 
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    	//create new content for viewer
+	    }
     }   
     /**
      * State-saving constructor.
@@ -124,7 +169,21 @@ public class PCA3DViewer extends ViewerAdapter {
         this.xAxis = xAxis.intValue();
         this.yAxis = yAxis.intValue();
         this.zAxis = zAxis.intValue();
-        setExperiment(e);
+        this.experiment = e;
+    	this.exptID = experiment.getId();
+        try {
+	    	content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);  
+	        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
+	        popup = createJPopupMenu();
+	        enabled3D = true;
+	    	renderContent = content;
+        } catch (UnsatisfiedLinkError ule) {
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    } catch (java.lang.NoClassDefFoundError ncdfe) {
+	    	enabled3D = false;
+	    	renderContent = getJ3DErrorPlaceholderContent();
+	    }
     }
     /**
      * @inheritDoc
@@ -133,15 +192,7 @@ public class PCA3DViewer extends ViewerAdapter {
     	return new Expression(this, this.getClass(), "new", 
     			new Object[]{this.experiment, new Boolean(geneViewer), U, new Integer(mode), new Integer(xAxis), new Integer(yAxis), new Integer(zAxis)});
     }
-    /**
-     * @inheritDoc
-     */
-    public void setExperiment(Experiment e){
-    	this.experiment = e;
-    	this.exptID = experiment.getId();
-        content = createContent(mode, U, experiment, geneViewer, xAxis, yAxis, zAxis);  
-        dlg = new PCASelectionAreaDialog(content, frame, content.getPositionX(), content.getPositionY(), content.getPositionZ(), content.getSizeX(), content.getSizeY(), content.getSizeZ(), content.getMaxValue());
-    }
+
     public int getExperimentID(){return this.exptID;}
     
     /**
@@ -152,23 +203,25 @@ public class PCA3DViewer extends ViewerAdapter {
         this.frame = framework.getFrame();
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();        
-        labelIndex = menu.getLabelIndex();        
-        content.setData(this.data);
-        content.setGeneLabelIndex(labelIndex);
-        onMenuChanged(menu);
-        content.updateScene();
-        
-        //In case it is viewed after serialization
-        if(popup == null){
-            popup = createJPopupMenu(); 
-            DefaultMutableTreeNode node = framework.getCurrentNode();
-            if(node != null){
-                if(node.getUserObject() instanceof LeafInfo){
-                    LeafInfo leafInfo = (LeafInfo) node.getUserObject();
-                    leafInfo.setPopupMenu(this.popup);
-                }
-            }
-        }    
+        labelIndex = menu.getLabelIndex();
+        if(enabled3D) {
+	        content.setData(this.data);
+	        content.setGeneLabelIndex(labelIndex);
+	        onMenuChanged(menu);
+	        content.updateScene();
+	        
+	        //In case it is viewed after serialization
+	        if(popup == null){
+	            popup = createJPopupMenu(); 
+	            DefaultMutableTreeNode node = framework.getCurrentNode();
+	            if(node != null){
+	                if(node.getUserObject() instanceof LeafInfo){
+	                    LeafInfo leafInfo = (LeafInfo) node.getUserObject();
+	                    leafInfo.setPopupMenu(this.popup);
+	                }
+	            }
+	        }    
+        }
     }
     
     public void onMenuChanged(IDisplayMenu menu) {
@@ -190,7 +243,7 @@ public class PCA3DViewer extends ViewerAdapter {
      * Returns a content of the viewer.
      */
     public JComponent getContentComponent() {
-        return content;
+        return renderContent;
     }
     
     /**
