@@ -33,6 +33,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import javax.swing.JDialog;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -54,7 +55,7 @@ public class NMF extends AbstractAlgorithm{
 	boolean doSamples = true;
 	boolean expScale = false;
 	boolean adjustData = false;
-	long randomSeed = -1;
+	long randomSeed = 33333;
 	long startTime;
     FloatMatrix expMatrix;
 	FloatMatrix[] W = new FloatMatrix[numRuns];
@@ -337,7 +338,7 @@ public class NMF extends AbstractAlgorithm{
     		}
     	}
     	expressionAverage = expressionAverage/((float)v.length*(float)v[0].length);
-    	
+    	System.out.println("ad = "+expressionAverage);
     	//handling negative/NaN values...
     	if (!adjustData)
     		return v;
@@ -360,9 +361,12 @@ public class NMF extends AbstractAlgorithm{
 					}
 				}
 			}
+    		System.out.println("t " + minVal);
 			for (int i=0; i<v.length; i++)
 				for (int j=0; j<v[0].length; j++)
 					v[i][j] = v[i][j] - minVal + tinyNumber;
+			
+			System.out.println(v[1592][3]);
     	}
     	return v;
     }
@@ -379,8 +383,8 @@ public class NMF extends AbstractAlgorithm{
 		int sampsOrGenes = doSamples? numSamples : numGenes;
 		connectivityMatrix = new float[sampsOrGenes][sampsOrGenes];
 		int totalTries = 0;
-		float costSum = 0;
-		float costBest = Float.POSITIVE_INFINITY;
+//		float costSum = 0;
+//		float costBest = Float.POSITIVE_INFINITY;
 		Random random = new Random();
 		if (randomSeed!=-1)
 			random.setSeed(randomSeed);
@@ -410,6 +414,7 @@ public class NMF extends AbstractAlgorithm{
 			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
 			float previousCost = Float.POSITIVE_INFINITY;
 			float cost=0;
+			float cost2=0;
 			for(int iter = 0; iter<maxIterations; iter++){
     			updateProgressBar(iter,runcount);
 				if (!divergence){//use euclidean
@@ -431,9 +436,9 @@ public class NMF extends AbstractAlgorithm{
     					}
     				}
     				W[runcount] = new FloatMatrix(w);
-    				cost = 0;
     				FloatMatrix WH = W[runcount].times(H[runcount]);
 
+    				cost = 0;
     				for (int i=0; i<numGenes; i++){
     					for (int j=0; j<numSamples; j++){
     						cost = cost + (float)Math.pow(V.A[i][j]-WH.A[i][j], 2);
@@ -472,31 +477,41 @@ public class NMF extends AbstractAlgorithm{
     				cost = 0;
     				
     				WH = W[runcount].times(H[runcount]);
+//    				cost2 = 0;
+//    				for (int i=0; i<numGenes; i++){
+//    					for (int j=0; j<numSamples; j++){
+//    						cost2 = cost2 + (float)Math.pow(V.A[i][j]-WH.A[i][j], 2);
+//    					}
+//    				}
+    				
     				cost = getCost(V,WH);
     				if (cost<0)
     					return;
 				}
-    				System.out.println("iteration = " +iter+", cost = "+ cost);
+//    				System.out.println("iteration = " +iter+", cost = "+ cost+ " euclidean = "+cost2);
 				if (cost>=previousCost){
 //					System.out.println("higher cost, "+cost+ ", iteration="+iter);
-					costSum = costSum+cost;
-					break;
+//					costSum = costSum+cost;
+//					JDialog jd = new JDialog();
+//					jd.setModal(true);
+//					jd.setVisible(true);
+//					break;
 				}
 				previousCost= cost;
 			}
 //    		printMat(H[runcount]);
 //    		this is my technique for removing bad solutions
-			costSum = costSum+cost;
-			if (Float.isNaN(cost)||cost>costSum/totalTries){
-				runcount--;
-				if (Float.isNaN(cost))
-					totalTries--;
-				continue;
-			}
-			
-			if (cost<costBest){
-				costBest= cost;
-			}
+//			costSum = costSum+cost;
+//			if (Float.isNaN(cost)||cost>costSum/totalTries){
+//				runcount--;
+//				if (Float.isNaN(cost))
+//					totalTries--;
+//				continue;
+//			}
+//			
+//			if (cost<costBest){
+//				costBest= cost;
+//			}
 			costs[runcount] = cost;
 			if (doSamples){
 				//Assigns m samples to r classes
@@ -614,48 +629,6 @@ public class NMF extends AbstractAlgorithm{
 	}
 	
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		standalone = true;
-		float [][] v1 = 
-			{	{	16,	32	,72		,40	},
-				{	28,	56	,126 	,70	},
-				{	4,	8	,18		,10},
-				{	24, 48 	,108	,60}
-			};
-		
-
-		ArrayList<String> amounts = new ArrayList<String>();
-		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
-		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line;
-			while( (line = br.readLine()) != null)
-				amounts.add(line.trim());
-			br.close();
-		
-		}catch (Exception e){
-			
-		}
-		float[][] v = new float[amounts.size()][];
-		for (int i=0; i<v.length; i++){
-			String[] str = amounts.get(i).split("\t");
-			v[i] = new float[str.length];
-			for (int j=0; j<str.length; j++){
-				v[i][j] = Float.parseFloat(str[j]);
-			}
-		}
-		NMF nmf = new NMF();
-		nmf.NMFMultiplicativeUpdate(v);
-		try{
-			nmf.calculateHierarchicalTree();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-	}
     
     /**
      * Checking the result of hcl algorithm calculation.
@@ -723,12 +696,10 @@ public class NMF extends AbstractAlgorithm{
     	 * that Leaves[i][j] is equal to the jth leaf under the node i.
     	 */
     private void getLeavesFromNode(HCLTreeData hcltd, int node){
-    	System.out.print("gnfl "+node);
     	if (node< (doSamples ? numSamples : numGenes)){
     		leaves.add(node);
     		return;
     	}
-    		
     	if (hcltd.child_1_array[node]<(doSamples ? numSamples : numGenes))
     		leaves.add(hcltd.child_1_array[node]);
     	else
@@ -737,7 +708,50 @@ public class NMF extends AbstractAlgorithm{
     		leaves.add(hcltd.child_2_array[node]);
     	else
     		getLeavesFromNode(hcltd, hcltd.child_2_array[node]);
-    	
     }
-    
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		standalone = true;
+		float [][] v1 = 
+			{	{	16,	32	,72		,40	},
+				{	28,	56	,126 	,70	},
+				{	4,	8	,18		,10},
+				{	24, 48 	,108	,60}
+			};
+		
+
+		ArrayList<String> amounts = new ArrayList<String>();
+		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
+		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
+		File file3 = new File("C://workspace//data//BETR_5000_genes_NoAnno.txt");
+		
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(file3));
+			String line;
+			while( (line = br.readLine()) != null)
+				amounts.add(line.trim());
+			br.close();
+		
+		}catch (Exception e){
+			
+		}
+		float[][] v = new float[amounts.size()][];
+		for (int i=0; i<v.length; i++){
+			String[] str = amounts.get(i).split("\t");
+			v[i] = new float[str.length];
+			for (int j=0; j<str.length; j++){
+				v[i][j] = Float.parseFloat(str[j]);
+			}
+		}
+		NMF nmf = new NMF();
+		nmf.NMFMultiplicativeUpdate(nmf.dataPreProcessing(v));
+		try{
+			nmf.calculateHierarchicalTree();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 }
