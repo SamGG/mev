@@ -44,7 +44,7 @@ public class NMF extends AbstractAlgorithm{
 	float[][] connectivityMatrix;
 	boolean stop = false;
 	int r=2;
-	int numRuns = 1;
+	int numRuns = 10;
 	int maxIterations = 10000;
 	int numSamples, numGenes;
 	int checkFreq = 40;
@@ -65,6 +65,8 @@ public class NMF extends AbstractAlgorithm{
 	FloatMatrix[] H = new FloatMatrix[numRuns];
 	int[][] clusters;
 	private float tinyNumber = .0001f;
+	static long timelast;
+	long t1,t2,t3,t4,t5,t6,t7,t8;
     /**
      * This method should interrupt the calculation.
      */
@@ -137,7 +139,13 @@ public class NMF extends AbstractAlgorithm{
         result.addMatrix("clusters_variances", variances);
         result.addParam("cophen", String.valueOf(cophen));
         result.addParam("adjustData", String.valueOf(adjustData));
-    	
+
+//		System.out.println(t1);
+//		System.out.println(t2);
+//		System.out.println(t3);
+//		System.out.println(t4);
+//		System.out.println(t5);
+//		System.out.println(t6);
     	return result;
     }
 
@@ -416,13 +424,17 @@ public class NMF extends AbstractAlgorithm{
 			H[runcount] = new FloatMatrix(h);
 			Wt = W[runcount].transpose();
 			Ht = H[runcount].transpose();
+			FloatMatrix WH;
 			
 			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
 			float previousCost = Float.POSITIVE_INFINITY;
 			float cost=0;
 //			float cost2=0;
 			for(int iter = 0; iter<maxIterations; iter++){
+				timelast = System.currentTimeMillis();
     			updateProgressBar(iter,runcount);
+				t1 += System.currentTimeMillis()-timelast;
+				timelast = System.currentTimeMillis();
 				if (!divergence){//use euclidean
     				FloatMatrix WtV = Wt.times(V);
     				FloatMatrix WtWH = Wt.times(W[runcount]).times(H[runcount]);
@@ -442,7 +454,7 @@ public class NMF extends AbstractAlgorithm{
     					}
     				}
     				W[runcount] = new FloatMatrix(w);
-    				FloatMatrix WH = W[runcount].times(H[runcount]);
+    				WH = W[runcount].times(H[runcount]);
 
     				cost = 0;
     				for (int i=0; i<numGenes; i++){
@@ -451,12 +463,16 @@ public class NMF extends AbstractAlgorithm{
     					}
     				}
 				} else { //use divergence
-    				FloatMatrix WH = W[runcount].times(H[runcount]);
+    				WH = W[runcount].times(H[runcount]);
+    				t2 += System.currentTimeMillis()-timelast;
+    				timelast = System.currentTimeMillis();
     				float h1[][]=new float[r][numSamples];
     				for (int i=0; i<r; i++){
 						float sumk = 0;
 						for (int k=0; k<numGenes; k++)
 							sumk = sumk + W[runcount].get(k, i);
+	    				t3 += System.currentTimeMillis()-timelast;
+	    				timelast = System.currentTimeMillis();
     					for (int j=0; j<numSamples; j++){
     						float sumi = 0;
     						for (int k=0; k<numGenes; k++)
@@ -464,6 +480,8 @@ public class NMF extends AbstractAlgorithm{
     						h1[i][j] = H[runcount].get(i, j)*sumi/sumk;
     					}
     				}
+    				t4 += System.currentTimeMillis()-timelast;
+    				timelast = System.currentTimeMillis();
     				H[runcount] = new FloatMatrix(h1);
     				WH = W[runcount].times(H[runcount]);
 
@@ -479,24 +497,20 @@ public class NMF extends AbstractAlgorithm{
     						w1[i][j] = W[runcount].get(i, j)*sumi/sumk;
     					}
     				}
+    				t5 += System.currentTimeMillis()-timelast;
+    				timelast = System.currentTimeMillis();
     				W[runcount] = new FloatMatrix(w1);
-    				cost = 0;
     				
-    				WH = W[runcount].times(H[runcount]);
-//    				cost2 = 0;
-//    				for (int i=0; i<numGenes; i++){
-//    					for (int j=0; j<numSamples; j++){
-//    						cost2 = cost2 + (float)Math.pow(V.A[i][j]-WH.A[i][j], 2);
-//    					}
-//    				}
-    				
-    				cost = getCost(V,WH);
-    				if (cost<0)
-    					return;
+    				t6 += System.currentTimeMillis()-timelast;
+    				timelast = System.currentTimeMillis();
 				}
 //    			System.out.println("iteration = " +iter+", cost = "+ cost);
     			if (!doMax){
     				if (iter%checkFreq==0){
+    					WH = W[runcount].times(H[runcount]);   
+        				cost = getCost(V,WH);
+        				if (cost<0)
+        					return;
 						if (cost>(previousCost-cutoff)){
 //							System.out.println("stop!!");
 							break;
@@ -511,6 +525,8 @@ public class NMF extends AbstractAlgorithm{
     				}
     			}
 			}
+			WH = W[runcount].times(H[runcount]);   
+			cost = getCost(V,WH);
 //    		printMat(H[runcount]);
 //    		this is my technique for removing bad solutions
 //			costSum = costSum+cost;
@@ -726,6 +742,7 @@ public class NMF extends AbstractAlgorithm{
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		timelast = System.currentTimeMillis();
 		standalone = true;
 		float [][] v1 = 
 			{	{	16,	32	,72		,40	},
@@ -737,11 +754,11 @@ public class NMF extends AbstractAlgorithm{
 
 		ArrayList<String> amounts = new ArrayList<String>();
 //		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
-//		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
-		File file3 = new File("C://workspace//data//BETR_5000_genes_NoAnno.txt");
+		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
+//		File file3 = new File("C://workspace//data//BETR_5000_genes_NoAnno.txt");
 		
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(file3));
+			BufferedReader br = new BufferedReader(new FileReader(file2));
 			String line;
 			while( (line = br.readLine()) != null)
 				amounts.add(line.trim());
@@ -760,6 +777,12 @@ public class NMF extends AbstractAlgorithm{
 		}
 		NMF nmf = new NMF();
 		nmf.NMFMultiplicativeUpdate(nmf.dataPreProcessing(v));
+		System.out.println(nmf.t1);
+		System.out.println(nmf.t2);
+		System.out.println(nmf.t3);
+		System.out.println(nmf.t4);
+		System.out.println(nmf.t5);
+		System.out.println(nmf.t6);
 		try{
 			nmf.calculateHierarchicalTree();
 		}catch (Exception e){
