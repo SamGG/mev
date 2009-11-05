@@ -91,7 +91,7 @@ public class ParseGB_GO {
      */
     public static HashMap readGB_GOs(String fileName){
 	try {
-		System.out.println("readGB_GOs()" + fileName);
+		//System.out.println("readGB_GOs()" + fileName);
 	    Useful.checkFile(fileName);
 	    HashMap hm = new HashMap();
 	    FileReader fr = new FileReader(fileName);
@@ -347,8 +347,8 @@ public class ParseGB_GO {
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
 	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");
 	    String newInterAndRandomFileName = props.getProperty("outDirectedInteractionsAndRandomFileName", "outDirectedInteractionsAndRandom.txt");
-	    System.out.println("test()" + gbGOsFileName);
-	    System.out.println("test()" + sifFileName);
+	    //System.out.println("test()" + gbGOsFileName);
+	    //System.out.println("test()" + sifFileName);
 	    Useful.checkFile(gbGOsFileName);
 	    Useful.checkFile(sifFileName);
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);

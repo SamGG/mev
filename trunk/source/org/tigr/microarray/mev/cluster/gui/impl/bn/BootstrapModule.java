@@ -117,19 +117,19 @@ public class BootstrapModule {
 	    WekaUtil.writeDataToCSVFile(instances, path+"instances.csv");
 		//call Bootstrap on csv
 		Bootstrap.createDataSets(path+"instances.csv", rootOutFileName, numBootstrapIterations, seed);
-		System.out.println("Bootstrap.createDataSets() -- rootOutFileName " + rootOutFileName);
+		//System.out.println("Bootstrap.createDataSets() -- rootOutFileName " + rootOutFileName);
 		//convert all boot files from csv to arff
 		Instances[] bootstraps = new Instances[numBootstrapIterations];
 		File f = null;
 		for(int i = 0; i < numBootstrapIterations; i++){
-			System.out.println("WekaUtil.readInstancesCSV() -- rootOutFileName+i " + rootOutFileName+i);
+			//System.out.println("WekaUtil.readInstancesCSV() -- rootOutFileName+i " + rootOutFileName+i);
 		    bootstraps[i] = WekaUtil.readInstancesCSV(rootOutFileName+i); 
 		    f = new File(rootOutFileName+i);
 		    f.delete();
-		    System.out.println("WekaUtil.writeDataToArffFile() -- rootOutFileName+i " + rootOutFileName+i);
+		    //System.out.println("WekaUtil.writeDataToArffFile() -- rootOutFileName+i " + rootOutFileName+i);
 		    WekaUtil.writeDataToArffFile(bootstraps[i], rootOutFileName+i);
 		    //fix states
-		    System.out.println("FixStates.fixStates() -- rootOutFileName+i " + rootOutFileName+i);
+		    //System.out.println("FixStates.fixStates() -- rootOutFileName+i " + rootOutFileName+i);
 		    FixStates.fixStates(path+rootOutFileName+i, binLabels, ".arff");
 		    
 		}	

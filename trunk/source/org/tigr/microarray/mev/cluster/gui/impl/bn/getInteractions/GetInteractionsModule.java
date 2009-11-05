@@ -83,12 +83,12 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			debug=true;
+			debug=false;
 			//path=path+sep; //Raktim - Use tmp Dir
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String resFileLoc = path+BNConstants.SEP;
 
-			System.out.println("PATH Paiso: " + fileLoc);
+			//System.out.println("PATH Paiso: " + fileLoc);
 			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME);
 
 			//System.out.print(resFileName);
@@ -140,15 +140,15 @@ public class GetInteractionsModule {
 				//if(articlesGbs.size() == 0)
 					//System.out.println("articlesGbs size is 0");
 				//else
-					System.out.println("articlesGbs size is " + articlesGbs.size());
+					//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromGeneDb.size() == 0)
 					//System.out.println("gbArticlesFromGeneDb size is 0");
 				//else
-					System.out.println("gbArticlesFromGeneDb size is " + gbArticlesFromGeneDb.size());
+					//System.out.println("gbArticlesFromGeneDb size is " + gbArticlesFromGeneDb.size());
 				//if (interGeneDb.size() == 0)
 					//System.out.println("interGeneDb size is 0");
 				//else
-					System.out.println("interGeneDb size is " + interGeneDb.size());
+					//System.out.println("interGeneDb size is " + interGeneDb.size());
 			} else {
 				System.out.println("One of the vectors for GeneDB is null");
 			}
@@ -161,15 +161,15 @@ public class GetInteractionsModule {
 				//if(articlesGbs.size() == 0)
 					//System.out.println("articlesGbs size is 0");
 				//else
-					System.out.println("articlesGbs size is " + articlesGbs.size());
+					//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromPubmed.size() == 0)
 					//System.out.println("gbArticlesFromPubmed size is 0");
 				//else
-					System.out.println("gbArticlesFromPubmed size is " + gbArticlesFromPubmed.size());
+					//System.out.println("gbArticlesFromPubmed size is " + gbArticlesFromPubmed.size());
 				//if (interPubmed.size() == 0)
 					//System.out.println("interPubmed size is 0");
 				//else
-					System.out.println("interPubmed size is " + interPubmed.size());
+					//System.out.println("interPubmed size is " + interPubmed.size());
 			} else {
 				System.out.println("One of the vectors for Pubmed is null");
 			}
@@ -182,15 +182,15 @@ public class GetInteractionsModule {
 				//if(articlesGbs.size() == 0)
 					//System.out.println("articlesGbs size is 0");
 				//else
-					System.out.println("articlesGbs size is " + articlesGbs.size());
+					//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromRes.size() == 0)
 					//System.out.println("gbArticlesFromRes size is 0");
 				//else
-					System.out.println("gbArticlesFromRes size is " + gbArticlesFromRes.size());
+					//System.out.println("gbArticlesFromRes size is " + gbArticlesFromRes.size());
 				//if (interRes.size() == 0)
 					//System.out.println("interRes size is 0");
 				//else
-					System.out.println("interRes size is " + interRes.size());
+					//System.out.println("interRes size is " + interRes.size());
 			} else {
 				System.out.println("One of the vectors for Res is null");
 			}
@@ -202,7 +202,7 @@ public class GetInteractionsModule {
 				UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
 			}
 			
-			System.out.println("******* Merging interGeneDb, interRes, interPubmed ********");
+			//System.out.println("******* Merging interGeneDb, interRes, interPubmed ********");
 			ArrayList unionOfInter = GetInteractionsUtil.uniquelyMergeArrayLists(interGeneDb, interRes, interPubmed);
 			if(unionOfInter == null || unionOfInter.size() == 0){
 				//TODO
@@ -252,48 +252,34 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			// get props of ppi list, gbs, res
-			//path=path+sep;
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String resFileLoc = path+BNConstants.SEP;
 			//System.out.print(path);
 			String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
 			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME, null);
 			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME, null);
-			//Useful.checkFile(ppiFileName);
-			//Useful.checkFile(resFileName);
-			//Useful.checkFile(gbAccessionsFileName);
-			// convert to unique symbols
-			//System.exit(1);
+			
+			ArrayList interFromPpiSyms = getInteractionsFromPpiSyms(props);
+			//System.out.println(interFromPpiSyms.size());
+			// replace symbols with gbs in interFromPpi
+			// The mapping below is not correct
+			//ArrayList interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
+			// Read all GenBankAcc in cluster to Symbol mapping. 
 			HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
-			System.out.println("gbSymbol "+gbSymbols.size());  
-			//System.exit(1);
-			HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
-			System.out.println("uniSymbol "+uniqueSymbols.size());
-			//System.exit(1);
-			ArrayList queryNodes = new ArrayList();
-			queryNodes.addAll(uniqueSymbols);
-			ArrayList ppi = UsefulInteractions.readInteractions(ppiFileName);
-			System.out.println("# PPI Interaction: "+uniqueSymbols.size());
-			//System.exit(1);
-			//return getInteractionsFromPpi(ppi,queryNodes,props);
-			ArrayList ppiInterActions = getInteractionsFromPpi(ppi,queryNodes,props);
-			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
-			//E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
-			//ppiInterActions = UsefulInteractions.removeReverseEdge(ppiInterActions);
-			return ppiInterActions;
-		}
-		catch(IOException ioe){
-			System.out.println(ioe);
-			ioe.printStackTrace();
+			ArrayList interFromPpi = GetInteractionsUtil.replaceSymsWithGBs(gbSymbols, interFromPpiSyms);
+			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+				prepareGBsForPpiNotDirectly(interFromPpi, props);	
+			}
+			interFromPpi = UsefulInteractions.removeReverseEdge(interFromPpi);
+			return interFromPpi;
 		}
 		catch(NullArgumentException nae){
 			System.out.println(nae);
 			nae.printStackTrace();
 		}
-		catch(OutOfRangeException oore){
-			System.out.println(oore);
-			oore.printStackTrace();
+		catch(FileNotFoundException fnfe){
+			System.out.println(fnfe);
+			fnfe.printStackTrace();
 		}
 		return null;
 	}
@@ -346,31 +332,31 @@ public class GetInteractionsModule {
 		ArrayList ppiIner = null;
 		if(usePpiDirectlyStr.equals("true")){
 			if(usePpiOnlyWithinStr.equals("true")){
-				System.out.println("usePpiDirectlyStr & usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodesOnlyWithin()");
+				//System.out.println("usePpiDirectlyStr & usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodesOnlyWithin()");
 				//return UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
 				ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodesOnlyWithin(ppi, queryNodes);
 			}
 			else {
-				System.out.println("usePpiDirectlyStr & !usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodes()");
+				//System.out.println("usePpiDirectlyStr & !usePpiOnlyWithinStr \n getSubsetInteractionsGivenNodes()");
 				//return UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
 				ppiIner = UsefulInteractions.getSubsetInteractionsGivenNodes(ppi, queryNodes);
 			}
 		} else {
 			if(useTransitiveClosureStr.equals("true")){
-				System.out.println("!usePpiDirectlyStr & useTransitiveClosureStr \n getInteractionsWithReachableNodes()");
+				//System.out.println("!usePpiDirectlyStr & useTransitiveClosureStr \n getInteractionsWithReachableNodes()");
 				//return TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
 				ppiIner = TransitiveClosure.getInteractionsWithReachableNodes(ppi, queryNodes);
 			}
 			else {		
 				//return AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
-				System.out.println("!usePpiDirectlyStr & !useTransitiveClosureStr \n getInteractionsWithNodesAtDistanceK()");
+				//System.out.println("!usePpiDirectlyStr & !useTransitiveClosureStr \n getInteractionsWithNodesAtDistanceK()");
 				ppiIner = AllPairsShortestPaths.getInteractionsWithNodesAtDistanceK(ppi, queryNodes, distanceK);
 			}
 		}
 		if(ppiIner == null)
 			System.out.println("GetInteractionsModule.getInteractionsFromPpi() NO interactions!!");
-		else
-			System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
+		//else
+			//System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
 		return ppiIner;
 	}
 
@@ -388,7 +374,7 @@ public class GetInteractionsModule {
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			//String resFileLoc = path+BNConstants.SEP;
 
-			System.out.println("PATH Kegg Paiso: " + fileLoc);
+			//System.out.println("PATH Kegg Paiso: " + fileLoc);
 			//String resFileName = resFileLoc+props.getProperty("resourcererFileName");
 
 			//System.out.print(resFileName);
@@ -401,7 +387,7 @@ public class GetInteractionsModule {
 			ArrayList keggListAll = GetInteractionsUtil.loadKeggInteractions(kegg_sp,BNConstants.SEP+BNConstants.KEGG_FILE_BASE+BNConstants.SEP);
 			// Find INteractions that corresponds to the Data
 			ArrayList keggList = GetInteractionsUtil.getEdgesfromKegg(keggListAll, gbAccessionsFileName);
-			System.out.println("Edges From KEGG " + keggList.size());
+			//System.out.println("Edges From KEGG " + keggList.size());
 			//for(int i = 0; i < keggList.size(); i++){
 				//System.out.println(keggList.get(i).toString());
 			//}
@@ -461,7 +447,7 @@ public class GetInteractionsModule {
 				}
 			}
 			
-			System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
+			//System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
 			//for(int i = 0; i < unionLitKegg.size(); i++){
 				//System.out.println(unionLitKegg.get(i).toString());
 			//}
@@ -558,19 +544,10 @@ public class GetInteractionsModule {
 		// get interactions from both literature and ppi NOT kegg
 		else if(isLiteratureStr.equals("true") && isPpiStr.equals("true") && !isKeggStr.equals("true")){
 			System.out.println("Only Lit & PPI");
-			interFromPpiSyms = getInteractionsFromPpi(props);
-			System.out.println("getInteractions()interFromPpiSyms Size: " + interFromPpiSyms.size());
-			// replace symbols with gbs in interFromPpi
-			interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path + BNConstants.SEP+props.getProperty(BNConstants.RES_FILE_NAME,null), interFromPpiSyms);
-			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false")|| props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
-				prepareGBsForPpiNotDirectly(interFromPpi, props);	
-				interFromLit = getInteractionsFromLiterature(props);
-				return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
-			}
-			else { // usePpiDirectlyOnlyWithin was true
-				interFromLit = getInteractionsFromLiterature(props);
-				return GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
-			}
+			ArrayList unionLitPpi = new ArrayList();
+			unionLitPpi = getInteractionsFromLiteraturePpi(props);
+			return unionLitPpi;
+			
 		}
 		// get interactions from both literature and kegg and NOT ppi
 		else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && isKeggStr.equals("true")){
@@ -583,38 +560,25 @@ public class GetInteractionsModule {
 		else if(!isLiteratureStr.equals("true") && isPpiStr.equals("true") && isKeggStr.equals("true")){
 			System.out.println("Only KEGG & PPI");
 			ArrayList keggAndPpiInterActions = null;
-			//Get KEGG interactions
-			interFromKegg = getInteractionsFromKegg(props);
-			//get PPI interactions
-			interFromPpiSyms = getInteractionsFromPpi(props);
-			//Replace symbols with gbs in interFromPpi
-			interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
-			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
-				prepareGBsForPpiNotDirectly(interFromPpi, props);
-				keggAndPpiInterActions = GetUnionOfInters.uniquelyMergeArrayLists(interFromKegg, interFromPpi);
-			} else {
-				keggAndPpiInterActions = GetUnionOfInters.uniquelyMergeArrayLists(interFromKegg, interFromPpi);
-			}
-			
+			keggAndPpiInterActions = getInteractionsFromPpiKegg(props);
 			return keggAndPpiInterActions;
 		}
 		// get interactions from literature but NOT from ppi & kegg
 		else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && !isKeggStr.equals("true")){
-			interFromLit = getInteractionsFromLiterature(props);
 			System.out.println("Only LIT");
-			//System.exit(1);
+			interFromLit = getInteractionsFromLiterature(props);
 			return interFromLit;
 		}
 		// get interactions from ppi but not from literature and Kegg
 		else if(isPpiStr.equals("true") && !isLiteratureStr.equals("true") && !isKeggStr.equals("true")){	
 			System.out.println("Only PPI");
-			interFromPpiSyms = getInteractionsFromPpi(props);
+			interFromPpi = getInteractionsFromPpi(props);
 			//System.out.println(interFromPpiSyms.size());
 			// replace symbols with gbs in interFromPpi
-			interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
-			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
-				prepareGBsForPpiNotDirectly(interFromPpi, props);	
-			}
+			//interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
+			//if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+				//prepareGBsForPpiNotDirectly(interFromPpi, props);	
+			//}
 			return interFromPpi;
 		}
 		// get interactions from only  kegg and  and NOT ppi and literature 
@@ -628,6 +592,164 @@ public class GetInteractionsModule {
 		}
 	}
 
+	/**
+	 * 
+	 * @param props
+	 * @return
+	 * @throws NullArgumentException
+	 */
+	public static ArrayList getInteractionsFromPpiKegg(Properties props) throws NullArgumentException {
+		try {
+			if(props == null){
+				throw new NullArgumentException("The given properties were null");
+			}
+			
+			ArrayList unionPpiKegg = null;
+			ArrayList kegg = getInteractionsFromKegg(props);
+			ArrayList ppi = getInteractionsFromPpi(props);
+			if(kegg == null || kegg.size() == 0) {
+				System.out.println("No valid KEGG interactions found");
+				if(ppi == null || ppi.size() == 0) {
+					System.out.println("No valid LIT interactions found");
+					System.out.println("No valid KEGG-LIT interactions found");
+					return null;
+				} else {
+					//KEGG is null but LIT is valid
+					unionPpiKegg = GetUnionOfInters.uniquelyMergeArrayLists(new ArrayList(), ppi);
+					unionPpiKegg = UsefulInteractions.removeReverseEdge(unionPpiKegg);
+					//return unionLitKegg;
+				}
+			} else {
+				//KEGG is valid but LIT is not
+				if(ppi == null || ppi.size() == 0) {
+					System.out.println("No valid LIT interactions found");
+					unionPpiKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, new ArrayList());
+					unionPpiKegg = UsefulInteractions.removeReverseEdge(unionPpiKegg);
+					//return unionLitKegg;
+				} else {
+					//KEGG is valid and LIT is valid
+					unionPpiKegg = GetUnionOfInters.uniquelyMergeArrayLists(kegg, ppi);
+					unionPpiKegg = UsefulInteractions.removeReverseEdge(unionPpiKegg);
+					//return unionLitKegg;
+				}
+			}
+			
+			//System.out.println("\nEdges From KEGG & PPI " + unionPpiKegg.size());
+			//for(int i = 0; i < unionLitKegg.size(); i++){
+				//System.out.println(unionLitKegg.get(i).toString());
+			//}
+			return unionPpiKegg;
+		}
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+			nae.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param props
+	 * @return
+	 * @throws NullArgumentException
+	 */
+	public static ArrayList getInteractionsFromPpiSyms(Properties props) throws NullArgumentException {
+		try {
+			if(props == null){
+				throw new NullArgumentException("The given properties were null");
+			}
+			// get props of ppi list, gbs, res
+			//path=path+sep;
+			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
+			String resFileLoc = path+BNConstants.SEP;
+			//System.out.print(path);
+			String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
+			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME, null);
+			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME, null);
+
+			// Read all GenBankAcc in cluster to Symbol mapping. 
+			HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
+			//System.out.println("gbSymbol "+gbSymbols.size());  
+			//System.exit(1);
+			HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
+			//System.out.println("uniSymbol "+uniqueSymbols.size());
+			//System.exit(1);
+			ArrayList queryNodes = new ArrayList();
+			queryNodes.addAll(uniqueSymbols);
+			//Load the ppi file
+			ArrayList ppi = UsefulInteractions.readInteractions(ppiFileName);
+			//System.out.println("# PPI Interaction: "+ppi.size());
+			//System.exit(1);
+			//return getInteractionsFromPpi(ppi,queryNodes,props);
+			ArrayList ppiInterActions = getInteractionsFromPpi(ppi,queryNodes,props);
+			//Merged functinalilty from getINteractions 
+			//interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
+			//if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+				//prepareGBsForPpiNotDirectly(interFromPpi, props);	
+			//}
+			//return interFromPpi;
+			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
+			//E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
+			//ppiInterActions = UsefulInteractions.removeReverseEdge(ppiInterActions);
+			return ppiInterActions;
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+			ioe.printStackTrace();
+		}
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+			nae.printStackTrace();
+		}
+		catch(OutOfRangeException oore){
+			System.out.println(oore);
+			oore.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param props
+	 * @return
+	 * @throws NullArgumentException
+	 */
+	public static ArrayList getInteractionsFromLiteraturePpi(Properties props) throws NullArgumentException {
+		try {
+			if(props == null){
+				throw new NullArgumentException("The given properties were null");
+			}
+			
+			ArrayList unionLitPpi = null;
+			ArrayList interFromPpi = getInteractionsFromPpi(props);
+			ArrayList interFromLit = getInteractionsFromLiterature(props);
+			
+			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + interFromPpi.size());
+			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + interFromLit.size());
+			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false")|| props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
+				prepareGBsForPpiNotDirectly(interFromPpi, props);	
+				interFromLit = getInteractionsFromLiterature(props);
+				unionLitPpi = GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
+			}
+			else { // usePpiDirectlyOnlyWithin was true
+				interFromLit = getInteractionsFromLiterature(props);
+				unionLitPpi = GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
+				
+			}
+			unionLitPpi = UsefulInteractions.removeReverseEdge(unionLitPpi);
+			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + unionLitPpi.size());
+			return unionLitPpi;
+		}
+		catch(OutOfRangeException oore){
+			System.out.println(oore);
+			oore.printStackTrace();
+		}
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+			nae.printStackTrace();
+		}
+		return null;
+	}
 	/**
 	 * The <code>prepareGBsForPpiNotDirectly</code> method takes in a given graph of ppi, and given properties 
 	 * and gets the new GenBank accessions for the official gene symbols obtained from not directly getting ppi
@@ -706,7 +828,7 @@ public class GetInteractionsModule {
 			//System.exit(1);
 			Properties props = new Properties();
 			props.load(new FileInputStream(propertiesFileName));
-			System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
+			//System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
 			
 			//Magic Happens Here. This is where Lit netwrok is created//
 			ArrayList interactions = getInteractions(props); 
@@ -734,8 +856,8 @@ public class GetInteractionsModule {
 				System.setProperty("LM_ONLY", fname_cyto);
 				if(probeIndexAssocHash != null ) {
 					if (probeIndexAssocHash.size() <= 0) {
-						System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
-						System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+						//System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+						//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 					}
 				} else {
 					throw new NullArgumentException("Given Probe-Index Hash was null!");

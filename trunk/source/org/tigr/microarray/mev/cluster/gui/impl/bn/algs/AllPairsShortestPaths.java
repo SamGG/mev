@@ -187,8 +187,8 @@ public class AllPairsShortestPaths {
 	    String queryNodesFileName = props.getProperty("queryNodesFileName", null);	    
 	    double distanceK = Double.parseDouble(props.getProperty("distanceK", "3"));	    
 	    String outInterWithNodesAtDistanceKFileName = props.getProperty("outInteractionsWithNodesAtDistanceKFileName", "outInteractionsWithNodesAtDistanceK.txt");
-	    System.out.println("test()" + ppiFileName);
-		System.out.println("test()" + queryNodesFileName);
+	    //System.out.println("test()" + ppiFileName);
+		//System.out.println("test()" + queryNodesFileName);
 	    Useful.checkFile(ppiFileName);
 	    Useful.checkFile(queryNodesFileName);
 	    ArrayList ppi = UsefulInteractions.readDirectedInteractions(ppiFileName);

@@ -136,7 +136,7 @@ public class FromWekaToSif {
 	 */
 	public static void fromWekaToXgmml2(boolean dir, String evalStr, String fileName, String cptFile, boolean b, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
-			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 		} else {
 			throw new NullArgumentException("Given Probe-Index Hash was null!");
@@ -283,7 +283,7 @@ public class FromWekaToSif {
 	 */
 	public static void fromWekaToXgmml(boolean dir, String evalStr, String fileName, String cptFileName, boolean b, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
-			System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("fromWekaToXgmml - probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 		} else {
 			throw new NullArgumentException("Given Probe-Index Hash was null!");
@@ -373,7 +373,7 @@ public class FromWekaToSif {
 	 */
 	public static void fromWekaToXgmml(boolean dir, Hashtable edgesTable, String cptFileName, int numItr, float confThreshold, String fileName, HashMap probeIndexAssocHash, IData data, String interactionType) throws NullArgumentException, IOException {
 		if(probeIndexAssocHash != null) {
-			System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+			//System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
 			//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 		} else {
 			throw new NullArgumentException("Given Probe-Index Hash was null!");
@@ -497,7 +497,7 @@ public class FromWekaToSif {
 			labelTo = nodes[1].trim();
 
 			//Conver to XGMML node & Edge
-			//Get indx from hash map encoded int the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
+			//Get index from hash map encoded into the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
 			String tmp[] = ((String)probeIndexAssocHash.get(labelFrom)).split("-");
 			fromTo[0] = Integer.parseInt(tmp[0]);
 			tmp = ((String)probeIndexAssocHash.get(labelTo)).split("-");
@@ -544,8 +544,8 @@ public class FromWekaToSif {
 			}
 
 			if(probeIndexAssocHash != null) {
-				System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
-				System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+				//System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+				//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
 			} else {
 				throw new NullArgumentException("Given Probe-Index Hash was null!");
 			}
@@ -556,17 +556,18 @@ public class FromWekaToSif {
 			SimpleGeneEdge sGE = null;
 			//int nodeId = 1;
 			String xgmmlContent = "";
-			System.out.println("Network File Name " + fileName);
+			//System.out.println("Network File Name " + fileName);
 			String label = fileName.substring(0, fileName.lastIndexOf("."));
 			//String _tmp[] = fileName.split(".");
 			//String label = _tmp[0];
-			System.out.println("Network File Prefix " + label);
+			//System.out.println("Network File Prefix " + label);
 			xgmmlContent = XGMMLGenerator.createHeader(label, "");
 
 			for(int i = 0; i < inter.size(); i++){
 				sGE = (SimpleGeneEdge) inter.get(i);
 				String labelFrom = sGE.getFrom().trim();
 				String labelTo = sGE.getTo().trim();
+				//System.out.println("fromSimpleGeneEdgeToXgmml: Edge: " + sGE.getEdgeAsString("pd"));
 				edges.add(sGE.getEdgeAsString("pd"));
 				if(!nodes.contains(labelFrom.trim())) {
 					nodes.add(labelFrom.trim());
@@ -635,7 +636,7 @@ public class FromWekaToSif {
 				labelFrom = s.substring(startIndex,index).trim();
 				if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 					//pw.println(labelFrom + " pd " + labelTo);
-					System.out.println(labelFrom + "-" + labelTo);
+					//System.out.println(labelFrom + "-" + labelTo);
 					edges.add(labelFrom + "-" + labelTo);
 				}
 				startIndex = index;	    
@@ -647,7 +648,7 @@ public class FromWekaToSif {
 		labelFrom = s.substring(startIndex, s.length()).trim();
 		if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 			//pw.println(labelFrom + " pd " + labelTo);
-			System.out.println(labelFrom + "-" + labelTo);
+			//System.out.println(labelFrom + "-" + labelTo);
 			edges.add(labelFrom + "-" + labelTo);
 		}
 		return edges;

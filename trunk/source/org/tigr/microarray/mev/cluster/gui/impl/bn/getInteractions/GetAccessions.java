@@ -64,13 +64,16 @@ public class GetAccessions {
 	    String s = null;
 	    String[] tokens = null;
 	    String[] subTokens = null;
-	    int dummy = 2;
+	    int dummy = 0;
 	    while((s = lnr.readLine())!= null){
-	    	if(dummy <= 2)
-	    		continue; //Skip irst 2 lines
+	    	if(dummy++ <= 2)
+	    		continue; //Skip first 2 lines
+	    	
 			s = s.trim();
 			tokens = s.split("\t");
-			if(tokens.length >= Constants.SYMBOLS_COLUMN_NUMBER){
+			//System.out.println("GetAccessions.getAccessions(): token len: " + tokens.length + " 1st token: " + tokens[0]);
+			if(tokens.length >= Constants.SYMBOLS_COLUMN_NUMBER + 1 &&
+					tokens[Constants.SYMBOLS_COLUMN_NUMBER] != ""){
 			    // Resourcerer file format for the official gene symbols is:
 			    // official gene symbol ; gene common name
 			    subTokens = tokens[Constants.SYMBOLS_COLUMN_NUMBER].split(";");
@@ -86,6 +89,7 @@ public class GetAccessions {
 	    return hm;
 	}
 	catch(IOException ioe){
+		System.out.println("IO Error From: org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions.getAccessions()");
 	    System.out.println(ioe);
 	}
 	return null;

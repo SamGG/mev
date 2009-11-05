@@ -161,7 +161,7 @@ public class PrepareXMLBifModule {
 	public static void test(String propsFileName){	
 		//String path=System.getProperty("user.dir");
 		String path=BNConstants.getBaseFileLocation();
-		System.out.println("PrepareXMLBifModule path: user.dir: " + path);
+		//System.out.println("PrepareXMLBifModule path: user.dir: " + path);
 		//String sep=System.getProperty("file.separator");
 		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Use tmp Dir
 		//path=path+BNConstants.SEP+"data"+BNConstants.SEP+"bn"+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
@@ -178,8 +178,8 @@ public class PrepareXMLBifModule {
 			String gbGOsFileName = path+props.getProperty(BNConstants.GB_GO_FILE_NAME, null); //"gbGOsFileName"
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 			long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
-			System.out.println("test(): namesFileName " + namesFileName);
-			System.out.println("test(): sifFileName " + sifFileName);
+			//System.out.println("test(): namesFileName " + namesFileName);
+			//System.out.println("test(): sifFileName " + sifFileName);
 			Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			if(useGO){
@@ -191,8 +191,8 @@ public class PrepareXMLBifModule {
 			//String fileLoc = path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String outXMLBifFileName = path+props.getProperty(BNConstants.OUT_XML_BIF_FILE_NAME,BNConstants.OUT_XML_BIF_FILE);
 			ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);
-			System.out.println("Reading Weights before creating DAG");
-			System.out.println("Num. of interaction to be considered: " + inter.size());
+			//System.out.println("Reading Weights before creating DAG");
+			//System.out.println("Num. of interaction to be considered: " + inter.size());
 			ArrayList names = Useful.readNamesFromFile(namesFileName);
 			ArrayList newInter = null;
 			if(useGO){
@@ -227,7 +227,7 @@ public class PrepareXMLBifModule {
 	 */
 	public static void createXMLBifFromList(String propsFileName, Vector fixedNetworkInter) throws Exception{	
 		String path = BNConstants.getBaseFileLocation();
-		System.out.println("PrepareXMLBifModule path: " + path);
+		//System.out.println("PrepareXMLBifModule path: " + path);
 		path = path+BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
 		try {
 			Properties props = new Properties();
@@ -237,7 +237,7 @@ public class PrepareXMLBifModule {
 			//String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 			
-			System.out.println("test(): namesFileName " + namesFileName);
+			//System.out.println("test(): namesFileName " + namesFileName);
 			//System.out.println("test(): sifFileName " + sifFileName);
 			//Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
@@ -245,7 +245,7 @@ public class PrepareXMLBifModule {
 			String outXMLBifFileName = path + props.getProperty(BNConstants.OUT_XML_BIF_FILE_FINAL_NAME,BNConstants.OUT_XML_BIF_FILE_FINAL);
 			ArrayList inter = UsefulInteractions.readInteractions(fixedNetworkInter);
 			//System.out.println("Reading Weights before creating DAG");
-			System.out.println("Num. of interaction to be considered: " + inter.size());
+			//System.out.println("Num. of interaction to be considered: " + inter.size());
 			ArrayList names = Useful.readNamesFromFile(namesFileName);
 			//TODO We may not need to create the DAG. The DAG is already there, we just populate the 
 			//ArrayList with the interactions

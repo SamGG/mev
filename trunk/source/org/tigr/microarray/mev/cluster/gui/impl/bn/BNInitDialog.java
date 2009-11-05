@@ -993,7 +993,8 @@ public class BNInitDialog extends AlgorithmDialog {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
 				String dir = chooser.getSelectedFile().getAbsolutePath().trim();
-
+				
+				/* Work around in Useful.getWekaArgsArray
 				if(dir.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
 							"Spaces are not allowed in Path. \n Selected a different location", 
@@ -1004,6 +1005,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					//defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
+				*/
 
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
 				//TMEV.setDataPath(defaultFileBaseLocation.getText());
@@ -1145,7 +1147,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				manager.updateFiles();
 			} else if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
-				System.out.println("BN Dlg. OK Cmd");
+				//System.out.println("BN Dlg. OK Cmd");
 				//Check to see if user is connected to Internet
 				Hashtable repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
 				String codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
@@ -1172,7 +1174,8 @@ public class BNInitDialog extends AlgorithmDialog {
 
 				// Validate if selected options have supporting file(s)
 				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
-
+				
+				/* Work around in Useful.getWekaArgsArray
 				if(fileBase.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
 							"Spaces are not allowed in Path. \n Selected a different location", 
@@ -1183,7 +1186,8 @@ public class BNInitDialog extends AlgorithmDialog {
 					//configPanel.defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
-
+				*/
+				
 				if(isLit()){
 					//Check if Lit File(s) exist
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {

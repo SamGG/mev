@@ -148,8 +148,8 @@ public class TransitiveClosure{
 	    String ppiFileName = props.getProperty("ppiFileName", null);
 	    String queryNodesFileName = props.getProperty("queryNodesFileName", null);	    
 	    String outInterWithReachableFileName = props.getProperty("outInteractionsWithReachableNodesFileName", "outInteractionsWithReachableNodes.txt");	    
-	    System.out.println("test()" + ppiFileName);
-	    System.out.println("test()" + queryNodesFileName);
+	    //System.out.println("test()" + ppiFileName);
+	    //System.out.println("test()" + queryNodesFileName);
 	    Useful.checkFile(ppiFileName);
 	    Useful.checkFile(queryNodesFileName);
 	    ArrayList ppi = UsefulInteractions.readDirectedInteractions(ppiFileName);
@@ -178,9 +178,9 @@ public class TransitiveClosure{
 	    inter.add(new SimpleGeneEdge("c", "d", 1.0));
 	    ArrayList query = new ArrayList();
 	    query.add("b");
-	    System.out.println("Testing with given graph: "+inter+"\nand given queryNode="+query);
+	    //System.out.println("Testing with given graph: "+inter+"\nand given queryNode="+query);
 	    ArrayList reachableInters = getInteractionsWithReachableNodes(inter, query);
-	    System.out.println("Result: "+reachableInters);	    
+	    //System.out.println("Result: "+reachableInters);	    
 	}
 	catch(NullArgumentException nae){
 	    System.out.println(nae);
