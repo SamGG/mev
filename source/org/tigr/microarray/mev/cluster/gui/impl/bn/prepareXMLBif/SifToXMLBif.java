@@ -233,8 +233,8 @@ public class SifToXMLBif {
 			props.load(new FileInputStream(propsFileName));
 			String sifFileName = props.getProperty("sifFileName",null);
 			String namesFileName = props.getProperty("namesFileName",null);
-			System.out.println("test()" + namesFileName);
-			System.out.println("test()" + sifFileName);
+			//System.out.println("test()" + namesFileName);
+			//System.out.println("test()" + sifFileName);
 			Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			ArrayList interactions = UsefulInteractions.readDirectedInteractionsWithWeights(sifFileName);

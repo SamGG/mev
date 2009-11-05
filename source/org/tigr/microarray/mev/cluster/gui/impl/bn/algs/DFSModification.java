@@ -113,7 +113,7 @@ public class DFSModification {
 	    String sifFileName = props.getProperty("sifFileName", null);	    
 	    long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
 	    String newInterFileName = props.getProperty("outDirectedInteractionsFileName", "outDirectedInteractions.txt");
-	    System.out.println("test()" + sifFileName);
+	    //System.out.println("test()" + sifFileName);
 	    Useful.checkFile(sifFileName);
 	    ArrayList inter = UsefulInteractions.readInteractionsWithWeights(sifFileName);
 	    ArrayList newInter = getDAGFromUndirectedGraph(inter);

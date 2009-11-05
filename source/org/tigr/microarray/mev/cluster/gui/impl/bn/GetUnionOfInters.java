@@ -49,9 +49,9 @@ public class GetUnionOfInters {
 		if(al1 == null || al2 == null){
 			throw new NullArgumentException("At least one the arguments ArrayLists was null: al1="+al1+"al2="+al2);
 		}
-		System.out.println("***Before merging Stats****");
-		System.out.println("***ArrayList 1 Size = " + al1.size());
-		System.out.println("***ArrayList 2 Size = " + al2.size());
+		//System.out.println("***Before merging Stats****");
+		//System.out.println("***ArrayList 1 Size = " + al1.size());
+		//System.out.println("***ArrayList 2 Size = " + al2.size());
 		
 		ArrayList toWrite = new ArrayList();
 		SimpleGeneEdge sGE = null;
@@ -60,7 +60,7 @@ public class GetUnionOfInters {
 			if(!UsefulInteractions.containsEitherWay(toWrite, sGE)){
 				toWrite.add(sGE);
 				toWrite.add(new SimpleGeneEdge(sGE.getTo(), sGE.getFrom(), sGE.getWeight()));
-				System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
+				//System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
 			}
 		}
 		for(int i = 0; i < al2.size(); i++){
@@ -68,7 +68,7 @@ public class GetUnionOfInters {
 			if(!UsefulInteractions.containsEitherWay(toWrite, sGE)){
 				toWrite.add(sGE);
 				toWrite.add(new SimpleGeneEdge(sGE.getTo(), sGE.getFrom(), sGE.getWeight()));
-				System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
+				//System.out.println("Adding Edge " + sGE.getTo() + "_" + sGE.getFrom() + "_" + sGE.getWeight());
 			}
 		}
 		if(toWrite.size() == 0){
@@ -97,9 +97,9 @@ public class GetUnionOfInters {
 	 */
 	public static void test(String interFileName1, String interFileName2, String outUnionOfInterFileName){
 		try {
-			System.out.println("test()" + interFileName1);
-			System.out.println("test()" + interFileName2);
-			System.out.println("test()" + outUnionOfInterFileName);
+			//System.out.println("test()" + interFileName1);
+			//System.out.println("test()" + interFileName2);
+			//System.out.println("test()" + outUnionOfInterFileName);
 			Useful.checkFile(interFileName1);
 			Useful.checkFile(interFileName2);
 			ArrayList al1 = UsefulInteractions.readInteractionsWithWeights(interFileName1);

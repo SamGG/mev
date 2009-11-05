@@ -48,7 +48,7 @@ public class Bootstrap {
      * of the given dataset
      */
     public static String[][] readDataSet(String dataSetFileName){
-    	System.out.println("readDataSet()");
+    	//System.out.println("readDataSet()");
     	// initialize 2D array that will contain the dataset of size max iterations in either dimension
 		String[][] dataSet = new String[MAX_ITERATIONS][MAX_ITERATIONS];
 		for(int i = 0; i < MAX_ITERATIONS; i++){
@@ -117,7 +117,7 @@ public class Bootstrap {
      * used to randomly resample the original dataset with replacement
      */
     public static void createDataSets(String origDataSetFileName, String rootOutFileName, int numIterations, long seed){
-    	System.out.println("createDataSets()");
+    	//System.out.println("createDataSets()");
     	try { 
 		    String[][] origDataSet = readDataSet(origDataSetFileName);
 		    String[][] dataSet_i = null;
@@ -145,9 +145,9 @@ public class Bootstrap {
 		    }
 		    
 		    // Debug Only
-		    for(int i = 0; i < classes.size(); i++) {
-		    	System.out.println(classes.get(i) + " Size: " + classSizes[i]);
-		    }
+		    //for(int i = 0; i < classes.size(); i++) {
+		    	//System.out.println(classes.get(i) + " Size: " + classSizes[i]);
+		    //}
 			for(int i = 0; i < numIterations; i++){
 				fos = new FileOutputStream(rootOutFileName+i);
 				pw = new PrintWriter(fos, true);
@@ -174,7 +174,7 @@ public class Bootstrap {
      * resampling with replacement the original dataset
      */
     public static String[][] reSampleDataSet(Random rand, String[][] origDataSet, Vector classes, int[]clsSizes){
-    	System.out.println("reSampleDataSet()");
+    	//System.out.println("reSampleDataSet()");
     	// Initialize dataset to original dataset
 		String[][] dataSet = new String[origDataSet.length][origDataSet[0].length];
 		int randomNumber = 0;

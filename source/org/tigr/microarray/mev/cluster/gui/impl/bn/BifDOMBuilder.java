@@ -24,7 +24,7 @@ public class BifDOMBuilder {
 			System.out.println("BifDOMBuilder() exception...");
 			pce.printStackTrace();
 		}
-		System.out.println("BifDOMBuilder()");
+		//System.out.println("BifDOMBuilder()");
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class BifDOMBuilder {
 		} else {
 			throw new SAXException("Number of discrete states could not be determined");
 		}
-		System.out.println("Number of BINs " + BIN);
+		//System.out.println("Number of BINs " + BIN);
 		
 		//Grab all DEF nodes
 		NodeList nodes_def = document.getElementsByTagName("DEFINITION");
@@ -192,7 +192,7 @@ public class BifDOMBuilder {
 		} else {
 			throw new SAXException("Number of discrete states could not be determined");
 		}
-		System.out.println("Number of BINs " + BIN);
+		//System.out.println("Number of BINs " + BIN);
 		
 		//Grab all DEF nodes
 		NodeList nodes_def = document.getElementsByTagName("DEFINITION");
@@ -219,7 +219,7 @@ public class BifDOMBuilder {
 					Element child = (Element) node_j;
 					
 					//Set child
-					System.out.println("Adding Child :" + child.getChildNodes().item(0).getNodeValue().trim());
+					//System.out.println("Adding Child :" + child.getChildNodes().item(0).getNodeValue().trim());
 					bnode.setChild(child.getChildNodes().item(0).getNodeValue().trim());
 				}
 				
@@ -229,7 +229,7 @@ public class BifDOMBuilder {
 					Element given = (Element) node_j;
 					
 					//Add Parent
-					System.out.println("Adding Parent :" + given.getChildNodes().item(0).getNodeValue().trim());
+					//System.out.println("Adding Parent :" + given.getChildNodes().item(0).getNodeValue().trim());
 					bnode.addParent(given.getChildNodes().item(0).getNodeValue().trim());
 				}
 				

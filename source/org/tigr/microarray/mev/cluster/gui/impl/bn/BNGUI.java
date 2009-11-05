@@ -245,7 +245,7 @@ public class BNGUI implements IClusterGUI {
 			return null;
 		}
 		//literatureMining(true,false,false,dialog.getBaseFileLocation());
-		System.out.println("Interaction count: " + status);
+		//System.out.println("Interaction count: " + status);
 		if(status > 0) {
 			//Display warning if too many interactions are found.
 			if(status > 50) {
@@ -405,9 +405,9 @@ public class BNGUI implements IClusterGUI {
 					//	WEKA on observed Data
 					pbar.setNote("Evaluating Model on Obeserved data");
 					Thread.sleep(3000);
-					String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-					System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
-					String[] argsWeka = arguments.split(" ");
+					//String arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+					//System.out.println("calling weka On Observed Data,  with arguments: \n"+arguments);
+					String[] argsWeka = Useful.getWekaArgsArray(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 					BayesNet bnNetOrg = new BayesNet();
 					evalStr = Evaluation.evaluateModel(bnNetOrg, argsWeka);
 					if(pbar.isCanceled()) return;
@@ -417,10 +417,10 @@ public class BNGUI implements IClusterGUI {
 					XmlBifStr = bnNetOrg.toXMLBIF03();
 					if(pbar.isCanceled()) return;
 					pbar.setProgress(3);
-					System.out.println("\t\t ***** Start Eval and Bif Strs");
-					System.out.println("XmlBifStr\n" + XmlBifStr);
-					System.out.println("evalStr\n" + evalStr);
-					System.out.println("\t\t End ***** Eval and Bif Strs");
+					//System.out.println("\t\t ***** Start Eval and Bif Strs");
+					//System.out.println("XmlBifStr\n" + XmlBifStr);
+					//System.out.println("evalStr\n" + evalStr);
+					//System.out.println("\t\t End ***** Eval and Bif Strs");
 					
 					//TODO Start
 					//LM Network
@@ -481,9 +481,9 @@ public class BNGUI implements IClusterGUI {
 							ctr++;
 							pbar.setNote("Bootstrap " + ctr + " of " + numIterations);
 							outarff = outarffbase + i + outarffext;
-							arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
-							System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
-							argsWeka = arguments.split(" ");
+							//arguments = Useful.getWekaArgs(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
+							//System.out.println("calling weka On Bootstrap Data, arguments: \n"+arguments);
+							argsWeka = Useful.getWekaArgsArray(path, outarff, sAlgorithm, useArc, numParents, sType, kfold);
 							
 							bnNetOrg = new BayesNet();
 							evalStrs[i] = Evaluation.evaluateModel(bnNetOrg, argsWeka);
@@ -492,7 +492,7 @@ public class BNGUI implements IClusterGUI {
 							
 							if(pbar.isCanceled()) return;
 							pbar.setProgress(5 + i + 1);
-							System.out.println("Bootstrap Itr: " + i);
+							//System.out.println("Bootstrap Itr: " + i);
 						}
 						//if(!BNGUI.cancelRun)
 						pbar.setNote("Creating Network from Bootstrap Models");
@@ -574,10 +574,10 @@ public class BNGUI implements IClusterGUI {
 		}
 
 		// Debug Print File Names
-		System.out.println("Files to Show: " + networkFiles.size());
-		for(int i=0; i < networkFiles.size(); i++) {
-			System.out.println("File: " + networkFiles.get(i));
-		}
+		//System.out.println("Files to Show: " + networkFiles.size());
+		//for(int i=0; i < networkFiles.size(); i++) {
+			//System.out.println("File: " + networkFiles.get(i));
+		//}
 		//End Debug
 
 		final JPanel evalPanel = new JPanel();
@@ -688,8 +688,8 @@ public class BNGUI implements IClusterGUI {
 			if(finalThreshBox.isSelected()) {
 				//Create File & interaction adges
 				
-				System.out.println("Boot threshold: " + confThres);
-				System.out.println("Boot file: " + _bootNetFile);
+				//System.out.println("Boot threshold: " + confThres);
+				//System.out.println("Boot file: " + _bootNetFile);
 
 				//store the final thresh and the file name
 				finalBootFile = _bootNetFile;
@@ -768,26 +768,26 @@ public class BNGUI implements IClusterGUI {
 	 * Saves sample classification info in a file
 	 */
 	private String[] saveToFile(BNClassTableModel kModel, int numClasses, int numLabels, String fileName) {
-		System.out.println("saveToFile kModel Row# " + kModel.getRowCount());
-		System.out.println("numClasses " + numClasses);
+		//System.out.println("saveToFile kModel Row# " + kModel.getRowCount());
+		//System.out.println("numClasses " + numClasses);
 		String[] label = new String[numLabels];
 		try {
 			PrintWriter out = new PrintWriter(new FileOutputStream(new File(fileName)));
 			for (int i = 0; i < kModel.getRowCount(); i++) {
-				System.out.println("label Row " + i+1);
+				//System.out.println("label Row " + i+1);
 				out.print(((Integer)(kModel.getValueAt(i, 0))).intValue());
 				out.print("\t");
 				for (int j = 1; j <= numClasses; j++) {
 					if (((Boolean)(kModel.getValueAt(i, j))).booleanValue()) {
 						out.print(j);
 						label[i]=(new Integer(j)).toString();
-						System.out.println("label at " + i + " is " + label[i]);
+						//System.out.println("label at " + i + " is " + label[i]);
 						break;
 					}
 				}
 				if (((Boolean)(kModel.getValueAt(i, numClasses + 1))).booleanValue()) {
 					label[i]=(new Integer(-1)).toString();
-					System.out.println("label at " + i + " is " + label[i]);
+					//System.out.println("label at " + i + " is " + label[i]);
 					out.print(-1);
 				}
 				//out.print("\t");
@@ -1018,7 +1018,7 @@ public class BNGUI implements IClusterGUI {
 		//String sep= System.getProperty("file.separator");    
 		String filePath = path + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE; // Raktim - path incls tmp dir
 		//String filePath = path+sep+"tmp"+sep+"list.txt";
-		System.out.println("convertFromFile(): " + filePath);
+		//System.out.println("convertFromFile(): " + filePath);
 		String lineRead = "";
 		Vector<String> store=new Vector<String>();
 		String[] accList=null;
@@ -1078,15 +1078,15 @@ public class BNGUI implements IClusterGUI {
 		//Dataset
 		String outarff = basePath+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP + "outExpression.arff";
 		//Specify Data set K for kfold validation in weka
-        String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
+        //String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
         //Specify Fixed Network Classifier from File
-        modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
+        //modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
         //Specify Fixed Network Bif File
-        modelArgs += bifFileFinal;
+        //modelArgs += bifFileFinal;
         //Specify Weka Estimator with inital alpha
-        modelArgs += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+        //modelArgs += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
         //Run Weka Model
-        Evaluation.evaluateModel(bnNet, modelArgs.split(" "));
+        Evaluation.evaluateModel(bnNet, Useful.getWekaArgsArrayForFixedFile(outarff, bifFileFinal, kfold));
         //Estimator myEstm [][] = bnNet.getDistributions();
 		bnNet.estimateCPTs();
 		//Write The network with CPts in BIF File format
@@ -1106,7 +1106,7 @@ public class BNGUI implements IClusterGUI {
 		for(int j=0; j<interacts.size(); j++) {
 			// Of the form XXXXXX pp XXXXXX
 			String[] edgeLabels = interacts.get(j).split(" ");
-			System.out.println("Encoding edge: " + edgeLabels[0] + " - " + edgeLabels[2]);
+			//System.out.println("Encoding edge: " + edgeLabels[0] + " - " + edgeLabels[2]);
 			int[] fromTo = new int[2];
 			//Get indx from hash map encoded int the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
 			String tmp[] = probeIndexAssocHash.get(edgeLabels[0]).split("-");

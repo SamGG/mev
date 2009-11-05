@@ -141,9 +141,9 @@ public class GetResourcererArticles {
      */
     public static void writeGBsArticlesGivenResourcererAndGBsList(String gbAccessionsFileName, String resourcererFileName, String outputFileName) throws FileNotFoundException{
 	try {
-		System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + gbAccessionsFileName);
-		System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + resourcererFileName);
-		System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + outputFileName);
+		//System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + gbAccessionsFileName);
+		//System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + resourcererFileName);
+		//System.out.println("writeGBsArticlesGivenResourcererAndGBsList()" + outputFileName);
 	    Useful.checkFile(resourcererFileName);
 	    Useful.checkFile(gbAccessionsFileName);
 	    ArrayList gbs = Useful.readNamesFromFile(gbAccessionsFileName);

@@ -20,7 +20,11 @@ package org.tigr.microarray.mev.cluster.gui.impl.bn.getInteractions;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -186,13 +190,13 @@ public class GetInteractionsUtil {
 		ArrayList union1And2 = GetUnionOfInters.uniquelyMergeArrayLists(inter1, inter2);
 		ArrayList unionAll = null;
 		if(union1And2 == null || union1And2.size() == 0) {
-			System.out.println("***** Union of the first 2 vectors is null or empty *****");
+			//System.out.println("***** Union of the first 2 vectors is null or empty *****");
 			unionAll =  GetUnionOfInters.uniquelyMergeArrayLists(inter3, new ArrayList());
 		} else {
 			unionAll =  GetUnionOfInters.uniquelyMergeArrayLists(inter3, union1And2);
 		}
 		if(unionAll == null || unionAll.size() == 0) {
-			System.out.println("***** Union of 1-2 & 3 vectors is null or empty *****");
+			//System.out.println("***** Union of 1-2 & 3 vectors is null or empty *****");
 			//return null;
 		}
 		return unionAll;
@@ -216,6 +220,7 @@ public class GetInteractionsUtil {
 			if(interFromPpiSyms == null){
 				throw new NullArgumentException("Given interFromPpiSyms is null!");
 			} 
+			//System.out.println("\nreplaceSymsWithGBsInInter()");
 			ArrayList newGeneSymbols = UsefulInteractions.getNodes(interFromPpiSyms);
 			HashMap newGeneSymbolsGBs = GetInteractionsUtil.getAccessions(resourcererFileName, newGeneSymbols);
 			SimpleGeneEdge sGE = null;
@@ -232,6 +237,7 @@ public class GetInteractionsUtil {
 				replacedFrom = (String) newGeneSymbolsGBs.get(from);
 				replacedTo = (String) newGeneSymbolsGBs.get(to);
 				if(replacedFrom != null && replacedTo != null){
+					//System.out.println("replacedFrom: " + replacedFrom + " replacedTo: " + replacedTo);
 					replacedSGE = new SimpleGeneEdge(replacedFrom, replacedTo, sGE.getWeight());
 					if(!UsefulInteractions.containsEitherWay(result, replacedSGE)){
 						result.add(replacedSGE);
@@ -297,7 +303,7 @@ public class GetInteractionsUtil {
 				if(!_nextAcc.equals(_curAcc)) {
 					String _curEdge1 = _curAcc + "-" + _nextAcc;
 					String _curEdge2 = _nextAcc + "-" + _curAcc;
-					System.out.println("Searchin for: " + _curEdge1 + " and reverse");
+					//System.out.println("Searchin for: " + _curEdge1 + " and reverse");
 					if(!keggMatchesAsStrings.contains(_curEdge1) && !keggMatchesAsStrings.contains(_curEdge2)) {
 						keggMatches.add(new SimpleGeneEdge(_curAcc, _nextAcc, 1.0));
 						keggMatches.add(new SimpleGeneEdge(_nextAcc, _curAcc, 1.0));
@@ -317,6 +323,55 @@ public class GetInteractionsUtil {
 			System.out.println("Returning KEGG matches: NONE Found!!");
 			return null;
 		}
+	}
+
+	/**
+	 * To map PPI symbols back to Acc# based on the acc in the initial cluster selected
+	 * Potential for some conflicts !!!!! In case multiple Syms are values in the key value
+	 * pair such that same gene sym(value) maps to 2 diff acc (key).
+	 * Chances are remote but possible.
+	 * @param gbSymbols
+	 * @param interFromPpiSyms
+	 * @return
+	 */
+	public static ArrayList replaceSymsWithGBs(HashMap gbSymbols, ArrayList interFromPpiSyms) {
+		ArrayList result = new ArrayList();
+		SimpleGeneEdge sGE = null;
+		for(int i = 0; i < interFromPpiSyms.size(); i++){
+			//System.out.println("replaceSymsWithGBs: "+interFromPpiSyms.size());
+			sGE = (SimpleGeneEdge)interFromPpiSyms.get(i);
+			String fromSym = sGE.getFrom();
+			String toSym = sGE.getTo();
+			
+			String fromAcc = null;
+			String toAcc = null;
+			
+			Set entries = gbSymbols.entrySet();
+			for(Iterator it = entries.iterator(); it.hasNext();) {
+			    Entry entry = (Entry) it.next();
+			    String key = (String)entry.getKey();
+			    String value = (String)entry.getValue();
+			    //System.out.println(key + " = " + value);
+			    if(value.equals(fromSym)) {
+			    	fromAcc = key;
+			    }
+			    if(value.equals(toSym)) {
+			    	toAcc = key;
+			    }
+			    if(fromAcc != null && toAcc != null) {
+			    	result.add(new SimpleGeneEdge(fromAcc, toAcc));
+			    	break;
+			    }
+			}
+			
+			//if(){
+				//if(!containsEitherWay(result,sGE)){
+					//System.out.println("PPI getSubsetInteractionsGivenNodesOnlyWithin: " + sGE.toString());
+					//result.add(sGE);
+				//}
+			//}
+		}
+		return result;
 	}
 }
 

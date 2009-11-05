@@ -94,7 +94,7 @@ public class GeneInteractions {
 				    // create an undirected weighted edge between symbol1 and symbol2 with this weight
 				    sGE = new SimpleGeneEdge(symbol1, symbol2, weight);
 				    // add this edge to the ArrayList of interactions, if it's not already there
-				    System.out.println("Simple Gene Edge: " + sGE.toString());
+				    //System.out.println("Simple Gene Edge: " + sGE.toString());
 				    if(!UsefulInteractions.containsEitherWay(interactions, sGE)){
 					interactions.add(sGE); 		
 				    }
@@ -254,13 +254,13 @@ public class GeneInteractions {
      */
     public static void testCreateInteractions(String gbArticlesFileName){      
 	try {
-		System.out.println("testCreateInteractions()" + gbArticlesFileName);
+		//System.out.println("testCreateInteractions()" + gbArticlesFileName);
 	    Useful.checkFile(gbArticlesFileName);
 	    HashMap gbArticles = Useful.readHashMapFromFile(gbArticlesFileName);
-	    System.out.println("gbArticles="+gbArticles);
+	    //System.out.println("gbArticles="+gbArticles);
 	    GeneInteractions gI = new GeneInteractions();
 	    ArrayList inter = (ArrayList) gI.createInteractions(gbArticles);    
-	    System.out.println("inter="+inter);
+	    //System.out.println("inter="+inter);
 	}
 	catch(FileNotFoundException fnfe){
 	    System.out.println(fnfe);
@@ -282,16 +282,16 @@ public class GeneInteractions {
      */
     public static void testCreateInteractionsWithFilter(String gbArticlesFileName, int threshold){
 	try {
-	    System.out.println("--> in testCreateInteractionsWithFilter");
+	    //System.out.println("--> in testCreateInteractionsWithFilter");
 	    HashMap gbArticles = Useful.readHashMapFromFile(gbArticlesFileName);
-	    System.out.println("gbArticlesBeforeFilter="+gbArticles);
+	    //System.out.println("gbArticlesBeforeFilter="+gbArticles);
 	    HashMap articlesGbs = backwards(gbArticles);
 	    HashMap gbArticles2 = null;
 	    gbArticles2 = filter(articlesGbs, gbArticles, threshold);
-	    System.out.println("gbArticlesAfterFilter="+gbArticles2);
+	    //System.out.println("gbArticlesAfterFilter="+gbArticles2);
 	    GeneInteractions gI = new GeneInteractions();
 	    ArrayList inter = (ArrayList) gI.createInteractions(gbArticles2);    
-	    System.out.println("inter="+inter);
+	    //System.out.println("inter="+inter);
 	}
 	catch(OutOfRangeException oore){
 	    System.out.println(oore);

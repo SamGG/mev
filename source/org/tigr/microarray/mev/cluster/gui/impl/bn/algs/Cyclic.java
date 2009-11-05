@@ -85,6 +85,7 @@ public class Cyclic {
 			if(inter == null || inter.size()==0){
 				throw new NullArgumentException("Given ArrayList inter is null or empty!");
 			}
+			//Returns a unique set of nodes given a set of interactions
 			ArrayList nodes = UsefulInteractions.getNodes(inter);
 			int[] color = new int[nodes.size()];
 			// color: white = -1, grey = 0, black = 1
@@ -159,7 +160,7 @@ public class Cyclic {
 	 * The <code>DFSModification</code> method performs a Depth-First search on the given undirected graph 
 	 * in order to return a DAG
 	 * <br>
-	 * Theorem: A graph is cyclic iff at some point during the traversal, 
+	 * Theorem: A graph is cyclic if at some point during the traversal, 
 	 * when u is grey, one of the neighbors v of u considered in DFS is colored grey and is not p[u]. 
 	 *
 	 * @param u an <code>int</code> corresponding to the index of a particular white colored node in the graph

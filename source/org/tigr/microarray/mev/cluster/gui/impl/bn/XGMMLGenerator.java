@@ -49,7 +49,8 @@ public class XGMMLGenerator {
 		xgmml_header += "  </att>" + lineSep;
 		xgmml_header += "  <att name='backgroundColor' value='#ccccff'/>" + lineSep;
 		xgmml_header += "  <att name='layout' value='grid'/>" + lineSep;
-		xgmml_header += "  <att name='cpt' value='" + cptFileLoc.trim() + "'/>" + lineSep;
+		//Use UNix style path separator even for Windows files
+		xgmml_header += "  <att name='cpt' value='" + cptFileLoc.trim().replace("\\", "/") + "'/>" + lineSep;
 		return xgmml_header;
 	}
 

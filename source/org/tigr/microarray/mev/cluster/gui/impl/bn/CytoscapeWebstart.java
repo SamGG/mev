@@ -65,7 +65,7 @@ public class CytoscapeWebstart {
     	String fileLoc = filePath.substring(0, index-1);
     	//String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
     	String jnlpURI = fileLoc + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
-    	System.out.println("jnlpURI: " + jnlpURI);
+    	//System.out.println("jnlpURI: " + jnlpURI);
     	
     	try {
             BufferedWriter out = new BufferedWriter(new FileWriter(jnlpURI));
@@ -84,8 +84,9 @@ public class CytoscapeWebstart {
      */
     private static void startCytoscape(String jnlpURI) {
         String command = System.getProperty("java.home");
-        System.out.println("Java Home: " + command);
-        command += File.separator +  "bin" + File.separator + "javaws " + jnlpURI;
+        //System.out.println("Java Home: " + command);
+        //jnlpURI in quotes incase there are spaces in file path
+        command += File.separator +  "bin" + File.separator + "javaws \"" + jnlpURI+"\"";
         try {
         	runtimeProc = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
@@ -248,7 +249,10 @@ public class CytoscapeWebstart {
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
     	for(int i=0; i < files.size(); i++) {
     		xml += "<argument>-N</argument>";
-        	xml += "<argument>file:///" + files.get(i).replace("\\", "/") + "</argument>";
+    		//Replaces 2 things in file path
+    		//1. \ with / for all platforms
+    		//2. Spaces in path with %20 to conform to URI standards
+        	xml += "<argument>file:///" + files.get(i).replace("\\", "/").replace(" ", "%20") + "</argument>";
     	}
     	xml += "  </application-desc>";
     	xml += "</jnlp>";

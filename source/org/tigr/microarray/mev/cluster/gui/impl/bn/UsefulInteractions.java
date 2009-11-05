@@ -64,7 +64,7 @@ public class UsefulInteractions {
 				s = s.trim();
 				tokens = s.split(" pp ");
 				if(tokens.length == 2){
-					//System.out.println(tokens[0]);	
+					//System.out.println("readInteractions PPI " + tokens[0] + " " + tokens[1]);	
 					inter.add(new SimpleGeneEdge(tokens[0], tokens[1]));
 					inter.add(new SimpleGeneEdge(tokens[1], tokens[0]));
 				}
@@ -78,7 +78,7 @@ public class UsefulInteractions {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * To Craete SimpleGeneEdge Objects from string encoded edges
 	 * @param edges
@@ -94,7 +94,7 @@ public class UsefulInteractions {
 			Enumeration enumerate = edges.elements();
 			while(enumerate.hasMoreElements()){
 				s = (String)enumerate.nextElement();
-				System.out.println("readInteractions from Vector: " + s);
+				//System.out.println("readInteractions from Vector: " + s);
 				String splitOn = " pd ";
 				if (s.contains(" pp ")) splitOn = " pp ";
 				if (s.contains(" pd ")) splitOn = " pd ";
@@ -127,7 +127,7 @@ public class UsefulInteractions {
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
 	public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{
-		System.out.println("readInteractionsWithWeights(), File: " + fileName);
+		//System.out.println("readInteractionsWithWeights(), File: " + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -138,7 +138,7 @@ public class UsefulInteractions {
 			int index = -1;
 			while((s = lnr.readLine()) != null){
 				s = s.trim();
-				System.out.println("Line: " + s);
+				//System.out.println("Line: " + s);
 				index = s.indexOf(" (pp) ");
 				if(index == -1){
 					continue;
@@ -240,7 +240,7 @@ public class UsefulInteractions {
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
 	public static ArrayList readDirectedInteractions(String fileName) throws FileNotFoundException {
-		System.out.println("readDirectedInteractions()" + fileName);
+		//System.out.println("readDirectedInteractions()" + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -278,7 +278,7 @@ public class UsefulInteractions {
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
 	public static ArrayList readDirectedInteractionsWithWeights(String fileName) throws FileNotFoundException {
-		System.out.println("readDirectedInteractionsWithWeights()" + fileName);
+		//System.out.println("readDirectedInteractionsWithWeights()" + fileName);
 		Useful.checkFile(fileName);
 		try {
 			ArrayList inter = new ArrayList();
@@ -334,7 +334,7 @@ public class UsefulInteractions {
 			System.out.println(ioe);
 		}
 	}
-	
+
 	/**
 	 * Writes a network in sif file format
 	 * @param inter
@@ -350,7 +350,7 @@ public class UsefulInteractions {
 		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {
 			if(inter == null){
-				System.out.println("UsefulInteractions-writeSif");  
+				//System.out.println("UsefulInteractions-writeSif");  
 				throw new NullArgumentException("Given inter was null!");
 			}
 
@@ -456,15 +456,15 @@ public class UsefulInteractions {
 	}
     }
 	 */
-	
+
 	/**
 	 * 
 	 */
 	public static void writeXgmmlFileUndir(ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		FromWekaToSif.fromSimpleGeneEdgeToXgmml(false, inter, fileName, probeIndexAssocHash, data);
-			}
+	}
 
-	
+
 	/**
 	 * The <code>createAdjMatrix</code> method takes in an <code>ArrayList</code> of <code>SimpleGeneEdge</code>objects
 	 * corresponding to interactions and returns a 2D array of ints corresponding to the adjacency matrix representation
@@ -494,7 +494,7 @@ public class UsefulInteractions {
 		}
 		return adjMatrix;
 	}
-	
+
 	/**
 	 * The <code>printAdjMatrix</code> method prints the given adjacency matrix to screen
 	 *
@@ -620,9 +620,12 @@ public class UsefulInteractions {
 		for(int i = 0; i < inter.size(); i++){
 			//System.out.println("getSut"+inter.size());
 			sGE = (SimpleGeneEdge)inter.get(i);
-			if(queryNodes.contains(sGE.getFrom())&& queryNodes.contains(sGE.getTo())){
-				if(!containsEitherWay(result,sGE)){
-					result.add(sGE);
+			if(!sGE.getFrom().equals(sGE.getTo())) { //To prevent self loops
+				if(queryNodes.contains(sGE.getFrom())&& queryNodes.contains(sGE.getTo())){
+					if(!containsEitherWay(result,sGE)){
+						//System.out.println("PPI getSubsetInteractionsGivenNodesOnlyWithin: " + sGE.toString());
+						result.add(sGE);
+					}
 				}
 			}
 		}

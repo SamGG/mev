@@ -61,7 +61,7 @@ public class PrepareArrayDataModule {
      */
     public static void transpose(String inFileName, String outFileName) {
 	try {
-		System.out.println("transpose()" + outFileName);
+		//System.out.println("transpose()" + outFileName);
 	    Useful.checkFile(inFileName);
 	    Transpose.readAndWriteTranspose(inFileName, outFileName);	
 	}
@@ -171,7 +171,7 @@ public class PrepareArrayDataModule {
     public static Properties prepareArrayData(String fileName,String num, boolean bootStrap, int numIter, int numClasses){
     	try {
     	    
-    		System.out.println("prepareArrayData()" + fileName);
+    		//System.out.println("prepareArrayData()" + fileName);
     	    Useful.checkFile(fileName);
     	    boolean isBootstrapStr = bootStrap; //Raktim - Temp. Need to handle differently later.
     	    //String fullPathfileName=Useful.getFilePath();
@@ -231,12 +231,12 @@ public class PrepareArrayDataModule {
     	    return null;
     	}
     	catch(NullArgumentException nae){
-    	    System.out.println(nae);
+    	    //System.out.println(nae);
     	    nae.printStackTrace();
     	    return null;
     	}
     	catch(IOException ioe){
-    	    System.out.println(ioe);
+    	    //System.out.println(ioe);
     	    ioe.printStackTrace();
     	    return null;
     	}

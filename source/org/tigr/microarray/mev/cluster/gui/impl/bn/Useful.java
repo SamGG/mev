@@ -115,7 +115,7 @@ public class Useful {
 	 */
 	public static HashSet readUniqueNamesFromFile(String fileName) throws FileNotFoundException {
 		//String path=null;
-		System.out.println("readUniqueNamesFromFile()" + fileName);
+		//System.out.println("readUniqueNamesFromFile()" + fileName);
 		checkFile(fileName);
 
 		try {
@@ -155,6 +155,7 @@ public class Useful {
 	 */
 	public static ArrayList readNamesFromFile(String fileName) throws FileNotFoundException{
 		try {
+			//System.out.println("readNamesFromFile: " + fileName);
 			ArrayList<String> names = new ArrayList<String>();
 			FileReader fr = new FileReader(fileName);
 			LineNumberReader lnr = new LineNumberReader(fr);
@@ -163,6 +164,7 @@ public class Useful {
 			while((s = lnr.readLine())!=null){
 				s = s.trim();
 				names.add(s);
+				//System.out.println("readNamesFromFile: " + s);
 			}
 			lnr.close();
 			fr.close();
@@ -187,7 +189,7 @@ public class Useful {
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
 	public static HashMap readHashMapFromFile(String fileName) throws FileNotFoundException{
-		System.out.println("readHashMapFromFile()" + fileName);
+		//System.out.println("readHashMapFromFile()" + fileName);
 		checkFile(fileName);
 		try {
 			HashMap result = new HashMap();
@@ -448,7 +450,7 @@ public class Useful {
 		//System.out.println(" 2. " + dateString);
 		return dateString;
 	}
-	
+
 	public static String getDateTime() {
 		Date now = new Date();
 		String dateString = now.toString();
@@ -458,10 +460,10 @@ public class Useful {
 		//System.out.println(" 2. " + dateString);
 		return dateString;
 	}
-	
+
 	/**
-	 * NOT USED
 	 * Function to create arguments string for Weka using BayesNet SimpleEstimator
+	 * Cannot handle spaces in file path
 	 * @param path
 	 * @param outArffFileName
 	 * @param sAlgorithm
@@ -473,6 +475,15 @@ public class Useful {
 	 */
 	public static String getWekaArgs(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
+		// If absolute user path contains spaces " " make path relative
+		// to make Weka happy
+		if(System.getProperty("os.name").toLowerCase().contains("win") &&
+				System.getProperty("user.dir").contains(" ")) {
+			path = path.replace(System.getProperty("user.dir")+BNConstants.SEP, "");
+			//System.out.println("Relative path: " + path);
+		}
+
+		//System.out.println("user.dir: " + System.getProperty("user.dir") + "\n outArffFileName: " + fName);
 		String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
 		if(useArc){
 			arguments +="-R";
@@ -486,16 +497,119 @@ public class Useful {
 				//ignore;
 			}
 		}
-		*/
+		 */
 		//if(BNGUI.prior){     
-			arguments += " -X " + path+ "resultBif.xml";
-			//System.out.print("my prior");
+		arguments += " -X " + path+ "resultBif.xml";
+		//System.out.print("my prior");
 		//}
 		arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
 		return arguments;
 	}
 
 	/**
+	 * Function to create arguments string for Weka using BayesNet SimpleEstimator
+	 * This function solves the problem of having spaces in the path
+	 * @param path
+	 * @param outArffFileName
+	 * @param sAlgorithm
+	 * @param useArc
+	 * @param numParents
+	 * @param sType
+	 * @param kfolds
+	 * @return
+	 */
+	public static String[] getWekaArgsArray(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
+
+		ArrayList<String> args = new ArrayList<String>(); 
+		args.add("");
+		//System.out.println("user.dir: " + System.getProperty("user.dir") + "\n outArffFileName: " + fName);
+		//String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
+		args.add("-t");
+		args.add(path + outArffFileName);
+		args.add("-c");
+		args.add("1");
+		args.add("-x");
+		args.add(String.valueOf(kfolds));
+		args.add("-Q");
+		args.add("weka.classifiers.bayes.net.search.local."+sAlgorithm);
+		args.add("--");
+		
+		if(useArc){
+			//arguments +="-R";
+			args.add("-R");
+		}
+		//arguments +=" -P "+numParents+" -S "+sType;
+		args.add("-P");
+		args.add(numParents);
+		args.add("-S");
+		args.add(sType);
+		
+		//if(BNGUI.prior){     
+		//arguments += " -X " + path+ "resultBif.xml";
+		args.add("-X");
+		args.add(path+ "resultBif.xml");
+		//System.out.print("my prior");
+		//}
+		//arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+		args.add("-E");
+		args.add("weka.classifiers.bayes.net.estimate.SimpleEstimator");
+		args.add("--");
+		args.add("-A");
+		args.add("0.5");
+		
+		String[] argsWeka = args.toArray(new String[args.size()]);
+		//Debug only
+		//for(int i = 0;i < argsWeka.length; i++) {
+			//System.out.println("Arg["+i+"]: " + argsWeka[i]);
+		//}
+		return argsWeka;
+	}
+	
+	/**
+	 * Function to create weka arguments list to learn CPT from using a Fixed Net struct
+	 * @param outArffFileName
+	 * @param bifFile
+	 * @param sAlgorithm
+	 * @param sType
+	 * @param kfolds
+	 * @return
+	 */
+	public static String[] getWekaArgsArrayForFixedFile(String outArffFileName, String bifFile, int kfolds) {
+
+		ArrayList<String> args = new ArrayList<String>(); 
+		args.add("");
+		//String modelArgs = "-t " + outarff + " -c 1 -x " + kfold;
+		args.add("-t");
+		args.add(outArffFileName);
+		args.add("-c");
+		args.add("1");
+		args.add("-x");
+		args.add(String.valueOf(kfolds));
+		
+		//modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
+		args.add("-Q");
+		args.add("weka.classifiers.bayes.net.search.fixed.FromFile");
+		args.add("--");
+		args.add("-B");
+		args.add(bifFile);
+		
+		//arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
+		args.add("-E");
+		args.add("weka.classifiers.bayes.net.estimate.SimpleEstimator");
+		args.add("--");
+		args.add("-A");
+		args.add("0.5");
+		
+		String[] argsWeka = args.toArray(new String[args.size()]);
+		//Debug only
+		//for(int i = 0;i < argsWeka.length; i++) {
+			//System.out.println("Arg["+i+"]: " + argsWeka[i]);
+		//}
+		return argsWeka;
+	}
+
+	/**
+	 * NOT USED
 	 * Function to create arguments string for Weka using Weka BMAEstimator class instead of SimpleEstimator
 	 * @param path
 	 * @param outArffFileName
@@ -513,17 +627,17 @@ public class Useful {
 			arguments +="-R";
 		}
 		arguments +=" -P "+numParents+" -S "+sType;
-		
+
 		//while(!BNGUI.done){
-			//try{
-				//Thread.sleep(10000);	
-			//}catch(InterruptedException x){
-				//ignore;
-			//}
+		//try{
+		//Thread.sleep(10000);	
+		//}catch(InterruptedException x){
+		//ignore;
+		//}
 		//}
 		//if(BNGUI.prior){     
-			arguments += " -X " + path+ "resultBif.xml";
-			//System.out.print("my prior");
+		arguments += " -X " + path+ "resultBif.xml";
+		//System.out.print("my prior");
 		//}
 		arguments += " -E weka.classifiers.bayes.net.estimate.BMAEstimator -- -A 0.5";
 		return arguments;
@@ -577,13 +691,13 @@ public class Useful {
 			for (int i = 0; i < accList.length; i++) {
 				accList[i] = (String)accHash.get((String)probeId[i].trim());
 				if (accList[i] == null) {
-					System.out.println("UID " + (String)probeId[i].trim() + " could not be mapped");
+					//System.out.println("UID " + (String)probeId[i].trim() + " could not be mapped");
 					throw new Exception("UID " + (String)probeId[i].trim() + " could not be mapped");
 				}
 				// Also Stores probe IDs and cluster indices assoc for creating gaggle Network
 				// E.g.:- NM_23456 to 1-Afy_X1234 where 1 is the probe index
 				probeIndexAssocHash.put(accList[i], new Integer(rows[i]).toString()+"-"+probeId[i]);
-				System.out.println("Clone - Acc, Hash Value: " + probeId[i] + " - " + accList[i] + " , " + new Integer(rows[i]).toString()+"-"+probeId[i] );
+				//System.out.println("Clone - Acc, Hash Value: " + probeId[i] + " - " + accList[i] + " , " + new Integer(rows[i]).toString()+"-"+probeId[i] );
 			}
 			// TODO - Raktim Why write to file ?
 			writeAccToFile(accList,path);
@@ -629,7 +743,7 @@ public class Useful {
 	 */
 	private static void writeAccToFile (String[] accList, String path) throws Exception {
 		String outFile = path + BNConstants.SEP+ BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
-		System.out.println(outFile);
+		//System.out.println(outFile);
 		BufferedWriter out = null;
 		int nRows = accList.length;
 		try {
@@ -795,7 +909,7 @@ public class Useful {
 			}
 			out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 			if(goTerms){
-				System.out.println("Use GO Terms");
+				//System.out.println("Use GO Terms");
 				out.println(BNConstants.USE_GO + "=" + "true");
 				out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
 			}
@@ -906,7 +1020,7 @@ public class Useful {
 			}
 			out= new PrintWriter(new FileOutputStream(new File(propFile[fileSize-1])));
 			if(goTerms){
-				System.out.println("Use GO Terms");
+				//System.out.println("Use GO Terms");
 				out.println(BNConstants.USE_GO + "=" + "true");
 				out.println(BNConstants.GB_GO_FILE_NAME + "=" + BNConstants.GB_GO_FILE); //"gbGOs.txt"
 			}
@@ -926,40 +1040,40 @@ public class Useful {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Copies all files under srcDir to dstDir.
-    // If dstDir does not exist, it will be created.
-    public static void copyDirectory(File srcDir, File dstDir) throws IOException {
-        if (srcDir.isDirectory()) {
-            if (!dstDir.exists()) {
-                dstDir.mkdir();
-            }
-    
-            String[] children = srcDir.list();
-            for (int i=0; i<children.length; i++) {
-                copyDirectory(new File(srcDir, children[i]),  new File(dstDir, children[i]));
-            }
-        } else {
-            copyFile(srcDir, dstDir);
-        }
-    }
-    
-    // Copies src file to dst file.
-    // If the dst file does not exist, it is created
-    private static void copyFile(File src, File dst) throws IOException {
-    	if(dst.exists()) return;
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-    
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        in.close();
-        out.close();
-    }
+	// If dstDir does not exist, it will be created.
+	public static void copyDirectory(File srcDir, File dstDir) throws IOException {
+		if (srcDir.isDirectory()) {
+			if (!dstDir.exists()) {
+				dstDir.mkdir();
+			}
+
+			String[] children = srcDir.list();
+			for (int i=0; i<children.length; i++) {
+				copyDirectory(new File(srcDir, children[i]),  new File(dstDir, children[i]));
+			}
+		} else {
+			copyFile(srcDir, dstDir);
+		}
+	}
+
+	// Copies src file to dst file.
+	// If the dst file does not exist, it is created
+	private static void copyFile(File src, File dst) throws IOException {
+		if(dst.exists()) return;
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+
+		// Transfer bytes from in to out
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
+	}
 }
 
 
