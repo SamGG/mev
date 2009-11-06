@@ -52,6 +52,8 @@ import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
+import org.tigr.util.swing.SOFTFileFilter;
+import org.tigr.util.swing.TXTFileFilter;
 
 /**
  * @author Sarita Nair
@@ -113,12 +115,13 @@ public class SOFT_AffymetrixFileLoader extends ExpressionFileLoader {
 
            public boolean accept(File f) {
                if (f.isDirectory()) return true;
+               if (f.getName().endsWith(".soft") || f.getName().endsWith(".SOFT") ) return true;
                if (f.getName().endsWith(".txt") || f.getName().endsWith(".TXT") ) return true;
                else return false;
            }
 
            public String getDescription() {
-               return "GEO SOFT Affymetrix Format Files (*.txt)";
+               return "GEO SOFT Affymetrix Format Files (*.soft, *.txt)";
            }
        };
 
@@ -248,7 +251,7 @@ public Vector loadExpressionFiles() throws IOException {
 
 			  for(int m=0;m<this.platformHeaders.size();m++) {
 				  fieldNames[m]=(String)this.platformHeaders.elementAt(m);
-				  // System.out.println("FieldNames:"+fieldNames[m]);
+				 //  System.out.println("FieldNames:"+fieldNames[m]);
 
 			  }
 		  } else {
@@ -298,11 +301,11 @@ public Vector loadExpressionFiles() throws IOException {
 				  String Val=(String)this.platformMatrix.get(probeID);
 				  StringSplitter pSplit=new StringSplitter(':');
 				  pSplit.init(Val);
-
-				  for(int j=0;j<platformHeaders.size();j++) {
+				  moreFields[0]=probeID;
+				  for(int j=1;j<platformHeaders.size();j++) {
 					  if(pSplit.hasMoreTokens())
 						  moreFields[j]=(String)pSplit.nextToken();
-
+					  
 				  }
 			  }else {
 				  moreFields[0]=probeID;
@@ -635,8 +638,8 @@ public Vector loadExpressionFiles() throws IOException {
 
 					}else {
 						String eMsg = "<html>The following probes are missing from some samples<br>" +
-						"<html>Probes:<br> "+key+
-						"<html>Sample<br>"+sName+" </html>";
+						"<html>Probes: "+key+"<br>"+
+						"<html>Sample: "+sName+"<br>"+" </html>";
 						JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}else if(this.OnlyIntensity) {
@@ -648,8 +651,8 @@ public Vector loadExpressionFiles() throws IOException {
 						}
 					}else {
 						String eMsg = "<html>The following probes are missing from some samples<br>" +
-						"<html>Probes:<br> "+key+
-						"<html>Sample<br>"+sName+" </html>";
+						"<html>Probes: "+key+"<br>"+
+						"<html>Sample: "+sName+"<br>"+" </html>";
 						JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -859,8 +862,10 @@ public Vector loadExpressionFiles() throws IOException {
         
         public void onBrowse() {
 			JFileChooser fileChooser=new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-			fileChooser.setFileFilter(getFileFilter());
-			int retVal=fileChooser.showOpenDialog(SOFT_AffymetrixFileLoaderPanel.this);
+			fileChooser.addChoosableFileFilter(new TXTFileFilter());
+	        fileChooser.addChoosableFileFilter(new SOFTFileFilter());
+			
+			int retVal=fileChooser.showOpenDialog(this);
 
 			if(retVal==JFileChooser.APPROVE_OPTION) {
 				File selectedFile=fileChooser.getSelectedFile();

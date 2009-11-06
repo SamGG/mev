@@ -476,7 +476,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
      * @deprecated 
      */
     public String getFieldAt(int index) {
-        if(extraFields == null || index < 0 || index > (extraFields.length - 1)) {
+        if(extraFields[index]==null||extraFields[index].length()==0||extraFields[index].trim().length()==0||extraFields == null || index < 0 || index > (extraFields.length - 1)) {
             return "";
         }
         return extraFields[index];

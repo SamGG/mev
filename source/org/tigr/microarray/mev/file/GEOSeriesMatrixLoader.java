@@ -493,6 +493,7 @@ public class GEOSeriesMatrixLoader extends ExpressionFileLoader {
 			twoColorArray.addActionListener(new EventHandler());
 			affymetrixArray = new JRadioButton("Affymetrix Array");
 			affymetrixArray.setFocusPainted(false);
+			affymetrixArray.setSelected(true);
 			affymetrixArray.addActionListener(new EventHandler());
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(twoColorArray);
