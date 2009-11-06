@@ -497,6 +497,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
 		for (int i = 0; i < allFields.length; i++) {
 			if (allFields[i].equals(attr)) {
 				if (!element.getFieldAt(i).equals("")) {
+			//	if (element!=null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0 && element.getFieldAt(i)!=null) {
 					return new String[] { element.getFieldAt(i) };
 				} else
 					return new String[] { "NA" };
@@ -521,10 +522,14 @@ public class SlideData implements ISlideData, ISlideMetaData {
 		String[] values = new String[] { "NA" };
 		for (int i = 0; i < allFields.length; i++) {
 			if (allFields[i].equals(attr)) {
-				if (!element.getFieldAt(i).equals("")) {
+				//if (!element.getFieldAt(i).equals("")) {
+				//System.out.println("key:"+attr);
+				if (element!=null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0 && element.getFieldAt(i)!=null) {
 					values = new String[] { element.getFieldAt(i) };
+					//System.out.println("values:"+values);
 				} else
 					values = new String[] { "NA" };
+				
 			}
 		}
 		return new AnnoAttributeObj(attr, values);

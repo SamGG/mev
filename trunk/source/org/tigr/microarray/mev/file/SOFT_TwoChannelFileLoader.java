@@ -65,6 +65,8 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
 import org.tigr.microarray.util.ExpressionFileTableCellRenderer;
+import org.tigr.util.swing.SOFTFileFilter;
+import org.tigr.util.swing.TXTFileFilter;
 
 /**
  * @author Sarita Nair
@@ -126,12 +128,13 @@ public class SOFT_TwoChannelFileLoader extends ExpressionFileLoader {
 
            public boolean accept(File f) {
                if (f.isDirectory()) return true;
+               if (f.getName().endsWith(".soft") || f.getName().endsWith(".SOFT") ) return true;
                if (f.getName().endsWith(".txt") || f.getName().endsWith(".TXT") ) return true;
                else return false;
            }
 
            public String getDescription() {
-               return "GEO SOFT Two Channel Format Files (*.txt)";
+               return "GEO SOFT Two Channel Format Files (*.soft, *.txt)";
            }
        };
 
@@ -789,8 +792,10 @@ public Vector loadExpressionFiles() throws IOException {
 	        
 	        public void selectSOFT_TwoChannelFile() {
 	            JFileChooser jfc = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-	            jfc.setFileFilter(getFileFilter());
-	            int activityCode = jfc.showDialog(this, "Select");
+	           
+	            jfc.addChoosableFileFilter(new TXTFileFilter());
+	            jfc.addChoosableFileFilter(new SOFTFileFilter());
+	            int activityCode = jfc.showOpenDialog(this);
 	            
 	            if (activityCode == JFileChooser.APPROVE_OPTION) {
 	                File target = jfc.getSelectedFile();

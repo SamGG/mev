@@ -476,7 +476,8 @@ public class GEO_GDSFileLoader extends ExpressionFileLoader {
 			twoColorArray.addActionListener(new EventHandler());
 			
 			affymetrixArray = new JRadioButton("Affymetrix Array");
-			affymetrixArray.setFocusPainted(false);
+			affymetrixArray.setFocusPainted(true);
+			affymetrixArray.setSelected(true);
 			affymetrixArray.addActionListener(new EventHandler());
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(twoColorArray);

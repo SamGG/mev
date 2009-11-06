@@ -256,6 +256,7 @@ public class InfoDisplay extends ActionInfoDialog  {
        
         String[] fieldNames = data.getFieldNames();
         	message += "<th colspan=2 align=left valign=center><font size=6>Gene Annotation</font></th>";
+        
         	for (int i = 0; i < fieldNames.length; i++) {                
         		AnnoAttributeObj anno = data.getElementAnnotationObject(this.probe, fieldNames[i]);
         			if(anno.getAttribCount() < 1 || anno.getAttributeAt(0).toString().equalsIgnoreCase("na")) {
@@ -281,7 +282,7 @@ public class InfoDisplay extends ActionInfoDialog  {
         			}
         	}               
 
-
+        
 
         if(fieldNames != null && fieldNames.length > 0){
         	for (int i = 0; i < fieldNames.length; i++) {                

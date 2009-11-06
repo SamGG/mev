@@ -31,6 +31,8 @@ public class Utils {
     public final static String tiff = "tiff";
     public final static String gmt = "gmt";
     public final static String gmx = "gmx";
+    public final static String soft = "soft";
+    
     /*
      * Get the extension of a file.
      */

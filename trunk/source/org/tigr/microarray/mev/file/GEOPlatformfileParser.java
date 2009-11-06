@@ -9,6 +9,7 @@ package org.tigr.microarray.mev.file;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -60,6 +61,9 @@ public class GEOPlatformfileParser {
 	    		e.printStackTrace();
 	    	}
 	   //	System.out.println("platform parsing ends");
+	   	
+	   
+	   	
 	    	if(pMatrix.size()!=0)
 	    	return pMatrix;
 	    	else
@@ -95,7 +99,9 @@ public class GEOPlatformfileParser {
 		    	
 	
 		    }
-	
+		    
+			
+		   	
 		    if(pMatrix.size()==0) {
 		    	pMatrix=null;
 		    	return pMatrix;

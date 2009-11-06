@@ -132,7 +132,7 @@ public class MevFileLoader extends ExpressionFileLoader {
 			setRemain(mevFiles.length - i - 1);
 			setFilesProgress(i);
 		}
-		if (!mflp.noAnnFileBox.isSelected()) {
+		if (!mflp.noAnnFileBox.isSelected()&& annFiles.length>0) {
 			for (int i = 0; i < annFiles.length; i++) {
 				File file=new File(this.mflp.annFileListTextField.getText(),((File) annFiles[i]).getName());
 				//loadAnnotationFile((SlideData) data.elementAt(0),
@@ -934,8 +934,9 @@ public class MevFileLoader extends ExpressionFileLoader {
 			// Currently, a minimum of one mev file must be selected to enable
 			// loading
 
-			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0 &&
-					((DefaultListModel) annSelectedList.getModel()).size() > 0) {
+			if (((DefaultListModel) mevSelectedList.getModel()).size() > 0) {
+				markLoadEnabled(true);
+			}else if(((DefaultListModel) annSelectedList.getModel()).size() > 0) {
 				markLoadEnabled(true);
 			}else {
 				markLoadEnabled(false);
