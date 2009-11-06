@@ -88,7 +88,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 public class ClusterTable extends JPanel implements IViewer {
     private JTable tableOfClusters;
     private JTable tableOfElements;
-    private IViewer iViewer;
+    private IViewer iViewer, ctv, ev, egv, cv;
     private JPopupMenu menu;
     private JPanel pane;
     JRadioButton rb1, rb2, rb3, rb4, rb5;
@@ -163,6 +163,12 @@ public class ClusterTable extends JPanel implements IViewer {
         
         setInitialColumnWidths();
 
+        //creating viewers
+        ctv = new ClusterTableViewer(framework);
+        ev = new ExperimentViewer(framework);
+		egv = new CentroidViewer(framework, 1);
+		cv = new CentroidViewer(framework, 0);
+        
         String[] viewerStrings = {"Table", "Expression Image", "Expression Graph", "Centroid Graph", "Venn Diagram"};
         viewerCB = new JComboBox(viewerStrings);
         viewerCB.addActionListener(new ActionListener(){
@@ -170,23 +176,23 @@ public class ClusterTable extends JPanel implements IViewer {
         		if (geneClusterTable){
 	        		switch (viewerCB.getSelectedIndex()){
 	            	case 0:
-	            		iViewer = new ClusterTableViewer(framework);
+	            		iViewer = ctv;
 	            		tableOfElements = ((ClusterTableViewer)iViewer).getTable();
 	            		tableOfElements.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 	            		bottomTablePane.setViewportView(tableOfElements);
 	            		break;
 	            	case 1:
-	            		iViewer = new ExperimentViewer(framework);
+	            		iViewer = ev;
 	    	            bottomTablePane.setViewportView(((ExperimentViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((ExperimentViewer)iViewer).getHeaderComponent());
 	    	            break;
 	            	case 2:
-	            		iViewer = new CentroidViewer(framework, 1);
+	            		iViewer = egv;
 	    	            bottomTablePane.setViewportView(((CentroidViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((CentroidViewer)iViewer).getHeaderComponent());
 	    	            break;
 	            	case 3:
-	            		iViewer = new CentroidViewer(framework, 0);
+	            		iViewer = cv;
 	    	            bottomTablePane.setViewportView(((CentroidViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((CentroidViewer)iViewer).getHeaderComponent());
 	    	            break;
@@ -553,10 +559,10 @@ public class ClusterTable extends JPanel implements IViewer {
     		
     	int[][] mat = new int[1][];
     	if (rb1.isSelected()){		//show all
-			mat = new int[1][framework.getData().
-			                         getExperiment().getNumberOfGenes()];
+    		
+			mat = new int[1][iViewer.getExperiment().getNumberOfGenes()];
     		for (int i=0; i<mat[0].length; i++){
-    			mat[0][i] = framework.getData().getExperiment().getGeneIndexMappedToData(i);
+    			mat[0][i] = iViewer.getExperiment().getGeneIndexMappedToData(i);
     		}
     	}else if (this.tableOfClusters.getSelectedRowCount()==0){	//no cluster selected
     		mat = new int[1][0];
@@ -634,13 +640,13 @@ public class ClusterTable extends JPanel implements IViewer {
     					arl.add(this.getSelectedClusters()[i].getIndices()[j]);
     			}
     		}
-    		mat = new int[1][framework.getData().
+    		mat = new int[1][iViewer.
 			                         getExperiment().getNumberOfGenes()-arl.size()];
     		
     		int count=0;
-    		for (int i=0; i<framework.getData().getExperiment().getNumberOfGenes(); i++){
-    			if (!arl.contains(framework.getData().getExperiment().getGeneIndexMappedToData(i))){
-    				mat[0][count] = framework.getData().getExperiment().getGeneIndexMappedToData(i);
+    		for (int i=0; i<iViewer.getExperiment().getNumberOfGenes(); i++){
+    			if (!arl.contains(iViewer.getExperiment().getGeneIndexMappedToData(i))){
+    				mat[0][count] = iViewer.getExperiment().getGeneIndexMappedToData(i);
     				count++;
     			}
     		}
@@ -686,7 +692,7 @@ public class ClusterTable extends JPanel implements IViewer {
     	}
     	int[][] mat = new int[1][];
     	if (rb1.isSelected()){
-			mat = new int[1][framework.getData().getExperiment().getNumberOfSamples()];
+			mat = new int[1][iViewer.getExperiment().getNumberOfSamples()];
     		for (int i=0; i<mat[0].length; i++){
     			mat[0][i] = i;
     		}
@@ -764,9 +770,9 @@ public class ClusterTable extends JPanel implements IViewer {
     					arl.add(this.getSelectedClusters()[i].getIndices()[j]);
     			}
     		}
-    		mat = new int[1][framework.getData().getExperiment().getNumberOfSamples()-arl.size()];
+    		mat = new int[1][iViewer.getExperiment().getNumberOfSamples()-arl.size()];
     		int count=0;
-    		for (int i=0; i<framework.getData().getExperiment().getNumberOfSamples(); i++){
+    		for (int i=0; i<iViewer.getExperiment().getNumberOfSamples(); i++){
     			if (!arl.contains(i)){
     				mat[0][count] = i;
     				count++;
