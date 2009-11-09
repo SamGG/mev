@@ -499,10 +499,13 @@ public class ResultTree extends JTree implements java.io.Serializable {
         private Icon tableIcon = GUIFactory.getIcon("TableViewerResult.gif");
         /** P Value graph Icon
          */
-        private Icon pValueIcon = GUIFactory.getIcon("TableViewerResult.gif");
+        private Icon pValueIcon = GUIFactory.getIcon("pValueGraphViewer.gif");
         /** Test statistic viewer icon
          */
-        private Icon testStatValueIcon = GUIFactory.getIcon("TestStatViewer.gif");
+        private Icon testStatValueIcon = GUIFactory.getIcon("TestStatisticViewer.gif");
+        /** Leading Edge viewer icon
+         */
+        private Icon leadingEdgeViewerIcon = GUIFactory.getIcon("LeadingEdgeViewer.gif");
         
         
         /** PCA 3D icon
@@ -826,6 +829,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(pValueIcon);
                     }else if(text.indexOf("Test statistics graph") != -1){
                         setIcon(testStatValueIcon);
+                    } else if(text.indexOf("J-G statistic for incremental gene subsets") != -1){
+                        setIcon(leadingEdgeViewerIcon);
                     } /* CGH Icons */else if (text.equals("Experiment Views")) {
                         setIcon(exprViewIcon);
                     } else if(parentText.equals("Experiment Views")) {
