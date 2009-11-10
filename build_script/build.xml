@@ -2027,10 +2027,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
 	-->
 	<target name="build-package-all-os-arch" depends="clean, build-all">
-		<antcall target="build-package-mac"/>
 		<antcall target="build-package-linux32"/>
 		<antcall target="build-package-linux64"/>
 		<antcall target="build-package-win"/>
+		<!-- Mac target has to be the last one, or else it will get over written -->
+		<antcall target="build-package-mac"/>
 	</target>
 	
 	<!-- Build Mac distribution -->
@@ -2039,7 +2040,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	</target>
 	
 	<target name="build-package-mac">
-		<echo message="Building Windows Package"/>				
+		<echo message="Building Mac Package"/>				
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 				<!-- Not deleting file temp soln -->
 				<!-- 
@@ -2111,6 +2112,11 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 			<delete includeemptydirs="true">
 				<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
 			</delete>
+			<delete dir="${package.dir}/${mev_version.dir}/lib" quiet="true"/>
+			<delete dir="${package.dir}/${mev_version.dir}/plugins" quiet="true"/>
+			<delete dir="${package.dir}/${mev_version.dir}/R-2.9.1" quiet="true"/>
+			<delete file="${package.dir}/${mev_version.dir}/tmev.sh" quiet="true"/>
+			<delete file="${package.dir}/${mev_version.dir}/TMEV.bat" quiet="true"/>
 			
 			<!-- No need to Copy RHook files. The files are already in mac_distribution_support/MeV.app/Contents/Respurces/Java -->
 			
