@@ -33,5 +33,5 @@ public class RConstants {
 	public static String LIMMA_WIN = "limma_2.16.5.zip";
 	public static String LIMMA_LINUX_32 = "limma_2.18.2.tar.gz";
 	public static String LIMMA_LINUX_64 = "limma_2.18.2.tar.gz";
-	public static String LIMMA_MAC = "";
+	public static String LIMMA_MAC = "limma_2.18.2.tgz";
 }

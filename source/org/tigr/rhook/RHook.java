@@ -18,6 +18,7 @@ package org.tigr.rhook;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -121,11 +122,23 @@ public class RHook  {
 		}
 		logger = new RLogger(RLogger.getLogFileName());
 		logger.start();
-
+		System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
+		String r_home = System.getenv("R_HOME");
+		if(r_home == null || r_home == "") {
+			System.err.println("** R_HOME not avaialble or not set properly.");
+			logger.writeln("** R_HOME not avaialble or not set properly.");
+			throw new Exception("R_HOME not set or available");
+		}
+		
+		if(!(new File(r_home).exists())) {
+			System.err.println("R_HOME dir: " + r_home + "does not exist.");
+			logger.writeln("R_HOME dir: " + r_home + "does not exist.");
+			throw new Exception("R_HOME dir: " + r_home + "does not exist.");
+		}
+		
 		if (!Rengine.versionCheck()) {
 			System.err.println("** Version mismatch - Java files don't match library version.");
 			logger.writeln("** Version mismatch - Java files don't match library version.");
-			//System.exit(1);
 			throw new Exception("Java class version mismatch");
 		}
 
@@ -205,19 +218,19 @@ public class RHook  {
 
 	//Test if limma/any R package is installed
 	public static void testPackage(String pkgName) throws Exception {
-		System.out.println("Raktim: Test Code");
-		System.out.println("Checking for LIMMA");
-		System.out.println("Parsing");
+		//System.out.println("Raktim: Test Code");
+		//System.out.println("Checking for LIMMA");
+		//System.out.println("Parsing");
 		logger.writeln("Checking Package - " + pkgName);
 
 		long e=re.rniParse("which(as.character(installed.packages()[,1])=='"+pkgName+"')", 1);
-		System.out.println("Result = "+e+", running eval");
+		//System.out.println("Result = "+e+", running eval");
 		long r=re.rniEval(e, 0);
-		System.out.println("Result = "+r+", building REXP");
+		//System.out.println("Result = "+r+", building REXP");
 		REXP x=new REXP(re, r);
-		System.out.println("REXP result = "+x);
+		//System.out.println("REXP result = "+x);
 		//Return the index of limma
-		System.out.println("REXP result = "+x.asInt());
+		//System.out.println("REXP result = "+x.asInt());
 		if(x.asInt() != 0 ) {
 			System.out.println(pkgName + " Package Installed");
 			logger.writeln(pkgName + " Package Installed");
