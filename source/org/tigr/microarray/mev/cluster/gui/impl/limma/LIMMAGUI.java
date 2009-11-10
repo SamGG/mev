@@ -109,7 +109,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		//Before anything check for Mac OS and throw appropriate msg
-		if(macMsg() != JOptionPane.OK_OPTION)
+		if(sysMsg() != JOptionPane.OK_OPTION)
 			return null;
 		//System.out.println("Checking for R_HOME in properties: " + System.getProperty("R_HOME"));
 		System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
@@ -819,25 +819,32 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         }
     }
     
-	private int macMsg() {
+	private int sysMsg() {
 		String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		String ver = System.getProperty("os.version");
+
+		String message = "System Config:\n";
+		message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
+		message += "Please note:\n";
+		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
+			message += "You need to have 32Bit JVM as default for LIMMA\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "You also need to have R 2.9.x installed for LIMMA\n";
+			message += "Cancel if either is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if(arch.toLowerCase().contains("64")) {
+			message += "You need to have 32Bit JVM as default for LIMMA\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "Cancel if 32 Bit JVM is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
 		if (os.toLowerCase().contains("mac")) {
-			String message = "System Config:\n";
-			message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
-			message += "Please note:\n";
 			message += "You need to have R 2.9.x installed for LIMMA\n";
 			message += "Cancel if R is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
-		//TODO remove Msg Dialog
-		//String message = "System Config:\n";
-		//message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
-		//message += "Please note:\n";
-		//message += "You need to have R 2.9.x installed for LIMMA\n";
-		//message += "Hit Cancel if R is not installed. Ok to continue.";
-		//JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		return JOptionPane.OK_OPTION;
 	}
 
