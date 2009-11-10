@@ -225,16 +225,19 @@ public class BNDownloadManager {
 			String cytoLibDir = TMEV.getSettingForOption("cytoscape_lib_dir").trim();
 			String keggServer = TMEV.getSettingForOption("kegg_server").trim();
 			String keggDir = TMEV.getSettingForOption("kegg_dir").trim();
+			String pluginsDir = TMEV.getSettingForOption("cytoscape_plugins_dir").trim();
 			if(cytoURL.equals("") || cytoURL == null 
 					|| cytoLibDir.equals("") || cytoLibDir == null 
 					|| keggServer.equals("") || keggServer == null
-					|| keggDir.equals("") || keggDir == null) {
+					|| keggDir.equals("") || keggDir == null
+					|| pluginsDir.equals("") || pluginsDir == null) {
 				JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Previously cached info not avaialble", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
 			} else {
 				repHash.put("cytoscape_webstart", cytoURL);
 				repHash.put("cytoscape_lib_dir", cytoLibDir);
 				repHash.put("kegg_server", keggServer);
 				repHash.put("kegg_dir", keggDir);
+				repHash.put("cytoscape_plugins_dir", pluginsDir);
 				return repHash;
 			}
 		}
