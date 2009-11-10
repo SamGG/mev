@@ -517,12 +517,12 @@ public class LIMMA extends AbstractAlgorithm{
 		try {
 			re = RHook.startRSession();
 			if(re == null) {
-				JOptionPane.showMessageDialog(null, "Error creating R Engine", "REngine", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "REngine", "Error creating R Engine",  JOptionPane.ERROR_MESSAGE);
 				//logger.writeln("Could not get REngine");
 				return;
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Error creating R Engine", "REngine", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "REngine", e.getMessage(), JOptionPane.ERROR_MESSAGE);
 			//logger.writeln("Could not get REngine");
 			return;
 		}
