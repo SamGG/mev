@@ -82,7 +82,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JLabel genesetPanelEmptyLabel;
 	private javax.swing.JLabel geneIdentifierLabel;
 	private javax.swing.JComboBox geneIdentifierBox;
-	private String fileFilter;
+	private String fileFilter=new String();
 	
 	
 	
@@ -453,20 +453,35 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			algData.addParam("standard-deviation-cutoff", "NA");
 			}
 		
-		//if(geneNumber.getText()!=null)
+		if (geneNumber.getText().length() != 0)
 			algData.addParam("gene-number", geneNumber.getText());
+		else
+			algData.addParam("gene-number", "");
+		
+		if (permutationTextField.getText().length() != 0)
 			algData.addParam("permutations", permutationTextField.getText());
+		else
+			algData.addParam("permutations", "");
+		
+		
+		if (pathTextField.getText().length() != 0)
 			algData.addParam("gene-set-directory", pathTextField.getText());
-			
-			if(getFileFilter().equalsIgnoreCase("Gene Matrix and Gene Matrix Transpose (*.gmt, *.gmx)"))
-				algData.addParam("gene-identifier", AnnotationFieldConstants.GENE_SYMBOL);
-			else{
-				algData.addParam("gene-identifier", (String)geneIdentifierBox.getSelectedItem());
-			}
-			
-			
-			algData.addStringArray("gene-set-files", getAllSelectedItems());
-			
+		else
+			algData.addParam("gene-set-directory", "");
+
+		if (getFileFilter().equalsIgnoreCase("")) {
+			algData.addParam("gene-identifier", "");
+		} else if (getFileFilter().equalsIgnoreCase(
+				"Gene Matrix and Gene Matrix Transpose (*.gmt, *.gmx)")) {
+			algData.addParam("gene-identifier",
+					AnnotationFieldConstants.GENE_SYMBOL);
+		} else {
+			algData.addParam("gene-identifier", (String) geneIdentifierBox
+					.getSelectedItem());
+		}
+
+		algData.addStringArray("gene-set-files", getAllSelectedItems());
+
 			
 			if (adh.isAnnotationSelected()) {
 				algData.addParam("annotation-file", adh.getAnnFilePath());
@@ -619,7 +634,10 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	}
 	
 	private String getFileFilter(){
+		if(fileFilter.length()>0)
 		return fileFilter;
+		else
+			return "";
 	}
 	
 	/**
