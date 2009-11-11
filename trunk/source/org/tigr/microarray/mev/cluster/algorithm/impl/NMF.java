@@ -429,7 +429,6 @@ public class NMF extends AbstractAlgorithm{
 			//The number crunching: Uses multiplicative update calculation to find locally optimal factors, W and H
 			float previousCost = Float.POSITIVE_INFINITY;
 			float cost=0;
-//			float cost2=0;
 			for(int iter = 0; iter<maxIterations; iter++){
 				timelast = System.currentTimeMillis();
     			updateProgressBar(iter,runcount);
@@ -504,7 +503,6 @@ public class NMF extends AbstractAlgorithm{
     				t6 += System.currentTimeMillis()-timelast;
     				timelast = System.currentTimeMillis();
 				}
-//    			System.out.println("iteration = " +iter+", cost = "+ cost);
     			if (!doMax){
     				if (iter%checkFreq==0){
     					WH = W[runcount].times(H[runcount]);   
@@ -512,14 +510,7 @@ public class NMF extends AbstractAlgorithm{
         				if (cost<0)
         					return;
 						if (cost>(previousCost-cutoff)){
-//							System.out.println("stop!!");
 							break;
-		//					System.out.println("higher cost, "+cost+ ", iteration="+iter);
-		//					costSum = costSum+cost;
-		//					JDialog jd = new JDialog();
-		//					jd.setModal(true);
-		//					jd.setVisible(true);
-		//					break;
 						}
 						previousCost = cost;
     				}
@@ -527,19 +518,6 @@ public class NMF extends AbstractAlgorithm{
 			}
 			WH = W[runcount].times(H[runcount]);   
 			cost = getCost(V,WH);
-//    		printMat(H[runcount]);
-//    		this is my technique for removing bad solutions
-//			costSum = costSum+cost;
-//			if (Float.isNaN(cost)||cost>costSum/totalTries){
-//				runcount--;
-//				if (Float.isNaN(cost))
-//					totalTries--;
-//				continue;
-//			}
-//			
-//			if (cost<costBest){
-//				costBest= cost;
-//			}
 			costs[runcount] = cost;
 			if (doSamples){
 				//Assigns m samples to r classes
@@ -553,10 +531,6 @@ public class NMF extends AbstractAlgorithm{
 						}
 					}
 				}
-//				for (int i=0; i<numSamples; i++){
-//					System.out.print(classes[i]+"\t");
-//				}
-//				System.out.println(cost);
 				//Adds to connectivity matrix
 				for (int i=0; i<numSamples; i++){
 					for (int j=0; j<numSamples; j++){
@@ -576,10 +550,6 @@ public class NMF extends AbstractAlgorithm{
 						}
 					}
 				}
-//				for (int i=0; i<numGenes; i++){
-//					System.out.print(classes[i]+"\t");
-//				}
-//				System.out.println(cost);
 				//Adds to connectivity matrix
 				for (int i=0; i<numGenes; i++){
 					for (int j=0; j<numGenes; j++){
@@ -594,11 +564,6 @@ public class NMF extends AbstractAlgorithm{
 	    	costsIndex[i]=i;
 	    }
 	    ExperimentUtil.sort2(costs, costsIndex);
-//		System.out.println();
-//		System.out.println(costSum/totalTries);
-//		System.out.println(costBest);
-//		System.out.println(totalTries);
-//		System.out.println("Conn Matrix ");
 		for (int i=0; i<connectivityMatrix.length; i++){
 			for (int j=0; j<connectivityMatrix.length; j++){
 				connectivityMatrix[i][j]=1-connectivityMatrix[i][j]/numRuns;
@@ -753,9 +718,7 @@ public class NMF extends AbstractAlgorithm{
 		
 
 		ArrayList<String> amounts = new ArrayList<String>();
-//		File file = new File("C://Users//Dan//workspace//MeV_4_4//data//NMF_tester3.txt");
 		File file2 = new File("C://Users//Dan//workspace//MeV_4_4//data//BETR_5000_sample.txt");
-//		File file3 = new File("C://workspace//data//BETR_5000_genes_NoAnno.txt");
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file2));
