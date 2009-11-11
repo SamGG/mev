@@ -2,27 +2,50 @@
     <body bgcolor = "#FFFFCC"><basefont face = "Arial">
 	<h1>NMF: Non-negative Matrix Factorization</h1><h2>Parameter Information</h2>
             <hr size = 10>
-BETR is a flexible linear random-effects modeling framework that takes into account 
-correlations between samples and sampling times.
-<h2> Type of Data </h2>
-Choose the type of data that BETR will run on.  
+            
+<h5>Brunet, J-P., Tamayo, P., Golub, T.R., and Mesirov, J.P. 2004. Metagenes and molecular pattern discovery using matrix factorization. /Proc. Natl. Acad. Sci. USA/ 101(12):4164Â–4169. 
 <br>
-2-Condition:  Each condition must have multiple replicates for each time-point.  <br>
-1-Condition:  Only one condition, the initial time-point will be treated as the control.<br>
-Paired data:  Data exists as a difference between two-conditions.
-<h2> Choosing Time and Conditions </h2>
-After choosing the type of data and number of time-points a dialog appears for time 
-and condition assignments.  You may assign your samples using either the individual button selection method
-or the cluster selection method. <br>
-For each condition every time-point must be assigned at least two samples.
+Devarajan K, 2008 Nonnegative Matrix Factorization: An Analytical and Interpretive Tool in Computational Biology. PLoS Comput Biol 4(7): e1000029. doi:10.1371/journal.pcbi.1000029 
 <br>
-<h2>Alpha value</h2>
-This text field allows you to enter the alpha or critical p-value.
+Lee DD, Seung SH (2001) Algorithms for nonnegative matrix factorization. Adv Neural Inform Process Syst 13: 556–562.</h5>
+
+Non-negative Matrix Factorization, a technique which makes use of an algorithm based on decomposition by parts of an extensive data matrix into a small number of relevant metagenes.  NMF’s ability to identify expression patterns and make class discoveries has been shown to able to have greater robustness over popular clustering techniques such as HCL and SOM.  
 <br>
-<h2>Hierarchical Clustering </h2>
-This check box specifies whether to perform hierarchical clustering on the elements in 
-each cluster created
+MeV’s NMF uses a multiplicative update algorithm, introduced by Lee and Seung in 2001, to factor a non-negative data matrix into two factor matrices referred to as W and H.  Associated with each factorization is a user-specified rank.  This represents the columns in W, the rows in H, and the number of clusters to which the samples are to be assigned.  Starting with randomly seeded matrices and using an iterative approach with a specified cost measurement we can reach a locally optimal solution for these factor matrices.  H and W can then be evaluated as metagenes and metagenes expression patterns, respectively.  Using a “winner-take-all” approach, samples can be assigned to clusters based on their highest metagenes expression.  Multiple iterations of this process allow us to see the robustness of the cluster memberships.  Additionally, running multiple ranks consecutively can allow for the comparison between differing numbers of classes using cophenetic correlation.
 <br>
+NMF is most frequently used to make class discoveries through identification of molecular patterns.  The module can also be used to cluster genes, generating metasamples rather than metagenes.
+<br>
+
+<h3>Parameters:</h3>
+<h4>Sample Selection </h4>
+The sample selection option indicates whether to cluster genes or samples. <br>
+<h4>Run multiple ranks</h4>
+This checkbox determines if NMF will be performed on one rank or compared across multiple ranks.  Selecting this option will allow the user to choose a rank range.<br>
+<h4>Number of runs</h4>
+Specifies the number of factorization runs to perform on each rank.  Typically, this value is between 20 and 100.<br>
+<h4>Rank Value/ Rank Range</h4>
+	The value or range of ranks for which NMF is performed.<br>
+<h4>Maximum iterations</h4>
+The maximum number of iterations to be completed as W and H approach a local optimization.<br>
+<h4>Always perform maximum iterations</h4>
+Specifies whether or not MeV should complete the maximum number of iterations or stop after a certain convergence has been reached.<br>
+<h4>Cost convergence cutoff</h4>
+The point at which a run can be halted based on sufficient convergence.<br>
+<h4>Check Frequency</h4>
+	The frequency, in iterations, of checking for convergence.<br>
+<h4>Update rules and cost measurement</h4>
+The algorithmic technique, as described by Lee and Seung, for iteratively updating the factor matrices and the manner in which their cost is measured.  The default is “Divergence”.<br>
+<h4>Data matrix pre-processing</h4>
+A requirement for running NMF is a data matrix free of negative values.  If your data includes negative values, a method must be selected to adjust the data.  If “Always adjust data” is checked, the selected operation will be performed, regardless of your data.  If unchecked, the selected operation will only be performed if a search through the data reveals negative values.  After running your analysis, the preprocessing step (if any) will be recorded in the General Info tab.<br>
+Subtract minimum value means that the lowest value in the data, regardless of negativity, will be subtracted from all values, ensuring a non-negative matrix.<br>
+	Exponentially scale means that every value will be exponentiated, base 2. <br>
+<h4>Random Number Generation</h4>
+For the purpose of reproducibility, NMF allows the addition of a seed value for the creation of initial generation of W and H matrices.  Use of the same seed value on runs of NMF with identical parameters will result in identical results.<br>
+<h4>Store results as clusters</h4>
+Selecting this option will cause the creation and storage of the results as clusters in MeV’s clustering system.  These clusters will be visible in the Cluster Manager as well as in MeV’s experiment viewers. <br> 
+            <br>
+<br>
+For more information please see the MeV manual.
        </basefont>
     </body>
 </html>
