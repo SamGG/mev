@@ -36,7 +36,7 @@ public class PCA extends AbstractAlgorithm {
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
 	FloatMatrix expMatrix = data.getMatrix("experiment");
 	AlgorithmParameters map = data.getParams();
-	int function = map.getInt("distance-function", COVARIANCE);
+	int function = COVARIANCE;
 	factor = map.getFloat("distance-factor", 1.0f);
 	boolean absolute = map.getBoolean("distance-absolute", false);
 	mode = map.getInt("pca-mode", 0);
