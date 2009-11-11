@@ -82,7 +82,7 @@ public class GooseImpl implements Goose, GaggleConnectionListener {
 					"MeV will launch an instance of the Genome Browser.\n" +
 	        		"Please load the genome of the organism of interest.\n" +
 	        		"Click Ok when the genome is loaded to begin the broadcast.\n" +
-	        		"See http://mev.tm4.org for help", 
+	        		"See http://mev.tm4.org/documentation/gaggle for help", 
 	        		"Waiting for Genome Browser",
 	        		JOptionPane.OK_CANCEL_OPTION, 
 	        		JOptionPane.QUESTION_MESSAGE)

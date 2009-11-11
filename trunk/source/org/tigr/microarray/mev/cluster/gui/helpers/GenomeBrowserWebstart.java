@@ -55,7 +55,12 @@ public class GenomeBrowserWebstart {
      */
     private static void startGenomeBrowser(String jnlpURI) {
         String command = System.getProperty("java.home");
-        command += File.separator +  "bin" + File.separator + "javaws " + jnlpURI;
+        if(System.getProperty("os.name").toLowerCase().contains("win")) {
+             //jnlpURI in quotes incase there are spaces in file path on Win
+             command += File.separator +  "bin" + File.separator + "javaws \"" + jnlpURI+"\"";
+        } else {
+             command += File.separator +  "bin" + File.separator + "javaws " + jnlpURI;    
+        }
         try {
         	runtimeProc = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
