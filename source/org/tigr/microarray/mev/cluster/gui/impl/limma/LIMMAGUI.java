@@ -87,6 +87,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
     protected float alpha;
     protected String factorAName, factorBName;
     protected boolean errorGenes;
+    protected boolean isHierarchicalTree;
     protected int iterations;
     
     //Raktim LIMMA gene & sample names
@@ -156,7 +157,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         if (groupAssignments == null)
         	return null;
         
-        boolean isHierarchicalTree = LIMMADialog.drawTrees();
+        isHierarchicalTree = LIMMADialog.drawTrees();
         drawSigTreesOnly = true;
         if (isHierarchicalTree) {
             drawSigTreesOnly = LIMMADialog.drawSigTreesOnly();
@@ -742,8 +743,8 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         if (dataDesign!=5)
         	node.add(getGroupAssignmentInfo());
-        node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
-        node.add(new DefaultMutableTreeNode("Iterations: "+iterations));
+        if (this.isHierarchicalTree)
+        	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
