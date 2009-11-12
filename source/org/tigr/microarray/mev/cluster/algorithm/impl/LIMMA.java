@@ -506,8 +506,9 @@ public class LIMMA extends AbstractAlgorithm{
 	}    
 	/**
 	 * Function to create R session in memory and execute LIMMA
+	 * @throws AbortException 
 	 */
-	public void runRAlg() {
+	public void runRAlg() throws AbortException {
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue(10);
@@ -517,14 +518,16 @@ public class LIMMA extends AbstractAlgorithm{
 		try {
 			re = RHook.startRSession();
 			if(re == null) {
-				JOptionPane.showMessageDialog(null, "REngine", "Error creating R Engine",  JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Error creating R Engine",  "REngine", JOptionPane.ERROR_MESSAGE);
 				//logger.writeln("Could not get REngine");
-				return;
+				throw new AbortException();
+				//return;
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "REngine", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
 			//logger.writeln("Could not get REngine");
-			return;
+			throw new AbortException();
+			//return;
 		}
 
 		try {
