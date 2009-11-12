@@ -468,8 +468,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
         		selectionPanel.add(createSaveLoadPanel(), cnstr);
 
                 
-                conditionCS= new ClusterSelector(repository, factorAlevels, "Condition");
-                timepointCS= new ClusterSelector(repository, factorBlevels, "Time-Point");
+                conditionCS= new ClusterSelector(repository, 2, "Condition");
+                timepointCS= new ClusterSelector(repository, numGroups, "Time-Point");
                 if (repository!=null){
                 	conditionCS.setClusterType("Condition");
                 	timepointCS.setClusterType("Time-Point");
@@ -487,7 +487,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
         		cnstr.weighty = 0;
         		selectionPanel.add(createSaveLoadPanel(), cnstr);
         		
-        		if(getExperimentalDesign()==5){
+        		if(getExperimentalDesign()==5){//ever occur?
         			groupsCS= new ClusterSelector(repository, numGroups, "Timepoint");
 	            	groupsCS.setClusterType("Timepoint");
         		}else{
@@ -1509,6 +1509,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
         return groupAssignments;
     }
     private int[] getTimeCourseGroupAssignments() {
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    		return getClusterSelectorTimeCourseAssignments();
     	int[]timeCourseGroupAssignments = new int[exptNames.size()];
 
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1535,7 +1537,71 @@ public class LIMMAInitBox extends AlgorithmDialog {
     	return timeCourseGroupAssignments;
     }
     
-    private int[] getFactorGroupAssignments() {
+    private int[] getClusterSelectorTimeCourseAssignments() {
+    	boolean doubleAssigned;
+    	int[][]groupAssignments = new int[2][exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
+    	for (int i=0; i<mPanel.numGroups; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.timepointCS.getGroupSamples("Time-Point "+j);
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[0][i] = 0;
+    		for (int j = 0;j<mPanel.numGroups;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			groupAssignments[0][i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	arraylistArray = new ArrayList[2];
+    	for (int i=0; i<2; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.conditionCS.getGroupSamples("Condition "+j);
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[1][i] = 0;
+    		for (int j = 0;j<2;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			groupAssignments[1][i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	int[] groupAssignments2 = new int[exptNames.size()];
+    	for (int i=0; i<groupAssignments2.length; i++){
+    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
+    			groupAssignments2[i]=0;
+    		else
+    			groupAssignments2[i] = (groupAssignments[1][i]-1)*mPanel.numGroups+(groupAssignments[0][i]-1)+1;
+    	}
+    	return groupAssignments2;
+	}
+
+
+	private int[] getFactorGroupAssignments() {
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    		return getClusterSelectorFactorAssignments();
     	int[]factorGroupAssignments = new int[exptNames.size()];
 
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1561,7 +1627,69 @@ public class LIMMAInitBox extends AlgorithmDialog {
         }
     	return factorGroupAssignments;
     }
-    public int[][] getGroupMatrix(){
+    private int[] getClusterSelectorFactorAssignments() {
+    	boolean doubleAssigned;
+    	int[][]groupAssignments = new int[2][exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[getNumFactorBGroups()];
+    	for (int i=0; i<getNumFactorBGroups(); i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.factorACS.getGroupSamples("Level "+j);
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[0][i] = 0;
+    		for (int j = 0;j<getNumFactorBGroups();j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			groupAssignments[0][i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	arraylistArray = new ArrayList[2];
+    	for (int i=0; i<2; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Level "+j);
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[1][i] = 0;
+    		for (int j = 0;j<2;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+
+	    			}
+	    			groupAssignments[1][i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	int[] groupAssignments2 = new int[exptNames.size()];
+    	for (int i=0; i<groupAssignments2.length; i++){
+    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
+    			groupAssignments2[i]=0;
+    		else
+    			groupAssignments2[i] = (groupAssignments[0][i]-1)*this.getNumFactorBGroups()+(groupAssignments[1][i]-1)+1;
+    	}
+    	return groupAssignments2;
+	}
+
+
+	public int[][] getGroupMatrix(){
     	int[] timeAssignments;
 //    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
 //    		timeAssignments = getClusterGroupAssignments();
