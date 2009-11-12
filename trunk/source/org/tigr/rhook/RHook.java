@@ -127,18 +127,27 @@ public class RHook  {
 		if(r_home == null || r_home == "") {
 			System.err.println("** R_HOME not avaialble or not set properly.");
 			logger.writeln("** R_HOME not avaialble or not set properly.");
-			throw new Exception("R_HOME not set or available");
+			logger.writeln("** Possible Causes:");
+			logger.writeln("** MeV launched via WebStart");
+			//logger.writeln("** MeV launched via WebStart");
+			logger.stop();
+			throw new Exception("R_HOME not set or available.\n** Possible Causes:\n** MeV launched via WebStart");
 		}
 		
 		if(!(new File(r_home).exists())) {
-			System.err.println("R_HOME dir: " + r_home + "does not exist.");
-			logger.writeln("R_HOME dir: " + r_home + "does not exist.");
-			throw new Exception("R_HOME dir: " + r_home + "does not exist.");
+			System.err.println("R_HOME dir: " + r_home + " does not exist.");
+			logger.writeln("R_HOME dir: " + r_home + " does not exist.");
+			logger.writeln("** Possible Causes:");
+			logger.writeln("** MeV launched via WebStart");
+			logger.writeln("** " + r_home + " location removed");
+			logger.stop();
+			throw new Exception("R_HOME dir: " + r_home + "does not exist.\n** Possible Causes:\n** MeV launched via WebStart\n** " + r_home + " location removed");
 		}
 		
 		if (!Rengine.versionCheck()) {
 			System.err.println("** Version mismatch - Java files don't match library version.");
 			logger.writeln("** Version mismatch - Java files don't match library version.");
+			logger.stop();
 			throw new Exception("Java class version mismatch");
 		}
 
