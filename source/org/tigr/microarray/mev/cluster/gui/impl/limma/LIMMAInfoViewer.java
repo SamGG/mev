@@ -91,7 +91,6 @@ public class LIMMAInfoViewer extends ViewerAdapter {
 	for (int counter = 0; counter < clusters.length; counter++) {
 	    if (counter%2==0) {
 	    	String str = "";
-	    	System.out.println("dataDesign " +dataDesign);
 	    	if (dataDesign==3){
 	    		str = "Group "+x+" vs. Group "+y+" ";
 	    		y++;
