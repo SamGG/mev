@@ -345,7 +345,7 @@ public class GSEAGUI implements IClusterGUI {
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));
 	            
 	            // System.out.println("Gene set name:"+gene_set_names.get(i)); 
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("J-G statistic for incremental gene subsets", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading Edge Graph", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])))));
 	            String[][] temp=new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])).getLeadingEdgeGenes();
 	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1,temp );
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading edge genes", tabViewer)));

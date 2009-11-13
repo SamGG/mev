@@ -829,7 +829,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(pValueIcon);
                     }else if(text.indexOf("Test statistics graph") != -1){
                         setIcon(testStatValueIcon);
-                    } else if(text.indexOf("J-G statistic for incremental gene subsets") != -1){
+                    } else if(text.indexOf("Leading Edge Graph") != -1){
                         setIcon(leadingEdgeViewerIcon);
                     } /* CGH Icons */else if (text.equals("Experiment Views")) {
                         setIcon(exprViewIcon);
