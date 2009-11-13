@@ -75,7 +75,7 @@ public abstract class FileDownloader {
 		public void windowClosing(WindowEvent e) {
 			progress.wasCancelled = true;
 			result = JOptionPane.CANCEL_OPTION;
-			System.out.println("closing window");
+//			System.out.println("closing window");
 			progress.dispose();
 		}
 	}
