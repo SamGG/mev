@@ -962,7 +962,7 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
                 int fieldNamesLength=data.getFieldNames().length-1; 
                 String[] names = new String[experiment.getNumberOfGenes()];
                 for (int i=0; i<names.length; i++){
-                    names[this.clusters[0][i]] = genes ? data.getGeneName(i) : data.getSampleName(i);
+                    names[i] = genes ? data.getGeneName(this.clusters[0][i]) : data.getSampleName(this.clusters[0][i]);
                 }
                 for (int row=top; row<bottom; row++) {
                     if (labelIndex >= 0) {
