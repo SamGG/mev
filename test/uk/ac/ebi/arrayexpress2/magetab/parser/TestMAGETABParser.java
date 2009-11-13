@@ -27,14 +27,14 @@ public class TestMAGETABParser  {
     private MAGETABInvestigation affyInvestigation;
     private MAGETABInvestigation twocolorInvestigation;
 	
-    @Test
+   
 	public  void testSetupParse(){
     	URL affyFileURL;
     	URL twocolorFileURL;
     	
 		try{
 		affyFileURL=new URL("http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12.idf.txt");
-		if(affyFileURL.getFile().isEmpty()){
+		if(affyFileURL.getFile().length()==0){
 			fail("The file does not exist OR you provided the wrong path");
 		}
 		
@@ -58,7 +58,7 @@ public class TestMAGETABParser  {
 		//Testing two color array file
 		try{
 		twocolorFileURL=new URL("file:///"+"C://mage-files//E-JCVI-1.idf.txt");
-		if(twocolorFileURL.getFile().isEmpty()){
+		if(twocolorFileURL.getFile().length()==0){
 			fail("The file does not exist OR you provided the wrong path");
 		}
 		
@@ -84,14 +84,14 @@ public class TestMAGETABParser  {
 
 	}
 	
-    @Test
+ 
 	public void testCheckIDFObject(){
     	URL affyFileURL;
     	URL twocolorFileURL;
     	
     	try{
     		affyFileURL=new URL("http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12.idf.txt");
-    		if(affyFileURL.getFile().isEmpty()){
+    		if(affyFileURL.getFile().length()==0){
     			fail("The file does not exist OR you provided the wrong path");
     		}
     		
@@ -131,7 +131,7 @@ public class TestMAGETABParser  {
     	
     	try{
     		twocolorFileURL=new URL("file:///"+"C://mage-files//E-JCVI-1.idf.txt");
-    		if(twocolorFileURL.getFile().isEmpty()){
+    		if(twocolorFileURL.getFile().length()==0){
     			fail("The file does not exist OR you provided the wrong path");
     		}
     		
@@ -184,7 +184,7 @@ public class TestMAGETABParser  {
 
     	try {
     		fileURL = new URL("file:///"+"C:/MeV4.4/data/magetab/E-ATMX-12.idf.txt");
-    		if (fileURL.getFile().isEmpty()) {
+    		if (fileURL.getFile().length()==0) {
     			fail("The file does not exist OR you provided the wrong path");
     		}
 
@@ -293,7 +293,7 @@ public class TestMAGETABParser  {
     	//Two color array  testing		
 		try{
 			twocolorFileURL=new URL("file:///"+"C://mage-files//E-JCVI-1.idf.txt");
-			if(twocolorFileURL.getFile().isEmpty()){
+			if(twocolorFileURL.getFile().length()==0){
 				fail("The file does not exist OR you provided the wrong path");
 			}
 
