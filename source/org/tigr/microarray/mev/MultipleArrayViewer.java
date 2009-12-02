@@ -4080,6 +4080,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     	if (JOptionPane.showConfirmDialog(this, "Are you sure? This cannot be undone!", "Delete all loaded data", JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 	        removeChildren(mainViewerNode);
 	        clusterNode.removeAllChildren();
+	        experimentClusterManager = null;
+	        geneClusterManager = null;
 	        analysisNode.removeAllChildren();
 	        scriptNode.removeAllChildren();
 	        historyLog = new HistoryViewer();
