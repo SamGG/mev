@@ -157,8 +157,6 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        features = features == null ? createDefaultFeatures(experiment) : features;
 	        this.expViewer = createExperimentViewer(experiment, features, genes_result, samples_result);
 	        this.expViewer.getContentComponent().addMouseListener(listener);
-	        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
-	        this.header.addMouseListener(listener);
 	        this.colorBar = new HCLColorBar(this.clusters, features.length);
 	        this.colorBar.addMouseListener(listener);
 	        this.genesOrder = createGenesOrder(experiment, features, genes_result);
@@ -178,10 +176,12 @@ public class TEASEViewer extends JPanel implements IViewer{
 	            this.sampleTree.addMouseListener(listener);
 	            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
 	        }
+	        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent(), sampleTree);
+	        this.header.addMouseListener(listener);
 
 	        this.isExperimentCluster = false;
 	        this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
-	        addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
+	        addComponents(null, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
 	        
 	        this.isHCLOnly = hclOnly;
 	        if (!this.isHCLOnly) {
@@ -237,8 +237,6 @@ public class TEASEViewer extends JPanel implements IViewer{
 	        features = features == null ? createDefaultFeatures(experiment) : features;
 	        this.expViewer = createExperimentViewer(experiment, features, genes_result, samples_result);
 	        this.expViewer.getContentComponent().addMouseListener(listener);
-	        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent());
-	        this.header.addMouseListener(listener);
 	        this.colorBar = new HCLColorBar(this.clusters, features.length);
 	        this.colorBar.addMouseListener(listener);
 	        this.genesOrder = createGenesOrder(experiment, features, genes_result);
@@ -256,10 +254,12 @@ public class TEASEViewer extends JPanel implements IViewer{
 	            this.sampleTree.addMouseListener(listener);
 	            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
 	        }
+	        this.header = new HCLExperimentHeader(this.expViewer.getHeaderComponent(), sampleTree);
+	        this.header.addMouseListener(listener);
 
 	        this.isExperimentCluster = false;
 	        this.numberOfSamples = experiment.getNumberOfSamples(); //know this is correct for gene clustering constructor
-	        addComponents(this.sampleTree, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
+	        addComponents(null, this.genesTree, this.expViewer.getContentComponent(), this.colorBar, this.annotationBar);
 	        
 	        if (!this.isHCLOnly) {  
 	        	for(int i=0; i<dots.size(); i++){

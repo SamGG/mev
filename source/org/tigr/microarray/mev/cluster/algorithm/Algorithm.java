@@ -34,6 +34,7 @@ public interface Algorithm {
     public static final int SPEARMANRANK = 9;
     public static final int KENDALLSTAU = 10;
     public static final int MUTUALINFORMATION = 11;
+	public static final int CONSENSUS = 12;
     
     /**
      * This method execute calculation and return result,

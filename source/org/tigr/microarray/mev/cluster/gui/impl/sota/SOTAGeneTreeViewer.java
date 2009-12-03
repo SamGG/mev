@@ -123,9 +123,9 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer {
         numberOfSamples = centroidData.getNumberOfSamples();
         expViewer = new SOTACentroidExpressionViewer( centroidData, null, samplesOrder, sotaTreeData.clusterPopulation, sotaTreeData.clusterDiversity, selectedClusterList);
         expViewer.addMouseListener(listener);
-        header = new HCLExperimentHeader(expViewer.getHeaderComponent());
+        header = new HCLExperimentHeader(expViewer.getHeaderComponent(), sampleTree);
         header.addMouseListener(listener);
-        addComponents(sotaTree, expViewer, sampleTree);
+        addComponents(sotaTree, expViewer, null);
         this.setLocation(0,0);
         addMouseListener(listener);
         popup = this.createJPopupMenu(listener);
@@ -183,9 +183,9 @@ public class SOTAGeneTreeViewer extends JPanel implements IViewer {
         this.expViewer = new SOTACentroidExpressionViewer( centroidData, null, samplesOrder, sotaTreeData.clusterPopulation, sotaTreeData.clusterDiversity, selectedClusterList);
         
         expViewer.addMouseListener(listener);        
-        header = new HCLExperimentHeader(expViewer.getHeaderComponent());
+        header = new HCLExperimentHeader(expViewer.getHeaderComponent(), sampleTree);
         header.addMouseListener(listener);
-        addComponents(sotaTree, expViewer, sampleTree);
+        addComponents(sotaTree, expViewer, null);
         this.setLocation(0,0);
         addMouseListener(listener);
         popup = this.createJPopupMenu(listener);

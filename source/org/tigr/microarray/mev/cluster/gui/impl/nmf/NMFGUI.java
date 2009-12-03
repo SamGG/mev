@@ -479,6 +479,7 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
         data.child_2_array = (int[])valueList.getNodeValue(pos+1).value;
         data.node_order = (int[])valueList.getNodeValue(pos+2).value;
         data.height = (float[])valueList.getNodeValue(pos+3).value;
+        data.setFunction(Algorithm.CONSENSUS);
         return data;
     }
     

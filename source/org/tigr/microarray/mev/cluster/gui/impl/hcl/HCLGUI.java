@@ -281,6 +281,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         data.child_2_array = result.getIntArray("child-2-array");
         data.node_order = result.getIntArray("node-order");
         data.height = result.getMatrix("height").getRowPackedCopy();
+        data.setFunction(result.getParams().getInt("function"));
         return data;
     }
     

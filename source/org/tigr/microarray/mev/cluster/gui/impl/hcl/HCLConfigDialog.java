@@ -23,6 +23,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.util.Hashtable;
@@ -73,6 +74,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
     private HCLTree tree;
 
     private HCLViewer viewer;
+	private JCheckBox showScale;
     
     /**
      * Constructs the dialog.
@@ -136,8 +138,9 @@ public class HCLConfigDialog extends AlgorithmDialog {
         
         treeDimPanel.add(new JLabel("Minimum pixel height"), new GridBagConstraints(0,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         treeDimPanel.add(new JLabel("Maximum pixel height"), new GridBagConstraints(0,1,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
-        treeDimPanel.add(new JLabel("Use jagged tree structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+//        treeDimPanel.add(new JLabel("Use jagged tree structure"), new GridBagConstraints(0,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         treeDimPanel.add(new JLabel("Use true branch length structure"), new GridBagConstraints(0,3,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
+        treeDimPanel.add(new JLabel("Show node height scale"), new GridBagConstraints(0,4,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,20,0,10),0,0));
         
         minTextField = new JTextField(String.valueOf(minPixelDistance), 4);
         treeDimPanel.add(minTextField, new GridBagConstraints(1,0,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
@@ -146,11 +149,23 @@ public class HCLConfigDialog extends AlgorithmDialog {
         armLengthBox = new JCheckBox();
         armLengthBox.setBackground(Color.white);
         armLengthBox.setSelected(tree.actualArms);
-        treeDimPanel.add(armLengthBox, new GridBagConstraints(1,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+//        treeDimPanel.add(armLengthBox, new GridBagConstraints(1,2,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         absArmLengthBox = new JCheckBox();
         absArmLengthBox.setBackground(Color.white);
         absArmLengthBox.setSelected(tree.useAbsoluteHeight);
+        absArmLengthBox.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent ae){
+        		if (!absArmLengthBox.isSelected())
+        			showScale.setSelected(false);
+    			showScale.setEnabled(absArmLengthBox.isSelected());
+        	}
+        });
         treeDimPanel.add(absArmLengthBox, new GridBagConstraints(1,3,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+        
+        showScale = new JCheckBox();
+        showScale.setBackground(Color.white);
+        showScale.setSelected(tree.showScale);
+        treeDimPanel.add(showScale, new GridBagConstraints(1,4,1,1,0.3,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
         
         applyButton = new JButton("Apply");
         applyButton.setActionCommand("apply-tree-dimensions-command");
@@ -246,8 +261,10 @@ public class HCLConfigDialog extends AlgorithmDialog {
                     tree.setProperties(zThr, minPixDist, maxPixDist);
                     tree.actualArms = armLengthBox.isSelected();
                     tree.useAbsoluteHeight = absArmLengthBox.isSelected();
+                    tree.showScale = showScale.isSelected();
                     viewer.revalidateViewer();
                     viewer.repaint();
+                    viewer.getHeaderComponent().repaint();
                     result = JOptionPane.OK_OPTION;
                     dispose();
                 } catch (Exception exc) {
@@ -258,12 +275,14 @@ public class HCLConfigDialog extends AlgorithmDialog {
                 try{
                     tree.actualArms = armLengthBox.isSelected();
                     tree.useAbsoluteHeight = absArmLengthBox.isSelected();
+                    tree.showScale = showScale.isSelected();
                     minPixDist = Integer.parseInt(minTextField.getText());
                     maxPixDist = Integer.parseInt(maxTextField.getText());
                     tree.setPixelHeightLimits(minPixDist, maxPixDist);
                     tree.repaint();
                     viewer.revalidateViewer();
                     viewer.repaint();
+                    viewer.getHeaderComponent().repaint();
                 } catch (NumberFormatException e1) {
                     result = JOptionPane.CANCEL_OPTION;
                     dispose();
