@@ -128,7 +128,6 @@ public class NMFHCLExperimentViewer extends JPanel implements IViewer {
     private boolean showClusters = true;
     private boolean haveColorBar = false;
     protected int exptID = 0;
-    //Added by Sarita
     protected String LabelName;
     
     private int activeCluster = 0;

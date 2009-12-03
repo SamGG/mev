@@ -21,6 +21,7 @@ public class HCLTreeData implements java.io.Serializable {
     public int[] child_2_array;
     public int[] node_order;
     public float[] height;
+    private int function;
     
     public HCLTreeData(){}
     
@@ -78,6 +79,14 @@ public class HCLTreeData implements java.io.Serializable {
      */
     public void setHeight(float[] height) {
         this.height = height;
-    }    
+    }
+
+	public void setFunction(int function) {
+		this.function = function;
+	}
+
+	public int getFunction() {
+		return function;
+	}    
     
 }

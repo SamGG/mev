@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
@@ -61,13 +62,14 @@ public class HCLTree extends JPanel {
     
     protected int orientation = HORIZONTAL;
     protected int min_pixels = 2;
-    protected int max_pixels = 10;
+    protected int max_pixels = 100;
     protected float zero_threshold = 0.05f;
     protected Color lineColor = new Color(0, 0, 128);
     protected Color belowThrColor = Color.lightGray;
     protected Color selectedLineColor = Color.magenta;
     protected boolean actualArms = false;
-	protected boolean useAbsoluteHeight = false;
+	protected boolean useAbsoluteHeight = true;
+	public boolean showScale = true;
     // initial data
     protected IData data;
     // a result data
@@ -89,6 +91,10 @@ public class HCLTree extends JPanel {
     protected int horizontalOffset = 0;
     
     protected IFramework framework;
+	private int function;
+	private float similarityFactor = 1.0f;
+	private float nodeHeightOffset = 0.0f;
+	
     
     /**
      * Constructs a <code>HCLTree</code> for passed result and
@@ -100,16 +106,25 @@ public class HCLTree extends JPanel {
     public HCLTree(HCLTreeData treeData, int orientation) {
         setBackground(Color.white);
         this.treeData = treeData;
+        function = treeData.getFunction();
+	  		
+	  	
         this.orientation = orientation;
         // helpers
         this.flatTree = flatTreeCheck(treeData.height);
         this.minHeight = getMinHeight(treeData.node_order, treeData.height);
+        this.maxHeight = getMaxHeight(treeData.node_order, treeData.height);
         
-        this.maxHeight = getMaxHeight(this.treeData.node_order, treeData.height);
+        setNodeHeightOffset();
+        if (function!=Algorithm.CONSENSUS)//exception for NMF's tree
+        	for (int i=0; i<treeData.height.length; i++)
+        		treeData.height[i] = treeData.height[i]+nodeHeightOffset;
+  		
+        this.minHeight = getMinHeight(treeData.node_order, treeData.height);
+        this.maxHeight = getMaxHeight(treeData.node_order, treeData.height);
         
         this.zero_threshold = minHeight;
         this.terminalNodes = new boolean[this.treeData.height.length];
-        
         
         initializeParentNodeArray();
         
@@ -135,6 +150,66 @@ public class HCLTree extends JPanel {
         addMouseListener(new Listener());
     }
     
+	private void setNodeHeightOffset() {
+		switch (function) {
+		    case Algorithm.PEARSON:
+		    	nodeHeightOffset = 1;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.COSINE:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.COVARIANCE:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.EUCLIDEAN:
+		    	nodeHeightOffset = 0;
+		    	similarityFactor = 1.0f;
+		    	break;
+		    case Algorithm.DOTPRODUCT:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.PEARSONUNCENTERED:
+		    	nodeHeightOffset = 1;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.PEARSONSQARED:
+		    	nodeHeightOffset = 1;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.MANHATTAN:
+		    	nodeHeightOffset = 0;
+		    	similarityFactor = 1.0f;
+		    	break;
+		    case Algorithm.SPEARMANRANK:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.KENDALLSTAU:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    case Algorithm.MUTUALINFORMATION:
+		    	nodeHeightOffset = -minHeight;
+		    	similarityFactor = 1.0f;
+		    	break;
+		    case Algorithm.CONSENSUS:
+		    	nodeHeightOffset = 1;
+		    	similarityFactor = -1.0f;
+		    	break;
+		    default: {
+		    	nodeHeightOffset=-minHeight;
+		    	similarityFactor = -1.0f;
+		    }
+		}
+		System.out.println("nodeHeightOffset = "+ nodeHeightOffset);
+		System.out.println("similarityFactor = "+ similarityFactor);
+		System.out.println("function = "+ function);
+	}
+
 //    private HCLTree() { }
     
     /**
@@ -404,6 +479,17 @@ public class HCLTree extends JPanel {
     }
     
     /**
+     * Returns max height of the tree nodes.
+     */
+    private float getMaxHeight(int[] nodeOrder, float[] height) {
+        float max = Float.MIN_VALUE;
+        for (int i=0; i<nodeOrder.length-1; i++) {
+            max = Math.max(max, height[nodeOrder[i]]);
+        }
+        return max;
+    }
+    
+    /**
      * Returns true if tree is flat
      */
     private boolean flatTreeCheck(float [] height){
@@ -415,17 +501,6 @@ public class HCLTree extends JPanel {
                 return false;
         }
         return true;
-    }
-    
-    /**
-     * Returns max height of the tree nodes.
-     */
-    private float getMaxHeight(int[] nodeOrder, float[] height) {
-        float max = Float.MIN_VALUE;
-        for (int i=0; i<nodeOrder.length-1; i++) {
-            max = Math.max(max, height[nodeOrder[i]]);
-        }
-        return max;
     }
     
     /**
@@ -510,23 +585,23 @@ public class HCLTree extends JPanel {
      * Returns nodes heights in pixels.
      */
   private int[] getPixelHeights(int[] nodeOrder, float[] height) {
-        float scale = getScale();
-        int[] pHeights = new int[nodeOrder.length*2];
-        int node;
-        int child_1, child_2;
-        for (int i=0; i<nodeOrder.length-1; i++) {
-            node = nodeOrder[i];
-            child_1 = treeData.child_1_array[node];
-            child_2 = treeData.child_2_array[node];
-            
-            if (!this.useAbsoluteHeight)
-            pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
-            else
-            	pHeights[node] = Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
-
-        }
-        return pHeights;
-    }
+		float scale = getScale();
+		int[] pHeights = new int[nodeOrder.length*2];
+		int node;
+		int child_1, child_2;
+		for (int i=0; i<nodeOrder.length-1; i++) {
+		    node = nodeOrder[i];
+		    child_1 = treeData.child_1_array[node];
+		    child_2 = treeData.child_2_array[node];
+		    
+		    if (!this.useAbsoluteHeight)
+		    	pHeights[node] = Math.max(pHeights[child_1], pHeights[child_2]) + Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+		    else
+		    	pHeights[node] = Math.max(Math.min((int)Math.round(height[node]*scale), max_pixels), min_pixels);
+		
+		}
+		return pHeights;
+  }
   
   
     /*
@@ -582,9 +657,13 @@ public class HCLTree extends JPanel {
             return;
         }
         int sign = 1;
+        int distToScale;
         if (this.orientation == VERTICAL) {
+        	distToScale = stepSize*this.data.getExperiment().getNumberOfSamples()+ horizontalOffset+5;
             ((Graphics2D)g).rotate(-Math.PI/2.0);
             sign = -1;
+        }else{
+        	distToScale = 5;
         }
         int max_node_height = this.pHeights[this.treeData.node_order[this.treeData.node_order.length-2]];
 
@@ -687,9 +766,51 @@ public class HCLTree extends JPanel {
 	            }
             }
         }
+        if (showScale&&function!=Algorithm.DEFAULT&&this.orientation!=HORIZONTAL){
+	        g.setColor(Color.black);
+	        
+	        //verticle line
+	        g.drawLine(0, distToScale, 
+	        		-(this.max_pixels-1), distToScale);
+	        //top tick
+	        g.drawLine(0, distToScale, 
+	        		0, distToScale+5);
+	        //middle tick
+	        g.drawLine(-(this.max_pixels-1)/2, distToScale, 
+	        		-(this.max_pixels-1)/2, distToScale+5);
+	        //bottom tick
+	        g.drawLine(-(this.max_pixels-1), distToScale, 
+	        		-(this.max_pixels-1), distToScale+5);
+	        
+	
+	        ((Graphics2D)g).rotate(Math.PI/2.0);
+	        //top Label
+	        g.drawString(getMaxHeightDisplay(),
+	        		(distToScale+10),10);
+	        //mid Label
+	        g.drawString(getMidHeightDisplay(),//(this.maxHeight -this.minHeight)/2+this.minHeight),
+	        		(distToScale+10),(this.max_pixels-1)/2+4);
+	        //bottom Label
+	        g.drawString(getMinHeightDisplay(),//this.minHeight),
+	        		(distToScale+10),(this.max_pixels-1));
+	
+	        ((Graphics2D)g).rotate(-Math.PI/2.0);
+        }
     }
-    
-    public void drawWedge(Graphics g, int node, int x1, int x2, int y1, int y2){
+
+	public String getMinHeightDisplay() {
+		return String.valueOf(nodeHeightOffset);
+	}
+	
+	public String getMidHeightDisplay() {
+		return String.valueOf((similarityFactor*(maxHeight - nodeHeightOffset)+nodeHeightOffset)/2);
+	}
+
+	public String getMaxHeightDisplay() {
+		return String.valueOf(similarityFactor*(maxHeight - nodeHeightOffset));
+	}
+
+	public void drawWedge(Graphics g, int node, int x1, int x2, int y1, int y2){
         int [] xs = new int[3];
         int [] ys = new int[3];
         
@@ -784,8 +905,9 @@ public class HCLTree extends JPanel {
             setPreferredSize(new Dimension(width, height));
         }
         else{
-            setSize(this.stepSize*this.treeData.node_order.length, height);
-            setPreferredSize(new Dimension(this.stepSize*this.treeData.node_order.length, height));
+        	int scaleLabel = 100;
+            setSize(this.stepSize*this.treeData.node_order.length + scaleLabel, height);
+            setPreferredSize(new Dimension(this.stepSize*this.treeData.node_order.length + scaleLabel, height));
         }
     }
     

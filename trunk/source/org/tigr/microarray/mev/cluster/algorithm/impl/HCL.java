@@ -423,6 +423,7 @@ public class HCL extends AbstractAlgorithm {
     //            System.out.println("H"+q+" = "+Height[q]);
                 
       //      }
+	result.addParam("function", String.valueOf(function));
 	return result;
     }
     
