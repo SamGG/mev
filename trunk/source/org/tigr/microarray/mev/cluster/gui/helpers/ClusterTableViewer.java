@@ -60,6 +60,7 @@ public class ClusterTableViewer implements IViewer {
     protected static final String COPY_CMD = "copy-cells";
     protected static final String SELECT_ALL_CMD = "select-all-cmd";
     protected static final String SORT_ORIG_ORDER_CMD = "sort-orig-order-cmd";
+    protected static final String TOGGLE_SCALE = "toggle-scale-cmd";
     protected static final String LINK_TO_URL_CMD = "link-to-url-cmd";    
     protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     protected static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
@@ -91,6 +92,7 @@ public class ClusterTableViewer implements IViewer {
     private ClusterTableSearchDialog searchDialog;
     private JMenuItem urlMenuItem;
     private int exptID = 0;
+	private boolean useGlobalMinMax = false;
     
     protected LinkRenderer linkRenderer;
     
@@ -127,6 +129,7 @@ public class ClusterTableViewer implements IViewer {
         this.clusters = clusters;  
         this.fieldNames = data.getFieldNames();
         this.auxTitles = auxTitles;
+        setMinMax();
         if(this.auxTitles == null) {
         	this.auxTitles = new String[0];
         }
@@ -153,7 +156,8 @@ public class ClusterTableViewer implements IViewer {
         this.clusterModel = new ClusterTableModel();
         this.clusterTable = new JTable(clusterModel);
         clusterTable.setCellSelectionEnabled(true);
-        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        clusterTable.setDefaultRenderer(Color.class, new ColorSparklineRenderer(true));
+        clusterTable.setDefaultRenderer(float[].class, new ColorSparklineRenderer(true));
         linkRenderer = new LinkRenderer();
         clusterTable.setDefaultRenderer(AnnoAttributeObj.class, linkRenderer);
       
@@ -484,16 +488,17 @@ public class ClusterTableViewer implements IViewer {
         		columnNames[1] = NO_ANNOTATION;
         		hasAnnotation = false;
         	} else {
-           columnNames = new String[1 + fieldNames.length + auxTitles.length];  
+           columnNames = new String[2 + fieldNames.length + auxTitles.length];  
            int counter;
-            for (counter = 1; counter < fieldNames.length + 1; counter++) {
-                columnNames[counter] = fieldNames[counter - 1];
+            for (counter = 2; counter < fieldNames.length + 2; counter++) {
+                columnNames[counter] = fieldNames[counter - 2];
             }
             for (int i = counter; i < columnNames.length; i++) {
                 columnNames[i] = auxTitles[i - counter];
             }
         }
 	        columnNames[0] = "Stored Color";
+	        columnNames[1] = "Expression line";
         }
 
         public int getColumnCount() {
@@ -511,12 +516,15 @@ public class ClusterTableViewer implements IViewer {
         public Object getValueAt(int row, int col) {
             if (col == 0) {
                 return data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row])) == null? Color.white : data.getProbeColor(experiment.getGeneIndexMappedToData(getSortedCluster()[row]));
+            } else if (col == 1){
+            	return data.getExperiment().getValues()[getSortedCluster()[row]];
+            	//return Color.pink;
             } else if(!hasAnnotation){
-            	return new Integer(row+1);
-            } else if (col < fieldNames.length + 1) {
-            	return data.getElementAnnotationObject(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), fieldNames[col-1]);
+            	return new Integer(row+2);
+            } else if (col < fieldNames.length + 2) {
+            	return data.getElementAnnotationObject(experiment.getGeneIndexMappedToData(getSortedCluster()[row]), fieldNames[col-2]);
             } else {
-				return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 1)]);
+				return String.valueOf(auxData[getSortedCluster()[row]][col - (fieldNames.length + 2)]);
 
             }
         }
@@ -582,7 +590,7 @@ public class ClusterTableViewer implements IViewer {
         }
         
         int[] sortedIndices = new int[getCluster().length];
-        if (column == 0) {
+        if (column < 2) {
             double[] origArray = new double[getCluster().length];
             for (int i = 0; i < origArray.length; i++) {
                 Color currColor = data.getProbeColor(experiment.getGeneIndexMappedToData(getCluster()[i])) == null? Color.white : data.getProbeColor(experiment.getGeneIndexMappedToData(getCluster()[i]));
@@ -594,11 +602,11 @@ public class ClusterTableViewer implements IViewer {
                 sortedIndices[i] = getCluster()[sortedPrimaryIndices[i]];
             }            
             
-        } else if (column < fieldNames.length +1) {
+        } else if (column < fieldNames.length +2) {
             SortableField[] sortFields = new SortableField[getCluster().length];
             for (int i = 0; i < sortFields.length; i++) {
                 int currIndex = getCluster()[i];
-                String currField = data.getElementAttribute(experiment.getGeneIndexMappedToData(getCluster()[i]), column - 1);
+                String currField = data.getElementAttribute(experiment.getGeneIndexMappedToData(getCluster()[i]), column - 2);
                 sortFields[i] = new SortableField(currIndex, currField);
             }
             
@@ -607,16 +615,16 @@ public class ClusterTableViewer implements IViewer {
                 sortedIndices[i] = sortFields[i].getIndex();
             }
         } else {
-            int obType = getObjectType(auxData[0][column - (fieldNames.length +1)]);
+            int obType = getObjectType(auxData[0][column - (fieldNames.length +2)]);
             if ((obType == ExperimentUtil.DOUBLE_TYPE) || (obType == ExperimentUtil.FLOAT_TYPE) || (obType == ExperimentUtil.INTEGER_TYPE)) {
                 double[] origArray = new double[getCluster().length];
                 for (int i = 0; i < origArray.length; i++) {
                     if (obType == ExperimentUtil.DOUBLE_TYPE) {
-                        origArray[i] = ((Double)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
+                        origArray[i] = ((Double)(auxData[getCluster()[i]][column - (fieldNames.length + 2)])).doubleValue();
                     } else if (obType == ExperimentUtil.FLOAT_TYPE) {
-                        origArray[i] = ((Float)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
+                        origArray[i] = ((Float)(auxData[getCluster()[i]][column - (fieldNames.length + 2)])).doubleValue();
                     } else if (obType == ExperimentUtil.INTEGER_TYPE) {
-                        origArray[i] = ((Integer)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).doubleValue();
+                        origArray[i] = ((Integer)(auxData[getCluster()[i]][column - (fieldNames.length + 2)])).doubleValue();
                     }
                 }
                 QSort sortArray = new QSort(origArray);
@@ -628,7 +636,7 @@ public class ClusterTableViewer implements IViewer {
                 SortableField[] sortFields = new SortableField[getCluster().length];
                 for (int i = 0; i < sortFields.length; i++) {
                     int currIndex = getCluster()[i];
-                    String currField = ((Boolean)(auxData[getCluster()[i]][column - (fieldNames.length + 1)])).toString();
+                    String currField = ((Boolean)(auxData[getCluster()[i]][column - (fieldNames.length + 2)])).toString();
                     sortFields[i] = new SortableField(currIndex, currField);
                 }
                 
@@ -640,7 +648,7 @@ public class ClusterTableViewer implements IViewer {
                 SortableField[] sortFields = new SortableField[getCluster().length];
                 for (int i = 0; i < sortFields.length; i++) {
                     int currIndex = getCluster()[i];
-                    String currField = (String)(auxData[getCluster()[i]][column - (fieldNames.length + 1)]);
+                    String currField = (String)(auxData[getCluster()[i]][column - (fieldNames.length + 2)]);
                     sortFields[i] = new SortableField(currIndex, currField);
                 }
                 
@@ -929,6 +937,11 @@ public class ClusterTableViewer implements IViewer {
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
+        menuItem = new JMenuItem("Toggle global/gene sparkline scale ", GUIFactory.getIcon("TableViewerResult.gif"));
+        menuItem.setActionCommand(TOGGLE_SCALE);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
         //menuItem.addActionListener(listener);
         //menu.add(menuItem);   
      
@@ -1025,7 +1038,12 @@ public class ClusterTableViewer implements IViewer {
     private void onSetDefaultColor() {
 	setClusterColor(null);
     }  
-    
+
+	   
+	private void toggleScale() {
+		useGlobalMinMax = !useGlobalMinMax;
+		clusterTable.repaint();
+	}
     /**
      * The class to listen to mouse and action events.
      */
@@ -1059,6 +1077,8 @@ public class ClusterTableViewer implements IViewer {
                 clusterTable.selectAll();
             } else if (command.equals(SORT_ORIG_ORDER_CMD)) {
                 sortInOrigOrder();
+            } else if (command.equals(TOGGLE_SCALE)) {
+                toggleScale();
             } else if (command.equals(LINK_TO_URL_CMD)) {
                 linkToURL2();
             } else if (command.equals(BROADCAST_MATRIX_GAGGLE_CMD)) {
@@ -1071,7 +1091,7 @@ public class ClusterTableViewer implements IViewer {
 	        	broadcastGeneClusterToGenomeBrowser();
             }
 	}
-	   
+
 	public void mouseReleased(MouseEvent event) {
             //System.out.println("Mouse released");
 	    maybeShowPopup(event);
@@ -1101,36 +1121,40 @@ public class ClusterTableViewer implements IViewer {
 	}
     }
     
-    public class ColorRenderer extends JLabel implements TableCellRenderer {
+    public class ColorSparklineRenderer extends JLabel implements TableCellRenderer {
         Border unselectedBorder = null;
         Border selectedBorder = null;
         boolean isBordered = true;
         
-        public ColorRenderer(boolean isBordered) {
+        public ColorSparklineRenderer(boolean isBordered) {
             this.isBordered = isBordered;
             setOpaque(true); //MUST do this for background to show up.
         }
         
         public Component getTableCellRendererComponent(JTable table, Object color, boolean isSelected, boolean hasFocus, int row, int column) {
-            Color newColor = (Color)color;
-            setBackground(newColor);
-            if (isBordered) {
-                if (isSelected) {
-                    if (selectedBorder == null) {
-                        selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                        table.getSelectionBackground());
-                    }
-                    setBorder(selectedBorder);
-                } else {
-                    if (unselectedBorder == null) {
-                        unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
-                        table.getBackground());
-                    }
-                    setBorder(unselectedBorder);
-                }
-            }          
-            //setToolTipText(...); //Discussed in the following section
-            return this;
+        	if (color.getClass()==Color.class){
+	            Color newColor = (Color)color;
+	            setBackground(newColor);
+	            if (isBordered) {
+	                if (isSelected) {
+	                    if (selectedBorder == null) {
+	                        selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+	                        table.getSelectionBackground());
+	                    }
+	                    setBorder(selectedBorder);
+	                } else {
+	                    if (unselectedBorder == null) {
+	                        unselectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+	                        table.getBackground());
+	                    }
+	                    setBorder(unselectedBorder);
+	                }
+	            }          
+	            //setToolTipText(...); //Discussed in the following section
+	            return this;
+        	} else {
+        		return new Sparkline((float[])color);
+        	}
         }
     }
 
@@ -1177,7 +1201,8 @@ public class ClusterTableViewer implements IViewer {
         
         //this.fieldNames = data.getFieldNames();
         
-        clusterTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
+        clusterTable.setDefaultRenderer(Color.class, new ColorSparklineRenderer(true));
+        clusterTable.setDefaultRenderer(float[].class, new ColorSparklineRenderer(true));
         TableColumn column = null;
         for (int i = 0; i < clusterModel.getColumnCount(); i++) {
             column = clusterTable.getColumnModel().getColumn(i);
@@ -1280,6 +1305,50 @@ public class ClusterTableViewer implements IViewer {
         }
     }
 
+	float globalMin = Float.POSITIVE_INFINITY;
+	float globalMax = Float.NEGATIVE_INFINITY;
+    private void setMinMax(){
+    	for (int i=0; i<this.experiment.getNumberOfGenes(); i++){
+    		for (int j=0; j<this.experiment.getNumberOfSamples(); j++){
+    			globalMin = (experiment.getValues()[i][j]<globalMin ? experiment.getValues()[i][j] : globalMin);
+    			globalMax = (experiment.getValues()[i][j]>globalMax ? experiment.getValues()[i][j] : globalMax);
+    			
+    		}
+    	}
+    }
+    
+    @SuppressWarnings("serial")
+	public class Sparkline extends JLabel {
+    	float[] values;
+    	float geneMin = Float.POSITIVE_INFINITY;
+    	float geneMax = Float.NEGATIVE_INFINITY;
+    	public Sparkline(float[] values){
+    		this.values = values;
+    		for (int i=0; i<values.length; i++){
+    			geneMin = (values[i]<geneMin ? values[i] : geneMin);
+    			geneMax = (values[i]>geneMax ? values[i] : geneMax);
+    		}
+    		this.setBackground(Color.blue);
+    		repaint();
+    	}
+        /**
+         * Paint component into specified graphics.
+         */
+        public void paint(Graphics g) {
+            super.paint(g);
+            float min = useGlobalMinMax ? globalMin : geneMin;
+            float max = useGlobalMinMax ? globalMax : geneMax;
+            g.setColor(Color.blue);
+    		for (int i=0; i<values.length-1; i++){
+    			g.drawLine(
+    					(int)(((float)i/(float)(values.length-1))*this.getWidth()), 
+    					(int)(this.getHeight()*(values[i]-max)/(min-max)), 
+    					(int)(((float)(i+1)/(float)(values.length-1))*this.getWidth()), 
+    					(int)(this.getHeight()*(values[i+1]-max)/(min-max)));
+    		}
+        }
+    }
+    
     public class LinkListener extends MouseAdapter {
         public void mouseEntered(MouseEvent event) {
         	xRow = clusterTable.rowAtPoint(event.getPoint());
