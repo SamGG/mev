@@ -95,7 +95,7 @@ public class ISlideDataPersistenceDelegate extends
 			}
 		} catch (Exception ioe){
 			ioe.printStackTrace();
-			System.out.println("Can't write to file to save FloatMatrix");
+			System.out.println("Can't write to file to save FloatSlideData");
 			return null;
 		}
 		return e;

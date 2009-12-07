@@ -10,8 +10,10 @@ import javax.swing.JOptionPane;
 import org.systemsbiology.gaggle.core.*;
 import org.systemsbiology.gaggle.core.datatypes.*;
 import org.systemsbiology.gaggle.geese.common.*;
+import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.TMEV;
@@ -250,6 +252,49 @@ public class GooseImpl implements Goose, GaggleConnectionListener {
 	public void handleMatrix(String sourceGoose, DataMatrix matrix)
 			throws RemoteException {
 
+		IChipAnnotation chipAnno = new MevChipAnnotation();
+		chipAnno.setSpeciesName(matrix.getSpecies());
+		
+		Tuple metaData = matrix.getMetadata();
+		@SuppressWarnings("unused")
+		String identifier;
+		@SuppressWarnings("unused")
+		String logStatus;
+		int dataType = IData.DATA_TYPE_AFFY_ABS;
+		if (metaData != null) {
+			List<Single> singles = metaData.getSingleList();
+			for (Single thisSingle : singles) {
+				if (thisSingle.getName().equals(GaggleConstants.MEV_METADATA)) {
+					try {
+						Tuple mevMetaData = (Tuple) thisSingle.getValue();
+						List<Single> items = mevMetaData.getSingleList();
+						for (Single item : items) {
+							String itemname = item.getName();
+							if (itemname.equals(GaggleConstants.DATA_TYPE)) {
+								String untranslatedDataType = item.getValue().toString();
+								dataType = GaggleTranslater.translateDataType(untranslatedDataType);
+								chipAnno.setDataType(new Integer(dataType)
+										.toString());
+							}
+							if (itemname.equals(GaggleConstants.ARRAY_NAME)) {
+								chipAnno
+										.setChipName(item.getValue().toString());
+								chipAnno
+										.setChipType(item.getValue().toString());
+							}
+							if (itemname.equals(GaggleConstants.LOG_STATUS))
+								logStatus = item.getValue().toString();
+						}
+					} catch (ClassCastException cce) {
+						// Someone put the wrong thing into this location
+					}
+				}
+				if (thisSingle.getName()
+						.equals(GaggleConstants.IDENTIFIER_TYPE)) {
+					identifier = thisSingle.getValue().toString();
+				}
+			}
+		}
 		float cy3, cy5;
 		String[] moreFields = new String[1];
 		final int rColumns = 1;
@@ -308,9 +353,14 @@ public class GooseImpl implements Goose, GaggleConnectionListener {
 			}
 
 			moreFields[0] = rowTitles[r];
-			SlideDataElement sde = new SlideDataElement(
+			ISlideDataElement sde;
+
+			sde = new SlideDataElement(
 					String.valueOf(row + 1), rows, columns, new float[2],
 					moreFields);
+			if(dataType == IData.DATA_TYPE_AFFY_ABS) 
+				sde = new AffySlideDataElement(sde);
+			
 			slideDataArray[0].addSlideDataElement(sde);
 
 			for (int i = 0; i < slideDataArray.length; i++) {
@@ -323,49 +373,7 @@ public class GooseImpl implements Goose, GaggleConnectionListener {
 					maxval = cy5;
 			} // for i
 		} // for r
-		IChipAnnotation chipAnno = new MevChipAnnotation();
-		chipAnno.setSpeciesName(matrix.getSpecies());
 
-		Tuple metaData = matrix.getMetadata();
-		@SuppressWarnings("unused")
-		String identifier;
-		@SuppressWarnings("unused")
-		String logStatus;
-		int dataType = IData.DATA_TYPE_AFFY_ABS;
-		if (metaData != null) {
-			List<Single> singles = metaData.getSingleList();
-			for (Single thisSingle : singles) {
-				if (thisSingle.getName().equals(GaggleConstants.MEV_METADATA)) {
-					try {
-						Tuple mevMetaData = (Tuple) thisSingle.getValue();
-						List<Single> items = mevMetaData.getSingleList();
-						for (Single item : items) {
-							String itemname = item.getName();
-							if (itemname.equals(GaggleConstants.DATA_TYPE)) {
-								String untranslatedDataType = item.getValue().toString();
-								dataType = GaggleTranslater.translateDataType(untranslatedDataType);
-								chipAnno.setDataType(new Integer(dataType)
-										.toString());
-							}
-							if (itemname.equals(GaggleConstants.ARRAY_NAME)) {
-								chipAnno
-										.setChipName(item.getValue().toString());
-								chipAnno
-										.setChipType(item.getValue().toString());
-							}
-							if (itemname.equals(GaggleConstants.LOG_STATUS))
-								logStatus = item.getValue().toString();
-						}
-					} catch (ClassCastException cce) {
-						// Someone put the wrong thing into this location
-					}
-				}
-				if (thisSingle.getName()
-						.equals(GaggleConstants.IDENTIFIER_TYPE)) {
-					identifier = thisSingle.getValue().toString();
-				}
-			}
-		}
 		listener.expressionDataReceived(slideDataArray, chipAnno, dataType);
 	}
 	
