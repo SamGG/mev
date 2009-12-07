@@ -32,7 +32,7 @@ public class BooleanArrayPersistenceDelegate extends PersistenceDelegate {
 	        return new Expression((BooleanArray) oldInstance, this.getClass(), "readBooleanArray",
 					new Object[]{outputFile.getName()});
 		} catch (IOException ioe){
-			System.out.println("Can't write to file to save FloatMatrix");
+			System.out.println("Can't write to file to save BooleanArray.");
 			return null;
 		}
 	}
