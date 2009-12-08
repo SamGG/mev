@@ -36,6 +36,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
@@ -54,11 +55,12 @@ public class GSEAGUI implements IClusterGUI {
 	    //max_columns decides the number of columns to display in the
 	    //table viewer
 	    int max_columns;
-	    private int[][]geneset_clusters;
+	   
 	    private  AlgorithmData algData = new AlgorithmData();
 	    private HashMap<String, LinkedHashMap<String, Float>>orderedTestStats=new HashMap<String, LinkedHashMap<String, Float>>();
 	    private HashMap<String, LinkedHashMap<String, Float>>descendingSortedTStats=new HashMap<String, LinkedHashMap<String, Float>>();
-	 	
+	    private Geneset[]geneset=null;
+		private IGeneData[]gData=null;
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
 	
 		this.experiment = framework.getData().getExperiment();
@@ -71,8 +73,7 @@ public class GSEAGUI implements IClusterGUI {
 		
 		
 		Geneset[]gset=null;
-		Geneset[]geneset=null;
-		IGeneData[]gData=null;
+		
 		
 		algData.addMatrix("matrix",matrix);
 					
@@ -193,28 +194,18 @@ public class GSEAGUI implements IClusterGUI {
 			this.max_columns=((GeneData)gData[0]).get_max_num_probes_mapping_to_gene();
 			
 			//Add code to generate a 2-d integer array 
-			geneset_clusters=GenesettoProbeMapping(gData, geneset);
+			//geneset_clusters=GenesettoProbeMapping(gData, geneset);
 			
 			
 			//add clusters, means, and variances---Move it to gesa util.java 
-			FloatMatrix clusterMeans = this.getMeans(matrix, geneset_clusters);
-			FloatMatrix clusterVars = this.getVariances(matrix, clusterMeans, geneset_clusters);
-			algData.addIntMatrix("clusters", geneset_clusters);
-			algData.addMatrix("cluster-means", clusterMeans);
-			algData.addMatrix("cluster-variances", clusterVars);
+//			FloatMatrix clusterMeans = this.getMeans(matrix, geneset_clusters);--commented for testing
+//			FloatMatrix clusterVars = this.getVariances(matrix, clusterMeans, geneset_clusters);--commented for testing
+//			algData.addIntMatrix("clusters", geneset_clusters);--commented for testing
+//			algData.addMatrix("cluster-means", clusterMeans);--commented for testing
+//			algData.addMatrix("cluster-variances", clusterVars);--commented for testing
 		//Move ends
 			
-			/*Printing the gene to probe mapping
-			for(int i=0; i<geneset_clusters.length; i++){
-				System.out.println("Gene set cluster"+i);
-				int[] temp=geneset_clusters[i];
-				for(int j=0; j<temp.length; j++){
-					System.out.print(temp[j]);
-					System.out.print('\t');
-				}
-				System.out.println("----------------------------");
-				System.out.println();
-			}*/
+		
 			
 			if(result.getMappings("over-enriched") == null)
 	            resultNode = createEmptyResultNode(result);
@@ -319,27 +310,34 @@ public class GSEAGUI implements IClusterGUI {
 
 					
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-		GSEAExperimentViewer expViewer = new GSEAExperimentViewer(experiment, geneset_clusters);
-		GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, geneset_clusters);
+		//GSEAExperimentViewer expViewer = new GSEAExperimentViewer(experiment, geneset_clusters);
+	//	GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, geneset_clusters);----commented for testing
 	
-		float [][] means = result.getMatrix("cluster-means").A;
-    	float [][] vars = result.getMatrix("cluster-variances").A;
+//		float [][] means = result.getMatrix("cluster-means").A;--commented for testing
+//    	float [][] vars = result.getMatrix("cluster-variances").A;--commented for testing
     	String[]header1= {"Gene set", "Incremental J-G score"};
     	String[]header2= {"Gene set", "Test Statistic"};
-        centroidViewer.setMeans(means);
-        centroidViewer.setVariances(vars);
+//        centroidViewer.setMeans(means);--commented for testing
+//        centroidViewer.setVariances(vars);--commented for testing
 		DefaultMutableTreeNode clusterNode;
-		
+		int[]cols=new int[experiment.getNumberOfSamples()];
+		for(int i=0; i<experiment.getNumberOfSamples(); i++) {
+			cols[i]=i;
+		}
 	
 		
 		//Generate a 2 d string array from the over and under enriched linked hashmaps
 		Object[]gene_set_names=result.getMappings("over-enriched").keySet().toArray();
 		//Loop generates a folder for every gene set. Each folder/geneset has an experiment viewer, centroid viewer and table viewer
 		  for (int i=0; i<gene_set_names.length; i++) {
+			  int[][]clusters=new int[1][];
+			  clusters=GenesettoProbeMapping(gData, geneset, (String)gene_set_names[i]);
+			  GSEAExperimentViewer expViewer=new GSEAExperimentViewer(experiment, clusters);
 	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names[i]);
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+	            //clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
+	            //clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
+	          //  clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names[i])))));
 	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names[i])));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));
@@ -350,6 +348,7 @@ public class GSEAGUI implements IClusterGUI {
 	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1,temp );
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading edge genes", tabViewer)));
 	            node.add(clusterNode);
+	            
 	        }
 	 	 		
 		root.add(node);
@@ -534,14 +533,14 @@ public class GSEAGUI implements IClusterGUI {
     * 
     * 
     */
-   private int[][]GenesettoProbeMapping(IGeneData[] gData, Geneset[]gset){
+   private int[][]GenesettoProbeMapping(IGeneData[] gData, Geneset[]gset, String name){
 	   
 	   int genesetIndex=0;
 	 
 	   int geneDataElementIndex=0;
-		   
+	 
 	   //The size of geneset_clusters would be equal to the number of gene sets 
-	   geneset_clusters=new int[gset.length][];
+	   int[][]geneset_clusters=new int[1][];
 	   
 	   //Vector containing the indices of probes mapping to a gene
 	   Vector probe_mappings;
@@ -549,8 +548,16 @@ public class GSEAGUI implements IClusterGUI {
 	   //integer array of probe_mappings
 	   int[]probe_mappings_array;
 	   
-	   //Iterate over gene sets
-	   while(genesetIndex<gset.length){
+	   //Iterate over gene sets till you find the desired one
+	   for(int index=0; index<gset.length; index++) {
+		   if(gset[index].getGeneSetName().equalsIgnoreCase(name)) {
+			   genesetIndex=index;
+		   		break;
+		   }
+	   }
+	   
+	   
+	   
 		   int genesetElementIndex=0;
 		   //Fetch the array list containing  gene set elements
 		   ArrayList<IGeneSetElement> gsElementList=gset[genesetIndex].getGenesetElements();
@@ -576,16 +583,13 @@ public class GSEAGUI implements IClusterGUI {
 		   } //Gene set elements while loop ends
 		   //Populate the probe_mappings_array
 		   probe_mappings_array=new int[probe_mappings.size()];
+		   geneset_clusters=new int[1][probe_mappings.size()];
 		   for(int index=0; index<probe_mappings.size(); index++){
-			   probe_mappings_array[index]=((Integer)probe_mappings.get(index)).intValue();
+			   geneset_clusters[0][index]=((Integer)probe_mappings.get(index)).intValue();
 		   }
 		   
-		   geneset_clusters[genesetIndex]=probe_mappings_array;
-		   genesetIndex=genesetIndex+1;
-		   
-	   }//outer while loop ends
-	   
-	   
+		 
+	
 	   
 	   return geneset_clusters;
    }

@@ -14,7 +14,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl.gsea;
 public interface IGeneData {
 
 	public String getSlideName();
-	
+	                                                    
 	public IGeneDataElement getGeneDataElement(int index);
 	
 	public IGeneDataElement getGeneDataElement(String gene);

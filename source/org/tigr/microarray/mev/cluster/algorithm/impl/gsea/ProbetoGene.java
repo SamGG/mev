@@ -171,13 +171,12 @@ public class ProbetoGene {
 
 			while (count < geneRows && found == false) {
 				String requiredID = (String) unique_genes_in_data.get(count);
-
+				
 				if (currentID.equalsIgnoreCase(requiredID)) {
 					gde = (GeneDataElement) gdata[0].getGeneDataElement(count);
 
 					if (!gde.getProbeID().contains(probeID)) {
-						// System.out.println("probeID:"+probeID);
-						// System.out.println("probePosition:"+index);
+						
 						gde.setProbeID(probeID);
 						gde.setProbePosition(index);
 					}
@@ -203,6 +202,12 @@ public class ProbetoGene {
 		}// End of for loop
 
 		
+			 System.out.print("GeneID:"+gdata[0].getGeneDataElement(0).getGeneIdentifier());
+			 System.out.print("\t");
+			 for(int j=0; j<gdata[0].getGeneDataElement(0).getProbePosition().size(); j++) {
+				 System.out.println("probeName:"+gdata[0].getGeneDataElement(0).getProbeID().get(j));
+			 System.out.println("probePosition:"+gdata[0].getGeneDataElement(0).getProbePosition().get(j));
+			 }
 		/**
 		 * Use the float matrix contained in the AlgorithmData, to populate the
 		 * expression values in GeneDataElement. The original values obtained

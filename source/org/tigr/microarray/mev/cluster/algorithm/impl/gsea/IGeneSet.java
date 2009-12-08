@@ -16,7 +16,7 @@ import java.util.Vector;
 public interface IGeneSet {
 	/**
 	 * This identifier is static because the gene identifier used has to be uniform across all the genesets
-	 */
+	 */  
 	static String GSEAConstant=new String();
 	
 	public String getGeneSetName();

@@ -11,16 +11,7 @@ public class GSEAExperimentViewer extends ExperimentViewer{
 	private String [][] auxData;
 	
 	
-	 /**
-	  * TO DO: Delete this, if not needed
-     * Constructs a <code>GSEAExperimentViewer</code> with specified
-     * experiment and clusters.
-     */
-    public GSEAExperimentViewer(GSEAExperiment experiment) {
-        super(experiment, null);
-    	this.auxData = auxData;
-    	this.auxTitles = auxTitles;
-    }
+	 
    
     /**
      * 
