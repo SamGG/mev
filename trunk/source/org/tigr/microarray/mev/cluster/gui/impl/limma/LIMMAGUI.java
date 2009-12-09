@@ -283,8 +283,8 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
             
             Vector<String> titlesVector = new Vector<String>();
             for (int i = 0; i < geneGroupMeans[0].length; i++) {
-                titlesVector.add("Group " + (i) + " mean");
-                titlesVector.add("Group " + (i) + " std.dev");
+                titlesVector.add("Group " + (i+1) + " mean");
+                titlesVector.add("Group " + (i+1) + " std.dev");
             }
 
             titlesVector.add("F-values");
