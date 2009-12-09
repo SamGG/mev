@@ -145,7 +145,10 @@ public class SAMInitDialog extends AlgorithmDialog {
         unpairedTab = new JTabbedPane();
         unpairedTab.add("Button Selection", gPanel);
         unpairedTab.add("Cluster Selection",unpairedSelector);
-        
+
+        unpairedTab.setSelectedIndex(1);
+        if (repository==null||repository.isEmpty())
+        	unpairedTab.setSelectedIndex(0);
         
         tabPane.add("Two-class unpaired", unpairedTab);
         tcpmPanel = new TwoClassPairedMainPanel();
@@ -184,6 +187,9 @@ public class SAMInitDialog extends AlgorithmDialog {
         oneClassTab = new JTabbedPane();
         oneClassTab.add("Button Selection", oneCPanel);
         oneClassTab.add("Cluster Selection", oneClassPanel);
+        oneClassTab.setSelectedIndex(1);
+        if (repository==null||repository.isEmpty())
+        	oneClassTab.setSelectedIndex(0);
         tabPane.add("One-Class", oneClassTab);
    
         buildConstraints(constraints, 0, 0, 1, 1, 100, 75);
@@ -1844,10 +1850,11 @@ public class SAMInitDialog extends AlgorithmDialog {
                             constraints.fill = GridBagConstraints.BOTH;
                             gridbag.setConstraints(multiClassTab, constraints);
                             multiClassTab.add("Cluster Selection", multiClassSelector);
-                            
+
+                            multiClassTab.setSelectedIndex(1);
+                            if (repository==null||repository.isEmpty())
+                            	multiClassTab.setSelectedIndex(0);
                             MultiClassPanel.this.add(multiClassTab);
-                            //MultiClassPanel.this.add(mulgPanel);
-                            //MultiClassPanel.this.add(dummyButton);
                             MultiClassPanel.this.validate();
                             ngPanel.okButton.setEnabled(false);
                             ngPanel.numGroupsField.setEnabled(false);

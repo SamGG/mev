@@ -210,6 +210,9 @@ public class OneWayANOVAInitBox extends AlgorithmDialog {
                             clusterSelector = new ClusterSelector(repository, numGroups);
                             tabbedmulg.add("Button Selection", mulgPanel);
                             tabbedmulg.add("Cluster Selection", clusterSelector);
+                            tabbedmulg.setSelectedIndex(1);
+                            if (repository==null||repository.isEmpty())
+                            	tabbedmulg.setSelectedIndex(0);
                             buildConstraints(constraints, 0, 1, 1, 1, 0, 90);
                             constraints.fill = GridBagConstraints.BOTH;
                             gridbag.setConstraints(tabbedmulg, constraints);

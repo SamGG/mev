@@ -246,6 +246,9 @@ public class TtestInitDialog extends AlgorithmDialog {
         oneClassTab = new JTabbedPane();
         oneClassTab.add("Button Selection", oPanel);
         oneClassTab.add("Cluster Selection", oneClassPanel);
+        oneClassTab.setSelectedIndex(1);
+        if (repository==null||repository.isEmpty())
+        	oneClassTab.setSelectedIndex(0);
         oneClassTab.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 pPanel.tDistButton.setSelected(true);
@@ -270,6 +273,9 @@ public class TtestInitDialog extends AlgorithmDialog {
         betweenSubsTab.add("Button Selection", gPanel);
         clusterSelector = new ClusterSelector(repository, 2);
         betweenSubsTab.add("Cluster Selection",clusterSelector);
+        betweenSubsTab.setSelectedIndex(1);
+        if (repository==null||repository.isEmpty())
+        	betweenSubsTab.setSelectedIndex(0);
         betweenSubsTab.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 pPanel.tDistButton.setSelected(true);
