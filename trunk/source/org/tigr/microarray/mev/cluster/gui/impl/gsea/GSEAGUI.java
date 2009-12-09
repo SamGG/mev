@@ -158,16 +158,7 @@ public class GSEAGUI implements IClusterGUI {
 			//Add to Algorithm Data, so that can access from viewers
 			algData.addVector("excluded-gene-sets", rgset.getExcludedGeneSets());
 			
-			
-			
-			/****
-			 *@TO Do:  I think i may need to add a function to probetoGene that returns GSEAExperiment.
-			 * No way of passing it around otherwise. ?
-			 */
-			
-			
-			
-			
+		
 			
 			}catch(Exception e){
 				e.printStackTrace();
@@ -192,21 +183,8 @@ public class GSEAGUI implements IClusterGUI {
 			//The reason being one Gene may map to one probe and another to ten. 
 			 
 			this.max_columns=((GeneData)gData[0]).get_max_num_probes_mapping_to_gene();
-			
-			//Add code to generate a 2-d integer array 
-			//geneset_clusters=GenesettoProbeMapping(gData, geneset);
-			
-			
-			//add clusters, means, and variances---Move it to gesa util.java 
-//			FloatMatrix clusterMeans = this.getMeans(matrix, geneset_clusters);--commented for testing
-//			FloatMatrix clusterVars = this.getVariances(matrix, clusterMeans, geneset_clusters);--commented for testing
-//			algData.addIntMatrix("clusters", geneset_clusters);--commented for testing
-//			algData.addMatrix("cluster-means", clusterMeans);--commented for testing
-//			algData.addMatrix("cluster-variances", clusterVars);--commented for testing
-		//Move ends
-			
-		
-			
+	
+						
 			if(result.getMappings("over-enriched") == null)
 	            resultNode = createEmptyResultNode(result);
 			else
@@ -282,7 +260,6 @@ public class GSEAGUI implements IClusterGUI {
    private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
 		DefaultMutableTreeNode node = null;
 		
-		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
 			addPValueGraphImage(node, result);
 			addTableViews(node, result, experiment, idata);
@@ -310,21 +287,11 @@ public class GSEAGUI implements IClusterGUI {
 
 					
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-		//GSEAExperimentViewer expViewer = new GSEAExperimentViewer(experiment, geneset_clusters);
-	//	GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, geneset_clusters);----commented for testing
-	
-//		float [][] means = result.getMatrix("cluster-means").A;--commented for testing
-//    	float [][] vars = result.getMatrix("cluster-variances").A;--commented for testing
+		
     	String[]header1= {"Gene set", "Incremental J-G score"};
     	String[]header2= {"Gene set", "Test Statistic"};
-//        centroidViewer.setMeans(means);--commented for testing
-//        centroidViewer.setVariances(vars);--commented for testing
 		DefaultMutableTreeNode clusterNode;
-		int[]cols=new int[experiment.getNumberOfSamples()];
-		for(int i=0; i<experiment.getNumberOfSamples(); i++) {
-			cols[i]=i;
-		}
-	
+		
 		
 		//Generate a 2 d string array from the over and under enriched linked hashmaps
 		Object[]gene_set_names=result.getMappings("over-enriched").keySet().toArray();
@@ -332,12 +299,16 @@ public class GSEAGUI implements IClusterGUI {
 		  for (int i=0; i<gene_set_names.length; i++) {
 			  int[][]clusters=new int[1][];
 			  clusters=GenesettoProbeMapping(gData, geneset, (String)gene_set_names[i]);
-			  GSEAExperimentViewer expViewer=new GSEAExperimentViewer(experiment, clusters);
+			
+				FloatMatrix clusterMeans = this.getMeans(experiment.getMatrix(), clusters);
+				FloatMatrix clusterVars = this.getVariances(experiment.getMatrix(), clusterMeans, clusters);
+				GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, clusters);
+				centroidViewer.setMeans(clusterMeans.A);
+				centroidViewer.setVariances(clusterVars.A);
 	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names[i]);
-	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
-	            //clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
-	            //clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", centroidViewer, new CentroidUserObject(i,CentroidUserObject.VARIANCES_MODE))));
-	          //  clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", new GSEAExperimentViewer(experiment, clusters))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph",centroidViewer , new CentroidUserObject(new Integer(0),CentroidUserObject.VARIANCES_MODE))));
+	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(new Integer(0), CentroidUserObject.VALUES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics graph", new TestStatisticViewer(getOrderedTestStats().get((String)gene_set_names[i])))));
 	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names[i])));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));

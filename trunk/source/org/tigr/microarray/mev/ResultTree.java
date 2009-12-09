@@ -831,7 +831,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(testStatValueIcon);
                     } else if(text.indexOf("Leading Edge Graph") != -1){
                         setIcon(leadingEdgeViewerIcon);
-                    } /* CGH Icons */else if (text.equals("Experiment Views")) {
+                    }  else if(text.indexOf("Leading edge genes") != -1){
+                        setIcon(tableIcon);
+                    }/* CGH Icons */else if (text.equals("Experiment Views")) {
                         setIcon(exprViewIcon);
                     } else if(parentText.equals("Experiment Views")) {
                         setIcon(cirViewIcon);

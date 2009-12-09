@@ -202,12 +202,7 @@ public class ProbetoGene {
 		}// End of for loop
 
 		
-			 System.out.print("GeneID:"+gdata[0].getGeneDataElement(0).getGeneIdentifier());
-			 System.out.print("\t");
-			 for(int j=0; j<gdata[0].getGeneDataElement(0).getProbePosition().size(); j++) {
-				 System.out.println("probeName:"+gdata[0].getGeneDataElement(0).getProbeID().get(j));
-			 System.out.println("probePosition:"+gdata[0].getGeneDataElement(0).getProbePosition().get(j));
-			 }
+			
 		/**
 		 * Use the float matrix contained in the AlgorithmData, to populate the
 		 * expression values in GeneDataElement. The original values obtained
