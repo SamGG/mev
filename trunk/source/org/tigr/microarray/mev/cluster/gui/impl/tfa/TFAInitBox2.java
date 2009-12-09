@@ -129,10 +129,10 @@ public class TFAInitBox2 extends AlgorithmDialog {
         
         tabbedSelectors = new JTabbedPane();
         tabbedSelectors.add("Button Selection",gPanel);        
-        //buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
-        //gridbag.setConstraints(clusterSelectorPanel, constraints);
-        //constraints.anchor = GridBagConstraints.PAGE_END;
         tabbedSelectors.add("Cluster Selection",clusterSelectorPanel);
+        tabbedSelectors.setSelectedIndex(1);
+        if (repository==null||repository.isEmpty())
+        	tabbedSelectors.setSelectedIndex(0);
         
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(tabbedSelectors, constraints);
