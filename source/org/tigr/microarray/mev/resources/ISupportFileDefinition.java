@@ -119,8 +119,12 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 	public boolean accept(File dir, String name) {
 		String uniqueName = getUniqueName();
 		int lastIndex = uniqueName.lastIndexOf('.');
-		if(lastIndex <= 0)
+		if(lastIndex <= 0) 
 			lastIndex = uniqueName.length();
+		//Check that suffixes of the files match
+		String suffix = name.substring(name.lastIndexOf('.'), name.length());
+		if(!uniqueName.endsWith(suffix))
+			return false;
 		String prefix = uniqueName.substring(0, lastIndex);
 
 		try {
