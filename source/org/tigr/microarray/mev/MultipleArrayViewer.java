@@ -4342,7 +4342,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         msg += "The annotation for each sample is organized in rows corresponding to the order of the loaded samples.";
         msg += "If annotation is missing for a sample the entry in that sample row may be left blank.  Please see the manual appendix on file formats for more information. </html>";
         
-        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Sample Annotation File Selection", msg, TMEV.getFile("data"), true);
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Sample Annotation File Selection", msg, TMEV.getDataPath(), true);
         dialog.setApproveButtonText("Load");
         dialog.setSize(500, 600);
         if(dialog.showModal() == JFileChooser.APPROVE_OPTION) {
@@ -4372,7 +4372,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         msg += "Note that this file format should conform the MeV annotation file format conventions (.ann) file ";
         msg += "described in the appendix of the manual</html>";
         
-        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getFile("data"), true);
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getDataPath(), true);
         dialog.setFileFilter(new AnnFileFilter());
         dialog.setApproveButtonText("Load");
         dialog.setSize(500, 600);
@@ -4468,7 +4468,7 @@ private void appendResourcererGeneAnnotation() {
         msg += "Note that this file format should conform the MeV Resourcerer annotation file format conventions (.txt) file ";
         msg += "described in the appendix of the manual</html>";
         
-        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getFile("data"), true);
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, TMEV.getDataPath(), true);
         dialog.setFileFilter(new AnnFileFilter());
         dialog.setApproveButtonText("Load");
         dialog.setSize(500, 600);

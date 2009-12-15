@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import org.tigr.microarray.mev.ShowThrowableDialog;
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationURLsFileDefinition;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
@@ -273,7 +274,11 @@ public class FileResourceManager implements IResourceManager {
 					if(cachedFile == null || !cachedFile.exists()) {
 						cachedDateForThisDef = null;
 					} else {
+						try {
 						cachedDateForThisDef = getDateFromFilename(cachedFile, thisDef);
+						} catch (ParseException pe) {
+							cachedDateForThisDef = new Date(0);
+					}
 					}
 					
 					try {
@@ -560,7 +565,12 @@ public class FileResourceManager implements IResourceManager {
 			File latestFile = null;
 			Date newest = new Date(0);
 			for (int i=0; i<versions.length; i++) {
-				Date d = getDateFromFilename(versions[i], def);
+				Date d;
+				try {
+					d = getDateFromFilename(versions[i], def);
+				} catch (ParseException pe) {
+					d = new Date(0);
+				}
 				if(d.after(newest))
 					newest = d;
 				latestFile = versions[i];
@@ -577,7 +587,7 @@ public class FileResourceManager implements IResourceManager {
 	 * @param def
 	 * @return
 	 */
-	private Date getDateFromFilename(File f, ISupportFileDefinition def) {
+	protected static Date getDateFromFilename(File f, ISupportFileDefinition def) throws ParseException {
 		String filename = f.getName();
 		String uniqueName = def.getUniqueName();
 		String prefix = "";
@@ -591,12 +601,8 @@ public class FileResourceManager implements IResourceManager {
 			dateString = filename.substring(prefix.length(), filename.lastIndexOf('.'));
 		else 
 			dateString = filename.substring(prefix.length());
-		try {
 			return stringToDate(dateString);
-		} catch (ParseException pe) {
-			return new Date(0);
 		}
-	}
 	/**
 	 * Creates a datestamped file name for a file of type def, with date d.
 	 * @param def
@@ -618,7 +624,7 @@ public class FileResourceManager implements IResourceManager {
 		return prefix + dateToString(d) + suffix;
 	}
 	
-	private Date stringToDate(String s) throws ParseException {
+	private static Date stringToDate(String s) throws ParseException {
 		DateFormat df = new SimpleDateFormat("_yyyy-MM-dd", new Locale("en"));
 		return df.parse(s);
 	}
@@ -896,13 +902,14 @@ public class FileResourceManager implements IResourceManager {
 		Vector<ISupportFileDefinition> defs = new Vector<ISupportFileDefinition>();
 //		defs.add(new ResourcererAnnotationFileDefinition("C.elegans", "affy_Celegans"));
 //		defs.add(new SupportFileUrlsPropertiesDefinition());
-		defs.add(new EASEImpliesAndURLDataFile());
+//		defs.add(new EASEImpliesAndURLDataFile());
 //		defs.add(new ExpressionDataSupportDataFile("http://www.tm4.org/webstart/mev/TDMS_format_sample.txt", false, FileType.STANFORD));
 		defs.add(new ResourcererAnnotationFileDefinition("Human", "APPLERA_ABI1700"));
-		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
-		defs.add(new ResourcererAnnotationFileDefinition("Rat", "Agilent_RatOligo"));
-		defs.add(new AnnotationURLsFileDefinition());
-//		defs.add(new EASESupportDataFile("Human", "APPLERA_ABI1700"));
+//		defs.add(new ResourcererAnnotationFileDefinition("Human", "affy_HG-U133A"));
+//		defs.add(new ResourcererAnnotationFileDefinition("Rat", "Agilent_RatOligo"));
+//		defs.add(new ResourcererAnnotationFileDefinition("Sugar_Cane", "affy_Sugar_Cane"));
+//		defs.add(new EASEEntrezSupportDataFile("Sugar_Cane", "affy_Sugar_Cane"));
+//		defs.add(new AnnotationURLsFileDefinition());
 //		defs.add(new GseaSupportDataFile("c1.all.v2.5.symbols.gmt"));
 //		defs.add(new GseaSupportDataFile("c2.v2.symbols.gmt"));
 //		defs.add(new AvailableAnnotationsFileDefinition());
@@ -932,7 +939,7 @@ public class FileResourceManager implements IResourceManager {
 					System.out.println("Found file " + thisDef.getUniqueName());
 			}
 		}
-		frm.testGSEADownloads();
+//		frm.testGSEADownloads();
 		
 		//Test retrieving of definitions
 		Enumeration<ISupportFileDefinition> temp = defs.elements();

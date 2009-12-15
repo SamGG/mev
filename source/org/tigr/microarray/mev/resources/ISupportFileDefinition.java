@@ -116,27 +116,39 @@ public abstract class ISupportFileDefinition  implements FilenameFilter{
 	 * Implementation of FilenameFilter returns true if the submitted file name could represent a versioned copy of 
 	 * a file defined by this instance of ISupportFileDefinition. Default implementation 
 	 */
-	public boolean accept(File dir, String name) {
-		String uniqueName = getUniqueName();
-		int lastIndex = uniqueName.lastIndexOf('.');
-		if(lastIndex <= 0) 
-			lastIndex = uniqueName.length();
-		//Check that suffixes of the files match
-		String suffix = name.substring(name.lastIndexOf('.'), name.length());
-		if(!uniqueName.endsWith(suffix))
-			return false;
-		String prefix = uniqueName.substring(0, lastIndex);
+	public boolean accept(File dir, String candidateName) {
+		String referenceName = getUniqueName();
+		String rootReferenceName;
+		int lastIndex = referenceName.lastIndexOf('.');
+		if(lastIndex <= 0) {
+			lastIndex = referenceName.length();
+			rootReferenceName = referenceName;
+		} else {
+			rootReferenceName = referenceName.substring(0, lastIndex);
+		}
+		if(candidateName.contains(new String(".").subSequence(0, 1))) {
+			//Check that suffixes of the files match
+			String suffix = candidateName.substring(candidateName.lastIndexOf('.'), candidateName.length());
 
+			if(!referenceName.endsWith(suffix)) {
+				return false;
+			} 
+			candidateName = candidateName.substring(0, candidateName.lastIndexOf('.'));
+		}
+		String rootCandidateName = "";
+		int last = candidateName.lastIndexOf("_");
+		if(last > 0) {
+			rootCandidateName = candidateName.substring(0, candidateName.lastIndexOf("_"));
+		} 
+		
+		if(!rootCandidateName.equals(rootReferenceName)) {
+			return false;
+		}
 		try {
 			Date temp;
-			DateFormat df = new SimpleDateFormat("_yyyy-MM-dd", new Locale("en"));
 			
-			if(name.contains(".".subSequence(0, 1))) {
-				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length(), name.lastIndexOf('.')));
-			} else {
-				temp = df.parse(name.substring(name.lastIndexOf(prefix)+prefix.length(), name.length()));
-			}
 			
+			temp = FileResourceManager.getDateFromFilename(new File(candidateName), this);
 			return true;
 		} catch (ParseException pe) {
 			return false;

@@ -1003,8 +1003,7 @@ public class MultipleArrayData implements IData {
 		String thisAnnotationValue;
 		for(int i = 0; i < featuresList.size(); i++) {
 			ISlideData thisSlide = getFeature(i);
-			thisSlideFileName = thisSlide.getSlideFileName();
-			thisSlideFileName = thisSlide.getSlideFileName().substring(thisSlideFileName.lastIndexOf(System.getProperty("file.separator"))+1);
+			thisSlideFileName = thisSlide.getSampleAnnotation().getAnnotation(DEFAULT_SAMPLE_ANNOTATION_KEY);
 			if(annotation.containsKey(thisSlideFileName)) {
 				for(int j=0; j< annKeys.length; j++) {
 					thisAnnotationValue = ((String[])annotation.get(thisSlideFileName))[j];
