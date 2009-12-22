@@ -11,9 +11,15 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,6 +28,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -37,6 +44,13 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.resources.FileResourceManager;
+import org.tigr.microarray.mev.resources.GseaMultiSuppFileDefinition;
+import org.tigr.microarray.mev.resources.IMultiSupportFileDefinition;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
+import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.SelectMultiFilesDialog;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.util.FileLoaderUtility;
 import org.tigr.util.swing.GeneMatrixFileFilter;
 import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
@@ -76,13 +90,17 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JTextField pathTextField;
 	private javax.swing.JButton browse;
 	private javax.swing.JPanel autoDownloadPanel;
-	private javax.swing.JLabel downloadGenesetLabel;
-	private javax.swing.JLabel downloadStatusLabel;
+	private javax.swing.JLabel emailAddressLabel;
+	private javax.swing.JTextField emailAddressTextField;
 	private javax.swing.JButton DownloadButton;
-	private javax.swing.JLabel genesetPanelEmptyLabel;
 	private javax.swing.JLabel geneIdentifierLabel;
 	private javax.swing.JComboBox geneIdentifierBox;
+	private javax.swing.JComboBox geneSetSelectionBox;
+	private javax.swing.JLabel genesetSelectionLabel;
+	
 	private String fileFilter=new String();
+
+	private FileResourceManager frm;
 	
 	
 	
@@ -189,42 +207,47 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
         genesetPanel.setBorder(new EtchedBorder());
         
         //Create and Add the radio buttons to choice panel
-//        choicePanel=new JPanel();
-//        choicePanel.setLayout(new GridBagLayout());
-//        
-//        mSigDBbutton=new JRadioButton();
-//        mSigDBbutton.setText("Download from MSigDB");
-//        mSigDBbutton.setSelected(false);
-//        
-//        localFileButton=new JRadioButton();
-//        localFileButton.setText("Load local geneset file/files");
-//        localFileButton.setSelected(true);
-//        
-//        buttonGrp=new ButtonGroup();
-//        buttonGrp.add(mSigDBbutton);
-//        buttonGrp.add(localFileButton);
-//        
-//        gba.add(choicePanel, mSigDBbutton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-//        gba.add(choicePanel, localFileButton, 2, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
-//        
-//        autoDownloadPanel=new JPanel();
-//        autoDownloadPanel.setLayout(new GridBagLayout());
-//        downloadGenesetLabel = new javax.swing.JLabel();
-//        downloadGenesetLabel.setText("Download gene sets from the Broad-MIT FTP site");
-//
-//		genesetPanelEmptyLabel = new javax.swing.JLabel();
-//
-//		DownloadButton = new javax.swing.JButton();
-//		DownloadButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-//		DownloadButton.setPreferredSize(new Dimension(100, 30));
-//		DownloadButton.addActionListener(new Listener());
-//		DownloadButton.setText("Download");
-//
-//		gba.add(autoDownloadPanel, downloadGenesetLabel, 0, 1, 2, 1, 0, 0, GBA.H,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//		gba.add(autoDownloadPanel, genesetPanelEmptyLabel, 1, 1, 1, 1, 0, 0, GBA.H,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//		gba.add(autoDownloadPanel, DownloadButton, 2, 1, GBA.REMAINDER, 1, 0, 0,GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//
-//        
+        choicePanel=new JPanel();
+        choicePanel.setBackground(Color.white);
+        choicePanel.setLayout(new GridBagLayout());
+        
+        genesetSelectionLabel=new JLabel("Gene set selection method");
+               
+        String[] selectionMethods=new String[3];
+        selectionMethods[0]="Load local geneset file/files";
+        selectionMethods[1]="Download from MSigDB";
+        selectionMethods[2]="Download from GeneSigDB";
+        
+        geneSetSelectionBox=new JComboBox(selectionMethods);
+        geneSetSelectionBox.addActionListener(new Listener());
+       
+              
+        gba.add(choicePanel, genesetSelectionLabel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        gba.add(choicePanel, geneSetSelectionBox, 2, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+        
+        autoDownloadPanel=new JPanel();
+        autoDownloadPanel.setBackground(Color.WHITE);
+        autoDownloadPanel.setLayout(new GridBagLayout());
+        
+        emailAddressLabel = new javax.swing.JLabel();
+        emailAddressLabel.setText("Please enter your MSigDB registration email address: ");
+        emailAddressLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+        
+        emailAddressTextField=new JTextField();
+        emailAddressTextField.setPreferredSize(new Dimension(500, 20));
+        emailAddressTextField.setEditable(true);
+
+		DownloadButton = new javax.swing.JButton();
+		DownloadButton.setSize(new Dimension(100, 30));
+		DownloadButton.setPreferredSize(new Dimension(100, 30));
+		DownloadButton.addActionListener(new Listener());
+		DownloadButton.setText("Download");
+
+
+		gba.add(autoDownloadPanel, emailAddressLabel, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(1, 1, 1, 1), 0, 0);
+		gba.add(autoDownloadPanel, emailAddressTextField, 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(1, 1, 1, 1), 0, 0);
+		gba.add(autoDownloadPanel, DownloadButton, 2, 0, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(1, 1, 1, 1), 0, 0);
+
         
         
         //Create and Add components to fileSelectionPanel 
@@ -369,11 +392,8 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
         //Add choicePanel, fileSelectionPanel and identifierSelectionPanel to the geneset panel
         
        
-//        gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//        gba.add(genesetPanel, autoDownloadPanel, 0, 1, 2, 1, 0, 0, GBA.H,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-	//	gba.add(genesetPanel,fileSelectionPanel, 0, 2, 1, 4, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-	  //  gba.add(genesetPanel, identifierSelectionPanel, 0, 6, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-        gba.add(genesetPanel,fileSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+        gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+	    gba.add(genesetPanel,fileSelectionPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
   	    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
        
 	    annotationPanel=new JPanel();
@@ -676,7 +696,72 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		return new File(this.adh.getAnnFilePath());
 	}
 
+	
+	
+	
+	private void BROADDownloads(String emailID) {
+		try {
 		
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
+			
+			//Get the file containing the list of available geneset files.
+			File geneSetList = frm.getSupportFile(new BroadGeneSetList(), true);
+			try {
+				//Parse the list of geneset files into filename strings
+				ArrayList<String> genesetFilenames = BroadGeneSetList.getFileNames(geneSetList);
+
+				//get email address from user
+				String email = emailID;
+				String[] genesetFileNameArray=new String[genesetFilenames.size()];				
+				int index=0;
+				ArrayList<ISupportFileDefinition> defs = new ArrayList<ISupportFileDefinition>();
+				Iterator<String> it = genesetFilenames.iterator();
+				//Add each geneset file name to a String array
+				while(it.hasNext()) {
+					genesetFileNameArray[index] = it.next();
+					index=index+1;
+					
+				}
+				//Ask the resource manager to download a file for each definition
+				SelectMultiFilesDialog dialog = new SelectMultiFilesDialog(new JFrame(), "Select files to download", ((new BroadGeneSetList()).getURL().getHost()), genesetFileNameArray);
+				dialog.setVisible(true);
+				
+				int[] indices = dialog.getSelectedFilesIndices();
+				String[] selectedFiles = new String[indices.length];
+				for(int i=0; i<indices.length; i++) {
+					selectedFiles[i] = genesetFilenames.get(indices[i]);
+					//Create a definition for each geneset file
+				//	System.out.println("Selected file names:"+selectedFiles[i]);
+					defs.add(new BroadGeneSet(selectedFiles[i], email));
+				}
+				
+				
+				Hashtable<ISupportFileDefinition, File> results = frm.getSupportFiles(defs, true);
+				
+				//Check each file for validity, print a list of the valid downloaded files
+				Enumeration<ISupportFileDefinition> e = results.keys();
+				while(e.hasMoreElements()) {
+					ISupportFileDefinition thisDef = e.nextElement();
+					File temp = results.get(thisDef);
+					if(thisDef.isValid(temp))
+						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
+					else 
+						System.out.println("support file not downloaded " + temp.getAbsolutePath());
+				}
+				
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			sfae.printStackTrace();
+		}catch (RepositoryInitializationError rie) {
+			rie.printStackTrace();
+		}
+	}
+	
+	
+	
 	
 	
 	private class Listener implements ActionListener{
@@ -702,6 +787,32 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 				permutationTextField.setText(permutationTextField.getText());
 			}else if (command.equalsIgnoreCase(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
 				processAnnotationFile();
+			}else if(e.getSource().equals(geneSetSelectionBox)) {
+				updateLabel((String)geneSetSelectionBox.getSelectedItem());
+				if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
+					
+					genesetPanel.removeAll();
+					revalidate();
+					gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					gba.add(genesetPanel, autoDownloadPanel, 0, 1, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				    gba.add(genesetPanel, identifierSelectionPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					revalidate();
+
+				}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
+					genesetPanel.removeAll();
+					revalidate();
+					gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					gba.add(genesetPanel,fileSelectionPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					revalidate();
+				}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
+					
+				}
+			}else if(command.equalsIgnoreCase("Download")) {
+				String email=emailAddressTextField.getText();
+				if(!email.isEmpty())
+					BROADDownloads(email);
+				
 			}
 			
 			
