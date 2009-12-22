@@ -74,7 +74,7 @@ public class SelectMultiFilesDialog extends AlgorithmDialog {
 		filelisttable.setColumnSelectionAllowed(false);
 		filelisttable.setCellSelectionEnabled(false);
 		filelisttable.setRowSelectionAllowed(true);
-		filelisttable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		filelisttable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		filelisttable.setDragEnabled(false);
 		
 		addContent(tablePanel);
