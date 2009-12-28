@@ -85,6 +85,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JButton addGenesetButton, addAllGenesetButton, removeGenesetButton, removeAllGenesetButton;
 	private javax.swing.JScrollPane availableScrollPane, selectedScrollPane;
 	private javax.swing.JScrollPane availableGenesetScrollPane, selectedGenesetScrollPane;
+	private javax.swing.JLabel errorMessageLabel;
 	private javax.swing.JTextField pathTextField;
 	private javax.swing.JButton browse;
 	private javax.swing.JPanel autoDownloadPanel;
@@ -95,7 +96,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JComboBox geneIdentifierBox;
 	private javax.swing.JComboBox geneSetSelectionBox;
 	private javax.swing.JLabel genesetSelectionLabel;
-	
+	private String genesetFilePath;
 	private String fileFilter=new String();
 
 	private FileResourceManager frm;
@@ -368,10 +369,14 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		DownloadButton.addActionListener(new Listener());
 		DownloadButton.setText("Download");
 		
+		errorMessageLabel=new javax.swing.JLabel();
+	
+		errorMessageLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+		
 		gba.add(genesetSelectionPanel, emailAddressLabel, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		gba.add(genesetSelectionPanel, emailAddressTextField, 1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		gba.add(genesetSelectionPanel, DownloadButton, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		
+		gba.add(genesetSelectionPanel, errorMessageLabel, 0, 2, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
 		
 
 		genesetListPanel=new JPanel();
@@ -585,12 +590,12 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		if (((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files") && pathTextField.getText().length() != 0) {
 			algData.addParam("gene-set-directory", pathTextField.getText());
 		}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")) {
-			algData.addParam("gene-set-directory",  );
+			algData.addParam("gene-set-directory", this.genesetFilePath );
 		}else {
 			algData.addParam("gene-set-directory", "");
 		}
 
-		if (getFileFilter().equalsIgnoreCase("")) {
+		if (getFileFilter().equalsIgnoreCase("") && ((String)geneIdentifierBox.getSelectedItem()).equalsIgnoreCase("")) {
 			algData.addParam("gene-identifier", "");
 		} else if (getFileFilter().equalsIgnoreCase(
 				"Gene Matrix and Gene Matrix Transpose (*.gmt, *.gmx)")) {
@@ -729,6 +734,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			return selectedFiles;
 		} else if (((String) geneSetSelectionBox.getSelectedItem())
 				.equalsIgnoreCase("Download from MSigDB")) {
+		
 			String[] selectedFiles = new String[selectedGenesetList.getModel()
 					.getSize()];
 			for (int index = 0; index < selectedFiles.length; index++) {
@@ -906,7 +912,8 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 					File temp = results.get(thisDef);
 					if(thisDef.isValid(temp)) {
 						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
-						((DefaultListModel) selectedGenesetList.getModel()).addElement(temp);
+						this.genesetFilePath=temp.getParent();
+						((DefaultListModel) selectedGenesetList.getModel()).addElement(new File(temp.getName()));
 						
 						
 						
@@ -977,9 +984,14 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			}else if(command.equalsIgnoreCase("Download")) {
 				String email=emailAddressTextField.getText();
 				if(!email.isEmpty()) {
+					errorMessageLabel.setText("");
 					BROADDownloads(email);
 					geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
 					geneIdentifierBox.setEnabled(false);
+				}else {
+					String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
+					"</font></html>";
+					errorMessageLabel.setText(eMsg);
 				}
 				
 			}

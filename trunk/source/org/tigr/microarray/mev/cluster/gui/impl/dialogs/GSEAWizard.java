@@ -502,7 +502,8 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 					nextStep();
 					String eMsg=new String();
 					if(algData.getParams().getString("gene-identifier").equals("")||algData.getParams().getString("gene-set-directory").equals("")||algData.getParams().getString("annotation-file").equals("")){
-					eMsg="<html>MeV is missing some required parameters, so you cannot execute...just yet<br>" +
+				
+						eMsg="<html>MeV is missing some required parameters, so you cannot execute...just yet<br>" +
 						"<html>Please make sure that you <br>" +
 						"1. Selected gene identifer present in your gene set file from the drop down list<br>"+
 						"2. Loaded the gene set file AND the annotation file.<br></html>";
