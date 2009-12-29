@@ -19,7 +19,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,7 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -45,8 +43,6 @@ import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.resources.FileResourceManager;
-import org.tigr.microarray.mev.resources.GseaMultiSuppFileDefinition;
-import org.tigr.microarray.mev.resources.IMultiSupportFileDefinition;
 import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.RepositoryInitializationError;
 import org.tigr.microarray.mev.resources.SelectMultiFilesDialog;
@@ -76,22 +72,17 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	//Collects all information pertaining to gene sets
 	private javax.swing.JPanel genesetPanel;
 	private javax.swing.JPanel choicePanel;
-	private javax.swing.JPanel fileSelectionPanel, buttonPanel, listPanel, selectFilePanel, genesetSelectionPanel, genesetListPanel, genesetButtonPanel;
+	private javax.swing.JPanel fileSelectionPanel, buttonPanel, listPanel, selectFilePanel;
 	private javax.swing.JPanel identifierSelectionPanel;
-	private javax.swing.JLabel selectFile, availableLabel, selectedLabel, availableGenesetLabel, selectedGenesetLabel;
+	private javax.swing.JLabel selectFile, availableLabel, selectedLabel;
 	private javax.swing.JList availableList, selectedList;
-	private javax.swing.JList availableGenesetList, selectedGenesetList;
+	
 	private javax.swing.JButton addButton, addAllButton, removeButton, removeAllButton;
-	private javax.swing.JButton addGenesetButton, addAllGenesetButton, removeGenesetButton, removeAllGenesetButton;
 	private javax.swing.JScrollPane availableScrollPane, selectedScrollPane;
-	private javax.swing.JScrollPane availableGenesetScrollPane, selectedGenesetScrollPane;
 	private javax.swing.JLabel errorMessageLabel;
 	private javax.swing.JTextField pathTextField;
 	private javax.swing.JButton browse;
-	private javax.swing.JPanel autoDownloadPanel;
-	private javax.swing.JLabel emailAddressLabel;
-	private javax.swing.JTextField emailAddressTextField;
-	private javax.swing.JButton DownloadButton;
+		
 	private javax.swing.JLabel geneIdentifierLabel;
 	private javax.swing.JComboBox geneIdentifierBox;
 	private javax.swing.JComboBox geneSetSelectionBox;
@@ -223,251 +214,10 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
               
         gba.add(choicePanel, genesetSelectionLabel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
         gba.add(choicePanel, geneSetSelectionBox, 2, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
+       
         
-              
-        
-        //Create and Add components to fileSelectionPanel 
-        fileSelectionPanel=new JPanel();
-        fileSelectionPanel.setLayout(new GridBagLayout());
-        fileSelectionPanel.setBackground(Color.white);
-        
-        selectFilePanel = new JPanel();
-		selectFilePanel.setLayout(new GridBagLayout());
-		selectFilePanel.setBackground(Color.white);
-		
-        selectFile = new JLabel("Select the directory containing your gene sets");
-
-		browse = new JButton("Browse");
-		browse.setSize(new Dimension(100, 30));
-		browse.setPreferredSize(new Dimension(100, 30));
-		browse.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onBrowse();
-			}
-			
-		});
+        createDownloadPanel("Select the directory containing your gene sets", "Browse", "browse");
 	
-		
-		pathTextField = new JTextField();
-		pathTextField.setEditable(false);
-		pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-		pathTextField.setPreferredSize(new Dimension(500, 20));
-		
-		
-		gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(selectFilePanel, browse, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-		
-		
-		listPanel=new JPanel();
-		listPanel.setLayout(new GridBagLayout());
-		listPanel.setBackground(Color.white);
-		availableLabel=new JLabel("Available");
-		selectedLabel=new JLabel("Selected");
-		
-		availableList=new javax.swing.JList(new DefaultListModel());
-		availableList.setName("availableList");
-		selectedList=new javax.swing.JList(new DefaultListModel());
-		selectedList.setName("selectedList");
-		
-		availableScrollPane=new JScrollPane(availableList);
-		availableScrollPane.setPreferredSize(new Dimension(250, 90));
-		selectedScrollPane=new JScrollPane(selectedList);
-		selectedScrollPane.setPreferredSize(new Dimension(250,90));
-		
-		addButton=new JButton("Add");
-		addButton.setPreferredSize(new Dimension(100,20));
-		addButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onAdd("availableList");
-			}
-		});
-		
-		addAllButton=new JButton("Add All");
-		addAllButton.setPreferredSize(new Dimension(100,20));
-		addAllButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onAddAll("availableList");
-			}
-		});
-		
-		removeButton=new JButton("Remove");
-		removeButton.setPreferredSize(new Dimension(100,20));
-		removeButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onRemove("selectedList");
-			}
-			
-		});
-		
-		removeAllButton=new JButton("Remove All");
-		removeAllButton.setPreferredSize(new Dimension(100,20));
-		removeAllButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onRemoveAll("selectedList");
-			}
-			
-		});
-		
-		buttonPanel=new JPanel();
-		buttonPanel.setLayout(new GridBagLayout());
-		buttonPanel.setBackground(Color.white);
-		gba.add(buttonPanel, addButton, 0, 0, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(buttonPanel, addAllButton, 0, 1, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(buttonPanel, removeButton, 0, 2, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(buttonPanel, removeAllButton, 0, 3, 1, 1, 1, 1,
-				GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-
-		
-		
-		
-		gba.add(listPanel, availableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(listPanel, availableScrollPane, 0, 1, 1, 4, 5, 1,
-				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//		gba.add(listPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-//				new Insets(0, 0, 0, 0), 0, 0);
-		gba.add(listPanel, buttonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(listPanel, selectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(listPanel, selectedScrollPane, 2, 1, 1, 4, 5, 1,
-				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-
-		
-		
-		gba.add(fileSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(fileSelectionPanel, listPanel, 0, 2, 1, 1, 1, 1, GBA.B,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		
-		//MSigDB Download panel
-		autoDownloadPanel=new JPanel();
-		autoDownloadPanel.setBackground(Color.WHITE);
-		autoDownloadPanel.setLayout(new GridBagLayout());
-		
-		genesetSelectionPanel=new JPanel();
-		genesetSelectionPanel.setBackground(Color.white);
-		genesetSelectionPanel.setLayout(new GridBagLayout());
-		
-		
-		emailAddressLabel = new javax.swing.JLabel();
-		emailAddressLabel.setText("Please enter your MSigDB registration email address: ");
-		emailAddressLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-
-		emailAddressTextField=new JTextField();
-		emailAddressTextField.setPreferredSize(new Dimension(500, 20));
-		emailAddressTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-		emailAddressTextField.setEditable(true);
-
-		DownloadButton = new javax.swing.JButton();
-		DownloadButton.setSize(new Dimension(100, 30));
-		DownloadButton.setPreferredSize(new Dimension(100, 30));
-		DownloadButton.addActionListener(new Listener());
-		DownloadButton.setText("Download");
-		
-		errorMessageLabel=new javax.swing.JLabel();
-	
-		errorMessageLabel.setHorizontalTextPosition(SwingConstants.LEFT);
-		
-		gba.add(genesetSelectionPanel, emailAddressLabel, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetSelectionPanel, emailAddressTextField, 1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetSelectionPanel, DownloadButton, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetSelectionPanel, errorMessageLabel, 0, 2, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		
-
-		genesetListPanel=new JPanel();
-	
-		genesetListPanel.setLayout(new GridBagLayout());
-		genesetListPanel.setBackground(Color.white);
-		availableGenesetLabel=new JLabel("Available");
-		selectedGenesetLabel=new JLabel("Selected");
-		
-		availableGenesetList=new javax.swing.JList(new DefaultListModel());
-		availableGenesetList.setName("availableGenesetList");
-		
-		selectedGenesetList=new javax.swing.JList(new DefaultListModel());
-		selectedGenesetList.setName("selectedGenesetList");
-		
-		availableGenesetScrollPane=new JScrollPane(availableGenesetList);
-		availableGenesetScrollPane.setPreferredSize(new Dimension(250, 90));
-		selectedGenesetScrollPane=new JScrollPane(selectedGenesetList);
-		selectedGenesetScrollPane.setPreferredSize(new Dimension(250,90));
-		
-		addGenesetButton=new JButton("Add");
-		addGenesetButton.setPreferredSize(new Dimension(100,20));
-		addGenesetButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onAdd("availableGenesetList");
-			}
-		});
-		
-		addAllGenesetButton=new JButton("Add All");
-		addAllGenesetButton.setPreferredSize(new Dimension(100,20));
-		addAllGenesetButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onAddAll("availableGenesetList");
-			}
-		});
-		
-		removeGenesetButton=new JButton("Remove");
-		removeGenesetButton.setPreferredSize(new Dimension(100,20));
-		removeGenesetButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onRemove("selectedGenesetList");
-			}
-			
-		});
-		
-		removeAllGenesetButton=new JButton("Remove All");
-		removeAllGenesetButton.setPreferredSize(new Dimension(100,20));
-		removeAllGenesetButton.addActionListener(new Listener(){
-			public void actionPerformed(ActionEvent e){
-				onRemoveAll("selectedGenesetList");
-			}
-			
-		});
-		
-		genesetButtonPanel=new JPanel();
-		genesetButtonPanel.setLayout(new GridBagLayout());
-		genesetButtonPanel.setBackground(Color.white);
-		gba.add(genesetButtonPanel, addGenesetButton, 0, 0, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(genesetButtonPanel, addAllGenesetButton, 0, 1, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(genesetButtonPanel, removeGenesetButton, 0, 2, 1, 1, 1, 1, GBA.N,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(genesetButtonPanel, removeAllGenesetButton, 0, 3, 1, 1, 1, 1,
-				GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-
-		
-		
-		
-		gba.add(genesetListPanel, availableGenesetLabel, 0, 0, 1, 1, 0, 0, GBA.N,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetListPanel, availableGenesetScrollPane, 0, 1, 1, 4, 5, 1,
-				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-//		gba.add(listPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
-//				new Insets(0, 0, 0, 0), 0, 0);
-		gba.add(genesetListPanel, genesetButtonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetListPanel, selectedGenesetLabel, 2, 0, 1, 1, 0, 0, GBA.N,
-				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		gba.add(genesetListPanel, selectedGenesetScrollPane, 2, 1, 1, 4, 5, 1,
-				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
-		
-		revalidate();
-		
-		
-			
-		gba.add(autoDownloadPanel, genesetSelectionPanel, 0, 0, 1, 1, 1, 1, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		gba.add(autoDownloadPanel, genesetListPanel, 0, 2, 1, 1, 1, 1, GBA.B,
-				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		
-		
 
         //Create and Add components to identifierSelectionPanel
         identifierSelectionPanel=new JPanel();
@@ -558,6 +308,156 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void createDownloadPanel(String label, String buttonName, String actionCommand) {
+		
+		fileSelectionPanel=new JPanel();
+        fileSelectionPanel.setLayout(new GridBagLayout());
+        fileSelectionPanel.setBackground(Color.white);
+        
+        selectFilePanel = new JPanel();
+		selectFilePanel.setLayout(new GridBagLayout());
+		selectFilePanel.setBackground(Color.white);
+		
+        selectFile = new JLabel(label);
+        
+        pathTextField = new JTextField();
+        if(actionCommand.equalsIgnoreCase("msigdb_download"))
+        	pathTextField.setEditable(true);
+		pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+		pathTextField.setPreferredSize(new Dimension(500, 20));
+		
+
+		browse = new JButton(buttonName);
+		browse.setName(buttonName);
+		browse.setActionCommand(actionCommand);
+		browse.setSize(new Dimension(100, 30));
+		browse.setPreferredSize(new Dimension(100, 30));
+		browse.addActionListener(new Listener(){
+			public void actionPerformed(ActionEvent e){
+				if(e.getActionCommand().equalsIgnoreCase("browse")) {
+				onBrowse();
+				}else if(e.getActionCommand().equalsIgnoreCase("msigdb_download")) {
+					if(pathTextField.getText().length()> 0) {
+						errorMessageLabel.setText("");
+						BROADDownloads(pathTextField.getText());
+						geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+						geneIdentifierBox.setEnabled(false);
+					}else {
+						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
+						"</font></html>";
+						errorMessageLabel.setText(eMsg);
+						
+					}
+				
+				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
+					
+				}
+			}
+			
+		});
+	
+		
+		
+		
+		gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(selectFilePanel, browse, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+		if(buttonName.equalsIgnoreCase("Download")) {
+			 errorMessageLabel=new javax.swing.JLabel();
+			 gba.add(selectFilePanel, errorMessageLabel, 0, 2, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		}
+		
+		listPanel=new JPanel();
+		listPanel.setLayout(new GridBagLayout());
+		listPanel.setBackground(Color.white);
+		availableLabel=new JLabel("Available");
+		selectedLabel=new JLabel("Selected");
+		
+		availableList=new javax.swing.JList(new DefaultListModel());
+		availableList.setName("availableList");
+		selectedList=new javax.swing.JList(new DefaultListModel());
+		selectedList.setName("selectedList");
+		
+		availableScrollPane=new JScrollPane(availableList);
+		availableScrollPane.setPreferredSize(new Dimension(250, 90));
+		selectedScrollPane=new JScrollPane(selectedList);
+		selectedScrollPane.setPreferredSize(new Dimension(250,90));
+		
+		addButton=new JButton("Add");
+		addButton.setPreferredSize(new Dimension(100,20));
+		addButton.addActionListener(new Listener(){
+			public void actionPerformed(ActionEvent e){
+				onAdd("availableList");
+			}
+		});
+		
+		addAllButton=new JButton("Add All");
+		addAllButton.setPreferredSize(new Dimension(100,20));
+		addAllButton.addActionListener(new Listener(){
+			public void actionPerformed(ActionEvent e){
+				onAddAll("availableList");
+			}
+		});
+		
+		removeButton=new JButton("Remove");
+		removeButton.setPreferredSize(new Dimension(100,20));
+		removeButton.addActionListener(new Listener(){
+			public void actionPerformed(ActionEvent e){
+				onRemove("selectedList");
+			}
+			
+		});
+		
+		removeAllButton=new JButton("Remove All");
+		removeAllButton.setPreferredSize(new Dimension(100,20));
+		removeAllButton.addActionListener(new Listener(){
+			public void actionPerformed(ActionEvent e){
+				onRemoveAll("selectedList");
+			}
+			
+		});
+		
+		buttonPanel=new JPanel();
+		buttonPanel.setLayout(new GridBagLayout());
+		buttonPanel.setBackground(Color.white);
+		gba.add(buttonPanel, addButton, 0, 0, 1, 1, 1, 1, GBA.N,
+				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(buttonPanel, addAllButton, 0, 1, 1, 1, 1, 1, GBA.N,
+				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(buttonPanel, removeButton, 0, 2, 1, 1, 1, 1, GBA.N,
+				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(buttonPanel, removeAllButton, 0, 3, 1, 1, 1, 1,
+				GBA.N, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+		
+		
+		
+		gba.add(listPanel, availableLabel, 0, 0, 1, 1, 0, 0, GBA.N,
+				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(listPanel, availableScrollPane, 0, 1, 1, 4, 5, 1,
+				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+//		gba.add(listPanel, new JPanel(), 1, 0, 1, 1, 0, 0, GBA.B, GBA.C,
+//				new Insets(0, 0, 0, 0), 0, 0);
+		gba.add(listPanel, buttonPanel, 1, 1, 1, 4, 1, 1, GBA.B,
+				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(listPanel, selectedLabel, 2, 0, 1, 1, 0, 0, GBA.N,
+				GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+		gba.add(listPanel, selectedScrollPane, 2, 1, 1, 4, 5, 1,
+				GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
+
+		
+		
+		gba.add(fileSelectionPanel, selectFilePanel, 0, 0, 1, 1, 1, 1, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(fileSelectionPanel, listPanel, 0, 2, 1, 1, 1, 1, GBA.B,
+				GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		
+		gba.add(genesetPanel,fileSelectionPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		revalidate();
+		
+		
+	}
 
 	
 	public void populateAlgorithmData() {
@@ -587,13 +487,14 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			algData.addParam("permutations", "");
 		
 		
-		if (((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files") && pathTextField.getText().length() != 0) {
+		if (((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")) {
 			algData.addParam("gene-set-directory", pathTextField.getText());
 		}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")) {
 			algData.addParam("gene-set-directory", this.genesetFilePath );
 		}else {
 			algData.addParam("gene-set-directory", "");
 		}
+
 
 		if (getFileFilter().equalsIgnoreCase("") && ((String)geneIdentifierBox.getSelectedItem()).equalsIgnoreCase("")) {
 			algData.addParam("gene-identifier", "");
@@ -628,7 +529,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	
 	public void onAdd(String componentName) {
 
-		if (componentName.equalsIgnoreCase("availableList")) {
+		
 			int[] chosenIndices = availableList.getSelectedIndices();
 			Object[] chosenObjects = new Object[chosenIndices.length];
 
@@ -643,29 +544,14 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 				.addElement(chosenObjects[i]);
 			}
 
-		} else {
-			int[] chosenIndices = availableGenesetList.getSelectedIndices();
-			Object[] chosenObjects = new Object[chosenIndices.length];
-
-			for (int i = chosenIndices.length - 1; i >= 0; i--) {
-				Object addItem = ((DefaultListModel) availableGenesetList
-						.getModel()).getElementAt(chosenIndices[i]);
-				chosenObjects[i] = addItem;
-			}
-
-			for (int i = 0; i < chosenIndices.length; i++) {
-				((DefaultListModel) selectedGenesetList.getModel())
-				.addElement(chosenObjects[i]);
-			}
-		}
+		
 
 	}
 	
 	
 	public void onAddAll(String componentName){
 		
-		if (componentName.equalsIgnoreCase("availableList")) {
-			int elementCount = ((DefaultListModel) availableList.getModel())
+		int elementCount = ((DefaultListModel) availableList.getModel())
 					.size();
 			for (int i = 0; i < elementCount; i++) {
 				Object addItem = ((DefaultListModel) availableList.getModel())
@@ -673,16 +559,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 				((DefaultListModel) selectedList.getModel())
 						.addElement(addItem);
 			}
-		} else {
-			int elementCount = ((DefaultListModel) availableGenesetList.getModel())
-					.size();
-			for (int i = 0; i < elementCount; i++) {
-				Object addItem = ((DefaultListModel) availableGenesetList.getModel())
-						.getElementAt(i);
-				((DefaultListModel) selectedGenesetList.getModel())
-						.addElement(addItem);
-			}
-		}
+		
 
 	}
 	
@@ -690,41 +567,28 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	
 	public void onRemove(String componentName){
 
-		if (componentName.equalsIgnoreCase("selectedList")) {
-			int[] chosenIndices = selectedList.getSelectedIndices();
+		int[] chosenIndices = selectedList.getSelectedIndices();
 
 			// Designed with copy-then-add functionality in mind
 			for (int i = chosenIndices.length - 1; i >= 0; i--) {
 				((DefaultListModel) selectedList.getModel())
 						.remove(chosenIndices[i]);
 			}
-		} else {
-			int[] chosenIndices = selectedGenesetList.getSelectedIndices();
-
-			// Designed with copy-then-add functionality in mind
-			for (int i = chosenIndices.length - 1; i >= 0; i--) {
-				((DefaultListModel) selectedGenesetList.getModel())
-						.remove(chosenIndices[i]);
-			}
-		}
+		 
 		
 	}
 	
 	
 	public void onRemoveAll(String componentName){
 		// Designed with copy-then-add functionality in mind
-		if (componentName.equalsIgnoreCase("selectedList")) {
+	
 			((DefaultListModel) selectedList.getModel()).removeAllElements();
-		} else {
-			((DefaultListModel) selectedGenesetList.getModel()).removeAllElements();
-		}
+		
 	}
 
 	
 	public String[]getAllSelectedItems(){
 		
-		if (((String) geneSetSelectionBox.getSelectedItem())
-				.equalsIgnoreCase("Load local geneset file/files")) {
 			String[] selectedFiles = new String[selectedList.getModel()
 					.getSize()];
 			for (int index = 0; index < selectedFiles.length; index++) {
@@ -732,20 +596,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 						.getElementAt(index)).getName();
 			}
 			return selectedFiles;
-		} else if (((String) geneSetSelectionBox.getSelectedItem())
-				.equalsIgnoreCase("Download from MSigDB")) {
 		
-			String[] selectedFiles = new String[selectedGenesetList.getModel()
-					.getSize()];
-			for (int index = 0; index < selectedFiles.length; index++) {
-			
-				selectedFiles[index] = ((File) selectedGenesetList.getModel()
-						.getElementAt(index)).getName();
-			}
-			return selectedFiles;
-		}
-		
-		return null;
 	}
 	
 	
@@ -913,7 +764,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 					if(thisDef.isValid(temp)) {
 						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
 						this.genesetFilePath=temp.getParent();
-						((DefaultListModel) selectedGenesetList.getModel()).addElement(new File(temp.getName()));
+						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
 						
 						
 						
@@ -967,33 +818,25 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 					genesetPanel.removeAll();
 					revalidate();
 					gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-					gba.add(genesetPanel, autoDownloadPanel, 0, 1, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				    gba.add(genesetPanel, identifierSelectionPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					createDownloadPanel("Please enter your MSigDB registration email address:", "Download", "msigdb_download");
+					gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 					revalidate();
 
 				}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
 					genesetPanel.removeAll();
 					revalidate();
 					gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-					gba.add(genesetPanel,fileSelectionPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					createDownloadPanel("Select the directory containing your gene sets", "Browse", "browse");
 				    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 					revalidate();
 				}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
-					
+					genesetPanel.removeAll();
+					revalidate();
+					gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					createDownloadPanel("Please select gene set files", "Download", "genesigdb_download");
+				    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					revalidate();
 				}
-			}else if(command.equalsIgnoreCase("Download")) {
-				String email=emailAddressTextField.getText();
-				if(!email.isEmpty()) {
-					errorMessageLabel.setText("");
-					BROADDownloads(email);
-					geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
-					geneIdentifierBox.setEnabled(false);
-				}else {
-					String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
-					"</font></html>";
-					errorMessageLabel.setText(eMsg);
-				}
-				
 			}
 			
 			
