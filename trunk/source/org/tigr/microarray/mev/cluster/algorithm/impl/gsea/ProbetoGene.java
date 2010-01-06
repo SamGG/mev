@@ -81,7 +81,7 @@ public class ProbetoGene {
 		IGeneData[] gdata = new IGeneData[cols];
 
 		/*
-		 * Initialize the gene data and GeneDataElement. Each of the geneData
+		 * Initialize the gene data and GeneDataElement. Each geneData
 		 * should have this information and hence the loop
 		 * 
 		 */

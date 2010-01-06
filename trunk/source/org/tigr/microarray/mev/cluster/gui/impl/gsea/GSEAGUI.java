@@ -61,13 +61,14 @@ public class GSEAGUI implements IClusterGUI {
 	    private HashMap<String, LinkedHashMap<String, Float>>descendingSortedTStats=new HashMap<String, LinkedHashMap<String, Float>>();
 	    private Geneset[]geneset=null;
 		private IGeneData[]gData=null;
+		
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
 	
 		this.experiment = framework.getData().getExperiment();
         this.idata = framework.getData();
         FloatMatrix matrix = experiment.getMatrix();
 		int number_of_samples = experiment.getNumberOfSamples();
-		
+	
        
         DefaultMutableTreeNode resultNode = null;
 		
@@ -262,6 +263,7 @@ public class GSEAGUI implements IClusterGUI {
 		
 			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
 			addPValueGraphImage(node, result);
+			addGenesetMembershipPlot(node, result);
 			addTableViews(node, result, experiment, idata);
 			addExpressionImages(node, result, this.experiment);
 			
@@ -270,7 +272,13 @@ public class GSEAGUI implements IClusterGUI {
 		return node;
 	}
 	
-   
+   private void addGenesetMembershipPlot(DefaultMutableTreeNode root, AlgorithmData result){
+	   
+	  Vector<String> geneset=result.getVector("gene-set-names");
+	  Vector<String>uniquegenes=result.getVector("Unique-Genes-in-Expressionset");
+	  root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset Membership Plot", new GenesetMembership(uniquegenes, geneset, this.geneset))));
+	   
+   }
    
    
    private void addPValueGraphImage(DefaultMutableTreeNode root, AlgorithmData result){
