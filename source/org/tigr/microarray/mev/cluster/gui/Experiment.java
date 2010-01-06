@@ -80,7 +80,8 @@ public class Experiment {
         this.rowMapping = rows;
         if (new Integer(this.id).equals(null))
         	this.id = exptCount;
-    }
+        
+       }
     
     public int[] getRows() {return rowMapping;}
     public int[] getColumns(){return columns;}
