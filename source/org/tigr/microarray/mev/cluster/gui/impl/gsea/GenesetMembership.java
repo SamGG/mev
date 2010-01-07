@@ -81,11 +81,15 @@ public class GenesetMembership extends JPanel implements IViewer {
 			Vector<String> genesets, Geneset[] gset) {
 		this.unique_genes = uniquegenes;
 		this.gene_sets = genesets;
+//		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
+//				this.gene_sets.size() + 1);
 		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
-				this.gene_sets.size() + 1);
+				this.gene_sets.size() );
 		this.gSets = gset;
 		createExperimentObject();
 		setBackground(Color.white);
+		System.out.println("genes:"+this.unique_genes.size());
+		System.out.println("genesets:"+this.gene_sets.size());
 	}
 
 	/**
@@ -115,7 +119,8 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 		int rowIndex = 0;
 		int colIndex = 0;
-		int matrixColIndex = 1;
+		//int matrixColIndex = 1;
+		int matrixColIndex = 0;
 
 		// Loop through the gene sets
 		for (colIndex = 0; colIndex < colSize; colIndex++) {
@@ -136,24 +141,26 @@ public class GenesetMembership extends JPanel implements IViewer {
 					// statistic if gene in the gene set also present in data
 					// set
 					if (uniq_genes.equals(Gene)) {
-						this.experimentMatrix.set(k, 0, gSets[colIndex]
-								.getGeneSetElement(j).getTestStat());
-						this.experimentMatrix.set(k, matrixColIndex,
-								gSets[colIndex].getGeneSetElement(j)
-										.getTestStat());
+						//this.experimentMatrix.set(k, 0, gSets[colIndex]
+							//	.getGeneSetElement(j).getTestStat());--commented by Sarita for testing out genesigdb like graph
+						//this.experimentMatrix.set(k, matrixColIndex,
+								//gSets[colIndex].getGeneSetElement(j)
+								//		.getTestStat());
+						this.experimentMatrix.set(k, colIndex, 1);
 					}
 
 				}
 
 			}
 
-			matrixColIndex = matrixColIndex + 1;
+			//matrixColIndex = matrixColIndex + 1;
 
 		}
 
+//		experimentObject = new GSEAExperiment(this.experimentMatrix,
+//				createColumns(this.gene_sets.size() + 1));--commented to test out genesigdb like graph
 		experimentObject = new GSEAExperiment(this.experimentMatrix,
-				createColumns(this.gene_sets.size() + 1));
-
+				createColumns(this.gene_sets.size()));
 	}
 
 	/**
@@ -167,15 +174,34 @@ public class GenesetMembership extends JPanel implements IViewer {
 		}
 		return maxWidth;
 	}
+	
+	
+	/**
+	 * Returns max width of Gene names.
+	 */
+	protected int getGeneNamesWidth(FontMetrics metrics) {
+		int maxWidth = 0;
+		for (int i = 0; i < this.unique_genes.size(); i++) {
+			maxWidth = Math.max(maxWidth, metrics.stringWidth(this.unique_genes
+					.get(i)));
+		}
+		return maxWidth;
+	}
+	
+	
+	
+	
+	
 
 	/**
 	 * Paints chart into specified graphics.
 	 */
 	public void paint(Graphics g) {
 		FontMetrics metrics = g.getFontMetrics();
-		Rectangle rect = g.getClipBounds();
-
-		paint((Graphics2D) g, rect);
+		//Rectangle rect = g.getClipBounds();
+		Rectangle rectangle = new Rectangle(40, 20,
+				getWidth()- 40, getHeight() - getNamesWidth(metrics));
+		paint((Graphics2D) g, rectangle);
 	}
 
 	/**
@@ -193,11 +219,22 @@ public class GenesetMembership extends JPanel implements IViewer {
 			return;
 		final int samples = experimentObject.getNumberOfSamples();
 
-		final int top = getTopIndex(rectangle.y) + getNamesWidth(metrics);
-		final int bottom = getBottomIndex(rectangle.y + rectangle.height,
-				rectangle.y + rectangle.height);
-		final int left = getLeftIndex(rectangle.x);
-		final int right = getRightIndex(rectangle.x + rectangle.width, samples);
+//		final int top = getTopIndex(rectangle.y) + getNamesWidth(metrics);
+//		final int bottom = getBottomIndex(rectangle.y + rectangle.height,
+//				rectangle.y + rectangle.height);
+//		final int left = getLeftIndex(rectangle.x);
+//		final int right = getRightIndex(rectangle.x + rectangle.width, samples);
+		
+		final int top=(rectangle.y);
+		final int bottom=(rectangle.height)/elementSize.height+1;
+		final int left=(rectangle.x);
+		final int right=(rectangle.width)/elementSize.width+1;
+		System.out.println("x:"+left);
+		System.out.println("y:"+top);
+		System.out.println("width:"+right);
+		System.out.println("Height:"+bottom);
+	
+			
 		int expressionRowIndex = 0;
 		int expressionColIndex = 0;
 
@@ -207,7 +244,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 				fillRectAt(g, row, column, expressionRowIndex,
 						expressionColIndex);
 
-				if (expressionRowIndex < experimentObject.getNumberOfGenes()) {
+				if (expressionRowIndex < this.unique_genes.size()-1) {
 					expressionRowIndex = expressionRowIndex + 1;
 				}
 			}
@@ -217,7 +254,17 @@ public class GenesetMembership extends JPanel implements IViewer {
 		}
 
 		// Paint the gene set names as column names
+	//	g.rotate(-Math.PI / 2.0);
+		g.setColor(Color.black);
+		
+		final int max_name_width = getNamesWidth(metrics);
+		for (int i = 0; i < samples ; i++) {
+			g.drawString(this.gene_sets.get(i),left+(i*elementSize.width), top-10);
+			
+		}
+	//	g.rotate(Math.PI / 2.0);
 
+		
 		// Paint the names of the genes
 
 	}
@@ -227,18 +274,27 @@ public class GenesetMembership extends JPanel implements IViewer {
 	 */
 	private void fillRectAt(Graphics g, int row, int column,
 			int expressionRowIndex, int expressionColIndex) {
-		if (column > (experimentObject.getNumberOfSamples() - 1))
+//		if (column > (experimentObject.getNumberOfSamples() -1))
+//			return;--commented to test genesigdb graph
+		if (column > (experimentObject.getNumberOfSamples() ))
 			return;
-		int x = column * elementSize.width + insets.left;
-		int y = row * elementSize.height;
+		//int x = column * elementSize.width + insets.left;
+//		int y = row * elementSize.height;
+		int x = expressionColIndex * elementSize.width + insets.left;
+		int y = expressionRowIndex * elementSize.height;
 		boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0
 				&& (row < this.firstSelectedRow || row > this.lastSelectedRow);
 		mask = (mask || this.firstSelectedColumn >= 0
 				&& this.lastSelectedColumn >= 0
 				&& (column < this.firstSelectedColumn || column > this.lastSelectedColumn));
-
-		g.setColor(getColor(this.experimentObject.get(expressionRowIndex,
-				expressionColIndex)));
+		if(this.experimentObject.get(expressionRowIndex,
+				expressionColIndex)==1) {
+			g.setColor(Color.CYAN);
+		}else {
+			g.setColor(Color.gray);
+		}
+//		g.setColor(getColor(this.experimentObject.get(expressionRowIndex,
+//				expressionColIndex)));--commented to test genesigdb graph
 		g.fillRect(x, y, elementSize.width, elementSize.height);
 		if (mask) {
 			g.setColor(maskColor);
