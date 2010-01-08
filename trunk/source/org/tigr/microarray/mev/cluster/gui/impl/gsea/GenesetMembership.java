@@ -1,13 +1,20 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
 import java.util.ArrayList;
@@ -15,6 +22,8 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.Geneset;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
@@ -23,6 +32,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+
 import org.tigr.util.FloatMatrix;
 
 public class GenesetMembership extends JPanel implements IViewer {
@@ -57,39 +67,45 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private FloatMatrix experimentMatrix;
 	private int[] columns;
 	private FontMetrics metrics;
-	private Dimension elementSize = new Dimension(20, 5);
+	private Dimension elementSize = new Dimension(10, 10);
 	public static Color missingColor = new Color(128, 128, 128);
 	public static Color maskColor = new Color(255, 255, 255, 128);
 	private int firstSelectedRow = -1;
 	private int lastSelectedRow = -1;
 	private int firstSelectedColumn = -1;
 	private int lastSelectedColumn = -1;
-	private Insets insets = new Insets(0, 10, 0, 0);
+	private Insets insets = new Insets(0, 5, 0, 0);
 	private boolean isDrawBorders = true;
 	private boolean useDoubleGradient = true;
-	public BufferedImage posColorImage = createGradientImage(Color.black,
-			Color.red);
-	public BufferedImage negColorImage = createGradientImage(Color.green,
-			Color.black);
+//	public BufferedImage posColorImage = createGradientImage(Color.black,
+//			Color.red);
+//	public BufferedImage negColorImage = createGradientImage(Color.green,
+//			Color.black);
 	private static final float INITIAL_MAX_VALUE = 3f;
 	private static final float INITIAL_MIN_VALUE = -3f;
 	private float maxValue = INITIAL_MAX_VALUE;
 	private float minValue = INITIAL_MIN_VALUE;
 	private float midValue = 0.0f;
-
+	
+	private int xOldEvent;
+	private int yOldEvent;
+	
 	public GenesetMembership(Vector<String> uniquegenes,
 			Vector<String> genesets, Geneset[] gset) {
+		setLayout(new GridBagLayout());
 		this.unique_genes = uniquegenes;
 		this.gene_sets = genesets;
-//		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
-//				this.gene_sets.size() + 1);
 		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
 				this.gene_sets.size() );
 		this.gSets = gset;
 		createExperimentObject();
+		addMouseListener(new Listener());
+		addMouseMotionListener(new Listener());
+		super.setAutoscrolls(true);
 		setBackground(Color.white);
 		System.out.println("genes:"+this.unique_genes.size());
 		System.out.println("genesets:"+this.gene_sets.size());
+		
 	}
 
 	/**
@@ -119,8 +135,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 		int rowIndex = 0;
 		int colIndex = 0;
-		//int matrixColIndex = 1;
-		int matrixColIndex = 0;
+		
 
 		// Loop through the gene sets
 		for (colIndex = 0; colIndex < colSize; colIndex++) {
@@ -141,11 +156,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 					// statistic if gene in the gene set also present in data
 					// set
 					if (uniq_genes.equals(Gene)) {
-						//this.experimentMatrix.set(k, 0, gSets[colIndex]
-							//	.getGeneSetElement(j).getTestStat());--commented by Sarita for testing out genesigdb like graph
-						//this.experimentMatrix.set(k, matrixColIndex,
-								//gSets[colIndex].getGeneSetElement(j)
-								//		.getTestStat());
+						
 						this.experimentMatrix.set(k, colIndex, 1);
 					}
 
@@ -153,7 +164,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 			}
 
-			//matrixColIndex = matrixColIndex + 1;
+			
 
 		}
 
@@ -181,67 +192,80 @@ public class GenesetMembership extends JPanel implements IViewer {
 	 */
 	protected int getGeneNamesWidth(FontMetrics metrics) {
 		int maxWidth = 0;
+		String genes="NA";
 		for (int i = 0; i < this.unique_genes.size(); i++) {
+			if(maxWidth!=Math.max(maxWidth, metrics.stringWidth(this.unique_genes
+					.get(i)))) {
+				genes=this.unique_genes.get(i);
+			}
 			maxWidth = Math.max(maxWidth, metrics.stringWidth(this.unique_genes
 					.get(i)));
+			
 		}
+		//System.out.println("Longest gene name:"+genes);
+	//	System.out.println("Max gene names width:"+maxWidth);
 		return maxWidth;
 	}
 	
 	
 	
+	  /**
+     * Paints chart into specified graphics.
+     *
+    public void paint(Graphics g) {
+     
+        paint((Graphics2D)g);
+    }
+    
+  
+  
 	
+
 	
-
-	/**
-	 * Paints chart into specified graphics.
-	 */
-	public void paint(Graphics g) {
-		FontMetrics metrics = g.getFontMetrics();
-		//Rectangle rect = g.getClipBounds();
-		Rectangle rectangle = new Rectangle(40, 20,
-				getWidth()- 40, getHeight() - getNamesWidth(metrics));
-		paint((Graphics2D) g, rectangle);
-	}
-
 	/**
 	 * 
 	 * 
 	 * 
 	 */
 
-	public void paint(Graphics2D g, Rectangle rectangle) {
-		super.paint(g);
+	public void paint(Graphics g1) {
+		
+		super.paint(g1);
+		Graphics2D g =  (Graphics2D)g1;
+		
+		setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
 		FontMetrics metrics = g.getFontMetrics();
 		setFontMetric(metrics);
 		// Paint the expression data points
 		if (this.elementSize.getHeight() < 1)
 			return;
 		final int samples = experimentObject.getNumberOfSamples();
-
-//		final int top = getTopIndex(rectangle.y) + getNamesWidth(metrics);
-//		final int bottom = getBottomIndex(rectangle.y + rectangle.height,
-//				rectangle.y + rectangle.height);
-//		final int left = getLeftIndex(rectangle.x);
-//		final int right = getRightIndex(rectangle.x + rectangle.width, samples);
 		
-		final int top=(rectangle.y);
-		final int bottom=(rectangle.height)/elementSize.height+1;
-		final int left=(rectangle.x);
-		final int right=(rectangle.width)/elementSize.width+1;
-		System.out.println("x:"+left);
-		System.out.println("y:"+top);
-		System.out.println("width:"+right);
-		System.out.println("Height:"+bottom);
+		Rectangle rectangle=g.getClipBounds();
+		final int y = getTopIndex(rectangle.y)+5;
+		final int height = getBottomIndex(rectangle.y + rectangle.height, this.unique_genes.size()*elementSize.height);
+		final int x = getLeftIndex(rectangle.x);
+		final int width =  getRightIndex(rectangle.x+rectangle.width, rectangle.x+rectangle.width+40);
+		
+		
 	
-			
+//		System.out.println("Original x:"+rectangle.x);
+//		System.out.println("Original y:"+rectangle.y);
+//		System.out.println("Original width:"+rectangle.width);
+//		System.out.println("Original Height:"+rectangle.height);
+//		
+//		System.out.println("calculated x:"+x);
+//		System.out.println("calculated y:"+y);
+//		System.out.println("calculated width:"+width);
+//		System.out.println("calculated Height:"+height);
+				
 		int expressionRowIndex = 0;
 		int expressionColIndex = 0;
 
-		for (int column = left; column < right; column++) {
+		for (int column = x; column < width; column++) {
 
-			for (int row = top; row < bottom; row++) {
-				fillRectAt(g, row, column, expressionRowIndex,
+			for (int row = y; row < height; row++) {
+				fillRectAt(g1, row, column, expressionRowIndex,
 						expressionColIndex);
 
 				if (expressionRowIndex < this.unique_genes.size()-1) {
@@ -254,34 +278,45 @@ public class GenesetMembership extends JPanel implements IViewer {
 		}
 
 		// Paint the gene set names as column names
-	//	g.rotate(-Math.PI / 2.0);
+		
 		g.setColor(Color.black);
 		
 		final int max_name_width = getNamesWidth(metrics);
+		int descent = metrics.getDescent();
+        
+        int h = -getSize().height + 5;
+        
+    	g.rotate(-Math.PI / 2.0);
 		for (int i = 0; i < samples ; i++) {
-			g.drawString(this.gene_sets.get(i),left+(i*elementSize.width), top-10);
-			
-		}
-	//	g.rotate(Math.PI / 2.0);
-
 		
+			g.drawString(this.gene_sets.get(i), h, descent + elementSize.width*i + elementSize.width/2 + insets.left);		
+		}
+		g.rotate(Math.PI / 2.0);
+	
 		// Paint the names of the genes
-
+//		 int uniqX = elementSize.width*samples+10;
+//		 int annY;
+//		for(int row=y; row<height; row++ ) {
+//			annY = (row+1)*elementSize.height;
+//            g.drawString(this.unique_genes.get(row), uniqX + insets.left, annY-1);
+//		}
+		
 	}
-
+	
+	
+	
+   
 	/**
 	 * Fills rect with specified row and column.
 	 */
 	private void fillRectAt(Graphics g, int row, int column,
 			int expressionRowIndex, int expressionColIndex) {
-//		if (column > (experimentObject.getNumberOfSamples() -1))
-//			return;--commented to test genesigdb graph
+
 		if (column > (experimentObject.getNumberOfSamples() ))
 			return;
-		//int x = column * elementSize.width + insets.left;
-//		int y = row * elementSize.height;
-		int x = expressionColIndex * elementSize.width + insets.left;
-		int y = expressionRowIndex * elementSize.height;
+		int x = column * elementSize.width + insets.left;
+		int y = row * elementSize.height;
+
 		boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0
 				&& (row < this.firstSelectedRow || row > this.lastSelectedRow);
 		mask = (mask || this.firstSelectedColumn >= 0
@@ -289,12 +324,11 @@ public class GenesetMembership extends JPanel implements IViewer {
 				&& (column < this.firstSelectedColumn || column > this.lastSelectedColumn));
 		if(this.experimentObject.get(expressionRowIndex,
 				expressionColIndex)==1) {
-			g.setColor(Color.CYAN);
+			g.setColor(Color.RED);
 		}else {
-			g.setColor(Color.gray);
+			g.setColor(Color.white);
 		}
-//		g.setColor(getColor(this.experimentObject.get(expressionRowIndex,
-//				expressionColIndex)));--commented to test genesigdb graph
+
 		g.fillRect(x, y, elementSize.width, elementSize.height);
 		if (mask) {
 			g.setColor(maskColor);
@@ -306,49 +340,20 @@ public class GenesetMembership extends JPanel implements IViewer {
 		}
 	}
 
-	private Color getColor(float value) {
-		if (Float.isNaN(value)) {
-			return missingColor;
-		}
-
-		float maximum;
-		int colorIndex, rgb;
-
-		if (useDoubleGradient) {
-			maximum = value < midValue ? this.minValue : this.maxValue;
-			colorIndex = (int) (255 * (value - midValue) / (maximum - midValue));
-			if (colorIndex < 0)
-				colorIndex = -colorIndex;
-			colorIndex = colorIndex > 255 ? 255 : colorIndex;
-			rgb = value < midValue ? negColorImage.getRGB(255 - colorIndex, 0)
-					: posColorImage.getRGB(colorIndex, 0);
-		} else {
-			float span = this.maxValue - this.minValue;
-			if (value <= minValue)
-				colorIndex = 0;
-			else if (value >= maxValue)
-				colorIndex = 255;
-			else
-				colorIndex = (int) (((value - this.minValue) / span) * 255);
-
-			rgb = posColorImage.getRGB(colorIndex, 0);
-		}
-		return new Color(rgb);
-	}
-
 	/**
-	 * Creates a gradient image with specified initial colors.
-	 */
-	public BufferedImage createGradientImage(Color color1, Color color2) {
-		BufferedImage image = (BufferedImage) java.awt.GraphicsEnvironment
-				.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDefaultConfiguration().createCompatibleImage(256, 1);
-		Graphics2D graphics = image.createGraphics();
-		GradientPaint gp = new GradientPaint(0, 0, color1, 255, 0, color2);
-		graphics.setPaint(gp);
-		graphics.drawRect(0, 0, 255, 1);
-		return image;
-	}
+     * Updates size of this viewer.
+     */
+    private void updateSize() {
+        setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
+        Graphics2D g = (Graphics2D)getGraphics();
+        
+      
+        setSize(getContentComponent().getWidth(), getContentComponent().getHeight());
+     
+       //	setPreferredSize(new Dimension(getContentComponent().getWidth(), getContentComponent().getHeight()));
+       	
+    }
+    
 
 	public int[][] createSpotIndices(int count) {
 
@@ -413,11 +418,70 @@ public class GenesetMembership extends JPanel implements IViewer {
 	}
 	
 	
-	public JComponent getContentComponent() {
-		// TODO Auto-generated method stub
-		return this;
-	}
+ private class Listener implements MouseMotionListener, MouseListener{
+
 	
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int x = e.getX();
+        int y = e.getY();
+        Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
+        ((JPanel)e.getSource()).scrollRectToVisible(r);
+        System.out.println("mouse drageed");
+	}
+
+
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		 int x = e.getX();
+         int y = e.getY();
+//          System.out.println("x in mouse moved:"+x);
+//          System.out.println("y in mouse moved:"+y);
+            setXOldEvent(x);
+            setYOldEvent(y);
+            repaint();
+	}
+
+
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		setXOldEvent(-1);
+        setYOldEvent(-1);
+        repaint();
+	}
+
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	 
+ }
+
+ public void setCursor(int cursor) {setCursor(Cursor.getPredefinedCursor(cursor));}
+ public void setXOldEvent(int xEvent) {this.xOldEvent = xEvent;}
+ public int getXOldEvent() {return this.xOldEvent;}
+ public void setYOldEvent(int yEvent) {this.yOldEvent = yEvent;}
+ public int getYOldEvent() {return this.yOldEvent;}
+
 	
 	public int[][] getClusters() {
 		// TODO Auto-generated method stub
@@ -463,7 +527,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 	public int getViewerType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return -1;
 	}
 
 	public void onClosed() {
@@ -488,7 +552,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 	public void onSelected(IFramework framework) {
 		// TODO Auto-generated method stub
-
+		//repaint();
 	}
 
 	public void setExperiment(Experiment e) {
@@ -499,6 +563,13 @@ public class GenesetMembership extends JPanel implements IViewer {
 	public void setExperimentID(int id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	
+	public JComponent getContentComponent() {
+		// TODO Auto-generated method stub
+		
+		return this;
 	}
 
 }
