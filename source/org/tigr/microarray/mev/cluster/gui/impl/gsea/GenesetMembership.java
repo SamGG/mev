@@ -1,11 +1,13 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
@@ -22,7 +24,7 @@ import java.util.Vector;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.Geneset;
@@ -34,6 +36,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
 import org.tigr.util.FloatMatrix;
+
+
 
 public class GenesetMembership extends JPanel implements IViewer {
 
@@ -60,8 +64,8 @@ public class GenesetMembership extends JPanel implements IViewer {
 	// the original experiment object
 	// 3. We will be plotting test statistic and not expression values.
 
-	private Vector<String> unique_genes;
-	private Vector<String> gene_sets;
+	private Vector<String> unique_genes=new java.util.Vector<String>();
+	private Vector<String> gene_sets=new java.util.Vector<String>();
 	private Geneset[] gSets;
 	private GSEAExperiment experimentObject;
 	private FloatMatrix experimentMatrix;
@@ -76,7 +80,9 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private int lastSelectedColumn = -1;
 	private Insets insets = new Insets(0, 5, 0, 0);
 	private boolean isDrawBorders = true;
-	private boolean useDoubleGradient = true;
+	
+	
+	    
 //	public BufferedImage posColorImage = createGradientImage(Color.black,
 //			Color.red);
 //	public BufferedImage negColorImage = createGradientImage(Color.green,
@@ -89,12 +95,19 @@ public class GenesetMembership extends JPanel implements IViewer {
 	
 	private int xOldEvent;
 	private int yOldEvent;
+	private boolean referenceLinesOn=true;
+	private boolean mouseOnMap = false;
+	private int mouseRow = 0;
+	private int mouseColumn = 0;
+	private int dragRow = 0;
+	private int dragColumn = 0;
+	
 	
 	public GenesetMembership(Vector<String> uniquegenes,
 			Vector<String> genesets, Geneset[] gset) {
 		setLayout(new GridBagLayout());
-		this.unique_genes = uniquegenes;
-		this.gene_sets = genesets;
+		setUnique_genes(uniquegenes);
+		setGene_sets(genesets);
 		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
 				this.gene_sets.size() );
 		this.gSets = gset;
@@ -249,42 +262,59 @@ public class GenesetMembership extends JPanel implements IViewer {
 			
 		
 		Rectangle rectangle=g.getClipBounds();
-		final int y =  getTopIndex(rectangle.y+getNamesWidth(metrics)+15);
-		final int height = getBottomIndex(rectangle.y + rectangle.height, this.unique_genes.size());
-		final int x = getLeftIndex(rectangle.x);
-		final int width =  getRightIndex(rectangle.x+rectangle.width, samples);
-	
-				
-		int expressionRowIndex = 0;
-		int expressionColIndex = 0;
+		 int originalY =  getTopIndex(rectangle.y+getNamesWidth(metrics)+15);
+		final int height = originalY+elementSize.height*experimentObject.getNumberOfGenes();
+		int originalX = getLeftIndex(rectangle.x);
+		final int width =  originalX+insets.left+elementSize.width*samples+40;
+		int currentX=originalX;
+		int currentY=originalY;
+		
+		
+		setSize(width, height);
+		setPreferredSize(new Dimension(width, height));
+		//repaint();		
 		
 		// Paint the expression data points
-		for (int column = x; column < width; column++) {
-
-			for (int row = y; row < height; row++) {
-				fillRectAt(g1, row, column, expressionRowIndex,
-						expressionColIndex);
-
-				if (expressionRowIndex < this.unique_genes.size()-1) {
-					expressionRowIndex = expressionRowIndex + 1;
-				}
+		
+		//Scrollbar appears. X and Y calculations need work. NOt correct.
+		
+		for (int column = 0; column < samples; column++) {
+			
+			currentX=currentX+column*elementSize.width;
+			for (int row = 0; row < this.unique_genes.size(); row++) {
+				fillRectAt(g1, currentX, currentY, row,
+						column);
+				
+				currentY=currentY+row*elementSize.height;
+				
 			}
-			if (expressionColIndex < samples) {
-				expressionColIndex = expressionColIndex + 1;
-			}
-		}
-
-		updateSize();
-	
-		// Paint the names of the genes
-		 int uniqX = elementSize.width*samples+10;
-		 int annY;
-		for(int row=y; row<height; row++ ) {
-			annY = (row+1)*elementSize.height;
-            g.drawString(this.unique_genes.get(row), uniqX + insets.left, annY-1);
+			
+			currentY=getTopIndex(rectangle.y+getNamesWidth(metrics)+15);
 		}
 		
-		repaint();
+		// Paint the names of the genes
+//		 int uniqX = elementSize.width*samples+10;
+//		 int annY;
+//		for(int row=y; row<height; row++ ) {
+//			
+//			annY = (row+1)*elementSize.height;
+//            g.drawString(this.unique_genes.get(row), uniqX + insets.left, annY-1);
+//		}
+		
+	//	updateSize();
+		
+		if(referenceLinesOn) {
+			
+		 if (mouseOnMap){
+		     drawRectAt(g, mouseRow, mouseColumn, Color.white);
+		   }
+		   mouseOnMap=false;
+			
+			
+			
+			
+		}
+		
 		
 	}
 	
@@ -320,11 +350,11 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private void fillRectAt(Graphics g, int row, int column,
 			int expressionRowIndex, int expressionColIndex) {
 
-		if (column > (experimentObject.getNumberOfSamples() ))
-			return;
-		int x = column * elementSize.width + insets.left;
-		int y = row * elementSize.height;
-
+	
+		
+		int x = row ;
+		int y = column;
+		
 		boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0
 				&& (row < this.firstSelectedRow || row > this.lastSelectedRow);
 		mask = (mask || this.firstSelectedColumn >= 0
@@ -347,7 +377,21 @@ public class GenesetMembership extends JPanel implements IViewer {
 			g.drawRect(x, y, elementSize.width - 1, elementSize.height - 1);
 		}
 	}
-
+	
+	  /**
+     * Draws rect with specified row, column and color.
+     */
+    private void drawRectAt(Graphics g, int row, int column, Color color) {
+        g.setColor(color);
+        if (column>=experimentObject.getNumberOfSamples()){
+        	return;
+        }
+        else{
+        g.drawRect(column*elementSize.width + insets.left, row*elementSize.height, elementSize.width-1, elementSize.height-1);
+    }
+    }
+	
+	
 	/**
      * Updates size of this viewer.
      */
@@ -423,73 +467,144 @@ public class GenesetMembership extends JPanel implements IViewer {
 		int result = bottom / elementSize.height + 1;
 		return result > limit ? limit : result;
 	}
-	
-	
- private class Listener implements MouseMotionListener, MouseListener{
 
+	  /**
+     * Finds column for specified x coordinate.
+     * @return -1 if column was not found.
+     */
+    private int findColumn(int targetx) {
+        int xSize = experimentObject.getNumberOfSamples()*elementSize.width;
+        if (targetx < insets.left) {
+            return -1;
+        }
+        if (targetx >= (xSize + insets.left) && (targetx < (xSize + insets.left+this.elementSize.width + 10)))
+        	return (targetx - insets.left-5)/elementSize.width;
+        return (targetx - insets.left)/elementSize.width;
+    }
+    
+    /**
+     * Finds row for specified y coordinate.
+     * @return -1 if row was not found.
+     */
+    private int findRow(int targety) {
+        int ySize = this.gene_sets.size()*elementSize.height;
+        if (targety >= ySize || targety < 0)
+            return -1;
+        return targety/elementSize.height;
+    }
+    
+    private boolean isLegalPosition(int row, int column) {
+        if (isLegalRow(row) && isLegalColumn(column))
+            return true;
+        return false;
+    }
+    
+    private boolean isLegalColumn(int column) {
+        if (column < 0 || column > (experimentObject.getNumberOfSamples() -1))
+            return false;
+        return true;
+    }
+    
+    private boolean isLegalRow(int row) {
+        if (row < 0 || row > this.gene_sets.size() -1)
+            return false;
+        return true;
+    }
+    
 	
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		int x = e.getX();
-        int y = e.getY();
-        Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
-        ((JPanel)e.getSource()).scrollRectToVisible(r);
-        System.out.println("mouse drageed");
-	}
+	/**
+     * The class to listen to mouse events.
+     */
+    private class Listener extends MouseAdapter implements MouseMotionListener {
+        
+        private String oldStatusText;
+        private int oldRow = -1;
+        private int oldColumn = -1;
+        private int startColumn = 0;
+        private int startRow = 0;
+        
+        public void mouseClicked(MouseEvent event) {
+            if (SwingUtilities.isRightMouseButton(event)) {
+                return;
+            }
+          
+        		return;
+        	}
+           
+       
+        
+        public void mouseMoved(MouseEvent event) {
+        	  if (experimentObject.getNumberOfSamples() == 0 || event.isShiftDown())
+                  return;
+              int column = findColumn(event.getX());
+              int row = findRow(event.getY());
+              Graphics g = null;
+              g = getGraphics();
+              Graphics2D g2d=(Graphics2D)g;
+             
+              //mouse on heat map
+              if (isLegalPosition(row, column)&& (column < experimentObject.getNumberOfSamples())) {
+                  drawRectAt(g, row, column, Color.black);
+                
+					g.drawString("Gene set: "+getGene_sets().get(findColumn(column)), findRow(row) , findColumn(column) - 20);
+					g.drawString("Gene:"+getUnique_genes().get(findRow(row)), findRow(row) , findColumn(column));
+                
+              }
+              //mouse on different rectangle, but still on the map
+              if (!isCurrentPosition(row, column)&&isLegalPosition(row, column)){
+              	mouseOnMap = true;
+              	mouseRow = row;
+              	mouseColumn = column;
+              	g.drawString("Gene set: "+getGene_sets().get(findColumn(mouseColumn)), findRow(mouseRow) , findColumn(mouseColumn) - 20);
+				g.drawString("Gene:"+getUnique_genes().get(findRow(mouseRow)), findRow(mouseRow) , findColumn(mouseColumn));
+            
+//                       	
+              	repaint();
+              }
+             
+        }
+        
+        public void mouseEntered(MouseEvent event) {
+        	
+        }
+        
+        public void mouseExited(MouseEvent event) {
 
-
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		 int x = e.getX();
-         int y = e.getY();
-//          System.out.println("x in mouse moved:"+x);
-//          System.out.println("y in mouse moved:"+y);
-            setXOldEvent(x);
-            setYOldEvent(y);
+        
             repaint();
-	}
+        }
+        
+        public void mouseDragged(MouseEvent event) {
+        	repaint();
+         
+        }
+        /** Called when the mouse has been pressed. */
+        public void mousePressed(MouseEvent event) {
+            if (SwingUtilities.isRightMouseButton(event)) {
+                return;
+            }
 
+           
+        }
 
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		setXOldEvent(-1);
-        setYOldEvent(-1);
-        repaint();
-	}
-
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	 
- }
-
- public void setCursor(int cursor) {setCursor(Cursor.getPredefinedCursor(cursor));}
- public void setXOldEvent(int xEvent) {this.xOldEvent = xEvent;}
- public int getXOldEvent() {return this.xOldEvent;}
- public void setYOldEvent(int yEvent) {this.yOldEvent = yEvent;}
- public int getYOldEvent() {return this.yOldEvent;}
-
-	
+        /** Called when the mouse has been released. */
+        public void mouseReleased(MouseEvent event) {
+	     	repaint();
+	     }
+        
+        
+        private void setOldPosition(int row, int column) {
+            oldColumn = column;
+            oldRow = row;
+        }
+        
+        private boolean isCurrentPosition(int row, int column) {
+            return(row == oldRow && column == oldColumn);
+        }
+        
+       
+    }
+   
 	public int[][] getClusters() {
 		// TODO Auto-generated method stub
 		return null;
@@ -559,7 +674,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 	public void onSelected(IFramework framework) {
 		// TODO Auto-generated method stub
-		//repaint();
+		repaint();
 	}
 
 	public void setExperiment(Experiment e) {
@@ -577,6 +692,22 @@ public class GenesetMembership extends JPanel implements IViewer {
 		// TODO Auto-generated method stub
 		
 		return this;
+	}
+
+	public Vector<String> getUnique_genes() {
+		return unique_genes;
+	}
+
+	public void setUnique_genes(Vector<String> unique_genes) {
+		this.unique_genes = unique_genes;
+	}
+
+	public Vector<String> getGene_sets() {
+		return gene_sets;
+	}
+
+	public void setGene_sets(Vector<String> gene_sets) {
+		this.gene_sets = gene_sets;
 	}
 
 }
