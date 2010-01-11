@@ -343,10 +343,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
                 <pathelement location="${lib.dir}/jai_codec.jar"/>	
                 <pathelement location="${lib.dir}/jama.jar"/>	
                 <pathelement location="${lib.dir}/JSciCore.jar"/>	
-
                 <pathelement location="${lib.dir}/jai_core.jar"/>	
                 <pathelement location="${lib.dir}/vecmath.jar"/>	
-
                 <pathelement location="${lib.dir}/j3dcore.jar"/>	
                 <pathelement location="${lib.dir}/j3dutils.jar"/>	
                  <pathelement location="${lib.dir}/colt.jar"/>
@@ -356,19 +354,15 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				<pathelement location="${lib.dir}/jbcl.jar" />
 				<pathelement location="${lib.dir}/piccolo.jar" />
 				<pathelement location="${lib.dir}/piccolox.jar" />
-
                 <pathelement location="${lib.dir}/xerces.jar"/>
                 <pathelement location="${lib.dir}/base64.jar"/>
                 <pathelement location="${lib.dir}/HTTPClient.jar"/>
                 <pathelement location="${lib.dir}/servlet.jar"/>
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
                 <pathelement location="${lib.dir}/jsch-0.1.39.jar"/>
-				<pathelement location="${lib.dir}/soap.jar" />
                 <pathelement location="${tigr.dir}/microarray/file"/>
 				<pathelement location="${lib.dir}/weka.jar" />
-				<pathelement location="${lib.dir}/commons-net-1.4.1.jar" />
 				<pathelement location="${lib.dir}/goose.jar" />
-				<pathelement location="${lib.dir}/tar.jar" />
             	<pathelement location="${lib.dir}/magetab-parser.jar" />
             	
             	<pathelement location="${lib.dir}/JRI.jar" />
