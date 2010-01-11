@@ -1,0 +1,48 @@
+Needed?	size	name	Purpose	Candidates for removal
+Y	"40,654"	args4j-2.0.9.jar	command line argument support	 
+Y	"4,101"	base64.jar	64-bit machine support	 
+Y	"581,945"	colt.jar		 
+Y	"1,740,845"	comcgh.jar		 
+N	"180,792"	commons-net-1.4.1.jar		commons-net-1.4.1.jar
+Y	"13,118"	educgh.jar		 
+Y	"18,006"	ftpbean.jar	FTP support in FileResourceManager	 
+Y	"86,818"	goose.jar	Gaggle library	 
+Y	"699,658"	HTTPClient.jar	in org.tigr.util.remote. Not used?	 
+Y	"210,305"	images.jar	MeV library of images	 
+N		j3daudio.jar		j3daudio.jar
+Y	"1,954,722"	j3dcore.jar	"Java3D support, COA, PCA, TRN"	 
+Y	"660,365"	j3dutils.jar	"Java3D support, COA, PCA, TRN"	 
+Y	"183,421"	jai_codec.jar	Java image codec	 
+Y	"1,018,280"	jai_core.jar	Java image core classes	 
+Y	"114,326"	jama.jar		 
+N	"5,618"	jaxp.jar		jaxp.jar
+Y	"816,903"	jbcl.jar		 
+N	"686,953"	jconn2.jar		jconn2.jar
+N	"153,253"	jdom-1.0.jar		jdom-1.0.jar
+N	"934,581"	jfreechart-0.9.20.zip		jfreechart-0.9.20.zip
+N	"328,981"	jfreechart-common-0.9.5.zip		jfreechart-common-0.9.5.zip
+Y	"31,524"	JRI.jar	Java-R Interface	 
+Y	"177,987"	jsch-0.1.39.jar	scp support. Required for FileResourceManger sftp support	 
+Y	"401,285"	JSciCore.jar	Scientific computation library	 
+Y	"16,674"	JSciPartial.jar	Scientific computation library	 
+Y	"440,315"	magetab-parser.jar	MAGE-TAB file loading/writing support	 
+N	"347,137"	mail.jar		mail.jar
+Y	"469,630"	mev-algorithm-impl.jar	MeV algorithm library	 
+Y	"41,502"	mev-algorithm-support.jar	MeV support classes library	 
+Y	"1,976,409"	mev-base.jar	MeV core classes	 
+Y	"3,485,049"	mev-gui-impl.jar	MeV	 
+Y	"270,442"	mev-gui-support.jar	MeV	 
+Y	"128,827"	mev-util.jar	MeV	 
+Y	"123,954"	normalization.jar	MIDAS normalization library	 
+Y	"80,066"	piccolo.jar		 
+Y	"102,083"	piccolox.jar		 
+Y	"35,904"	servlet.jar	"Servlet connection support, used by org.tigr.util.remote. "	 
+N	"232,498"	soap.jar		soap.jar
+N	"157,810"	swing-layout-1.0.1.jar		swing-layout-1.0.1.jar
+N	"1,140,444"	swingx-2006_10_27.jar		swingx-2006_10_27.jar
+N	"25,176"	tar.jar		tar.jar
+Y		TextJDBC30.jar	CGH queries against a text file	 
+Y	"275,946"	vecmath.jar	"Used *very* seldom, in MAD"	 
+Y	"1,064,510"	weka.jar	"Weka library, used extensively by BN"	 
+Y	"1,812,019"	xerces.jar	XML support	 
+Y	"123,705"	xml-apis.jar	XML support	 

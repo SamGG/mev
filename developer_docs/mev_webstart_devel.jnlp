@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- JNLP File for Mev Application -->
+<!--v
+  CVS information:
+	$RCSfile$
+	$Revision$
+	$Date$
+	$Author$
+	$State$
+-->
+<jnlp spec="1.0+"
+	<!-- CHANGE the codebase to the directory containing mev's lib directory -->
+	  codebase = "http://www.tm4.org/webstart/"
+	<!--  CHANGE this jnlp, not sure why we need the cirularity?
+		This probably should an href to the sevlet url not a static jnlp -->
+ >
+<information>
+	<title>TMEV</title>
+	<vendor> Dana-Farber Cancer Institute </vendor>
+	<homepage href="http://www.tm4.org/mev.html"/>
+	<description>Mev (Microarray Multiexperiment Viewer, version 4.2) analysis of microarray data to identify patterns of gene expression and differentially expressed genes. </description>
+	<description kind="short">Microarray Multiexperiment Viewer</description>
+	<icon href="Images/mev.gif"/>
+ </information>
+  <security>
+	<all-permissions/>
+   </security> 
+  <resources>
+	<j2se version="1.5+" max-heap-size="512m" />
+	<jar main="true" href="http://www.tm4.org/webstart/mev_test/lib/mev-base.jar"/>
+	<jar href="mev_test/lib/args4j-2.0.9.jar"/>
+	<jar href="mev_test/lib/base64.jar"/>
+	<jar href="mev_test/lib/colt.jar"/>
+	<jar href="mev_test/lib/comcgh.jar"/>
+	<jar href="mev_test/lib/dialogHelp.jar"/>
+	<jar href="mev_test/lib/educgh.jar"/>
+	<jar href="mev_test/lib/ftpbean.jar"/>
+	<jar href="mev_test/lib/goose.jar"/>
+	<jar href="mev_test/lib/images.jar"/>
+	<jar href="mev_test/lib/j3dcore.jar"/>
+	<jar href="mev_test/lib/j3dutils.jar"/>
+	<jar href="mev_test/lib/jai_codec.jar"/>
+	<jar href="mev_test/lib/jai_core.jar"/>
+	<jar href="mev_test/lib/jama.jar"/>
+	<jar href="mev_test/lib/jbcl.jar"/>
+	<jar href="mev_test/lib/jsch-0.1.39.jar"/>
+	<jar href="mev_test/lib/JSciCore.jar"/>
+	<jar href="mev_test/lib/JSciPartial.jar"/>
+	<jar href="mev_test/lib/magetab-parser.jar"/>
+	<jar href="mev_test/lib/mev-algorithm-impl.jar"/>
+	<jar href="mev_test/lib/mev-algorithm-support.jar"/>
+	<jar href="mev_test/lib/mev-gui-impl.jar"/>
+	<jar href="mev_test/lib/mev-gui-support.jar"/>
+	<jar href="mev_test/lib/mev-util.jar"/>
+	<jar href="mev_test/lib/normalization.jar"/>
+	<jar href="mev_test/lib/piccolo.jar"/>
+	<jar href="mev_test/lib/piccolox.jar"/>
+	<jar href="mev_test/lib/servlet.jar"/>
+	<jar href="mev_test/lib/TextJDBC30.jar"/>
+	<jar href="mev_test/lib/vecmath.jar"/>
+	<jar href="mev_test/lib/weka.jar"/>
+	<jar href="mev_test/lib/xerces.jar"/>
+	<jar href="mev_test/lib/xml-apis.jar"/>
+	<property name="java.util.prefs.systemRoot" value="/tmp/.java"/>
+  </resources>
+  <application-desc main-class="org.tigr.microarray.mev.TMEV">
+	
+	<argument>-fileType</argument>
+	<argument>tdms</argument>
+	<!-- This argument will either be the url to a stanford file like this or a servelet url like commented below -->
+	<argument>-fileUrl</argument>
+	<argument>http://www.tm4.org/webstart/mev/TDMS_format_sample.txt</argument>
+	<argument>-arrayType</argument>
+	<argument>affy_HG-U133A</argument>
+	<argument>-firstRow</argument>
+	<argument>3</argument>
+	<argument>-firstColumn</argument>
+	<argument>4</argument>
+ </application-desc>
+</jnlp>
