@@ -44,6 +44,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEImpliesAndURLDataFile;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
 import org.tigr.microarray.mev.file.FileType;
 
 /**
@@ -885,6 +886,17 @@ public class FileResourceManager implements IResourceManager {
 		} catch (SupportFileAccessError sfae) {
 			sfae.printStackTrace();
 		}
+		try {
+			
+			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
+			File geneSigs = getSupportFile(temp, true);
+			if(temp.isValid(geneSigs)) {
+				System.out.println("GeneSigDb download file is valid.");
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			System.out.println("Could not download GeneSigDbGeneSets file.");
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -939,7 +951,7 @@ public class FileResourceManager implements IResourceManager {
 					System.out.println("Found file " + thisDef.getUniqueName());
 			}
 		}
-//		frm.testGSEADownloads();
+		frm.testGSEADownloads();
 		
 		//Test retrieving of definitions
 		Enumeration<ISupportFileDefinition> temp = defs.elements();
