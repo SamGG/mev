@@ -65,7 +65,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	// 3. We will be plotting test statistic and not expression values.
 
 	private Vector<String> unique_genes=new java.util.Vector<String>();
-	private Vector<String> gene_sets=new java.util.Vector<String>();
+	private ArrayList<String> gene_sets=new java.util.ArrayList<String>();
 	private Geneset[] gSets;
 	private GSEAExperiment experimentObject;
 	private FloatMatrix experimentMatrix;
@@ -101,20 +101,38 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private int mouseColumn = 0;
 	private int dragRow = 0;
 	private int dragColumn = 0;
+	private int width=0;
+	private int height=0;
 	
 	
+	public int getCurrentWidth() {
+		return width;
+	}
+
+	public void setCurrentWidth(int width) {
+		this.width = width;
+	}
+
+	public int getCurrentHeight() {
+		return height;
+	}
+
+	public void setCurrentHeight(int height) {
+		this.height = height;
+	}
+
 	public GenesetMembership(Vector<String> uniquegenes,
-			Vector<String> genesets, Geneset[] gset) {
-		setLayout(new GridBagLayout());
+			ArrayList<String> genesets, Geneset[] gset) {
+	//	setLayout(new GridBagLayout());
 		setUnique_genes(uniquegenes);
 		setGene_sets(genesets);
 		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
 				this.gene_sets.size() );
 		this.gSets = gset;
 		createExperimentObject();
-		addMouseListener(new Listener());
-		addMouseMotionListener(new Listener());
-		super.setAutoscrolls(true);
+		this.addMouseListener(new Listener());
+		this.addMouseMotionListener(new Listener());
+	//	super.setAutoscrolls(true);
 		setBackground(Color.white);
 		System.out.println("genes:"+this.unique_genes.size());
 		System.out.println("genesets:"+this.gene_sets.size());
@@ -215,23 +233,12 @@ public class GenesetMembership extends JPanel implements IViewer {
 			}
 			
 		}
-		
-		System.out.println("Max gene names width:"+maxWidth);
+	
 		return maxWidth;
 	}
 	
 	
 	
-	  /**
-     * Paints chart into specified graphics.
-     *
-    public void paint(Graphics g) {
-     
-        paint((Graphics2D)g);
-    }
-    
-  
-  
 	
 
 	
@@ -246,77 +253,85 @@ public class GenesetMembership extends JPanel implements IViewer {
 		super.paint(g1);
 		Graphics2D g =  (Graphics2D)g1;
 		setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
-		
-		// Paint the gene set names as column names
-		drawSampleNames(g);
-		repaint();
-		
-		
+
 		FontMetrics metrics = g.getFontMetrics();
 		setFontMetric(metrics);
-		
+
 		if (this.elementSize.getHeight() < 1)
 			return;
-		final int samples = experimentObject.getNumberOfSamples();
-		
-			
-		
+		final int samples = getGene_sets().size();
+
 		Rectangle rectangle=g.getClipBounds();
-		 int originalY =  getTopIndex(rectangle.y+getNamesWidth(metrics)+15);
-		final int height = originalY+elementSize.height*experimentObject.getNumberOfGenes();
-		int originalX = getLeftIndex(rectangle.x);
-		final int width =  originalX+insets.left+elementSize.width*samples+40;
+		final int originalY =  (rectangle.y+getNamesWidth(metrics)+15);
+		final int height = originalY+elementSize.height*getUnique_genes().size();
+		final int originalX = (rectangle.x)+insets.left;
+		final int width =  originalX+elementSize.width*samples;
 		int currentX=originalX;
 		int currentY=originalY;
 		
 		
-		setSize(width, height);
-		setPreferredSize(new Dimension(width, height));
-		//repaint();		
+		// Paint the gene set names as column names
+		drawSampleNames(g);
 		
+		
+
 		// Paint the expression data points
-		
-		//Scrollbar appears. X and Y calculations need work. NOt correct.
-		
-		for (int column = 0; column < samples; column++) {
-			
-			currentX=currentX+column*elementSize.width;
+
+
+		for (int column = 0; column < this.gene_sets.size(); column++) {
+
 			for (int row = 0; row < this.unique_genes.size(); row++) {
 				fillRectAt(g1, currentX, currentY, row,
 						column);
-				
-				currentY=currentY+row*elementSize.height;
-				
-			}
-			
-			currentY=getTopIndex(rectangle.y+getNamesWidth(metrics)+15);
+				if(currentY<=height)
+				currentY=currentY+elementSize.height;
+
+			} 	  	
+			if(currentX<=width)
+				currentX=currentX+elementSize.width;
+			currentY=originalY;
+
 		}
 		
 		// Paint the names of the genes
-//		 int uniqX = elementSize.width*samples+10;
-//		 int annY;
-//		for(int row=y; row<height; row++ ) {
-//			
-//			annY = (row+1)*elementSize.height;
-//            g.drawString(this.unique_genes.get(row), uniqX + insets.left, annY-1);
-//		}
+		g.setColor(Color.black);
+		for(int row=0; row<this.unique_genes.size(); row++ ) {
+			String name=this.unique_genes.get(row);
+	           g.drawString(name, width,  height+elementSize.height*row + elementSize.height/2);
+	           //annY=annY+elementSize.height;
+			}
 		
-	//	updateSize();
+		validate();
+	
+	//	drawGeneNames(width, height, g1, originalY);
+		//updateSize(width, height);
+		//
+
+
 		
-		if(referenceLinesOn) {
-			
-		 if (mouseOnMap){
-		     drawRectAt(g, mouseRow, mouseColumn, Color.white);
-		   }
-		   mouseOnMap=false;
-			
-			
-			
-			
+	}
+	
+	public void drawGeneNames(int width, int height, Graphics g, int ycoordinate) {
+		//int newWidth=width+40;
+		//setSize(newWidth, height);
+		
+		int descent = g.getFontMetrics().getDescent();
+		 int uniqX = width+5;
+		 int annY=ycoordinate;
+		 
+		 g.setColor(Color.black);
+		for(int row=0; row<this.unique_genes.size(); row++ ) {
+			String name=this.unique_genes.get(row);
+           g.drawString(name, uniqX, descent + elementSize.height*row + elementSize.height/2);
+           //annY=annY+elementSize.height;
 		}
 		
 		
+		
+		
 	}
+	
+	
 	
 	
 	
@@ -325,19 +340,20 @@ public class GenesetMembership extends JPanel implements IViewer {
 		FontMetrics metrics=g.getFontMetrics();
 		
 		int descent = metrics.getDescent();
-		int samples=experimentObject.getNumberOfSamples();
+		int samples=getGene_sets().size();
 		
 		if(samples==0)
 			return;
 		
-		setSize(elementSize.width*samples, getNamesWidth(metrics));
-        int h = -getSize().height + 5;
+	//	setSize(elementSize.width*samples, getNamesWidth(metrics)+15+g.getClipBounds().y);
+       // int h = -getSize().height + 5;
+		int h = -(getNamesWidth(metrics)+15+g.getClipBounds().y) + 5;
 		   
         g.setColor(Color.black);
         g.rotate(-Math.PI/2);
         for (int sample = 0; sample < samples; sample++) {
             String name = this.gene_sets.get(sample);
-            g.drawString(name, h, descent + elementSize.width*sample + elementSize.width/2 + insets.left);
+             g.drawString(name, h, descent + elementSize.width*sample + elementSize.width/2 + insets.left);
         }
        g.rotate(Math.PI/2);
 	}
@@ -349,12 +365,15 @@ public class GenesetMembership extends JPanel implements IViewer {
 	 */
 	private void fillRectAt(Graphics g, int row, int column,
 			int expressionRowIndex, int expressionColIndex) {
-
+		
 	
+		if(column> getWidth())
+			return;
 		
 		int x = row ;
 		int y = column;
 		
+	
 		boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0
 				&& (row < this.firstSelectedRow || row > this.lastSelectedRow);
 		mask = (mask || this.firstSelectedColumn >= 0
@@ -363,11 +382,13 @@ public class GenesetMembership extends JPanel implements IViewer {
 		if(this.experimentObject.get(expressionRowIndex,
 				expressionColIndex)==1) {
 			g.setColor(Color.RED);
+			
 		}else {
 			g.setColor(Color.white);
+			
 		}
-
 		g.fillRect(x, y, elementSize.width, elementSize.height);
+	
 		if (mask) {
 			g.setColor(maskColor);
 			g.fillRect(x, y, elementSize.width, elementSize.height);
@@ -395,14 +416,14 @@ public class GenesetMembership extends JPanel implements IViewer {
 	/**
      * Updates size of this viewer.
      */
-    private void updateSize() {
+    private void updateSize(int width, int height) {
     	 setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
-         Graphics2D g = (Graphics2D)getGraphics();
-         int width = elementSize.width*experimentObject.getNumberOfSamples() + 1 + insets.left;
-         width += 20+40;
-         int height = elementSize.height*experimentObject.getNumberOfGenes()+5+40;
-         setSize(width, height);
-
+    	 
+         int new_width = width+10;
+         int new_height = height;
+         setCurrentWidth(new_width);
+         setCurrentHeight(new_height);
+        
     }
     
 
@@ -561,6 +582,9 @@ public class GenesetMembership extends JPanel implements IViewer {
 //                       	
               	repaint();
               }
+              if (g != null) {
+                  g.dispose();
+              }
              
         }
         
@@ -569,13 +593,37 @@ public class GenesetMembership extends JPanel implements IViewer {
         }
         
         public void mouseExited(MouseEvent event) {
-
+//        	mouseOnMap = false;
+//        	
+//        	repaint();
+//        	if (isLegalPosition(oldRow, oldColumn)) {
+//                Graphics g = getGraphics();
+//                fillRectAt(g, oldRow, oldColumn);
+//                g.dispose();
+//            }
+//            setOldPosition(-1, -1);
+//            framework.setStatusText(oldStatusText);
+//            repaint();
         
-            repaint();
+           
         }
         
         public void mouseDragged(MouseEvent event) {
         	repaint();
+            if (SwingUtilities.isRightMouseButton(event)) {
+                return;
+            }
+            int column = findColumn(event.getX());
+            int row = findRow(event.getY());
+            if (!isLegalPosition(row, column)) {
+            	
+                return;
+            }
+          
+            dragColumn = column;
+            dragRow = row;
+
+        
          
         }
         /** Called when the mouse has been pressed. */
@@ -583,13 +631,30 @@ public class GenesetMembership extends JPanel implements IViewer {
             if (SwingUtilities.isRightMouseButton(event)) {
                 return;
             }
+            startColumn = findColumn(event.getX());
+            startRow = findRow(event.getY());
+            if ((!isLegalPosition(startRow, startColumn))||event.isShiftDown()||startColumn<experimentObject.getNumberOfSamples())
+            	return;
+         
+
+            dragColumn = startColumn;
+            dragRow = startRow;
+         
 
            
         }
 
         /** Called when the mouse has been released. */
         public void mouseReleased(MouseEvent event) {
-	     	repaint();
+	     	
+	        int endColumn = findColumn(event.getX());
+	        if (endColumn < experimentObject.getNumberOfSamples())
+	        	return;
+	        int endRow = findRow(event.getY());
+	        if (!isLegalPosition(startRow, startColumn)) {
+	            return;
+	        }
+	      	
 	     }
         
         
@@ -702,12 +767,25 @@ public class GenesetMembership extends JPanel implements IViewer {
 		this.unique_genes = unique_genes;
 	}
 
-	public Vector<String> getGene_sets() {
-		return gene_sets;
-	}
+	
 
-	public void setGene_sets(Vector<String> gene_sets) {
+	public void setGene_sets(ArrayList<String> gene_sets) {
 		this.gene_sets = gene_sets;
 	}
 
+	public ArrayList<String> getGene_sets() {
+		return gene_sets;
+	}
+	
+	public Dimension getMinimumSize() {
+		if(getCurrentWidth()==0 || getCurrentHeight()==0)
+		return new Dimension(elementSize.width*getGene_sets().size(), elementSize.height*getUnique_genes().size());
+		else
+			return new Dimension(getCurrentWidth(), getCurrentHeight());
+	}
+	
+	public Dimension getPreferredSize() {
+		return getMinimumSize();
+	}
+	
 }

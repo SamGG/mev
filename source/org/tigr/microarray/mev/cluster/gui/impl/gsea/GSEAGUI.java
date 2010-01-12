@@ -273,10 +273,15 @@ public class GSEAGUI implements IClusterGUI {
 	}
 	
    private void addGenesetMembershipPlot(DefaultMutableTreeNode root, AlgorithmData result){
+	  
+	   Object[]mappingKey=result.getMappings("over-enriched").keySet().toArray();
+	   ArrayList<String>genesetNames=new ArrayList<String>();
+	   for(int index=0; index<mappingKey.length; index++) {
+		   genesetNames.add((String)mappingKey[index]);
+	   }
 	   
-	  Vector<String> geneset=result.getVector("gene-set-names");
 	  Vector<String>uniquegenes=result.getVector("Unique-Genes-in-Expressionset");
-	  root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset Membership Plot", new GenesetMembership(uniquegenes, geneset, this.geneset))));
+	  root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset Membership Plot", new GenesetMembership(uniquegenes, genesetNames, this.geneset))));
 	   
    }
    
