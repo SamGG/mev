@@ -1,6 +1,7 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Cursor;
@@ -78,7 +79,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private int lastSelectedRow = -1;
 	private int firstSelectedColumn = -1;
 	private int lastSelectedColumn = -1;
-	private Insets insets = new Insets(0, 5, 0, 0);
+	private Insets insets = new Insets(10, 10, 0, 0);
 	private boolean isDrawBorders = true;
 	
 	
@@ -252,7 +253,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 		
 		super.paint(g1);
 		Graphics2D g =  (Graphics2D)g1;
-		setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
+		g.setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
 
 		FontMetrics metrics = g.getFontMetrics();
 		setFontMetric(metrics);
@@ -274,37 +275,52 @@ public class GenesetMembership extends JPanel implements IViewer {
 		drawSampleNames(g);
 		
 		
-
+	// Paint the names of the genes
+		g.setStroke(new BasicStroke(2));
+		g.setColor(Color.black);
+		for(int row=0; row<this.unique_genes.size(); row++ ) {
+			String name=this.unique_genes.get(row);
+	        g.drawString(name, width-originalX, g.getFontMetrics().getAscent()+originalY+elementSize.height*row + elementSize.height/2);
+	           
+			}
+		repaint();
+		
+		
 		// Paint the expression data points
 
 
-		for (int column = 0; column < this.gene_sets.size(); column++) {
+	/*	for (int column = 0; column < this.gene_sets.size(); column++) {
 
 			for (int row = 0; row < this.unique_genes.size(); row++) {
 				fillRectAt(g1, currentX, currentY, row,
 						column);
-				if(currentY<=height)
+				
 				currentY=currentY+elementSize.height;
 
 			} 	  	
-			if(currentX<=width)
+		
 				currentX=currentX+elementSize.width;
 			currentY=originalY;
 
-		}
+		}*/
 		
-		// Paint the names of the genes
-		g.setColor(Color.black);
-		for(int row=0; row<this.unique_genes.size(); row++ ) {
-			String name=this.unique_genes.get(row);
-	           g.drawString(name, width,  height+elementSize.height*row + elementSize.height/2);
-	           //annY=annY+elementSize.height;
-			}
-		
-		validate();
+		 Rectangle bounds = g.getClipBounds();
+	        final int top = getTopIndex(bounds.y+getNamesWidth(metrics)+20);
+	        final int bottom = getBottomIndex(top+bounds.height, getUnique_genes().size());
+	        final int left = getLeftIndex(bounds.x);
+	        final int right = getRightIndex(bounds.x+bounds.width, samples);
+	      
+	        int x, y;
+	        // draw rectangles
+	        for (int column=left; column<right; column++) {
+	            for (int row=top; row<bottom; row++) {
+	                fillRectAt(g, row, column);
+	            }
+	        }
 	
 	//	drawGeneNames(width, height, g1, originalY);
-		//updateSize(width, height);
+		
+		
 		//
 
 
@@ -348,7 +364,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	//	setSize(elementSize.width*samples, getNamesWidth(metrics)+15+g.getClipBounds().y);
        // int h = -getSize().height + 5;
 		int h = -(getNamesWidth(metrics)+15+g.getClipBounds().y) + 5;
-		   
+		  
         g.setColor(Color.black);
         g.rotate(-Math.PI/2);
         for (int sample = 0; sample < samples; sample++) {
@@ -357,6 +373,33 @@ public class GenesetMembership extends JPanel implements IViewer {
         }
        g.rotate(Math.PI/2);
 	}
+	
+	 /**
+     * Fills rect with specified row and column.
+     */
+    private void fillRectAt(Graphics g, int row, int column) {
+        if (column > (experimentObject.getNumberOfSamples() -1))
+        	return;
+        int x = column*elementSize.width + insets.left;
+        int y = row*elementSize.height;
+        boolean mask = this.firstSelectedRow >= 0 && this.lastSelectedRow >= 0 && (row < this.firstSelectedRow || row > this.lastSelectedRow);
+        mask = (mask || this.firstSelectedColumn >= 0 && this.lastSelectedColumn >= 0 && (column < this.firstSelectedColumn || column > this.lastSelectedColumn));
+        
+        if(experimentObject.get(row, column)==1) {
+        	 g.setColor(Color.red);
+        }else
+        	g.setColor(Color.white);
+       
+        g.fillRect(x, y, elementSize.width, elementSize.height);
+        if (mask) {
+            g.setColor(maskColor);
+            g.fillRect(x, y, elementSize.width, elementSize.height);
+        }
+        if (this.isDrawBorders) {
+            g.setColor(Color.black);
+            g.drawRect(x, y, elementSize.width-1, elementSize.height-1);
+        }
+    }
 	
 	
    
@@ -421,6 +464,8 @@ public class GenesetMembership extends JPanel implements IViewer {
     	 
          int new_width = width+10;
          int new_height = height;
+         
+         setSize(new_width, new_height);
          setCurrentWidth(new_width);
          setCurrentHeight(new_height);
         
@@ -739,6 +784,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 	public void onSelected(IFramework framework) {
 		// TODO Auto-generated method stub
+			
 		repaint();
 	}
 
@@ -755,7 +801,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	
 	public JComponent getContentComponent() {
 		// TODO Auto-generated method stub
-		
+		revalidate();
 		return this;
 	}
 
@@ -779,7 +825,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	
 	public Dimension getMinimumSize() {
 		if(getCurrentWidth()==0 || getCurrentHeight()==0)
-		return new Dimension(elementSize.width*getGene_sets().size(), elementSize.height*getUnique_genes().size());
+		return new Dimension(elementSize.width*getGene_sets().size()+100, elementSize.height*getUnique_genes().size());
 		else
 			return new Dimension(getCurrentWidth(), getCurrentHeight());
 	}
@@ -787,5 +833,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	public Dimension getPreferredSize() {
 		return getMinimumSize();
 	}
+	
+	
 	
 }
