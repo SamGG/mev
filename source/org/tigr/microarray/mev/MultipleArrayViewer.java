@@ -191,6 +191,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GenesetMembership;
 import org.tigr.microarray.mev.cluster.gui.impl.nmf.NMFPlotViewer;
 import org.tigr.microarray.mev.file.AnnFileFilter;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
@@ -1739,7 +1740,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		 * CGHPositionGraphViewer needs onSelected called before setting the viewport
 		 * Dan Oct 28, 2009 -NMFPlotViewer need the same.
 		 */
-		if (this.viewer instanceof CGHPositionGraphViewer||this.viewer instanceof NMFPlotViewer) {
+		if (this.viewer instanceof CGHPositionGraphViewer||this.viewer instanceof NMFPlotViewer || this.viewer instanceof GenesetMembership) {
 			this.viewer.onSelected(framework);
         }
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
