@@ -7,7 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.RenderingHints;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -29,25 +29,17 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
 	private static final int COLOR_BAR_HEIGHT = 15;
 	private int elementWidth;
 	private Insets insets = new Insets(0, 10, 0, 0);
-	private int maxSampleLabelLength = 0;
 	private int headerWidth = 0;
-	private boolean isDrag = false;
 	private boolean headerDrag = false;
-	private boolean isSampleDrag = false;
 	private boolean isShift = false;
-	private boolean isShiftMove = false;
-	 private boolean enableMoveable = true;
-	 private int startColumn = 0;
-	    private int startShift = 0;
+	private boolean enableMoveable = true;
+	 private int startShift = 0;
 	    private int endShift = 0;
-	    private int startRow = 0;
-	    private int labelLength = 0;
 	    private int startShiftMove = 0;
 	    private int endShiftMove = 0;
-	private int sampleDragColumn = 0;
-	private int headerDragRow = 0;
-	private int dragColumn = 0;
-	private int dragRow = 0;
+	private float maxValue = 1f;
+    private float minValue = -1f;
+    private float midValue = 0;
 
 
 	public  GenesetMembershipHeader(ArrayList<String>genesets) {
@@ -69,14 +61,13 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
 	        FontMetrics hfm = g.getFontMetrics();
 	        int maxHeight = 0;
 	        String name;
-	        int contentWidth=0;
+	     
 	        final int size = this.gene_set.size();
 	        for (int feature = 0; feature < size; feature++) {
 	            name = this.gene_set.get(feature);
 	            maxHeight = Math.max(maxHeight, hfm.stringWidth(name));
 	        }
-	        contentWidth = (this.gene_set.size())*elementWidth + insets.left + 4;
-	        maxSampleLabelLength = maxHeight;
+	     //   int contentWidth = (this.gene_set.size())*elementWidth + insets.left + 4;
 	        maxHeight += RECT_HEIGHT + hfm.getHeight() + 10;
 	        setBackground(Color.white);
 	        setSize(this.headerWidth, maxHeight);
@@ -114,12 +105,10 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
             return;
         }
         
-        int width = samples*elementWidth;
-        
+             
        
         FontMetrics hfm = g.getFontMetrics();
         int descent = hfm.getDescent();
-        int fHeight = hfm.getHeight();
         
         g.setColor(Color.black);
         
@@ -148,6 +137,8 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
         setFont(new Font("monospaced", Font.PLAIN, width));
     }
     
+    
+	
 	
 	public JComponent getContentComponent() {
 		// TODO Auto-generated method stub
@@ -190,49 +181,49 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
 		
 	}
 
-	
+	 /**
+     * Sets max and min experiment values.
+     */
+   
 	public void setValues(float minValue, float maxValue) {
 		// TODO Auto-generated method stub
-		
+		  this.maxValue = maxValue;
+	        this.minValue = minValue;
 	}
 	
-	
+	 /**
+     * Sets max min and mid experiment values.
+     */
+    public void setValues(float minValue, float midValue, float maxValue) {
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+        this.midValue = midValue;
+    }
 	  private class Listener extends MouseAdapter implements MouseMotionListener {
 
 	
 		public void mouseDragged(MouseEvent event) {
 			 repaint();
             if (SwingUtilities.isRightMouseButton(event)) {
-            	isShiftMove=false;
-            	isSampleDrag = false;
-                return;
+            	return;
             }
             if(event.isShiftDown()){
-            	isSampleDrag = false;
             	return;
             }
             int column = findColumn(event.getX());
             int row = findRow(event.getY());
             if (column==-1){
-            	isShiftMove=false;
-            	isSampleDrag = false;
             	return;
             }
             if (isShift&&enableMoveable){
-        		isShiftMove=true;
-            	endShiftMove = column;
+        		endShiftMove = column;
             	if (startShiftMove-endShiftMove>Math.min(startShift, endShift))
             		endShiftMove = startShiftMove-Math.min(startShift, endShift);
             	if (endShiftMove-startShiftMove>getGene_set().size()-Math.max(startShift, endShift)-1)
             		endShiftMove = startShiftMove+getGene_set().size()-Math.max(startShift, endShift)-1;
             	return;
             }
-            sampleDragColumn = column;
-        	isSampleDrag = true;
-
-        	if (!enableMoveable){
-            	isShiftMove=false;
-            	isSampleDrag = false;
+            if (!enableMoveable){
         	}
             if (!isLegalPosition(row, column)) {
             	headerDrag = false;
@@ -240,12 +231,10 @@ public class GenesetMembershipHeader extends JPanel implements IExperimentHeader
             }
             if (!headerDrag)
             	return;
-            headerDragRow = row;
-        	if (column<getGene_set().size()){
+            if (column<getGene_set().size()){
         		
         	} else{
         		headerDrag = false;
-        		isSampleDrag = false;
         	}
 			
 		}

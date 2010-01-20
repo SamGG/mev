@@ -61,6 +61,7 @@ public class GSEAGUI implements IClusterGUI {
 	    private HashMap<String, LinkedHashMap<String, Float>>descendingSortedTStats=new HashMap<String, LinkedHashMap<String, Float>>();
 	    private Geneset[]geneset=null;
 		private IGeneData[]gData=null;
+		private ArrayList<String>sorted_gene_names=new ArrayList<String>();
 		
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
 	
@@ -172,10 +173,16 @@ public class GSEAGUI implements IClusterGUI {
 		
 			logger.append("Generating Viewers...\n");
 			//Populate the test statistic in to gene sets
+			GSEAUtils utils=new GSEAUtils();
 			geneset=(new GSEAUtils()).populateTestStatistic(gData, geneset, algData.getGeneMatrix("lmPerGene-coefficients"));
 			
-			orderedTestStats=(new GSEAUtils()).getSortedTestStats(geneset);
-			descendingSortedTStats=(new GSEAUtils()).getDescendingSortedTestStats(geneset);
+			orderedTestStats=utils.getSortedTestStats(geneset);
+			this.sorted_gene_names=utils.getSorted_gene_names();
+			
+			
+			descendingSortedTStats=utils.getDescendingSortedTestStats(geneset);
+			
+			
 			
 			//String array containing Gene to Probe mapping, which will be used in the table viewers	
 			geneToProbeMapping=((GeneData)gData[0]).getProbetoGeneMapping(gData);
@@ -280,8 +287,8 @@ public class GSEAGUI implements IClusterGUI {
 		   genesetNames.add((String)mappingKey[index]);
 	   }
 	   
-	  Vector<String>uniquegenes=result.getVector("Unique-Genes-in-Expressionset");
-	  root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset Membership Plot", new GenesetMembership(uniquegenes, genesetNames, this.geneset))));
+	
+	  root.add(new DefaultMutableTreeNode(new LeafInfo("Geneset Membership Plot", new GenesetMembership(this.sorted_gene_names, genesetNames, this.geneset))));
 	   
    }
    

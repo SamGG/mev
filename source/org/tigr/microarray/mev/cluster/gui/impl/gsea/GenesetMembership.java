@@ -67,7 +67,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	// the original experiment object
 	// 3. We will be plotting test statistic and not expression values.
 
-	private Vector<String> unique_genes=new java.util.Vector<String>();
+	private ArrayList<String> unique_genes=new java.util.ArrayList<String>();
 	private ArrayList<String> gene_sets=new java.util.ArrayList<String>();
 	private ArrayList<String>sampleNames=new java.util.ArrayList<String>();
 	private Geneset[] gSets;
@@ -79,7 +79,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private int[] columns;
 	private FontMetrics metrics;
 	private Dimension elementSize = new Dimension(20, 10);
-	public static Color missingColor = new Color(254, 254, 254);
+	public static Color missingColor = new Color(105, 105, 105);
 	public static Color maskColor = new Color(255, 255, 255, 128);
 	public BufferedImage posColorImage = createGradientImage(Color.black, Color.red);
 	public BufferedImage negColorImage = createGradientImage(Color.green, Color.black);
@@ -91,9 +91,10 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private Insets insets = new Insets(0, 10, 0, 0);
 	private boolean isDrawBorders = true;
 	
-	private boolean useDoubleGradient = false;
-	private static final float INITIAL_MAX_VALUE = 3f;
-	private static final float INITIAL_MIN_VALUE = -3f;
+	private boolean useDoubleGradient = true;
+	private boolean isAntiAliasing=true;
+	private static final float INITIAL_MAX_VALUE = 0.5f;
+	private static final float INITIAL_MIN_VALUE = -0.5f;
 	private float maxValue = INITIAL_MAX_VALUE;
 	private float minValue = INITIAL_MIN_VALUE;
 	private float midValue = 0.0f;
@@ -121,7 +122,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 		this.height = height;
 	}
 
-	public GenesetMembership(Vector<String> uniquegenes,
+	public GenesetMembership(ArrayList<String> uniquegenes,
 			ArrayList<String> genesets, Geneset[] gset) {
 	
 	
@@ -129,7 +130,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 		setGene_sets(genesets);
 		setSampleNames(genesets);
 		this.experimentMatrix = new FloatMatrix(this.unique_genes.size(),
-				this.gene_sets.size()+1);
+				this.gene_sets.size()+1, Float.NaN);
 		this.gSets = gset;
 		createExperimentObject();
 		this.header=new GenesetMembershipHeader(getSampleNames());
@@ -278,7 +279,7 @@ public class GenesetMembership extends JPanel implements IViewer {
 	
 			
 			if(right>=samples) {
-				 int uniqX = elementSize.width*samples+30;
+				 int uniqX = elementSize.width*samples+elementSize.width*2;
 				 int row=top;
 				 for (int rowIndex=0; rowIndex<this.unique_genes.size(); rowIndex++) {
 					 
@@ -530,7 +531,7 @@ public class GenesetMembership extends JPanel implements IViewer {
     }
     
     private boolean isLegalRow(int row) {
-        if (row < 0 || row > this.gene_sets.size() -1)
+        if (row < 0 || row > this.unique_genes.size() -1)
             return false;
         return true;
     }
@@ -541,28 +542,29 @@ public class GenesetMembership extends JPanel implements IViewer {
      */
     private class Listener extends MouseAdapter implements MouseMotionListener {
         
-        private String oldStatusText;
+       
         private int oldRow = -1;
         private int oldColumn = -1;
-        private int startColumn = 0;
-        private int startRow = 0;
+       
         GSEAInfoDisplay display;
         public void mouseClicked(MouseEvent event) {
-        	//System.out.println("mouse clicked");
-        	 if (experimentObject.getNumberOfSamples() == 0 || event.isShiftDown())
-                 return;
+        
           
         	 int column = findColumn(event.getX());
              int row = findRow(event.getY());
-                     
+             
+                        
              //mouse on heat map
              if (isLegalPosition(row, column)&& (column < experimentObject.getNumberOfSamples())) {
+            	
             	 if(column==0)
                  display =new GSEAInfoDisplay(null, "Geneset Membership Info Dialog", false, "NA", getUnique_genes().get(row), Float.toString(experimentObject.get(row,column)));
-            	 else
-            		 display =new GSEAInfoDisplay(null, "Geneset Membership Info Dialog", false, getGene_sets().get(column-1), getUnique_genes().get(row), Float.toString(experimentObject.get(row,column)));	 
+            	 else {
+            		 display =new GSEAInfoDisplay(null, "Geneset Membership Info Dialog", false, getGene_sets().get(column-1), getUnique_genes().get(row), Float.toString(experimentObject.get(row,column)));
+            		
+            	 }
             	 
-             }
+             } 
 
         		
         	}
@@ -572,8 +574,6 @@ public class GenesetMembership extends JPanel implements IViewer {
         public void mouseMoved(MouseEvent event) {
         	
         	
-        	
-        	 
         }
         
         public void mouseEntered(MouseEvent event) {
@@ -685,10 +685,55 @@ public class GenesetMembership extends JPanel implements IViewer {
 	}
 
 	public void onMenuChanged(IDisplayMenu menu) {
-		// TODO Auto-generated method stub
+		
+        header.updateSizes(header.getSize().width, elementSize.width);
+        updateSize();
+//        this.maxValue = menu.getMaxRatioScale();
+//        this.minValue = menu.getMinRatioScale();
+//        this.midValue = menu.getMidRatioValue();
+        
+        
+        
+       // this.posColorImage = menu.getPositiveGradientImage();
+     //   this.negColorImage = menu.getNegativeGradientImage();
+       // this.useDoubleGradient = menu.getUseDoubleGradient();
+       // this.header.setNegAndPosColorImages(this.negColorImage, this.posColorImage);
+      //  this.header.setUseDoubleGradient(useDoubleGradient);
+        //header.setValues(maxValue, minValue);
+     //   header.setValues(minValue, midValue, maxValue);
+        if (this.elementSize.equals(menu.getElementSize())  &&
+        this.isAntiAliasing == menu.isAntiAliasing()) {
+            return;
+        }
+        setElementSize(menu.getElementSize());
+        setAntialiasing(menu.isAntiAliasing());
+           
+        header.updateSizes(header.getSize().width, elementSize.width);
+        updateSize();
+        header.setAntiAliasing(menu.isAntiAliasing());
+        header.updateSizes(header.getSize().width, elementSize.width);
+       
 
 	}
+	
 
+	
+	 /**
+     * Sets a shape size.
+     */
+    private void setElementSize(Dimension elementSize) {
+        this.elementSize = new Dimension(elementSize);
+    }
+    
+    /**
+     * Sets anti-aliasing attribute.
+     */
+    private void setAntialiasing(boolean value) {
+        this.isAntiAliasing = value;
+    }
+    
+	
+	
 	public void onSelected(IFramework framework) {
 		// TODO Auto-generated method stub
 		updateSize();
@@ -712,11 +757,11 @@ public class GenesetMembership extends JPanel implements IViewer {
 		return this;
 	}
 
-	public Vector<String> getUnique_genes() {
+	public ArrayList<String> getUnique_genes() {
 		return unique_genes;
 	}
 
-	public void setUnique_genes(Vector<String> unique_genes) {
+	public void setUnique_genes(ArrayList<String> unique_genes) {
 		this.unique_genes = unique_genes;
 	}
 
