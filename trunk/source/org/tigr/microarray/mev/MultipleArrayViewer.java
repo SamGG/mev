@@ -1740,9 +1740,12 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 		 * CGHPositionGraphViewer needs onSelected called before setting the viewport
 		 * Dan Oct 28, 2009 -NMFPlotViewer need the same.
 		 */
-		if (this.viewer instanceof CGHPositionGraphViewer||this.viewer instanceof NMFPlotViewer || this.viewer instanceof GenesetMembership) {
+		if (this.viewer instanceof CGHPositionGraphViewer||this.viewer instanceof NMFPlotViewer ) {
 			this.viewer.onSelected(framework);
         }
+		
+		
+		
         this.viewScrollPane.setViewportView(this.viewer.getContentComponent());
         
         //Top Header (column header)

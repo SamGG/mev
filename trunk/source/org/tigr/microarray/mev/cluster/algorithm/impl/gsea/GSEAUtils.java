@@ -17,6 +17,7 @@ public class GSEAUtils {
 	
 	
 	private Vector<String>geneSetNames;
+	private ArrayList<String>sorted_gene_names=new ArrayList<String>();
 	
 	public  Vector<String>getGeneSetNames(Geneset[]gset){
 		geneSetNames=new Vector<String>();
@@ -101,7 +102,8 @@ public class GSEAUtils {
 	
 	public HashMap<String, LinkedHashMap<String, Float>> getSortedTestStats(Geneset[]gset){
 		HashMap<String, LinkedHashMap<String, Float>> sorted=new HashMap<String, LinkedHashMap<String, Float>>();
-		
+		int index=0;
+		ArrayList<String>tempList=new ArrayList<String>();
 		//Loop through each gene set
 		for(int setIndex=0; setIndex<gset.length; setIndex++){
 		
@@ -114,11 +116,21 @@ public class GSEAUtils {
 				temp.put(Gene, new Float(tStat));
 				
 			}
-					
-			sorted.put(gset[setIndex].getGeneSetName(), sortHashMapByValues(temp));
+			LinkedHashMap<String, Float>tempMap=sortHashMapByValues(temp);	
+			sorted.put(gset[setIndex].getGeneSetName(), tempMap);
+			
+			Iterator it=tempMap.keySet().iterator();
+			
+			while(it.hasNext()) {
+				String name=(String)it.next();
+				tempList.add(index,name );
+				
+				index=index+1;
+			}
+
 					
 		}
-		
+		setSorted_gene_names(tempList);
 		return sorted;
 	}
 	
@@ -146,12 +158,14 @@ public class GSEAUtils {
 	                passedMap.remove(key);
 	                mapKeys.remove(key);
 	                sortedMap.put((String)key, (Float)val);
+	               
 	                break;
 	            }
 
 	        }
 
 	    }
+	   
 	    return sortedMap;
 	}
 
@@ -189,10 +203,18 @@ public class GSEAUtils {
 
 	    }
 		
-		Iterator it=sortedMap.keySet().iterator();
-		
 		
 	    return sortedMap;
+	}
+
+
+	public ArrayList<String> getSorted_gene_names() {
+		return sorted_gene_names;
+	}
+
+
+	public void setSorted_gene_names(ArrayList<String> sorted_gene_names) {
+		this.sorted_gene_names = sorted_gene_names;
 	}
 
 	

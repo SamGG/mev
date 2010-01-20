@@ -75,14 +75,32 @@ public class GSEAInfoDisplay extends ActionInfoDialog{
 	
 	
 	private String createMessage() {
+		String message="<html>" +
+				"<body bgcolor=\"#FFFFCC\">" +
+				"<basefont face =\"monospaced\">" +
+				"<font size=4>"+
+				"<p>" +
+				"Gene set membership plot shows the overlap of genes and geneset. Each row represents a gene present in the expression data.<br/>" +
+				"First column denotes the test statistic computed for each gene. All following columns show individual genesets.<br/>" +
+				"gray colored cell indicates that the gene is not present in that geneset.<br/>" +
+				"</p> ";
+		if(getGeneSetName().equalsIgnoreCase("NA")) {
+			 message += "<table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Gene and Teststatistic</font></th>";
+			 message += "<tr><td><i>GeneName</i></td><td>" + getGeneName() + "</td></tr>";	        
+	         message += "<tr><td><i>Test statistics</i></td><td>" + getTestStats() + "</td></tr>";
+	         message += "</table>";
+		     message += "</basefont></font></body></html>";
+		    
+			
+		}else {
 		
-		 String message = "<html><body bgcolor = \"#FFFFCC\"><basefont face = \"Arial\"><table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Geneset and Genes/font></th>";
+		 message += "<table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Geneset and Genes</font></th>";
 		 message += "<tr><td><i>Geneset</i></td><td>" + getGeneSetName() + "</td></tr>"+
          "<tr><td><i>Gene</i></td><td>" + getGeneName()  + "</td></tr>";
          message += "<tr><td><i>Test statistics</i></td><td>" + getTestStats() + "</td></tr>";
          message += "</table>";
-	     message += "</basefont></body></html>";
-	    
+	     message += "</basefont></font></body></html>";
+		}
 	     return message;
 	}
 
