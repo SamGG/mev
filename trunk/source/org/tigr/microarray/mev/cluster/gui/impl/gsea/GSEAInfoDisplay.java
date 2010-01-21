@@ -80,9 +80,9 @@ public class GSEAInfoDisplay extends ActionInfoDialog{
 				"<basefont face =\"monospaced\">" +
 				"<font size=4>"+
 				"<p>" +
-				"Gene set membership plot shows the overlap of genes and geneset. Each row represents a gene present in the expression data.<br/>" +
-				"First column denotes the test statistic computed for each gene. All following columns show individual genesets.<br/>" +
-				"gray colored cell indicates that the gene is not present in that geneset.<br/>" +
+				"Gene set membership plot shows the overlap of genes and genesets. Each row represents a gene present in the expression data." +
+				"First column contains the (sorted) test statistic computed for each gene. All following columns show individual genesets." +
+				"Gray colored cell is indicative of the gene not being present in that geneset and test statistic for such a gene will be NA" +
 				"</p> ";
 		if(getGeneSetName().equalsIgnoreCase("NA")) {
 			 message += "<table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Gene and Teststatistic</font></th>";
@@ -92,14 +92,23 @@ public class GSEAInfoDisplay extends ActionInfoDialog{
 		     message += "</basefont></font></body></html>";
 		    
 			
-		}else {
+		}else if(getTestStats().equalsIgnoreCase(Float.toString(Float.NaN))) {
 		
 		 message += "<table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Geneset and Genes</font></th>";
 		 message += "<tr><td><i>Geneset</i></td><td>" + getGeneSetName() + "</td></tr>"+
          "<tr><td><i>Gene</i></td><td>" + getGeneName()  + "</td></tr>";
-         message += "<tr><td><i>Test statistics</i></td><td>" + getTestStats() + "</td></tr>";
+         message += "<tr><td><i>Test statistics</i></td><td>" + "NA" + "</td></tr>";
+         message += "<tr><td><i>Status</i></td><td>" + "Gene not present in this geneset" + "</td></tr>";
          message += "</table>";
 	     message += "</basefont></font></body></html>";
+		}else {
+			 message += "<table cellpadding=4 valign=top><th colspan=2 align=left valign=center><font size=6>Geneset and Genes</font></th>";
+			 message += "<tr><td><i>Geneset</i></td><td>" + getGeneSetName() + "</td></tr>"+
+	         "<tr><td><i>Gene</i></td><td>" + getGeneName()  + "</td></tr>";
+	         message += "<tr><td><i>Test statistics</i></td><td>" + getTestStats() + "</td></tr>";
+	         message += "<tr><td><i>Status</i></td><td>" + "Gene is present in this geneset" + "</td></tr>";
+	         message += "</table>";
+		     message += "</basefont></font></body></html>";
 		}
 	     return message;
 	}

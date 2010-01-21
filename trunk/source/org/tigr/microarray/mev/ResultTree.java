@@ -507,6 +507,11 @@ public class ResultTree extends JTree implements java.io.Serializable {
          */
         private Icon leadingEdgeViewerIcon = GUIFactory.getIcon("LeadingEdgeViewer.gif");
         
+        /** Geneset Membership Plot icon
+         */
+        private Icon geneSetMembershipPlotIcon = GUIFactory.getIcon("genesetmembership.gif");
+        
+        
         
         /** PCA 3D icon
          */
@@ -695,6 +700,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 	setIcon(pValueIcon);
                 } else if(text.equals("Test statistics graph")){
                 	setIcon(testStatValueIcon);
+                } else if(text.equals("Geneset Membership Plot")){
+                	setIcon(geneSetMembershipPlotIcon);
                 } 	/* CGH Icons */ 
                 else if(text.equals("Chromosome Views")){
                 
@@ -833,6 +840,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(leadingEdgeViewerIcon);
                     }  else if(text.indexOf("Leading edge genes") != -1){
                         setIcon(tableIcon);
+                    } else if(text.indexOf("Geneset Membership Plot") != -1){
+                        setIcon(geneSetMembershipPlotIcon);
                     }/* CGH Icons */else if (text.equals("Experiment Views")) {
                         setIcon(exprViewIcon);
                     } else if(parentText.equals("Experiment Views")) {
