@@ -174,7 +174,7 @@ public class GSEAGUI implements IClusterGUI {
 			logger.append("Generating Viewers...\n");
 			//Populate the test statistic in to gene sets
 			GSEAUtils utils=new GSEAUtils();
-			geneset=(new GSEAUtils()).populateTestStatistic(gData, geneset, algData.getGeneMatrix("lmPerGene-coefficients"));
+			geneset=utils.populateTestStatistic(gData, geneset, algData.getGeneMatrix("lmPerGene-coefficients"));
 			
 			orderedTestStats=utils.getSortedTestStats(geneset);
 			this.sorted_gene_names=utils.getSorted_gene_names();

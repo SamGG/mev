@@ -18,6 +18,7 @@ public class GSEAUtils {
 	
 	private Vector<String>geneSetNames;
 	private ArrayList<String>sorted_gene_names=new ArrayList<String>();
+	private HashMap<String, Float> sortedGeneStatistics=new HashMap<String, Float>();
 	
 	public  Vector<String>getGeneSetNames(Geneset[]gset){
 		geneSetNames=new Vector<String>();
@@ -35,6 +36,7 @@ public class GSEAUtils {
 	
 	public Geneset[]populateTestStatistic(IGeneData[]gData, Geneset[]geneset, FloatMatrix coef){
 		Geneset[]tempSet=geneset;
+		
 		//Extract the portion that contains the main factor coefficients. The zeroth coefficient is the intercept.
 		//The second coefficient will be that of the main factor.
 		FloatMatrix coef_intermediate=coef.getMatrix(1,1,0,coef.getColumnDimension()-1);
@@ -55,13 +57,15 @@ public class GSEAUtils {
 				float tstat=coef_intermediate.get(0, index);
 			//	System.out.println("test stat:"+tstat);
 				tempSet[setIndex].getGeneSetElement(elementIndex).setTestStat(tstat);
-				
+				sortedGeneStatistics.put(Gene, tstat);
 				
 				
 			}
 			
 			
 		}
+		sortedGeneStatistics=sortHashMapByValuesDescending(sortedGeneStatistics);
+		setSortedGeneStatistics(sortedGeneStatistics);
 		return tempSet;
 		
 		
@@ -103,7 +107,7 @@ public class GSEAUtils {
 	public HashMap<String, LinkedHashMap<String, Float>> getSortedTestStats(Geneset[]gset){
 		HashMap<String, LinkedHashMap<String, Float>> sorted=new HashMap<String, LinkedHashMap<String, Float>>();
 		int index=0;
-		ArrayList<String>tempList=new ArrayList<String>();
+	
 		//Loop through each gene set
 		for(int setIndex=0; setIndex<gset.length; setIndex++){
 		
@@ -119,18 +123,10 @@ public class GSEAUtils {
 			LinkedHashMap<String, Float>tempMap=sortHashMapByValues(temp);	
 			sorted.put(gset[setIndex].getGeneSetName(), tempMap);
 			
-			Iterator it=tempMap.keySet().iterator();
 			
-			while(it.hasNext()) {
-				String name=(String)it.next();
-				tempList.add(index,name );
-				
-				index=index+1;
-			}
-
 					
 		}
-		setSorted_gene_names(tempList);
+	
 		return sorted;
 	}
 	
@@ -215,6 +211,28 @@ public class GSEAUtils {
 
 	public void setSorted_gene_names(ArrayList<String> sorted_gene_names) {
 		this.sorted_gene_names = sorted_gene_names;
+	}
+
+
+	public HashMap<String, Float> getSortedGeneStatistics() {
+		return sortedGeneStatistics;
+	}
+
+
+	public void setSortedGeneStatistics(HashMap<String, Float> sortedGeneStatistics) {
+		this.sortedGeneStatistics = sortedGeneStatistics;
+		ArrayList<String>tempList=new ArrayList<String>();
+		Iterator it=sortedGeneStatistics.keySet().iterator();
+		int index=0;
+		while(it.hasNext()) {
+			String name=(String)it.next();
+			tempList.add(index,name );
+			
+			index=index+1;
+		}
+		
+		setSorted_gene_names(tempList);
+
 	}
 
 	
