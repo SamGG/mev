@@ -56,21 +56,20 @@ public class DistanceMetricPanel extends JPanel {
         
         if(showTitle)
             setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED),"Distance Metric Selection"));
-        
-        JLabel globalMetricLabel = new JLabel("Current Global Metric: "+globalFunctionName);        
+            
         JLabel localSettingLabel = new JLabel("Current Metric: ");
 
         absBox = new JCheckBox("Use Absolute Distance", globalAbsoluteValue);
         absBox.setOpaque(false);
         absBox.setFocusPainted(false);
-         Vector metrics = buildMetricVector();
-        metricBox = new JComboBox(metrics);    
+        Vector<DistanceMetric> metrics = buildMetricVector();
+        metricBox = new JComboBox(metrics); 
         metricBox.addActionListener(new Listener());
-        if(globalFunctionName.equals("not defined"))
+        if(globalFunctionName.equals("not defined")) {
             setMetricSelection(defaultMetricName);
-        else
+        } else {
             setMetricSelection(globalFunctionName);
-        
+        }        
         metricBox.addActionListener(new Listener());
         
         enableAbsolute(globalFunctionName);
@@ -98,8 +97,8 @@ public class DistanceMetricPanel extends JPanel {
         absBox.setSelected(this.globalAbsoluteValue);
     }
     
-    private Vector buildMetricVector() {
-        Vector distanceVector = new Vector();
+    private Vector<DistanceMetric> buildMetricVector() {
+        Vector<DistanceMetric> distanceVector = new Vector<DistanceMetric>();
         
         distanceVector.addElement(new DistanceMetric("Euclidean Distance", Algorithm.EUCLIDEAN));
         distanceVector.addElement(new DistanceMetric("Manhattan Distance", Algorithm.MANHATTAN));

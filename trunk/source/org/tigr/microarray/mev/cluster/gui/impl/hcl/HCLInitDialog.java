@@ -114,7 +114,7 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         orderingSelectionPanel.add(sample_ordering_box, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0,0,0,0),0,0));
         orderingSelectionPanel.add(optimizationWarning, new GridBagConstraints(0,1,2,1,0,0,GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10,10,0,0),0,0));
         
-        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteDistance, "Euclidean Distance", "HCL", true, true);
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteDistance, "Pearson Correlation", "HCL", true, true);
         
         ParameterPanel linkageMethodPanel = new ParameterPanel("Linkage Method Selection");
         linkageMethodPanel.setLayout(new GridBagLayout());

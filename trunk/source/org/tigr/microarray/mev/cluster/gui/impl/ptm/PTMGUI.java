@@ -271,7 +271,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
         
         int hcl_function = 4;
@@ -502,7 +502,7 @@ public class PTMGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();        
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
         
         int hcl_function = 4;

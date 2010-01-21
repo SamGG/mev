@@ -93,7 +93,7 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
             
             data.addParam("distance-function", String.valueOf(function));
@@ -150,7 +150,7 @@ public class GDMGUI implements IClusterGUI, IScriptGUI {
             data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT)     {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
             
             data.addParam("distance-function", String.valueOf(function));

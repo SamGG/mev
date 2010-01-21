@@ -73,7 +73,7 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();        
         if (function == Algorithm.DEFAULT) {        
-            function = Algorithm.EUCLIDEAN;            
+            function = Algorithm.PEARSON;            
         }
         
         // the default values
@@ -202,7 +202,7 @@ public class GSHGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();        
         if (function == Algorithm.DEFAULT) {        
-            function = Algorithm.EUCLIDEAN;            
+            function = Algorithm.PEARSON;            
         }        
                 
         GSHInitDialog gsh_dialog = new GSHInitDialog(framework.getFrame(), k, f, s);

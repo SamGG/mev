@@ -56,7 +56,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
         
         ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());
@@ -155,7 +155,7 @@ public class STGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
         
         ResampleTreeInitDialog dialog = new ResampleTreeInitDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());

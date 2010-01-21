@@ -244,7 +244,7 @@ public class ResampleTreeInitDialog extends AlgorithmDialog {
         this.singleLinkage.setForeground(labelColor);
         buttonGroup.add(singleLinkage);
         
-        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Euclidean Distance", "ST", true, true);        
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Pearson Correlation", "ST", true, true);        
         
         linkagePanel = new JPanel();
         linkagePanel.setLayout(new GridBagLayout());

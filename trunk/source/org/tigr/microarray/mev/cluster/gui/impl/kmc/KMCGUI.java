@@ -96,7 +96,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();        
         if (function == Algorithm.DEFAULT) {        
-            function = Algorithm.EUCLIDEAN;            
+            function = Algorithm.PEARSON;            
         }
            
         KMCInitDialog kmc_dialog = new KMCInitDialog((JFrame)framework.getFrame(), k, iterations, menu.getFunctionName(function),menu.isAbsoluteDistance());
@@ -165,7 +165,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("distance-absolute", String.valueOf(kmc_dialog.isAbsoluteDistance()));
             function = kmc_dialog.getDistanceMetric();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
             data.addParam("distance-function", String.valueOf(function));
             data.addParam("number-of-clusters", String.valueOf(k));
@@ -235,7 +235,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();        
         if (function == Algorithm.DEFAULT) {        
-            function = Algorithm.EUCLIDEAN;            
+            function = Algorithm.PEARSON;            
         }
         KMCInitDialog kmc_dialog = new KMCInitDialog((JFrame)framework.getFrame(), k, iterations, menu.getFunctionName(menu.getDistanceFunction()),menu.isAbsoluteDistance());
  
@@ -290,7 +290,7 @@ public class KMCGUI implements IClusterGUI, IScriptGUI {
         data.addParam("distance-absolute", String.valueOf(kmc_dialog.isAbsoluteDistance()));
         function = kmc_dialog.getDistanceMetric();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
         data.addParam("distance-function", String.valueOf(function));
         data.addParam("number-of-clusters", String.valueOf(k));

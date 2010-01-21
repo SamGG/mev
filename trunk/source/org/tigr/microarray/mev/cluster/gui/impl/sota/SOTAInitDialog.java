@@ -141,7 +141,7 @@ public class SOTAInitDialog extends AlgorithmDialog {
         
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"), true, "Sample Selection");
         
-        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Euclidean Distance", "SOTA", true, true);
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteSetting, "Pearson Correlation", "SOTA", true, true);
                 
         maxCyclesLabel = new javax.swing.JLabel();
         maxDivLabel = new javax.swing.JLabel();

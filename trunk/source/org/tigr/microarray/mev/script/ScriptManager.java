@@ -474,7 +474,7 @@ public class ScriptManager implements Serializable {
                         
                         int function = this.framework.getDistanceMenu().getDistanceFunction();
                         if(function == Algorithm.DEFAULT)
-                            function = Algorithm.EUCLIDEAN;
+                            function = Algorithm.PEARSON;
                         
                         data.addParam("distance-function", String.valueOf(function));
                         data.addParam("use-absolute", String.valueOf(this.framework.getDistanceMenu().isAbsoluteDistance()));
@@ -498,7 +498,7 @@ public class ScriptManager implements Serializable {
                         
                         int function = this.framework.getDistanceMenu().getDistanceFunction();
                         if(function == Algorithm.DEFAULT)
-                            function = Algorithm.EUCLIDEAN;
+                            function = Algorithm.PEARSON;
                         
                         data.addParam("distance-function", String.valueOf(function));
                         data.addParam("use-absolute", String.valueOf(this.framework.getDistanceMenu().isAbsoluteDistance()));

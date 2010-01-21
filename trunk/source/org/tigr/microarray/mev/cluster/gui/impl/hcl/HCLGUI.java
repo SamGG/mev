@@ -52,7 +52,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }        
         
         HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
@@ -133,7 +133,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }        
         
         HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);

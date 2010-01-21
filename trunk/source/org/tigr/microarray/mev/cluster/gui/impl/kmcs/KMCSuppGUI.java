@@ -90,7 +90,7 @@ public class KMCSuppGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
             
         KMCSupportDialog kmcsDialog = new KMCSupportDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());
@@ -311,7 +311,7 @@ public class KMCSuppGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
             
         KMCSupportDialog kmcsDialog = new KMCSupportDialog((JFrame) framework.getFrame(), true, menu.getFunctionName(function), menu.isAbsoluteDistance());

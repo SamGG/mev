@@ -84,7 +84,7 @@ public class CASTGUI implements IClusterGUI, IScriptGUI {
         int usedFunction = Algorithm.EUCLIDEAN;
         
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
             
         CASTInitDialog cast_dialog = new CASTInitDialog((JFrame) framework.getFrame(), modal, menu.getFunctionName(function), menu.isAbsoluteDistance());
@@ -219,7 +219,7 @@ public class CASTGUI implements IClusterGUI, IScriptGUI {
         int usedFunction = Algorithm.EUCLIDEAN;
         
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         }
             
         CASTInitDialog cast_dialog = new CASTInitDialog((JFrame) framework.getFrame(), modal, menu.getFunctionName(function), menu.isAbsoluteDistance());
