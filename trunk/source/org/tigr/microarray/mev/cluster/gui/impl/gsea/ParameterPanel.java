@@ -351,6 +351,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 					}
 				
 				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
+					GeneSigDBDownloads();
 					
 				}
 			}
@@ -490,6 +491,8 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		if (((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")) {
 			algData.addParam("gene-set-directory", pathTextField.getText());
 		}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")) {
+			algData.addParam("gene-set-directory", this.genesetFilePath );
+		}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
 			algData.addParam("gene-set-directory", this.genesetFilePath );
 		}else {
 			algData.addParam("gene-set-directory", "");
@@ -714,6 +717,38 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		return new File(this.adh.getAnnFilePath());
 	}
 
+	
+	
+	
+	private void GeneSigDBDownloads() {
+		
+		try {
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
+			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
+			File geneSigs = frm.getSupportFile(temp, true);
+			if(temp.isValid(geneSigs)) {
+				System.out.println("GeneSigDb download file is valid.");
+				this.genesetFilePath=geneSigs.getParent();
+				pathTextField.setText(this.genesetFilePath);
+				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			System.out.println("Could not download GeneSigDbGeneSets file.");
+		} catch (RepositoryInitializationError e) {
+				e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
