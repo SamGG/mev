@@ -96,7 +96,7 @@ public class SOMInitDialog extends AlgorithmDialog {
         });
         
     
-        metricPanel = new DistanceMetricPanel(globalFunctionName, globalAbsoluteValue, "Euclidean Distance", "SOM", true, true);
+        metricPanel = new DistanceMetricPanel(globalFunctionName, globalAbsoluteValue, "Pearson Correlation", "SOM", true, true);
         
         JPanel parameters1 = new JPanel();
         parameters1.setBorder(new EmptyBorder(5, 10, 20, 0));

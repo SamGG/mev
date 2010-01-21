@@ -165,8 +165,8 @@ public class TEASEGUI implements IClusterGUI {
     private AlgorithmData TEASEInterface(IFramework framework, AlgorithmData data) throws AlgorithmException {
     	IDistanceMenu menu = framework.getDistanceMenu();   //get user input from IDistanceMenu
         int function = menu.getDistanceFunction();
-        if (function == Algorithm.DEFAULT) {      //default value is Euclidean distance
-            function = Algorithm.EUCLIDEAN;
+        if (function == Algorithm.DEFAULT) {      //default value is Pearson correlation distance
+            function = Algorithm.PEARSON;
         }        
 
         String speciesName = null; 

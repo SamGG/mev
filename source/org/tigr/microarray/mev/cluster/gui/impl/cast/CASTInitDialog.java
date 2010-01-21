@@ -69,7 +69,7 @@ public class CASTInitDialog extends AlgorithmDialog{
         eventListener = new EventListener();
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
     
-        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Euclidean Distance", "CAST", true, true);
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Pearson Correlation", "CAST", true, true);
  
         thresholdLabel = new JLabel("Threshold");
         thresholdTextField = new JTextField(10);

@@ -65,7 +65,7 @@ public class KMCInitDialog extends AlgorithmDialog {
         
         sampleSelectionPanel = new SampleSelectionPanel(Color.white, UIManager.getColor("Label.foreground"),true,"Sample Selection");
         
-        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Euclidean Distance", "KMC", true, true);
+        metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteValue, "Pearson Correlation", "KMC", true, true);
         
         meanMedianGroup = new ButtonGroup();
         calcMeans = new JRadioButton("Calculate K-Means", true);

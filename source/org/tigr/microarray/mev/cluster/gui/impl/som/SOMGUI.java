@@ -72,7 +72,7 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         } 
             
         this.data = framework.getData();
@@ -197,7 +197,7 @@ public class SOMGUI implements IClusterGUI, IScriptGUI {
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
-            function = Algorithm.EUCLIDEAN;
+            function = Algorithm.PEARSON;
         } 
             
         this.data = framework.getData();

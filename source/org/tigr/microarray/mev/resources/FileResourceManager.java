@@ -124,7 +124,11 @@ public class FileResourceManager implements IResourceManager {
 		v.add(def);
 		File f = getSupportFiles(v, getOnline).get(def);
 		if(f == null)
-			throw new SupportFileAccessError("Unable to download support file.");
+			try {
+				throw new SupportFileAccessError("Unable to download support file." + def.getURL());
+			} catch (MalformedURLException mue) {
+				throw new SupportFileAccessError("Unable to download support file: \n" + def.getUniqueName() + ": " + mue.getStackTrace().toString());
+			}
 		return f;
 	}
 	public synchronized Hashtable<ISupportFileDefinition, File> getSupportFiles(Collection<ISupportFileDefinition> defs, boolean getOnline) throws SupportFileAccessError {
@@ -892,8 +896,8 @@ public class FileResourceManager implements IResourceManager {
 			File geneSigs = getSupportFile(temp, true);
 			if(temp.isValid(geneSigs)) {
 				System.out.println("GeneSigDb download file is valid.");
-			}
-			
+	}
+	
 		} catch (SupportFileAccessError sfae) {
 			System.out.println("Could not download GeneSigDbGeneSets file.");
 		}

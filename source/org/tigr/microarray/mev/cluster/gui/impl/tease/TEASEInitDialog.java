@@ -913,7 +913,7 @@ public class TEASEInitDialog extends AlgorithmDialog{
             setBackground(Color.white);
             
             metricPanel = new DistanceMetricPanel(globalMetricName, globalAbsoluteDistance, 
-            		"Euclidean Distance", "HCL", true, true);
+            		"Pearson Correlation", "HCL", true, true);
             metricPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(
             		EtchedBorder.LOWERED), "Distance Metric Selection", TitledBorder.DEFAULT_JUSTIFICATION, 
 					TitledBorder.DEFAULT_POSITION, font, Color.black));

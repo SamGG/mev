@@ -175,7 +175,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             IDistanceMenu menu = framework.getDistanceMenu();                 
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
 
             // hcl init
@@ -369,7 +369,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             IDistanceMenu menu = framework.getDistanceMenu();                 
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
 
             // hcl init
@@ -604,7 +604,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             IDistanceMenu menu = framework.getDistanceMenu();
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
 
             // hcl init
@@ -748,7 +748,7 @@ public class KNNCGUI implements IClusterGUI, IScriptGUI {
             IDistanceMenu menu = framework.getDistanceMenu();
             int function = menu.getDistanceFunction();
             if (function == Algorithm.DEFAULT) {
-                function = Algorithm.EUCLIDEAN;
+                function = Algorithm.PEARSON;
             }
 
             // hcl init

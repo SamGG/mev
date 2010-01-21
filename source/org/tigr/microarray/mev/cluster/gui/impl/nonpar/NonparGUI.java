@@ -99,7 +99,7 @@ public class NonparGUI implements IClusterGUI {
 				IDistanceMenu menu = framework.getDistanceMenu();				
 				   int function = menu.getDistanceFunction();        
 			        if (function == Algorithm.DEFAULT) {        
-			            function = Algorithm.EUCLIDEAN;            
+			            function = Algorithm.PEARSON;            
 			        }
 			        
 	            HCLInitDialog hclDialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), false, true);
