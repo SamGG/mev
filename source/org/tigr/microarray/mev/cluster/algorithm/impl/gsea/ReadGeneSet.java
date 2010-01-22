@@ -27,9 +27,7 @@ import org.tigr.util.FloatMatrix;
  * 
  * Currently reads MIT provided GMX and GMT files. It also accepts TXT format files.
  * The GMX and GMT files have Gene Symbols as identifiers. 
- * TXT format is similar to the GMT format files, with two exceptions  
- * 1. There is NO description column after gene set name column. 
- * 2. TXT format uses ENTREZ Gene as identifier
+ * TXT format is similar to the GMT format files
  *  
  *
  */
@@ -41,7 +39,6 @@ public class ReadGeneSet {
 
 
 	GeneSetElement gsElement;
-	Vector genesetNames=new Vector();
 	String filePath;
 	String fileExtension;
 
@@ -50,107 +47,65 @@ public class ReadGeneSet {
 		fileExtension=extension;
 
 	}
-
-	/**
-	 * 
-	 * @param filePath
-	 * @throws Exception
-	 * This function reads the gmx format files. There can be one or many
-	 * gene sets in a file. It creates an array of Genesets. The number of gene
-	 * sets is determined from the first row of the gmx file, which is a tab seperated
-	 * list of gene set names. 
-	 * 
-	 * The genes present within a Geneset are stored in GeneSetElement. Each row (GeneSetElement)
-	 * is added to the corresponding GeneSet.
-	 * 
-	 * The names of All the UNIQUE genes present in the gene set is also stored in the
-	 * first GeneSet, as a vector.
-	 * 
-	 * The names of All the genesets is also stored as a vector in the first GeneSet    
-	 * 
-	 * 
-	 * 
-	 */
-
-	public Geneset[] read_GMXformatfile(String filePath) throws Exception{
-
-		int num_of_linesinFile=this.getCountOfLines(new File(filePath));
-		int num_of_rows=num_of_linesinFile-2;
-
+	
+	public Geneset[] read_GMXfile(String filePath) throws Exception{
+		System.out.println("Start time:"+System.currentTimeMillis());
+		ArrayList<Geneset>genesetList=new ArrayList<Geneset>();
 		String temp;
 		int curpos=0;
+		int index=0;
+		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
 
 		BufferedReader bread=new BufferedReader(new FileReader(new File(filePath)));
-
 		String currentLine=bread.readLine();
-		parseGenesetNamesfromGMX(currentLine);
+		currentLine=currentLine.trim();
 
-		int num_geneSets=this.genesetNames.size();
+		split.init(currentLine);
+		//In GMX files, the first line (row) contains the geneset names.
+		while(split.hasMoreTokens()) {
+			temp=split.nextToken();
+
+			if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("")&&!temp.equalsIgnoreCase("na")){
+				Geneset gset=new Geneset();
+				gset.setGeneSetName(temp);
+				genesetList.add(index, gset);
+				index=index+1;
+			}
 
 
-		set=new Geneset[num_geneSets];
-
-		for(int i=0; i<set.length;i++){
-
-			String gsetName=(String)genesetNames.get(i);
-			set[i]=new Geneset();
-			set[i].setGeneSetName(gsetName);
 		}
 
-	//	set[0].setAllGenesetNames(genesetNames);
-		bread.readLine();//Ignore the second line, which contains description
-		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
+		set=new Geneset[genesetList.size()];
+		set=genesetList.toArray(set);
+
+		//Skip second line containing descriptions
+		bread.readLine();
 
 		while((currentLine=bread.readLine())!=null){
 			split.init(currentLine);
-			int index=0;
 
-
-			while(index<num_geneSets){
-				Vector gene=new Vector();
+			for(index=0; index<set.length; index++) {
 				temp=split.nextToken().trim();
-				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("")&&!temp.equalsIgnoreCase("na")){
-					gsElement=new GeneSetElement(String.valueOf(curpos), temp);
-//					if(!set[index].getGenesinGeneset().contains(temp))//Commented this. IGeneset does NOT have this functionality any more.
-//						set[index].setGenesinGeneset(temp);
-
-				}else{
-					gsElement=new GeneSetElement(String.valueOf(curpos), "NA");
-
-				}
+				gsElement=new GeneSetElement(String.valueOf(curpos), temp);
 				set[index].setGeneSetElement(gsElement, curpos);
-
-				index=index+1;
-
 			}
+
 			curpos=curpos+1;
 
 
+
 		}
+
 		bread.close();
 
-		/*	System.out.println("Printing Gene sets.......................");
-		for(int i=0; i<set.length; i++){
-			System.out.println("Gene set is:"+set[i].getGeneSetName(i));
-			for(int j=0; j<set[i].getGenesetElements().size(); j++){
-				System.out.println("setElement:"+set[i].getGeneSetElement(j).getGene());
-			}
-		}
-		System.out.println("Printing Gene sets...............ENDS........");*/
-
-		//System.out.println("unique genes:"+set[0].getAllGenesinGeneset().size());	
+		System.out.println("End time:"+System.currentTimeMillis());
 		return set;
+
 	}
 
-
+	
 	/**
-	 * read_GMTformatfile reads a GMT format gene set file. There can be one or many
-	 * gene sets in a file. It creates an array of Genesets.
-	 * 
-	 * The length of the gene sets may be different. Unlike read_GMXformatfile, where 
-	 * we would have prior knowledge of the largest number of genes per geneset(considered
-	 * equal to the number of non null rows in file minus the comment and header lines);
-	 * we do not have that luxury here.
+	 * read_GMTformatfile reads a GMT format gene set file. 
 	 *   
 	 *
 	 * 
@@ -160,154 +115,109 @@ public class ReadGeneSet {
 	 * @throws Exception
 	 */
 
-
-
-
-
-
-	public Geneset[] read_GMTformatfile(String filePath)throws Exception{
-
-//		System.out.println("read_GMTformatfiles");
-		String temp;
-
-		parseGenesetNamesfromGMT(filePath);
+	
+	public Geneset[] read_GMTfile(String filePath)throws Exception{
+		
+		ArrayList<Geneset>genesetList=new ArrayList<Geneset>();
+		//System.out.println("Reading starts at:"+System.currentTimeMillis());
 		BufferedReader bread=new BufferedReader(new FileReader(new File(filePath)));
 		String currentLine;
-
 		int index=0;
-		int num_geneSets=this.genesetNames.size();
-		//	System.out.println("gene set size:"+num_geneSets);
-
-		set=new Geneset[num_geneSets];
-
-		for(int i=0; i<num_geneSets;i++){
-
-			String gsetName=(String)genesetNames.get(i);
-			set[i]=new Geneset();
-			set[i].setGeneSetName(gsetName);
-			//System.out.println("gene set name:"+set[i].geneSetName+":"+i);
-		}
-
-	//	set[0].setAllGenesetNames(genesetNames);
-
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
+
+
 		while((currentLine=bread.readLine())!=null&&currentLine.trim().length()!=0){
-			//System.out.print("currentline:"+currentLine);
+
+			Geneset gset=new Geneset();
 			split.init(currentLine);
 			String geneSetName=split.nextToken().trim();//First column has gene set names
+			gset.setGeneSetName(geneSetName);
 			split.nextToken();//Second column contains descriptions
 			int curpos=0;
 
 
-			while(split.hasMoreTokens()&& genesetNames.contains(geneSetName)){
-				temp=split.nextToken().trim();
+			while(split.hasMoreTokens()){
+				String temp=split.nextToken().trim();
 				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("") && !temp.equalsIgnoreCase("na")){
 					gsElement=new GeneSetElement(String.valueOf(curpos), temp);
-					//System.out.println("Gene setname:"+set[index].geneSetName);
-					//System.out.println("gene name is:"+temp);
-					//System.out.println("index:"+index);
-					//System.out.println("curpos:"+curpos);
-					set[index].setGeneSetElement(gsElement, curpos);
-//					if(!set[index].getGenesinGeneset().contains(temp)){--commented because IGeneset does NOT have this functionality any more 
-//						set[index].setGenesinGeneset(temp);
-//					}
+					gset.setGeneSetElement(gsElement, curpos);
+
 					curpos=curpos+1;
 				}
 
 			}
 
+			genesetList.add(index, gset);
 			index=index+1;
-
 
 		}
 		bread.close();
-		/*	System.out.println("Printing Gene sets. in read_GMTFile function......................");
-		for(int i=0; i<set[0].getAllGenesetNames().size(); i++){
-			System.out.println("Gene set is:"+set[0].getGeneSetName(i));
-			for(int j=0; j<set[i].getGenesinGeneset().size(); j++){
-				System.out.println("Gene in gene set is:"+(String)set[i].getGenesinGeneset().get(j));
-			}
-		}
-		System.out.println("Printing Gene sets...............ENDS........");*/
+
+		set=new Geneset[genesetList.size()];
+		set=genesetList.toArray(set);
 
 		return set;
 	}
 
+
 	/**
-	 * read_TXTformatfile functions similar to the read_GMTformatfile
+	 * read_TXTfile 
 	 * @param filePath
 	 * @return
 	 * @throws Exception
 	 */
+	
 
-	public Geneset[] read_TXTformatfile(String filePath)throws Exception{
-
-
-		String temp;
-       
-		parseGenesetNamesfromGMT(filePath);
+	
+	public Geneset[] read_TXTfile(String filePath)throws Exception{
+		ArrayList<Geneset>genesetList=new ArrayList<Geneset>();
+		
 		BufferedReader bread=new BufferedReader(new FileReader(new File(filePath)));
 		String currentLine;
-
 		int index=0;
-		int num_geneSets=this.genesetNames.size();
-		
-
-		set=new Geneset[num_geneSets];
-
-		for(int i=0; i<num_geneSets;i++){
-
-			String gsetName=(String)genesetNames.get(i); 
-
-			set[i]=new Geneset();
-			set[i].setGeneSetName(gsetName);
-			//System.out.println("gene set name:"+set[i].geneSetName+":"+i);
-		}
-		 getCountOfLines(new File(filePath));
-//		set[0].setAllGenesetNames(genesetNames);
-
 		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
-		while((currentLine=bread.readLine())!=null && currentLine.trim().length()!=0){
-			//System.out.print("currentline:"+currentLine);
-			currentLine=currentLine.trim();
+
+
+		while((currentLine=bread.readLine())!=null&&currentLine.trim().length()!=0){
+
+			Geneset gset=new Geneset();
 			split.init(currentLine);
 			String geneSetName=split.nextToken().trim();//First column has gene set names
-			//geneSetName=geneSetName.trim();
+			gset.setGeneSetName(geneSetName);
+			split.nextToken();//Second column contains descriptions
 			int curpos=0;
 
 
-			while(split.hasMoreTokens()&& genesetNames.contains(geneSetName)){
-			//	System.out.println("gene set name:"+geneSetName);
-				//System.out.println("index:"+index);
-				//Remove any leading/trailing white spaces.
-				temp=split.nextToken().trim();
-				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("") && !temp.equalsIgnoreCase("na")&& temp.length()!=0){
-
+			while(split.hasMoreTokens()){
+				String temp=split.nextToken().trim();
+				if(temp!=null && !temp.equalsIgnoreCase("null")&& !temp.equalsIgnoreCase("") && !temp.equalsIgnoreCase("na")){
 					gsElement=new GeneSetElement(String.valueOf(curpos), temp);
+					gset.setGeneSetElement(gsElement, curpos);
 
-					//System.out.println("Gene setname:"+set[index].geneSetName);
-
-					//System.out.println("gene name is:"+temp);
-
-					//System.out.println("index:"+index);
-
-
-					//System.out.println("curpos:"+curpos);
-					set[index].setGeneSetElement(gsElement, curpos);
 					curpos=curpos+1;
 				}
 
 			}
 
+			genesetList.add(index, gset);
 			index=index+1;
-
 
 		}
 		bread.close();
 
-	
+		set=new Geneset[genesetList.size()];
+		set=genesetList.toArray(set);
+
+		
+		
 		return set;
 	}
+
+
+
+
+	
+	
 	
 	/**
 	 * Reads multiple gene set files. The files can be a mix of gmt and gmx OR multiple txt formats.
@@ -327,13 +237,12 @@ public class ReadGeneSet {
 			String filePath=dirPath+"/"+(String)fileList[index];
 			//System.out.println("filePath:"+filePath);
 			if(fileExtension.equalsIgnoreCase("gmt")){
-				gSet=read_GMTformatfile(filePath);
+				gSet=read_GMTfile(filePath);
 
 			}else if(fileExtension.equalsIgnoreCase("gmx")){
-				gSet=read_GMXformatfile(filePath);
+				gSet=read_GMXfile(filePath);
 			}else{
-				//System.out.println("Read TXT format files");
-				gSet=read_TXTformatfile(filePath);
+				gSet=read_TXTfile(filePath);
 			}
 			//Add individual gene set to arraylists		
 			for(int i=0; i<gSet.length; i++){
@@ -420,88 +329,7 @@ public class ReadGeneSet {
 
 
 
-	/**
-	 * parseGenesetNamesfromGMX
-	 * This function parses the gene set names from the gene set file.
-	 * In GMX format files, the first line is the names of the gene sets. 
-	 * Due to the format, it becomes complicated down the line to leave out the gene
-	 * sets which have null or NA or empty string as names.
-	 *    
-	 *    
-	 * @param line
-	 */
-
-
-	public void parseGenesetNamesfromGMX(String line){
-
-		String temp;
-		Vector _tempGeneset=new Vector();
-		int index=0;
-
-		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
-		split.init(line);
-		while(split.hasMoreTokens()&&(temp=split.nextToken())!=null&&temp.trim().length()!=0){
-			//Remove any leading or trailing spaces.
-			temp=temp.trim();
-//			if(!_tempGeneset.contains(temp)){
-//				_tempGeneset.add(index,temp);
-//				index=index+1;
-//			}
-//			
-			if(!genesetNames.contains(temp)){
-				genesetNames.add(index,temp);
-				index=index+1;
-
-			}
-
-			
-			
-		}
 	
-
-	}
-
-
-	/**
-	 * parseGenesetNamesfromGMT
-	 * Parses the names of the gene sets in the file. 
-	 * @filePath
-	 * 
-	 * 
-	 *  
-	 */
-	public void parseGenesetNamesfromGMT(String filePath) throws IOException{
-		BufferedReader bread=new BufferedReader(new FileReader(new File(filePath)));
-		StringSplitter split=new StringSplitter(GSEAConstants.TAB_CHAR);
-		String currentLine;
-		Vector _tempGeneset=new Vector();
-
-		int index=0;
-
-		while((currentLine=bread.readLine())!=null && currentLine.trim().length()!=0){
-			currentLine=currentLine.trim();
-			split.init(currentLine); 
-
-			//Remove any leading or trailing spaces
-			String _temp=(split.nextToken()).trim();
-
-
-			if(_temp!=null){
-
-				if(!genesetNames.contains(_temp)){
-					genesetNames.add(index,_temp);
-					index=index+1;
-
-				}
-
-			}
-
-		}
-
-		bread.close();
-		
-	}
-
 	/**
 	 * Returns number of lines in the specified file.
 	 */

@@ -45,7 +45,7 @@ import org.tigr.util.FloatMatrix;
 public class GSEAGUI implements IClusterGUI {
 	 	
 		private Algorithm gsea;
-		private Progress progress;
+		
 	    private Experiment experiment;
 	    private GSEAExperiment gseaExperiment;
 	    private IData idata;
@@ -62,14 +62,14 @@ public class GSEAGUI implements IClusterGUI {
 	    private Geneset[]geneset=null;
 		private IGeneData[]gData=null;
 		private ArrayList<String>sorted_gene_names=new ArrayList<String>();
+		private boolean stop=false;
 		
 	public DefaultMutableTreeNode execute(IFramework framework)	throws AlgorithmException {
 	
 		this.experiment = framework.getData().getExperiment();
         this.idata = framework.getData();
         FloatMatrix matrix = experiment.getMatrix();
-		int number_of_samples = experiment.getNumberOfSamples();
-	
+		
        
         DefaultMutableTreeNode resultNode = null;
 		
@@ -115,6 +115,9 @@ public class GSEAGUI implements IClusterGUI {
 			ProbetoGene ptg=new ProbetoGene(algData, idata);
 			logger.append("Collapsing probes to genes \n");
 			
+			if(stop)
+				return null;
+			
 			//Get the gene identifier from AlgorithmData and use it to collapse the probes
 			gData=ptg.convertProbeToGene(algData.getParams().getString("gene-identifier"), collapsemode, cutoff);
 			
@@ -130,6 +133,9 @@ public class GSEAGUI implements IClusterGUI {
 			
 			logger.append("Reading gene set files \n");
 			
+			if(stop)
+				return null;
+			
 			ReadGeneSet rgset=new ReadGeneSet(extension, genesetFilePath);
 			try{
 				
@@ -142,7 +148,10 @@ public class GSEAGUI implements IClusterGUI {
 			//Third step is to generate Association Matrix. The Association Matrix generated, does not include gene set
 			//which do not satisfy the minimum number of genes criteria
 			logger.append("Creating Association Matrix \n");
-				
+			
+			if(stop)
+				return null;
+			
 			FloatMatrix amat=rgset.createAssociationMatrix(gene_set, genesInExpressionData, min_genes);
 			algData.addGeneMatrix("association-matrix", amat);
 					
@@ -168,9 +177,13 @@ public class GSEAGUI implements IClusterGUI {
 			gsea = framework.getAlgorithmFactory().getAlgorithm("GSEA");
 			gsea.addAlgorithmListener(listener);
 			logger.append("Algorithm execution begins... \n");
+		
 			AlgorithmData result = gsea.execute(algData);	
 			logger.append("Algorithm excecution ends...\n");
 		
+			if(stop)
+				return null;
+			
 			logger.append("Generating Viewers...\n");
 			//Populate the test statistic in to gene sets
 			GSEAUtils utils=new GSEAUtils();
@@ -217,30 +230,24 @@ public class GSEAGUI implements IClusterGUI {
     */
    private class Listener extends DialogListener implements AlgorithmListener {
        
-       public void valueChanged(AlgorithmEvent event) {
-           switch (event.getId()) {
-               case AlgorithmEvent.SET_UNITS:
-                   progress.setUnits(event.getIntValue());
-                   progress.setDescription(event.getDescription());
-                   break;
-               case AlgorithmEvent.PROGRESS_VALUE:
-                   progress.setValue(event.getIntValue());
-                   progress.setDescription(event.getDescription());
-                   break;
-           }
-       }
-       
+             
        public void actionPerformed(ActionEvent e) {
            String command = e.getActionCommand();
            if (command.equals("cancel-command")) {
-               gsea.abort();
-               progress.dispose();
+        	   stop = true;
+        	   if(gsea!=null)
+        		   gsea.abort();
+               logger.dispose();
            }
+       }
+       
+       public void valueChanged(AlgorithmEvent event) {
+           
        }
        
        public void windowClosing(WindowEvent e) {
            gsea.abort();
-           progress.dispose();
+           
        }
    }
 	
