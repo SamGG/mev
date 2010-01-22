@@ -32,6 +32,7 @@ public class GSEA extends AbstractAlgorithm {
 	private Random aRandom=new Random();
 	private LinkedHashMap overEnrichedPVals=new LinkedHashMap();
 	private LinkedHashMap underEnrichedPVals=new LinkedHashMap();
+	private boolean stop=false;
 
 
 	/**
@@ -39,6 +40,7 @@ public class GSEA extends AbstractAlgorithm {
 	 *
 	 */
 	public void abort() {
+		stop=true;
 	}
 
 
@@ -49,6 +51,8 @@ public class GSEA extends AbstractAlgorithm {
 			
 			//Get the number of permutations and call gsealmPerm
 			int num_perms=Integer.parseInt(data.getParams().getString("permutations"));
+			if(stop)
+				return null;
 			gsealmPerm(num_perms, data, true);
 
 
