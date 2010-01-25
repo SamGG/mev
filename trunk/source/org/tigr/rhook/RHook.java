@@ -19,14 +19,28 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.util.FloatMatrix;
 
 class TextConsole implements RMainLoopCallbacks 
@@ -133,7 +147,7 @@ public class RHook  {
 			logger.stop();
 			throw new Exception("R_HOME not set or available.\n** Possible Causes:\n** MeV launched via WebStart");
 		}
-		
+
 		if(!(new File(r_home).exists())) {
 			System.err.println("R_HOME dir: " + r_home + " does not exist.");
 			logger.writeln("R_HOME dir: " + r_home + " does not exist.");
@@ -143,7 +157,7 @@ public class RHook  {
 			logger.stop();
 			throw new Exception("R_HOME dir: " + r_home + "does not exist.\n** Possible Causes:\n** MeV launched via WebStart\n** " + r_home + " location removed");
 		}
-		
+
 		if (!Rengine.versionCheck()) {
 			System.err.println("** Version mismatch - Java files don't match library version.");
 			logger.writeln("** Version mismatch - Java files don't match library version.");
@@ -252,9 +266,11 @@ public class RHook  {
 
 			//TODO Code to install a package from a local zip or tar based on OS
 			String pkg = System.getProperty("user.dir")+
-						 System.getProperty("file.separator")+
-						 RConstants.R_PACKAGE_DIR+
-						 System.getProperty("file.separator");
+			System.getProperty("file.separator")+
+			RConstants.R_PACKAGE_DIR+
+			System.getProperty("file.separator");
+			//Now getting package name from TMEV props, do not need the follwoing code
+			/*
 			if(getOS() == RConstants.WINDOWS_OS) {
 				pkg = pkg + RConstants.LIMMA_WIN;
 			} else if(getOS() == RConstants.LINUX_OS) {
@@ -265,6 +281,9 @@ public class RHook  {
 			} else if(getOS() == RConstants.MAC_OS) {
 				pkg = pkg + RConstants.LIMMA_MAC;
 			}
+			*/
+			String r_ver = TMEV.getSettingForOption("cur_r_ver");
+			pkg = pkg + TMEV.getSettingForOption(pkgName+"_"+getOSbyName()+"_"+r_ver+"_"+getARCHbyName());
 			//re.eval("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
 			evalR("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
 		}
@@ -565,7 +584,7 @@ public class RHook  {
 		logger.writeln(str);
 	}
 
-	private static int getOS() {
+	public static int getOS() {
 		String os = System.getProperty("os.name");
 		//String arch = System.getProperty("os.arch");
 		//String ver = System.getProperty("os.version");
@@ -580,7 +599,23 @@ public class RHook  {
 		}
 		return RConstants.UNKNOWN_OS;
 	}
-	
+
+	public static String getOSbyName() {
+		String os = System.getProperty("os.name");
+		//String arch = System.getProperty("os.arch");
+		//String ver = System.getProperty("os.version");
+		if (os.toLowerCase().contains("mac")) {
+			return "mac";
+		}
+		if (os.toLowerCase().contains("linux")) {
+			return "linux";
+		}
+		if (os.toLowerCase().contains("win")) {
+			return "win";
+		}
+		return "unknown";
+	}
+
 	private static int getARCH() {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
@@ -591,7 +626,384 @@ public class RHook  {
 		if (arch.toLowerCase().contains("686") || arch.toLowerCase().contains("64")) {
 			return RConstants.OS_ARCH_64;
 		}
-		
+
 		return RConstants.UNKNOWN_ARCH;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	private static String getARCHbyName() {
+		//String os = System.getProperty("os.name");
+		String arch = System.getProperty("os.arch");
+		//String ver = System.getProperty("os.version");
+		if (arch.toLowerCase().contains("386") || arch.toLowerCase().contains("32")) {
+			return "32";
+		}
+		if (arch.toLowerCase().contains("686") || arch.toLowerCase().contains("64")) {
+			return "64";
+		}
+
+		return "UNKNOWN_ARCH";
+	}
+
+	/**
+	 * Function to check if R in Mac has been upgraded to newer version
+	 * 
+	 * @return
+	 * @throws Exception 
+	 */
+	public static boolean Mac_R_ver_Changed() throws Exception {
+		// Check if R is installed
+		String r_home = System.getenv("R_HOME");
+		if(r_home == null || r_home == "") {
+			System.err.println("** R_HOME not avaialble or not set properly.");
+			throw new Exception("R_HOME not set or available.\n** Possible Causes:\n** MeV launched via WebStart");
+		}
+
+		if(!(new File(r_home).exists())) {
+			System.err.println("R_HOME dir: " + r_home + " does not exist.");
+			throw new Exception("R_HOME dir: " + r_home + "does not exist.\n** Possible Causes:\n** MeV launched via WebStart\n** " + r_home + " location removed");
+		}
+
+		// Get current version of R
+		String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+		System.out.println("Mac OS X current R version: " + ver);
+		// Check if R version has changed since last use by 
+		// comparing the version in MeV props.
+		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
+		System.out.println("Mac OS X last R version: " + last_used_ver);
+		
+		// if version changed, check if lib and package for module is 
+		if (ver.equals(last_used_ver)) 
+			return false;
+		return true;
+	}
+	
+	/**
+	 * For Mac OS X only --
+	 * Check for R ver and dyn lib compatibility
+	 * If mismatched try upgrading to correct version
+	 * Downloads 1 or all of the following as applicable:
+	 * dynamic lib
+	 * R version specific R package
+	 * Module specific jar
+	 * 
+	 * @param string module name
+	 * @return
+	 * @throws Exception 
+	 */
+	public static boolean checkRDynLib(String module) throws Exception {
+		// Get current version of R
+		String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+		//System.out.println("Mac OS X current R version: " + ver);
+		// Check if R version has changed since last use by 
+		// comparing the version in MeV props.
+		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
+		//System.out.println("Mac OS X last R version: " + last_used_ver);
+		
+		// if version changed, check if lib and package for module is 
+		if (!ver.equals(last_used_ver)) {
+			System.out.println("Current and last used R version is NOT same\n will check for avaialble updates for ver "+ ver);
+			// read R hook repository info
+			Hashtable<String, String> repHash = getPropInfoRhook();
+			// parse keys
+			String os = getOSbyName();
+			String arch = getARCHbyName();
+			
+			ArrayList<String> r_versionList = getValuesFrmHash(repHash, os+"_r_versions");
+			ArrayList<String> r_moduleList = getValuesFrmHash(repHash, "r_modules");
+			ArrayList<String> archList = getValuesFrmHash(repHash, os+"_arch");
+			
+			// check if current R version is supported
+			if (!r_versionList.contains(ver)) {
+				System.out.println("R version: " + ver + " not yet supported");
+				throw new Exception("R version: " + ver + " not yet supported");
+			}
+			// check if module is supported
+			if (!r_moduleList.contains(module)) {
+				System.out.println(module + " not yet supported");
+				throw new Exception(module + " not yet supported");
+			}
+			// check if architecture is supported
+			if (!archList.contains(arch)) {
+				System.out.println(os + " " + arch + " bit not yet supported");
+				throw new Exception(os + " " + arch + " bit not yet supported");
+			}
+			
+			// check if lib and pkg available for new version
+			String lib_url = RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/libjri.jnilib";
+			ArrayList<String> pkg_url_list = createPkgUrls(
+					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os,
+					ver,
+					r_moduleList,
+					arch,
+					os,
+					repHash);
+			// update lib and all packages associated with R ver
+			updateLibAndPackages(lib_url, pkg_url_list);
+			
+			//update TMEV properties
+			TMEV.storeProperty("cur_r_ver", ver);
+			TMEV.storeProperty("prev_r_ver", last_used_ver);
+			// extract module specific property (pkg name) for cur R ver and store in TMEV
+			storeModuleProperty(ver, r_moduleList, arch, os, repHash);
+			return true;
+		} 
+		// else return
+		System.out.println("Current and last used R version is same");
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param libUrl
+	 * @param pkgUrlList
+	 * @throws IOException 
+	 */
+	private static void updateLibAndPackages(String libUrl, ArrayList<String> pkgUrlList) throws IOException {
+		String lib_dest = System.getProperty("user.dir")+"/"+RConstants.MAC_MEV_RES_LOC;
+		String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
+		
+		// get dyn lib
+		String fileName = getFileNameFromURL(libUrl);
+		System.out.println("updateLibAndPackages remote LIB " + fileName);
+		getRemoteFile(libUrl, lib_dest+"/"+fileName);
+		
+		// get R pkgs
+		for(int i=0; i < pkgUrlList.size(); i++) {
+			fileName = getFileNameFromURL(pkgUrlList.get(i));
+			System.out.println("updateLibAndPackages remote PKG " + fileName);
+			getRemoteFile(pkgUrlList.get(i), pkg_dest+"/"+fileName);
+		}
+	}
+
+	/**
+	 * 
+	 * @param libUrl
+	 * @return
+	 */
+	private static String getFileNameFromURL(String libUrl) {
+		System.out.println("getFileNameFromURL " + libUrl.substring(libUrl.lastIndexOf("/")+1));
+		return libUrl.substring(libUrl.lastIndexOf("/")+1);
+	}
+
+	/**
+	 * 
+	 * @param libUrl
+	 * @param libDest
+	 * @throws IOException
+	 */
+	private static void getRemoteFile(String libUrl, String libDest) throws IOException {
+		
+		String newFName = libDest;//+getFileNameFromURL(libUrl);
+		System.out.println("To Download: " + newFName);
+		File old = new File(newFName);
+		if (old.exists()) {
+			// if file already exists re-name it
+			String reNameTo = newFName + "_" + TMEV.getSettingForOption("cur_r_ver") + "_" + getDateTime();
+			if (!old.renameTo(new File(reNameTo)))
+				throw new IOException(newFName + " could not be renamed");
+			System.out.println("getRemoteFile: Renamed to " + reNameTo);
+		}
+		
+		URL url = new URL(libUrl);
+		InputStream uis = url.openConnection().getInputStream();
+		OutputStream fos = new FileOutputStream(newFName);
+		int bytesRead;
+		byte[] buf = new byte[1024];
+		while ((bytesRead = uis.read(buf,0,buf.length)) > 0)
+			fos.write(buf, 0, bytesRead);
+		fos.close();
+		uis.close();
+		System.out.println("Downloaded: " + newFName);
+		System.out.println("	 >>>>>>>>>>>>>>>>>>>");
+	}
+
+	/**
+	 * 
+	 * @param baseUrl
+	 * @param ver
+	 * @param rModuleList
+	 * @param arch
+	 * @param os 
+	 * @param repHash
+	 * @return
+	 */
+	private static ArrayList<String> createPkgUrls(String baseUrl,
+			String ver, ArrayList<String> rModuleList,
+			String arch, String os, Hashtable<String, String> repHash) {
+		
+		System.out.println("createPkgUrls: baseUrl " + baseUrl);
+		ArrayList<String> result = new ArrayList<String>();
+		// module name loop
+		for(int i = 0; i < rModuleList.size(); i++) {
+			String tmp = rModuleList.get(i) + "_" + os + "_" + ver + "_" + arch;
+			result.add(baseUrl + "/" + rModuleList.get(i) + "/" + repHash.get(tmp));
+			System.out.println("createPkgUrls " + result.get(result.size()-1));
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param ver
+	 * @param rModuleList
+	 * @param arch
+	 * @param os
+	 * @param repHash
+	 */
+	private static void storeModuleProperty(String ver,
+			ArrayList<String> rModuleList, String arch, String os,
+			Hashtable<String, String> repHash) {
+		// module name loop
+		for(int i = 0; i < rModuleList.size(); i++) {
+			String tmp = rModuleList.get(i) + "_" + os + "_" + ver + "_" + arch;
+			TMEV.storeProperty(tmp, repHash.get(tmp));
+			System.out.println("TMEV stored prop " + tmp + ":" + repHash.get(tmp));
+		}
+	}
+	
+	/**
+	 * 
+	 * @param repHash
+	 * @param key
+	 * @return
+	 */
+	private static ArrayList<String> getValuesFrmHash(
+		Hashtable<String, String> repHash, String key) {
+		System.out.println("repHash size " + repHash.size());
+		return new ArrayList<String>(Arrays.asList((repHash.get(key).split(RConstants.PROP_DELIM))));
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Hashtable<String, String> getPropInfoRhook() {
+		Hashtable<String, String> repHash = new Hashtable<String, String>();
+
+		try {
+			URLConnection conn = new URL(RConstants.RHOOK_PROP_URL).openConnection();    		    		
+
+			//add repository property hashes to the vector
+			repHash = parseProp(conn.getInputStream());			
+
+			//Cache property results in TMEV props
+			/*
+			Enumeration keySet = repHash.keys();
+			while(keySet.hasMoreElements()) {
+				String key = (String)keySet.nextElement();
+				TMEV.storeProperty(key, (String)repHash.get(key));
+			}
+			 */
+		} catch (Exception e) {
+			System.out.println("Could not tereive Web Repository Info. Using cached value instead.");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		//return the vector of repository hashes
+		return repHash; 
+	}
+
+	/**
+	 * 
+	 * @param is
+	 * @return
+	 * @throws IOException
+	 */
+	private static Hashtable<String, String> parseProp(InputStream is) throws IOException{
+		String os  = getOSbyName();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		String [] keyValue;
+
+		Hashtable<String, String> currHash = new Hashtable<String, String>();
+		String line;
+		//loop through the file to parse into 
+		while((line = br.readLine())!= null) {
+			//comment line, if any
+			if(line.startsWith("#"))
+				continue;
+			//if(!line.contains(os))
+				//continue;
+			keyValue = line.split("=");
+			//add the current property specific to the os
+			System.out.println("URL Config: " + keyValue[0] + "-" + keyValue[1]);
+			currHash.put(keyValue[0], keyValue[1]);
+		}
+		return currHash;
+	}
+
+	/**
+	 * Determines if a file/dir is symbolic link
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean isSymlink(File file) throws IOException {
+		if (file == null)
+			throw new NullPointerException("File must not be null");
+		File canon;
+		if (file.getParent() == null) {
+			canon = file;
+		} else {
+			File canonDir = file.getParentFile().getCanonicalFile();
+			canon = new File(canonDir, file.getName());
+		}
+		return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+	}
+
+	/**
+	 * 
+	 * @param curRpath
+	 * @return
+	 */
+	public static String getMacRversionFromSymLink (String curRpath) {
+		// Detecting a link
+		File file = new File(curRpath);
+		try {
+			System.out.println("Absolute path : " + file.getAbsoluteFile());
+			System.out.println("Canonical path: " + file.getCanonicalFile());
+			if (isSymlink(file))
+				System.out.println("Path is a link");
+			else
+				System.out.println("Path is NOT a link");
+			String can = file.getCanonicalPath();
+			String ver = can.substring(can.lastIndexOf("/")+1);
+			//Get R version
+			System.out.println("R version: " + ver);
+			return ver;
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			return null;
+		}
+
+		/*
+		boolean isSymbolicLink = Attributes.readBasicFileAttributes(file, LinkOption.NOFOLLOW_LINKS).isSymbolicLink();
+		// Read symbolic link
+		//Path link = ...;
+		try {
+		    System.out.format("Target of link '%s' is '%s'%n", file, file.readSymbolicLink());
+		} catch (IOException x) {
+		    System.err.println(x);
+		}
+		 */
+	}
+	
+	/**
+	 * Return a unique time stamp
+	 * @return
+	 */
+	private static String getDateTime() {
+		Date now = new Date();
+		String dateString = now.toString();
+
+		SimpleDateFormat formatDt = new SimpleDateFormat("MMM_dd_yy_HH:mm:ss");
+		dateString = formatDt.format(now);
+		//System.out.println(" 2. " + dateString);
+		return dateString;
 	}
 }
