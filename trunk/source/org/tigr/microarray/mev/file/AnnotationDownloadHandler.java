@@ -1,6 +1,8 @@
 package org.tigr.microarray.mev.file;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -97,8 +100,25 @@ public class AnnotationDownloadHandler {
 
 	public JPanel getAnnotationLoaderPanel(GBA gba) {
 
-
-		annotationPanel = new JPanel();
+		annotationPanel = new JPanel() {
+			public void setBackground(Color bg){
+				super.setBackground(bg);
+				if(this != null) {
+					if(autoDownload != null)
+						autoDownload.setBackground(bg);
+					if(loadFromFile != null)
+						loadFromFile.setBackground(bg);
+					if(proceedLoadingAnnotation != null)
+						proceedLoadingAnnotation.setBackground(bg);
+					if(annFileLocation != null)
+						annFileLocation.setBackground(bg);
+					if(arrayListBox != null)
+						arrayListBox.setBackground(bg);
+					if(organismListBox != null)
+						organismListBox.setBackground(bg);
+				}
+			}			
+		};
 		annotationPanel.setLayout(new GridBagLayout());
 		annotationPanel.setBorder(new TitledBorder(new EtchedBorder(), "Load Annotation Data"));
 
@@ -108,7 +128,6 @@ public class AnnotationDownloadHandler {
 		
 		autoDownload = new JRadioButton("Automatically download");
 		loadFromFile = new JRadioButton("Load from local file");
-
 			
 		annFileLocation.setEditable(false);
 		browseAnnFileButton = new JButton("Choose File");
@@ -214,6 +233,7 @@ public class AnnotationDownloadHandler {
 		try {
 			final String organismName = organismListBox.getSelectedItem().toString();
 			final String arrayName = arrayListBox.getSelectedItem().toString();
+			
 			if(autoDownload.isSelected()) {
 				if(!organismName.equals(CHOOSE_ORGANISM) &&	!arrayName.equals(CHOOSE_ARRAY)) {
 					final ISupportFileDefinition def = new ResourcererAnnotationFileDefinition(organismName, arrayName);
@@ -225,6 +245,7 @@ public class AnnotationDownloadHandler {
 								updateLabel();
 								try {
 									datapath = irm.getSupportFile(def, true).getAbsolutePath();
+								
 								} catch (SupportFileAccessError sfae) {
 									annotationSelected = false;
 									inProgress = false;
@@ -240,8 +261,6 @@ public class AnnotationDownloadHandler {
 								getAdditionalSupportFiles(organismName, arrayName);
 								annotationSelected = true;
 								inProgress = false;
-						       	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, organismName);
-						       	TMEV.storeProperty(TMEV.LAST_LOADED_ARRAY, arrayName);
 								updateLabel();
 							} catch (Exception e) {
 								annotationSelected = false;
@@ -306,6 +325,7 @@ public class AnnotationDownloadHandler {
 					additionalListener.actionPerformed(new ActionEvent(browseAnnFileButton, 0, GOT_ANNOTATION_FILE));
 				}
 			} else if (source.equals(autoDownload)) {
+				System.out.println("autoDownmload");
 				if(autoDownload.isSelected()) {
 					onSelectAutoDownload();
 				}
@@ -333,8 +353,6 @@ public class AnnotationDownloadHandler {
 			proceedLoadingAnnotation.setSelected(true);
 
 	}
-
-
 	private void onSelectBrowseFile() {
 		annFileLocation.setEnabled(true);
 		browseAnnFileButton.setEnabled(true);
@@ -397,12 +415,12 @@ public class AnnotationDownloadHandler {
 	
 	public void setDownloadEnabled(boolean isEnabled) {
 		autoDownload.setEnabled(isEnabled);
-		loadFromFile.setSelected(!isEnabled);
+		loadFromFile.setSelected(false);
 		loadFromFile.setEnabled(isEnabled);
 		organismListBox.setEnabled(isEnabled);
 		arrayListBox.setEnabled(isEnabled);
-		proceedLoadingAnnotation.setSelected(false);
-		proceedLoadingAnnotation.setEnabled(false);
+		proceedLoadingAnnotation.setSelected(isEnabled);
+		proceedLoadingAnnotation.setEnabled(isEnabled);
 		annotationSelected = false;
 		statusLabel.setForeground(Color.gray);
 		this.isEnabled = isEnabled;
@@ -429,7 +447,6 @@ public class AnnotationDownloadHandler {
 			AnnotationDownloadHandler adh = new AnnotationDownloadHandler(irm, speciestoarrays, "Human", "affy_HG-U133A");
 			JPanel annotationPanel = adh.getAnnotationLoaderPanel(gba);
 			frame.add(annotationPanel);
-
 		} catch (SupportFileAccessError sfae) {
 //			fail("Couldn't get species/array mappings from repository.");
 		} catch (IOException ioe) {

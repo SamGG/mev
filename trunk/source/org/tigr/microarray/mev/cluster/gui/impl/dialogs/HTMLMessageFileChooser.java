@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -42,6 +43,10 @@ public class HTMLMessageFileChooser extends JDialog {
     private String approveString;
     private int result = JOptionPane.CANCEL_OPTION;
     private JPanel msgPanel;
+    private JButton okButton, cancelButton;
+    
+   
+    
     
     /** Creates a new instance of MessageFileChooser */
     public HTMLMessageFileChooser(Frame parent, String title, String msg, String filePath, boolean modal) {
@@ -69,7 +74,8 @@ public class HTMLMessageFileChooser extends JDialog {
         this.setContentPane(contentPanel);
         pack();
     }
-            
+    
+               
     public HTMLMessageFileChooser(Frame parent, String title, String msg, File file, boolean modal) {
         super(parent, title, modal);
         chooser = new JFileChooser(file);
@@ -95,6 +101,65 @@ public class HTMLMessageFileChooser extends JDialog {
         this.setContentPane(contentPanel);
         pack();        
     }
+    
+    /**
+     * Constructor added to accomodate importing gene annotations using Resourcerer after data was loaded. 
+     * @param parent
+     * @param title
+     * @param msg
+     * @param annotationPanel
+     * @param modal
+     */
+    
+    public HTMLMessageFileChooser(Frame parent, String title, String msg, JPanel annotationPanel, boolean modal) {
+    	
+    	super(parent, title, modal);
+    	   	
+    	 JTextPane pane = new JTextPane();
+         pane.setEditable(false);
+         pane.setContentType("text/html");
+         pane.setBackground(Color.white);
+        
+         pane.setText(msg);
+         
+         JPanel msgPanel = new JPanel(new GridBagLayout());
+         msgPanel.add(pane, new GridBagConstraints(0,0,1,1,1,1,GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0,5,10,5), 0,0));
+         msgPanel.setBackground(Color.white);
+         msgPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+         
+         
+         JPanel buttonPanel = new JPanel();
+         okButton = new JButton("OK");
+         okButton.setActionCommand("ok-command");
+         okButton.setSize(60,30);
+         okButton.setPreferredSize(new Dimension(60,30));
+         okButton.setFocusPainted(false);
+         okButton.addActionListener(new Listener());
+         cancelButton = new JButton("Cancel");
+         cancelButton.setActionCommand("cancel-command");
+         cancelButton.setSize(60,30);
+         cancelButton.setPreferredSize(new Dimension(60,30));
+         cancelButton.setFocusPainted(false);
+         cancelButton.addActionListener(new Listener());
+         
+         buttonPanel.add(cancelButton, new GridBagConstraints(3,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+         buttonPanel.add(okButton, new GridBagConstraints(4,0,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
+         
+    	
+         JPanel contentPanel = new JPanel(new GridBagLayout());
+         contentPanel.add(msgPanel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+         contentPanel.add(annotationPanel, new GridBagConstraints(0,2,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));        
+         contentPanel.add(buttonPanel, new GridBagConstraints(0,4,1,1,1.0,0.0,GridBagConstraints.SOUTH, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+         
+         this.setContentPane(contentPanel);
+         pack();        
+    
+    	
+    }
+    
+   
+    
+    
     
     public int showModal() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -133,9 +198,15 @@ public class HTMLMessageFileChooser extends JDialog {
             if (cmd.equals(JFileChooser.APPROVE_SELECTION)) {
                 result = JFileChooser.APPROVE_OPTION;
                 dispose();
-            } else {
+            } else if(cmd.equals(JFileChooser.CANCEL_SELECTION)) {
                result = JFileChooser.CANCEL_OPTION;                
                dispose();                
+            }else if(cmd.equalsIgnoreCase("ok-command")) {
+            	 result = JOptionPane.OK_OPTION;
+            	dispose();
+            }else if(cmd.equalsIgnoreCase("cancel-command")) {
+            	 result = JOptionPane.CANCEL_OPTION;
+            	 dispose();
             }
         }        
     }

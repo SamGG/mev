@@ -100,6 +100,7 @@ import javax.swing.JTree;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -192,11 +193,14 @@ import org.tigr.microarray.mev.cluster.gui.helpers.TextViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HTMLMessageFileChooser;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.GenesetMembership;
+
 import org.tigr.microarray.mev.cluster.gui.impl.nmf.NMFPlotViewer;
 import org.tigr.microarray.mev.file.AnnFileFilter;
+import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.CGHStanfordFileLoader;
 import org.tigr.microarray.mev.file.FileLoadInfo;
 import org.tigr.microarray.mev.file.FileType;
+import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.gaggle.GaggleConstants;
 import org.tigr.microarray.mev.gaggle.GaggleListener;
@@ -286,6 +290,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 
 	//Dan's time saver
 	private static boolean firstLoad = true;
+	private AnnotationDownloadHandler adh;
 
     /**
      * Construct a <code>MultipleArrayViewer</code> with default title,
@@ -4455,6 +4460,98 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         }
     }
     
+    
+    private void appendResourcererAnnotation() {
+    	 String msg = "<html><center><h1>Import Gene Annotation</h1></center>";
+         msg += "Please select an annotation file to import.  The file should contain a column that can be used ";
+         msg += "to map annotation in the file to the proper genes.  After file selection you will be asked to identify ";
+         msg += "a key from the data and from the input file to be used to ensure proper mapping of annotation. ";
+         msg += "Note that this file format should conform the MeV Resourcerer annotation file format conventions (.txt) file ";
+         msg += "described in the appendix of the manual</html>";
+         
+         GBA gba=new GBA();
+         JPanel annotationPanel=new JPanel();
+  	    annotationPanel.setLayout(new GridBagLayout());
+          annotationPanel.setBorder(new EtchedBorder());
+         
+  	       
+  	    adh = new AnnotationDownloadHandler(this.framework);
+  	  
+  	   // System.out.println("Annotation has been loaded:"+fwork.getData().isAnnotationLoaded());
+  		if(this.framework.getData().isAnnotationLoaded()) {
+  						
+  			annotationPanel.setVisible(false);
+  			adh.setOptionalMessage("Annotation is already loaded for array " + this.framework.getData().getChipAnnotation().getChipType());
+  			adh.setAnnFilePath(this.framework.getData().getChipAnnotation().getAnnFileName());
+  		}
+  		adh.addListener(new EventListener());
+  		annotationPanel = adh.getAnnotationLoaderPanel(gba);
+  		annotationPanel.setBackground(Color.white);
+  		
+  		adh.setDownloadEnabled(!this.framework.getData().isAnnotationLoaded());
+         
+        HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, annotationPanel, true);
+        dialog.setSize(new Dimension(700,500));
+        
+        if(dialog.showModal()==JOptionPane.OK_OPTION) {
+        	processAnnotationFile();
+        }
+      
+              
+         
+    }
+    
+    
+    /**
+	 * processAnnotationFile() function 
+	 * 1. Reads the selected annotation file 
+	 * 2. Calls "GeneAnnotationImportDialog" to correctly map the unique identifier
+	 * in the annotation file (probe id) to the unique identifier in the
+	 * expression data loaded. 
+	 * 3. Calls "addResourcererGeneAnnotation", which makes the necessary changes in SlideDataElement
+	 * 
+	 */
+	public void processAnnotationFile() {
+		System.out.println("processAnnotationFile");
+		try {
+			String[] dataFieldNames = this.framework.getData().getFieldNames();
+
+			AnnotationFileReader reader = AnnotationFileReader
+			.createAnnotationFileReader(getAnnotationFile());
+			//EH
+			GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(
+					new JFrame(), dataFieldNames, reader.getAvailableAnnotations());//MevAnnotation.getFieldNames());
+
+			 if(importDialog.showModal() == JOptionPane.OK_OPTION) {
+                 data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
+                
+                    menubar.replaceLabelMenuItems(data.getFieldNames());
+                    
+                    //add event to history log
+                    String historyMsg = "New Gene Annotation\n";
+                    historyMsg += "Annotation File = " + getAnnotationFile().getAbsolutePath() + "\n";
+                    historyMsg += "New Annotation Fields: ";
+                    addHistory(historyMsg);
+                    
+                    JOptionPane.showMessageDialog(getFrame(), "<html>Gene annotation has been successfully added.<br>Check the history node for field information.</html>", "Append Gene Annotation", JOptionPane.INFORMATION_MESSAGE);
+
+              
+            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		this.framework.getData().setAnnotationLoaded(true);
+	}
+
+	
+	private File getAnnotationFile() {
+		return new File(this.adh.getAnnFilePath());
+	}
+	
+	public boolean isAnnotationSelected() {
+		return this.adh.isAnnotationSelected();
+	}
+    
    /*Added by Sarita Nair
     * 
     * 
@@ -4481,7 +4578,7 @@ private void appendResourcererGeneAnnotation() {
             File file = dialog.getSelectedFile();
             
             try {
-            	
+            
             	
                String [] dataFieldNames = data.getFieldNames();
                
@@ -5285,6 +5382,7 @@ private void appendResourcererGeneAnnotation() {
 
         public void actionPerformed(ActionEvent event) {
             String command = event.getActionCommand();
+            
             if (command.equals(ActionManager.CLOSE_COMMAND)) {
                 onClose();
             } else if (command.equals(ActionManager.CLEAR_DATA_COMMAND)) {
@@ -5523,8 +5621,12 @@ private void appendResourcererGeneAnnotation() {
             } else if (command.equals(ActionManager.APPEND_GENE_ANNOTATION_COMMAND)) {
                 appendGeneAnnotation();
             } else if (command.equals(ActionManager.IMPORT_RESOURCERER_ANNOTATION_COMMAND)) {
-               appendResourcererGeneAnnotation();
-	        } else if (command.equals(ActionManager.CHANGE_SPECIES_NAME_COMMAND)) {
+               //appendResourcererGeneAnnotation();
+            	appendResourcererAnnotation();
+	        } else if (command.equalsIgnoreCase(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
+				processAnnotationFile();
+			}
+            else if (command.equals(ActionManager.CHANGE_SPECIES_NAME_COMMAND)) {
 	            askUserForSpeciesName(data.getGaggleOrganismName());
 	        }
             /**
