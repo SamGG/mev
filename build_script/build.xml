@@ -252,13 +252,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 				mev/cluster/algorithm/impl/util
     -->
     <target name="algorithm-support" depends="jar-util">
+    	<!--
     	<javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${jri.dir}" destdir="${dest.dir}">
     	    <include name="*.java"/>  
     		<classpath>
                 <pathelement location="${lib.dir}/JRI.jar"/>
-    			<!-- <pathelement location="${lib.dir}/swing-layout-1.0.3.jar"/>  -->
     		</classpath>
     	</javac>
+    	-->
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${cluster.dir}" destdir="${dest.dir}">
             <include name="*.java"/>            
         </javac>
@@ -282,8 +283,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     <target name="jar-algorithm-support" depends="algorithm-support">
         <jar destfile="${lib.dir}/mev-algorithm-support.jar"
              basedir="${dest.dir}"
-	       includes="org/tigr/rhook/*.class,
-    				org/tigr/microarray/mev/cluster/*.class,
+	       includes="org/tigr/microarray/mev/cluster/*.class,
                    	org/tigr/microarray/mev/cluster/algorithm/*.class,
                  	org/tigr/microarray/mev/cluster/algorithm/impl/*.class,            
                  	org/tigr/microarray/mev/cluster/algorithm/impl/util/*.class"            
@@ -321,6 +321,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             "mev/r/**, 
             file/**, 
             remote/**, 
+        	rhook/**,
             util/**, 
             mev/**, 
             mev/action/*.java, 
@@ -506,7 +507,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
         <jar destfile="${lib.dir}/mev-base.jar"
              basedir="${dest.dir}"
 	       includes= 
-        	"org/tigr/remote/**,
+        	"org/tigr/rhook/*.class,
+        	org/tigr/remote/**,
             org/tigr/microarray/file/*.class,
 		    org/tigr/microarray/util/**,
 			org/tigr/microarray/mev/r/*.class,

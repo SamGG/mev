@@ -53,6 +53,8 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
+import org.tigr.rhook.RConstants;
+import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 
 /**
@@ -112,8 +114,26 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
 		//Before anything check for Mac OS and throw appropriate msg
 		if(sysMsg() != JOptionPane.OK_OPTION)
 			return null;
+		
+		// For Mac OS X only --
+		// Check for R ver and dyn lib compatibility
+		// If mismatched try upgrading to correct version
+		if (RHook.getOS() == RConstants.MAC_OS) {
+			try {
+				if (RHook.Mac_R_ver_Changed()) {
+					if (!RHook.checkRDynLib("limma")) {
+						JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
+						throw new AbortException(); 
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Error updating R library\n **" + e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
+				throw new AbortException();
+			}
+		}
 		//System.out.println("Checking for R_HOME in properties: " + System.getProperty("R_HOME"));
-		System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
+		//System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
