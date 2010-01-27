@@ -219,6 +219,7 @@ public class ProbetoGene {
 		if (conversionCriteria.equalsIgnoreCase(GSEAConstants.SD)) {
 
 			gene_data = remove_lowVar_probes(gdata, SDcutoff);
+			
 
 		}// If SD loop ends
 
@@ -309,7 +310,10 @@ public class ProbetoGene {
 	public GSEAExperiment returnGSEAExperiment() {
 		return this.gseaExperiment;
 	}
-
+	
+	
+	
+	
 	/**
 	 * remove_lowVar_probes does the following 
 	 * 1. Goes through the Genes in the original GeneData, checks if it has one or multiple probes associated
@@ -325,7 +329,7 @@ public class ProbetoGene {
 	 */
 
 	public IGeneData[] remove_lowVar_probes(IGeneData[] gdata, String SDcutoff) {
-
+		
 		IGeneData[] gene_data;
 		// List of genes (subset of the unique ones in the expression data) which
 		// pass the SD cutoff
@@ -344,8 +348,7 @@ public class ProbetoGene {
 
 		FloatMatrix geneDataMatrix;
 
-		// for testing
-		Vector probe = new Vector();
+		
 
 		/**
 		 * First step in removing the probes, is to go through the unique genes
@@ -391,7 +394,7 @@ public class ProbetoGene {
 				// Calculate the SD of the probe across samples and see if it
 				// exceeds the user cutoff
 				for (int col = 0; col < cols; col++) {
-					matrixVals = new double[cols];
+					
 					matrixVals[col] = (double) experiment_matrix.get(probe_pos,
 							col);
 				}
@@ -411,7 +414,7 @@ public class ProbetoGene {
 				}
 
 			} else { //If there are more than one probes mapping to a gene 
-				matrixVals = new double[cols];
+			
 				// Loops through the probes mapping to a gene
 				for (int k = 0; k < num_probes; k++) {
 					// Gets the position of that probe
@@ -422,7 +425,8 @@ public class ProbetoGene {
 						matrixVals[val] = (double) experiment_matrix.get(
 								probe_pos, val);
 					}
-
+					
+					//Calculate SD of the probe across samples
 					current_sd = JSci.maths.ArrayMath
 							.standardDeviation(matrixVals);
 
@@ -431,6 +435,7 @@ public class ProbetoGene {
 					// max_sd value
 					if (current_sd > max_sd
 							&& current_sd >= Double.parseDouble(SDcutoff)) {
+						max_sd=current_sd;
 						max_probeSD_pos = probe_pos;
 					}
 
@@ -459,12 +464,9 @@ public class ProbetoGene {
 		 * the downstream analysis
 		 * 
 		 * 
-		 * 
-		 * 
-		 * 
 		 */
 
-		gene_data = new GeneData[cols];
+		gene_data = new IGeneData[cols];
 		int geneRows = genes.size();
 		geneDataMatrix = new FloatMatrix(geneRows, cols);
 
@@ -483,18 +485,16 @@ public class ProbetoGene {
 
 			for (int index = 0; index < geneRows; index++) {
 				String Gene = (String) genes.get(index);
-				int gIndex = unique_genes_in_data.indexOf(Gene);
-				
+			
 				if(i==0){
 					gde = new GeneDataElement(index, Gene);
 					gene_data[i].setGeneDataElement(gde, index);
 				}else{
 					fgde = new FloatGeneDataElement(index, Gene);	
-					gene_data[i].setGeneDataElement(fgde, index);
+					gene_data[i].setGeneDataElement(gde, index);
 				}
 				
 				
-			
 
 			}
 		}// col for loop ends
@@ -549,6 +549,7 @@ public class ProbetoGene {
 		// Sets the unique genes in the data set. This time ONLY the genes
 		// passing the SD cutoff are included.
 		setUniqueGenesinDataset(genes);
+		
 		return gene_data;
 	}
 
