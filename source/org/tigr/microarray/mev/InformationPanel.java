@@ -113,14 +113,18 @@ public class InformationPanel extends JPanel {
 	
 	CurrentPosition+=20;
 	g2.drawString("Java 3D Runtime Environment:",40,CurrentPosition);
-	g2.drawString(Java3DTitle,InfoPosition,CurrentPosition);
-	CurrentPosition+=20;
-	g2.drawString("Java 3D Runtime Environment vendor:",40,CurrentPosition);
-	g2.drawString(Java3DVendor,InfoPosition,CurrentPosition);
-	CurrentPosition+=20;
-	g2.drawString("Java 3D Runtime Environment version:",40,CurrentPosition);
-	g2.drawString(Java3DVersion,InfoPosition,CurrentPosition);
-	
+	try {
+		g2.drawString(Java3DTitle,InfoPosition,CurrentPosition);
+		CurrentPosition+=20;
+		g2.drawString("Java 3D Runtime Environment vendor:",40,CurrentPosition);
+		g2.drawString(Java3DVendor,InfoPosition,CurrentPosition);
+		CurrentPosition+=20;
+		g2.drawString("Java 3D Runtime Environment version:",40,CurrentPosition);
+		g2.drawString(Java3DVersion,InfoPosition,CurrentPosition);
+	} catch (NullPointerException npe) {
+		g2.drawString("Java 3D Not Installed ",InfoPosition,CurrentPosition);
+	}
+
 	CurrentPosition+=20;
 	g2.drawString("Operating System name:",40,CurrentPosition);
 	g2.drawString(System.getProperty("os.name"),InfoPosition,CurrentPosition);
@@ -143,11 +147,11 @@ public class InformationPanel extends JPanel {
 	format.setGroupingSize(3);
 	MemoryPosition=CurrentPosition;
 	CurrentPosition+=20;
-	g2.drawString("Free System Memory:",40,CurrentPosition);
+	g2.drawString("Free Memory Available to JVM:",40,CurrentPosition);
 	long FreeMemory=Runtime.getRuntime().freeMemory();
 	g2.drawString(format.format(FreeMemory)+" Bytes",InfoPosition,CurrentPosition);
 	CurrentPosition+=20;
-	g2.drawString("Total System Memory:",40,CurrentPosition);
+	g2.drawString("Total Memory Available to MeV:",40,CurrentPosition);
 	long TotalMemory=Runtime.getRuntime().totalMemory();
 	g2.drawString(format.format(TotalMemory)+" Bytes",InfoPosition,CurrentPosition);
 	CurrentPosition+=20;
