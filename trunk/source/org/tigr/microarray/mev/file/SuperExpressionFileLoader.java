@@ -670,7 +670,7 @@ public class SuperExpressionFileLoader {
 			loader = new GenePixFileLoader(this);
 			break;
 		case AGILENT:
-			loader = new AgilentMevFileLoader(this);
+			loader = new AgilentFileLoader(this);
 			break;
 		case GEO_SERIES_MATRIX:
 			loader = new GEOSeriesMatrixLoader(this);
