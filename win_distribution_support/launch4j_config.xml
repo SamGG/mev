@@ -1,0 +1,32 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>console</headerType>
+  <errTitle>Java is not installed.</errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>http://www.tm4.org/mev/java</supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>icon.ico</icon>
+  <var>R_HOME=%EXEDIR%\\R-2.9.1</var>
+  <var>PATH=PATH;%EXEDIR%\\R-2.9.1\\bin;%EXEDIR%\\R-2.9.1\\lib</var>
+  <var>launch4j=debug</var>
+  <jre>
+    <path></path>
+    <minVersion>1.6.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>512</initialHeapSize>
+    <maxHeapSize>1024</maxHeapSize>
+    <opt>-Djava.library.path=%EXEDIR%\\lib</opt>
+    <opt>-Xss1M</opt>
+  </jre>
+  <classPath>
+    <mainClass>org.tigr.microarray.mev.TMEV</mainClass>
+    <cp>%EXEDIR%\\lib\\*</cp>
+  </classPath>
+  
+</launch4jConfig>

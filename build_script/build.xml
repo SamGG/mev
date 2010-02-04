@@ -2004,6 +2004,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<!-- Build WebStart distribution -->
 	</target>
 	
+
+
 	<!-- 
 		 Target to build all release bundles for all OS and all 
 		 architecture. 
@@ -2022,6 +2024,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux32.zip
 		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
 	-->
+
 	<target name="build-package-all-os-arch" depends="clean, build-all">
 		<antcall target="build-package-linux32"/>
 		<antcall target="build-package-linux64"/>
@@ -2180,7 +2183,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 	<target name="build-package-win" >
 
 		<echo message="Building Windows Package"/>
-		
+
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 
 		<!-- Not deleting file temp soln -->
@@ -2254,20 +2257,57 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<copy todir="${package.dir}/${mev_version.dir}/data">
 			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
-		
+		<ant target="build-mev-exe"/>
 		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_win.zip"
-			basedir="${package.dir}"
-			>
+			basedir="${package.dir}">
 			<include name="${mev_version.dir}/data/**"/>
 			<include name="${mev_version.dir}/documentation/**"/>
-			<include name="${mev_version.dir}/lib/**"/>
+			<include name="${mev_version.dir}/lib/**"/> 
 			<include name="${mev_version.dir}/RPackages/**"/>
 			<include name="${mev_version.dir}/R-2.9.1/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
 			<include name="${mev_version.dir}/artistic_license.txt"/>
-			<include name="${mev_version.dir}/TMEV.bat"/>
+			<include name="${mev_version.dir}/TMEV.bat"/> 
+			<include name="${mev_version.dir}/MeV.exe"/>
 			<exclude name=".svn"/>
 		</zip>
+
+		<!-- Clean up the mess. -->
+		<delete includeemptydirs="true">
+			<fileset file="${package.dir}/${mev_version.dir}/MeV.exe" />
+		</delete>
+
+	</target>
+
+	<target name="build-mev-exe" description="Creates a windows executable \'MeV.exe\' file. Depends on 
+		Launch4j being present in windows-support directory. Also will only run properly on a windows system. ">	
+
+	   <mkdir dir="${package.dir}/${mev_version.dir}/temp"/>
+		<unjar src="${package.dir}/${mev_version.dir}/lib/mev-base.jar"
+	    	dest="${package.dir}/${mev_version.dir}/temp">
+	    	<patternset includes="**/TMEV.class"/>
+		</unjar>
+		<jar destfile="${package.dir}/${mev_version.dir}/mev-exe.jar"
+            basedir="${package.dir}/${mev_version.dir}/temp"
+            includes="**" >
+		  <manifest>
+		    <attribute name="Class-Path" value="lib/MeV-libs.jar" />
+		    <attribute name="Main-Class" value="org.tigr.microarray.mev.TMEV" />
+		  </manifest>
+		</jar>
+		<taskdef name="launch4j"
+				    classname="net.sf.launch4j.ant.Launch4jTask"
+				    classpath="${home.dir}/win_distribution_support/Launch4j/launch4j.jar
+				        :${home.dir}/win_distribution_support/Launch4j/xstream.jar" /> 
+				
+		<launch4j configFile="${home.dir}/win_distribution_support/launch4j_config.xml" 
+			outfile="${package.dir}/${mev_version.dir}/MeV.exe"
+			jar="${package.dir}/${mev_version.dir}/mev-exe.jar"
+			bindir="${home.dir}/win_distribution_support/Launch4j/bin">
+		</launch4j>
+		<delete dir="${package.dir}/${mev_version.dir}/temp"/>
+		
+		<delete file="${package.dir}/${mev_version.dir}/mev-exe.jar"/>
 	</target>
 	
 	<!--
@@ -2595,6 +2635,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
 
+	
 	<target name="clean">
 		<delete dir="${package.dir}"/>
         <delete dir="${dest.dir}"/>
