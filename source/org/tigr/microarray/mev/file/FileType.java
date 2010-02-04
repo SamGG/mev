@@ -18,7 +18,7 @@ public enum FileType {
   	AFFY_GPL				("affy-gp", 			9,	false,	SOFT_AffymetrixFileLoader.class,	"GEO SOFT Affymetrix Format Files"),
   	TWO_CHANNEL_GPL			("two-channel-gpl",		10,	false,	SOFT_TwoChannelFileLoader.class,	"GEO SOFT Two Channel Format Files"),
   	GENEPIX					("genepix", 			11,	true,	GenePixFileLoader.class,			"GenePix Format Files"),
-  	AGILENT					("agilent",				12,	true,	AgilentMevFileLoader.class,			"Agilent Files"),
+  	AGILENT					("agilent",				12,	true,	AgilentFileLoader.class,			"Agilent Files"),
   	GEO_SERIES_MATRIX		("geo-series-matrix",	13,	false,	GEOSeriesMatrixLoader.class,		"GEO Series Matrix Files"),
   	GEO_GDS					("geo-gds", 			14,	false,	GEO_GDSFileLoader.class,			"GEO GDS Format Files"), 
   	MAGETAB					("mage-tab", 			15,	false,	MAGETABFileLoader.class,			"MAGE-TAB Format Files"),;
