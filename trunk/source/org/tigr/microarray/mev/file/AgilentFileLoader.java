@@ -16,6 +16,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -24,23 +25,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
+import org.tigr.microarray.mev.SlideData;
+import org.tigr.microarray.mev.cluster.gui.IData;
 
 
 public class AgilentFileLoader extends ExpressionFileLoader {
 	private GBA gba;
-    private AgilentFileLoaderPanel amflp;
-    private MultipleArrayViewer mav;
-    
+	private AgilentFileLoaderPanel aflp;
+	private MultipleArrayViewer mav;
+	private boolean loadEnabled = false;
+	private String annotationFilePath;
+
 	public AgilentFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
-		gba=new GBA();
-		amflp=new AgilentFileLoaderPanel();
-		mav=superLoader.getArrayViewer();
-		
-		
+		gba = new GBA();
+		aflp = new AgilentFileLoaderPanel();
+		mav = superLoader.getArrayViewer();
+
 	}
 
 	public ISlideData loadExpressionFile(File f) throws IOException {
@@ -52,30 +57,55 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	/**
+	 * populates slidedata from the given file
+	 * @param currentFile
+	 * @return
+	 * @throws IOException
+	 */
+	public ISlideData loadSlideData(File currentFile) throws IOException {
+		SlideData slideData = null;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	  return slideData;	
+	}
+	
+	
 	public boolean checkLoadEnable() {
 		// TODO Auto-generated method stub
-		return false;
+		setLoadEnabled(loadEnabled);
+		return this.loadEnabled;
+
 	}
 
 	public String getAnnotationFilePath() {
 		// TODO Auto-generated method stub
-		return null;
+		return annotationFilePath;
 	}
 
 	public int getDataType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return IData.DATA_TYPE_RATIO_ONLY;
 	}
 
 	public JPanel getFileLoaderPanel() {
 		// TODO Auto-generated method stub
-		return amflp;
+		return aflp;
 	}
 
 	public String getFilePath() {
 		// TODO Auto-generated method stub
-		return null;
+		if (aflp.pathTextField == null)
+			return null;
+		return aflp.pathTextField.getText();
+
 	}
 
 	public void openDataPath() {
@@ -85,12 +115,34 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 	public void setAnnotationFilePath(String filePath) {
 		// TODO Auto-generated method stub
-
+		this.annotationFilePath = filePath;
 	}
 
 	public void setFilePath(String path) {
 		// TODO Auto-generated method stub
+		aflp.pathTextField.setText(path);
+		processFileList(path, new Vector());
+	}
 
+	public void processFileList(String filePath, Vector fileNames) {
+
+		if (fileNames == null)
+			return; // Don't process files if there aren't any
+
+		FileFilter mevFileFilter = getFileFilter();
+
+		aflp.getAvailableListModel().clear();
+
+		for (int i = 0; i < fileNames.size(); i++) {
+
+			File targetFile = new File((String) fileNames.elementAt(i));
+
+			if (mevFileFilter.accept(targetFile)) {
+				aflp.getAvailableListModel().addElement(
+						new File((String) fileNames.elementAt(i)));
+			}
+
+		}
 	}
 
 	private class AgilentFileLoaderPanel extends JPanel {
@@ -110,19 +162,18 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		private JButton addButton, addAllButton, removeButton, removeAllButton,
 				browseButton1;
 		private JTextField pathTextField;
-		private static final String LOAD_AGILENT_ANNOTATION="load_agilent_annotation_file";
-		private static final String LOAD_RESOURCERER_ANNOTATION="load_resourcerer_annotation";
+		private static final String LOAD_AGILENT_ANNOTATION = "load_agilent_annotation_file";
+		private static final String LOAD_RESOURCERER_ANNOTATION = "load_resourcerer_annotation";
 
 		private AgilentFileLoaderPanel() {
 			setLayout(new GridBagLayout());
-			
-			//choice Panel
+
+			// choice Panel
 			choicePanel = new javax.swing.JPanel();
 			choicePanel.setBorder(new TitledBorder(new EtchedBorder(),
 					"Choice Panel"));
 			choicePanel.setLayout(new GridBagLayout());
-			
-			
+
 			loadIButton = new JRadioButton("Load Integrated Spot Intensities",
 					true);
 			loadIButton.setFocusPainted(false);
@@ -159,7 +210,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			gba.add(choicePanel, cutQuotesBox, 0, 2, 2, 1, 1, 0, GBA.H, GBA.C,
 					new Insets(0, 2, 0, 2), 0, 0);
 
-			//Annotation panel
+			// Annotation panel
 			annotationPanel = new javax.swing.JPanel();
 			annotationPanel.setLayout(new GridBagLayout());
 			annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
@@ -174,33 +225,33 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			annotationSelectionBox = new JComboBox(selectionMethods);
 			annotationSelectionBox.addActionListener(new Listener());
 			createAnnotationPanel(AgilentFileLoaderPanel.LOAD_AGILENT_ANNOTATION);
-			
+
 			gba.add(annotationPanel, annotationSelectionLabel, 0, 0, 1, 1, 1,
 					0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(annotationPanel, annotationSelectionBox, 2, 0, 1, 1, 1, 0,
 					GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		//	gba.add(annotationPanel,selectFilePanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			// gba.add(annotationPanel,selectFilePanel, 0, 1, 1, 1, 1, 1, GBA.B,
+			// GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-		
-
-			//Data panel
+			// Data panel
 			dataPanel = new javax.swing.JPanel();
 			dataPanel.setLayout(new GridBagLayout());
 			dataPanel.setBorder(new TitledBorder(new EtchedBorder(),
 					"Agilent Feature Extraction Files (*.txt)"));
 
-			//selectFilePanel for choosing directory
+			// selectFilePanel for choosing directory
 			JPanel selectFilePanel = new JPanel();
 			selectFilePanel.setLayout(new GridBagLayout());
 
-			selectFile = new JLabel("Select directory containing Agilent Feature Extraction Files");
+			selectFile = new JLabel(
+					"Select directory containing Agilent Feature Extraction Files");
 
 			browseButton1 = new JButton("Browse");
 			browseButton1.setSize(new Dimension(100, 30));
 			browseButton1.setPreferredSize(new Dimension(100, 30));
 			browseButton1.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 				}
 			});
 
@@ -216,10 +267,10 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			gba.add(selectFilePanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0,
 					0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-			//listPanel for available and selected file lists
+			// listPanel for available and selected file lists
 			JPanel listPanel = new JPanel();
 			listPanel.setLayout(new GridBagLayout());
-		//	listPanel.setBackground(Color.white);
+			// listPanel.setBackground(Color.white);
 			availableLabel = new JLabel("Available Files");
 			selectedLabel = new JLabel("Selected Files");
 			availableList = new JList(new DefaultListModel());
@@ -228,7 +279,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			availableScrollPane = new JScrollPane(availableList);
 			selectedScrollPane = new JScrollPane(selectedList);
 
-			//buttonPanel for add, remove, addall and removeall buttons
+			// buttonPanel for add, remove, addall and removeall buttons
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.setLayout(new GridBagLayout());
 
@@ -240,31 +291,29 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				}
 			});
 
-			
 			addAllButton = new JButton("Add All");
 			addAllButton.setPreferredSize(new Dimension(100, 20));
 			addAllButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 				}
 			});
-			
+
 			removeButton = new JButton("Remove");
 			removeButton.setPreferredSize(new Dimension(100, 20));
 			removeButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 				}
 			});
-			
-			
+
 			removeAllButton = new JButton("Remove All");
 			removeAllButton.setPreferredSize(new Dimension(100, 20));
 			removeAllButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 				}
-				
+
 			});
 
 			gba.add(buttonPanel, addButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C,
@@ -275,7 +324,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(buttonPanel, removeAllButton, 0, 3, 1, 1, 0, 0, GBA.N,
 					GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			
+
 			gba.add(listPanel, availableLabel, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C,
 					new Insets(5, 5, 5, 5), 0, 0);
 			gba.add(listPanel, availableScrollPane, 0, 1, 1, 4, 5, 1, GBA.B,
@@ -291,34 +340,32 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(dataPanel, listPanel, 0, 2, 1, 1, 1, 1, GBA.B, GBA.C,
 					new Insets(2, 2, 2, 2), 0, 0);
-			
-			gba.add(this, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		    gba.add(this, annotationPanel, 0, 2, 1, 1, 100, 100, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-		    gba.add(this, dataPanel, 0, 4, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				
-		
+
+			gba.add(this, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C,
+					new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(this, annotationPanel, 0, 2, 1, 1, 100, 100, GBA.B, GBA.C,
+					new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(this, dataPanel, 0, 4, 1, 1, 1, 1, GBA.B, GBA.C,
+					new Insets(2, 2, 2, 2), 0, 0);
+
 			revalidate();
 
 		}
-	
-		
-		
+
 		public void createAnnotationPanel(String actionCommand) {
-			
-			if(actionCommand.equalsIgnoreCase(LOAD_AGILENT_ANNOTATION)) {
-				
+
+			if (actionCommand.equalsIgnoreCase(LOAD_AGILENT_ANNOTATION)) {
+
 				selectFilePanel = new JPanel();
 				selectFilePanel.setLayout(new GridBagLayout());
-				//selectFilePanel.setBackground(Color.white);
-				
-		        JLabel selectFile = new JLabel("Select Agilent annotation file");
-		        
-		        JTextField pathTextField = new JTextField();
-		       	pathTextField.setEditable(false);
+
+				JLabel selectFile = new JLabel("Select Agilent annotation file");
+
+				JTextField pathTextField = new JTextField();
+				pathTextField.setEditable(false);
 				pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
 				pathTextField.setSize(new Dimension(500, 20));
 				pathTextField.setPreferredSize(new Dimension(500, 20));
-				
 
 				JButton browse = new JButton("Browse");
 				browse.setName("Browse");
@@ -327,52 +374,81 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				browse.setPreferredSize(new Dimension(100, 30));
 				browse.addActionListener(new Listener() {
 					public void actionPerformed(ActionEvent e) {
-						
+						onSelectAgilentAnnotationFile();
 					}
 				});
-				
-				gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				gba.add(selectFilePanel, browse, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-				
-				gba.add(annotationPanel,selectFilePanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,
+						GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0,
+						GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				gba.add(selectFilePanel, browse, 2, 0, GBA.RELATIVE, 1, 0, 0,
+						GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+				gba.add(annotationPanel, selectFilePanel, 0, 1, 1, 1, 1, 1,
+						GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 				revalidate();
-			
-				
+
 			}
-			
-			
-			
+
 		}
-		
-		
-		
-		
+
+		/**
+		 * select Agilent provided annotation file
+		 * 
+		 * 
+		 * 
+		 */
+
+		public void onSelectAgilentAnnotationFile() {
+			JFileChooser fileChooser = new JFileChooser(
+					SuperExpressionFileLoader.DATA_PATH);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+			int retVal = fileChooser
+					.showOpenDialog(AgilentFileLoaderPanel.this);
+
+			if (retVal == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = fileChooser.getSelectedFile();
+				String path = selectedFile.getAbsolutePath();
+				setAnnotationFilePath(path);
+			}
+
+		}
+
+		/**
+		 * adds a selected file from the available list to the selected list
+		 * 
+		 * 
+		 */
 		public void onAdd() {
-			
+
 			int[] chosenIndices = availableList.getSelectedIndices();
 			Object[] chosenObjects = new Object[chosenIndices.length];
 
 			for (int i = chosenIndices.length - 1; i >= 0; i--) {
 				Object addItem = ((DefaultListModel) availableList.getModel())
-				.getElementAt(chosenIndices[i]);
+						.getElementAt(chosenIndices[i]);
 				chosenObjects[i] = addItem;
 			}
 
 			for (int i = 0; i < chosenIndices.length; i++) {
 				((DefaultListModel) selectedList.getModel())
-				.addElement(chosenObjects[i]);
+						.addElement(chosenObjects[i]);
 			}
 
-		
+		}
 
-	}
-	
-	
-	public void onAddAll(){
-		
-		int elementCount = ((DefaultListModel) availableList.getModel())
+		/**
+		 * same as onAdd, but for multiple selected files
+		 * 
+		 * 
+		 * 
+		 */
+
+		public void onAddAll() {
+
+			int elementCount = ((DefaultListModel) availableList.getModel())
 					.size();
 			for (int i = 0; i < elementCount; i++) {
 				Object addItem = ((DefaultListModel) availableList.getModel())
@@ -380,47 +456,51 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				((DefaultListModel) selectedList.getModel())
 						.addElement(addItem);
 			}
-		
 
-	}
-	
-	
-	
-	public void onRemove(){
+		}
+		/**
+		 * removes file from the 'selected' list
+		 * 
+		 * 
+		 * 
+		 */
+		public void onRemove() {
 
-		int[] chosenIndices = selectedList.getSelectedIndices();
+			int[] chosenIndices = selectedList.getSelectedIndices();
 
 			// Designed with copy-then-add functionality in mind
 			for (int i = chosenIndices.length - 1; i >= 0; i--) {
 				((DefaultListModel) selectedList.getModel())
 						.remove(chosenIndices[i]);
 			}
-		 
-		
-	}
-	
-	
-	public void onRemoveAll(){
-		// Designed with copy-then-add functionality in mind
-	
-			((DefaultListModel) selectedList.getModel()).removeAllElements();
-		
-	}
 
-	private class Listener implements ActionListener{
-
-		
-		public void actionPerformed(ActionEvent e) {
-			
-			
 		}
 		
-	}
-		
-		
-		
-		
-		
+		/**
+		 * same as onRemove, just for multiple files
+		 * 
+		 * 
+		 */
+		public void onRemoveAll() {
+			((DefaultListModel) selectedList.getModel()).removeAllElements();
+
+		}
+
+		public DefaultListModel getAvailableListModel() {
+			return (DefaultListModel) availableList.getModel();
+		}
+
+		public DefaultListModel getSelectedListModel() {
+			return (DefaultListModel) selectedList.getModel();
+		}
+
+		private class Listener implements ActionListener {
+
+			public void actionPerformed(ActionEvent e) {
+
+			}
+
+		}
 
 	}
 
