@@ -36,6 +36,7 @@ import javax.swing.filechooser.FileFilter;
 import org.tigr.microarray.mev.ISlideData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
+import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.cluster.gui.IData;
 
 
@@ -47,6 +48,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	private String annotationFilePath;
 	private ArrayList<String> columnHeaders;
 	private boolean loadMedianIntensities=false;
+	private String[] uidArray;
 
 	public AgilentFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
@@ -80,13 +82,14 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		
 		if(afp.isAgilentFileValid()) {
 			
-			int probeColumn=afp.getColumn(AgilentFileParser.PROBENAME);
-			int rProcessedSignal=afp.getColumn(AgilentFileParser.RPROCESSEDSIGNAL);
-			int gProcessedSignal = afp.getColumn(AgilentFileParser.GPROCESSEDSIGNAL);
-			int row=afp.getColumn(AgilentFileParser.ROW);
-			int column=afp.getColumn(AgilentFileParser.COLUMN);
-			int rMedianSignal=afp.getColumn(AgilentFileParser.RMEDIANSIGNAL);
-			int gMedianSignal=afp.getColumn(AgilentFileParser.GMEDIANSIGNAL);
+			int probeColumn=afp.getRequiredHeaders().get(AgilentFileParser.PROBENAME);
+			int rProcessedSignal=afp.getRequiredHeaders().get(AgilentFileParser.RPROCESSEDSIGNAL);
+			int gProcessedSignal = afp.getRequiredHeaders().get(AgilentFileParser.GPROCESSEDSIGNAL);
+			int row=afp.getRequiredHeaders().get(AgilentFileParser.ROW);
+			int column=afp.getRequiredHeaders().get(AgilentFileParser.COLUMN);
+			int rMedianSignal=afp.getRequiredHeaders().get(AgilentFileParser.RMEDIANSIGNAL);
+			int gMedianSignal=afp.getRequiredHeaders().get(AgilentFileParser.GMEDIANSIGNAL);
+			int featureNum=afp.getRequiredHeaders().get(AgilentFileParser.FEATURENUMBER);
 			
 			
 			// Intensities exist??
@@ -100,7 +103,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 											+ "the header names rMedianSignal and gMedianSignal",
 									"Load Error", JOptionPane.ERROR_MESSAGE);
 				return null;
-			}else {
+			}else if((rProcessedSignal==-1 || gProcessedSignal==-1)){
 				
 				JOptionPane.showMessageDialog(aflp,
 									"Error loading "
@@ -112,11 +115,80 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				return null;
 			}
 
-	
+			
+			String[][]data=afp.getDataMatrix();
+			SlideDataElement sde;
+			int[] rows;
+			int[] cols;
+			float[] intensities;
+			String uid;
+			String[][] spotData;
+			uidArray = new String[data.length];
+
+			int maxRow = 0;
+			int maxCol = 0;
+			for (int i = 0; i < data.length; i++) {
+				maxRow = Math.max(maxRow, Integer.parseInt(data[i][1]));
+				maxCol = Math.max(maxCol, Integer.parseInt(data[i][2]));
+			}
+			
+			slideData = new SlideData(maxRow, maxCol);
+			setLinesCount(data.length);
+			
+			for (int i = 0; i < data.length; i++) {
+				rows = new int[3];
+				cols = new int[3];
+				intensities = new float[2];
+
+				uidArray[i] = data[i][0];
+
+				try {
+					if(loadMedianIntensities) {
+						intensities[0] = Float.parseFloat(data[i][rMedianSignal]);
+						intensities[1] = Float.parseFloat(data[i][gMedianSignal]);
+					}else {
+						intensities[0] = Float.parseFloat(data[i][rProcessedSignal]);
+						intensities[1] = Float.parseFloat(data[i][gProcessedSignal]);
+					}
+					rows[0] = Integer.parseInt(data[i][3]);
+					cols[0] = Integer.parseInt(data[i][4]);
+					rows[1] = Integer.parseInt(data[i][5]);
+					cols[1] = Integer.parseInt(data[i][6]);
+					
+						rows[2] = 0;
+						cols[2] = 0;
+					
+				} catch (NumberFormatException e) {
+					final String fileName = targetFile.getName();
+					final int loc = i;
+					Thread thread = new Thread(new Runnable() {
+						public void run() {
+							JOptionPane
+									.showConfirmDialog(
+											aflp,
+											"The input file \""
+													+ fileName
+													+ "\" was missing critical information on line # "
+													+ String.valueOf(loc + 1)
+													+ "\n"
+													+ "MeV files require entries for UID, Intensities, and slide location information.",
+											"Loading Aborted/Loading Error",
+											JOptionPane.ERROR_MESSAGE);
+						}
+					});
+					thread.start();
+					return null;
+				}
+				sde = new SlideDataElement(data[i][0], rows, cols, intensities,
+						null);
+				slideData.add(sde);
+				setFileProgress(i);
+			}
 			
 			
 		}
-	
+		slideData.setSlideDataName(targetFile.getName());
+		slideData.setSlideFileName(targetFile.getPath());
 		
 	  return slideData;	
 	}
