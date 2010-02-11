@@ -7,9 +7,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -19,6 +24,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -39,6 +45,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	private MultipleArrayViewer mav;
 	private boolean loadEnabled = false;
 	private String annotationFilePath;
+	private ArrayList<String> columnHeaders;
+	private boolean loadMedianIntensities=false;
 
 	public AgilentFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
@@ -55,6 +63,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 	public Vector<ISlideData> loadExpressionFiles() throws IOException {
 		// TODO Auto-generated method stub
+		this.loadMedianIntensities = aflp.loadMedButton.isSelected();
 		return null;
 	}
 	/**
@@ -63,16 +72,51 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	 * @return
 	 * @throws IOException
 	 */
-	public ISlideData loadSlideData(File currentFile) throws IOException {
+	public ISlideData loadSlideData(File targetFile) throws IOException {
+		
 		SlideData slideData = null;
+		AgilentFileParser afp=new AgilentFileParser();
+		afp.loadFile(targetFile);
 		
-		
-		
-		
-		
-		
-		
-		
+		if(afp.isAgilentFileValid()) {
+			
+			int probeColumn=afp.getColumn(AgilentFileParser.PROBENAME);
+			int rProcessedSignal=afp.getColumn(AgilentFileParser.RPROCESSEDSIGNAL);
+			int gProcessedSignal = afp.getColumn(AgilentFileParser.GPROCESSEDSIGNAL);
+			int row=afp.getColumn(AgilentFileParser.ROW);
+			int column=afp.getColumn(AgilentFileParser.COLUMN);
+			int rMedianSignal=afp.getColumn(AgilentFileParser.RMEDIANSIGNAL);
+			int gMedianSignal=afp.getColumn(AgilentFileParser.GMEDIANSIGNAL);
+			
+			
+			// Intensities exist??
+			if (loadMedianIntensities && (rMedianSignal==-1 || gMedianSignal==-1)) {
+				
+				JOptionPane.showMessageDialog(aflp,
+									"Error loading "
+											+ targetFile.getName()
+											+ "\n"
+											+ "The file was missing median intensity columns indicated by\n"
+											+ "the header names rMedianSignal and gMedianSignal",
+									"Load Error", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}else {
+				
+				JOptionPane.showMessageDialog(aflp,
+									"Error loading "
+											+ targetFile.getName()
+											+ "\n"
+											+ "The file was missing intensity columns indicated by\n"
+											+ "the header names rProcessedSignal and gProcessedSignal",
+									"Load Error", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+
+	
+			
+			
+		}
+	
 		
 	  return slideData;	
 	}

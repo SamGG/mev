@@ -14,9 +14,20 @@ import java.util.regex.Pattern;
 
 public class AgilentFileParser {
 	
-	private static final int VALID_AGILENT_FILE=1;
-	private static final int INVALID_AGILENT_FILE=0;
-	private boolean isAgilentFileLoaded=false;
+	public static final int VALID_AGILENT_FILE=1;
+	public static final int INVALID_AGILENT_FILE=0;
+	public static final String PROBENAME ="ProbeName"; 
+	public static final String RPROCESSEDSIGNAL ="rProcessedSignal";
+	public static final String GPROCESSEDSIGNAL ="gProcessedSignal";
+	public static final String ROW ="Row"; 
+	public static final String COLUMN = "Col";
+	
+	public static final String RMEDIANSIGNAL ="rMedianSignal";
+	public static final String GMEDIANSIGNAL ="gMedianSignal";
+	public static final String SYSTEMATICNAME ="SystematicName"; 
+	public static final String GENENAME = "GeneName"; 
+	
+	private boolean isAgilentFileValid=false;
 	private ArrayList<String>columnHeaders;
 	
 	
@@ -30,9 +41,10 @@ public class AgilentFileParser {
 /**
 	Scans the specified header line and returns validity code.
 	Validity check 1: "ProbeName" present
-	Validity check 2: "LogRatio" present
-	Validity check 3: "Row" present --required for meta data, not 
-	Validity check 4: "Col" present
+	Validity check 2: "gProcessedSignal" present
+	Validity check 3: "rProcessedSignal" present
+	Validity check 4: "Row" present  
+	Validity check 5: "Col" present
 		
 	@param headerLine The header line contained in the expression data file
 	
@@ -52,6 +64,7 @@ public class AgilentFileParser {
 		boolean valid2 = false;
 		boolean valid3 = false;
 		boolean valid4 = false;
+		boolean valid5 = false;
 
 		while (split.hasMoreTokens()) {
 			String token = split.nextToken();
@@ -60,20 +73,25 @@ public class AgilentFileParser {
 				valid1 = true;
 			}
 
-			if (token.equalsIgnoreCase(AgilentFileCodes.LOGRATIO.toString())) {
+			if (token.equalsIgnoreCase(AgilentFileParser.GPROCESSEDSIGNAL)) {
 				valid2 = true;
+			}
+			
+			if (token.equalsIgnoreCase(AgilentFileParser.RPROCESSEDSIGNAL)) {
+				valid3 = true;
 			}
 
 			if (token.equalsIgnoreCase(AgilentFileCodes.ROW.toString()))
-				valid3 = true;
+				valid4 = true;
 
 			if (token.equalsIgnoreCase(AgilentFileCodes.COLUMN.toString())) {
-				valid4 = true;
+				valid5 = true;
 			}
 
 		}
 
-		if (valid1 && valid2)
+		//A file must at the bare minimum satisfy all these five conditions
+		if (valid1 && valid2 && valid3 &&valid4 && valid5) 
 			return AgilentFileParser.VALID_AGILENT_FILE;
 
 		else
@@ -87,9 +105,10 @@ public class AgilentFileParser {
 		return columnHeaders;
 	}
 
-	public void setColumnHeaders(ArrayList<String> columnHeaders) {
-		this.columnHeaders = columnHeaders;
-	}
+	
+	
+	
+	
 	
 	
 	
@@ -127,16 +146,19 @@ public class AgilentFileParser {
 			}
 			
 			if(AgilentFileParser.validate(currentLine)==AgilentFileParser.VALID_AGILENT_FILE) {
-				setAgilentFileLoaded(true);
+				this.isAgilentFileValid=true;
 			}else
-				setAgilentFileLoaded(false);
+				this.isAgilentFileValid=false;
 			
 			//Loop through the file and fill datamatrix
 			
 			String[][]dataMatrix=new String[lines_in_file-headerLinesCount][getColumnHeaders().size()];
 			
-			
-			
+			//write a function to capture all file headers
+			//write a function that will set the arraylist columnheaders to the predefined list above
+			//Read the lines in the file, split the line in to tokens. construct a for loop that would compare
+			//actual file headers with required headers, if they match put the token into the data matrix array.
+			//If a column in the pre definedlist is not present in the file, just replace it with NA
 			
 			
 			
@@ -146,20 +168,41 @@ public class AgilentFileParser {
 			
 		}catch(Exception e) {
 			e.printStackTrace();
-			setAgilentFileLoaded(false);
+			this.isAgilentFileValid=false;
 		}
 		
 	
 		
 	}
 	
-	public boolean isAgilentFileLoaded() {
-		return isAgilentFileLoaded;
+	/**
+	 * 
+	 * @param columnName
+	 * @return returns the position of desired column in the file
+	 */
+	public int getColumn(String columnName) {
+		
+		int columnSize=getColumnHeaders().size();
+		
+		for(int index=0; index<columnSize; index++) {
+			if(columnName.equalsIgnoreCase(getColumnHeaders().get(index)))
+				return index;
+		}
+		
+		
+		
+		return -1;
+	}
+	
+	
+	
+	
+	
+	public boolean isAgilentFileValid() {
+		return isAgilentFileValid;
 	}
 
-	public void setAgilentFileLoaded(boolean isAgilentFileLoaded) {
-		this.isAgilentFileLoaded = isAgilentFileLoaded;
-	}
+	
 
 	/**
 	 * 
