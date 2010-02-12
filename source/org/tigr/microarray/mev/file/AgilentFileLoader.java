@@ -7,14 +7,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -34,17 +31,21 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.FloatSlideData;
+import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.cluster.gui.IData;
+
+import org.tigr.microarray.util.FileLoaderUtility;
 
 
 public class AgilentFileLoader extends ExpressionFileLoader {
 	private GBA gba;
 	private AgilentFileLoaderPanel aflp;
 	private MultipleArrayViewer mav;
-	private boolean loadEnabled = false;
+	private boolean loadEnabled = true;
 	private String annotationFilePath;
 	private ArrayList<String> columnHeaders;
 	private boolean loadMedianIntensities=false;
@@ -66,8 +67,121 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	public Vector<ISlideData> loadExpressionFiles() throws IOException {
 		// TODO Auto-generated method stub
 		this.loadMedianIntensities = aflp.loadMedButton.isSelected();
-		return null;
+		
+		Object[] dataFiles = aflp.getSelectedListModel().toArray();
+		
+		Vector<ISlideData> data = new Vector<ISlideData>();
+		ISlideMetaData metaData = null;
+		ISlideData slideData=null;
+		
+		setFilesCount(dataFiles.length);
+		setRemain(dataFiles.length);
+
+		
+		for(int index=0; index<dataFiles.length; index++) {
+			if (index == 0) {
+				
+				File file=new File(this.aflp.pathTextField.getText(),((File) dataFiles[index]).getName());
+				slideData = loadSlideData(file);
+				
+				if (slideData == null)
+					return null;
+				data.add(slideData);
+				metaData = slideData.getSlideMetaData();
+			} else {
+				File file=new File(this.aflp.pathTextField.getText(),((File) dataFiles[index]).getName());
+				data.add(loadFloatSlideData(file, metaData));
+			}
+			
+			setRemain(dataFiles.length - index - 1);
+			setFilesProgress(index);
+			
+	
+		}
+		
+		
+		if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
+			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
+		}
+		
+		if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
+			String msg = "The selected annotation file";
+			msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
+			JOptionPane.showMessageDialog(aflp, msg,
+					"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
+		}
+		
+		
+		return data;
 	}
+	
+	
+		
+	
+	public SlideData loadAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
+		
+	
+		AgilentAnnotationFileParser parser=new AgilentAnnotationFileParser();
+		parser.loadAnnotationFile(sourceFile);
+		
+		if(parser.isAnnotationLoaded()) {
+			ArrayList<String> headers = parser.getColumnHeaders();
+			int firstAnnField=1;
+			
+			if(headers.indexOf(AgilentAnnotationFileParser.COLUMN)!=-1 &&
+					headers.indexOf(AgilentAnnotationFileParser.ROW)!=-1) {
+				firstAnnField=3;
+			}
+			
+			
+			String[][]annMatrix=parser.getAnnotationMatrix();
+			
+			
+			String[] annotHeaders = new String[headers.size() - firstAnnField];
+			int headerIndex=0;
+			for (int i = 1; i < headers.size(); i++) {
+				
+				if(!((String)headers.get(i)).equalsIgnoreCase(AgilentAnnotationFileParser.COLUMN)
+						&& !((String)headers.get(i)).equalsIgnoreCase(AgilentAnnotationFileParser.ROW)) {
+					annotHeaders[headerIndex] = (String) headers.get(i);
+					headerIndex=headerIndex+1;
+				}
+			}
+			targetData.getSlideMetaData().appendFieldNames(annotHeaders);
+
+			Hashtable hash = new Hashtable();
+			String[] value;
+			int dataLength = targetData.size();
+			for (int i = 0; i < annMatrix.length; i++) {
+				value = new String[annMatrix[i].length - firstAnnField];
+				System.arraycopy(annMatrix[i], firstAnnField, value, 0,
+						annMatrix[i].length - firstAnnField);
+				hash.put(annMatrix[i][0], value);
+			}
+			
+			SlideDataElement sde;
+			String[] extraFields;
+			for (int i = 0; i < dataLength; i++) {
+				extraFields = (String[]) (hash.get(targetData.getFieldNames()[0]));
+				((SlideDataElement) targetData.getSlideDataElement(i))
+						.setExtraFields(extraFields);
+			}
+			
+			
+		}
+		
+		return targetData;
+
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * populates slidedata from the given file
 	 * @param currentFile
@@ -141,6 +255,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				intensities = new float[2];
 
 				uidArray[i] = data[i][0];
+				
+				
+				String[] fieldNames = new String[rProcessedSignal];
+				for (int fieldCnt = 0; fieldCnt < rProcessedSignal; fieldCnt++) {
+					fieldNames[fieldCnt] = data[i][fieldCnt];
+				}
 
 				try {
 					if(loadMedianIntensities) {
@@ -150,10 +270,10 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 						intensities[0] = Float.parseFloat(data[i][rProcessedSignal]);
 						intensities[1] = Float.parseFloat(data[i][gProcessedSignal]);
 					}
-					rows[0] = Integer.parseInt(data[i][3]);
-					cols[0] = Integer.parseInt(data[i][4]);
-					rows[1] = Integer.parseInt(data[i][5]);
-					cols[1] = Integer.parseInt(data[i][6]);
+					rows[0] = Integer.parseInt(data[i][1]);
+					cols[0] = Integer.parseInt(data[i][2]);
+					rows[1] = 0;
+					cols[1] = 0;
 					
 						rows[2] = 0;
 						cols[2] = 0;
@@ -171,7 +291,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 													+ "\" was missing critical information on line # "
 													+ String.valueOf(loc + 1)
 													+ "\n"
-													+ "MeV files require entries for UID, Intensities, and slide location information.",
+													+ "Agilent two color file loading require entries for FeatureNum, rMedianSignal, gMedianSignal," +
+															"rProcessedSignal and gProcessedSignal.",
 											"Loading Aborted/Loading Error",
 											JOptionPane.ERROR_MESSAGE);
 						}
@@ -182,6 +303,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				sde = new SlideDataElement(data[i][0], rows, cols, intensities,
 						null);
 				slideData.add(sde);
+				slideData.getSlideMetaData().appendFieldNames(fieldNames);
 				setFileProgress(i);
 			}
 			
@@ -194,6 +316,81 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	}
 	
 	
+	
+	
+	
+	public ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
+		
+		AgilentFileParser afp=new AgilentFileParser();
+		afp.loadFile(currentFile);
+		FloatSlideData floatSlideData = null;
+		int intensity1=0;
+		int intensity2=0;
+		
+		
+		
+		
+		if (afp.isAgilentFileValid()) {
+
+			if (loadMedianIntensities) {
+				intensity1 = afp.getRequiredHeaders().get(
+						AgilentFileParser.RMEDIANSIGNAL);
+				intensity2 = afp.getRequiredHeaders().get(
+						AgilentFileParser.GMEDIANSIGNAL);
+			} else {
+				intensity1 = afp.getRequiredHeaders().get(
+						AgilentFileParser.RPROCESSEDSIGNAL);
+				intensity2 = afp.getRequiredHeaders().get(
+						AgilentFileParser.GPROCESSEDSIGNAL);
+			}
+
+			if ((intensity1 == -1 || intensity2 == -1)) {
+				if(loadMedianIntensities) {
+				JOptionPane
+						.showMessageDialog(
+								aflp,
+								"Error loading "
+										+ currentFile.getName()
+										+ "\n"
+										+ "The file was missing median intensity columns indicated by\n"
+										+ "the header names rMedianSignal and gMedianSignal",
+								"Load Error", JOptionPane.ERROR_MESSAGE);
+				}else {
+					JOptionPane
+					.showMessageDialog(
+							aflp,
+							"Error loading "
+									+ currentFile.getName()
+									+ "\n"
+									+ "The file was missing intensity columns indicated by\n"
+									+ "the header names rProcessedSignal and gProcessedSignal",
+							"Load Error", JOptionPane.ERROR_MESSAGE);
+				}
+				return null;
+			}
+			
+
+			String[][] data = afp.getDataMatrix();
+			setLinesCount(data.length);
+
+			for (int i = 0; i < data.length; i++) {
+				floatSlideData.setIntensities(i, Float
+						.parseFloat(data[i][intensity1]), Float
+						.parseFloat(data[i][intensity2]));
+				setFileProgress(i);
+			}
+		}
+		floatSlideData.setSlideDataName(currentFile.getName());
+		floatSlideData.setSlideFileName(currentFile.getPath());
+		
+		return floatSlideData;
+		
+	}
+	
+	
+	
+	
+	
 	public boolean checkLoadEnable() {
 		// TODO Auto-generated method stub
 		setLoadEnabled(loadEnabled);
@@ -202,8 +399,11 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	}
 
 	public String getAnnotationFilePath() {
-		// TODO Auto-generated method stub
-		return annotationFilePath;
+
+		if(annotationFilePath.isEmpty()) {
+			return "NA";
+		}else
+			return annotationFilePath;
 	}
 
 	public int getDataType() {
@@ -367,7 +567,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			browseButton1.setPreferredSize(new Dimension(100, 30));
 			browseButton1.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-
+					onFeatureFileBrowse();
 				}
 			});
 
@@ -508,6 +708,48 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			}
 
 		}
+		
+		
+		
+		public void onFeatureFileBrowse() {
+			FileLoaderUtility fileLoad=new FileLoaderUtility();
+			Vector<String> retrievedFileNames=new Vector<String>();
+			JFileChooser fileChooser = new JFileChooser(
+					SuperExpressionFileLoader.DATA_PATH);
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+			int retVal = fileChooser.showOpenDialog(AgilentFileLoaderPanel.this);
+
+			if (retVal == JFileChooser.APPROVE_OPTION) {
+				((DefaultListModel) getAvailableListModel()).clear();
+				((DefaultListModel) getSelectedListModel()).clear();
+
+				File selectedFile = fileChooser.getSelectedFile();
+				String path=selectedFile.getAbsolutePath();
+				retrievedFileNames=fileLoad.getFileNameList(selectedFile.getAbsolutePath());
+				//retrievedFileNames=fileLoad.getFileNameList(path);
+				
+				
+				for (int i = 0; i < retrievedFileNames.size(); i++) {
+					
+					Object fileName=retrievedFileNames.get(i);
+					boolean acceptFile=getFileFilter().accept((File)fileName);
+					
+					
+					
+					if(acceptFile) {
+						pathTextField.setText(path);
+						String Name=fileChooser.getName((File) fileName);
+						
+						
+					((DefaultListModel) getAvailableListModel())
+							.addElement(new File(Name));
+					}
+				}
+
+			}
+		
+		}
 
 		/**
 		 * select Agilent provided annotation file
@@ -613,7 +855,18 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		private class Listener implements ActionListener {
 
 			public void actionPerformed(ActionEvent e) {
+				Object source = e.getSource();
 
+				if (source == addButton) {
+					onAdd();
+				} else if (source == addAllButton) {
+					onAddAll();
+				} else if (source == removeButton) {
+					onRemove();
+				} else if (source == removeAllButton) {
+					onRemoveAll();
+				} 
+				
 			}
 
 		}

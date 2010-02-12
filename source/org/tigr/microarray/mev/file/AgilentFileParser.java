@@ -245,25 +245,28 @@ public class AgilentFileParser {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
 							.get(AgilentFileParser.GENENAME).intValue()];
 				}
-				if (getRequiredHeaders().keySet().contains(
-						AgilentFileParser.GPROCESSEDSIGNAL)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.GPROCESSEDSIGNAL).intValue()];
-				}
+				
 				if (getRequiredHeaders().keySet().contains(
 						AgilentFileParser.RPROCESSEDSIGNAL)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
 							.get(AgilentFileParser.RPROCESSEDSIGNAL).intValue()];
 				}
+				
 				if (getRequiredHeaders().keySet().contains(
-						AgilentFileParser.GMEDIANSIGNAL)) {
+						AgilentFileParser.GPROCESSEDSIGNAL)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.GMEDIANSIGNAL).intValue()];
+							.get(AgilentFileParser.GPROCESSEDSIGNAL).intValue()];
 				}
+				
 				if (getRequiredHeaders().keySet().contains(
 						AgilentFileParser.RMEDIANSIGNAL)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
 							.get(AgilentFileParser.RMEDIANSIGNAL).intValue()];
+				}
+				if (getRequiredHeaders().keySet().contains(
+						AgilentFileParser.GMEDIANSIGNAL)) {
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
+							.get(AgilentFileParser.GMEDIANSIGNAL).intValue()];
 				}
 				
 				rowIndex=rowIndex+1;

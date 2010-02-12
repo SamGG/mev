@@ -17,10 +17,12 @@ public class AgilentAnnotationFileParser {
 	public static final int INVALID_ANNOTATION_FILE = 0;
 	public static final int VALID_ANNOTATION_FILE = 1;
 	public static final String REF_NUM = "RefNumber";
+	public static final String ROW ="Row"; 
+	public static final String COLUMN = "Col";
 	private String[][]annotationMatrix=new String[1][1];
 	private int uniqueIdentifierColumn;
 	private ArrayList<String>columnHeaders=new ArrayList<String>();
-	
+	private static boolean isAnnotationLoaded=false;
 	
 
 	public AgilentAnnotationFileParser() {
@@ -91,10 +93,12 @@ public class AgilentAnnotationFileParser {
 				String[] tokens = currentLine.split("\t");
 				
 				this.annotationMatrix[rowIndex][0]=tokens[getUniqueIdentifierColumn()];
-				
+				int colIndex=1;
 				for(int index=0; index<getColumnHeaders().size(); index++) {
-					if(index!=getUniqueIdentifierColumn())
-					this.annotationMatrix[rowIndex][index]=tokens[index];
+					if(index!=getUniqueIdentifierColumn()) {
+						this.annotationMatrix[rowIndex][colIndex]=tokens[index];
+						colIndex=colIndex+1;
+					}
 				}
 				
 				
@@ -110,14 +114,16 @@ public class AgilentAnnotationFileParser {
 			
 		}
 		
-		
-		
-		
-		
-		
-		
-		
+			
 	}
+	
+	
+	public static boolean isAnnotationLoaded() {
+		return isAnnotationLoaded;
+	}
+	
+	
+	
 	
 	/**
 	 * 
