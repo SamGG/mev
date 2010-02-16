@@ -46,7 +46,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	private AgilentFileLoaderPanel aflp;
 	private MultipleArrayViewer mav;
 	private boolean loadEnabled = true;
-	private String annotationFilePath;
+	private String annotationFilePath="NA";
 	private ArrayList<String> columnHeaders;
 	private boolean loadMedianIntensities=false;
 	private String[] uidArray;
@@ -81,7 +81,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		for(int index=0; index<dataFiles.length; index++) {
 			if (index == 0) {
 				
-				File file=new File(this.aflp.pathTextField.getText(),((File) dataFiles[index]).getName());
+				File file=new File(getFilePath(),((File) dataFiles[index]).getName());
+			
 				slideData = loadSlideData(file);
 				
 				if (slideData == null)
@@ -89,7 +90,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				data.add(slideData);
 				metaData = slideData.getSlideMetaData();
 			} else {
-				File file=new File(this.aflp.pathTextField.getText(),((File) dataFiles[index]).getName());
+				File file=new File(getFilePath(),((File) dataFiles[index]).getName());
 				data.add(loadFloatSlideData(file, metaData));
 			}
 			
@@ -102,14 +103,16 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		
 		if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
 			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
+			
+			if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
+				String msg = "The selected annotation file";
+				msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
+				JOptionPane.showMessageDialog(aflp, msg,
+						"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
+			}
 		}
 		
-		if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
-			String msg = "The selected annotation file";
-			msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
-			JOptionPane.showMessageDialog(aflp, msg,
-					"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
-		}
+		
 		
 		
 		return data;
@@ -190,20 +193,35 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	 */
 	public ISlideData loadSlideData(File targetFile) throws IOException {
 		
+		
 		SlideData slideData = null;
 		AgilentFileParser afp=new AgilentFileParser();
 		afp.loadFile(targetFile);
+		int numAnnotationColumns=-1;
+		String[][]data=afp.getDataMatrix();
+		SlideDataElement sde;
+		int[] rows;
+		int[] cols;
+		float[] intensities;
+		String uid;
+		String[][] spotData;
+		uidArray = new String[data.length];
+		String[]annotationHeaders=null;
 		
 		if(afp.isAgilentFileValid()) {
 			
-			int probeColumn=afp.getRequiredHeaders().get(AgilentFileParser.PROBENAME);
-			int rProcessedSignal=afp.getRequiredHeaders().get(AgilentFileParser.RPROCESSEDSIGNAL);
-			int gProcessedSignal = afp.getRequiredHeaders().get(AgilentFileParser.GPROCESSEDSIGNAL);
-			int row=afp.getRequiredHeaders().get(AgilentFileParser.ROW);
-			int column=afp.getRequiredHeaders().get(AgilentFileParser.COLUMN);
-			int rMedianSignal=afp.getRequiredHeaders().get(AgilentFileParser.RMEDIANSIGNAL);
-			int gMedianSignal=afp.getRequiredHeaders().get(AgilentFileParser.GMEDIANSIGNAL);
-			int featureNum=afp.getRequiredHeaders().get(AgilentFileParser.FEATURENUMBER);
+			int probeName=afp.getRequiredHeaders().indexOf(AgilentFileParser.PROBENAME);
+			int genename=afp.getRequiredHeaders().indexOf(AgilentFileParser.GENENAME);
+			int rProcessedSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.RPROCESSEDSIGNAL);
+			int gProcessedSignal = afp.getRequiredHeaders().indexOf(AgilentFileParser.GPROCESSEDSIGNAL);
+			int row=afp.getRequiredHeaders().indexOf(AgilentFileParser.ROW);
+			int column=afp.getRequiredHeaders().indexOf(AgilentFileParser.COLUMN);
+			int rMedianSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.RMEDIANSIGNAL);
+			int gMedianSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.GMEDIANSIGNAL);
+			int featureNum=afp.getRequiredHeaders().indexOf(AgilentFileParser.FEATURENUMBER);
+			
+			if(probeName!=-1 && genename!=-1)
+				numAnnotationColumns=5;
 			
 			
 			// Intensities exist??
@@ -230,14 +248,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			}
 
 			
-			String[][]data=afp.getDataMatrix();
-			SlideDataElement sde;
-			int[] rows;
-			int[] cols;
-			float[] intensities;
-			String uid;
-			String[][] spotData;
-			uidArray = new String[data.length];
+		
 
 			int maxRow = 0;
 			int maxCol = 0;
@@ -249,6 +260,13 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			slideData = new SlideData(maxRow, maxCol);
 			setLinesCount(data.length);
 			
+			annotationHeaders=new String[numAnnotationColumns];
+			for (int fieldCnt = 0; fieldCnt < numAnnotationColumns; fieldCnt++) {
+				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt) ;
+			}
+			
+			slideData.getSlideMetaData().appendFieldNames(annotationHeaders);
+			
 			for (int i = 0; i < data.length; i++) {
 				rows = new int[3];
 				cols = new int[3];
@@ -257,8 +275,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				uidArray[i] = data[i][0];
 				
 				
-				String[] fieldNames = new String[rProcessedSignal];
-				for (int fieldCnt = 0; fieldCnt < rProcessedSignal; fieldCnt++) {
+				String[] fieldNames = new String[numAnnotationColumns];
+				for (int fieldCnt = 0; fieldCnt < numAnnotationColumns; fieldCnt++) {
 					fieldNames[fieldCnt] = data[i][fieldCnt];
 				}
 
@@ -280,7 +298,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					
 				} catch (NumberFormatException e) {
 					final String fileName = targetFile.getName();
-					final int loc = i;
+				
 					Thread thread = new Thread(new Runnable() {
 						public void run() {
 							JOptionPane
@@ -288,10 +306,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 											aflp,
 											"The input file \""
 													+ fileName
-													+ "\" was missing critical information on line # "
-													+ String.valueOf(loc + 1)
+													+ "\" seems to be missing critical columns like "
 													+ "\n"
-													+ "Agilent two color file loading require entries for FeatureNum, rMedianSignal, gMedianSignal," +
+													+ "FeatureNum, rMedianSignal, gMedianSignal," +
 															"rProcessedSignal and gProcessedSignal.",
 											"Loading Aborted/Loading Error",
 											JOptionPane.ERROR_MESSAGE);
@@ -302,17 +319,19 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				}
 				sde = new SlideDataElement(data[i][0], rows, cols, intensities,
 						null);
+				sde.setExtraFields(fieldNames);
 				slideData.add(sde);
-				slideData.getSlideMetaData().appendFieldNames(fieldNames);
+				
 				setFileProgress(i);
 			}
 			
-			
+			slideData.setSlideDataName(targetFile.getName());
+			slideData.setSlideFileName(targetFile.getPath());
+			return slideData;	
 		}
-		slideData.setSlideDataName(targetFile.getName());
-		slideData.setSlideFileName(targetFile.getPath());
-		
-	  return slideData;	
+	
+		return null;
+	  
 	}
 	
 	
@@ -320,7 +339,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	
 	
 	public ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
-		
+
 		AgilentFileParser afp=new AgilentFileParser();
 		afp.loadFile(currentFile);
 		FloatSlideData floatSlideData = null;
@@ -333,14 +352,14 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		if (afp.isAgilentFileValid()) {
 
 			if (loadMedianIntensities) {
-				intensity1 = afp.getRequiredHeaders().get(
+				intensity1 = afp.getRequiredHeaders().indexOf(
 						AgilentFileParser.RMEDIANSIGNAL);
-				intensity2 = afp.getRequiredHeaders().get(
+				intensity2 = afp.getRequiredHeaders().indexOf(
 						AgilentFileParser.GMEDIANSIGNAL);
 			} else {
-				intensity1 = afp.getRequiredHeaders().get(
+				intensity1 = afp.getRequiredHeaders().indexOf(
 						AgilentFileParser.RPROCESSEDSIGNAL);
-				intensity2 = afp.getRequiredHeaders().get(
+				intensity2 = afp.getRequiredHeaders().indexOf(
 						AgilentFileParser.GPROCESSEDSIGNAL);
 			}
 
@@ -761,7 +780,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		public void onSelectAgilentAnnotationFile() {
 			JFileChooser fileChooser = new JFileChooser(
 					SuperExpressionFileLoader.DATA_PATH);
-			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
 			int retVal = fileChooser
 					.showOpenDialog(AgilentFileLoaderPanel.this);
