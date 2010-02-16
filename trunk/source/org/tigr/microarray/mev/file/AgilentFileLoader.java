@@ -104,12 +104,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
 			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
 			
-			if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
-				String msg = "The selected annotation file";
-				msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
-				JOptionPane.showMessageDialog(aflp, msg,
-						"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
-			}
+//			if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
+//				String msg = "The selected annotation file";
+//				msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
+//				JOptionPane.showMessageDialog(aflp, msg,
+//						"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
+//			}
 		}
 		
 		
@@ -427,7 +427,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 	public int getDataType() {
 		// TODO Auto-generated method stub
-		return IData.DATA_TYPE_RATIO_ONLY;
+		return IData.DATA_TYPE_TWO_INTENSITY;
 	}
 
 	public JPanel getFileLoaderPanel() {
@@ -688,7 +688,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		}
 
 		public void createAnnotationPanel(String actionCommand) {
-
+			 
 			if (actionCommand.equalsIgnoreCase(LOAD_AGILENT_ANNOTATION)) {
 
 				selectFilePanel = new JPanel();
@@ -709,7 +709,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				browse.setPreferredSize(new Dimension(100, 30));
 				browse.addActionListener(new Listener() {
 					public void actionPerformed(ActionEvent e) {
-						onSelectAgilentAnnotationFile();
+						int result=onSelectAgilentAnnotationFile();
+						
+						
 					}
 				});
 
@@ -777,7 +779,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		 * 
 		 */
 
-		public void onSelectAgilentAnnotationFile() {
+		public int onSelectAgilentAnnotationFile() {
 			JFileChooser fileChooser = new JFileChooser(
 					SuperExpressionFileLoader.DATA_PATH);
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -789,8 +791,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				File selectedFile = fileChooser.getSelectedFile();
 				String path = selectedFile.getAbsolutePath();
 				setAnnotationFilePath(path);
+				
 			}
-
+			return retVal;
 		}
 
 		/**

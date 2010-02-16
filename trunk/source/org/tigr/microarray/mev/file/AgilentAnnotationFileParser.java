@@ -22,7 +22,7 @@ public class AgilentAnnotationFileParser {
 	private String[][]annotationMatrix=new String[1][1];
 	private int uniqueIdentifierColumn;
 	private ArrayList<String>columnHeaders=new ArrayList<String>();
-	private static boolean isAnnotationLoaded=false;
+	private  boolean isAnnotationLoaded=false;
 	
 
 	public AgilentAnnotationFileParser() {
@@ -45,9 +45,12 @@ public class AgilentAnnotationFileParser {
 		Pattern pattern=Pattern.compile(AgilentAnnotationFileParser.REF_NUM,Pattern.CASE_INSENSITIVE );
 		Matcher m = pattern.matcher(headerLine);
 		if(m.find()) {
+			System.out.println("valid annotation file");
 			return VALID_ANNOTATION_FILE;
-		}else
+		}else {
+			System.out.println("invalid annotation file");
 			return INVALID_ANNOTATION_FILE;
+		}
 
 		
 			
@@ -118,7 +121,7 @@ public class AgilentAnnotationFileParser {
 	}
 	
 	
-	public static boolean isAnnotationLoaded() {
+	public boolean isAnnotationLoaded() {
 		return isAnnotationLoaded;
 	}
 	
