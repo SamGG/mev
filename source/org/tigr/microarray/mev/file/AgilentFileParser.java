@@ -8,10 +8,11 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
+
 
 import org.tigr.microarray.util.LineCount;
 
@@ -36,14 +37,14 @@ public class AgilentFileParser {
 	
 	private boolean isAgilentFileValid=false;
 
-	private HashMap<String, Integer>requiredHeaders=new HashMap<String, Integer>();
+	private ArrayList<String>requiredHeaders=new ArrayList<String>();
 	private String[][]dataMatrix=new String[1][1];
 	
 	
 
 	
 	public AgilentFileParser() {
-		
+		initializeHeaders();
 	}
 	
 /**
@@ -78,7 +79,7 @@ public class AgilentFileParser {
 
 		while (split.hasMoreTokens()) {
 			String token = split.nextToken();
-
+			
 			if(token.equalsIgnoreCase(AgilentFileParser.FEATURENUMBER)) { //Validity test 1
 				valid1=true;
 			}
@@ -103,11 +104,13 @@ public class AgilentFileParser {
 		}
 
 		//A file must at the bare minimum satisfy all these five conditions
-		if (valid1 && valid2 && valid3 &&valid4 && valid5) 
+		if (valid1 && valid2 && valid3 &&valid4 && valid5) {
 			return AgilentFileParser.VALID_AGILENT_FILE;
+		}
 
-		else
+		else {
 			return AgilentFileParser.INVALID_AGILENT_FILE;
+		}
 
 	}
 	
@@ -118,7 +121,7 @@ public class AgilentFileParser {
 	 * 
 	 * @return
 	 */
-	public HashMap<String, Integer>getRequiredHeaders(){
+	public ArrayList<String>getRequiredHeaders(){
 		return this.requiredHeaders;
 	}
 	
@@ -127,21 +130,39 @@ public class AgilentFileParser {
 	 * Sets the required headers to the predefined list of columns as described in public static instance fields
 	 * 
 	 */
-	public void setRequiredHeaders() {
-		this.requiredHeaders.put(AgilentFileParser.FEATURENUMBER, new Integer(0) );
-		this.requiredHeaders.put(AgilentFileParser.ROW, new Integer(1) );
-		this.requiredHeaders.put(AgilentFileParser.COLUMN, new Integer(2) );
-		this.requiredHeaders.put(AgilentFileParser.PROBENAME,new Integer(3) );
-		this.requiredHeaders.put(AgilentFileParser.GENENAME, new Integer(4));
-		this.requiredHeaders.put(AgilentFileParser.SYSTEMATICNAME,new Integer(5) );
-		this.requiredHeaders.put(AgilentFileParser.GPROCESSEDSIGNAL,new Integer(6) );
-		this.requiredHeaders.put(AgilentFileParser.RPROCESSEDSIGNAL, new Integer(7));
-		this.requiredHeaders.put(AgilentFileParser.GMEDIANSIGNAL,new Integer(8) );
-		this.requiredHeaders.put(AgilentFileParser.RMEDIANSIGNAL, new Integer(9));
+	public void initializeHeaders() {
+		this.requiredHeaders.add(0,AgilentFileParser.FEATURENUMBER );
+		this.requiredHeaders.add(1,AgilentFileParser.ROW);
+		this.requiredHeaders.add(2,AgilentFileParser.COLUMN);
+		this.requiredHeaders.add(3,AgilentFileParser.PROBENAME );
+		this.requiredHeaders.add(4,AgilentFileParser.GENENAME);
+		this.requiredHeaders.add(5,AgilentFileParser.SYSTEMATICNAME);
+		this.requiredHeaders.add(6,AgilentFileParser.GPROCESSEDSIGNAL);
+		this.requiredHeaders.add(7,AgilentFileParser.RPROCESSEDSIGNAL);
+		this.requiredHeaders.add(8,AgilentFileParser.GMEDIANSIGNAL);
+		this.requiredHeaders.add(9,AgilentFileParser.RMEDIANSIGNAL);
 	}
 	
 
-	
+	public void setHeaderPositions(ArrayList<String>columnHeaders, String headerLine) {
+		
+		Pattern pattern=null;
+		Matcher m =null;
+		int colIndex=0;
+		
+		for(int index=0; index<columnHeaders.size(); index++) {
+			String key=columnHeaders.get(index);
+			
+			pattern=Pattern.compile(key,Pattern.CASE_INSENSITIVE );
+			m = pattern.matcher(headerLine);
+			
+			if(m.find()) {
+				//do nothing
+			}else
+				requiredHeaders.remove(key);
+				
+		}
+	}
 	
 	
 	
@@ -150,10 +171,11 @@ public class AgilentFileParser {
 		StringSplitter splitter=new StringSplitter('\t');
 		String currentLine = new String();
 		BufferedReader reader = null;
-		Pattern pattern=Pattern.compile("FEATURE",Pattern.CASE_INSENSITIVE );
+		Pattern pattern=Pattern.compile("FEATURES",Pattern.CASE_INSENSITIVE );
 		//Get number of lines in the file
 		int lines_in_file=LineCount.getNumberOfLines(targetFile);
 		int headerLinesCount=0;
+		ArrayList<String> columnHeaders=new ArrayList<String>();
 		
 		try {
 			reader=new BufferedReader(new FileReader(targetFile));
@@ -166,7 +188,12 @@ public class AgilentFileParser {
 				headerLinesCount=headerLinesCount+1;
 				Matcher m = pattern.matcher(currentLine);
 				if(m.find()) {
-					patternFound=true;
+					
+					pattern=Pattern.compile("FeatureNum",Pattern.CASE_INSENSITIVE );
+					m = pattern.matcher(currentLine);
+					
+					if(m.find()) {
+					
 					
 					//Once header row is found, check if file has all required columns in it. If not, no point in reading further
 					if(AgilentFileParser.validate(currentLine)==AgilentFileParser.VALID_AGILENT_FILE) {
@@ -177,26 +204,17 @@ public class AgilentFileParser {
 					}
 					
 				//Store all the header fields in the file
-					ArrayList<String> columnHeaders=new ArrayList<String>(Arrays.asList(currentLine.split("\t")));
+					columnHeaders=new ArrayList<String>(Arrays.asList(currentLine.split("\t")));
 					
 					//All Agilent files *mostly* have Row, Column, FeatureNum, rProcessedSignal and gProcessedSignal
 					//However required headers hash map has a couple more headers. If these headers are not in the file, no big deal..just remove them
 					//from the list of requiredHeaders. If these headers are present in the file, update the position of the header in required headers
 					//hashmap
-					for(int index=0; index<getRequiredHeaders().size(); index++) {
-						String key=getRequiredHeaders().keySet().iterator().next();
-						pattern=Pattern.compile(key,Pattern.CASE_INSENSITIVE );
-						 m = pattern.matcher(currentLine);
-						
-						if(m.find()) {
-							patternFound=true;
-							requiredHeaders.put(key, new Integer(columnHeaders.indexOf(key)));
-						}else
-							requiredHeaders.remove(index);
-							
-					}
+					setHeaderPositions(columnHeaders, currentLine);
 				
+					patternFound=true;
 					break search;		
+				}
 				}
 						
 			}
@@ -210,63 +228,54 @@ public class AgilentFileParser {
 			//headers from the hashmap, fetch from token array and fill in data matrix  
 			
 			int rowIndex=0;
-			java.util.Iterator<String> keyIterator=getRequiredHeaders().keySet().iterator();
+			
 			while ((currentLine = reader.readLine()) != null) {
 				int columnIndex = 0;
 				String[] tokens = currentLine.split("\t");
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.FEATURENUMBER)) {
-					this.dataMatrix[rowIndex][0] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.FEATURENUMBER).intValue()];
+					this.dataMatrix[rowIndex][0] = tokens[columnHeaders.indexOf(AgilentFileParser.FEATURENUMBER)];
 					++columnIndex;
 				}
 
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.ROW)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.ROW).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.ROW)];
 				}
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.COLUMN)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.COLUMN).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.COLUMN)];
 				}
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.PROBENAME)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.PROBENAME).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.PROBENAME)];
 				}
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.GENENAME)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.GENENAME).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.GENENAME)];
 				}
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.RPROCESSEDSIGNAL)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.RPROCESSEDSIGNAL).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.RPROCESSEDSIGNAL)];
 				}
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.GPROCESSEDSIGNAL)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.GPROCESSEDSIGNAL).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.GPROCESSEDSIGNAL)];
 				}
 				
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.RMEDIANSIGNAL)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.RMEDIANSIGNAL).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.RMEDIANSIGNAL)];
 				}
-				if (getRequiredHeaders().keySet().contains(
+				if (getRequiredHeaders().contains(
 						AgilentFileParser.GMEDIANSIGNAL)) {
-					this.dataMatrix[rowIndex][columnIndex++] = tokens[getRequiredHeaders()
-							.get(AgilentFileParser.GMEDIANSIGNAL).intValue()];
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.GMEDIANSIGNAL)];
 				}
 				
 				rowIndex=rowIndex+1;
