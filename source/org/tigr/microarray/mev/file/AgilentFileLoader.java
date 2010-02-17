@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -104,15 +105,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
 			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
 			
-//			if(!AgilentAnnotationFileParser.isAnnotationLoaded()) {
-//				String msg = "The selected annotation file";
-//				msg += " is in a different format than what MeV expects (Agilent feature extraction software version 10.7)\n";
-//				JOptionPane.showMessageDialog(aflp, msg,
-//						"Annotation Mismatch Warning", JOptionPane.WARNING_MESSAGE);
-//			}
 		}
-		
-		
 		
 		
 		return data;
@@ -126,48 +119,35 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	
 		AgilentAnnotationFileParser parser=new AgilentAnnotationFileParser();
 		parser.loadAnnotationFile(sourceFile);
-		
+			
 		if(parser.isAnnotationLoaded()) {
+		
 			ArrayList<String> headers = parser.getColumnHeaders();
-			int firstAnnField=1;
-			
-			if(headers.indexOf(AgilentAnnotationFileParser.COLUMN)!=-1 &&
-					headers.indexOf(AgilentAnnotationFileParser.ROW)!=-1) {
-				firstAnnField=3;
-			}
-			
-			
+							
 			String[][]annMatrix=parser.getAnnotationMatrix();
-			
-			
-			String[] annotHeaders = new String[headers.size() - firstAnnField];
-			int headerIndex=0;
-			for (int i = 1; i < headers.size(); i++) {
-				
-				if(!((String)headers.get(i)).equalsIgnoreCase(AgilentAnnotationFileParser.COLUMN)
-						&& !((String)headers.get(i)).equalsIgnoreCase(AgilentAnnotationFileParser.ROW)) {
-					annotHeaders[headerIndex] = (String) headers.get(i);
-					headerIndex=headerIndex+1;
-				}
-			}
-			targetData.getSlideMetaData().appendFieldNames(annotHeaders);
+					
+			targetData.getSlideMetaData().appendFieldNames(headers.toArray(new String[headers.size()]));
 
 			Hashtable hash = new Hashtable();
 			String[] value;
-			int dataLength = targetData.size();
+			int dataLength = targetData.getSize();
 			for (int i = 0; i < annMatrix.length; i++) {
-				value = new String[annMatrix[i].length - firstAnnField];
-				System.arraycopy(annMatrix[i], firstAnnField, value, 0,
-						annMatrix[i].length - firstAnnField);
+				value = new String[headers.size()];
+				System.arraycopy(annMatrix[i], 1, value, 0,
+						headers.size());
+			
 				hash.put(annMatrix[i][0], value);
+				
 			}
 			
-			SlideDataElement sde;
+			
 			String[] extraFields;
 			for (int i = 0; i < dataLength; i++) {
-				extraFields = (String[]) (hash.get(targetData.getFieldNames()[0]));
+				extraFields = new String[headers.size()];
+				extraFields=(String[])(hash.get(uidArray[i]));
 				((SlideDataElement) targetData.getSlideDataElement(i))
 						.setExtraFields(extraFields);
+				
 			}
 			
 			
@@ -262,7 +242,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			
 			annotationHeaders=new String[numAnnotationColumns];
 			for (int fieldCnt = 0; fieldCnt < numAnnotationColumns; fieldCnt++) {
-				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt) ;
+				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt).toLowerCase() ;
+				System.out.println("fieldNames:"+annotationHeaders[fieldCnt]);
 			}
 			
 			slideData.getSlideMetaData().appendFieldNames(annotationHeaders);
