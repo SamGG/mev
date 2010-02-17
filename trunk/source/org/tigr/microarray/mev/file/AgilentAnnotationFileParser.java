@@ -18,10 +18,10 @@ public class AgilentAnnotationFileParser {
 	public static final int VALID_ANNOTATION_FILE = 1;
 	public static final String REF_NUM = "RefNumber";
 	public static final String ROW ="Row"; 
-	public static final String COLUMN = "Col";
+	public static final String COLUMN = "Column";
 	private String[][]annotationMatrix=new String[1][1];
 	private int uniqueIdentifierColumn;
-	private ArrayList<String>columnHeaders=new ArrayList<String>();
+	private ArrayList<String>columnNames;
 	private  boolean isAnnotationLoaded=false;
 	
 
@@ -82,39 +82,62 @@ public class AgilentAnnotationFileParser {
 			if(result==AgilentAnnotationFileParser.INVALID_ANNOTATION_FILE)
 				return;
 			
+					
 			//Add all column headers to the array list
-			columnHeaders=new ArrayList<String>(Arrays.asList(currentLine.split("\t")));
+			ArrayList<String>columnHeaders=new ArrayList<String>(Arrays.asList(currentLine.split("\t")));
+			this.columnNames=new ArrayList<String>();
 			
+			this.columnNames.add(0, AgilentAnnotationFileParser.REF_NUM);
+			for(int index=0; index<columnHeaders.size(); index++) {
+				String key=columnHeaders.get(index);
+				if(key.equalsIgnoreCase(AgilentAnnotationFileParser.REF_NUM)||key.equalsIgnoreCase(AgilentAnnotationFileParser.ROW)||
+						key.equalsIgnoreCase(AgilentAnnotationFileParser.COLUMN)) {
+					
+				}else
+					this.columnNames.add(key);
+					
+							
+			}
+			
+		
+					
 			//Gets the column number of the unique identifier
-			this.uniqueIdentifierColumn=columnHeaders.indexOf(AgilentAnnotationFileParser.REF_NUM);
-			this.annotationMatrix=new String[rowCount-1][columnHeaders.size()];
+						
+		
+			this.annotationMatrix=new String[rowCount-1][columnNames.size()];
+			
 			int rowIndex=0;
 			
+	
 			//Read rest of the file
 			while((currentLine=reader.readLine())!=null) {
 				
 				String[] tokens = currentLine.split("\t");
+			
 				
-				this.annotationMatrix[rowIndex][0]=tokens[getUniqueIdentifierColumn()];
-				int colIndex=1;
-				for(int index=0; index<getColumnHeaders().size(); index++) {
-					if(index!=getUniqueIdentifierColumn()) {
-						this.annotationMatrix[rowIndex][colIndex]=tokens[index];
-						colIndex=colIndex+1;
-					}
+				for(int index=0; index<this.columnNames.size(); index++) {
+					String key=this.columnNames.get(index);
+					int colIndex=columnHeaders.indexOf(key);
+					
+				 if(colIndex<tokens.length) {
+						this.annotationMatrix[rowIndex][index]=tokens[colIndex];
+					}else
+						this.annotationMatrix[rowIndex][index]="NA";
+				
 				}
 				
-				
+			
 				
 				rowIndex=rowIndex+1;
 			}
 			
 			
-			
-			
-			
+			reader.close();
+			this.columnNames.remove(AgilentAnnotationFileParser.REF_NUM);
+			this.isAnnotationLoaded=true;
+		
 		}catch(Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 			
@@ -142,7 +165,7 @@ public class AgilentAnnotationFileParser {
 	 * @returns all the header columns in the annotation file
 	 */
 	public ArrayList<String> getColumnHeaders() {
-		return this.columnHeaders;
+		return this.columnNames;
 	}
 	
 	

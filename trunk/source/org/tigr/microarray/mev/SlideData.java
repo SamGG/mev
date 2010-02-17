@@ -282,6 +282,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
             String [] newNames = new String[this.fieldNames.length+fieldNames.length];
             System.arraycopy(this.fieldNames, 0, newNames, 0, this.fieldNames.length);
             System.arraycopy(fieldNames, 0, newNames, this.fieldNames.length, fieldNames.length);
+            this.fieldNames=new String[newNames.length];
             this.fieldNames = newNames;
         }
     }

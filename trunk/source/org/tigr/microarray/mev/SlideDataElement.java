@@ -126,10 +126,14 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
             this.extraFields = values;
         else{
             String [] newFields = new String[this.extraFields.length+values.length];
-            for(int i = 0; i < this.extraFields.length; i++)
+            for(int i = 0; i < this.extraFields.length; i++) {
                 newFields[i] = this.extraFields[i];
-            for(int i = 0; i < values.length; i++)
+            }
+            for(int i = 0; i < values.length; i++) {
                 newFields[i+this.extraFields.length] = values[i];
+               
+            }
+            this.extraFields=new String[newFields.length];
             this.extraFields = newFields;
         }
     }
