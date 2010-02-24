@@ -131,16 +131,16 @@ public class AgilentFileParser {
 	 * 
 	 */
 	public void initializeHeaders() {
-		this.requiredHeaders.add(0,AgilentFileParser.FEATURENUMBER );
-		this.requiredHeaders.add(1,AgilentFileParser.ROW);
-		this.requiredHeaders.add(2,AgilentFileParser.COLUMN);
-		this.requiredHeaders.add(3,AgilentFileParser.PROBENAME );
-		this.requiredHeaders.add(4,AgilentFileParser.GENENAME);
-		this.requiredHeaders.add(5,AgilentFileParser.SYSTEMATICNAME);
-		this.requiredHeaders.add(6,AgilentFileParser.GPROCESSEDSIGNAL);
-		this.requiredHeaders.add(7,AgilentFileParser.RPROCESSEDSIGNAL);
-		this.requiredHeaders.add(8,AgilentFileParser.GMEDIANSIGNAL);
-		this.requiredHeaders.add(9,AgilentFileParser.RMEDIANSIGNAL);
+		this.requiredHeaders.add(AgilentFileParser.FEATURENUMBER );
+		this.requiredHeaders.add(AgilentFileParser.ROW);
+		this.requiredHeaders.add(AgilentFileParser.COLUMN);
+		this.requiredHeaders.add(AgilentFileParser.PROBENAME );
+		this.requiredHeaders.add(AgilentFileParser.GENENAME);
+		this.requiredHeaders.add(AgilentFileParser.SYSTEMATICNAME);
+		this.requiredHeaders.add(AgilentFileParser.GPROCESSEDSIGNAL);
+		this.requiredHeaders.add(AgilentFileParser.RPROCESSEDSIGNAL);
+		this.requiredHeaders.add(AgilentFileParser.GMEDIANSIGNAL);
+		this.requiredHeaders.add(AgilentFileParser.RMEDIANSIGNAL);
 	}
 	
 
@@ -257,6 +257,10 @@ public class AgilentFileParser {
 				if (getRequiredHeaders().contains(
 						AgilentFileParser.GENENAME)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.GENENAME)];
+				}
+				if (getRequiredHeaders().contains(
+						AgilentFileParser.SYSTEMATICNAME)) {
+					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.SYSTEMATICNAME)];
 				}
 				
 				if (getRequiredHeaders().contains(

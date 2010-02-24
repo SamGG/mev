@@ -37,7 +37,15 @@ import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
+import org.tigr.microarray.mev.annotation.AnnotationFileReader;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
+
+import org.tigr.microarray.mev.resources.FileResourceManager;
+import org.tigr.microarray.mev.resources.IResourceManager;
+import org.tigr.microarray.mev.resources.PipelinedAnnotationsFileDefinition;
+import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 import org.tigr.microarray.util.FileLoaderUtility;
 
@@ -46,6 +54,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	private GBA gba;
 	private AgilentFileLoaderPanel aflp;
 	private MultipleArrayViewer mav;
+	
+
 	private boolean loadEnabled = true;
 	private String annotationFilePath="NA";
 	private ArrayList<String> columnHeaders;
@@ -101,8 +111,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	
 		}
 		
-		
-		if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
+		if(aflp.isAnnotationLoaded()) {
+			data.set(0, loadResourcererAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
+		}else if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
 			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
 			
 		}
@@ -112,7 +123,45 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	}
 	
 	
+	
+	public SlideData loadResourcererAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
 		
+		this.mav.getData().setAnnotationLoaded(true);
+		File annoFile=new File(getAnnotationFilePath());
+		
+		AnnotationFileReader afr = AnnotationFileReader.createAnnotationFileReader(new File(getAnnotationFilePath()));
+		Hashtable _tempAnno = afr.getAffyAnnotation();
+		chipAnno = afr.getAffyChipAnnotation();
+		int dataLength = targetData.getSize();
+		int probeColumn=Arrays.asList(targetData.getSlideMetaData().getFieldNames()).indexOf(AgilentFileParser.PROBENAME);
+		
+		for(int index=0; index<dataLength; index++) {
+		
+			String cloneName = targetData.getSlideDataElement(index).getExtraFields()[probeColumn];
+			MevAnnotation mevAnno = null;
+			if(_tempAnno.size() != 0 && probeColumn!=-1) {
+				if (((MevAnnotation) _tempAnno.get(cloneName)) != null) {
+					mevAnno = (MevAnnotation) _tempAnno.get(cloneName);
+				} else {
+				/*
+				  * Sarita: clone ID explicitly set here because if the data file
+				  * has a probe (for eg. Affy house keeping probes) for which Resourcerer
+				  * does not have annotation, MeV would still work fine. NA will be
+				  * appended for the rest of the fields. 
+				 */
+				mevAnno = new MevAnnotation();
+				mevAnno.setCloneID(cloneName);
+			}
+				targetData.getSlideDataElement(index).setElementAnnotation(mevAnno);
+		}
+			
+			
+		}
+		
+		return targetData;
+	}
+	
+	
 	
 	public SlideData loadAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
 		
@@ -178,27 +227,29 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		AgilentFileParser afp=new AgilentFileParser();
 		afp.loadFile(targetFile);
 		int numAnnotationColumns=-1;
-		String[][]data=afp.getDataMatrix();
+		String[][]data=new String[1][1];
 		SlideDataElement sde;
 		int[] rows;
 		int[] cols;
 		float[] intensities;
-		String uid;
-		String[][] spotData;
-		uidArray = new String[data.length];
+		
 		String[]annotationHeaders=null;
 		
 		if(afp.isAgilentFileValid()) {
 			
+			data=new String[afp.getDataMatrix().length][afp.getDataMatrix()[0].length];
+			data=afp.getDataMatrix();
+			uidArray = new String[data.length];
+					
 			int probeName=afp.getRequiredHeaders().indexOf(AgilentFileParser.PROBENAME);
 			int genename=afp.getRequiredHeaders().indexOf(AgilentFileParser.GENENAME);
 			int rProcessedSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.RPROCESSEDSIGNAL);
 			int gProcessedSignal = afp.getRequiredHeaders().indexOf(AgilentFileParser.GPROCESSEDSIGNAL);
-			int row=afp.getRequiredHeaders().indexOf(AgilentFileParser.ROW);
-			int column=afp.getRequiredHeaders().indexOf(AgilentFileParser.COLUMN);
+		
 			int rMedianSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.RMEDIANSIGNAL);
 			int gMedianSignal=afp.getRequiredHeaders().indexOf(AgilentFileParser.GMEDIANSIGNAL);
-			int featureNum=afp.getRequiredHeaders().indexOf(AgilentFileParser.FEATURENUMBER);
+			
+			
 			
 			if(probeName!=-1 && genename!=-1)
 				numAnnotationColumns=5;
@@ -243,7 +294,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			annotationHeaders=new String[numAnnotationColumns];
 			for (int fieldCnt = 0; fieldCnt < numAnnotationColumns; fieldCnt++) {
 				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt).toLowerCase() ;
-				System.out.println("fieldNames:"+annotationHeaders[fieldCnt]);
+				
 			}
 			
 			slideData.getSlideMetaData().appendFieldNames(annotationHeaders);
@@ -265,6 +316,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					if(loadMedianIntensities) {
 						intensities[0] = Float.parseFloat(data[i][rMedianSignal]);
 						intensities[1] = Float.parseFloat(data[i][gMedianSignal]);
+						
 					}else {
 						intensities[0] = Float.parseFloat(data[i][rProcessedSignal]);
 						intensities[1] = Float.parseFloat(data[i][gProcessedSignal]);
@@ -460,24 +512,27 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 		}
 	}
+	
+	public MultipleArrayViewer getMav() {
+		return mav;
+	}
 
 	private class AgilentFileLoaderPanel extends JPanel {
 
 		private JPanel choicePanel, annotationPanel, dataPanel;
-		private JCheckBox noAnnFileBox;
-		private JCheckBox saveSpotInfoBox;
-		private JCheckBox cutQuotesBox;
+		
 		private JRadioButton loadIButton;
 		private JRadioButton loadMedButton;
-		private JPanel selectFilePanel;
+		private JPanel selectFilePanel, annotationSelectionMethodPanel;
 		private JLabel annotationSelectionLabel;
 		private JComboBox annotationSelectionBox;
-		private JLabel availableLabel, selectedLabel, selectFile;
+		private JLabel availableLabel, selectedLabel, selectFile, selectAnnotationFile;
 		private JList availableList, selectedList;
 		private JScrollPane availableScrollPane, selectedScrollPane;
 		private JButton addButton, addAllButton, removeButton, removeAllButton,
-				browseButton1;
-		private JTextField pathTextField;
+				browseButton1, annBrowseButton;
+		private JTextField pathTextField, annPathTextField;
+		private AnnotationDownloadHandler adh=null;
 		private static final String LOAD_AGILENT_ANNOTATION = "load_agilent_annotation_file";
 		private static final String LOAD_RESOURCERER_ANNOTATION = "load_resourcerer_annotation";
 
@@ -499,56 +554,39 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			bg.add(loadIButton);
 			bg.add(loadMedButton);
 
-			noAnnFileBox = new JCheckBox(
-					"Use Annotation Contained in MeV File (no annotation file)",
-					false);
-			noAnnFileBox.setFocusPainted(false);
-			noAnnFileBox.setActionCommand("use-annotation-in-mev-file");
-			noAnnFileBox.addActionListener(new Listener());
-
-			saveSpotInfoBox = new JCheckBox("Load Auxiliary Spot Information",
-					false);
-			saveSpotInfoBox.setFocusPainted(false);
-
-			cutQuotesBox = new JCheckBox("Remove Annotation Quotes(\"...\")",
-					false);
-			cutQuotesBox.setHorizontalAlignment(JCheckBox.CENTER);
-			cutQuotesBox.setFocusPainted(false);
+			
 
 			gba.add(choicePanel, loadIButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
 					new Insets(0, 2, 0, 2), 0, 0);
-			gba.add(choicePanel, saveSpotInfoBox, 1, 0, 1, 1, 1, 0, GBA.H,
+			gba.add(choicePanel, loadMedButton, 1, 0, 1, 1, 1, 0, GBA.H,
 					GBA.C, new Insets(0, 2, 0, 2), 0, 0);
-			gba.add(choicePanel, loadMedButton, 0, 1, 1, 1, 1, 0, GBA.H, GBA.C,
-					new Insets(0, 2, 0, 2), 0, 0);
-			gba.add(choicePanel, noAnnFileBox, 1, 1, 1, 1, 1, 0, GBA.H, GBA.C,
-					new Insets(0, 2, 0, 2), 0, 0);
-			gba.add(choicePanel, cutQuotesBox, 0, 2, 2, 1, 1, 0, GBA.H, GBA.C,
-					new Insets(0, 2, 0, 2), 0, 0);
-
+		
 			// Annotation panel
 			annotationPanel = new javax.swing.JPanel();
 			annotationPanel.setLayout(new GridBagLayout());
 			annotationPanel.setBorder(new TitledBorder(new EtchedBorder(),
 					"Annotation Panel"));
-
+			
+			annotationSelectionMethodPanel=new javax.swing.JPanel();
 			annotationSelectionLabel = new JLabel("Annotation selection method");
 
 			String[] selectionMethods = new String[2];
-			selectionMethods[0] = "Load Agilent provided annotation file ";
+			selectionMethods[0] = "Load Agilent provided annotation file";
 			selectionMethods[1] = "Load gene annotations from Resourcerer";
 
 			annotationSelectionBox = new JComboBox(selectionMethods);
 			annotationSelectionBox.addActionListener(new Listener());
 			createAnnotationPanel(AgilentFileLoaderPanel.LOAD_AGILENT_ANNOTATION);
 
-			gba.add(annotationPanel, annotationSelectionLabel, 0, 0, 1, 1, 1,
+			gba.add(annotationSelectionMethodPanel, annotationSelectionLabel, 0, 0, 1, 1, 1,
 					0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(annotationPanel, annotationSelectionBox, 2, 0, 1, 1, 1, 0,
+			gba.add(annotationSelectionMethodPanel, new JLabel(), 0, 1, 1, 1, 1,
+					0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(annotationSelectionMethodPanel, annotationSelectionBox, 2, 0, 1, 1, 1, 0,
 					GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			// gba.add(annotationPanel,selectFilePanel, 0, 1, 1, 1, 1, 1, GBA.B,
-			// GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-
+			gba.add(annotationPanel, annotationSelectionMethodPanel, 0, 0, 1, 1, 1, 0,
+					GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			
 			// Data panel
 			dataPanel = new javax.swing.JPanel();
 			dataPanel.setLayout(new GridBagLayout());
@@ -675,37 +713,87 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				selectFilePanel = new JPanel();
 				selectFilePanel.setLayout(new GridBagLayout());
 
-				JLabel selectFile = new JLabel("Select Agilent annotation file");
+				selectAnnotationFile = new JLabel("Select Agilent annotation file");
 
-				JTextField pathTextField = new JTextField();
-				pathTextField.setEditable(false);
-				pathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
-				pathTextField.setSize(new Dimension(500, 20));
-				pathTextField.setPreferredSize(new Dimension(500, 20));
-
-				JButton browse = new JButton("Browse");
-				browse.setName("Browse");
-				browse.setActionCommand("browse");
-				browse.setSize(new Dimension(100, 30));
-				browse.setPreferredSize(new Dimension(100, 30));
-				browse.addActionListener(new Listener() {
+				annPathTextField = new JTextField();
+				annPathTextField.setEditable(false);
+				annPathTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+			
+				annBrowseButton = new JButton("Browse");
+				annBrowseButton.setName("Browse");
+				annBrowseButton.setActionCommand("browse");
+				annBrowseButton.setSize(new Dimension(100, 30));
+				annBrowseButton.setPreferredSize(new Dimension(100, 30));
+				annBrowseButton.addActionListener(new Listener() {
 					public void actionPerformed(ActionEvent e) {
 						int result=onSelectAgilentAnnotationFile();
-						
+						if(result==JOptionPane.OK_OPTION)
+							annPathTextField.setText(getAnnotationFilePath());
 						
 					}
 				});
 
-				gba.add(selectFilePanel, selectFile, 0, 0, 1, 1, 0, 0, GBA.B,
+				gba.add(selectFilePanel, selectAnnotationFile, 0, 0, 1, 1, 0, 0, GBA.B,
 						GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				gba.add(selectFilePanel, pathTextField, 1, 0, 1, 1, 1, 0,
+				gba.add(selectFilePanel, annPathTextField, 1, 0, 1, 1, 1, 0,
 						GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-				gba.add(selectFilePanel, browse, 2, 0, GBA.RELATIVE, 1, 0, 0,
+				gba.add(selectFilePanel, annBrowseButton, 2, 0, GBA.RELATIVE, 1, 0, 0,
 						GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-
+				
+							
 				gba.add(annotationPanel, selectFilePanel, 0, 1, 1, 1, 1, 1,
 						GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 				revalidate();
+
+			}else if(actionCommand.equalsIgnoreCase(LOAD_RESOURCERER_ANNOTATION)) {
+				IResourceManager irm;
+				Hashtable<String, Vector<String>> speciestoarrays = new Hashtable<String, Vector<String>>();
+				try {
+					irm = new FileResourceManager(new File(new File(System
+							.getProperty("user.home"), ".mev"), "repository"));
+					irm.setAskToGetOnline(false);
+				} catch (RepositoryInitializationError rie) {
+					rie.printStackTrace();
+					return;
+				}
+
+				try {
+					File taxonfile = irm.getSupportFile(
+							new PipelinedAnnotationsFileDefinition(), true);
+					PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
+					speciestoarrays = aafd.parseAnnotationListFile(taxonfile);
+				} catch (SupportFileAccessError sfae) {
+					// fail("Couldn't get species/array mappings from repository.");
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+					// fail("Couldn't get annotation file.");
+				}
+
+				adh = new AnnotationDownloadHandler(irm, speciestoarrays,
+						"Human", "affy_HG-U133A");
+				selectFilePanel = new JPanel();
+				selectFilePanel.setLayout(new GridBagLayout());
+
+				if (getMav().getData().isAnnotationLoaded()) {
+
+					annotationPanel.setVisible(false);
+					adh.setOptionalMessage("Annotation is already loaded for array "
+							+ getMav().getData().getChipAnnotation()
+							.getChipType());
+					adh.setAnnFilePath(getMav().getData().getChipAnnotation()
+							.getAnnFileName());
+					setAnnotationFilePath(adh.getAnnFilePath());
+				}
+				adh.addListener(new Listener());
+				gba.add(selectFilePanel, adh.getAnnotationLoaderPanel(gba), 0,
+						0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0,
+						0);
+				gba.add(annotationPanel, selectFilePanel, 0, 1, 1, 1, 1, 1,
+						GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+				revalidate();
+
+				adh.setDownloadEnabled(!getMav().getData()
+						.isAnnotationLoaded());
 
 			}
 
@@ -854,6 +942,18 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		public DefaultListModel getSelectedListModel() {
 			return (DefaultListModel) selectedList.getModel();
 		}
+		
+		private void updateLabel(String name) {
+			annotationSelectionBox.setSelectedItem(name);
+			
+		}
+		
+		private boolean isAnnotationLoaded() {
+			if(adh!=null)
+				return adh.isAnnotationSelected();
+			else
+				return false;
+		}
 
 		private class Listener implements ActionListener {
 
@@ -868,12 +968,51 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					onRemove();
 				} else if (source == removeAllButton) {
 					onRemoveAll();
-				} 
+				}else if(source.equals(annotationSelectionBox)) {
+					updateLabel((String)annotationSelectionBox.getSelectedItem());
+					
+					if(((String)annotationSelectionBox.getSelectedItem()).equalsIgnoreCase("Load gene annotations from Resourcerer")){
+						
+						annotationPanel.removeAll();
+						revalidate();
+						createAnnotationPanel(AgilentFileLoaderPanel.LOAD_RESOURCERER_ANNOTATION);
+
+						gba.add(annotationSelectionMethodPanel, annotationSelectionLabel, 0, 0, 1, 1, 1,
+								0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+						gba.add(annotationSelectionMethodPanel, annotationSelectionBox, 2, 0, 1, 1, 1, 0,
+								GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+						gba.add(annotationPanel, annotationSelectionMethodPanel, 0, 0, 1, 1, 1, 0,
+								GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					
+						revalidate();
+
+					}else if(((String)annotationSelectionBox.getSelectedItem()).equalsIgnoreCase("Load Agilent provided annotation file")){
+						annotationPanel.removeAll();
+						revalidate();
+						createAnnotationPanel(AgilentFileLoaderPanel.LOAD_AGILENT_ANNOTATION);
+
+						gba.add(annotationSelectionMethodPanel, annotationSelectionLabel, 0, 0, 1, 1, 1,
+								0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+						gba.add(annotationSelectionMethodPanel, annotationSelectionBox, 2, 0, 1, 1, 1, 0,
+								GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+						gba.add(annotationPanel, annotationSelectionMethodPanel, 0, 0, 1, 1, 1, 0,
+								GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+					
+						revalidate();
+					}
+					
+					
+				}
 				
 			}
 
 		}
-
+		
+		
+		
+		
+		
+		
 	}
 
 }

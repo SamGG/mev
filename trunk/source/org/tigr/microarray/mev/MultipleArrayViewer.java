@@ -4512,7 +4512,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	 * 
 	 */
 	public void processAnnotationFile() {
-		System.out.println("processAnnotationFile");
+	
 		try {
 			String[] dataFieldNames = this.framework.getData().getFieldNames();
 
@@ -4581,9 +4581,7 @@ private void appendResourcererGeneAnnotation() {
             
             	
                String [] dataFieldNames = data.getFieldNames();
-               
-             
-               
+                            
                 AnnotationFileReader reader =AnnotationFileReader.createAnnotationFileReader(file);
                 
                 
