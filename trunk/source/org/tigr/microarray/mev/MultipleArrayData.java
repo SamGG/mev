@@ -1192,9 +1192,7 @@ public class MultipleArrayData implements IData {
              	
                 	if(((MevAnnotation)annotationHash.get(cloneName))!=null) {
                 		MevAnnotation mevAnno = (MevAnnotation)annotationHash.get(cloneName);
-                		
-                		
-                	     sde.setElementAnnotation(mevAnno);
+                	    sde.setElementAnnotation(mevAnno);
                 		
                 	}else {
                 /**
@@ -1238,12 +1236,14 @@ public class MultipleArrayData implements IData {
 	    return annotationConcatenated;
     }
     
+    
     /**
      * Raktim - Annotation Model Method
      */
     public String[] getElementAnnotation(int row, String attr) {
 	    return ((ISlideData)featuresList.get(0)).getSlideMetaData().getAnnotationValue(row, attr);
         }
+    
     public String[][] getElementAnnotation(int[] rows, String attr) {
     	String[][] _temp = new String[rows.length][];
     	for(int i=0; i<_temp.length; i++) {

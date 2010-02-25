@@ -31,6 +31,7 @@ import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.ChipAnnotationFieldConstants;
 import org.tigr.microarray.mev.annotation.IAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.file.AgilentFileParser;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.midas.engine.IterativeLinReg;
 import org.tigr.midas.engine.IterativeLogMean;
@@ -320,7 +321,17 @@ public class SlideData implements ISlideData, ISlideMetaData {
     public void setSpotInformationData(SpotInformationData spotInfoData){
         this.spotInfoData = spotInfoData;
     }
-
+    
+    
+    /**
+     * 
+     * @returns the annotations contained in the expressiondata
+     */
+    public String[]getOldFieldNames(){
+    	return this.fieldNames;
+    }
+    
+    
     public String[] getFieldNames() {
 	    List<String> allAnns = new ArrayList<String>();
 	    Collections.addAll(allAnns, fieldNames);
@@ -486,25 +497,34 @@ public class SlideData implements ISlideData, ISlideMetaData {
      * @return the annotation values for row index, type attr.
      */
     public String[] getAnnotationValue(int index, String attr) {
+    	
 		ISlideDataElement element = getSlideDataElement(index);
-
 		IAnnotation annot = element.getElementAnnotation();
-
+		
 		if (annot != null && annot.getAttribute(attr) != null && annot.getAttribute(attr).length > 0 && !annot.getAttribute(attr)[0].equalsIgnoreCase("NA")) {
 			return (annot.getAttribute(attr));
+		}else {
+			//Had to write up getOldFieldNames because getFieldNames now returns all annotation fields including ones from new annotation model
+			//However, getFieldAt only checks for the extra gene annotations that were within the file and throws arrayindex out of bounds
+			int attribIndex=Arrays.asList(getOldFieldNames()).indexOf(attr);
+			if(attribIndex!=-1)
+				return new String[] { element.getFieldAt(attribIndex) };
+			else
+				return new String[] { "NA" };
 		}
 
-		String[] allFields = getFieldNames();
-		for (int i = 0; i < allFields.length; i++) {
-			if (allFields[i].equals(attr)) {
-				if (!element.getFieldAt(i).equals("")) {
-			//	if (element!=null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0 && element.getFieldAt(i)!=null) {
-					return new String[] { element.getFieldAt(i) };
-				} else
-					return new String[] { "NA" };
-			}
-		}
-		return new String[] { "NA" };
+//		String[] allFields = getFieldNames();
+//		for (int i = 0; i < allFields.length; i++) {
+//		
+//			 if (allFields[i].equals(attr)) {
+//				if (!element.getFieldAt(i).equals("")) {
+//			//	if (element!=null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0 && element.getFieldAt(i)!=null) {
+//					return new String[] { element.getFieldAt(i) };
+//				} else
+//					return new String[] { "NA" };
+//			}
+//		}
+		//return new String[] { "NA" };
 	}
     
     public AnnoAttributeObj getAnnotationObj(int index, String attr) {

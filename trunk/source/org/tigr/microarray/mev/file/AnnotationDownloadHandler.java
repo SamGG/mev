@@ -245,7 +245,8 @@ public class AnnotationDownloadHandler {
 								updateLabel();
 								try {
 									datapath = irm.getSupportFile(def, true).getAbsolutePath();
-								
+								//	System.out.println("annotation file pathin adh:"+datapath);
+									setAnnFilePath(datapath);
 								} catch (SupportFileAccessError sfae) {
 									annotationSelected = false;
 									inProgress = false;
