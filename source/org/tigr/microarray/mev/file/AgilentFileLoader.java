@@ -134,12 +134,15 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		chipAnno = afr.getAffyChipAnnotation();
 		int dataLength = targetData.getSize();
 		int probeColumn=Arrays.asList(targetData.getSlideMetaData().getFieldNames()).indexOf(AgilentFileParser.PROBENAME);
+	
 		
 		for(int index=0; index<dataLength; index++) {
 		
-			String cloneName = targetData.getSlideDataElement(index).getExtraFields()[probeColumn];
+			
 			MevAnnotation mevAnno = null;
 			if(_tempAnno.size() != 0 && probeColumn!=-1) {
+				String cloneName = targetData.getSlideDataElement(index).getExtraFields()[probeColumn];
+				
 				if (((MevAnnotation) _tempAnno.get(cloneName)) != null) {
 					mevAnno = (MevAnnotation) _tempAnno.get(cloneName);
 				} else {
@@ -149,15 +152,16 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				  * does not have annotation, MeV would still work fine. NA will be
 				  * appended for the rest of the fields. 
 				 */
+					
 				mevAnno = new MevAnnotation();
 				mevAnno.setCloneID(cloneName);
 			}
-				targetData.getSlideDataElement(index).setElementAnnotation(mevAnno);
+				
 		}
-			
+			targetData.getSlideDataElement(index).setElementAnnotation(mevAnno);
 			
 		}
-		
+		targetData.getSlideMetaData().updateFilledAnnFields();
 		return targetData;
 	}
 	
@@ -175,7 +179,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 							
 			String[][]annMatrix=parser.getAnnotationMatrix();
 					
-			targetData.getSlideMetaData().appendFieldNames(headers.toArray(new String[headers.size()]));
+			targetData.getSlideMetaData().setFieldNames(headers.toArray(new String[headers.size()]));
 
 			Hashtable hash = new Hashtable();
 			String[] value;
@@ -293,11 +297,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			
 			annotationHeaders=new String[numAnnotationColumns];
 			for (int fieldCnt = 0; fieldCnt < numAnnotationColumns; fieldCnt++) {
-				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt).toLowerCase() ;
+				annotationHeaders[fieldCnt] =afp.getRequiredHeaders().get(fieldCnt);
 				
 			}
 			
-			slideData.getSlideMetaData().appendFieldNames(annotationHeaders);
+			//slideData.getSlideMetaData().appendFieldNames(annotationHeaders);
+			slideData.getSlideMetaData().setFieldNames(annotationHeaders);
 			
 			for (int i = 0; i < data.length; i++) {
 				rows = new int[3];
@@ -351,9 +356,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					return null;
 				}
 				sde = new SlideDataElement(data[i][0], rows, cols, intensities,
-						null);
-				sde.setExtraFields(fieldNames);
-				slideData.add(sde);
+						fieldNames, null);
+				slideData.addSlideDataElement(sde);
 				
 				setFileProgress(i);
 			}
@@ -451,8 +455,11 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	}
 
 	public String getAnnotationFilePath() {
-
-		if(annotationFilePath.isEmpty()) {
+		
+		if(aflp.isAnnotationLoaded()) {
+			this.annotationFilePath=aflp.adh.getAnnFilePath();
+			return annotationFilePath;
+		}else if(annotationFilePath.isEmpty()) {
 			return "NA";
 		}else
 			return annotationFilePath;
@@ -483,7 +490,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 	public void setAnnotationFilePath(String filePath) {
 		// TODO Auto-generated method stub
-		this.annotationFilePath = filePath;
+		
+			this.annotationFilePath = filePath;
 	}
 
 	public void setFilePath(String path) {
@@ -649,7 +657,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			addAllButton.setPreferredSize(new Dimension(100, 20));
 			addAllButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-
+					onAddAll();
 				}
 			});
 
@@ -657,7 +665,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			removeButton.setPreferredSize(new Dimension(100, 20));
 			removeButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-
+					onRemove();
 				}
 			});
 
@@ -665,9 +673,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			removeAllButton.setPreferredSize(new Dimension(100, 20));
 			removeAllButton.addActionListener(new Listener() {
 				public void actionPerformed(ActionEvent e) {
-
+					onRemoveAll();
 				}
-
 			});
 
 			gba.add(buttonPanel, addButton, 0, 0, 1, 1, 0, 0, GBA.N, GBA.C,
@@ -782,7 +789,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 							.getChipType());
 					adh.setAnnFilePath(getMav().getData().getChipAnnotation()
 							.getAnnFileName());
-					setAnnotationFilePath(adh.getAnnFilePath());
+					
 				}
 				adh.addListener(new Listener());
 				gba.add(selectFilePanel, adh.getAnnotationLoaderPanel(gba), 0,
@@ -794,7 +801,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 				adh.setDownloadEnabled(!getMav().getData()
 						.isAnnotationLoaded());
-
+				
 			}
 
 		}
@@ -949,8 +956,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		}
 		
 		private boolean isAnnotationLoaded() {
-			if(adh!=null)
+			if(adh!=null) {
 				return adh.isAnnotationSelected();
+			}
 			else
 				return false;
 		}

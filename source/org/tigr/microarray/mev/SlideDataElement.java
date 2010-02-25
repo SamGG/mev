@@ -87,6 +87,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
 
     public SlideDataElement(String UID, int[] rows, int[] columns, float[] intensities, String[] values, MevAnnotation mevAnno) {
 	    this(UID, rows, columns, intensities, values);
+	 
 	    setElementAnnotation(mevAnno);
     }
     
@@ -480,6 +481,7 @@ public class SlideDataElement extends ArrayElement implements ISlideDataElement 
      * @deprecated 
      */
     public String getFieldAt(int index) {
+    	
         if(extraFields[index]==null||extraFields[index].length()==0||extraFields[index].trim().length()==0||extraFields == null || index < 0 || index > (extraFields.length - 1)) {
             return "";
         }
