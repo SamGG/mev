@@ -459,7 +459,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		if(aflp.isAnnotationLoaded()) {
 			this.annotationFilePath=aflp.adh.getAnnFilePath();
 			return annotationFilePath;
-		}else if(annotationFilePath.isEmpty()) {
+		}else if(annotationFilePath.length()==0) {
 			return "NA";
 		}else
 			return annotationFilePath;
