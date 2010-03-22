@@ -2004,6 +2004,76 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<!-- Build WebStart distribution -->
 	</target>
 	
+	<!-- Check if the folders containing each platform's R binary packages exist.
+		If they do, set the appropriate flag.
+	-->
+	<target name="check-r-binaries">
+		<mkdir dir="${home.dir}/${r.binaries}"/>
+		<condition property="has-linux32-rbinary">
+		      <available file="${home.dir}/${r.binaries}/R-2.9.1_linux32/"/>
+		</condition>
+		<echo message="has linux32-r-binaries: ${has-linux32-rbinary}"/>
+		<condition property="has-linux64-rbinary">
+		      <available file="${home.dir}/${r.binaries}/R-2.9.1_linux64/"/>
+		</condition>
+		<condition property="has-win32-rbinary">
+		      <available file="${home.dir}/${r.binaries}/R-2.9.1_win32/"/>
+		</condition>
+	</target>
+
+	<!-- If the the flag "has-linux32-rbinary" is not set, download and
+		unzip the linux R binary package from occams -->
+	<target name="download-linux-rbinaries" unless="has-linux32-rbinary">
+		<echo message="Downloading R binary for linux32 platform to ${home.dir}/${r.binaries}."/>
+
+		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
+			<fileset dir="${home.dir}/${r.binaries}/">
+				<include name="R-2.9.1_linux32.zip"/>
+			</fileset>
+			
+		</ftp>
+		
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_linux32.zip"></unzip>
+
+		<delete file="${home.dir}/${r.binaries}/R-2.9.1_linux32.zip"/>
+
+	</target>
+
+	<!-- If the the flag "has-linux64-rbinary" is not set, download and
+		unzip the linux R binary package from occams -->
+	<target name="download-linux64-rbinaries" unless="has-linux64-rbinary">
+		<echo message="Downloading R binary for linux64 platform to ${home.dir}/${r.binaries}."/>
+
+		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
+			<fileset dir="${home.dir}/${r.binaries}/">
+				<include name="R-2.9.1_linux64.zip"/>
+			</fileset>
+			
+		</ftp>
+		
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_linux64.zip"></unzip>
+
+		<delete file="${home.dir}/${r.binaries}/R-2.9.1_linux64.zip"/>
+
+	</target>
+
+	<!-- If the the flag "has-win32-rbinary" is not set, download and
+		unzip the linux R binary package from occams -->
+	<target name="download-win32-rbinaries" unless="has-win32-rbinary">
+		<echo message="Downloading R binary for win32 platform to ${home.dir}/${r.binaries}."/>
+
+		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
+			<fileset dir="${home.dir}/${r.binaries}/">
+				<include name="R-2.9.1_win.zip"/>
+			</fileset>
+			
+		</ftp>
+		
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_win.zip"></unzip>
+
+		<delete file="${home.dir}/${r.binaries}/R-2.9.1_win.zip"/>
+
+	</target>
 
 
 	<!-- 
@@ -2180,7 +2250,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	build-package-all-os-arch
 		 	build-package-win-alone
 	-->
-	<target name="build-package-win" >
+	<target name="build-package-win" depends="download-win32-rbinaries">
 
 		<echo message="Building Windows Package"/>
 
@@ -2326,6 +2396,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<antcall target="build-package-linux32"/>
 	</target>
 	
+
 	<!-- 
 		 Builds distributable zipfiles for linux 32, plus a source zipfile.
 		 Requires that all user docs be converted to .pdf already, 
@@ -2335,7 +2406,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	build-package-all-os-arch
 		 	build-package-linux32
 	-->
-	<target name="build-package-linux32">
+	<target name="build-package-linux32" depends="check-r-binaries, download-linux-rbinaries">
 
 		<echo message="Building Linux32 Package"/>
 		
@@ -2359,7 +2430,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
 		<!-- Make dir for R Binaries -->
 		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
-				
+					
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
 				<include name="*.pdf"/>
@@ -2454,7 +2525,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 		 	build-package-all-os-arch
 		 	build-package-linux32 
 	-->
-	<target name="build-package-linux64">
+	<target name="build-package-linux64" depends="download-linux64-rbinaries">
 
 		<echo message="Building Linux64 Package"/>
 		
