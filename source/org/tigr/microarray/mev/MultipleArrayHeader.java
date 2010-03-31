@@ -44,7 +44,7 @@ public class MultipleArrayHeader extends JPanel {
     private float minValue;
     private float midValue;
     private boolean useDoubleGradient = true;
-	private String userFont;
+	private String userFont= "monospaced";
 	private int userFontSize;
     
     /**

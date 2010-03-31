@@ -196,6 +196,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         }
         
         IDisplayMenu menu = framework.getDisplayMenu();
+        setUserFont(menu.getUserFont());
+        header.setUserFont(menu.getUserFont());
+        setUserFontSize(menu.getUserFontSize());
+        header.setUserFontSize(menu.getUserFontSize());
         useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);
         this.maxCY3 = menu.getMaxCY3Scale();
