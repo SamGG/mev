@@ -1268,7 +1268,14 @@ public class MultipleArrayMenubar extends JMenuBar {
         public int getColorScheme() {
             return colorScheme;
         }
-        
+
+		public String getUserFont() {
+			return userFont;
+		}
+
+		public int getUserFontSize() {
+			return userFontSize;
+		}
         /**
          * Return current positive gradient image
          */
@@ -1362,13 +1369,6 @@ public class MultipleArrayMenubar extends JMenuBar {
             return palette;
         }
 
-		public String getUserFont() {
-			return userFont;
-		}
-
-		public int getUserFontSize() {
-			return userFontSize;
-		}
         
 
     }

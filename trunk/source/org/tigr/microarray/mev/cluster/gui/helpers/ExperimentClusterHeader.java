@@ -88,7 +88,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     private Insets insets = new Insets(0, 10, 0, 0);
     
     private boolean useDoubleGradient = true;
-	private String userFont;
+	private String userFont = "monospaced";
 	private int userFontSize;
     
     public static String[] getPersistenceDelegateArgs(){

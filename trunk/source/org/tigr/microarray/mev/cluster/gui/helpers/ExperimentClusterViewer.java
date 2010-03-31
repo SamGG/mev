@@ -422,6 +422,10 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         this.framework = framework;
         this.data = framework.getData();
         IDisplayMenu menu = framework.getDisplayMenu();
+        setUserFont(menu.getUserFont());
+        header.setUserFont(menu.getUserFont());
+        setUserFontSize(menu.getUserFontSize());
+        header.setUserFontSize(menu.getUserFontSize());
         this.useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);
         Integer userObject = (Integer)framework.getUserObject();
