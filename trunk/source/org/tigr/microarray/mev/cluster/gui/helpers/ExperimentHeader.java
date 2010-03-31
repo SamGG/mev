@@ -100,7 +100,8 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     }
     
     private boolean useDoubleGradient = true;
-	private String userFont;
+	private String userFont = "monospaced";
+	private int userFontSize;
     
   
     public void setIData(IData d) {this.data = d;}
@@ -312,8 +313,14 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
      */
     private void setElementWidth(int width) {
         this.elementWidth = width;
-        if (width > 16) {
-            width = 16;
+        if (userFontSize==0){
+	        if (width > 16) {
+	            width = 16;
+	        }
+        }else if(userFontSize==-1){
+        	//fit, so width = width
+        } else {
+        	width = userFontSize;
         }
         setFont(new Font(userFont, Font.PLAIN, width));
     }
@@ -946,5 +953,10 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 
 	public void setUserFont(String font) {
 		userFont = font;
+	}
+
+
+	public void setUserFontSize(int userFontSize) {
+    	this.userFontSize = userFontSize;
 	}
 }

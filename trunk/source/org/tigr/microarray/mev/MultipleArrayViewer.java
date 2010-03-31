@@ -5441,6 +5441,18 @@ private void appendResourcererGeneAnnotation() {
                 onFontChanged("Helvetica");
             } else if (command.equals(ActionManager.COURIER)) {
                 onFontChanged("Courier");
+            } else if (command.equals(ActionManager.FONT_SIZE_DEFAULT)) {
+                onFontSizeChanged(0);
+            } else if (command.equals(ActionManager.FONT_SIZE_8)) {
+            	onFontSizeChanged(8);
+            } else if (command.equals(ActionManager.FONT_SIZE_12)) {
+            	onFontSizeChanged(12);
+            } else if (command.equals(ActionManager.FONT_SIZE_16)) {
+            	onFontSizeChanged(16);
+            } else if (command.equals(ActionManager.FONT_SIZE_20)) {
+            	onFontSizeChanged(20);
+            } else if (command.equals(ActionManager.FONT_SIZE_FIT)) {
+            	onFontSizeChanged(-1);
             } else if (command.equals(ActionManager.GREEN_RED_COLOR_SCHEME_CMD)){
                 onColorSchemeChange(IDisplayMenu.GREEN_RED_SCHEME);
             } else if (command.equals(ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD)){
@@ -5755,7 +5767,14 @@ private void appendResourcererGeneAnnotation() {
         
         
         
-        /* Raktim - Annotation Demo Only */
+        private void onFontSizeChanged(int size) {
+        	menubar.setNewFontSize(size);
+        	fireMenuChanged();
+		}
+
+
+
+		/* Raktim - Annotation Demo Only */
         private void onGenomeAnnotation() {
 			//System.out.println("onGenomeAnnotation() Called");
 			GenomeAnnoDialog dlg = new GenomeAnnoDialog(new javax.swing.JFrame(), data.getFieldNames());

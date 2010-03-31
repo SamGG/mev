@@ -89,6 +89,7 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     
     private boolean useDoubleGradient = true;
 	private String userFont;
+	private int userFontSize;
     
     public static String[] getPersistenceDelegateArgs(){
 //    	return new String[]{"samplesOrder", "centroidName", "elementWidth", "hasCentroid", "insets"};
@@ -337,8 +338,14 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
      */
     private void setElementWidth(int width) {
         this.elementWidth = width;
-        if (width > 12) {
-            width = 12;
+        if (userFontSize==0){
+	        if (width > 16) {
+	            width = 16;
+	        }
+        }else if(userFontSize==-1){
+        	//fit, so width = width
+        } else {
+        	width = userFontSize;
         }
         setFont(new Font(userFont, Font.PLAIN, width));
     }
@@ -883,6 +890,9 @@ public class ExperimentClusterHeader extends JPanel implements IExperimentHeader
     }
 	public void setUserFont(String userFont) {
 		this.userFont = userFont;
+	}
+	public void setUserFontSize(int userFontSize) {
+		this.userFontSize = userFontSize;
 	}
     
     

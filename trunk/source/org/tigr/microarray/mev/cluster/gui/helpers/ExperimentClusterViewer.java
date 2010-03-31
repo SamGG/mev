@@ -134,6 +134,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     private int dragColumn = 0;
     private JPopupMenu popup;
 	private String userFont;
+	private int userFontSize;
     
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
@@ -479,6 +480,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     	boolean isAutoArrangeChanged=isAutoArrangeColors;
         setUserFont(menu.getUserFont());
         header.setUserFont(menu.getUserFont());
+        setUserFontSize(menu.getUserFontSize());
+        header.setUserFontSize(menu.getUserFontSize());
     	this.useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);    	
         setDrawBorders(menu.isDrawingBorder());
@@ -517,7 +520,12 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         onSelected(framework);
     }
     
-    private void setUserFont(String userFont) {
+    private void setUserFontSize(int userFontSize) {
+		this.userFontSize = userFontSize;
+		
+	}
+
+	private void setUserFont(String userFont) {
 		this.userFont = userFont;
 	}
 

@@ -140,6 +140,8 @@ public interface IDisplayMenu {
     public boolean getUseDoubleGradient();
 
 	public String getUserFont();
+
+	public int getUserFontSize();
     
     
 
