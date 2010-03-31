@@ -143,6 +143,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	private boolean inColorbarDrag = false;
     private int dragRow = 0;
     private int dragColumn = 0;
+	private String userFont = "monospaced";
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -471,6 +472,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         setCompactClusters(menu.isCompactClusters());
         setAutoArrangeColors(menu.isAutoArrangeColors());
         setShowRects(menu.isShowRects());
+        setUserFont(menu.getUserFont());
+        header.setUserFont(menu.getUserFont());
         header.isShowRects = isShowRects;
         header.setCompactClusters(menu.isCompactClusters());
         header.setStoredColors(storedGeneColors);
@@ -511,7 +514,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
         
     }
     
-    /**
+    private void setUserFont(String font) {
+    	userFont = font;
+	}
+	/**
      * Sets data for this viewer and its header.
      * @see IViewer#onDataChanged
      */
@@ -789,7 +795,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             setPreferredSize(new Dimension(width, height));
             return;
         }
-        setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
+        
         Graphics2D g = (Graphics2D)getGraphics();
         int width = elementSize.width*experiment.getNumberOfSamples() + 1 + insets.left;
         if (isDrawAnnotations) {
@@ -912,7 +918,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
             g.drawString(NO_GENES_STR, 10, 30);
             return;
         }
-        
+        g.setFont(new Font(userFont, Font.PLAIN, elementSize.height));
         Rectangle bounds = g.getClipBounds();
         final int top = getTopIndex(bounds.y);
         final int bottom = getBottomIndex(bounds.y+bounds.height, getCluster().length);

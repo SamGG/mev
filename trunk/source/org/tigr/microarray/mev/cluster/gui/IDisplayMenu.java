@@ -15,6 +15,7 @@ package org.tigr.microarray.mev.cluster.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 /**
@@ -137,6 +138,8 @@ public interface IDisplayMenu {
      * Returns true if the gradient style is double 
      */
     public boolean getUseDoubleGradient();
+
+	public String getUserFont();
     
     
 

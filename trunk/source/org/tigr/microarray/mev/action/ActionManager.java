@@ -655,7 +655,16 @@ public class ActionManager implements java.io.Serializable {
     public static final String SHOW_GOOSE_CMD_NAME  = "Show Goose";
     public static final String SHOW_GOOSE_SELECT_ACTION = "show-goose-action";
     public static final String GAGGLE_ICON = "gaggle_icon_16.gif";
+
+	public static final String ARIAL_FONT = "arial-font";
+	public static final String TIMES_NEW_ROMAN_FONT = "times-new-roman-font";
+	public static final String DEFAULT_FONT = "default-font";
+	public static final String SANSSERIF = "sansserif";
+	public static final String SERIF = "serif";
+	public static final String COURIER = "courier";
+	public static final String HELVETICA = "helvetica";
   
+	
     
     
 }

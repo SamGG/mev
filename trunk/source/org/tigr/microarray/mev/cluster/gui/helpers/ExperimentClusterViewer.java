@@ -133,6 +133,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     private int dragRow = 0;
     private int dragColumn = 0;
     private JPopupMenu popup;
+	private String userFont;
     
     /**
      * Constructs an <code>ExperimentClusterViewer</code> with specified
@@ -476,6 +477,8 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
     	clickedCell = false;
     	boolean isCompactChanged= isCompact;
     	boolean isAutoArrangeChanged=isAutoArrangeColors;
+        setUserFont(menu.getUserFont());
+        header.setUserFont(menu.getUserFont());
     	this.useDoubleGradient = menu.getUseDoubleGradient();
         header.setUseDoubleGradient(useDoubleGradient);    	
         setDrawBorders(menu.isDrawingBorder());
@@ -514,7 +517,11 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
         onSelected(framework);
     }
     
-    /**
+    private void setUserFont(String userFont) {
+		this.userFont = userFont;
+	}
+
+	/**
      * Sets data for this viewer and its header.
      * @see IViewer#onDataChanged
      */
@@ -789,7 +796,7 @@ public class ExperimentClusterViewer extends JPanel implements IViewer {
             setPreferredSize(new Dimension(width, height));
             return;
         }
-        setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
+        setFont(new Font(userFont, Font.PLAIN, elementSize.height));
         Graphics2D g = (Graphics2D)getGraphics();
         int width = elementSize.width*getCluster().length+1 + insets.left;
         if (isDrawAnnotations) {
