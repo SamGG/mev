@@ -16,6 +16,7 @@ package org.tigr.microarray.mev;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
@@ -75,6 +76,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     ButtonGroup targetGooseNameGroup, showtargetGooseNameGroup;
    
     private ActionManager actionManager;
+	private String userFont = "monospaced";
 
 
     /**
@@ -264,7 +266,20 @@ public class MultipleArrayMenubar extends JMenuBar {
         sizeMenu.add(createJRadioButtonMenuItem("50 x 10", ActionManager.DISPLAY_50X10_CMD, listener, buttonGroup));
         sizeMenu.add(createJRadioButtonMenuItem("Custom", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
         displayMenu.add(sizeMenu);
-
+        
+        JMenu fontMenu = new JMenu("Set Font");
+        buttonGroup = new ButtonGroup();
+        fontMenu.add(createJRadioButtonMenuItem("Default", ActionManager.DEFAULT_FONT, listener, buttonGroup,true));
+        fontMenu.add(createJRadioButtonMenuItem("Arial", ActionManager.ARIAL_FONT, listener, buttonGroup));
+        fontMenu.add(createJRadioButtonMenuItem("Courier", ActionManager.COURIER, listener, buttonGroup));
+        fontMenu.add(createJRadioButtonMenuItem("Helvetica", ActionManager.HELVETICA, listener, buttonGroup));
+        fontMenu.add(createJRadioButtonMenuItem("Sans Serif", ActionManager.SANSSERIF, listener, buttonGroup));
+        fontMenu.add(createJRadioButtonMenuItem("Serif", ActionManager.SERIF, listener, buttonGroup));
+        fontMenu.add(createJRadioButtonMenuItem("Times New Roman", ActionManager.TIMES_NEW_ROMAN_FONT, listener, buttonGroup));
+//        sizeMenu.add(createJRadioButtonMenuItem("50 x 10", ActionManager.DISPLAY_50X10_CMD, listener, buttonGroup));
+//        sizeMenu.add(createJRadioButtonMenuItem("Custom", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
+        displayMenu.add(fontMenu);
+        
         displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));        
         displayMenu.addSeparator();
         
@@ -1338,6 +1353,10 @@ public class MultipleArrayMenubar extends JMenuBar {
             return palette;
         }
 
+		public String getUserFont() {
+			return userFont;
+		}
+
         
 
     }
@@ -1888,4 +1907,7 @@ public class MultipleArrayMenubar extends JMenuBar {
             this.flankingRegionType = flankingRegionType;
         }
     }
+	public void setNewFont(String newFont) {
+		userFont = newFont;
+	}
 }

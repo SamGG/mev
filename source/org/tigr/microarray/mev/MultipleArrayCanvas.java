@@ -120,6 +120,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     private JLabel emptyMacLabel;
     private String  emptyMacLabelText = "";
 
+	private String userFont;
+
 
     public MultipleArrayCanvas() {
         
@@ -241,6 +243,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         header.setUseDoubleGradient(useDoubleGradient);
         Dimension newSize = menu.getElementSize();
         elementSize = new Dimension(newSize);
+        setUserFont(menu.getUserFont());
+        header.setUserFont(menu.getUserFont());
         this.maxCY3 = menu.getMaxCY3Scale();
         this.maxCY5 = menu.getMaxCY5Scale();
         this.maxRatio = menu.getMaxRatioScale();
@@ -253,7 +257,7 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         updateSize();  //first set size of viewer
         isAntiAliasing = menu.isAntiAliasing();
         labelIndex = menu.getLabelIndex();
-        setFont(new Font("monospaced", Font.BOLD, elementSize.height));
+        setFont(new Font(userFont, Font.PLAIN, elementSize.height));
         updateSize();
         header.setTracing(isTracing);
         header.setElementWidth(elementSize.width);
@@ -266,7 +270,10 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
     public void onDeselected() {
         this.thumbnail.hide();
     }
-    
+
+    private void setUserFont(String font) {
+    	userFont = font;
+	}
     /**
      * Disposes a thumbnail when the framework is going to be closed.
      */

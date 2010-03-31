@@ -100,6 +100,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
     }
     
     private boolean useDoubleGradient = true;
+	private String userFont;
     
   
     public void setIData(IData d) {this.data = d;}
@@ -311,10 +312,10 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
      */
     private void setElementWidth(int width) {
         this.elementWidth = width;
-        if (width > 12) {
-            width = 12;
+        if (width > 16) {
+            width = 16;
         }
-        setFont(new Font("monospaced", Font.PLAIN, width));
+        setFont(new Font(userFont, Font.PLAIN, width));
     }
     /**
      * draws rectangle around specified sample cluster colors
@@ -359,6 +360,7 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
             g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         }
+//        g.setFont(new Font(userFont, Font.PLAIN, this.elementWidth));
         FontMetrics hfm = g.getFontMetrics();
         int maxHeight = 0;
         String name;
@@ -447,12 +449,12 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 	        g.drawImage(this.posColorImage, insets.left, 0, width, RECT_HEIGHT, null);
         }
 
+//        g.setFont(new Font(userFont, Font.PLAIN, this.elementWidth));
         FontMetrics hfm = g.getFontMetrics();
         int descent = hfm.getDescent();
         int fHeight = hfm.getHeight();
         
         g.setColor(Color.black);
-        
         int textWidth;
         g.drawString(String.valueOf(this.minValue), insets.left, RECT_HEIGHT+fHeight);
         textWidth = hfm.stringWidth(String.valueOf(midValue));
@@ -939,5 +941,10 @@ public class ExperimentHeader extends JPanel implements IExperimentHeader {
 
 	public void setEnableMoveable(boolean enableMoveable) {
 		this.enableMoveable = enableMoveable;
+	}
+
+
+	public void setUserFont(String font) {
+		userFont = font;
 	}
 }

@@ -17,6 +17,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -2279,7 +2280,10 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             onElementSizeChanged(size.width, size.height);
         }
     }
-    
+    private void onFontChanged(String newFont){
+    	menubar.setNewFont(newFont);
+    	fireMenuChanged();
+    }
     /**
      * Sets the color pallete colors
      * 
@@ -5423,6 +5427,20 @@ private void appendResourcererGeneAnnotation() {
                 onElementSizeChanged( 5,  2);
             } else if (command.equals(ActionManager.DISPLAY_OTHER_CMD)) {
                 onElementSizeChanged();
+            } else if (command.equals(ActionManager.DEFAULT_FONT)) {
+                onFontChanged("monospaced");
+            } else if (command.equals(ActionManager.TIMES_NEW_ROMAN_FONT)) {
+                onFontChanged("Times New Roman");
+            } else if (command.equals(ActionManager.ARIAL_FONT)) {
+                onFontChanged("Arial");
+            } else if (command.equals(ActionManager.SANSSERIF)) {
+                onFontChanged("sansserif");
+            } else if (command.equals(ActionManager.SERIF)) {
+                onFontChanged("serif");
+            } else if (command.equals(ActionManager.HELVETICA)) {
+                onFontChanged("Helvetica");
+            } else if (command.equals(ActionManager.COURIER)) {
+                onFontChanged("Courier");
             } else if (command.equals(ActionManager.GREEN_RED_COLOR_SCHEME_CMD)){
                 onColorSchemeChange(IDisplayMenu.GREEN_RED_SCHEME);
             } else if (command.equals(ActionManager.BLUE_YELLOW_COLOR_SCHEME_CMD)){

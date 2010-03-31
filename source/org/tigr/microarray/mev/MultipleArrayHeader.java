@@ -44,6 +44,7 @@ public class MultipleArrayHeader extends JPanel {
     private float minValue;
     private float midValue;
     private boolean useDoubleGradient = true;
+	private String userFont;
     
     /**
      * Constructs a <code>MultipleArrayHeader</code> with specified
@@ -144,10 +145,10 @@ public class MultipleArrayHeader extends JPanel {
      * Sets the component font size.
      */
     private void setFontSize(int width) {
-        if (width > 12) {
-            width = 12;
+        if (width > 16) {
+            width = 16;
         }
-        setFont(new Font("monospaced", Font.PLAIN, width));
+        setFont(new Font(userFont, Font.PLAIN, width));
     }
     
     /**
@@ -240,4 +241,9 @@ public class MultipleArrayHeader extends JPanel {
         }
         g.rotate(Math.PI/2);
     }
+
+
+	public void setUserFont(String font) {
+		userFont = font;
+	}
 }
