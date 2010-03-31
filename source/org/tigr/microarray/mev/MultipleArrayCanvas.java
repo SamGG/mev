@@ -245,6 +245,8 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         elementSize = new Dimension(newSize);
         setUserFont(menu.getUserFont());
         header.setUserFont(menu.getUserFont());
+        setUserFontSize(menu.getUserFontSize());
+        header.setUserFontSize(menu.getUserFontSize());
         this.maxCY3 = menu.getMaxCY3Scale();
         this.maxCY5 = menu.getMaxCY5Scale();
         this.maxRatio = menu.getMaxRatioScale();
@@ -264,7 +266,12 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.thumbnail.onMenuChanged(menu);
     }
     
-    /**
+    private void setUserFontSize(int userFontSize) {
+
+		
+	}
+
+	/**
      * Hides a thumbnail when the viewer is deselected.
      */
     public void onDeselected() {

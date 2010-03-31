@@ -663,6 +663,12 @@ public class ActionManager implements java.io.Serializable {
 	public static final String SERIF = "serif";
 	public static final String COURIER = "courier";
 	public static final String HELVETICA = "helvetica";
+	public static final String FONT_SIZE_8 = "font-size-8";
+	public static final String FONT_SIZE_12 = "font-size-12";
+	public static final String FONT_SIZE_16 = "font-size-16";
+	public static final String FONT_SIZE_20 = "font-size-20";
+	public static final String FONT_SIZE_FIT = "font-size-fit";
+	public static final String FONT_SIZE_DEFAULT = "font-size-default";
   
 	
     

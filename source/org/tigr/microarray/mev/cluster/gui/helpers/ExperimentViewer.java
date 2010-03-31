@@ -144,6 +144,7 @@ public class ExperimentViewer extends JPanel implements IViewer {
     private int dragRow = 0;
     private int dragColumn = 0;
 	private String userFont = "monospaced";
+	private int userFontSize=0;
     
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
@@ -474,6 +475,8 @@ public class ExperimentViewer extends JPanel implements IViewer {
         setShowRects(menu.isShowRects());
         setUserFont(menu.getUserFont());
         header.setUserFont(menu.getUserFont());
+        setUserFontSize(menu.getUserFontSize());
+        header.setUserFontSize(menu.getUserFontSize());
         header.isShowRects = isShowRects;
         header.setCompactClusters(menu.isCompactClusters());
         header.setStoredColors(storedGeneColors);
@@ -514,7 +517,10 @@ public class ExperimentViewer extends JPanel implements IViewer {
         
     }
     
-    private void setUserFont(String font) {
+    private void setUserFontSize(int userFontSize) {
+    	this.userFontSize = userFontSize;
+	}
+	private void setUserFont(String font) {
     	userFont = font;
 	}
 	/**

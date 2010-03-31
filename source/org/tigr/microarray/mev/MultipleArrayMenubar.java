@@ -77,6 +77,7 @@ public class MultipleArrayMenubar extends JMenuBar {
    
     private ActionManager actionManager;
 	private String userFont = "monospaced";
+	private int userFontSize = 0;
 
 
     /**
@@ -267,18 +268,26 @@ public class MultipleArrayMenubar extends JMenuBar {
         sizeMenu.add(createJRadioButtonMenuItem("Custom", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
         displayMenu.add(sizeMenu);
         
-        JMenu fontMenu = new JMenu("Set Font");
+        JMenu fontTypeMenu = new JMenu("Set Font Type");
         buttonGroup = new ButtonGroup();
-        fontMenu.add(createJRadioButtonMenuItem("Default", ActionManager.DEFAULT_FONT, listener, buttonGroup,true));
-        fontMenu.add(createJRadioButtonMenuItem("Arial", ActionManager.ARIAL_FONT, listener, buttonGroup));
-        fontMenu.add(createJRadioButtonMenuItem("Courier", ActionManager.COURIER, listener, buttonGroup));
-        fontMenu.add(createJRadioButtonMenuItem("Helvetica", ActionManager.HELVETICA, listener, buttonGroup));
-        fontMenu.add(createJRadioButtonMenuItem("Sans Serif", ActionManager.SANSSERIF, listener, buttonGroup));
-        fontMenu.add(createJRadioButtonMenuItem("Serif", ActionManager.SERIF, listener, buttonGroup));
-        fontMenu.add(createJRadioButtonMenuItem("Times New Roman", ActionManager.TIMES_NEW_ROMAN_FONT, listener, buttonGroup));
-//        sizeMenu.add(createJRadioButtonMenuItem("50 x 10", ActionManager.DISPLAY_50X10_CMD, listener, buttonGroup));
-//        sizeMenu.add(createJRadioButtonMenuItem("Custom", ActionManager.DISPLAY_OTHER_CMD, listener, buttonGroup));
-        displayMenu.add(fontMenu);
+        fontTypeMenu.add(createJRadioButtonMenuItem("Default", ActionManager.DEFAULT_FONT, listener, buttonGroup,true));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Arial", ActionManager.ARIAL_FONT, listener, buttonGroup));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Courier", ActionManager.COURIER, listener, buttonGroup));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Helvetica", ActionManager.HELVETICA, listener, buttonGroup));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Sans Serif", ActionManager.SANSSERIF, listener, buttonGroup));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Serif", ActionManager.SERIF, listener, buttonGroup));
+        fontTypeMenu.add(createJRadioButtonMenuItem("Times New Roman", ActionManager.TIMES_NEW_ROMAN_FONT, listener, buttonGroup));
+        displayMenu.add(fontTypeMenu);
+
+        JMenu fontSizeMenu = new JMenu("Set Font Size");
+        buttonGroup = new ButtonGroup();
+        fontSizeMenu.add(createJRadioButtonMenuItem("Default", ActionManager.FONT_SIZE_DEFAULT, listener, buttonGroup,true));
+        fontSizeMenu.add(createJRadioButtonMenuItem("8", ActionManager.FONT_SIZE_8, listener, buttonGroup));
+        fontSizeMenu.add(createJRadioButtonMenuItem("12", ActionManager.FONT_SIZE_12, listener, buttonGroup));
+        fontSizeMenu.add(createJRadioButtonMenuItem("16", ActionManager.FONT_SIZE_16, listener, buttonGroup));
+        fontSizeMenu.add(createJRadioButtonMenuItem("20", ActionManager.FONT_SIZE_20, listener, buttonGroup));
+        fontSizeMenu.add(createJRadioButtonMenuItem("Fit", ActionManager.FONT_SIZE_FIT, listener, buttonGroup));
+        displayMenu.add(fontSizeMenu);
         
         displayMenu.add(createJCheckBoxMenuItem("Draw Borders", ActionManager.DISPLAY_DRAW_BORDERS_CMD, listener, false));        
         displayMenu.addSeparator();
@@ -1357,6 +1366,9 @@ public class MultipleArrayMenubar extends JMenuBar {
 			return userFont;
 		}
 
+		public int getUserFontSize() {
+			return userFontSize;
+		}
         
 
     }
@@ -1909,5 +1921,9 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
 	public void setNewFont(String newFont) {
 		userFont = newFont;
+	}
+
+	public void setNewFontSize(int size) {
+		userFontSize  = size;
 	}
 }
