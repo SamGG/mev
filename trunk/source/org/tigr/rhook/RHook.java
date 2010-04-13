@@ -246,46 +246,38 @@ public class RHook  {
 		//System.out.println("Parsing");
 		logger.writeln("Checking Package - " + pkgName);
 
-		long e=re.rniParse("which(as.character(installed.packages()[,1])=='"+pkgName+"')", 1);
-		//System.out.println("Result = "+e+", running eval");
-		long r=re.rniEval(e, 0);
-		//System.out.println("Result = "+r+", building REXP");
-		REXP x=new REXP(re, r);
-		//System.out.println("REXP result = "+x);
-		//Return the index of limma
-		//System.out.println("REXP result = "+x.asInt());
-		if(x.asInt() != 0 ) {
-			System.out.println(pkgName + " Package Installed");
-			logger.writeln(pkgName + " Package Installed");
-		}
-		else {
-			System.out.println(pkgName + " Package NOT Installed");
-			System.out.println("**** Attempting to install" + pkgName+ " from local rep *****");
-			logger.writeln(pkgName + " Package NOT Installed");
-			logger.writeln("**** Attempting to install" + pkgName+ " from local rep *****");
+		//TODO Code to install a package from a local zip or tar based on OS
+		String pkgPath = System.getProperty("user.dir")+
+		System.getProperty("file.separator")+
+		RConstants.R_PACKAGE_DIR+
+		System.getProperty("file.separator");
 
-			//TODO Code to install a package from a local zip or tar based on OS
-			String pkg = System.getProperty("user.dir")+
-			System.getProperty("file.separator")+
-			RConstants.R_PACKAGE_DIR+
-			System.getProperty("file.separator");
-			//Now getting package name from TMEV props, do not need the follwoing code
-			/*
-			if(getOS() == RConstants.WINDOWS_OS) {
-				pkg = pkg + RConstants.LIMMA_WIN;
-			} else if(getOS() == RConstants.LINUX_OS) {
-				if(getARCH() == RConstants.OS_ARCH_32)
-					pkg = pkg + RConstants.LIMMA_LINUX_32;
-				if(getARCH() == RConstants.OS_ARCH_64)
-					pkg = pkg + RConstants.LIMMA_LINUX_32;
-			} else if(getOS() == RConstants.MAC_OS) {
-				pkg = pkg + RConstants.LIMMA_MAC;
+		String r_ver = TMEV.getSettingForOption("cur_r_ver");
+		String pkg = TMEV.getSettingForOption(pkgName+"_"+getOSbyName()+"_"+r_ver+"_"+getARCHbyName());
+		String pkgs[] = pkg.split(":");
+		for (int i=0; i < pkgs.length; i++) {
+
+			long e=re.rniParse("which(as.character(installed.packages()[,1])=='"+pkgs[i]+"')", 1);
+			//System.out.println("Result = "+e+", running eval");
+			long r=re.rniEval(e, 0);
+			//System.out.println("Result = "+r+", building REXP");
+			REXP x=new REXP(re, r);
+			//System.out.println("REXP result = "+x);
+			//Return the index of limma
+			//System.out.println("REXP result = "+x.asInt());
+			if(x.asInt() != 0 ) {
+				System.out.println(pkgs[i] + " Package Installed");
+				logger.writeln(pkgs[i] + " Package Installed");
 			}
-			*/
-			String r_ver = TMEV.getSettingForOption("cur_r_ver");
-			pkg = pkg + TMEV.getSettingForOption(pkgName+"_"+getOSbyName()+"_"+r_ver+"_"+getARCHbyName());
-			//re.eval("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
-			evalR("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
+			else {
+				System.out.println(pkgs[i] + " Package NOT Installed");
+				System.out.println("**** Attempting to install" + pkgs[i]+ " from local rep *****");
+				logger.writeln(pkgName + " Package NOT Installed");
+				logger.writeln("**** Attempting to install" + pkgs[i]+ " from local rep *****");
+
+				//re.eval("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
+				evalR("install.packages('" + pkgPath.replace("\\", "/")+pkgs[i] + "', repos=NULL)");
+			}
 		}
 	}
 
@@ -629,7 +621,7 @@ public class RHook  {
 
 		return RConstants.UNKNOWN_ARCH;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -638,7 +630,9 @@ public class RHook  {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		//String ver = System.getProperty("os.version");
-		if (arch.toLowerCase().contains("386") || arch.toLowerCase().contains("32")) {
+		if (arch.toLowerCase().contains("386") || 
+				arch.toLowerCase().contains("x86") ||
+				arch.toLowerCase().contains("32")) {
 			return "32";
 		}
 		if (arch.toLowerCase().contains("686") || arch.toLowerCase().contains("64")) {
@@ -674,13 +668,13 @@ public class RHook  {
 		// comparing the version in MeV props.
 		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
 		System.out.println("Mac OS X last R version: " + last_used_ver);
-		
+
 		// if version changed, check if lib and package for module is 
 		if (ver.equals(last_used_ver)) 
 			return false;
 		return true;
 	}
-	
+
 	/**
 	 * For Mac OS X only --
 	 * Check for R ver and dyn lib compatibility
@@ -702,7 +696,7 @@ public class RHook  {
 		// comparing the version in MeV props.
 		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
 		//System.out.println("Mac OS X last R version: " + last_used_ver);
-		
+
 		// if version changed, check if lib and package for module is 
 		if (!ver.equals(last_used_ver)) {
 			System.out.println("Current and last used R version is NOT same\n will check for avaialble updates for ver "+ ver);
@@ -711,11 +705,11 @@ public class RHook  {
 			// parse keys
 			String os = getOSbyName();
 			String arch = getARCHbyName();
-			
+
 			ArrayList<String> r_versionList = getValuesFrmHash(repHash, os+"_r_versions");
 			ArrayList<String> r_moduleList = getValuesFrmHash(repHash, "r_modules");
 			ArrayList<String> archList = getValuesFrmHash(repHash, os+"_arch");
-			
+
 			// check if current R version is supported
 			if (!r_versionList.contains(ver)) {
 				System.out.println("R version: " + ver + " not yet supported");
@@ -731,7 +725,7 @@ public class RHook  {
 				System.out.println(os + " " + arch + " bit not yet supported");
 				throw new Exception(os + " " + arch + " bit not yet supported");
 			}
-			
+
 			// check if lib and pkg available for new version
 			String lib_url = RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/libjri.jnilib";
 			ArrayList<String> pkg_url_list = createPkgUrls(
@@ -743,7 +737,7 @@ public class RHook  {
 					repHash);
 			// update lib and all packages associated with R ver
 			updateLibAndPackages(lib_url, pkg_url_list);
-			
+
 			//update TMEV properties
 			TMEV.storeProperty("cur_r_ver", ver);
 			TMEV.storeProperty("prev_r_ver", last_used_ver);
@@ -765,12 +759,12 @@ public class RHook  {
 	private static void updateLibAndPackages(String libUrl, ArrayList<String> pkgUrlList) throws IOException {
 		String lib_dest = System.getProperty("user.dir")+"/"+RConstants.MAC_MEV_RES_LOC;
 		String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
-		
+
 		// get dyn lib
 		String fileName = getFileNameFromURL(libUrl);
 		System.out.println("updateLibAndPackages remote LIB " + fileName);
 		getRemoteFile(libUrl, lib_dest+"/"+fileName);
-		
+
 		// get R pkgs
 		for(int i=0; i < pkgUrlList.size(); i++) {
 			fileName = getFileNameFromURL(pkgUrlList.get(i));
@@ -796,7 +790,7 @@ public class RHook  {
 	 * @throws IOException
 	 */
 	private static void getRemoteFile(String libUrl, String libDest) throws IOException {
-		
+
 		String newFName = libDest;//+getFileNameFromURL(libUrl);
 		System.out.println("To Download: " + newFName);
 		File old = new File(newFName);
@@ -807,7 +801,7 @@ public class RHook  {
 				throw new IOException(newFName + " could not be renamed");
 			System.out.println("getRemoteFile: Renamed to " + reNameTo);
 		}
-		
+
 		URL url = new URL(libUrl);
 		InputStream uis = url.openConnection().getInputStream();
 		OutputStream fos = new FileOutputStream(newFName);
@@ -834,7 +828,7 @@ public class RHook  {
 	private static ArrayList<String> createPkgUrls(String baseUrl,
 			String ver, ArrayList<String> rModuleList,
 			String arch, String os, Hashtable<String, String> repHash) {
-		
+
 		System.out.println("createPkgUrls: baseUrl " + baseUrl);
 		ArrayList<String> result = new ArrayList<String>();
 		// module name loop
@@ -864,7 +858,7 @@ public class RHook  {
 			System.out.println("TMEV stored prop " + tmp + ":" + repHash.get(tmp));
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param repHash
@@ -872,7 +866,7 @@ public class RHook  {
 	 * @return
 	 */
 	private static ArrayList<String> getValuesFrmHash(
-		Hashtable<String, String> repHash, String key) {
+			Hashtable<String, String> repHash, String key) {
 		System.out.println("repHash size " + repHash.size());
 		return new ArrayList<String>(Arrays.asList((repHash.get(key).split(RConstants.PROP_DELIM))));
 	}
@@ -928,7 +922,7 @@ public class RHook  {
 			if(line.startsWith("#"))
 				continue;
 			//if(!line.contains(os))
-				//continue;
+			//continue;
 			keyValue = line.split("=");
 			//add the current property specific to the os
 			System.out.println("URL Config: " + keyValue[0] + "-" + keyValue[1]);
@@ -992,7 +986,7 @@ public class RHook  {
 		}
 		 */
 	}
-	
+
 	/**
 	 * Return a unique time stamp
 	 * @return
