@@ -31,6 +31,8 @@
 	</param>
 	<param key="calculate-genes" value_type="boolean" val_level="optional"/>
 	<param key="calculate-experiments" value_type="boolean" val_level="optional"/>
+	<param key="optimize-gene-ordering" value_type="boolean" val_level="optional"/>
+	<param key="optimize-sample-ordering" value_type="boolean" val_level="optional"/>
 
 	<!-- distance parameters -->
 	<param key="distance-factor" value_type="float" val_level="required"/>
