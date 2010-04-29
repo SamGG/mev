@@ -1098,7 +1098,12 @@ public class EASEInitDialog extends AlgorithmDialog {
 					if (organismListBox.getSelectedItem() == null) {
 						arrayListBox = new JComboBox();
 					} else {
-						arrayListBox = new JComboBox(speciestoarrays.get(organismListBox.getSelectedItem()));
+						arrayListBox = new JComboBox();
+						Vector<String> arraysForThisSpecies = speciestoarrays
+						.get(organismListBox.getSelectedItem());
+						for (int i = 0; i < arraysForThisSpecies.size(); i++) {
+							arrayListBox.addItem(arraysForThisSpecies.elementAt(i));
+						}
 					}
 					try {
 						arrayListBox.setSelectedItem(arrayName);
