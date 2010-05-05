@@ -571,13 +571,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     /**
-     * Runs a single array viewer for specified column.
-     */
-    private void displaySingleArrayViewer(int column) {
-        Manager.createNewSingleArrayViewer(data.getFeature(column));
-    }
-    
-    /**
      * Runs a slide element info dialog for a specified spot.
      */
     private void displaySlideElementInfo(int column, int row) {
@@ -6086,9 +6079,6 @@ private void appendResourcererGeneAnnotation() {
         }
         public void setContentLocation(int x, int y) {
             MultipleArrayViewer.this.setContentLocation(x, y);
-        }
-        public void displaySingleArrayViewer(int feature) {
-            MultipleArrayViewer.this.displaySingleArrayViewer(feature);
         }
         public void displaySlideElementInfo(int feature, int probe) {
             MultipleArrayViewer.this.displaySlideElementInfo(feature, probe);

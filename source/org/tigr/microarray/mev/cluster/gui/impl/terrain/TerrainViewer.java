@@ -684,8 +684,6 @@ public class TerrainViewer extends JPanel implements IViewer {
     private void onPicked(int shapeIndex) {
         if (isGenes)
             this.framework.displaySlideElementInfo(0, shapeIndex);
-        else
-            this.framework.displaySingleArrayViewer(shapeIndex);
     }
 
     private void onCtrlPicked(MouseEvent event, PickCanvas canvas) {

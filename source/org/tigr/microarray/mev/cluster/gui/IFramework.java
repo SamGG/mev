@@ -79,7 +79,6 @@ public interface IFramework {
 	/**
 	 * Runs single array viewer for specified column.
 	 */
-	public void displaySingleArrayViewer(int column);
 
 	/**
 	 * Runs a dialog to display an element info.

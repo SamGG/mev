@@ -128,17 +128,6 @@ public class InfoDisplay extends ActionInfoDialog  {
         if (data != null)
             viewGeneGraphButton.setEnabled(true);
         
-        JButton viewExperimentButton = new JButton("Sample Detail");
-        //viewExperimentButton.setEnabled(false);
-        //viewExperimentButton.setToolTipText("Temporarily Disabled -- visit www.tigr.org/software/TM4 for update.");
-        viewExperimentButton.setActionCommand("view-experiment");
-        viewExperimentButton.addActionListener(listener);
-        /**
-         * Raktim, Temporary Fix for CGH Data
-         * All graph views from this option deals with log10 or log transformed data.
-         * Need to figure out how to handle the scenario with CGH data
-         */
-        if(data.isCGHData()) viewExperimentButton.setEnabled(false);
         
         JButton setColorButton = new JButton("Set Gene Color");
         setColorButton.setActionCommand("set-color");
@@ -155,7 +144,6 @@ public class InfoDisplay extends ActionInfoDialog  {
         GBA gba = new GBA();
         gba.add(contentPane, scrollPane, 0, 0, 3, 2, 1, 1, GBA.B, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(contentPane, viewGeneGraphButton, 0, 2, 1, 1, 0, 0, GBA.NONE, GBA.W, new Insets(5, 5, 5, 5), 0, 0);
-        gba.add(contentPane, viewExperimentButton, 1, 2, 1, 1, 0, 0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(contentPane, setColorButton, 2, 2, 1, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(contentPane, closeButton, 0, 3, 1, 1, 0, 0, GBA.NONE, GBA.C, new Insets(5, 5, 5, 5), 0, 0);
         gba.add(contentPane, spotImage, 2, 3, 1, 1, 0, 0, GBA.NONE, GBA.E, new Insets(5, 5, 5, 5), 0, 0);
@@ -164,7 +152,7 @@ public class InfoDisplay extends ActionInfoDialog  {
         setResizable(true);
         setTitle("Spot Information");
         setLocation(300, 100);
-        show();
+        setVisible(true);
     }
  
     private String createMessage(ISlideDataElement element) {
@@ -440,12 +428,8 @@ public class InfoDisplay extends ActionInfoDialog  {
             if (command.equals("close"))
                 dispose();
             else if (command.equals("view-gene-graph")) {
-                hide();
+                setVisible(false);
                 createGeneGraph();
-                dispose();
-            } else if (command.equals("view-experiment")) {
-                hide();
-                Manager.createNewSingleArrayViewer(slideData);
                 dispose();
             } else if (command.equals("set-color")) {
             }

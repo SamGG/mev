@@ -1583,8 +1583,6 @@ public class RelevanceNetworkViewer extends JPanel implements IViewer, Scrollabl
                 if (isSpotSelected) {
                     if (RelevanceNetworkViewer.this.isGenes)
                         framework.displaySlideElementInfo(0, spotIndex);
-                    else 
-                        framework.displaySingleArrayViewer(spotIndex);
                 }
             }
         }

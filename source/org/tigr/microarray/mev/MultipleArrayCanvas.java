@@ -1145,10 +1145,6 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
             if (!isLegalPosition(row, column)) {
                 return;
             }
-            if (event.isControlDown()) { // single array viewer
-                framework.displaySingleArrayViewer(column);
-                return;
-            }
             if (!event.isShiftDown()) { // element info
                 int[] indices = data.getSortedIndices(column);
                 framework.displaySlideElementInfo(column, indices[row]);
