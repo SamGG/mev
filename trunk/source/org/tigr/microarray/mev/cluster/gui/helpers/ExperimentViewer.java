@@ -1344,10 +1344,6 @@ public class ExperimentViewer extends JPanel implements IViewer {
 	            repaint();
         		return;
         	}
-            if (event.isControlDown()) { // single array viewer
-                framework.displaySingleArrayViewer(experiment.getSampleIndex(getColumn(column)));
-                return;
-            }
             if (!event.isShiftDown()) { // element info
                 framework.displaySlideElementInfo(experiment.getSampleIndex(getColumn(column)), getMultipleArrayDataRow(row));
                 return;

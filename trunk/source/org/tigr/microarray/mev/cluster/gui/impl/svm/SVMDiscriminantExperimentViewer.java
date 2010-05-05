@@ -869,10 +869,6 @@ public class SVMDiscriminantExperimentViewer extends JPanel implements IViewer {
             if (!isLegalPosition(row, column)) {
                 return;
             }
-            if (event.isControlDown()) { // single array viewer
-                framework.displaySingleArrayViewer(experiment.getSampleIndex(getColumn(column)));
-                return;
-            }
             if (!event.isShiftDown()) { // element info
                 framework.displaySlideElementInfo(experiment.getSampleIndex(getColumn(column)), getMultipleArrayDataRow(row));
                 return;

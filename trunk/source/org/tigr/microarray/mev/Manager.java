@@ -61,7 +61,6 @@ public class Manager {//A class to keep track of viewers
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenuItem newMultipleArrayViewerItem;
-    private JMenuItem newSingleArrayViewerItem;
     private JMenuItem newPreferencesItem;
     private JMenuItem loginItem;
     private JMenuItem quitItem;
@@ -135,13 +134,6 @@ public class Manager {//A class to keep track of viewers
         newMultipleArrayViewerItem.addActionListener(eventListener);
         newMultipleArrayViewerItem.setMnemonic(KeyEvent.VK_M);
         fileMenu.add(newMultipleArrayViewerItem);
-        
-        newSingleArrayViewerItem = new JMenuItem("New Single Array Viewer");
-        // newSingleArrayViewerItem.setToolTipText("Temporarily Disabled -- visit www.tigr.org/software/TM4 for update.");
-        //  newSingleArrayViewerItem.setEnabled(false);
-        newSingleArrayViewerItem.addActionListener(eventListener);
-        newSingleArrayViewerItem.setMnemonic(KeyEvent.VK_S);
-        fileMenu.add(newSingleArrayViewerItem);
         
         fileMenu.addSeparator();
         
@@ -299,12 +291,7 @@ public class Manager {//A class to keep track of viewers
         
         for(int i = 0; i < activeComponents.size(); i++) {
             component = (Component)(activeComponents.elementAt(i));
-            if(component instanceof SingleArrayViewer) {
-                item = new JMenuItem(((SingleArrayViewer)component).getFrame().getTitle());
-                
-            } else {
-                item = new JMenuItem(((MultipleArrayViewer)component).getFrame().getTitle());
-            }
+            item = new JMenuItem(((MultipleArrayViewer)component).getFrame().getTitle());
             item.setActionCommand("window-cmd");
             item.addActionListener(eventListener);
             windowMenu.add(item);
@@ -387,35 +374,7 @@ public class Manager {//A class to keep track of viewers
         mav.getFrame().setVisible(true);
         
     }
-    
-    public static void createNewSingleArrayViewer() {
-        SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"));
-        Manager.addComponent(sav);
-        sav.getFrame().setSize(650, 650);
-        sav.getFrame().setLocation(100, 100);
-        sav.getFrame().setVisible(true);
-    }
-    
-    public static void createNewSingleArrayViewer(ISlideData preparedArray) {
-        SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"), preparedArray);
-        Manager.addComponent(sav);
-        sav.getFrame().setSize(650, 650);
-        sav.getFrame().setLocation(100, 100);
-        sav.getFrame().setVisible(true);
-        sav.refreshSlide();
-    }
-    
-    public static void createNewSingleArrayViewer(ISlideData preparedArray, float upperCy3Cutoff, float upperCy5Cutoff) {
-        SingleArrayViewer sav = new SingleArrayViewer(new JFrame("Single Array Viewer"), preparedArray);
-        Manager.addComponent(sav);
-        sav.setUpperLimits(upperCy3Cutoff, upperCy5Cutoff);
-        sav.panel.setXYScrollbars((long)upperCy3Cutoff, (long)upperCy5Cutoff);
-        sav.getFrame().setSize(650, 650);
-        sav.getFrame().setLocation(100, 100);
-        sav.getFrame().setVisible(true);
-        sav.refreshSlide();
-    }
-
+  
 	public static void createNewMultipleArrayViewer(FileLoadInfo fileInfo) {
 		MultipleArrayViewer mav = new MultipleArrayViewer();
         Manager.addComponent(mav);
@@ -539,8 +498,6 @@ public class Manager {//A class to keep track of viewers
             handleItems(source);
             if (source == newMultipleArrayViewerItem) {
                 createNewMultipleArrayViewer();
-            } else if (source == newSingleArrayViewerItem) {
-                createNewSingleArrayViewer();
             } else if (source == loginItem) {
                 databaseLogin();
             } else if (source == newPreferencesItem) {
@@ -665,10 +622,7 @@ public class Manager {//A class to keep track of viewers
                         component.requestFocus();
                         component.setLocation(component.getLocation());
                         
-                        if(component.getClass() == SingleArrayViewer.class)
-                            ((SingleArrayViewer)component).getFrame().requestFocus();
-                        else
-                            ((MultipleArrayViewer)component).getFrame().requestFocus();
+                        ((MultipleArrayViewer)component).getFrame().requestFocus();
                         
                         break;
                     }
