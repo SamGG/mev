@@ -202,7 +202,7 @@ public class SAMGraph extends ActionInfoDialog {
             
 
             maxDelta = getMax(diffValues);
-            minDelta = getMin(diffValues);            
+            minDelta = getMin(diffValues);    
             //float[] absDiffArray = new float[expectedXArray.length];
             
             //initDelta = (double)(0.25*maxDelta);
@@ -480,7 +480,7 @@ public class SAMGraph extends ActionInfoDialog {
         } else {
             int currentIndex = 0;
             for (int i = 0; i < deltaGrid.length; i++) {
-                if (deltaGrid[i] > currDel) {
+                if (deltaGrid[i] >= currDel) {
                     currentIndex = i;
                     break;
                 }

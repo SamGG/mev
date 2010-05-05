@@ -25,6 +25,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -70,7 +71,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     
     private Algorithm algorithm;
     private Progress progress;
-    //private Monitor monitor;
     private IData data;
     
     private Experiment experiment;
@@ -84,8 +84,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     private int[] numSig;
     private String[] auxTitles;
     private float[][] auxData;
-    //private String[] allTitles;
-    
+
+    protected ArrayList<String> geneLabels;
+    protected ArrayList<String> sampleLabels;
     int[] groupAssignments;
     int numMultiClassGroups;
     int studyDesign;
@@ -97,6 +98,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     Vector exptNamesVector;
     Vector geneNamesVector;
     Vector pairedGroupAExpts, pairedGroupBExpts;
+	private float[] timeCourseData;
+	private int[] startOrEnd;
+    boolean isTimeCourse;
     /** Creates new SAMGUI */
     public SAMGUI() {
     }
@@ -112,9 +116,17 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         int number_of_samples = experiment.getNumberOfSamples();
         int number_of_genes = experiment.getNumberOfGenes();
         int [] columnIndices = experiment.getColumnIndicesCopy();
-        
+
+        sampleLabels = new ArrayList<String>();
+        geneLabels = new ArrayList<String>();
         for (int i = 0; i < number_of_samples; i++) {
             exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
+            sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
+        }
+        
+        for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
+        	//geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.PROBE_ID)[0]); //Raktim
+        	geneLabels.add(String.valueOf(i));
         }
         for (int i = 0; i < number_of_genes; i++) {
             geneNamesVector.add(framework.getData().getGeneName(i));
@@ -122,6 +134,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         
         SAMInitDialog sDialog;
         studyDesign = 0;
+        boolean useRSAM = true;
         int numCombs = 0;
         int numUniquePerms = 0;
         int numNeighbors = 0;
@@ -134,10 +147,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         boolean saveImputedMatrix = false;
         boolean useTusherEtAlS0 = false;
         boolean useAllUniquePerms = false;
-        
         double userPercentile = 0;
         
-        //SAMState.fieldNames = framework.getData().getFieldNames();
         
         if (!SAMState.firstRun) {
             SAMPreDialog spDialog = new SAMPreDialog((JFrame)framework.getFrame(), true);
@@ -147,7 +158,11 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             if (spDialog.usePrevious()) {
                 usePreviousGraph = true;
                 groupAssignments = SAMState.groupAssignments;
+
+                isTimeCourse = SAMState.isTimeCourse;
                 studyDesign = SAMState.studyDesign;
+                timeCourseData = SAMState.timeCourseData;
+                startOrEnd = SAMState.startOrEnd;
                 if (studyDesign == SAMInitDialog.MULTI_CLASS) {
                     numMultiClassGroups = SAMState.numMultiClassGroups;
                 }
@@ -187,8 +202,10 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                     SAMState.firstRun = false;
                 }
                 
-                //SAMState.firstRun = false;
                 studyDesign = sDialog.getStudyDesign();
+                isTimeCourse = sDialog.isTimeCourse();
+                timeCourseData = sDialog.getTimeCourse();
+                startOrEnd = sDialog.getStartEnd();
                 SAMState.studyDesign = studyDesign;
                 if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
                     pairedGroupAExpts = sDialog.getPairedAExpts();
@@ -217,8 +234,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 groupAssignments = sDialog.getGroupAssignments();
                 
                 SAMState.groupAssignments = groupAssignments;
-                //boolean useAllCombs = sDialog.useAllCombs();
-                //if (!useAllCombs) {
+                useRSAM = sDialog.isUseRSAM();
+                SAMState.useRSAM = useRSAM;
                 numCombs = sDialog.getUserNumCombs();
                 SAMState.numCombs = numCombs;
                 useAllUniquePerms = sDialog.useAllUniquePerms();
@@ -230,7 +247,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 //}
                 useKNearest = sDialog.useKNearest();
                 SAMState.useKNearest = useKNearest;
-                //numNeighbors = 10;
                 if (useKNearest) {
                     numNeighbors = sDialog.getNumNeighbors();
                     SAMState.numNeighbors = numNeighbors;
@@ -248,7 +264,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 if (isHierarchicalTree) {
                     drawSigTreesOnly = sDialog.drawSigTreesOnly();
                 }             
-                //SAMState.isHierarchicalTree = isHierarchicalTree;
             }
             
         } else { //if (SAMState.firstRun)
@@ -262,9 +277,13 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 SAMState.firstRun = false;
             }
             
-            //SAMState.firstRun = false;
+            isTimeCourse = sDialog.isTimeCourse();
+            timeCourseData = sDialog.getTimeCourse();
+            startOrEnd = sDialog.getStartEnd();
             studyDesign = sDialog.getStudyDesign();
             SAMState.studyDesign = studyDesign;
+            SAMState.timeCourseData = timeCourseData;
+            SAMState.isTimeCourse = isTimeCourse;
             if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
                 pairedGroupAExpts = sDialog.getPairedAExpts();
                 pairedGroupBExpts = sDialog.getPairedBExpts();
@@ -291,8 +310,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             groupAssignments = sDialog.getGroupAssignments();
             
             SAMState.groupAssignments = groupAssignments;
-            //boolean useAllCombs = sDialog.useAllCombs();
-            //if (!useAllCombs) {
+            useRSAM = sDialog.isUseRSAM();
+            SAMState.useRSAM = useRSAM;
             numCombs = sDialog.getUserNumCombs();
             SAMState.numCombs = numCombs;
             
@@ -370,6 +389,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             data.addParam("distance-function", String.valueOf(function));
             data.addIntArray("group-assignments", groupAssignments);
+            data.addParam("is-time-course", String.valueOf(isTimeCourse));
+            data.addMatrix("time-course-data", new FloatMatrix(this.timeCourseData,1));
+            data.addIntArray("start-or-end",startOrEnd);
             data.addParam("study-design", String.valueOf(studyDesign));
             if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
                 FloatMatrix pairedAExptsMatrix = new FloatMatrix(pairedGroupAExpts.size(), 1);
@@ -418,7 +440,10 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             if (useAllUniquePerms) {
                 data.addParam("numUniquePerms", String.valueOf(numUniquePerms));
             }
-            
+
+            data.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
+            data.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
+            data.addParam("use-r-sam", String.valueOf(useRSAM));
             data.addParam("num-combs", String.valueOf(numCombs));
             //data.addParam("use-all-combs", String.valueOf(useAllCombs));
             data.addParam("use-k-nearest", String.valueOf(useKNearest));
@@ -441,7 +466,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
-            //System.out.println("After algorithm.execute()");
             long time = System.currentTimeMillis() - start;
             // getting the results
             Cluster result_cluster = result.getCluster("cluster");
@@ -530,7 +554,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 FDRMedian[i] = (double)(FDRMedianMatrix.A[i][0]);
                 FDR90th[i] = (double)(FDR90thMatrix.A[i][0]);
             }
-            //int studyDesign = resultMap.getInt("studyDesign");
             
             if ((!usePreviousGraph) && (saveImputedMatrix)) {
                 FloatMatrix imputedMatrix = result.getMatrix("imputedMatrix");
@@ -542,8 +565,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                     try {
                         PrintWriter out = new PrintWriter(new FileOutputStream(file));
                         String[] fieldNames = framework.getData().getFieldNames();
-                        //out.print("Original row");
-                        //out.print("\t");
                         for (int i = 0; i < fieldNames.length; i++) {
                             out.print(fieldNames[i]);
                             if (i < fieldNames.length - 1) {
@@ -556,10 +577,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                         }
                         out.print("\n");
                         for (int i=0; i<imputedMatrix.getRowDimension(); i++) {
-                            //out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //handles cutoffs
-                            //out.print(data.getUniqueId(rows[i]));
-                            //out.print("\t");
-                            //out.print(data.getGeneName(rows[i]));
                             for (int f = 0; f < fieldNames.length; f++) {
                                 out.print(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), f));
                                 if (f < fieldNames.length - 1) {
@@ -572,16 +589,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                             }
                             out.print("\n");
                         }
-                        //int[] groupAssgn = getGroupAssignments();
-                        /*
-                        for (int i = 0; i < groupAssgn.length; i++) {
-                            out.print(groupAssgn[i]);
-                            if (i < groupAssgn.length - 1) {
-                                out.print("\t");
-                            }
-                        }
-                        out.println();
-                         */
                         out.flush();
                         out.close();
                     } catch (Exception e) {
@@ -632,6 +639,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             } else {
                 info.imputationEngine = "Row Average";
             }
+            info.useRSAM = useRSAM;
             info.numCombs = numCombs;
             info.sNought = sNought;
             info.s0Percentile = s0Percentile;
@@ -924,12 +932,13 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     }
     
     /**
-     * Adds node with general iformation.
+     * Adds node with general information.
      */
     private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         DefaultMutableTreeNode inputSubNode = new DefaultMutableTreeNode("Input Parameters");
         DefaultMutableTreeNode computedSubNode = new DefaultMutableTreeNode("Computed Quantities");
+        inputSubNode.add(new DefaultMutableTreeNode("SAM Version " + (info.useRSAM ? "2.0":"1.0")));
         inputSubNode.add(new DefaultMutableTreeNode("Study Design: " + info.getStudyDesign()));
         if ((studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) || (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) || (studyDesign == SAMInitDialog.MULTI_CLASS) || (studyDesign == SAMInitDialog.ONE_CLASS)) {
             inputSubNode.add(getGroupAssignmentInfo(info.studyDesign));
@@ -967,12 +976,10 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         computedSubNode.add(new DefaultMutableTreeNode("Computed Exchangeability Factor s0: " + info.sNought));
         computedSubNode.add(new DefaultMutableTreeNode("s0 Percentile: " + info.s0Percentile));
         computedSubNode.add(new DefaultMutableTreeNode("Pi0Hat: " + info.pi0Hat));
-        //computedSubNode.add(new DefaultMutableTreeNode("Number of Significant Genes: " + info.numSigGenes));
         computedSubNode.add(new DefaultMutableTreeNode("Num. False Sig. Genes (Median): " + info.numFalseSigMed));
         computedSubNode.add(new DefaultMutableTreeNode("Num. False Sig. Genes (90th %ile): " + info.numFalseSig90th));
         computedSubNode.add(new DefaultMutableTreeNode("False Discovery Rate (Median): " + info.FDRMedian + " %"));
         computedSubNode.add(new DefaultMutableTreeNode("False Discovery Rate (90th %ile): " + info.FDR90th + " %"));
-        //node.add(new DefaultMutableTreeNode(info.function));
         node.add(inputSubNode);
         node.add(computedSubNode);
         root.add(node);
@@ -1009,9 +1016,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
             for (int i = 0; i < groupAssignments.length; i++) {
                 if (groupAssignments[i] == SAMInitDialog.GROUP_A) {
-                    groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                    groupA.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))+(isTimeCourse? ", Time = "+this.timeCourseData:"")));
                 } else if (groupAssignments[i] == SAMInitDialog.GROUP_B) {
-                    groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                    groupB.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))+(isTimeCourse? ", Time = "+this.timeCourseData:"")));
                 } else {
                     neitherGroup.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
                     neitherGroupCounter++;
@@ -1078,7 +1085,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             int outCounter = 0;
             for (int i = 0; i < groupAssignments.length; i++) {
                 if (groupAssignments[i] == 1) {
-                    in.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+                    in.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))+(isTimeCourse? ", Time = "+this.timeCourseData:"")));
                 } else {
                     out.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
                     outCounter++;
@@ -1160,6 +1167,9 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         //SAMState.firstRun = false;
         studyDesign = sDialog.getStudyDesign();
         SAMState.studyDesign = studyDesign;
+        SAMState.isTimeCourse = isTimeCourse;
+        SAMState.timeCourseData = timeCourseData;
+        SAMState.startOrEnd = startOrEnd;
         if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
             pairedGroupAExpts = sDialog.getPairedAExpts();
             pairedGroupBExpts = sDialog.getPairedBExpts();
@@ -1490,72 +1500,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             * on the first pass
             *
             *
-            if ((!usePreviousGraph) && (saveImputedMatrix)) {
-                FloatMatrix imputedMatrix = result.getMatrix("imputedMatrix");
-                final JFileChooser fc = new JFileChooser();
-                fc.setDialogTitle("Save imputed matrix");
-                fc.setCurrentDirectory(new File("Data"));
-                int returnVal = fc.showSaveDialog((JFrame) framework.getFrame());
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    try {
-                        PrintWriter out = new PrintWriter(new FileOutputStream(file));
-                        String[] fieldNames = framework.getData().getFieldNames();
-                        //out.print("Original row");
-                        //out.print("\t");
-                        for (int i = 0; i < fieldNames.length; i++) {
-                            out.print(fieldNames[i]);
-                            if (i < fieldNames.length - 1) {
-                                out.print("\t");
-                            }
-                        }
-                        for (int i=0; i<experiment.getNumberOfSamples(); i++) {
-                            out.print("\t");
-                            out.print(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
-                        }
-                        out.print("\n");
-                        for (int i=0; i<imputedMatrix.getRowDimension(); i++) {
-                            //out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //handles cutoffs
-                            //out.print(data.getUniqueId(rows[i]));
-                            //out.print("\t");
-                            //out.print(data.getGeneName(rows[i]));
-                            for (int f = 0; f < fieldNames.length; f++) {
-                                out.print(framework.getData().getElementAttribute(experiment.getGeneIndexMappedToData(i), f));
-                                if (f < fieldNames.length - 1) {
-                                    out.print("\t");
-                                }
-                            }
-                            for (int j=0; j<imputedMatrix.getColumnDimension(); j++) {
-                                out.print("\t");
-                                out.print(Float.toString(imputedMatrix.A[i][j]));
-                            }
-                            out.print("\n");
-                        }
-                        //int[] groupAssgn = getGroupAssignments();
-            *
-            */
-                        /*
-                        for (int i = 0; i < groupAssgn.length; i++) {
-                            out.print(groupAssgn[i]);
-                            if (i < groupAssgn.length - 1) {
-                                out.print("\t");
-                            }
-                        }
-                        out.println();
-                         */
-              /*
-                        out.flush();
-                        out.close();
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                    }
-                    //this is where a real application would save the file.
-                    //log.append("Saving: " + file.getName() + "." + newline);
-              
-                } else {
-                    //log.append("Save command cancelled by user." + newline);
-                }
-            }
             
             */
            
@@ -1602,6 +1546,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             } else {
                 info.imputationEngine = "Row Average";
             }
+            info.useRSAM = params.getBoolean("use-r-sam");
             info.numCombs = params.getInt("num-combs");
             info.sNought = sNought;
             info.s0Percentile = s0Percentile;
@@ -1678,14 +1623,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                     progress.setValue(event.getIntValue());
                     progress.setDescription(event.getDescription());
                     break;
-                case AlgorithmEvent.MONITOR_VALUE:
-                    int value = event.getIntValue();
-                    if (value == -1) {
-                        //monitor.dispose();
-                    } else {
-                        //monitor.update(value);
-                    }
-                    break;
             }
         }
         
@@ -1694,7 +1631,6 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             if (command.equals("cancel-command")) {
                 algorithm.abort();
                 progress.dispose();
-                //monitor.dispose();
             }
         }
         
@@ -1706,7 +1642,8 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
     }
     
     private class GeneralInfo {
-        public int clusters;
+        public boolean useRSAM;
+		public int clusters;
         public String sigMethod, useFoldChange;
         
         //public boolean converged;
@@ -1736,7 +1673,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         public String getStudyDesign() {
             String study = "None";
             if (studyDesign == SAMInitDialog.TWO_CLASS_UNPAIRED) {
-                study = "Two Class Unpaired";
+                study = "Two Class Unpaired"+(isTimeCourse?" Time-course":"");
             } else if (studyDesign == SAMInitDialog.TWO_CLASS_PAIRED) {
                 study = "Two Class Paired";
             } else if (studyDesign == SAMInitDialog.MULTI_CLASS) {
@@ -1744,7 +1681,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             } else if (studyDesign == SAMInitDialog.CENSORED_SURVIVAL) {
                 study = "Censored Survival";
             } else if (studyDesign == SAMInitDialog.ONE_CLASS) {
-                study = "One Class";
+                study = "One Class"+(isTimeCourse?" Time-course":"");
             }
             return study;
         }
