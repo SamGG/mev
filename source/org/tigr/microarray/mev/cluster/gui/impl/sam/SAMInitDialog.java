@@ -84,6 +84,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     CensoredSurvivalPanel csPanel;
     OneClassPanel oneCPanel;
     S0AndQValueCalcPanel sqPanel;
+    VersionPanel vPanel;
     PermutationsPanel pPanel;
     ImputationPanel iPanel;
     OKCancelPanel oPanel;
@@ -98,7 +99,7 @@ public class SAMInitDialog extends AlgorithmDialog {
     
     public static final int GROUP_A = 1;
     public static final int GROUP_B = 2;
-    public static final int NEITHER_GROUP = 3;
+    public static final int NEITHER_GROUP = 0;
     
     public static final int TWO_CLASS_UNPAIRED = 4;
     public static final int TWO_CLASS_PAIRED = 5;
@@ -197,23 +198,28 @@ public class SAMInitDialog extends AlgorithmDialog {
         gridbag.setConstraints(tabPane, constraints);
         
         pane.add(tabPane);
+
+        vPanel = new VersionPanel();
+        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+        gridbag.setConstraints(vPanel, constraints);
+        pane.add(vPanel);
         
         pPanel = new PermutationsPanel();
-        buildConstraints(constraints, 0, 1, 1, 1, 0, 5);
+        buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
         gridbag.setConstraints(pPanel, constraints);
         pane.add(pPanel);
         sqPanel = new S0AndQValueCalcPanel();
-        buildConstraints(constraints, 0, 2, 1, 1, 0, 10);
+        buildConstraints(constraints, 0, 3, 1, 1, 0, 10);
         gridbag.setConstraints(sqPanel, constraints);
         pane.add(sqPanel);        
   
         iPanel = new ImputationPanel();
-        buildConstraints(constraints, 0, 3, 1, 1, 0, 5);
+        buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
         gridbag.setConstraints(iPanel, constraints);
         pane.add(iPanel);
         
         hclOpsPanel = new HCLSigOnlyPanel();
-        buildConstraints(constraints, 0, 4, 1, 1, 0, 5);
+        buildConstraints(constraints, 0, 5, 1, 1, 0, 5);
         gridbag.setConstraints(hclOpsPanel, constraints);
         pane.add(hclOpsPanel);
         
@@ -255,6 +261,8 @@ public class SAMInitDialog extends AlgorithmDialog {
     class GroupExperimentsPanel extends JPanel {
         JLabel[] expLabels;
         int numPanels = 0;
+        JTextField[] timeField;
+        JCheckBox[] startCB, endCB;
         JRadioButton[] groupARadioButtons, groupBRadioButtons, neitherGroupRadioButtons;
         JLabel lotsOfSamplesWarningLabel;
      
@@ -266,6 +274,9 @@ public class SAMInitDialog extends AlgorithmDialog {
             groupARadioButtons = new JRadioButton[exptNames.size()];
             groupBRadioButtons = new JRadioButton[exptNames.size()];
             neitherGroupRadioButtons = new JRadioButton[exptNames.size()];
+            timeField = new JTextField[exptNames.size()];
+            startCB = new JCheckBox[exptNames.size()];
+            endCB = new JCheckBox[exptNames.size()];
             ButtonGroup chooseGroup[] = new ButtonGroup[exptNames.size()];
             
             GridBagLayout gridbag = new GridBagLayout();
@@ -292,7 +303,27 @@ public class SAMInitDialog extends AlgorithmDialog {
                 chooseGroup[i].add(groupBRadioButtons[i]);
                 neitherGroupRadioButtons[i] = new JRadioButton("Neither group", false);
                 chooseGroup[i].add(neitherGroupRadioButtons[i]);
- 
+                timeField[i] = new JTextField("0.0");
+                timeField[i].setVisible(false);
+                startCB[i] = new JCheckBox("Start");
+                startCB[i].setVisible(false);
+                endCB[i] = new JCheckBox("End");
+                endCB[i].setVisible(false);
+                startCB[i].setActionCommand(String.valueOf(i));
+                startCB[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                    	if (startCB[Integer.parseInt(evt.getActionCommand())].isSelected())
+                    		endCB[Integer.parseInt(evt.getActionCommand())].setSelected(false);
+                    }
+                });
+
+                endCB[i].setActionCommand(String.valueOf(i));
+                endCB[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                    	if (endCB[Integer.parseInt(evt.getActionCommand())].isSelected())
+                    		startCB[Integer.parseInt(evt.getActionCommand())].setSelected(false);
+                    }
+                });
 //              set current panel
                 currPanel = i / 512;
                 
@@ -307,9 +338,26 @@ public class SAMInitDialog extends AlgorithmDialog {
                 buildConstraints(constraints, 2, i%512, 1, 1, 25, 100);
                 gridbag.setConstraints(groupBRadioButtons[i], constraints);
                 panels[currPanel].add(groupBRadioButtons[i]);
+                
                 buildConstraints(constraints, 3, i%512, 1, 1, 25, 100);
                 gridbag.setConstraints(neitherGroupRadioButtons[i], constraints);
-                panels[currPanel].add(neitherGroupRadioButtons[i]);                                
+                panels[currPanel].add(neitherGroupRadioButtons[i]);    
+
+                buildConstraints(constraints, 4, i%512, 1, 1, 25, 100);
+                constraints.fill = GridBagConstraints.BOTH;
+                gridbag.setConstraints(timeField[i], constraints);
+                panels[currPanel].add(timeField[i]);  
+                constraints.fill = GridBagConstraints.NONE;
+                buildConstraints(constraints, 5, i%512, 1, 1, 25, 100);
+                constraints.fill = GridBagConstraints.BOTH;
+                gridbag.setConstraints(startCB[i], constraints);
+                panels[currPanel].add(startCB[i]);  
+                constraints.fill = GridBagConstraints.NONE;
+                buildConstraints(constraints, 6, i%512, 1, 1, 25, 100);
+                constraints.fill = GridBagConstraints.BOTH;
+                gridbag.setConstraints(endCB[i], constraints);
+                panels[currPanel].add(endCB[i]);  
+                constraints.fill = GridBagConstraints.NONE;
             }
             
             JPanel bigPanel = new JPanel(new GridBagLayout());
@@ -546,9 +594,9 @@ public class SAMInitDialog extends AlgorithmDialog {
 
 
         			if( exptNames.size() != sampleNames.size()) {
-        				System.out.println(exptNames.size()+"  "+sampleNames.size());
+//        				System.out.println(exptNames.size()+"  "+sampleNames.size());
         				//status = "number-of-samples-mismatch";
-        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+//        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
         				//warn and prompt to continue but omit assignments for those not represented				
 
         				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
@@ -991,7 +1039,8 @@ public class SAMInitDialog extends AlgorithmDialog {
     
     class OneClassPanel extends JPanel {
         JTextField meanField;
-        JCheckBox[] includeExpts;
+        JCheckBox[] includeExpts, startCB, endCB;
+        JTextField[] timefields;
         int numPanels = 0;
         JButton saveButton, loadButton, resetButton;
         JLabel lotsOfSamplesWarningLabel;
@@ -1001,6 +1050,9 @@ public class SAMInitDialog extends AlgorithmDialog {
             JLabel meanLabel = new JLabel("Enter the mean value to be tested against: ");
             meanField = new JTextField("0", 7);
             includeExpts = new JCheckBox[exptNames.size()];
+            timefields = new JTextField[exptNames.size()];
+            startCB = new JCheckBox[exptNames.size()];
+            endCB = new JCheckBox[exptNames.size()];
             
             GridBagLayout gridbag = new GridBagLayout();
             GridBagConstraints constraints = new GridBagConstraints();
@@ -1019,8 +1071,43 @@ public class SAMInitDialog extends AlgorithmDialog {
                 includeExpts[i] = new JCheckBox((String)(exptNames.get(i)), true);
                 buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
                 gridbag.setConstraints(includeExpts[i], constraints);
-           
                 panels[currPanel].add(includeExpts[i]);
+                
+                timefields[i] = new JTextField("0.0");
+                buildConstraints(constraints, 1, i%512, 1, 1, 100, 100);
+                constraints.fill = GridBagConstraints.BOTH;
+                gridbag.setConstraints(timefields[i], constraints);
+                timefields[i].setVisible(false);
+                panels[currPanel].add(timefields[i]);
+                constraints.fill = GridBagConstraints.NONE;
+                
+                startCB[i] = new JCheckBox("Start");
+                buildConstraints(constraints, 2, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(startCB[i], constraints);
+                startCB[i].setVisible(false);
+                panels[currPanel].add(startCB[i]);
+
+                endCB[i] = new JCheckBox("End");
+                buildConstraints(constraints, 3, i%512, 1, 1, 100, 100);
+                gridbag.setConstraints(endCB[i], constraints);
+                endCB[i].setVisible(false);
+                panels[currPanel].add(endCB[i]);
+                
+                startCB[i].setActionCommand(String.valueOf(i));
+                startCB[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                    	if (startCB[Integer.parseInt(evt.getActionCommand())].isSelected())
+                    		endCB[Integer.parseInt(evt.getActionCommand())].setSelected(false);
+                    }
+                });
+
+                endCB[i].setActionCommand(String.valueOf(i));
+                endCB[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                    	if (endCB[Integer.parseInt(evt.getActionCommand())].isSelected())
+                    		startCB[Integer.parseInt(evt.getActionCommand())].setSelected(false);
+                    }
+                });
             }
             JPanel bigPanel = new JPanel(new GridBagLayout());
             
@@ -1051,7 +1138,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             
             JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scroll, scroll2);
             split.setOneTouchExpandable(true);
-            split.setDividerLocation(150);
+            split.setDividerLocation(300);
            
             constraints.fill = GridBagConstraints.BOTH;
             buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
@@ -1252,9 +1339,9 @@ public class SAMInitDialog extends AlgorithmDialog {
 
 
         			if( exptNames.size() != sampleNames.size()) {
-        				System.out.println(exptNames.size()+"  "+sampleNames.size());
+//        				System.out.println(exptNames.size()+"  "+sampleNames.size());
         				//status = "number-of-samples-mismatch";
-        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+//        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
         				//warn and prompt to continue but omit assignments for those not represented				
 
         				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
@@ -2276,9 +2363,9 @@ public class SAMInitDialog extends AlgorithmDialog {
 	
 	
 	        			if( exptNames.size() != sampleNames.size()) {
-	        				System.out.println(exptNames.size()+"  "+sampleNames.size());
+//	        				System.out.println(exptNames.size()+"  "+sampleNames.size());
 	        				//status = "number-of-samples-mismatch";
-	        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+//	        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
 	        				//warn and prompt to continue but omit assignments for those not represented				
 	
 	        				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
@@ -2363,7 +2450,84 @@ public class SAMInitDialog extends AlgorithmDialog {
             mulgPanel.reset();
         }
     }
-    
+    class VersionPanel extends JPanel {
+        //JLabel permsInfoLabel;
+        //JRadioButton useAllPermsButton, numPermsButton;
+        JLabel numPermsLabel;
+        JCheckBox useRSAM,timecourseCB;
+        JRadioButton versionThree;
+        ButtonGroup bg = new ButtonGroup();
+        VersionPanel() {
+            this.setBorder(new TitledBorder(new EtchedBorder(), "R settings", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
+            setBackground(Color.white);
+            numPermsLabel = new JLabel("Enter number of permutations:   ");
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints constraints = new GridBagConstraints();
+            this.setLayout(gridbag);
+            
+            useRSAM = new JCheckBox("Use R");
+            useRSAM.setBackground(Color.white);
+            useRSAM.setSelected(true);
+            useRSAM.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                	if (!useRSAM.isSelected()){
+                		timecourseCB.setSelected(false);
+                		setTimeCourse(false);
+                	}
+                	timecourseCB.setEnabled(useRSAM.isSelected());
+                }
+            });
+            buildConstraints(constraints, 0, 0, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.CENTER;
+            gridbag.setConstraints(useRSAM, constraints);
+            this.add(useRSAM);
+            timecourseCB = new JCheckBox("Time-Course Data");
+            timecourseCB.setBackground(Color.white);
+            timecourseCB.setSelected(false);
+            timecourseCB.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                	setTimeCourse(timecourseCB.isSelected());
+                }
+            });
+            buildConstraints(constraints, 1, 0, 1, 1, 50, 0);
+            constraints.anchor = GridBagConstraints.CENTER;
+            gridbag.setConstraints(timecourseCB, constraints);
+            this.add(timecourseCB);
+            
+        }
+        
+        public void reset(){
+
+        }
+        
+    }
+
+
+	private void setTimeCourse(boolean set) {
+		for (int i=0; i<gPanel.timeField.length; i++){
+			gPanel.timeField[i].setVisible(set);
+			gPanel.startCB[i].setVisible(set);
+			gPanel.endCB[i].setVisible(set);
+			oneCPanel.timefields[i].setVisible(set);
+			oneCPanel.startCB[i].setVisible(set);
+			oneCPanel.endCB[i].setVisible(set);
+		}
+		this.unpairedTab.setSelectedIndex(0);
+		this.unpairedTab.setEnabledAt(1, !set);
+		this.oneClassTab.setSelectedIndex(0);
+		this.oneClassTab.setEnabledAt(1, !set);
+		
+		this.gPanel.setEnabled(!set);
+		if (tabPane.getSelectedIndex()==1||tabPane.getSelectedIndex()==2||tabPane.getSelectedIndex()==3)
+			tabPane.setSelectedIndex(0);
+		this.tabPane.setEnabledAt(1, !set);
+		this.tabPane.setEnabledAt(2, !set);
+		this.tabPane.setEnabledAt(3, !set);
+		
+		gPanel.updateUI();
+		gPanel.repaint();
+		
+	}
     class PermutationsPanel extends JPanel {
         //JLabel permsInfoLabel;
         //JRadioButton useAllPermsButton, numPermsButton;
@@ -2495,7 +2659,27 @@ public class SAMInitDialog extends AlgorithmDialog {
             qNoButton.setSelected(true);
         }
     }
-    
+    private void getTCPRVector(){
+//    	for (int i=0; i<tcpmPanel.tcpPanel.pairedBExpts.size(); i++){
+//    		System.out.print(tcpmPanel.tcpPanel.pairedAExpts.get(i)+"-");
+//    		System.out.println(tcpmPanel.tcpPanel.pairedBExpts.get(i));
+//    	}
+    	Vector<Integer> rpair = new Vector<Integer>();
+//    	int index = 0;
+    	for (int i=0; i<exptNames.size(); i++){
+    		int found = tcpmPanel.tcpPanel.pairedAExpts.indexOf(i);
+    		if (found!=-1){
+    			rpair.add(found+1);
+    		} else {
+    			found = tcpmPanel.tcpPanel.pairedBExpts.indexOf(i);
+        		if (found!=-1)
+        			rpair.add(-found-1);
+    		}
+    	}
+//    	for (int i=0; i<rpair.size(); i++){
+//    		System.out.print(rpair.get(i)+", ");
+//    	}
+    }
     class ImputationPanel extends JPanel {
         JRadioButton kNearestButton, rowAverageButton;
         JTextField numNeighborsField;
@@ -2796,7 +2980,43 @@ public class SAMInitDialog extends AlgorithmDialog {
         }
         return studyDesign;
     }
-    
+
+    public int[] getStartEnd(){
+    	int[] tc = new int[exptNames.size()];
+    	if (getStudyDesign() == TWO_CLASS_UNPAIRED){
+    		for (int i=0; i<tc.length; i++){
+    			if (gPanel.startCB[i].isSelected())
+    				tc[i] = 1;
+    			else if (gPanel.endCB[i].isSelected())
+    				tc[i] = 2;
+    			else
+    				tc[i] = 0;
+    		}
+    	} else if (getStudyDesign() == ONE_CLASS){
+    		for (int i=0; i<tc.length; i++){
+    			if (oneCPanel.startCB[i].isSelected())
+    				tc[i] = 1;
+    			else if (oneCPanel.endCB[i].isSelected())
+    				tc[i] = 2;
+    			else
+    				tc[i] = 0;
+    		}
+    	}
+    	return tc;
+    }
+    public float[] getTimeCourse(){
+    	float[] tc = new float[exptNames.size()];
+    	if (getStudyDesign() == TWO_CLASS_UNPAIRED){
+    		for (int i=0; i<tc.length; i++){
+    			tc[i] = Float.parseFloat(this.gPanel.timeField[i].getText());
+    		}
+    	} else if (getStudyDesign() == ONE_CLASS){
+    		for (int i=0; i<tc.length; i++){
+    			tc[i] = Float.parseFloat(this.oneCPanel.timefields[i].getText());
+    		}
+    	}
+    	return tc;
+    }
     public int[] getGroupAssignments() {
         int[] groupAssignments = new int[exptNames.size()];
         if (getStudyDesign() == TWO_CLASS_UNPAIRED) {
@@ -3073,6 +3293,10 @@ public class SAMInitDialog extends AlgorithmDialog {
     public int getNumNeighbors() {
         String s = iPanel.numNeighborsField.getText();
         return Integer.parseInt(s);
+    }
+
+    public boolean isUseRSAM() {
+        return vPanel.useRSAM.isSelected();
     }
     
     public int getUserNumCombs() {
@@ -3415,8 +3639,17 @@ public class SAMInitDialog extends AlgorithmDialog {
         }
         SAMInitDialog sDialog = new SAMInitDialog(dummyFrame, true, dummyVect, 5, null);
         sDialog.setVisible(true);
+        sDialog.getTCPRVector();
+        float[] asd = sDialog.getTimeCourse();
+        for(int i=0; i<asd.length; i++){
+        	System.out.print(asd[i]+"   ");
+        }
         System.exit(0);
         
     }
+
+	public boolean isTimeCourse() {
+		return vPanel.timecourseCB.isSelected();
+	}
     
 }

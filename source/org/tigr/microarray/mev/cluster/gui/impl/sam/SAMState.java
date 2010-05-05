@@ -26,13 +26,16 @@ public class SAMState {
     public static boolean firstRun = true, useAllUniquePerms; 
     public static int[] groupAssignments, numSigGenesByDelta, sortedDArrayIndices;
     public static int studyDesign, numCombs, numNeighbors, numMultiClassGroups, numUniquePerms;
-    public static boolean useKNearest, /*isHierarchicalTree,*/ calculateQLowestFDR, useTusherEtAlS0;
+    public static boolean useKNearest, /*isHierarchicalTree,*/ calculateQLowestFDR, useTusherEtAlS0, useRSAM;
     public static double delta, sNought, pi0Hat, s0Percentile, oneClassMean; 
     public static double[] dBarValues, sortedDArray, deltaGrid, medNumFalselyCalledGenesByDelta, dArray, rArray, survivalTimes; 
     public static double[] ninetiethPercentileFalselyCalledGenesByDelta, FDRmedian, FDR90thPercentile, qLowestFDR;
     public static boolean[] inSurvivalAnalysis, censored;
     public static FloatMatrix imputedMatrix;
     public static Vector pairedGroupAExpts, pairedGroupBExpts;
+	public static boolean isTimeCourse;
+	public static float[] timeCourseData;
+	public static int[] startOrEnd;
     
     /** Creates new SAMState */
     public SAMState() {
