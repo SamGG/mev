@@ -138,6 +138,7 @@ public class ClusterAttributesDialog extends AlgorithmDialog {
 		parameters.add(optionalLabel, new GridBagConstraints(0,6,2,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
 
 		addContent(parameters);
+		clusterLabelField.requestFocusInWindow();
 		setActionListeners(listener);
 		if(this.clusterColor == null)
 			okButton.setEnabled(false);
