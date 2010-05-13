@@ -63,7 +63,6 @@
     <property name="FOM" value="y"/>
     <property name="PTM" value="y"/>
     <property name="TTEST" value="y"/>
-    <property name="BRIDGE" value="y"/>
     <property name="SAM" value="y"/>
     <property name="OWA" value="y"/>
     <property name="TFA" value="y"/>
@@ -118,7 +117,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -140,7 +139,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
     </target>
 
 
@@ -1025,43 +1024,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
 
 
 
-    <target name="BRIDGE" depends="BRIDGE-GUI" if="BRIDGE">
-        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-            <include name="Bridge.java"/>
-            <classpath>
-                <pathelement location="${lib.dir}/JSciCore.jar"/>
-
-                <!-- jars to support module compilation -->
-                <pathelement location="${lib.dir}/mev-util.jar"/>
-                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
-                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
-                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
-                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
-                <pathelement location="${lib.dir}/mev-base.jar"/>            
-            </classpath>
-	  </javac>
-	  <propertyfile file="${alg.properties.file}">
-            <entry key="BRIDGE" value="org.tigr.microarray.mev.cluster.algorithm.impl.bridge"/>
-        </propertyfile>
-    </target>
-
-    <target name="BRIDGE-GUI">
-        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/bridge" destdir="${dest.dir}">
-            <classpath refid="module.build.class.path"/>
-	  </javac>
-	  <propertyfile file="${gui.properties.file}">
-		<entry key="gui.names" value="BRIDGE:" operation="+"/>
-            <entry key="BRIDGE.name" value="BRIDGE"/>
-            <entry key="BRIDGE.class" value="org.tigr.microarray.mev.cluster.gui.impl.bridge.BridgeGUI"/>
-	  	<entry key="BRIDGE.category" value="${STATISTICS}"/> 
-	  	<entry key="BRIDGE.smallIcon" value="analysis16.gif"/>
-            <entry key="BRIDGE.largeIcon" value="bridge_button.gif"/>
-            <entry key="BRIDGE.tooltip" value="BRIDGE"/>
-        </propertyfile>
-    </target>
-
-
-	<target name="SAM" depends="SAM-GUI" if="SAM">
+    <target name="SAM" depends="SAM-GUI" if="SAM">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="SAM.java"/>
             <classpath>
