@@ -1061,17 +1061,27 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
     </target>
 
 
-
-    <target name="SAM" depends="SAM-GUI" if="SAM">
+	<target name="SAM" depends="SAM-GUI" if="SAM">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-            <classpath refid="module.build.class.path"/>
             <include name="SAM.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>   
+            	<pathelement location="${lib.dir}/JRI.jar"/>
+            </classpath>
 	  </javac>
 	  <propertyfile file="${alg.properties.file}">
             <entry key="SAM" value="org.tigr.microarray.mev.cluster.algorithm.impl.SAM"/>
-        </propertyfile>
-    </target>
-
+      </propertyfile>
+	</target>
+	
     <target name="SAM-GUI">
         <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/sam" destdir="${dest.dir}">
             <classpath refid="module.build.class.path"/>
@@ -1305,6 +1315,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,BRIDGE,SAM
             <entry key="LIMMA.tooltip" value="Linear Models for Microarray Data"/>
       </propertyfile>
 	</target>
+	
 	
     <target name="NMF" depends="NMF-GUI" if="NMF">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
