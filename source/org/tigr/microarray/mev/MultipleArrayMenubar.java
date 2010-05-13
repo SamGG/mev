@@ -137,12 +137,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         sampMenu.add(createJMenuItem("Digitalize Samples/Columns", ActionManager.DIGITAL_EXPERIMENTS_CMD, listener));
         adjustMenu.add(sampMenu);
         adjustMenu.addSeparator();
-//      vu 7.22.05
-	    JMenu repMenu = new JMenu( "Replicate Analysis" );
-        repMenu.add( createJMenuItem( "Rama Documentation", ActionManager.RAMA_DOC_CMD, listener ) );
-	    repMenu.add( createJMenuItem( "Rama", ActionManager.RAMA_CMD, listener ) );
-	    adjustMenu.add( repMenu );
-	    adjustMenu.addSeparator();
         
         JMenu logMenu = new JMenu("Log Transformations");
         logMenu.add(createJMenuItem("Log2 Transform", ActionManager.LOG2_TRANSFORM_CMD, listener));

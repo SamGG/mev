@@ -419,15 +419,6 @@ public class HelpWindow extends JDialog {
             return "gene_annotation_import_parameters.html";
         if(key.equals("Color Scale Dialog"))
             return "set_ratio_scale_parameters.html";
-		if (key.equals("RAMA Initialization Dialog")) {
-			return "rama_parameters1.html";
-		}
-		if (key.equals("RAMA Connection Dialog")) {
-			return "rama_parameters2.html";
-		}
-		if( key.equals( "Bridge Initialization Dialog" ) ) {
-			return "bridge_parameters1.html";
-		}
 		if (key.equals("USC Initialization Dialog")) {
 			return "usc_parameters1.html";
 		}
