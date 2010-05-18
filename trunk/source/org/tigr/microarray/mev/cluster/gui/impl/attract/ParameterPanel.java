@@ -1,8 +1,7 @@
-package org.tigr.microarray.mev.cluster.gui.impl.gsea;
-
-
+package org.tigr.microarray.mev.cluster.gui.impl.attract;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -39,6 +38,11 @@ import org.tigr.microarray.mev.annotation.AnnotationFileReader;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
+
 import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
@@ -52,14 +56,9 @@ import org.tigr.util.swing.GeneMatrixFileFilter;
 import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
 import org.tigr.util.swing.TXTFileFilter;
 
-/**
- * ParameterPanel creates 
- * 
- * @author sarita
- *
- */
-
-public class ParameterPanel extends JPanel implements IWizardParameterPanel{
+public class ParameterPanel extends JPanel implements IWizardParameterPanel {
+	
+	
 
 	//Collects all information (parameters) required to run the algorithm
 	private javax.swing.JPanel parameterPanel;
@@ -72,6 +71,12 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	private javax.swing.JTextField sdTextField;
 	private javax.swing.JLabel permutationLabel;
 	private javax.swing.JTextField permutationTextField;
+	private JTextField LIMMACutoffTextField;
+	private JTextField topPathwaysTextField;
+	private JLabel LIMMACutoffLabel;
+	private JLabel topPathwaysLabel;
+	private AlgorithmData algData;
+
 	private IFramework fwork;
 	private GBA gba;
 	//Collects all information pertaining to gene sets
@@ -97,25 +102,20 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 
 	private FileResourceManager frm;
 	
-	
-	
-	
-	
 	//Collects all information pertaining to gene annotation. Is visible only if annotations
 	//are NOT loaded
 	private javax.swing.JPanel annotationPanel;
 	private AnnotationDownloadHandler adh;
 	
-	private AlgorithmData algData;
-	
-	public ParameterPanel(AlgorithmData algData, JFrame parent, IFramework framework) {
-		this.algData=algData;
+	public ParameterPanel(AlgorithmData algData, JFrame parent,
+			IFramework framework) {
 		this.fwork=framework;
+		this.algData=algData;
 		initializePanel();
-		initialize(GSEAConstants.MAX_PROBE, Integer.toString(5), "0.6", Integer.toString(1000));
+		initialize(GSEAConstants.MAX_PROBE, Integer.toString(5), "0.6", Integer.toString(1000), Double.toString(0.05), Integer.toString(5) );
 	}
 	
-	
+
 	public void initializePanel(){
 		this.setPreferredSize(new Dimension(1000, 850));
 		setBackground(Color.WHITE);
@@ -174,13 +174,26 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		permutationTextField.setEditable(true);
 		permutationTextField.setActionCommand("permutations");
 		
-			
+        
+     	LIMMACutoffLabel=new javax.swing.JLabel("Select significance level: Alpha ");
+		LIMMACutoffTextField=new JTextField();
+		LIMMACutoffTextField.setActionCommand("limma-cutoff");
+		
+		topPathwaysLabel=new javax.swing.JLabel("Select maximum genesets for synexpression calculation");
+		
+		topPathwaysTextField=new JTextField();
+		topPathwaysTextField.setEditable(true);
+		topPathwaysTextField.setActionCommand("top-pathways");
+		
+		
+		
 		parameterPanel = new JPanel();
 		parameterPanel.setBackground(Color.WHITE);
         parameterPanel.setLayout(new GridBagLayout());
         parameterPanel.setBorder(new EtchedBorder());
-        
-        //Add all components to parameterPanel
+		
+		
+		  //Add all components to parameterPanel
     	gba.add(parameterPanel, probe2GeneLabel, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 		gba.add(parameterPanel, choiceBox, 2, 0, GBA.RELATIVE, 1, 0,0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 		gba.add(parameterPanel, probeInformationLabel, 0, 3, 1, 1, 0, 0, GBA.B,GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -194,9 +207,17 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		
 		gba.add(parameterPanel, permutationLabel, 0, 8, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 		gba.add(parameterPanel, permutationTextField, 2, 8, GBA.RELATIVE, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0); 
-
 		
-	    genesetPanel=new JPanel();
+		
+		gba.add(parameterPanel, LIMMACutoffLabel, 0, 9, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(parameterPanel, LIMMACutoffTextField, 2, 9, GBA.RELATIVE, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0); 
+		
+		gba.add(parameterPanel, topPathwaysLabel, 0, 10, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+		gba.add(parameterPanel, topPathwaysTextField, 2, 10, GBA.RELATIVE, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0); 
+		
+		
+		
+		genesetPanel=new JPanel();
 	    genesetPanel.setBackground(Color.WHITE);
 	    genesetPanel.setLayout(new GridBagLayout());
         genesetPanel.setBorder(new EtchedBorder());
@@ -281,40 +302,26 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 		    
 	    revalidate();
 	   
-	   
-		
+	
 		
 	}
 	
-    
-	public void initialize(String collapseMode, String minGenes, String SDcutoff, String num_Perms ) {
+	
+	
+	
+	
+	public void initialize(String collapseMode, String minGenes, String SDcutoff, String num_Perms,  String LIMMAcutoff, String numPathways ) {
 		this.choiceBox.setSelectedItem(collapseMode);
 		this.geneNumber.setText(minGenes);
 		this.sdTextField.setText(SDcutoff);
 		this.permutationTextField.setText(num_Perms);
-		
-		
-	}
-	
-	
-	
-	public void clearValuesFromAlgorithmData() {
-		
-		algData.getParams().getMap().remove("probe_value");
-		algData.getParams().getMap().remove("gene-number");
-		algData.getParams().getMap().remove("standard-deviation-cutoff");
-		algData.getParams().getMap().remove("permutations");
-		
-		
-	}
-
-	
-	public void onDisplayed() {
-		// TODO Auto-generated method stub
+		this.LIMMACutoffTextField.setText(LIMMAcutoff);
+		this.topPathwaysTextField.setText(numPathways);
 		
 	}
 	
-	public void createDownloadPanel(String label, String buttonName, String actionCommand) {
+	
+public void createDownloadPanel(String label, String buttonName, String actionCommand) {
 		
 		fileSelectionPanel=new JPanel();
         fileSelectionPanel.setLayout(new GridBagLayout());
@@ -466,7 +473,23 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 	}
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void populateAlgorithmData() {
+	
 		if(choiceBox.getSelectedItem()!=null){
 			if(choiceBox.getSelectedItem().equals("Max_Probe"))
 				algData.addParam("probe_value", GSEAConstants.MAX_PROBE);
@@ -491,6 +514,19 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			algData.addParam("permutations", permutationTextField.getText());
 		else
 			algData.addParam("permutations", "");
+		
+		if(topPathwaysTextField.getText().length()!=0) {
+			algData.addParam("pathway-cutoff", topPathwaysTextField.getText());
+		}else {
+			algData.addParam("pathway-cutoff", "");
+		}
+			
+		if(LIMMACutoffTextField.getText().length()!=0) {
+			algData.addParam("LIMMA-cutoff", LIMMACutoffTextField.getText());
+		}else {
+			algData.addParam("LIMMA-cutoff", "");
+		}
+			
 		
 		
 		if (((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")) {
@@ -526,93 +562,219 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 				algData.addParam("annotation-file", "");
 			}
 		
-	}
-	
-	private void updateLabel(String name) {
-		choiceBox.setSelectedItem(name);
+		
 		
 	}
 	
-	public javax.swing.JPanel getParameterPanel() {
-		return parameterPanel;
+	public void clearValuesFromAlgorithmData() {
+		algData.getParams().getMap().remove("probe_value");
+		algData.getParams().getMap().remove("gene-number");
+		algData.getParams().getMap().remove("standard-deviation-cutoff");
+		algData.getParams().getMap().remove("permutations");
+		algData.getParams().getMap().remove("pathway-cutoff");
+		algData.getParams().getMap().remove("LIMMA-cutoff");
+	}
+	
+	/**
+	 * processAnnotationFile() function 
+	 * 1. Reads the selected annotation file 
+	 * 2. Calls "GeneAnnotationImportDialog" to correctly map the unique identifier
+	 * in the annotation file (probe id) to the unique identifier in the
+	 * expression data loaded. 
+	 * 3. Calls "addResourcererGeneAnnotation", which makes the necessary changes in SlideDataElement
+	 * 
+	 */
+	public void processAnnotationFile() {
+		try {
+			String[] dataFieldNames = fwork.getData().getFieldNames();
+
+			AnnotationFileReader reader = AnnotationFileReader
+			.createAnnotationFileReader(getAnnotationFile());
+			//EH
+			GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(
+					new JFrame(), dataFieldNames, reader.getAvailableAnnotations());//MevAnnotation.getFieldNames());
+
+			if (importDialog.showModal() == JOptionPane.OK_OPTION) {
+				((MultipleArrayData) fwork.getData()).addResourcererGeneAnnotation(
+						importDialog.getDataAnnotationKey(), reader
+						.getAffyAnnotation());
+				fwork.getData().setChipAnnotation(reader.getAffyChipAnnotation());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		fwork.getData().setAnnotationLoaded(true);
 	}
 
-
-	public void setParameterPanel(javax.swing.JPanel parameterPanel) {
-		this.parameterPanel = parameterPanel;
+	
+	private File getAnnotationFile() {
+		return new File(this.adh.getAnnFilePath());
 	}
 
+	
+	private void GeneSigDBDownloads() {
+		
+		try {
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
+			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
+			File geneSigs = frm.getSupportFile(temp, true);
+			if(temp.isValid(geneSigs)) {
+				System.out.println("GeneSigDb download file is valid.");
+				this.genesetFilePath=geneSigs.getParent();
+				pathTextField.setText(this.genesetFilePath);
+				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			System.out.println("Could not download GeneSigDbGeneSets file.");
+		} catch (RepositoryInitializationError e) {
+				e.printStackTrace();
+		}
+	}
+	
+	
+	private void BROADDownloads(String emailID) {
+		try {
+		
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
+			
+			//Get the file containing the list of available geneset files.
+			File geneSetList = frm.getSupportFile(new BroadGeneSetList(), true);
+			try {
+				//Parse the list of geneset files into filename strings
+				ArrayList<String> genesetFilenames = BroadGeneSetList.getFileNames(geneSetList);
 
+				//get email address from user
+				String email = emailID;
+				String[] genesetFileNameArray=new String[genesetFilenames.size()];				
+				int index=0;
+				ArrayList<ISupportFileDefinition> defs = new ArrayList<ISupportFileDefinition>();
+				Iterator<String> it = genesetFilenames.iterator();
+				//Add each geneset file name to a String array
+				while(it.hasNext()) {
+					genesetFileNameArray[index] = it.next();
+					index=index+1;
+					
+				}
+				//Ask the resource manager to download a file for each definition
+				SelectMultiFilesDialog dialog = new SelectMultiFilesDialog(new JFrame(), "Select files to download", ((new BroadGeneSetList()).getURL().getHost()), genesetFileNameArray);
+				dialog.setVisible(true);
+				
+				int[] indices = dialog.getSelectedFilesIndices();
+				String[] selectedFiles = new String[indices.length];
+				for(int i=0; i<indices.length; i++) {
+					selectedFiles[i] = genesetFilenames.get(indices[i]);
+					//Create a definition for each geneset file
+				//	System.out.println("Selected file names:"+selectedFiles[i]);
+					defs.add(new BroadGeneSet(selectedFiles[i], email));
+				}
+				
+				
+				Hashtable<ISupportFileDefinition, File> results = frm.getSupportFiles(defs, true);
+				
+				//Check each file for validity, print a list of the valid downloaded files
+				Enumeration<ISupportFileDefinition> e = results.keys();
+				while(e.hasMoreElements()) {
+					ISupportFileDefinition thisDef = e.nextElement();
+					File temp = results.get(thisDef);
+					if(thisDef.isValid(temp)) {
+						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
+						this.genesetFilePath=temp.getParent();
+						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
+						
+						
+						
+					}
+					else 
+						System.out.println("support file not downloaded " + temp.getAbsolutePath());
+				}
+				
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			sfae.printStackTrace();
+		}catch (RepositoryInitializationError rie) {
+			rie.printStackTrace();
+		}
+	}
+	
 	
 	public void onAdd(String componentName) {
 
 		
-			int[] chosenIndices = availableList.getSelectedIndices();
-			Object[] chosenObjects = new Object[chosenIndices.length];
+		int[] chosenIndices = availableList.getSelectedIndices();
+		Object[] chosenObjects = new Object[chosenIndices.length];
 
-			for (int i = chosenIndices.length - 1; i >= 0; i--) {
-				Object addItem = ((DefaultListModel) availableList.getModel())
-				.getElementAt(chosenIndices[i]);
-				chosenObjects[i] = addItem;
-			}
+		for (int i = chosenIndices.length - 1; i >= 0; i--) {
+			Object addItem = ((DefaultListModel) availableList.getModel())
+			.getElementAt(chosenIndices[i]);
+			chosenObjects[i] = addItem;
+		}
 
-			for (int i = 0; i < chosenIndices.length; i++) {
-				((DefaultListModel) selectedList.getModel())
-				.addElement(chosenObjects[i]);
-			}
+		for (int i = 0; i < chosenIndices.length; i++) {
+			((DefaultListModel) selectedList.getModel())
+			.addElement(chosenObjects[i]);
+		}
 
-		
+	
 
-	}
-	
-	
-	public void onAddAll(String componentName){
-		
-		int elementCount = ((DefaultListModel) availableList.getModel())
-					.size();
-			for (int i = 0; i < elementCount; i++) {
-				Object addItem = ((DefaultListModel) availableList.getModel())
-						.getElementAt(i);
-				((DefaultListModel) selectedList.getModel())
-						.addElement(addItem);
-			}
-		
+}
 
-	}
-	
-	
-	
-	public void onRemove(String componentName){
 
-		int[] chosenIndices = selectedList.getSelectedIndices();
+public void onAddAll(String componentName){
+	
+	int elementCount = ((DefaultListModel) availableList.getModel())
+				.size();
+		for (int i = 0; i < elementCount; i++) {
+			Object addItem = ((DefaultListModel) availableList.getModel())
+					.getElementAt(i);
+			((DefaultListModel) selectedList.getModel())
+					.addElement(addItem);
+		}
+	
 
-			// Designed with copy-then-add functionality in mind
-			for (int i = chosenIndices.length - 1; i >= 0; i--) {
-				((DefaultListModel) selectedList.getModel())
-						.remove(chosenIndices[i]);
-			}
-		 
-		
-	}
-	
-	
-	public void onRemoveAll(String componentName){
+}
+
+
+
+public void onRemove(String componentName){
+
+	int[] chosenIndices = selectedList.getSelectedIndices();
+
 		// Designed with copy-then-add functionality in mind
+		for (int i = chosenIndices.length - 1; i >= 0; i--) {
+			((DefaultListModel) selectedList.getModel())
+					.remove(chosenIndices[i]);
+		}
+	 
 	
-			((DefaultListModel) selectedList.getModel()).removeAllElements();
-		
-	}
+}
 
+
+public void onRemoveAll(String componentName){
+	// Designed with copy-then-add functionality in mind
+	((DefaultListModel) selectedList.getModel()).removeAllElements();
 	
-	public String[]getAllSelectedItems(){
-		
-			String[] selectedFiles = new String[selectedList.getModel()
-					.getSize()];
-			for (int index = 0; index < selectedFiles.length; index++) {
-				selectedFiles[index] = ((File) selectedList.getModel()
-						.getElementAt(index)).getName();
-			}
-			return selectedFiles;
+}
+
+
+public String[]getAllSelectedItems(){
+	
+		String[] selectedFiles = new String[selectedList.getModel()
+				.getSize()];
+		for (int index = 0; index < selectedFiles.length; index++) {
+			selectedFiles[index] = ((File) selectedList.getModel()
+					.getElementAt(index)).getName();
+		}
+		return selectedFiles;
+	
+}
+	
+	
+	private void updateLabel(String name) {
+		choiceBox.setSelectedItem(name);
 		
 	}
 	
@@ -695,148 +857,10 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			return "";
 	}
 	
-	/**
-	 * processAnnotationFile() function 
-	 * 1. Reads the selected annotation file 
-	 * 2. Calls "GeneAnnotationImportDialog" to correctly map the unique identifier
-	 * in the annotation file (probe id) to the unique identifier in the
-	 * expression data loaded. 
-	 * 3. Calls "addResourcererGeneAnnotation", which makes the necessary changes in SlideDataElement
-	 * 
-	 */
-	public void processAnnotationFile() {
-		try {
-			String[] dataFieldNames = fwork.getData().getFieldNames();
-
-			AnnotationFileReader reader = AnnotationFileReader
-			.createAnnotationFileReader(getAnnotationFile());
-			//EH
-			GeneAnnotationImportDialog importDialog = new GeneAnnotationImportDialog(
-					new JFrame(), dataFieldNames, reader.getAvailableAnnotations());//MevAnnotation.getFieldNames());
-
-			if (importDialog.showModal() == JOptionPane.OK_OPTION) {
-				((MultipleArrayData) fwork.getData()).addResourcererGeneAnnotation(
-						importDialog.getDataAnnotationKey(), reader
-						.getAffyAnnotation());
-				fwork.getData().setChipAnnotation(reader.getAffyChipAnnotation());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		fwork.getData().setAnnotationLoaded(true);
-	}
-
-	
-	private File getAnnotationFile() {
-		return new File(this.adh.getAnnFilePath());
-	}
-
-	
-	
-	
-	private void GeneSigDBDownloads() {
+	public void onDisplayed() {
+		// TODO Auto-generated method stub
 		
-		try {
-			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
-			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
-			File geneSigs = frm.getSupportFile(temp, true);
-			if(temp.isValid(geneSigs)) {
-				System.out.println("GeneSigDb download file is valid.");
-				this.genesetFilePath=geneSigs.getParent();
-				pathTextField.setText(this.genesetFilePath);
-				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
-			}
-			
-		} catch (SupportFileAccessError sfae) {
-			System.out.println("Could not download GeneSigDbGeneSets file.");
-		} catch (RepositoryInitializationError e) {
-				e.printStackTrace();
-		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private void BROADDownloads(String emailID) {
-		try {
-		
-			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
-			
-			//Get the file containing the list of available geneset files.
-			File geneSetList = frm.getSupportFile(new BroadGeneSetList(), true);
-			try {
-				//Parse the list of geneset files into filename strings
-				ArrayList<String> genesetFilenames = BroadGeneSetList.getFileNames(geneSetList);
-
-				//get email address from user
-				String email = emailID;
-				String[] genesetFileNameArray=new String[genesetFilenames.size()];				
-				int index=0;
-				ArrayList<ISupportFileDefinition> defs = new ArrayList<ISupportFileDefinition>();
-				Iterator<String> it = genesetFilenames.iterator();
-				//Add each geneset file name to a String array
-				while(it.hasNext()) {
-					genesetFileNameArray[index] = it.next();
-					index=index+1;
-					
-				}
-				//Ask the resource manager to download a file for each definition
-				SelectMultiFilesDialog dialog = new SelectMultiFilesDialog(new JFrame(), "Select files to download", ((new BroadGeneSetList()).getURL().getHost()), genesetFileNameArray);
-				dialog.setVisible(true);
-				
-				int[] indices = dialog.getSelectedFilesIndices();
-				String[] selectedFiles = new String[indices.length];
-				for(int i=0; i<indices.length; i++) {
-					selectedFiles[i] = genesetFilenames.get(indices[i]);
-					//Create a definition for each geneset file
-				//	System.out.println("Selected file names:"+selectedFiles[i]);
-					defs.add(new BroadGeneSet(selectedFiles[i], email));
-				}
-				
-				
-				Hashtable<ISupportFileDefinition, File> results = frm.getSupportFiles(defs, true);
-				
-				//Check each file for validity, print a list of the valid downloaded files
-				Enumeration<ISupportFileDefinition> e = results.keys();
-				while(e.hasMoreElements()) {
-					ISupportFileDefinition thisDef = e.nextElement();
-					File temp = results.get(thisDef);
-					if(thisDef.isValid(temp)) {
-						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
-						this.genesetFilePath=temp.getParent();
-						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
-						
-						
-						
-					}
-					else 
-						System.out.println("support file not downloaded " + temp.getAbsolutePath());
-				}
-				
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			}
-			
-		} catch (SupportFileAccessError sfae) {
-			sfae.printStackTrace();
-		}catch (RepositoryInitializationError rie) {
-			rie.printStackTrace();
-		}
-	}
-	
-	
-	
-	
-	
 	private class Listener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
@@ -858,6 +882,10 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 				sdTextField.setText(sdTextField.getText());
 			}else if(command.equalsIgnoreCase("permutations")){
 				permutationTextField.setText(permutationTextField.getText());
+			}else if(command.equalsIgnoreCase("top-pathways")){
+				topPathwaysTextField.setText(topPathwaysTextField.getText());
+			}else if(command.equalsIgnoreCase("limma-cutoff")){
+				LIMMACutoffTextField.setText(LIMMACutoffTextField.getText());
 			}else if (command.equalsIgnoreCase(AnnotationDownloadHandler.GOT_ANNOTATION_FILE)) {
 				processAnnotationFile();
 			}else if(e.getSource().equals(geneSetSelectionBox)) {
@@ -909,7 +937,5 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
     }
 	
 	
-	
-	
-	
+
 }

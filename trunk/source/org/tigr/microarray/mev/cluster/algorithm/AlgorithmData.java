@@ -54,7 +54,7 @@ public class AlgorithmData implements Serializable {
      * Key: "unassigned-samples", Value: Vector
      * Key: "gene-set-names", Value:Vector
      * Key: "excluded-gene-sets", Value: Vector
-     * 
+     * Key: "attract", Value:AlgorithmParameters
      */
     
     protected HashMap gseaParam;
@@ -307,6 +307,24 @@ public class AlgorithmData implements Serializable {
             result[counter++] = (String)iter.next();
         return result;
     }
+    /**
+     * Adds Algorithm Parameters to HashMap 
+     * @param name algorithm name
+     * @param params Reference to AlgorithmParameters 
+     */
+    public void addAlgorithmParameters(String name, AlgorithmParameters params) {
+    	gseaParam.put(name, params);
+    }
+    /**
+     * Returns Algorithm Parameters 
+     * @param name
+     * @return
+     */
+    public AlgorithmParameters getAlgorithmParameters(String name) {
+    	return (AlgorithmParameters)gseaParam.get(name);
+    }
+    
+    
     /**
      * Gets parameters.
      */

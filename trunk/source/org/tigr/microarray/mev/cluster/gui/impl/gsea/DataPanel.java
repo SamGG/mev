@@ -48,7 +48,11 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
-
+/**
+ * DataPanel class creates the data selection component or the first panel of GSEA Wizard dialog
+ * @author sarita
+ *
+ */
 public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 		
@@ -80,20 +84,37 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	private static int xcoord=0;
 	private static int ycoord=0;
 	
+	private int maxFactors=4;
 	//Panel for group assignments/cluster selection
 	
-	//Constructor
+	
+
+	/**
+	 * Constructs a DataPanel object
+	 * 
+	 * 
+	 */
+	
 	public DataPanel(IData idata, AlgorithmData algData, JFrame parent,
 			ClusterRepository clusterRepository, IFramework framework) {
 
-		//this.parentFrame = parent;
+		
 		this.idata = idata;
 		this.algData = algData;
 		this.clusterRepository = clusterRepository;
 		this.framework = framework;
+		setMaxFactors(maxFactors);
 		initComponents();
 	}
 	
+	/**
+	 * Initializes the components of data panel and sets their default values.
+	 * The default data panel GUI comprises of one factor and two levels per factor 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	
 	private void initComponents(){
 		this.setPreferredSize(new Dimension(1000, 850));
@@ -194,8 +215,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	
 	/**
-	 * makeFactorLevel dynamically generates a new Factor Level
-	 * label and text box and assigns listener and adds them to the factorLevelPanel
+	 * makeFactorLevel dynamically generates a new Factor name label/textbox and Factor Level
+	 * label/text box and assigns listener and adds them to the factorLevelPanel
 	 * 
 	 * @param num_levels
 	 */
@@ -271,7 +292,11 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 
 	}
 	
-	
+	/**
+	 * Checks if the number of factors specified by user is valid. Shows an error message box otherwise.
+	 * @param num_factor number of groups specified by user
+	 * @return
+	 */
 	
 	public boolean validateFactorNumber(int num_factor){
 	
@@ -280,8 +305,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 			return false;
 		}
 		
-		if(num_factor>=4){
-			JOptionPane.showMessageDialog(this, "You cannot have more than three factors!", "Factor Number Error", JOptionPane.ERROR_MESSAGE);
+		if(num_factor>=getMaxFactors()){
+			JOptionPane.showMessageDialog(this, "You cannot have more than"+getMaxFactors() + " factors!", "Factor Number Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
@@ -310,8 +335,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	
 	/**
-	 * 
-	 * @param num_factor
+	 * Creates/removes GUI components (Factor name label/textbox and Factor level labels/text boxes) by calling makeFactorLevel function.
+	 * @param num_factor --groups in the data
 	 */
 	public void addRemoveFactor(int num_factor){
 		if(!factorLevelPanel.isVisible()){
@@ -328,7 +353,10 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		
 	}
 	
-	
+	/**
+	 * Creates the cluster groupings panel.
+	 * 
+	 */
 	public void makeClusterSelector(){
 
 		resetPanel(pane);
@@ -472,7 +500,10 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 
 	}
 
-	
+	/**
+	 * Returns the names of all factors
+	 * @return
+	 */
 	
 	public ArrayList<String> getAllFactorNames(){
 		return factorNameList;
@@ -480,12 +511,18 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	
 	
-	
+	/**
+	 * Returns the levels of individual factors
+	 * @return
+	 */
 	public ArrayList getAllFactorLevels(){
 			return factorLevelList;
 	}
 	
-	
+	/**
+	 * Returns the maximum factor level
+	 * @return
+	 */
 	public int getMaximumFactorLevel(){
 		int max=-1;
 		for(int index=0; index<factorLevelList.size(); index++){
@@ -545,9 +582,11 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 			Object src=e.getSource();
 			
 			//if(src==factorTextField && !factorTextField.getText().isEmpty() && validateFactorNumber(Integer.parseInt(factorTextField.getText()))){
-			if(src==factorTextField && factorTextField.getText() != "" && validateFactorNumber(Integer.parseInt(factorTextField.getText()))){
-				addRemoveFactor(Integer.parseInt(factorTextField.getText()));
-				initialize();
+			if(src==factorTextField && factorTextField.getText() != "" ){
+				if( validateFactorNumber(Integer.parseInt(factorTextField.getText()))) {
+					addRemoveFactor(Integer.parseInt(factorTextField.getText()));
+					initialize();
+				}
 				if(getAllFactorLevels().size()!=0){
 					if(drawSampleGroupingsPanel()){
 						makeClusterSelector();
@@ -576,8 +615,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	
 	public void clearValuesFromAlgorithmData() {
-		//Not necessary to clear values, because the parameters populated 
-		//are stored in a hash and so if user enters different set of values
+		//Not necessary to explicitly clear values, because the parameters populated 
+		//are stored in a hash in algorithm data and so if user enters different set of values
 		//by clicking back button, the entry in the hash will get replaced
 
 	}
@@ -586,7 +625,10 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		// TODO Auto-generated method stub
 		
 	}
-
+	/**
+	 * populates Algorithm Data with parameters like factor-names, factor-levels and factor-assigments
+	 * 
+	 */
 	public void populateAlgorithmData() {
 	
 		// Add code here to capture factor names, factor levels and group assignments. 
@@ -1180,6 +1222,19 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
         gbc.weighty = wy;
         return gbc;
     }
+	
+	
+	public int getMaxFactors() {
+		return maxFactors;
+	}
+
+
+	public void setMaxFactors(int maxFactors) {
+		this.maxFactors = maxFactors;
+	}
+	
+	
+	
 	
 	public static void main(String[] args) {
        

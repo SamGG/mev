@@ -32,7 +32,11 @@ import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 
-
+/**
+ * Creates a leading edge viewer
+ * @author sarita
+ *
+ */
 public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 	
 	private LinkedHashMap<String, Float>sorted;
@@ -54,7 +58,10 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 	private java.util.EventListener eventListener;
 	private Object[]genes;
 	
-	
+	/**
+	 * Constructs LeadingEdgeViewer object
+	 * @param sortedTStat
+	 */
 	public LeadingEdgeSubsetViewer(LinkedHashMap<String, Float>sortedTStat) {
 		sorted=sortedTStat;
 		genes=new String[sortedTStat.keySet().size()];
@@ -73,7 +80,16 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 
 	}
 
-	
+	/**
+	 * Returns a float array containing incremental test statistic values.
+	 * Loop through sorted gene test statistic values, populate these values in to a float array
+	 * such that value stored in the float array for GeneI will be equal to 
+	 * (GeneI+sum of test statistic of Gene0-GeneI-1)/sqrt(I) . This number is the incremental sum. 
+	 *
+	 *
+	 * 
+	 * @return
+	 */
 	
 	public float[] getIncrementalSubsetSum(){
 		float temp=Float.MIN_VALUE;
@@ -389,9 +405,6 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 			
 			int xcoord=left + (int) Math.round(index * stepX) + 3;
 			int ycoord=(int)(top+height-factor);
-			
-		
-			
 			int count=0;
 			
 			g.setColor(new Color(128,0,128));

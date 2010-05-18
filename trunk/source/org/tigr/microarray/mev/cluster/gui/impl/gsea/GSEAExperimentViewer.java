@@ -3,17 +3,20 @@ package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-
+/**
+ * Standard MeV Experiment Viewer
+ * @author sarita
+ *
+ */
 public class GSEAExperimentViewer extends ExperimentViewer {
 
 	
 
 	/**
-	 * 
+	 * Constructs a GSEA Experiment with given clusters and experiment
 	 * @param experiment
 	 * @param clusters
-	 *            Constructs a GSEA Experiment with given clusters and
-	 *            experiment
+	 *          
 	 */
 	public GSEAExperimentViewer(Experiment experiment, int[][] clusters) {
 		super(experiment, clusters);

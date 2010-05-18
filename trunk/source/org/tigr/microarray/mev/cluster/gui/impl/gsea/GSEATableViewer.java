@@ -123,7 +123,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         item.addActionListener(listener);
         launchMenu.add(item);
         
-        item = new JMenuItem("Test Statstic Graph");
+        item = new JMenuItem("Test Statistic Graph");
         item.setActionCommand(LAUNCH_TEST_STATISTIC_GRAPH_COMMAND);
         item.addActionListener(listener);
         launchMenu.add(item);
@@ -132,9 +132,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         menu.add(launchMenu);
         
         menu.addSeparator();
-        
-      
-        
+                
         item = new JMenuItem("Save pValues Table");
         item.setActionCommand(SAVE_PVALUES_TABLE_COMMAND);
         item.addActionListener(listener);
@@ -348,7 +346,8 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     }
     
     
-    /** Handles events
+    /** 
+     * Handles events
      */
     protected class Listener extends MouseAdapter implements ActionListener{
         

@@ -118,7 +118,7 @@ public class GSEA extends AbstractAlgorithm {
 
 		identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
 		try{
-		//Change this to avois errors if matrix is not singular	
+		//Change this to avoid errors if matrix is not singular	(use something other than solve)
 		xxInv=xx.solve(identity);
 		
 		FloatMatrix hMat=x.times(xxInv).times(xTranspose);
@@ -410,22 +410,7 @@ public class GSEA extends AbstractAlgorithm {
 			prodMargin=margin[0];
 
 
-		/*	
-		 * These two error messages have been temporarily commented. I suspect the checks are wrong
-		 * if(statLength > prodMargin || statLength < prodMargin){
-			String eMsg="<html>The length of stats vector does not match the <br>" +
-			"<html>dimensions of matrix. Cannot execute Sweep function </html>";
-			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}
-
-		if(statLength <=0){
-			String eMsg="<html>The length of stats vector is zero<br>" +
-			"<html>There was an error in calculating rowsums of AssociationMatrix <br>" +
-			"<html>Cannot execute Sweep function </html>";
-			JOptionPane.showMessageDialog(null, eMsg, "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		}*/
+		
 
 		//This loop applies "sweep" across the rows. Seperate loops would be needed to extend the sweep
 		//function across columns and rows&columns. 
@@ -511,12 +496,7 @@ public class GSEA extends AbstractAlgorithm {
 			//normBy=rowSums;
 			normBy=sqrtVector;
 			int[]margin={1};
-			/*Print normBy vector
-			System.out.println("Printing the normBy vector");
-			for(int i=0; i<normBy.size(); i++){
-				System.out.println(normBy.get(i));
-			}*/
-
+			
 
 
 
@@ -647,12 +627,7 @@ public class GSEA extends AbstractAlgorithm {
 
 
 			ProcessGroupAssignments pga=new ProcessGroupAssignments(factorNames,factorlevels,permutedFactorAssignments,true, nSamp);
-			//Added these two lines in for testing
-		//	pga.findUnassignedSamples(factorNames, factorlevels, permutedFactorAssignments);
-			//adata.addVector("unassigned-samples", pga.getUnassignedColumns());
-
-
-			
+						
 			FloatMatrix factor_matrix_new=pga.generateFactorMatrix(factorNames,factorlevels, permutedFactorAssignments);
 
 			Hashtable<String, FloatMatrix>lmPerGeneresultHash=lmPerGene(adata,factor_matrix_new , true);
@@ -670,7 +645,7 @@ public class GSEA extends AbstractAlgorithm {
 				psqrtCoefVar.set(0,col, (float)Math.sqrt(pcoefVar_intermediate.get(0, col)));
 			}
 			//Divide the coef_intermediate matrix with sqrtCoefVar matrix
-			//TO DO: Check the matrxi dimensions (permMat and result)if they are the same
+			
 			FloatMatrix result2=pcoef_intermediate.arrayRightDivide(psqrtCoefVar);
 
 			permMat.setMatrix(0, permMat.getRowDimension()-1, index, index, result2.transpose());
@@ -678,8 +653,8 @@ public class GSEA extends AbstractAlgorithm {
 
 		}
 		
-		//Assigning to a function global variable to enable passing on as parametres
-		//Dimesnions of this matrix would be equal to (row=number of gene sets, column=number of samples)
+		//Assigning to a function global variable to enable passing on as parameters
+		//Dimensions of this matrix would be equal to (row=number of gene sets, column=number of samples)
 
 		perms=GSNormalize(permMat, amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
 				GSEAConstants.SQRT, false, null);

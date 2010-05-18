@@ -21,35 +21,40 @@ import org.tigr.util.FloatMatrix;
 
 /**
  * 
- * @author Sarita Nair
- * ReadGeneSet parses user provided gene set files and populates the appropriate 
- * data structures.
  * 
- * Currently reads MIT provided GMX and GMT files. It also accepts TXT format files.
- * The GMX and GMT files have Gene Symbols as identifiers. 
- * TXT format is similar to the GMT format files
- *  
+ * ReadGeneSet parses user provided gene set files. Currently capable of reading Broad provided GMX and GMT format files. It also accepts TXT format files.
+ * The GMX and GMT files have Gene Symbols as identifiers. TXT format is similar to the GMT format files, except that there is no restriction on identifiers
+ * @author Sarita Nair
  *
  */
 
 public class ReadGeneSet {
-	Geneset[] set=null;
-	String[][]excludedGenes;
-	Vector excluded_geneSets=new Vector();
-
-
-	GeneSetElement gsElement;
-	String filePath;
-	String fileExtension;
-
+	private Geneset[] set=null;
+	private String[][]excludedGenes;
+	private Vector<String> excluded_geneSets=new Vector<String>();
+	private int minNumOfGenes;
+	private GeneSetElement gsElement;
+	private String filePath;
+	private String fileExtension;
+	
+	/**
+	 * Constructs a ReadGeneSet object
+	 * @param extension -- file name extension
+	 * @param fPath--path to the file
+	 */
 	public ReadGeneSet(String extension, String fPath){
 		filePath=fPath;
 		fileExtension=extension;
 
 	}
-	
+	/**
+	 * Reads and parses GMX format files and returns an array of Geneset objects
+	 * @param filePath of the geneset file
+	 * @return
+	 * @throws Exception
+	 */
 	public Geneset[] read_GMXfile(String filePath) throws Exception{
-		System.out.println("Start time:"+System.currentTimeMillis());
+		//System.out.println("Start time:"+System.currentTimeMillis());
 		ArrayList<Geneset>genesetList=new ArrayList<Geneset>();
 		String temp;
 		int curpos=0;
@@ -98,19 +103,15 @@ public class ReadGeneSet {
 
 		bread.close();
 
-		System.out.println("End time:"+System.currentTimeMillis());
+		//System.out.println("End time:"+System.currentTimeMillis());
 		return set;
 
 	}
 
 	
 	/**
-	 * read_GMTformatfile reads a GMT format gene set file. 
-	 *   
-	 *
-	 * 
-	 * 
-	 * @param filePath
+	 * Reads and parses GMT format files and returns an array of Geneset objects
+	 * @param filePath of the gene set file
 	 * @return
 	 * @throws Exception
 	 */
@@ -161,13 +162,11 @@ public class ReadGeneSet {
 
 
 	/**
-	 * read_TXTfile 
-	 * @param filePath
+	 * Reads and parses TXT format files and returns an array of Geneset objects
+	 * @param filePath of the gene set file
 	 * @return
 	 * @throws Exception
 	 */
-	
-
 	
 	public Geneset[] read_TXTfile(String filePath)throws Exception{
 		ArrayList<Geneset>genesetList=new ArrayList<Geneset>();
@@ -220,8 +219,8 @@ public class ReadGeneSet {
 	
 	
 	/**
-	 * Reads multiple gene set files. The files can be a mix of gmt and gmx OR multiple txt formats.
-	 * Each type is associated with a different gene identifier and so cannot be mixed
+	 * Reads multiple gene set files. The files can be a mix of gmt and gmx OR multiple txt format files.
+	 * GMX and GMT have gene symbols for identifiers and TXT files can have any identifier so cannot load a txt and a gmt file together.
 	 * Returns an array of gene sets
 	 * @param fileList (Names of files)
 	 * @param dirPath (Directory path)
@@ -290,22 +289,9 @@ public class ReadGeneSet {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	/**
-	 * 
+	 * Returns the maximum geneset size. As in length of the geneset containing the maximum number of genes
 	 * @param gset
 	 * @return
 	 */
@@ -350,37 +336,20 @@ public class ReadGeneSet {
 
 	/**
 	 * removeGenesNotinExpressionData returns a GeneSet array, containing all gene sets as in the
-	 * original one. The differEnce is that 
-	 * 
+	 * original one with the notable difference that
 	 * 1. The new Genesets would have ONLY the genes present in expression data.
 	 * 2. If a Geneset does NOT contain any elements, it is still included, but the zeroth GeneSetElement is set to null
-	 * 
-	 * 
+	 *  
 	 * @param gset
 	 * @param genesInExpressionData
 	 * @return
 	 */
 
-
-
 	public Geneset[] removeGenesNotinExpressionData(Geneset[]gset, Vector genesInExpressionData){
 		Geneset[]newGeneSet=new Geneset[gset.length];
 		Vector geneSetElement;
-		//Vector geneSetNames=gset[0].getAllGenesetNames();
 		int setIndex=0;
-	/*	System.out.println("Printing original gene set");
-    	for(int i=0; i<gset.length; i++){
-    		System.out.print("Gene set name:"+gset[i].geneSetName);
-    		System.out.print('\t');
-    		for(int j=0; j<gset[i].getGenesinGeneset().size(); j++){
-    			System.out.print((String)gset[i].getGenesinGeneset().get(j));
-    			System.out.print('\t');
-    		}
-    		System.out.println();
-    	}
-    	System.out.println("Printing original gene set......ENDS");*/
-
-
+	
 
 		while(setIndex<gset.length){
 
@@ -397,7 +366,7 @@ public class ReadGeneSet {
 				GeneSetElement gsElement=null;
 
 				newGeneSet[setIndex].setGeneSetElement(gsElement, 0);
-			//	newGeneSet[setIndex].setGenesinGeneset(null);--deprecated function
+			  
 
 			} else{
 				//Get the gene set elements coRresponding to that gene set
@@ -425,6 +394,10 @@ public class ReadGeneSet {
 				temp.clear();
 
 			}//End of else loop
+			if(newGeneSet[setIndex].getGenesetElements().size()<getMinNumOfGenes()) {
+				getExcludedGeneSets().add(gsetName);
+			}
+			
 			setIndex=setIndex+1;
 
 		}
@@ -454,11 +427,9 @@ public class ReadGeneSet {
 
 
 	/**
-	 * removeGenesetsWithoutMinimumGenes
-	 * This function removes the rows (genesets) which do not have atleast the minimum
-	 * number of genes, as specified by user
-	 * @param excludedgeneSets
-	 * @param oldGenesets
+	 * Removes the rows (genesets) which do not have the minimum number of genes, as specified by user
+	 * @param excludedgeneSets are the ones that do not have required minimum number of genes
+	 * @param oldGenesets original gene sets from which excluded gene sets are removed
 	 * @return
 	 */ 
 
@@ -491,7 +462,7 @@ public class ReadGeneSet {
 
 					newGenesets[newIndex].setGeneSetName(gsetName);
 					newGenesets[newIndex].setGeneSetElement(gsElement, j);
-				//	newGenesets[newIndex].setGenesinGeneset(gene);
+				
 
 
 				}
@@ -503,7 +474,7 @@ public class ReadGeneSet {
 
 		}//While ends
 		if(geneSetNames.isEmpty()){
-			//newGenesets[0].setAllGenesetNames(geneSetNames);--deprecated
+		
 	
 			String eMsg="<html>All the gene sets fail to pass the minimum genes cutoff. <br>"+ 
 			"<html>You can try lowering the cutoff and running the analysis. </html>";
@@ -641,12 +612,12 @@ public class ReadGeneSet {
 	 * @param genesets
 	 */  
 
-	public void setExcludedGeneSets(Vector genesets){
-		this.excluded_geneSets=genesets;
+	public void setExcludedGeneSets(Vector<String> genesets){
+		excluded_geneSets=genesets;
 	}
 
-	public Vector getExcludedGeneSets(){
-		return this.excluded_geneSets;
+	public Vector<String> getExcludedGeneSets(){
+		return excluded_geneSets;
 	}
 
 	/**
@@ -672,7 +643,21 @@ public class ReadGeneSet {
 		return extension;
 	}
 	
+	/**
+	 * Returns the minimum number of genes that must be present in a geneset
+	 * @return
+	 */
+	public int getMinNumOfGenes() {
+		return minNumOfGenes;
+	}
 
+	/**
+	 * Sets the minimum number of genes to be present in a geneset
+	 * @param minNumOfGenes
+	 */
+	public void setMinNumOfGenes(int minNumOfGenes) {
+		this.minNumOfGenes = minNumOfGenes;
+	}
 
 
 	public static void main(String[] str){

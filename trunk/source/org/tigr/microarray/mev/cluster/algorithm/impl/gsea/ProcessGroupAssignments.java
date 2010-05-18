@@ -7,9 +7,10 @@ import org.tigr.util.FloatMatrix;
 
 /**
  * 
- * @author Sarita Nair ProcessGroupAssignments class reads a factor file and
- *         generates a Matrix of values corresponding to the factor
- *         (phenotype/class)assignments.
+ * @author Sarita Nair 
+ * ProcessGroupAssignments class reads a factor file and
+ * generates a Matrix of values corresponding to the factor
+ * (phenotype/class)assignments.
  * 
  * 
  * 
