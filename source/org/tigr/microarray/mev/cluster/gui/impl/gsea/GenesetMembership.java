@@ -40,33 +40,20 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 
 import org.tigr.util.FloatMatrix;
 
-
+/**
+ * Creates a gene set membership plot. The rows of the plot correspond to genes and columns
+ * correspond to gene sets. The first column contains genes sorted (descending) and colored by their test statistic.
+ * If a gene(row) is present in a geneset (column), that cell is highlighted using same color as the cell corresponding 
+ * to the gene (row)in the first column. 
+ * 
+ * Reference: Geneset membership plot in GeneSigdb
+ * @author sarita
+ *
+ */
 
 public class GenesetMembership extends JPanel implements IViewer {
 
-	// First create an Experiment object with number of rows equal to genes
-	// present in gene sets and data.
-	// Number of columns id equal to number of gene sets +1. This can be
-	// obtained form GSEAGUI.
-
-	// Second step is to create a new ExperimentHeader class which would allow
-	// painting geneset names instead of sample names
-	// override the drawHeader(), updateSizes()
-
-	// Third step is to create an experimentViewer with the experiment object
-	// created in step one. GSEAExperimentViewer would need an additional
-	// constructor where it overrides exrimentHeader
-	// with the new custom experimentHeader object. Clusters would be equal to
-	// numer of rows
-	// in experiment object
-	// ExperimentViewer should have popup menu and rightclick disabled because
-	// 1. spot information will not be able to find the correct info. Number of
-	// columns is not equal to number of samples but is equal to number
-	// of gene sets.
-	// 2. Rows are not equal to number of genes so number of rows is lesser than
-	// the original experiment object
-	// 3. We will be plotting test statistic and not expression values.
-
+	
 	private ArrayList<String> unique_genes=new java.util.ArrayList<String>();
 	private ArrayList<String> gene_sets=new java.util.ArrayList<String>();
 	private ArrayList<String>sampleNames=new java.util.ArrayList<String>();
@@ -106,22 +93,13 @@ public class GenesetMembership extends JPanel implements IViewer {
 	private Graphics2D graphics;	
 	private Font font=new Font("monospaced", Font.PLAIN, elementSize.height);
 	
-	public int getCurrentWidth() {
-		return width;
-	}
-
-	public void setCurrentWidth(int width) {
-		this.width = width;
-	}
-
-	public int getCurrentHeight() {
-		return height;
-	}
-
-	public void setCurrentHeight(int height) {
-		this.height = height;
-	}
-
+	
+    /**
+     * Constructs a GenesetMembership object
+     * @param uniquegenes in the expression data
+     * @param genesets used for running gsea
+     * @param gset array of gene set objects
+     */
 	public GenesetMembership(ArrayList<String> uniquegenes,
 			ArrayList<String> genesets, Geneset[] gset) {
 	
@@ -142,15 +120,13 @@ public class GenesetMembership extends JPanel implements IViewer {
 	}
 
 	/**
-	 * @return createExperimentObject creates an Experiment object with
+	 * Creates an Experiment object with
+	 * rows=number of unique genes present in the expression data
+	 * columns=number of gene sets
 	 * 
-	 *         rows=number of unique genes present in the expression data
-	 *         columns=number of gene sets
-	 * 
-	 *         The zeroth column will contain the sorted test statistic of all
-	 *         genes in the data set. Thereafter each cell [row=gene and
-	 *         column=geneset] will contain the test statistic corresponding to
-	 *         that gene, if it is present in the gene set and zero otherwise
+	 * The zeroth column will contain the sorted test statistic of all
+	 * genes in the data set. Thereafter each cell [row=gene and column=geneset] will contain the test statistic 
+	 * corresponding to that gene, if it is present in the gene set and zero otherwise
 	 * 
 	 * 
 	 * 
@@ -235,13 +211,27 @@ public class GenesetMembership extends JPanel implements IViewer {
 		return maxWidth;
 	}
 	
-	
+	public int getCurrentWidth() {
+		return width;
+	}
+
+	public void setCurrentWidth(int width) {
+		this.width = width;
+	}
+
+	public int getCurrentHeight() {
+		return height;
+	}
+
+	public void setCurrentHeight(int height) {
+		this.height = height;
+	}
 	
 	
 
 	
 	/**
-	 * 
+	 * Overrides paint function
 	 * 
 	 * 
 	 */
@@ -354,12 +344,7 @@ public class GenesetMembership extends JPanel implements IViewer {
         return image;
     }
     
-    
-    
-    
-    
-    
-    
+      
     
     
     
@@ -579,12 +564,7 @@ public class GenesetMembership extends JPanel implements IViewer {
         public void mouseEntered(MouseEvent event) {
         //	System.out.println("mouse entered");
         	
-        	
-        	
-        	
-        	
-        	
-        	
+             	
         }
         
         
@@ -646,7 +626,9 @@ public class GenesetMembership extends JPanel implements IViewer {
 
 	public Expression getExpression() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Expression(this, this.getClass(), "new", 
+    			new Object[]{unique_genes,gene_sets, gSets});
+			
 	}
 
 	public JComponent getHeaderComponent() {

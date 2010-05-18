@@ -1,5 +1,9 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
-
+/**
+ * List of string constants used in GSEA
+ * @author sarita
+ *
+ */
 public class GSEAConstants {
 	
 	public static String MAX_PROBE = "max_probe";

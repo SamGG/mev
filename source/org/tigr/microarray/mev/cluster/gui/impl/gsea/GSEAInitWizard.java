@@ -17,12 +17,15 @@ public class GSEAInitWizard extends GSEAWizard {
 	 * Module specific IWizardParmeterPanels 
 	 */
 
-	private StepsPanel stepsPanel;
 	private DataPanel dataPanel;
-	private ParameterPanel parameterPanel;
+	private IWizardParameterPanel parameterPanel;
 
+	
 	private IWizardParameterPanel currentPanel;
 	private IData idata;
+	
+	
+	
 
 	/**
 	 * @param parent parent JFrame
@@ -47,7 +50,10 @@ public class GSEAInitWizard extends GSEAWizard {
 		parameterPanel = new ParameterPanel(algData, parent, framework);
 
 	}
-
+	
+	
+	
+	
 	/**
 	 * Prepares the next component to display.  A combination of current algorithm parameters
 	 * in AlgorithmData and step index is used to prepare the returned component for display.
@@ -125,4 +131,21 @@ public class GSEAInitWizard extends GSEAWizard {
 		return true;
 	}
 
+	public IWizardParameterPanel getParameterPanel() {
+		return parameterPanel;
+	}
+
+	public void setParameterPanel(IWizardParameterPanel parameterPanel) {
+		this.parameterPanel = parameterPanel;
+	}
+	
+	
+	public DataPanel getDataPanel() {
+		return dataPanel;
+	}
+
+
+
+	
+	
 }
