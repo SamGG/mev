@@ -43,6 +43,7 @@ public class TTestClusterTableViewer extends ClusterTableViewer {
         } else {
             titlesVector.add("Adj p value");
         }            
+        titlesVector.add("False Discovery Rate");
         
         String[] auxTitles = new String[titlesVector.size()];
         for (int i = 0; i < auxTitles.length; i++) {
@@ -74,6 +75,7 @@ public class TTestClusterTableViewer extends ClusterTableViewer {
             } else {
                 auxData[i][counter++] = new Float(results.getAdjPValuesMatrix().A[i][0]);
             }
+            auxData[i][counter++] = new Float(results.getQValuesMatrix().A[i][0]);
         }
         return auxData;
 	}
