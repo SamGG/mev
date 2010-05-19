@@ -404,7 +404,7 @@ public class ATTRACTGUI implements IClusterGUI{
 
 		// Display Excluded Gene sets
 		Vector temp = result.getVector("excluded-gene-sets");
-		System.out.println("length of excluded genesetsin GUI:"+temp.size());
+	
 		String[][] _dummy = new String[temp.size()][1];
 
 		for (int i = 0; i < temp.size(); i++) {

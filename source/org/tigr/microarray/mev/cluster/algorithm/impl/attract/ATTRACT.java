@@ -231,7 +231,7 @@ public class ATTRACT extends AbstractAlgorithm{
 			RHook.evalR(rCmd);
 			
 			//Faster to create an RDataMatrix directly from "incidence-matrix" than writing out a file and reading it	
-			System.out.println("Creating incidence matrix in R");
+			//System.out.println("Creating incidence matrix in R");
 			RHook.log("Creating incidence matrix in R");
 			
 			fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"incidenceMatrixFile.txt";
@@ -259,14 +259,14 @@ public class ATTRACT extends AbstractAlgorithm{
 			fileLoc = fileLoc.replace("\\", "/");
 			writeSignificantGenesetsToFile(fileLoc,geneSetSize, overEnriched);
 			
-			System.out.println("Reading in significant gene sets");
+			//System.out.println("Reading in significant gene sets");
 			RHook.log("Reading in Significant Genesets");
 			
 			
 			rCmd="rankedPathways<-read.delim('"+fileLoc+"', sep='\\t', header=TRUE)";
 			RHook.evalR(rCmd);
 			
-			System.out.println("Creating attractor moduleset");
+		//	System.out.println("Creating attractor moduleset");
 			RHook.log("Creating AttractorModuleSet");
 			
 						
@@ -289,7 +289,7 @@ public class ATTRACT extends AbstractAlgorithm{
 			RHook.evalR(rCmd);
 			
 			//Removing these flat genes 
-			System.out.println("Removing flat genes");
+			//System.out.println("Removing flat genes");
 			rCmd="remove.these.genes<-removeFlatGenes(eset, cellType, contrasts=NULL, limma.cutoff=0.05)";
 			x=RHook.evalR(rCmd);
 				
@@ -350,7 +350,6 @@ public class ATTRACT extends AbstractAlgorithm{
 			//Synexpression groups found for a geneset and the corresponding correlated genes
 			for(int groups=0; groups<numGroups; groups++) {
 				rCmd="asMatrix<-t(as.matrix(unlist(mapk.syn@groups[["+(groups+1)+"]]), nrow=length((mapk.syn@groups[["+(groups+1)+"]])), ncol=length(unlist(mapk.syn@groups[["+(groups+1)+"]])), byrow=true))";
-				//x=RHook.evalR(rCmd);--commented for testing
 				RHook.evalR(rCmd);
 				rCmd="asVector<-as.vector(asMatrix)";
 				x=RHook.evalR(rCmd);
@@ -392,9 +391,13 @@ public class ATTRACT extends AbstractAlgorithm{
 		
 	
 						
-			System.out.println("end r session");
+		//	System.out.println("end r session");
 			
 			RHook.endRSession();
+			//Remove all temporary files
+			removeAllTmps();
+			
+			
 			
 			
 			
@@ -610,9 +613,25 @@ public class ATTRACT extends AbstractAlgorithm{
 	}
 	
 		
-	private void removeTmps(String fileName) {
-		File f = new File(fileName);
-		f.delete();
+	private void removeAllTmps() {
+		String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator");
+		String fPath=fileLoc+"dataMatrixfile.txt";
+		fPath = fPath.replace("\\", "/");
+		new File(fPath).delete();
+			
+		
+		fPath=fileLoc+"sampleGroupingsR.txt";
+		fPath = fPath.replace("\\", "/");
+		new File(fPath).delete();
+		
+		fPath=fileLoc+"incidenceMatrixFile.txt";
+		fPath = fPath.replace("\\", "/");
+		new File(fPath).delete();
+		
+		fPath=fileLoc+"significantGeneSetFile.txt";
+		fPath = fPath.replace("\\", "/");
+		new File(fPath).delete();
+		
 	}
 	
 	public Geneset[]getGeneSets(){
