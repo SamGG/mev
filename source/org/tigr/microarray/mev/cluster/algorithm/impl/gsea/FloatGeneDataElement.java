@@ -4,9 +4,8 @@ import java.util.ArrayList;
 /**
  * FloatGeneDataElement is another implementation of IGeneDataElement. The purpose of this implementation is to
  * avoid duplicating information like 
- * 1) Number of probes mapping to a gene
- * 2) Intensity values of these probes
- * 3) Position of these probes
+ * 1) Names of probes mapping to a gene
+ * 2) Position of these probes
  * Rest of the implementation is same as GeneDataElement
  * 
  * @author Sarita Nair

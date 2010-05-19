@@ -8,7 +8,7 @@ import org.tigr.util.FloatMatrix;
 /**
  * 
  *
- * This interface represents all functionality to be implemented by a single geneset.
+ * IGeneSet interface provides functions.
  * 
  * 1. Return names of all genes in the gene set
  * 2. Return the name of the gene set

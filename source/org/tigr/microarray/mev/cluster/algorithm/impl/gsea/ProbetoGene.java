@@ -304,8 +304,7 @@ public class ProbetoGene {
 
 	// Need to return this. The reason being, it would be useful to get the
 	// information of what probes map
-	// to what gene etc, while generating expressionviewer. SpotInformationBox
-	// can contain this info.
+	// to what gene etc, while generating expressionviewer.
 
 	public GSEAExperiment returnGSEAExperiment() {
 		return this.gseaExperiment;
