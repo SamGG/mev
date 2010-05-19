@@ -296,7 +296,7 @@ public class ATTRACTGUI implements IClusterGUI{
 				   addSynExpressionGraph(geneset[i].getSynExpressionProfiles(),geneset[i].getSimilarGeneExpressionProfile(),geneset[i], clusterNode);
 			 
 				  //Call addExpressionViewers here
-				 // addExpressionImages(clusterNode, result, experiment, (String)geneset[i].getGeneSetName());
+				//  addExpressionImages(clusterNode, result, experiment, (String)geneset[i].getGeneSetName());
 				  
 				  node.add(clusterNode);
 			  }
