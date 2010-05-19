@@ -12,7 +12,7 @@ import org.tigr.util.FloatMatrix;
 
 public class TTestResults {
 	private int tTestDesign;
-	private FloatMatrix rawPValuesMatrix,
+	private FloatMatrix rawPValuesMatrix,qValuesMatrix,
 		adjPValuesMatrix, tValuesMatrix, dfMatrix, meansAMatrix, 
 		meansBMatrix, sdAMatrix, sdBMatrix, 
 		oneClassMeansMatrix, oneClassSDsMatrix;
@@ -73,8 +73,14 @@ public class TTestResults {
 	public FloatMatrix getRawPValuesMatrix() {
 		return rawPValuesMatrix;
 	}
+	public FloatMatrix getQValuesMatrix() {
+		return qValuesMatrix;
+	}
 	public void setRawPValuesMatrix(FloatMatrix rawPValuesMatrix) {
 		this.rawPValuesMatrix = rawPValuesMatrix;
+	}
+	public void setQValuesMatrix(FloatMatrix qValuesMatrix) {
+		this.qValuesMatrix = qValuesMatrix;
 	}
 	public FloatMatrix getAdjPValuesMatrix() {
 		return adjPValuesMatrix;

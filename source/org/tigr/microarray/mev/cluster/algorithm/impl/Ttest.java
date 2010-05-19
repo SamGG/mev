@@ -15,6 +15,7 @@
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
 
@@ -270,7 +271,8 @@ public class Ttest extends AbstractAlgorithm {
         clusterVector.add(sigGenes);
         clusterVector.add(nonSigGenes);
         k = clusterVector.size();       
-        
+
+        FloatMatrix qValuesMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix rawPValuesMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix adjPValuesMatrix = new FloatMatrix(numGenes, 1);
         FloatMatrix tValuesMatrix = new FloatMatrix(numGenes, 1);
@@ -291,8 +293,10 @@ public class Ttest extends AbstractAlgorithm {
             int currentGene = ((Integer)(sigGenes.get(i))).intValue();
             isSigMatrix.A[currentGene][0] = 1.0f;
         }      
-        
+
+        float[] qvalues = getQValsFromPVals(this.origPVals);
         for (int i = 0; i < numGenes; i++) {
+            qValuesMatrix.A[i][0] = qvalues[i];
             rawPValuesMatrix.A[i][0] = (float)(origPVals[i]);
             adjPValuesMatrix.A[i][0] = (float)(adjustedPVals[i]);
             tValuesMatrix.A[i][0] = (float)(tValues[i]);
@@ -351,6 +355,10 @@ public class Ttest extends AbstractAlgorithm {
             }
         }
                 
+//        float[]qvalues =getQValsFromPVals(this.origPVals);
+//        for (int i=0; i<qvalues.length; i++){
+//        	System.out.println("qvalues["+i+"] \t"+qvalues[i]+" \tadjustedPVals["+i+"] \t"+adjustedPVals[i]+" \torigPVals["+i+"] \t"+origPVals[i]);
+//        }
         // prepare the result
         AlgorithmData result = new AlgorithmData();
         result.addCluster("cluster", result_cluster);
@@ -362,6 +370,7 @@ public class Ttest extends AbstractAlgorithm {
         //result.addMatrix("sigTValues", sigTValuesMatrix);
         //result.addMatrix("nonSigPValues", nonSigPValuesMatrix);
         //result.addMatrix("nonSigTValues", nonSigTValuesMatrix);
+        result.addMatrix("qValues", qValuesMatrix);
         result.addMatrix("rawPValues", rawPValuesMatrix);
         result.addMatrix("adjPValues", adjPValuesMatrix);
         result.addMatrix("tValues", tValuesMatrix);
@@ -376,7 +385,21 @@ public class Ttest extends AbstractAlgorithm {
         return result;        
         //return null; //for now
     }
-    
+    private float[] getQValsFromPVals(double[] pvals){
+    	float[] qvals = new float[pvals.length];
+    	float[] temppvals = new float[pvals.length];
+    	float[] origIndex = new float[pvals.length];
+    	for (int i=0; i<temppvals.length; i++){
+    		temppvals[i] = (float)pvals[i];
+    		origIndex[i] = i;
+    	}
+    	ExperimentUtil.sort2(temppvals, origIndex);
+    	for (int i=0; i<temppvals.length; i++){
+    		qvals[(int)origIndex[i]] = temppvals[i]/((float)(Arrays.binarySearch(temppvals, temppvals[i])+1)/((float)temppvals.length));
+    		//uses binary search instead of index to return consistent index for multiple genes with identical p-values
+    	}
+    	return qvals;
+    }
     protected NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
         NodeValueList nodeList = new NodeValueList();
         AlgorithmData data = new AlgorithmData();

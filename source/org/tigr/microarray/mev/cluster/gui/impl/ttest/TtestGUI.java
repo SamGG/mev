@@ -72,7 +72,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
     protected String[] auxTitles;
     protected Object[][] auxData;
     
-    protected Vector<Float> tValues, rawPValues, adjPValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
+    protected Vector<Float> tValues, rawPValues, adjPValues, qValues, dfValues, meansA, meansB, sdA, sdB, oneClassMeans, oneClassSDs;
     protected Vector pairedGroupAExpts, pairedGroupBExpts;
     protected IData data;
     protected Vector<String> exptNamesVector;
@@ -276,6 +276,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
+            FloatMatrix qValuesMatrix = result.getMatrix("qValues");
             FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
             FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
             FloatMatrix tValuesMatrix = result.getMatrix("tValues");
@@ -289,6 +290,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             FloatMatrix oneClassSDsMatrix = result.getMatrix("oneClassSDsMatrix");
             ttestResult = new TTestResults();
             ttestResult.setTTestDesign(tTestDesign);
+            ttestResult.setQValuesMatrix(result.getMatrix("qValues"));
             ttestResult.setRawPValuesMatrix(result.getMatrix("rawPValues"));
             ttestResult.setAdjPValuesMatrix(result.getMatrix("adjPValues"));
             ttestResult.setTValuesMatrix(result.getMatrix("tValues"));
@@ -303,6 +305,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
         
             rawPValues = new Vector<Float>();
             adjPValues = new Vector<Float>();
+            qValues = new Vector<Float>();
             tValues = new Vector<Float>();
             dfValues = new Vector<Float>();
             meansA = new Vector<Float>();
@@ -315,6 +318,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
                 rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
                 adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
+                qValues.add(new Float(qValuesMatrix.A[i][0]));
             }
             
             for (int i = 0; i < tValuesMatrix.getRowDimension(); i++) {
@@ -695,6 +699,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             TTestResults ttestResult = new TTestResults();
             FloatMatrix rawPValuesMatrix = result.getMatrix("rawPValues");
             FloatMatrix adjPValuesMatrix = result.getMatrix("adjPValues");
+            FloatMatrix qValuesMatrix = result.getMatrix("qValues");
             FloatMatrix tValuesMatrix = result.getMatrix("tValues");
             FloatMatrix dfMatrix = result.getMatrix("dfValues");
             FloatMatrix meansAMatrix = result.getMatrix("meansAMatrix");
@@ -708,6 +713,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             ttestResult.setTTestDesign(tTestDesign);
             ttestResult.setRawPValuesMatrix(result.getMatrix("rawPValues"));
             ttestResult.setAdjPValuesMatrix(result.getMatrix("adjPValues"));
+            ttestResult.setQValuesMatrix(result.getMatrix("qValues"));
             ttestResult.setTValuesMatrix(result.getMatrix("tValues"));
             ttestResult.setDfMatrix(result.getMatrix("dfValues"));
             ttestResult.setMeansAMatrix(result.getMatrix("meansAMatrix"));
@@ -721,6 +727,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             
             rawPValues = new Vector<Float>();
             adjPValues = new Vector<Float>();
+            qValues = new Vector<Float>();
             tValues = new Vector<Float>();
             dfValues = new Vector<Float>();
             meansA = new Vector<Float>();
@@ -733,6 +740,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             for (int i = 0; i < rawPValuesMatrix.getRowDimension(); i++) {
                 rawPValues.add(new Float(rawPValuesMatrix.A[i][0]));
                 adjPValues.add(new Float(adjPValuesMatrix.A[i][0]));
+                qValues.add(new Float(qValuesMatrix.A[i][0]));
             }
             
             for (int i = 0; i < tValuesMatrix.getRowDimension(); i++) {
@@ -883,6 +891,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
             }
             titlesVector.add("Degrees of freedom");
             titlesVector.add("Raw p value");
+            titlesVector.add("FDR");
             //int significanceMethod = params.getInt("significance-method");
             if ((significanceMethod == TtestInitDialog.FALSE_NUM)||(significanceMethod == TtestInitDialog.FALSE_PROP)) {
                 if (calculateAdjFDRPVals)
@@ -911,6 +920,7 @@ public class TtestGUI implements IClusterGUI, IScriptGUI {
                 auxData[i][counter++] = tValues.get(i);
                 auxData[i][counter++] = dfValues.get(i);
                 auxData[i][counter++] = rawPValues.get(i);
+                auxData[i][counter++] = qValues.get(i);
                 if ((significanceMethod == TtestInitDialog.FALSE_NUM)||(significanceMethod == TtestInitDialog.FALSE_PROP)) {
                     if (calculateAdjFDRPVals)
                         auxData[i][counter++] = adjPValues.get(i);
