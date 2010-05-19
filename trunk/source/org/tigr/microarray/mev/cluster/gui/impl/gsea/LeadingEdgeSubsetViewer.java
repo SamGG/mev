@@ -84,7 +84,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 	 * Returns a float array containing incremental test statistic values.
 	 * Loop through sorted gene test statistic values, populate these values in to a float array
 	 * such that value stored in the float array for GeneI will be equal to 
-	 * (GeneI+sum of test statistic of Gene0-GeneI-1)/sqrt(I) . This number is the incremental sum. 
+	 * (test statistic of GeneI+sum of test statistic of Gene0-GeneI-1)/sqrt(I) . This number is the incremental sum. 
 	 *
 	 *
 	 * 

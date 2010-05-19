@@ -343,7 +343,7 @@ public class SynExpressionViewer extends JPanel implements IViewer {
 
 		// Draw x axis label
 		g.setStroke(new BasicStroke(2));
-		String xlabel = "Groups";
+		String xlabel = " Sample Groups";
 		String ylabel = "Log2(expression)";
 		Font font = new Font("Dialog", Font.PLAIN, 12);
 
@@ -504,10 +504,10 @@ public class SynExpressionViewer extends JPanel implements IViewer {
 				//Draw the string 'Group1', 'Group2' etc on to the graph. If there are say 7 samples in group1, the string would be drawn between
 				//sample 3 & sample 4. The instance field verticalLineCoord keeps a track of the previous x coordinate where the line was drawn.
 				if(verticalLineCoord==-1) {
-					g.drawString("Group "+grpNumber, (synXCoord) / 2, getHeight());
+					g.drawString("Group "+grpNumber, (synXCoord) / 2, getHeight()-8);
 					verticalLineCoord=synXCoord;
 				}else {
-					g.drawString("Group "+grpNumber, (synXCoord+verticalLineCoord) / 2, getHeight()-5);
+					g.drawString("Group "+grpNumber, (synXCoord+verticalLineCoord) / 2, getHeight()-8);
 					verticalLineCoord=synXCoord;
 				}
 				//Attract allows only one factor, there fore need to check just the zeroth factor level
@@ -518,7 +518,7 @@ public class SynExpressionViewer extends JPanel implements IViewer {
 			
 			if(index==numberOfSamples-1) {
 				g.setColor(Color.BLACK);
-				g.drawString("Group "+grpNumber, (synXCoord+verticalLineCoord) / 2, getHeight()-5);
+				g.drawString("Group "+grpNumber, (synXCoord+verticalLineCoord) / 2, getHeight()-8);
 				
 			}
 
