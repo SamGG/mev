@@ -5,16 +5,21 @@
  * All rights reserved.
  *******************************************************************************/
 /*
- * $RCSfile: BETRCentroidsViewer.java,v $
- * $Revision: 1.9 $
- * $Date: 2006-03-24 15:51:02 $
+ * $RCSfile: BETRExperimentViewer.java,v $
+ * $Revision: 1.10 $
+ * $Date: 2006-05-02 16:56:57 $
  * $Author: eleanorahowe $
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.limma;
+package org.tigr.microarray.mev.cluster.gui.impl.surv;
 
 import java.awt.Frame;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,69 +30,92 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.CentroidsViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileFilter;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
+import org.tigr.util.FloatMatrix;
+
 
 /**
  *
  * @author  dschlauch
  * @version 
  */
-public class LIMMACentroidsViewer extends CentroidsViewer {
-
-    private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;
-    private float[][] geneGroupMeans, geneGroupSDs;
+public class SURVExperimentViewer extends ExperimentViewer {
     
-    /** Creates new BETRCentroidsViewer */
-    public LIMMACentroidsViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-        super(experiment, clusters);        
-		initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
+    private Vector fValues, rawPValues, adjPValues, dfNumValues, dfDenomValues, ssGroups, ssError;  
+    private float[][] geneGroupMeans, geneGroupSDs;
+    public SURVExperimentViewer(Experiment e, ClusterWrapper clusters, ClusterWrapper samplesOrder, Boolean drawAnnotations) {
+    	super(e, clusters.getClusters(), samplesOrder.getClusters()[0], drawAnnotations);
     }
-	/**
-	 * @inheritDoc
-	 */
-	public LIMMACentroidsViewer(CentroidViewer cv, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-		super(cv);
-		initialize(geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
-	}
-	/**
-	 * @inheritDoc
-	 */
-	public Expression getExpression(){
-		Object[] parentExpressionArgs = super.getExpression().getArguments();
-		return new Expression(this, this.getClass(), "new", 
-				new Object[]{parentExpressionArgs[0], geneGroupMeans, geneGroupSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues});
-	}
-	
-	public void initialize(float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
-        this.rawPValues = rawPValues;
-        this.adjPValues = adjPValues;
-        this.fValues = fValues;
-        this.geneGroupMeans = geneGroupMeans;
-        this.geneGroupSDs = geneGroupSDs;
-        this.ssGroups = ssGroups;
-        this.ssError = ssError;
-        this.dfNumValues = dfNumValues;
-        this.dfDenomValues = dfDenomValues;       
+    	    
+    public SURVExperimentViewer(Experiment experiment, ClusterWrapper clusters, FloatMatrix geneGroupMeans, FloatMatrix geneGroupSDs, 
+    		Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    	this(experiment, clusters.getClusters(), geneGroupMeans.A, geneGroupSDs.A, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
     }
+    /** Creates new BETRExperimentViewer */
+    public SURVExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+	super(experiment, clusters);
+	        this.rawPValues = rawPValues;
+	        this.adjPValues = adjPValues;
+	        this.fValues = fValues;
+	        this.ssGroups = ssGroups;
+	        this.ssError = ssError;
+	        this.geneGroupMeans = geneGroupMeans;
+	        this.geneGroupSDs = geneGroupSDs;
+	        this.dfNumValues = dfNumValues;
+	        this.dfDenomValues = dfDenomValues;
+    }
+    public SURVExperimentViewer(Experiment e, int[][] clusters, int[] samplesOrder, boolean drawAnnotations, 
+    		String[] auxTitles, Object[][] auxData, Object o, Object oa, Object ob, Object oc, Object od, Object oe, Object of) {
+    	this(e, clusters, null, null, null, null, null, null, null, null, null);
+    } 
+    
+    /** Creates new BETRExperimentViewer */
+    public SURVExperimentViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues, Object o, Object oo) {
+	super(experiment, clusters);
+	        this.rawPValues = rawPValues;
+	        this.adjPValues = adjPValues;
+	        this.fValues = fValues;
+	        this.ssGroups = ssGroups;
+	        this.ssError = ssError;
+	        this.geneGroupMeans = geneGroupMeans;
+	        this.geneGroupSDs = geneGroupSDs;
+	        this.dfNumValues = dfNumValues;
+	        this.dfDenomValues = dfDenomValues;
+    }
+
+    
     /**
-     * Saves all clusters.
+     * Saves all the clusters.
      */
-    protected void onSaveClusters() {
-        Frame frame = JOptionPane.getFrameForComponent(getContentComponent());
-        try {
-            saveExperiment(frame, getExperiment(), getData(), getClusters());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Can not save cluster!", e.toString(), JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+    public void saveClusters(Frame frame) throws Exception {
+        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
+        saveExperiment(frame, getExperiment(), getData(), getClusters());
+    }
+
+    /**
+     * Saves current cluster.
+     */
+    public void saveCluster(Frame frame) throws Exception {
+        frame = frame == null ? JOptionPane.getFrameForComponent(this) : frame;
+        saveExperiment(frame, getExperiment(), getData(), getCluster());
+    }    
+    
+    /**
+     * Saves values from specified experiment and its rows.
+     */
+    public void saveExperiment(Frame frame, Experiment experiment, IData data, int[] rows) throws Exception {
+        File file = getFile(frame);
+        if (file != null) {
+            saveCluster(file, experiment, data, rows);
         }
     }
-    
-    
+
     /**
      * Saves values from specified experiment and cluster.
      */
@@ -103,7 +131,7 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
                 saveCluster(aFile, experiment, data, clusters[i]);
             }
         }
-    }
+    }  
     
     private void saveCluster(File file, Experiment experiment, IData data, int[] rows) throws Exception {
         PrintWriter out = new PrintWriter(new FileOutputStream(file));
@@ -127,8 +155,8 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
         out.print("SS(Error)\t");
         out.print("df (Groups)\t");
         out.print("df (Error)\t");
-        out.print("raw p value\t");
-        out.print("adj p value");
+        out.print(" raw p value\t");
+        out.print("adj. p value");
         
         //out.print("UniqueID\tName");
         for (int i=0; i<experiment.getNumberOfSamples(); i++) {
@@ -137,14 +165,14 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
         }
         out.print("\n");
         for (int i=0; i<rows.length; i++) {
-            out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));
+            out.print(Integer.toString(experiment.getGeneIndexMappedToData(rows[i]) + 1));  //handles cutoffs
             //out.print(data.getUniqueId(rows[i]));
             out.print("\t");
             //out.print(data.getGeneName(rows[i]));
             for (int k = 0; k < fieldNames.length; k++) {
                 out.print(data.getElementAttribute(experiment.getGeneIndexMappedToData(rows[i]), k));
                 //if (k < fieldNames.length - 1) {
-                    out.print("\t");
+                    out.print("\t"); 
                 //}
             }
             for (int j = 0; j < geneGroupMeans[rows[i]].length; j++) {
@@ -159,10 +187,10 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
             out.print("" + ((Float)ssError.get(rows[i])).floatValue());
             out.print("\t");            
             out.print("" + ((Float)dfNumValues.get(rows[i])).floatValue());
-            out.print("\t"); 
+            out.print("\t");   
             out.print("" + ((Float)dfDenomValues.get(rows[i])).floatValue());
             out.print("\t");            
-            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());
+            out.print("" + ((Float)rawPValues.get(rows[i])).floatValue());   
             out.print("\t");            
             out.print("" + ((Float)adjPValues.get(rows[i])).floatValue());            
             for (int j=0; j<experiment.getNumberOfSamples(); j++) {
@@ -173,7 +201,7 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
         }
         out.flush();
         out.close();
-    } 
+    }    
     
     /**
      * Returns a file choosed by the user.
@@ -188,7 +216,7 @@ public class LIMMACentroidsViewer extends CentroidsViewer {
             file = fc.getSelectedFile();
         }
         return file;
-    }
+    } 
     
-
+    
 }

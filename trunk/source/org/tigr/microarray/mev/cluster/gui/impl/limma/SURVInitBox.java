@@ -12,7 +12,7 @@
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.limma;
+package org.tigr.microarray.mev.cluster.gui.impl.surv;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,6 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,18 +57,25 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import org.tigr.microarray.mev.ISlideData;
+import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterBrowser;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.util.FloatMatrix;
 
 /**
  *
- * @author  dschlauch
+ * @author  eleanorahowe
  * @version 
  */
-public class LIMMAInitBox extends AlgorithmDialog {
+public class SURVInitBox extends AlgorithmDialog {
 
     /**
 	 * 
@@ -81,22 +89,37 @@ public class LIMMAInitBox extends AlgorithmDialog {
     public static final int FALSE_PROP = 13;    
     public static final int BUTTON_SELECTION = 14;
     public static final int CLUSTER_SELECTION = 15;
+    public static final int COX_MODEL = 16;
     
     boolean okPressed = false;
     boolean okReady = false;
     boolean step2 = false;
-    Vector<String> exptNames;    
+    Vector<String> exptNames;  
+    Vector<String> sampleAnnotationNames;    
     MultiClassPanel mPanel;
     JTabbedPane selectionPanel;
     HCLoptionPanel hclOpsPanel;
-    ClusterRepository repository;
+    ClusterRepository sampleRepository, geneRepository;
     JButton step2Button = new JButton("Continue...");
+    JLabel infoLabel;
+    JLabel infoLabel2;
+    
+    IData data;
     
     /** Creates new LIMMAInitBox */
-    public LIMMAInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
-        super(parentFrame, "LIMMA Initialization", modality);
+    public SURVInitBox(JFrame parentFrame, 
+    		boolean modality, 
+    		Vector<String> exptNames, 
+    		ClusterRepository sampleRepository, 
+    		ClusterRepository geneRepository,
+    		IData data, 
+    		Vector<String> sampleAnnotationNames) {
+        super(parentFrame, "SURV Initialization", modality);
         this.exptNames = exptNames;  
-        this.repository = repository;
+        this.sampleAnnotationNames = sampleAnnotationNames;
+        this.sampleRepository = sampleRepository;
+        this.geneRepository = geneRepository;
+        this.data = data;
         
         setBounds(0, 0, 1000, 850);
         setBackground(Color.white);
@@ -120,6 +143,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
         EventListener listener = new EventListener();
         setActionListeners(listener);
         this.addWindowListener(listener);  
+
+        
     }
 
     
@@ -259,6 +284,9 @@ public class LIMMAInitBox extends AlgorithmDialog {
         }    
         
     }
+    protected double getLambda() {
+    	return new Double(mPanel.lambdaField.getText());
+    }
     class MultiClassPanel extends JPanel {
         /**
 		 * 
@@ -277,19 +305,26 @@ public class LIMMAInitBox extends AlgorithmDialog {
         ClusterSelector groupsCS,factorACS,factorBCS,conditionCS,timepointCS;
         JLabel infoLabel;
         JLabel infoLabel2;
-        int numGroups=-1;
+        int numGroups=2;
         int factorAlevels=-1;
         int factorBlevels=-1;
         float alpha;
         String factorAName;
         String factorBName;
-        //Vector exptNames;
         
-        public MultiClassPanel(/*Vector exptNames*/) {
+        //Cox Model parameters.
+        ClusterBrowser geneClusterBrowser;
+        JTextField lambdaField;
+        JLabel lambdaLabel;
+        JPanel coxPanel;
+        JRadioButton useAllGenes, useCluster;
+        ButtonGroup geneSelection;
+        
+        public MultiClassPanel() {
+        	
             constraints = new GridBagConstraints();
             gridbag = new GridBagLayout();
             this.setBackground(Color.white);
-            //this.exptNames = exptNames;
             this.setLayout(gridbag);
             ngPanel = new DesignPanel();
 
@@ -316,28 +351,31 @@ public class LIMMAInitBox extends AlgorithmDialog {
 
             hclOpsPanel = new HCLoptionPanel();
             hclOpsPanel.setBorder(null);
-            buildConstraints(constraints, 1, 0, 1, 1, 25, 100);
-            gridbag.setConstraints(hclOpsPanel, constraints);
+            hclOpsPanel.setVisible(false);
             topPanel.add(hclOpsPanel);
             
-            buildConstraints(constraints, 1, 1, 1, 1, 0, 10);
+            constraints = new GridBagConstraints();
+            buildConstraints(constraints, 1, 1, 1, 1, 1, 0, GridBagConstraints.SOUTH, GridBagConstraints.NONE);
             gridbag.setConstraints(step2Button, constraints);
             topPanel.add(step2Button);
-
-            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "LIMMA Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
+            
+            constraints = new GridBagConstraints();
+            constraints.fill = GridBagConstraints.BOTH;
+            buildConstraints(constraints, 1, 1, 1, 1, 0, 10);
+            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "SURV Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
             buildConstraints(constraints, 0, 0,1,1,100,10);
             gridbag.setConstraints(topPanel, constraints);
             this.add(topPanel);
             
-            infoLabel = new JLabel("Sample Group Assignment");
+            infoLabel = new JLabel("Group Assignment");
             infoLabel.setMaximumSize(new Dimension(50,50));
             Font font = infoLabel.getFont();
             infoLabel.setFont(font.deriveFont(20.0f));
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 5,GridBagConstraints.CENTER,GridBagConstraints.NONE);
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 5,GridBagConstraints.CENTER, GridBagConstraints.NONE);
             gridbag.setConstraints(infoLabel, constraints);
             
             this.add(infoLabel, constraints);
-            infoLabel2 = new JLabel("Please select the type of LIMMA analysis to be run, then click 'Continue'.");
+            infoLabel2 = new JLabel("Please select the type of survival analysis to be run, then click 'Continue'.");
             buildConstraints(constraints, 0, 2, 1, 1, 100, 5,GridBagConstraints.CENTER);
             gridbag.setConstraints(infoLabel2, constraints);
             
@@ -350,7 +388,9 @@ public class LIMMAInitBox extends AlgorithmDialog {
             
             gridbag.setConstraints(dummyPanel, constraints);
             this.add(dummyPanel);
+            
         }
+
         private void goBack(){
     		infoLabel.setVisible(true);
             infoLabel2.setVisible(true);
@@ -358,9 +398,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
             ngPanel.alphaField.setEnabled(true);
             ngPanel.oneClass.setEnabled(true);
             ngPanel.twoClass.setEnabled(true);
-            ngPanel.multiClass.setEnabled(true);
-            ngPanel.factorialDesign.setEnabled(true);
-            ngPanel.timeCourse.setEnabled(true);
             ngPanel.factorALevel.setEnabled(true);
             ngPanel.factorBLevel.setEnabled(true);
             ngPanel.factorAName.setEnabled(true);
@@ -386,16 +423,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
             		numGroups = 1;
             	if (getExperimentalDesign()==2)
             		numGroups = 2;
-            	if (getExperimentalDesign()==3)
-            		numGroups = Integer.parseInt(ngPanel.numGroupsField.getText());
-            	if (getExperimentalDesign()==4){
-            		factorAlevels = Integer.parseInt(ngPanel.factorALevel.getText());
-            		factorBlevels = Integer.parseInt(ngPanel.factorBLevel.getText());
-            		factorAName = ngPanel.factorAName.getText();
-            		factorBName = ngPanel.factorBName.getText();
-            	}
-            	if (getExperimentalDesign()==5)
-            		numGroups = Integer.parseInt(ngPanel.numGroupsField.getText());
 
             }catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(null, "Error reading parameter input.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -407,14 +434,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
             }
             if (numGroups<2&&getExperimentalDesign()!=4&&getExperimentalDesign()!=1){ //excludes factorial and one-class design when checking for enough timepoints
             	JOptionPane.showMessageDialog(null, "The number of groups must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (getExperimentalDesign()==4&&(factorAName.contains(" ")||factorBName.contains(" "))){
-            	JOptionPane.showMessageDialog(null, "Factor names may not contain spaces.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (getExperimentalDesign()==4&&(factorAlevels<2||factorBlevels<2)){ //checks factorial design group amounts
-            	JOptionPane.showMessageDialog(null, "The number of groups in each factor must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             JPanel selectionPanel = new JPanel();
@@ -430,57 +449,98 @@ public class LIMMAInitBox extends AlgorithmDialog {
             GridBagConstraints c = new GridBagConstraints();
             c.gridwidth=2;
             clusterSelectorPanel.add(clusterInstructions, c);
-        	if (getExperimentalDesign()==4){
-        		FactorAESP = new ExperimentsSelectionPanel(exptNames, factorAlevels, ngPanel.getExperimentDesign(), factorAName, false);
-        		FactorBESP = new ExperimentsSelectionPanel(exptNames, factorBlevels, ngPanel.getExperimentDesign(), factorBName, false);
-                selectionPanel.add(FactorAESP, cnstr);
-        		cnstr.gridx = 1;
-        		selectionPanel.add(FactorBESP, cnstr);
-        		cnstr.gridy++;
-        		cnstr.gridx--;
-        		cnstr.gridwidth=2;
-        		cnstr.weighty = 0;
-        		selectionPanel.add(createSaveLoadPanel(), cnstr);
 
-                
-                factorACS= new ClusterSelector(repository, factorAlevels, "Level");
-                factorBCS= new ClusterSelector(repository, factorBlevels, "Level");
-                if (repository!=null){
-                	factorACS.setClusterType(factorAName);
-                	factorBCS.setClusterType(factorBName);
-        		}
+            MultiClassPanel.this.remove(dummyPanel);
+            
+            //Cox model 
+            if(getExperimentalDesign() == 1) {
+            	lambdaLabel = new JLabel("Initial Lambda Value: ");
+            	//TODO validate that only numbers are in here. 
+            	lambdaField = new JTextField("10", 2);
+            	sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group", true);
 
-                buildConstraints(c, 0, 1, 1, 1, 1, 1);
-                c.fill = GridBagConstraints.BOTH;
-            	clusterSelectorPanel.add(factorACS, c);
-                c.gridx = 1;
-                clusterSelectorPanel.add(factorBCS, c);
-        	}else if (getExperimentalDesign()==5){
-        		ConditionESP = new ExperimentsSelectionPanel(exptNames, 2, ngPanel.getExperimentDesign(), "Condition", false);
-        		TimePointESP = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Time", false);
-                selectionPanel.add(ConditionESP, cnstr);
-        		cnstr.gridx = 1;
-        		selectionPanel.add(TimePointESP, cnstr);
-        		cnstr.gridy++;
-        		cnstr.gridx--;
-        		cnstr.gridwidth=2;
-        		cnstr.weighty = 0;
-        		selectionPanel.add(createSaveLoadPanel(), cnstr);
+                useAllGenes=new JRadioButton("Build model from all loaded gene data.", true);
+                useCluster=new JRadioButton("Build model from selected gene cluster.", false);          
+                useAllGenes.setBackground(Color.white);
+                useAllGenes.setBorder(null);
+                useCluster.setBackground(Color.white);
+                useCluster.setBorder(null);
+                  
+                geneSelection = new ButtonGroup();
+                geneSelection.add(useAllGenes);
+                geneSelection.add(useCluster);
 
-                
-                conditionCS= new ClusterSelector(repository, 2, "Condition");
-                timepointCS= new ClusterSelector(repository, numGroups, "Time-Point");
-                if (repository!=null){
-                	conditionCS.setClusterType("Condition");
-                	timepointCS.setClusterType("Time-Point");
-        		}
+                useAllGenes.addActionListener(new ActionListener(){
+                  public void actionPerformed(ActionEvent ae) {
+                	  if(useAllGenes.isSelected()) {
+                		  System.out.println("disabling gene cluster selector");
+                		  geneClusterBrowser.setEnabled(false);
+                	  } else {
+                		  if (useCluster.isSelected()) {
+                    		  System.out.println("enabling gene cluster selector");
+                			  geneClusterBrowser.setEnabled(true);
+                		  }
+                	  }
+                  }
+                });
+                useCluster.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent ae) {
+                  	  if(useAllGenes.isSelected()) {
+                		  System.out.println("disabling gene cluster selector");
+                  		  geneClusterBrowser.setEnabled(false);
+                  	  } else {
+                  		  if (useCluster.isSelected()) {
+                    		  System.out.println("enabling gene cluster selector");
+                  			  geneClusterBrowser.setEnabled(true);
+                  		  }
+                  	  }
+                  		  
+                    }
+                  });
 
-                buildConstraints(c, 0, 1, 1, 1, 1, 1);
-                c.fill = GridBagConstraints.BOTH;
-            	clusterSelectorPanel.add(conditionCS, c);
-                c.gridx = 1;
-                clusterSelectorPanel.add(timepointCS, c);
-        	}else{
+                geneClusterBrowser = new ClusterBrowser(geneRepository);
+                //http://java.sun.com/docs/books/tutorial/uiswing/layout/gridbag.html
+	            JPanel browserpanel = new JPanel();
+	            browserpanel.setLayout(gbg);
+	            browserpanel.setBackground(Color.white);
+	            
+                buildConstraints(constraints, 0, 0, 1, 1, 0, 0);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            browserpanel.add(lambdaLabel, constraints);
+
+                buildConstraints(constraints, 1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            browserpanel.add(lambdaField, constraints);
+	            
+                buildConstraints(constraints, 0, 1, 2, 1, 0, 0);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            browserpanel.add(useAllGenes, constraints);
+
+
+                buildConstraints(constraints, 0, 2, 2, 1, 0, 0);
+	            constraints.fill = GridBagConstraints.BOTH;
+                browserpanel.add(useCluster, constraints);
+
+                buildConstraints(constraints, 2, 0, 1, 3, 1, 1, GridBagConstraints.EAST, GridBagConstraints.BOTH);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            browserpanel.add(geneClusterBrowser, constraints);
+	            
+	            //If no gene clusters available, set useCluster to disabled
+	            if(geneRepository.isEmpty()) {
+	            	useCluster.setEnabled(false);
+	            }
+	            useAllGenes.setSelected(true);
+	            tabbedmulg = new JTabbedPane();
+//	            tabbedmulg.setBackground(Color.white);
+	            tabbedmulg.add("Cox Proportional Hazard Model Options", browserpanel);
+                buildConstraints(constraints, 0, 1, 5, 5, 0, 90);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            gridbag.setConstraints(tabbedmulg, constraints);
+	            MultiClassPanel.this.add(tabbedmulg);
+	            MultiClassPanel.this.validate();
+	            
+            //Kaplan-Meier survival comparison
+        	} else {
         		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group", true);
         		selectionPanel.add(sampleSelectionPanel, cnstr);
         		cnstr.gridy++;
@@ -488,10 +548,10 @@ public class LIMMAInitBox extends AlgorithmDialog {
         		selectionPanel.add(createSaveLoadPanel(), cnstr);
         		
         		if(getExperimentalDesign()==5){//ever occur?
-        			groupsCS= new ClusterSelector(repository, numGroups, "Timepoint");
+        			groupsCS= new ClusterSelector(sampleRepository, numGroups, "Timepoint");
 	            	groupsCS.setClusterType("Timepoint");
         		}else{
-        			groupsCS= new ClusterSelector(repository, numGroups, "Class");
+        			groupsCS= new ClusterSelector(sampleRepository, numGroups, "Class");
         			groupsCS.setClusterType("Class");
         		}
 	            	
@@ -499,44 +559,106 @@ public class LIMMAInitBox extends AlgorithmDialog {
 	            c.fill = GridBagConstraints.BOTH;
 	            c.gridx = 1;
 	            clusterSelectorPanel.add(groupsCS, c);
+
+	            
+	            
+	            tabbedmulg = new JTabbedPane();
+	            tabbedmulg.add("Button Selection", selectionPanel);
+	            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
+	            tabbedmulg.setSelectedIndex(1);
+	            if (sampleRepository==null||sampleRepository.isEmpty())
+	            	tabbedmulg.setSelectedIndex(0);
+	            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            gridbag.setConstraints(tabbedmulg, constraints);
+	            MultiClassPanel.this.add(tabbedmulg);
+	            MultiClassPanel.this.validate();    
+	            ngPanel.numGroupsField.setEnabled(false);
+	            ngPanel.alphaField.setEnabled(false);
+	            ngPanel.oneClass.setEnabled(false);
+	            ngPanel.twoClass.setEnabled(false);
+	            ngPanel.factorALevel.setEnabled(false);
+	            ngPanel.factorBLevel.setEnabled(false);
+	            ngPanel.factorAName.setEnabled(false);
+	            ngPanel.factorBName.setEnabled(false);
         	}
 
-            MultiClassPanel.this.remove(dummyPanel);
-            tabbedmulg = new JTabbedPane();
-            
-            tabbedmulg.add("Button Selection", selectionPanel);
-            tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
-            tabbedmulg.setSelectedIndex(1);
-            if (repository==null||repository.isEmpty())
-            	tabbedmulg.setSelectedIndex(0);
-            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
-            constraints.fill = GridBagConstraints.BOTH;
-            gridbag.setConstraints(tabbedmulg, constraints);
-            MultiClassPanel.this.add(tabbedmulg);
-            MultiClassPanel.this.validate();
             enableOK();
-            ngPanel.numGroupsField.setEnabled(false);
-            ngPanel.alphaField.setEnabled(false);
-            ngPanel.oneClass.setEnabled(false);
-            ngPanel.twoClass.setEnabled(false);
-            ngPanel.multiClass.setEnabled(false);
-            ngPanel.factorialDesign.setEnabled(false);
-            ngPanel.timeCourse.setEnabled(false);
-            ngPanel.factorALevel.setEnabled(false);
-            ngPanel.factorBLevel.setEnabled(false);
-            ngPanel.factorAName.setEnabled(false);
-            ngPanel.factorBName.setEnabled(false);
+ 
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
             step2 = true;
         }
+        
         class DesignPanel extends JPanel {
-            JTextField factorAName, factorBName, factorALevel, factorBLevel, numGroupsField, alphaField;
-            JLabel numGroupsLabel;
+            private static final String LAST_SELECTED_SURVIVAL_FIELDNAME = "last-selected-survival-fieldname";
+			private static final String LAST_SELECTED_CENSOREDSTATUS_FIELDNAME = "last-selected-censoredstatus-fieldname";
+			JTextField factorAName, factorBName, factorALevel, factorBLevel, numGroupsField, alphaField;
+            JLabel numGroupsLabel; 
             JPanel factorPanel;
             boolean okPressed = false;
-            JRadioButton oneClass, twoClass, multiClass, factorialDesign, timeCourse;
+            JRadioButton oneClass, twoClass;
+            
+            JLabel survivalLabel, survivalInfo, censoredLabel, censoredInfo, instructionLabel;
+            JComboBox survival, censored;
+            
+            boolean validEventData = false;
+            boolean validCensoringData = false;
+
+            private void validateSurvival() {
+            	String fieldname = survival.getSelectedItem().toString();
+            	boolean canConvert = true;
+            	for(int i=0; i<data.getExperiment().getNumberOfSamples(); i++) {
+                	String ann = data.getSampleAnnotation(i, fieldname);
+            		try {
+            			Float.parseFloat(ann);
+            		} catch(NumberFormatException nfe) {
+            			canConvert = false;
+            			break;
+            		}
+            	}
+            	if(!canConvert) {
+            		survivalInfo.setText("Not valid floating-point values.");
+            		survivalInfo.setForeground(Color.red);
+            		validEventData = false;
+            	} else {
+            		survivalInfo.setText("Data OK.");
+            		survivalInfo.setForeground(Color.black);
+            		validEventData = true;
+            	}
+            	TMEV.storeProperty(LAST_SELECTED_SURVIVAL_FIELDNAME, fieldname);
+            }    
+            private void validateCensoringData() {
+            	String fieldname = censored.getSelectedItem().toString();
+            	boolean canConvert = true;
+            	for(int i=0; i<data.getExperiment().getNumberOfSamples(); i++) {
+                	String ann = data.getSampleAnnotation(i, fieldname);
+            		if(ann.equalsIgnoreCase("yes") ||
+            				ann.equalsIgnoreCase("y") ||
+            				ann.equalsIgnoreCase("true") ||
+            				ann.equalsIgnoreCase("false") ||
+            				ann.equalsIgnoreCase("no") ||
+            				ann.equalsIgnoreCase("n") ||
+            				ann.equalsIgnoreCase("censored") ||
+            				ann.equalsIgnoreCase("uncensored") ) {
+            			canConvert=true;
+            		} else {
+            			canConvert = false;
+            			break;
+            		}
+            	}
+            	if(!canConvert) {
+            		censoredInfo.setText("Not valid true/false values.");
+            		censoredInfo.setForeground(Color.red);
+            		validCensoringData = false;
+            	} else {
+            		censoredInfo.setText("Data OK.");
+            		censoredInfo.setForeground(Color.black);
+            		validCensoringData = true;
+            	}
+            	TMEV.storeProperty(LAST_SELECTED_CENSOREDSTATUS_FIELDNAME, fieldname);
+            }
             public DesignPanel() {
                 setBackground(Color.white);
                 GridBagLayout gridbag = new GridBagLayout();
@@ -544,74 +666,104 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 
                 this.setLayout(gridbag);
                 this.setMinimumSize(new Dimension(300,100));
-                
-                JLabel dataTypeLabel = new JLabel("Experimental Design:   ");
-                buildConstraints(constraints, 0, 0, 1, 1, 30, 100,GridBagConstraints.EAST);
-                gridbag.setConstraints(dataTypeLabel, constraints);
-                this.add(dataTypeLabel);
-                
-                oneClass=new JRadioButton("One Class", true);
-                twoClass=new JRadioButton("Two Class", false);
-                multiClass=new JRadioButton("Multi-Class", false);
-                factorialDesign=new JRadioButton("Two-Factor", false);
-                timeCourse=new JRadioButton("Time Course", false);
+                JLabel dataTypeLabel = new JLabel("Choose Type of Analysis: ");
+
+
+                oneClass=new JRadioButton("Build a Cox proportional hazards model", false);
+                twoClass=new JRadioButton("Kaplan-Meier Test between two groups", true);          
                 oneClass.setBackground(Color.white);
                 oneClass.setBorder(null);
                 twoClass.setBackground(Color.white);
                 twoClass.setBorder(null);
-                multiClass.setBackground(Color.white);
-                multiClass.setBorder(null);
-                factorialDesign.setBackground(Color.white);
-                factorialDesign.setBorder(null);
-                timeCourse.setBackground(Color.white);
-                timeCourse.setBorder(null);
+                  
                 ButtonGroup dataType = new ButtonGroup();
                 dataType.add(oneClass);
                 dataType.add(twoClass);
-                dataType.add(multiClass);
-                dataType.add(factorialDesign);
-                dataType.add(timeCourse);
+
                 oneClass.addActionListener(new RadioButtonListener());
                 twoClass.addActionListener(new RadioButtonListener());
-                multiClass.addActionListener(new RadioButtonListener());
-                factorialDesign.addActionListener(new RadioButtonListener());
-                timeCourse.addActionListener(new RadioButtonListener());
-                buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
+
+                buildConstraints(constraints, 0, 0, 1, 1, 30, 100,GridBagConstraints.WEST);
+                gridbag.setConstraints(dataTypeLabel, constraints);
+                this.add(dataTypeLabel);
+                buildConstraints(constraints, 0, 1, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(oneClass, constraints);
                 this.add(oneClass);
-                buildConstraints(constraints, 1, 1, 1, 1, 30, 100);
+                buildConstraints(constraints, 0, 2, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(twoClass, constraints);
                 this.add(twoClass);
+
+
+//selection of sample annotation fields...
+                instructionLabel = new JLabel("Please choose the annotation containing the survival data.");
+                survival = new JComboBox(sampleAnnotationNames);
+                survivalLabel = new JLabel("Survival time or time to event (numeric): ");
+                survivalInfo = new JLabel("Data Ok.");
+
+                survival.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						validateSurvival();
+					}
+				});
+                if(sampleAnnotationNames.contains(TMEV.getSettingForOption(LAST_SELECTED_SURVIVAL_FIELDNAME))) {
+                	survival.setSelectedItem(TMEV.getSettingForOption(LAST_SELECTED_SURVIVAL_FIELDNAME));
+                }
+                
+                censored = new JComboBox(sampleAnnotationNames);
+
+                censoredLabel = new JLabel("Censoring flag (yes/no, censored/uncensored): ");
+                censoredInfo = new JLabel("Data Ok.");
+
+                censored.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						validateCensoringData();
+					}
+				});
+                if(sampleAnnotationNames.contains(TMEV.getSettingForOption(LAST_SELECTED_CENSOREDSTATUS_FIELDNAME))) {
+                	censored.setSelectedItem(TMEV.getSettingForOption(LAST_SELECTED_CENSOREDSTATUS_FIELDNAME));
+                }
+                
+                buildConstraints(constraints, 1, 0, 2, 1, 30, 100);
+                constraints.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(instructionLabel, constraints);
+                this.add(instructionLabel);
+                buildConstraints(constraints, 1, 1, 2, 1, 30, 100);
+                constraints.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(survivalLabel, constraints);
+                this.add(survivalLabel);
                 buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(multiClass, constraints);
-                this.add(multiClass);
-                buildConstraints(constraints, 1, 3, 1, 1, 30, 100);
+                gridbag.setConstraints(survival, constraints);
+                this.add(survival);
+                buildConstraints(constraints, 2, 2, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(factorialDesign, constraints);
-                this.add(factorialDesign);
+                gridbag.setConstraints(survivalInfo, constraints);
+                this.add(survivalInfo);
+                validateSurvival();
+                
+                buildConstraints(constraints, 1, 3, 2, 1, 30, 100);
+                constraints.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(censoredLabel, constraints);
+                this.add(censoredLabel);
                 buildConstraints(constraints, 1, 4, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(timeCourse, constraints);
-                this.add(timeCourse);
+                gridbag.setConstraints(censored, constraints);
+                this.add(censored);
+                buildConstraints(constraints, 2, 4, 1, 1, 30, 100);
+                constraints.anchor = GridBagConstraints.WEST;
+                gridbag.setConstraints(censoredInfo, constraints);
+                this.add(censoredInfo);
+                validateCensoringData();
+                
                 
                 numGroupsLabel = new JLabel("Number of groups: ");
                 numGroupsLabel.setVisible(false);
-                buildConstraints(constraints, 0, 5, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(numGroupsLabel, constraints);
-                this.add(numGroupsLabel);
                 
                 numGroupsField = new JTextField("4", 7);
                 numGroupsField.setVisible(false);
                 numGroupsField.setMinimumSize(new Dimension(50,20));
-                constraints.anchor = GridBagConstraints.WEST;
-                buildConstraints(constraints, 1, 5, 1, 1, 30, 0);
-                gridbag.setConstraints(numGroupsField, constraints);
-                this.add(numGroupsField);
-
                 
                 factorPanel =  new JPanel();
                 factorPanel.setBackground(Color.white);
@@ -669,17 +821,19 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 constraints.ipady = 0;
                 
                 JLabel alphaLabel = new JLabel("Significance Level: Alpha = ");
-                buildConstraints(constraints, 0, 6, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(alphaLabel, constraints);
-                this.add(alphaLabel);
+//                buildConstraints(constraints, 0, 6, 1, 1, 30, 100);
+//                constraints.anchor = GridBagConstraints.EAST;
+//                gridbag.setConstraints(alphaLabel, constraints);
+//                this.add(alphaLabel);
                 
                 alphaField = new JTextField(".05", 7);
                 alphaField.setMinimumSize(new Dimension(50,20));
-                constraints.anchor = GridBagConstraints.WEST;
-                buildConstraints(constraints, 1, 6, 1, 1, 30, 0);
-                gridbag.setConstraints(alphaField, constraints);
-                this.add(alphaField);
+//                constraints.anchor = GridBagConstraints.WEST;
+//                buildConstraints(constraints, 1, 6, 1, 1, 30, 0);
+//                gridbag.setConstraints(alphaField, constraints);
+//                this.add(alphaField);
+                
+                
             }
             
             public int getExperimentDesign(){
@@ -687,13 +841,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
             		return 1;
             	if (twoClass.isSelected())
             		return 2;
-            	if (multiClass.isSelected())
-            		return 3;
-            	if (factorialDesign.isSelected())
-            		return 4;
-            	if (timeCourse.isSelected())
-            		return 5;
-            	return 0;
+            	return 2;
             }
             
             public void setVisible(boolean visible) {
@@ -712,7 +860,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
             }
             
         }
-        
 
         /**
     	 * Saves the assignments to file.
@@ -826,6 +973,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
             JRadioButton[][] assignmentRBs;
             JRadioButton[] notInTimeGroupRadioButtons;
             ExperimentsSelectionPanel(Vector<String> exptNames, int numGroups, int design, String title, boolean firstPanel) {
+            	numGroups = 2;
+//TODO selection...
             	this.design = design;
                 this.setBorder(new TitledBorder(new EtchedBorder(), title+" Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
@@ -855,21 +1004,21 @@ public class LIMMAInitBox extends AlgorithmDialog {
                     expLabels[i] = new JLabel(s1);
                     chooseTime[i] = new ButtonGroup();
                     chooseCondition[i] = new ButtonGroup();
-                    if (design==1){
-	                    assignmentRBs[0][i] = new JRadioButton("Include ", false);
-	                    chooseTime[i].add(assignmentRBs[0][i]);
-	                    assignmentRBs[0][i].setSelected(true);
-                    }else if (design==5){
-                    	for (int j = 0; j < numGroups; j++) {
-		                    assignmentRBs[j][i] = new JRadioButton(title+" " + (j) + "     ", false);
-		                    chooseTime[i].add(assignmentRBs[j][i]);
-		                }
-                    }else{
+//                    if (design==1){
+//	                    assignmentRBs[0][i] = new JRadioButton("Include ", false);
+//	                    chooseTime[i].add(assignmentRBs[0][i]);
+//	                    assignmentRBs[0][i].setSelected(true);
+//                    }else if (design==5){
+//                    	for (int j = 0; j < numGroups; j++) {
+//		                    assignmentRBs[j][i] = new JRadioButton(title+" " + (j) + "     ", false);
+//		                    chooseTime[i].add(assignmentRBs[j][i]);
+//		                }
+//                    }else{
 		                for (int j = 0; j < numGroups; j++) {
 		                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", false);
 		                    chooseTime[i].add(assignmentRBs[j][i]);
 		                }
-                    }
+//                    }
                     
                     
                     //set current panel
@@ -1048,14 +1197,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
 	        					}
         						continue;
         					}
-//        					if (design==4){
-//        						factorNames.add(getFactorAName());
-//        						factorNames.add(getFactorBName());
-//        					}
-//        					if (design==5){
-//        						factorNames.add("Condition 1");
-//        						factorNames.add("Condition 2");
-//        					}
         						
 
         					//non-comment line, non-header line and not a group label line
@@ -1079,9 +1220,8 @@ public class LIMMAInitBox extends AlgorithmDialog {
 
 
         			if( exptNames.size() != sampleNames.size()) {
-        				System.out.println(exptNames.size()+"  "+sampleNames.size());
         				//status = "number-of-samples-mismatch";
-        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
+//        				System.out.println(exptNames.size()+ " s length " + sampleNames.size());
         				//warn and prompt to continue but omit assignments for those not represented				
 
         				JOptionPane.showMessageDialog(this, "<html>Error -- number of samples designated in assignment file ("+String.valueOf(sampleNames.size())+")<br>" +
@@ -1126,28 +1266,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
         				}
         				
         				//set state
-//        				try{
-//        					exptTimeRadioButtons[groupIndex][sample].setSelected(true);
-//        				}catch (Exception e){
-//        					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
-//        				}
-//        				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
-//	        				if(condIndex == 1)
-//	        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
-//	        				else
-//	        					exptConditionRadioButtons[0][sample].setSelected(true);
-//        				}
-        				//set state
         				try{
-                        	if (getExperimentalDesign()==4){
-                        		mPanel.FactorBESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.FactorAESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else if (getExperimentalDesign()==5){
-                        		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.TimePointESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else {
-                        		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	}
         				}catch (Exception e){
                         	if (getExperimentalDesign()==4){
                         		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
@@ -1333,7 +1452,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
             if(command.equals("ok-command")){
             	if (!okReady)
             		return;
-            	if ((getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
+            	if ((getSelectionDesign()==SURVInitBox.CLUSTER_SELECTION)&&(sampleRepository.isEmpty())){
             		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
             	}
@@ -1348,7 +1467,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(LIMMAInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
+                HelpWindow hw = new HelpWindow(SURVInitBox.this, "Survival Analysis Initialization Dialog");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
@@ -1373,14 +1492,17 @@ public class LIMMAInitBox extends AlgorithmDialog {
     private boolean isParamSufficient(){
     	switch (getExperimentalDesign()){
 	    	case 1:{
-	    		int inc = 0;
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]==1)
-	    				inc++;
+	    		//TODO 
+	    		try {
+	    			Double test = new Double(mPanel.lambdaField.getText());
+	    		} catch (Exception e) {
+	    			JOptionPane.showMessageDialog(null, "Please enter a number into the field '" + mPanel.lambdaLabel.getText() + "'.", "Error", JOptionPane.WARNING_MESSAGE);
+	    			return false;
 	    		}
-	    		if (inc < 2){
-	    			JOptionPane.showMessageDialog(null, "Please select at least 2 samples.", "Error", JOptionPane.WARNING_MESSAGE);
+	    		if(mPanel.ngPanel.validEventData && 
+	    			mPanel.ngPanel.validCensoringData) {
+	    		} else {
+	    			JOptionPane.showMessageDialog(null, "Please select valid event and censoring data.", "Error", JOptionPane.WARNING_MESSAGE);
 	        		return false;
 	    		}
 	    		return true;
@@ -1398,53 +1520,6 @@ public class LIMMAInitBox extends AlgorithmDialog {
 	    		}
 	    		return true;
 	    	}	
-	    	case 3:{
-	    		int[] inc = new int[getNumGroups()];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each group.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-	    	case 4:{
-	    		int[] inc = new int[getNumGroups()];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each factor combination.\n" +
-	        					"Samples must be assigned to each possible combination of "+ getFactorAName()+" vs. "+getFactorBName()+".", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-	    	case 5:{
-	    		int[] inc = new int[getNumGroups()*2];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each timepoint and condition combination.\n" +
-	        					"Samples must be assigned to each possible combination of timepoints and conditions.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
     	}
     	return false;
     }
@@ -1458,7 +1533,15 @@ public class LIMMAInitBox extends AlgorithmDialog {
     		return getTimeCourseGroupAssignments();
         return null;
     }  
-
+    
+    /** Returns the cluster selected for analysis or null if none selected.
+     * @return  */
+    public Cluster getSelectedGeneCluster(){
+    	if(geneRepository.isEmpty())
+    		return null;
+    	else 
+    		return mPanel.geneClusterBrowser.getSelectedCluster();
+    }
     private int[] getClusterSelectorGroupAssignments(){
     	boolean doubleAssigned;
     	int[]groupAssignments = new int[exptNames.size()];
@@ -1491,7 +1574,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
     }
     
     private int[] getSimpleGroupAssignments() {
-    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==SURVInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorGroupAssignments();
         int[] groupAssignments = new int[exptNames.size()];
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1509,7 +1592,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
         return groupAssignments;
     }
     private int[] getTimeCourseGroupAssignments() {
-    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==SURVInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorTimeCourseAssignments();
     	int[]timeCourseGroupAssignments = new int[exptNames.size()];
 
@@ -1600,7 +1683,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
 
 
 	private int[] getFactorGroupAssignments() {
-    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==SURVInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorFactorAssignments();
     	int[]factorGroupAssignments = new int[exptNames.size()];
 
@@ -1714,32 +1797,34 @@ public class LIMMAInitBox extends AlgorithmDialog {
     	}
     	return timeMatrix;
     }
+	public String getCensoredField() {
+		return mPanel.ngPanel.censored.getSelectedItem().toString();
+	}
+	public String getSurvivalField() {
+		return mPanel.ngPanel.survival.getSelectedItem().toString();
+	}
     /**
      * 
      * @return
      * 
      */
     public int getExperimentalDesign() {
-    	int design = -1;
+    	int dataType = -1;
     	if (mPanel.ngPanel.oneClass.isSelected())
-    		design = 1;
+    		dataType = 1;
     	if (mPanel.ngPanel.twoClass.isSelected())
-    		design = 2;
-    	if (mPanel.ngPanel.multiClass.isSelected())
-    		design = 3;
-    	if (mPanel.ngPanel.factorialDesign.isSelected())
-    		design = 4;
-    	if (mPanel.ngPanel.timeCourse.isSelected())
-    		design = 5;
-    	return design;
+    		dataType = 2;
+    	return dataType;
     }
     
     public int getSelectionDesign() {
         int design = -1;
-        if (mPanel.tabbedmulg.getSelectedIndex() == 0) {
-        	design = LIMMAInitBox.BUTTON_SELECTION;
+        if(mPanel.ngPanel.oneClass.isSelected())
+        	design = SURVInitBox.COX_MODEL;
+        else if (mPanel.tabbedmulg.getSelectedIndex() == 0) {
+        	design = SURVInitBox.BUTTON_SELECTION;
         } else {
-        	design = LIMMAInitBox.CLUSTER_SELECTION;
+        	design = SURVInitBox.CLUSTER_SELECTION;
         }
         return design;
     }
@@ -1801,16 +1886,27 @@ public class LIMMAInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         Vector<String> dummyVect = new Vector<String>();
+       	//100 genes by 24 samples
+       	float[][] A = new float[100][24];
+       	int[] indices = new int[24];
         for (int i = 0; i < 24; i++) {
             dummyVect.add("Expt " + i);
+            for(int j=0; j<100; j++) {
+            	A[j][i] = new Float(Math.random());
+            }
+            indices[i] = i;
         }
-        
-        LIMMAInitBox oBox = new LIMMAInitBox(dummyFrame, true, dummyVect, null);
-        oBox.setVisible(true);
-//        int[] k = oBox.getGroupAssignments();
-//        for (int i=0; i<k.length; i++){
-//        	System.out.print(k[i]+"\t");
-//        }
+        Vector<String> dummySampleAnns = new Vector<String>();
+       	dummySampleAnns.add("event");
+       	dummySampleAnns.add("status");
+       	
+       	MultipleArrayData data = new MultipleArrayData();
+       	ArrayList<ISlideData> features = new ArrayList<ISlideData>();
+       	data.setFeaturesList(features);
+       	
+//       	
+//        SURVInitBox oBox = new SURVInitBox(dummyFrame, true, dummyVect, new ClusterRepository(0), new ClusterRepository(0), data, dummySampleAnns);
+//        oBox.setVisible(true);
         System.exit(0);
     }
 }

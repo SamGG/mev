@@ -12,10 +12,9 @@
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.limma;
+package org.tigr.microarray.mev.cluster.gui.impl.surv;
 
 import java.awt.Frame;
-import java.beans.Expression;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -37,21 +36,25 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
  * @author  dschlauch
  * @version 
  */
-public class LIMMACentroidViewer extends CentroidViewer {
+public class SURVCentroidViewer extends CentroidViewer {
     
     private Vector rawPValues, adjPValues, fValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
     
-    /** Creates new BETRCentroidViewer */
-    public LIMMACentroidViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    /** Creates new SURVCentroidViewer */
+    public SURVCentroidViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
         super(experiment, clusters);
    
     }
-
+    /** Creates new SURVCentroidViewer */
+    public SURVCentroidViewer(Experiment experiment, int[][] clusters) {
+        super(experiment, clusters);
+   
+    }
     /**
      * @inheritDoc
      */
-    public LIMMACentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    public SURVCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
     	super(e, clusters, variances, means, codes);
     }    
     /**
@@ -59,7 +62,7 @@ public class LIMMACentroidViewer extends CentroidViewer {
      * @param e
      * @param clusters
      */
-    public LIMMACentroidViewer(Experiment e, ClusterWrapper clusters) {
+    public SURVCentroidViewer(Experiment e, ClusterWrapper clusters) {
     	super(e, clusters.getClusters());
     }
 

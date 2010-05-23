@@ -491,6 +491,19 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** Cluster Info Icon
          */
         private Icon clusterInfoIcon = GUIFactory.getIcon("ClusterInformationResult.gif");
+        /** Cluster Info Icon
+         */
+        private Icon survDiffIcon = GUIFactory.getIcon("SurvDiffResultsIcon.gif");
+        /** Kaplan-Meier Plot Icon
+         */
+        private Icon KMGraphIcon = GUIFactory.getIcon("Kaplan-MeierPlotResult.gif");
+        
+        /**
+         * Baseline Hazard plot icon
+         */
+        private Icon BasehazGraphIcon = GUIFactory.getIcon("BaselineHazardPlotResult.gif");
+        
+        
         /** General Information Icon
          */
         private Icon generalInfoIcon = GUIFactory.getIcon("Information16.gif");
@@ -723,6 +736,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     setIcon(tableIcon);
                 } else if(text.indexOf("Amplifications") != -1 | text.indexOf("Deletions") != -1) {
                     setIcon(ampDelIcon);
+                } else {
+                //	System.out.println("No icon found for " + text);
                 } /* CGH Icons */
                 
             } else {  //it's a leaf
@@ -806,6 +821,14 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(tableIcon);
                     } else if(text.indexOf("Height Plot") != -1 || text.indexOf("SOTA Diversity") != -1 || text.indexOf("Graph - FOM") != -1){
                         setIcon(nodeHeightIcon);
+                    } else if(text.equals("Differential Survival")){
+                        setIcon(survDiffIcon);
+                    } else if(text.equals("Cox Proportional Hazard Model")){
+                        setIcon(survDiffIcon);
+                    } else if(text.contains("Kaplan-Meier Plot")){
+                        setIcon(KMGraphIcon);
+                    } else if(text.contains("Baseline")){
+                        setIcon(BasehazGraphIcon);
                     } else if(text.equals("Volcano Plot")){
                         setIcon(volcanoIcon);
                     } else if(text.equals("SAM Graph")){
