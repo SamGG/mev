@@ -239,6 +239,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
         
+        this.means = getMeans(clusters).A;
+        this.variances = getVariances(clusters, getMeans(clusters)).A;
+        
         PopupListener listener = new PopupListener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);

@@ -345,6 +345,8 @@ public class HelpWindow extends JDialog {
             return "nmf_parameters.html";
         if(key.equals("Linear Models for Microarray Data- Initialization Dialog"))
             return "limma_parameters.html";
+        if(key.equals("Survival Analysis Initialization Dialog"))
+            return "surv_parameters.html";
         if(key.equals("Cluster Save Dialog"))
             return "cluster_save_parameters.html";
         if(key.equals("Terrain Map Initialization Dialog"))
