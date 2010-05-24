@@ -363,6 +363,10 @@ public class HelpWindow extends JDialog {
             return "gdm_color_range.html";
         if(key.equals("EASE Initialization Dialog"))
             return "ease_parameters.html";
+        if(key.equals("EASE StatisticalParams Dialog"))
+        	return "ease_stat_parameter.html";
+        if(key.equals("EASE AdvancedParams Dialog"))
+        	return "ease_advanced_parameters.html";
         if(key.equals("GDM Result Selection Dialog"))
             return "result_selection_parameters.html";
         if(key.equals("Set Lower Cutoffs"))
