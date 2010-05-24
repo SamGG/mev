@@ -1106,7 +1106,7 @@ public class RHook  {
 		} 
 		// all other os
 		else {
-			lib = System.getenv("R_HOME") + "/" + getLibraryName();
+			lib = System.getProperty("user.dir") + "/lib/" + getLibraryName();
 		}
 		
 		if(!(new File(lib).exists())) {
