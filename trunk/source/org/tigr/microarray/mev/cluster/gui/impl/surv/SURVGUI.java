@@ -123,24 +123,6 @@ public class SURVGUI implements IClusterGUI/*, IScriptGUI*/ {
 		if(sysMsg() != JOptionPane.OK_OPTION)
 			return null;
 		
-		// For Mac OS X only --
-		// Check for R ver and dyn lib compatibility
-		// If mismatched try upgrading to correct version
-		if (RHook.getOS() == RConstants.MAC_OS) {
-			try {
-				if (RHook.Mac_R_ver_Changed()) {
-					if (!RHook.checkRDynLib("survival")) {
-						JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
-						throw new AbortException(); 
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Error updating R library\n **" + e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
-				throw new AbortException();
-			}
-		}
-
         this.experiment = framework.getData().getExperiment();   
         
         int number_of_samples = experiment.getNumberOfSamples();
