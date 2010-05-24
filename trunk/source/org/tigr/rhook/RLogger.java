@@ -92,7 +92,7 @@ public class RLogger {
     }
 
     public static String getLogFileName() {
-		String file = "limma.log";
+		String file = "rhook.log";
 		System.out.println("user.home " + System.getProperty("user.home"));
 		System.out.println("user.dir " + System.getProperty("user.dir"));
 
@@ -106,14 +106,14 @@ public class RLogger {
 				String dateString = formatDt.format(now);
 				File nf = new File(System.getProperty("user.home")+System.getProperty("file.separator")+file+dateString);
 				if(!f.renameTo(nf)) {
-					System.out.println("Unable to rename limma.log file");
+					System.out.println("Unable to rename rhook.log file");
 				}
 			}
 		} else {
 			try {
 				f.createNewFile();
 			} catch (IOException e) {
-				System.out.println("Unable to create limma.log file");
+				System.out.println("Unable to create rhook.log file");
 				e.printStackTrace();
 			}
 		}

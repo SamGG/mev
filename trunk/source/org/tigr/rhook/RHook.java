@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -106,25 +107,21 @@ public class RHook  {
 		if (!Rengine.versionCheck()) {
 			System.err.println("** Version mismatch - Java files don't match library version.");
 			return;
-			//System.exit(1);
 		}
 		if(re != null) {
 			System.out.println("Rengine already exists");
 			return;
 		}
 		System.out.println("Creating Rengine (with arguments)");
-		//guiFrame.rOutText.append("Creating Rengine (with arguments)\n");
 		// 1) we pass the arguments from the command line
 		// 2) we won't use the main loop at first, we'll start it later
 		//    (that's the "false" as second argument)
 		// 3) the callbacks are implemented by the TextConsole class above
 		re = new Rengine(args, false, new TextConsole());
 		System.out.println("Rengine created, waiting for R");
-		//guiFrame.rOutText.append("Rengine created, waiting for R\n");
 		// the engine creates R is a new thread, so we should wait until it's ready
 		if (!re.waitForR()) {
 			System.out.println("Cannot load R");
-			//guiFrame.rOutText.append("Cannot load R\n");
 			return;
 		}
 	}
@@ -138,26 +135,16 @@ public class RHook  {
 		logger.start();
 		System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
 		String r_home = System.getenv("R_HOME");
-		if(r_home == null || r_home == "") {
-			System.err.println("** R_HOME not avaialble or not set properly.");
-			logger.writeln("** R_HOME not avaialble or not set properly.");
-			logger.writeln("** Possible Causes:");
-			logger.writeln("** MeV launched via WebStart");
-			//logger.writeln("** MeV launched via WebStart");
-			logger.stop();
-			throw new Exception("R_HOME not set or available.\n** Possible Causes:\n** MeV launched via WebStart");
-		}
+		
+		// if RHOME variable is set
+		isRhomeSet(r_home);
 
-		if(!(new File(r_home).exists())) {
-			System.err.println("R_HOME dir: " + r_home + " does not exist.");
-			logger.writeln("R_HOME dir: " + r_home + " does not exist.");
-			logger.writeln("** Possible Causes:");
-			logger.writeln("** MeV launched via WebStart");
-			logger.writeln("** " + r_home + " location removed");
-			logger.stop();
-			throw new Exception("R_HOME dir: " + r_home + "does not exist.\n** Possible Causes:\n** MeV launched via WebStart\n** " + r_home + " location removed");
-		}
-
+		// if R_HOME location exist
+		doesExistRhome(r_home);
+		
+		// if OS specific dynamic lib exist for R
+		doesExistRlib();
+		
 		if (!Rengine.versionCheck()) {
 			System.err.println("** Version mismatch - Java files don't match library version.");
 			logger.writeln("** Version mismatch - Java files don't match library version.");
@@ -165,7 +152,7 @@ public class RHook  {
 			throw new Exception("Java class version mismatch");
 		}
 
-		if(re != null) {
+		if((re = Rengine.getMainEngine()) != null) {
 			System.out.println("Rengine already exists");
 			logger.writeln("Rengine already exists");
 			cleanUp();
@@ -174,11 +161,15 @@ public class RHook  {
 
 		System.out.println("Creating Rengine (with arguments)");
 		String[] args = {"--no-save"};
-		// 1) we pass the arguments from the command line
-		// 2) we won't use the main loop at first, we'll start it later
-		//    (that's the "false" as second argument)
-		// 3) the callbacks are implemented by the TextConsole class above
+
 		try {
+			// in Mac check for if user has changed R version. If so try get 
+			// compatible dynamic R lib for new version.
+			checkMacR();
+			// 1) we pass the arguments from the command line
+			// 2) we won't use the main loop at first, we'll start it later
+			// (that's the "false" as second argument)
+			// 3) the callbacks are implemented by the TextConsole class above
 			//re = new Rengine(null, false, new TextConsole());
 			re = new Rengine(args, false, new TextConsole());
 		} catch (Exception e) {
@@ -239,32 +230,58 @@ public class RHook  {
 		return d.length;
 	}
 
-	//Test if limma/any R package is installed
+	/**
+	 * Test if R packages for a module are available and installed
+	 * @param pkgName
+	 * @throws Exception
+	 */
 	public static void testPackage(String pkgName) throws Exception {
-		//System.out.println("Raktim: Test Code");
-		//System.out.println("Checking for LIMMA");
-		//System.out.println("Parsing");
 		logger.writeln("Checking Package - " + pkgName);
 
-		//TODO Code to install a package from a local zip or tar based on OS
+		// install a package from a local zip or tar based on OS
 		String pkgPath = System.getProperty("user.dir")+
 		System.getProperty("file.separator")+
 		RConstants.R_PACKAGE_DIR+
 		System.getProperty("file.separator");
 
+		// Get list of packages for the module
 		String r_ver = TMEV.getSettingForOption("cur_r_ver");
-		String pkg = TMEV.getSettingForOption(pkgName+"_"+getOSbyName()+"_"+r_ver+"_"+getARCHbyName());
+		String pkg = TMEV.getSettingForOption(
+				pkgName+"_"+
+				getOSbyName()+"_"+
+				r_ver+"_"+
+				getARCHbyName()
+		);
+		// array of pkg names
 		String pkgs[] = pkg.split(":");
+
+		// check if packages are down-loaded in MEV.home/RPackages
+		String pkgFolder = System.getProperty("user.dir") + "/" + RConstants.R_PACKAGE_DIR + "/";
+		ArrayList<String> pkgsToDownload = markPkgsToDownload(pkgFolder, pkgs);
+
+		if(pkgsToDownload.size() > 0) {
+			// create complete url for each pkg associated with the module
+			// based on R version, OS and architecture
+			String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+			String os = getOSbyName();
+			String arch = getARCHbyName();
+			ArrayList<String> pkg_url_list = createPkgUrls(
+					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os,
+					ver,
+					pkgsToDownload,
+					arch,
+					os,
+					repHash);
+
+			// try downloading the packages to MEV.home/RPackages
+			String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
+			updatePackages(pkg_url_list, pkg_dest);
+		}
+
+		// install the pkgs in R if not already installed
 		for (int i=0; i < pkgs.length; i++) {
 
-			long e=re.rniParse("which(as.character(installed.packages()[,1])=='"+pkgs[i]+"')", 1);
-			//System.out.println("Result = "+e+", running eval");
-			long r=re.rniEval(e, 0);
-			//System.out.println("Result = "+r+", building REXP");
-			REXP x=new REXP(re, r);
-			//System.out.println("REXP result = "+x);
-			//Return the index of limma
-			//System.out.println("REXP result = "+x.asInt());
+			REXP x = evalR("which(as.character(installed.packages()[,1])=='"+pkgs[i]+"')");
 			if(x.asInt() != 0 ) {
 				System.out.println(pkgs[i] + " Package Installed");
 				logger.writeln(pkgs[i] + " Package Installed");
@@ -281,6 +298,21 @@ public class RHook  {
 		}
 	}
 
+	/**
+	 * 
+	 * @param pkgs
+	 * @return
+	 */
+	private static ArrayList<String> markPkgsToDownload(String lookupfolder, String pkgs[]) {
+		ArrayList<String> pkgsToDownload = new ArrayList<String>();
+
+		for (int i=0; i < pkgs.length; i++) {
+			File f = new File(lookupfolder+pkgs[i].trim());
+			if(!f.exists())
+				pkgsToDownload.add(pkgs[i].trim());
+		}
+		return pkgsToDownload;
+	}
 	//Code to operate on a object returned by a function
 	//We create vector sd first and then use sd to create matrix y
 	public void createData(int samples, int genes, boolean print) {
@@ -346,9 +378,6 @@ public class RHook  {
 					i=0;
 				}
 				System.out.println("");
-				//guiFrame.rOutText.append(tmp);
-				//guiFrame.rOutText.append("\n");
-				//if(genes > 10) { guiFrame.rOutText.append(".....\n"); }
 			}
 		}
 	}
@@ -408,11 +437,9 @@ public class RHook  {
 				tmp1+= i+ "\t" + gene[i]+ "\t" + logFC[i] + "\t" + t[i] + "\t" + pValue[i] + "\t" + adj_pValue[i] + "\n"; 
 				i++; 
 			}
-			//guiFrame.rOutText.append(tmp1);
-			//guiFrame.rOutText.append("\n");
+
 		}
-		//guiFrame.cmdText.setFont(old_F);
-		//guiFrame.cmdText.setForeground(old_C);
+
 	}
 
 	public static void endR(){
@@ -423,6 +450,7 @@ public class RHook  {
 
 	static Rengine re;
 	protected static RLogger logger;
+	private static Hashtable<String, String> repHash;
 	//JRIJFrame guiFrame;
 
 	/* MeV API Functions */
@@ -498,6 +526,14 @@ public class RHook  {
 		return x;
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param fm
+	 * @param rowNames
+	 * @param colNames
+	 * @return
+	 */
 	public static REXP createRDataMatrix(String name, FloatMatrix fm, String[] rowNames, String[] colNames) {
 		REXP x = null;
 		int row = fm.getRowDimension();
@@ -537,17 +573,34 @@ public class RHook  {
 		return x;
 	}
 
+	/**
+	 * 
+	 * @throws Exception
+	 */
 	private static void cleanUp() throws Exception {
 		//re.eval("rm(list = ls())");		
 		evalR("rm(list = ls())");
 		//logger.stop();
 	}
 
+	/**
+	 * 
+	 * @throws Exception
+	 */
 	public static void endRSession() throws Exception {
 		cleanUp();
+		// TODO unload packages
 		logger.stop();
 	}
 
+	/**
+	 * 
+	 * @param rObj
+	 * @param filePath
+	 * @param rowNames
+	 * @param colNames
+	 * @throws Exception
+	 */
 	public static void createRDataMatrixFromFile(String rObj,	String filePath, boolean rowNames, String[] colNames) throws Exception {
 		//Create col names vector
 		String cNames = "cols <- c(0,";
@@ -568,14 +621,26 @@ public class RHook  {
 		evalR(rObj + " <- as.matrix(" + rObj + ")");
 	}
 
+	/**
+	 * 
+	 * @param e
+	 */
 	public static void log(Exception e) {
 		logger.writeln(e);
 	}
 
+	/**
+	 * 
+	 * @param str
+	 */
 	public static void log(String str) {
 		logger.writeln(str);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static int getOS() {
 		String os = System.getProperty("os.name");
 		//String arch = System.getProperty("os.arch");
@@ -592,6 +657,10 @@ public class RHook  {
 		return RConstants.UNKNOWN_OS;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static String getOSbyName() {
 		String os = System.getProperty("os.name");
 		//String arch = System.getProperty("os.arch");
@@ -608,6 +677,10 @@ public class RHook  {
 		return "unknown";
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	private static int getARCH() {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
@@ -638,7 +711,6 @@ public class RHook  {
 		if (arch.toLowerCase().contains("686") || arch.toLowerCase().contains("64")) {
 			return "64";
 		}
-
 		return "UNKNOWN_ARCH";
 	}
 
@@ -676,19 +748,11 @@ public class RHook  {
 	}
 
 	/**
-	 * For Mac OS X only --
-	 * Check for R ver and dyn lib compatibility
-	 * If mismatched try upgrading to correct version
-	 * Downloads 1 or all of the following as applicable:
-	 * dynamic lib
-	 * R version specific R package
-	 * Module specific jar
 	 * 
-	 * @param string module name
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	public static boolean checkRDynLib(String module) throws Exception {
+	public static boolean updateRDynLib() throws Exception {
 		// Get current version of R
 		String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
 		//System.out.println("Mac OS X current R version: " + ver);
@@ -697,57 +761,56 @@ public class RHook  {
 		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
 		//System.out.println("Mac OS X last R version: " + last_used_ver);
 
-		// if version changed, check if lib and package for module is 
-		if (!ver.equals(last_used_ver)) {
-			System.out.println("Current and last used R version is NOT same\n will check for avaialble updates for ver "+ ver);
-			// read R hook repository info
-			Hashtable<String, String> repHash = getPropInfoRhook();
-			// parse keys
-			String os = getOSbyName();
-			String arch = getARCHbyName();
+		// Get system os and arch
+		String os = getOSbyName();
+		String arch = getARCHbyName();
 
-			ArrayList<String> r_versionList = getValuesFrmHash(repHash, os+"_r_versions");
-			ArrayList<String> r_moduleList = getValuesFrmHash(repHash, "r_modules");
-			ArrayList<String> archList = getValuesFrmHash(repHash, os+"_arch");
+		// read R hook repository info from Web
+		getPropInfoRhook();
 
-			// check if current R version is supported
-			if (!r_versionList.contains(ver)) {
-				System.out.println("R version: " + ver + " not yet supported");
-				throw new Exception("R version: " + ver + " not yet supported");
-			}
-			// check if module is supported
-			if (!r_moduleList.contains(module)) {
-				System.out.println(module + " not yet supported");
-				throw new Exception(module + " not yet supported");
-			}
-			// check if architecture is supported
-			if (!archList.contains(arch)) {
-				System.out.println(os + " " + arch + " bit not yet supported");
-				throw new Exception(os + " " + arch + " bit not yet supported");
-			}
+		// parse keys
+		ArrayList<String> r_versionList = getValuesFrmHash(repHash, os+"_r_versions");
+		ArrayList<String> archList = getValuesFrmHash(repHash, os+"_arch");
 
-			// check if lib and pkg available for new version
-			String lib_url = RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/libjri.jnilib";
-			ArrayList<String> pkg_url_list = createPkgUrls(
-					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os,
-					ver,
-					r_moduleList,
-					arch,
-					os,
-					repHash);
-			// update lib and all packages associated with R ver
-			updateLibAndPackages(lib_url, pkg_url_list);
+		// check if current R version is supported
+		if (!r_versionList.contains(ver)) {
+			System.out.println("R version: " + ver + " not yet supported");
+			throw new Exception("R version: " + ver + " not yet supported");
+		}
 
-			//update TMEV properties
-			TMEV.storeProperty("cur_r_ver", ver);
-			TMEV.storeProperty("prev_r_ver", last_used_ver);
-			// extract module specific property (pkg name) for cur R ver and store in TMEV
-			storeModuleProperty(ver, r_moduleList, arch, os, repHash);
-			return true;
-		} 
-		// else return
-		System.out.println("Current and last used R version is same");
+		// check if architecture is supported
+		if (!archList.contains(arch)) {
+			System.out.println(os + " " + arch + " bit not yet supported");
+			throw new Exception(os + " " + arch + " bit not yet supported");
+		}
+
+		// check if lib and pkg available for new version
+		String lib_url = RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/libjri.jnilib";
+
+		// update lib and all packages associated with R ver
+		// updateLibAndPackages(lib_url, pkg_url_list);
+		updateRLib(lib_url);
+
+		// update TMEV properties
+		TMEV.storeProperty("cur_r_ver", ver);
+		TMEV.storeProperty("prev_r_ver", last_used_ver);
+		// storeModuleProperty(ver, r_moduleList, arch, os, repHash);
 		return true;
+
+	}
+
+	/**
+	 * 
+	 * @param libUrl
+	 * @throws IOException
+	 */
+	private static void updateRLib(String libUrl) throws IOException {
+		String lib_dest = System.getProperty("user.dir")+"/"+RConstants.MAC_MEV_RES_LOC;
+
+		// get dyn lib
+		String fileName = getFileNameFromURL(libUrl);
+		System.out.println("updateLibAndPackages remote LIB " + fileName);
+		getRemoteFile(libUrl, lib_dest+"/"+fileName);
 	}
 
 	/**
@@ -756,14 +819,9 @@ public class RHook  {
 	 * @param pkgUrlList
 	 * @throws IOException 
 	 */
-	private static void updateLibAndPackages(String libUrl, ArrayList<String> pkgUrlList) throws IOException {
-		String lib_dest = System.getProperty("user.dir")+"/"+RConstants.MAC_MEV_RES_LOC;
-		String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
-
-		// get dyn lib
-		String fileName = getFileNameFromURL(libUrl);
-		System.out.println("updateLibAndPackages remote LIB " + fileName);
-		getRemoteFile(libUrl, lib_dest+"/"+fileName);
+	private static void updatePackages(ArrayList<String> pkgUrlList, String pkg_dest) 
+	throws IOException {
+		String fileName;
 
 		// get R pkgs
 		for(int i=0; i < pkgUrlList.size(); i++) {
@@ -807,7 +865,7 @@ public class RHook  {
 		OutputStream fos = new FileOutputStream(newFName);
 		int bytesRead;
 		byte[] buf = new byte[1024];
-		while ((bytesRead = uis.read(buf,0,buf.length)) > 0)
+		while ((bytesRead = uis.read(buf, 0, buf.length)) > 0)
 			fos.write(buf, 0, bytesRead);
 		fos.close();
 		uis.close();
@@ -874,9 +932,13 @@ public class RHook  {
 	/**
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	public static Hashtable<String, String> getPropInfoRhook() {
-		Hashtable<String, String> repHash = new Hashtable<String, String>();
+	public static Hashtable<String, String> getPropInfoRhook() throws Exception {
+		if (repHash != null)
+			return repHash; 
+
+		repHash = new Hashtable<String, String>();
 
 		try {
 			URLConnection conn = new URL(RConstants.RHOOK_PROP_URL).openConnection();    		    		
@@ -893,14 +955,38 @@ public class RHook  {
 			}
 			 */
 		} catch (Exception e) {
-			System.out.println("Could not tereive Web Repository Info. Using cached value instead.");
+			System.out.println("Could not retreive Web Repository Info.");
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
-			return null;
+			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
+			//return null;
+			throw e;
 		}
 
 		//return the vector of repository hashes
 		return repHash; 
+	}
+
+	/**
+	 * For Mac OS X only --
+	 * Check for R ver and dyn lib compatibility
+	 * If mismatched try upgrading to correct version
+	 */
+	static void checkMacR() throws Exception {
+		if (RHook.getOS() != RConstants.MAC_OS)
+			return;
+		try {
+			if (Mac_R_ver_Changed()) {
+				//if (!RHook.checkRDynLib("limma")) {
+				if (!RHook.updateRDynLib()) {
+					//JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
+					throw new Exception("Error updating R library"); 
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			//JOptionPane.showMessageDialog(null, "Error updating R library\n **" + e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
+			throw new Exception("Error updating R library\n **" + e.getMessage());
+		}
 	}
 
 	/**
@@ -985,6 +1071,100 @@ public class RHook  {
 		    System.err.println(x);
 		}
 		 */
+	}
+
+	/**
+	 * Sets R library path to R_HOME/library
+	 * Vista permission issues forces R to use tmp filder as library path 
+	 * resulting to multiple install pf packages.
+	 * @throws Exception
+	 */
+	private void setLibPath() throws Exception {
+		String libPath = System.getenv("R_HOME");
+		libPath = libPath.replace("\\", "/");
+		libPath += "/library";
+		String rCmd = ".libPaths('" + libPath + "')";
+		System.out.println("libPath cmd " + rCmd);
+		RHook.evalR(rCmd);
+
+		rCmd = ".libPaths()";
+		REXP rx = RHook.evalR(rCmd);
+		System.out.println("Curr libPath " + rx.asStringArray()[0]);
+	}
+
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	private static void doesExistRlib() throws Exception {
+		String lib;
+		// Mac OS
+		if (getOS() == RConstants.MAC_OS){
+			lib = System.getProperty("user.dir") + "/" + 
+					"MeV.app/Contents/Resources/Java/" + 
+					getLibraryName();
+		} 
+		// all other os
+		else {
+			lib = System.getenv("R_HOME") + "/" + getLibraryName();
+		}
+		
+		if(!(new File(lib).exists())) {
+			System.err.println("R_HOME dir: " + lib + " does not exist.");
+			logger.writeln("R JRI lib: " + lib + "does not exist.");		
+			logger.stop();
+			throw new Exception("R JRI lib: " + lib + "does not exist.");
+		}
+	}
+	
+	/**
+	 * 
+	 * @param r_home
+	 * @throws Exception
+	 */
+	private static void doesExistRhome(String r_home) throws Exception {
+		if(!(new File(r_home).exists())) {
+			System.err.println("R_HOME dir: " + r_home + " does not exist.");
+			logger.writeln("R_HOME dir: " + r_home + " does not exist.");
+			logger.writeln("** Possible Causes:");
+			logger.writeln("** MeV launched via WebStart");
+			logger.writeln("** " + r_home + " location removed");
+			logger.stop();
+			throw new Exception("R_HOME dir: " + r_home + "does not exist.\n** Possible Causes:\n** MeV launched via WebStart\n** " + r_home + " location removed");
+		}
+	}
+	/**
+	 * 
+	 * @param r_home
+	 * @throws Exception
+	 */
+	private static void isRhomeSet(String r_home) throws Exception{
+		if(r_home == null || r_home == "") {
+			System.err.println("** R_HOME not avaialble or not set properly.");
+			logger.writeln("** R_HOME not avaialble or not set properly.");
+			logger.writeln("** Possible Causes:");
+			logger.writeln("** MeV launched via WebStart");
+			//logger.writeln("** MeV launched via WebStart");
+			logger.stop();
+			throw new Exception("R_HOME not set or available.\n** Possible Causes:\n** MeV launched via WebStart");
+		}
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	private static String getLibraryName() {
+		int os = getOS();
+		switch(os) {
+		case RConstants.MAC_OS:
+			return "libjri.jnilib";
+		case RConstants.WINDOWS_OS:
+			return "jri.dll";
+		case RConstants.LINUX_OS:
+			return "libjri.so";
+		default:
+			return null;
+		}
 	}
 
 	/**
