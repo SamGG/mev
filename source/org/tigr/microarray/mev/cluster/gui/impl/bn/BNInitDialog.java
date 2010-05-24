@@ -12,6 +12,8 @@
 package org.tigr.microarray.mev.cluster.gui.impl.bn;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -24,10 +26,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -47,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -55,6 +66,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tigr.microarray.mev.MultipleArrayData;
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.MevAnnotation;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -68,6 +80,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.ease.EASEEntrezSupportDataFile;
 import org.tigr.microarray.mev.resources.IResourceManager;
 import org.tigr.microarray.mev.resources.ResourcererAnnotationFileDefinition;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
+import org.tigr.util.StringSplitter;
 
 /** Accumulates parameters for execution of BN analysis.
  * Based on EASEInitDialog
@@ -79,7 +92,9 @@ public class BNInitDialog extends AlgorithmDialog {
 	 */
 	private int result = JOptionPane.CANCEL_OPTION;
 	ConfigPanel configPanel;
+	CustomSeedDialog customSeedDialog;
 	PriorSelectionPanel priorsPanel;
+	NetworkSeedPanel networkSeedPanel;
 	DiscretizingPanel discPanel;
 	ClassNumPanel classnumPanel;
 	XmlBifPanel useGoPanel;
@@ -97,6 +112,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	String searchAlgorithm = "TabuSearch"; //"HillClimber";
 	String scoreType = "BAYES"; //"BDeu";
 	boolean useArc = true;
+	boolean useCreated = false;
 	File fileDir = null;
 	String kegg_sp = null;
 	// RM specific attributes
@@ -104,6 +120,7 @@ public class BNInitDialog extends AlgorithmDialog {
 	protected Hashtable<String, Vector<String>> speciestoarrays;
 	protected IResourceManager resourceManager;
 	protected boolean useLoadedAnnotationFile = false;
+	ClusterRepository cr;
 	File annotationFile;
 
 	/** Creates a new instance of BNInitDialog
@@ -111,11 +128,19 @@ public class BNInitDialog extends AlgorithmDialog {
 	 * @param repository Cluster repository to construct <CODE>ClusterBrowser</CODE>
 	 * @param annotationLabels Annotation types
 	 */
-	public BNInitDialog(IFramework frame, ClusterRepository repository, String [] annotationLabels, IResourceManager rm, String speciesName, String arrayName, Hashtable<String, Vector<String>> speciestoarrays) {
-		super(frame.getFrame(), "BN: Bayes Network Analysis", true);
+	public BNInitDialog(
+			IFramework frame, 
+			ClusterRepository repository, 
+			String [] annotationLabels, 
+			IResourceManager rm, 
+			String speciesName, 
+			String arrayName, 
+			Hashtable<String, Vector<String>> speciestoarrays
+			) {
+		super(frame.getFrame(), "BN: Bayesian Network Analysis", true);
 		this.parent = frame.getFrame(); //parent;
 		this.framework = frame;
-
+		this.cr = repository;
 		// RM related
 		this.speciesName = speciesName;
 		this.arrayName = arrayName;
@@ -130,7 +155,8 @@ public class BNInitDialog extends AlgorithmDialog {
 		tabbedPane = new JTabbedPane();
 
 		//config panel        
-		configPanel = new ConfigPanel();        
+		configPanel = new ConfigPanel(); 
+		     
 
 		JPanel popNClusterPanel = new JPanel(new GridBagLayout());
 		popNClusterPanel.setBackground(Color.white);
@@ -139,7 +165,14 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		//re-enable this panel when population selection from file is available
 		//popNClusterPanel.add(popPanel, new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		popNClusterPanel.add(browser, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		popNClusterPanel.add(
+				browser, 
+				new GridBagConstraints(
+						0,1,1,1,1.0,1.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
 		tabbedPane.add("Population and Cluster Selection", popNClusterPanel);
 
 		bnParamPanel = new BNParameterPanel(annotationLabels);        
@@ -148,20 +181,78 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		//mode panel
 		priorsPanel = new PriorSelectionPanel(!(repository == null || repository.isEmpty()));
+		networkSeedPanel = new NetworkSeedPanel();
 		bootStrapPanel = new BootStrapPanel();
 		discPanel = new DiscretizingPanel();
 		classnumPanel = new ClassNumPanel();
 		useGoPanel = new XmlBifPanel();
 		runBNPanel = new RunBNPanel();
 		tabbedPane.add("Running BN Parameters", runBNPanel);
-		parameters.add(configPanel, new GridBagConstraints(0,0,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));       
-		parameters.add(priorsPanel, new GridBagConstraints(0,1,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
-		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.EAST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
-		parameters.add(classnumPanel, new GridBagConstraints(1,2,1,1,1.0,0,GridBagConstraints.WEST,GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0),0,0));
-		parameters.add(useGoPanel, new GridBagConstraints(0,4,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(
+				configPanel, 
+				new GridBagConstraints(
+						0,0,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				networkSeedPanel, 
+				new GridBagConstraints(
+						0,1,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				priorsPanel, 
+				new GridBagConstraints(
+						0,2,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				discPanel, 
+				new GridBagConstraints(
+						0,3,1,1,1.0,0,
+						GridBagConstraints.EAST,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				classnumPanel, 
+				new GridBagConstraints(
+						1,3,1,1,1.0,0,
+						GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				useGoPanel, 
+				new GridBagConstraints(
+						0,4,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				bootStrapPanel, 
+				new GridBagConstraints(
+						0,5,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
 		//parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(tabbedPane, new GridBagConstraints(0,6,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(
+				tabbedPane, 
+				new GridBagConstraints(
+						0,6,2,1,1.0,1.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
 
 		addContent(parameters);
 		setActionListeners(listener);
@@ -178,7 +269,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			okButton.setEnabled(false);
 		}
 
-		this.setSize(600,750);
+		this.setSize(800,750);
 	}
 
 	/** Creates a new instance of BNInitDialog
@@ -222,25 +313,83 @@ public class BNInitDialog extends AlgorithmDialog {
 
 		//mode paneli
 		priorsPanel = new PriorSelectionPanel(true);
+		networkSeedPanel = new NetworkSeedPanel();
 		bootStrapPanel = new BootStrapPanel();
 		discPanel = new DiscretizingPanel();
 		classnumPanel = new ClassNumPanel();
 		useGoPanel = new XmlBifPanel();
 		runBNPanel=new RunBNPanel(); 
 		tabbedPane.add("Running Bayesian Network Parameters", runBNPanel);
-		parameters.add(configPanel, new GridBagConstraints(0,0,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));       
-		parameters.add(priorsPanel, new GridBagConstraints(0,1,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(discPanel, new GridBagConstraints(0,2,1,1,1.0,0,GridBagConstraints.EAST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(classnumPanel, new GridBagConstraints(1,2,1,1,1.0,0,GridBagConstraints.WEST,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(useGoPanel, new GridBagConstraints(0,4,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(bootStrapPanel, new GridBagConstraints(0,5,2,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(
+				configPanel, 
+				new GridBagConstraints(
+						0,0,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				networkSeedPanel, 
+				new GridBagConstraints(
+						0,1,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				priorsPanel, 
+				new GridBagConstraints(
+						0,2,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				discPanel, 
+				new GridBagConstraints(
+						0,3,2,1,1.0,0,
+						GridBagConstraints.EAST,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				classnumPanel, 
+				new GridBagConstraints(
+						1,3,1,1,1.0,0,
+						GridBagConstraints.WEST,
+						GridBagConstraints.HORIZONTAL, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				useGoPanel, 
+				new GridBagConstraints(
+						0,4,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
+		parameters.add(
+				bootStrapPanel, 
+				new GridBagConstraints(
+						0,5,2,1,1.0,0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
 		//parameters.add(runBNPanel, new GridBagConstraints(0,5,1,1,1.0,0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
-		parameters.add(tabbedPane, new GridBagConstraints(0,6,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		parameters.add(
+				tabbedPane, 
+				new GridBagConstraints(
+						0,6,2,1,1.0,1.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.BOTH, 
+						new Insets(0,0,0,0),0,0)
+				);
 
 		addContent(parameters);
 		setActionListeners(listener);
 
-		this.setSize(600,800);
+		this.setSize(760,750);
 	}
 
 	/** Shows the dialog.
@@ -375,10 +524,42 @@ public class BNInitDialog extends AlgorithmDialog {
 	public int getKFolds(){
 		return Integer.parseInt(this.runBNPanel.kFolds());
 	}
+	
 	public String getKeggSpecies() {
 		return kegg_sp;
 	}
-
+	
+	public boolean useNetworkSeed() {
+		return networkSeedPanel.netSeedCheckbox.isSelected();
+	}
+	
+	public boolean useNetworkSeedWithPrior() {
+		return networkSeedPanel.netSeedCheckbox.isSelected() && 
+				/* networkSeedPanel.fullSeedRadio.isSelected() && */
+				networkSeedPanel.usePriorsRadio.isSelected();
+	}
+	public boolean useNetworkSeedWithoutPrior() {
+		return networkSeedPanel.netSeedCheckbox.isSelected() && 
+				/* networkSeedPanel.fullSeedRadio.isSelected() && */
+				networkSeedPanel.noPriorsRadio.isSelected();
+	}
+	
+	public boolean useNetworkSeedForCptOnly() {
+		return networkSeedPanel.netSeedCheckbox.isSelected() && 
+				networkSeedPanel.onlyCptRadio.isSelected() ;
+	}
+	
+	public String getNetSeedUID() {
+		return networkSeedPanel.netSeedUID;
+	}
+	
+	boolean validateNetSeedUID() {
+		System.out.println("Net Seed UID: " + networkSeedPanel.netSeedUID);
+		return !networkSeedPanel.netSeedUID.equals(networkSeedPanel.netSeedUIDList[0]);
+	}
+	String getNetSeedFileLoc() {
+		return networkSeedPanel.seedFileLocField.getText().trim();
+	}
 	/** Returns a list of file names corresponding to files mapping
 	 * indices to annotation terms (themes).
 	 */
@@ -401,7 +582,13 @@ public class BNInitDialog extends AlgorithmDialog {
 			super(new GridBagLayout());
 			setLayout(new GridBagLayout());
 			//setBackground(Color.white);
-			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Network Priors Sources", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
+			setBorder(
+					BorderFactory.createTitledBorder(
+							BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), 
+							"Network Priors Sources", 
+							TitledBorder.DEFAULT_JUSTIFICATION, 
+							TitledBorder.DEFAULT_POSITION, 
+							font, Color.black));
 
 			litSourceCheckbox = new JCheckBox("Literature Mining",true);
 			litSourceCheckbox.setFocusPainted(false);
@@ -447,9 +634,392 @@ public class BNInitDialog extends AlgorithmDialog {
 			add(ppiSourceCheckbox, new GridBagConstraints(2,0,1,1,1.0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0, 0));
 		}
 	}
+
+	/**
+	 * GUI to select network seed, full or partial
+	 * @author raktim
+	 *
+	 */
+	private class NetworkSeedPanel extends ParameterPanel {
+		private JCheckBox netSeedCheckbox;
+		private JComboBox netSeedComboUID;
+		private JButton uploadSeedButton,createSeedButton, cancelCreatedSeed;
+		private JTextField seedFileLocField;
+		private JLabel loadedLabel = new JLabel("");
+		private ButtonGroup priorsGroup; //seedGroup, 
+		//private JRadioButton partialSeedRadio, fullSeedRadio;
+		private JRadioButton usePriorsRadio, noPriorsRadio, onlyCptRadio;
+		//private JLabel priorsLabel;
+		private String netSeedUID;
+		private String netSeedUIDList[] = {"Select Seed UID",
+				MevAnnotation.fieldConsts.PROBE_ID, 
+				MevAnnotation.fieldConsts.GENBANK_ACC, 
+				MevAnnotation.fieldConsts.GENE_SYMBOL };
+		
+		public NetworkSeedPanel() {
+			//super(new GridBagLayout());
+			super("Network Seed");
+			setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+			setLayout(new GridBagLayout());
+			/*
+			setBorder(
+					BorderFactory.createTitledBorder(
+							BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), 
+							"Network Seed", 
+							TitledBorder.DEFAULT_JUSTIFICATION, 
+							TitledBorder.DEFAULT_POSITION, 
+							font, Color.black
+							)
+					);
+			setBackground(Color.white);
+			*/
+			netSeedCheckbox = new JCheckBox("Use Network Seed",false);
+			netSeedCheckbox.setFocusPainted(false);
+			netSeedCheckbox.setBackground(Color.white);
+			netSeedCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
+			netSeedCheckbox.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+//						if (useCreated){
+//							cancelCreatedSeed.setEnabled(true);
+//							createSeedButton.setEnabled(false);
+//						} else {
+//							cancelCreatedSeed.setEnabled(false);
+//							createSeedButton.setEnabled(true);
+//						}
+//						uploadSeedButton.setEnabled(true);
+						seedFileLocField.setEnabled(true);
+						//priorsLabel.setEnabled(true);
+						netSeedComboUID.setEnabled(true);
+						setLoadingSeedsButtons();
+						loadedLabel.setEnabled(true);
+						loadedLabel.setForeground(Color.red);
+						//for (Enumeration<AbstractButton> e = seedGroup.getElements(); e.hasMoreElements(); ) {
+							//((JRadioButton)e.nextElement()).setEnabled(true); 
+						//}
+						for (Enumeration<AbstractButton> e = priorsGroup.getElements(); e.hasMoreElements(); ) {
+							((JRadioButton)e.nextElement()).setEnabled(true); 
+						}
+						if (/*partialSeedRadio.isSelected() || 
+								(fullSeedRadio.isSelected() && */ usePriorsRadio.isSelected()/*)*/) {
+							priorsPanel.keggSourceCheckbox.setEnabled(true);
+							priorsPanel.litSourceCheckbox.setEnabled(true);
+							priorsPanel.ppiSourceCheckbox.setEnabled(true);
+						} else {
+							priorsPanel.keggSourceCheckbox.setEnabled(false);
+							priorsPanel.litSourceCheckbox.setEnabled(false);
+							priorsPanel.ppiSourceCheckbox.setEnabled(false);
+						}
+					} 
+					if (ie.getStateChange() == ItemEvent.DESELECTED ) {
+						uploadSeedButton.setEnabled(false);
+						seedFileLocField.setEnabled(false);
+						//priorsLabel.setEnabled(false);
+						netSeedComboUID.setEnabled(false);
+						cancelCreatedSeed.setEnabled(false);
+						createSeedButton.setEnabled(false);
+						loadedLabel.setEnabled(false);
+//						loadedLabel.setText("");
+						//for (Enumeration<AbstractButton> e = seedGroup.getElements(); e.hasMoreElements(); ) {
+							//((JRadioButton)e.nextElement()).setEnabled(false); 
+						//}
+						for (Enumeration<AbstractButton> e = priorsGroup.getElements(); e.hasMoreElements(); ) {
+							((JRadioButton)e.nextElement()).setEnabled(false); 
+						}
+						priorsPanel.keggSourceCheckbox.setEnabled(true);
+						priorsPanel.litSourceCheckbox.setEnabled(true);
+						priorsPanel.ppiSourceCheckbox.setEnabled(true);
+					}
+				}
+			});
+			
+			netSeedComboUID = new JComboBox(netSeedUIDList);
+			netSeedComboUID.setEnabled(false);
+			netSeedUID = netSeedUIDList[0];
+			netSeedComboUID.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					netSeedUID = (String)((JComboBox)ae.getSource()).getSelectedItem();
+					setLoadingSeedsButtons();
+				}
+			});
+			
+			seedFileLocField = new JTextField(200);
+			//seedFileLocField.setPreferredSize(new Dimension(250,40));
+			seedFileLocField.setEnabled(false);
+			seedFileLocField.setPreferredSize(new Dimension(200, seedFileLocField.getHeight()));
+			seedFileLocField.setEditable(false);
+
+			uploadSeedButton = new JButton("Upload");
+			uploadSeedButton.setEnabled(false);
+			uploadSeedButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					String startDir = seedFileLocField.getText();
+
+					File file = new File(startDir);
+					if(!file.exists()) {                
+						//file = TMEV.getFile("data/bn");
+						//if(file == null) {
+						//file = new File(System.getProperty("user.dir"));
+						file = new File(TMEV.getDataPath());
+						//}
+					}
+					JFileChooser chooser = new JFileChooser(file);
+					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
+						String dir = chooser.getSelectedFile().getAbsolutePath().trim();
+						seedFileLocField.setText(chooser.getSelectedFile().getAbsolutePath());
+						System.out.println("Net Seed Loc Prop" + seedFileLocField.getText());
+						System.out.println("Net Seed Loc " + seedFileLocField.getText());
+						TMEV.storeProperty(BNConstants.BN_NET_SEED_LOC_PROP, seedFileLocField.getText());
+						loadedLabel.setText("File Loaded");
+					}
+				}
+			});
+			createSeedButton = new JButton("Create Network Seed");
+			createSeedButton.setEnabled(false);
+			createSeedButton.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent ae) {
+					if (cr==null||cr.isEmpty()){
+						JOptionPane.showMessageDialog(parent, "Please create and choose a cluster from which to draw seeds.", "Cluster Not Selected", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+//					JDialog jd = new JDialog();
+//					JComboBox cb = new JComboBox(netSeedUIDList);
+//					jd.add(cb);
+//					jd.setModal(true);
+//					jd.setVisible(true);
+//					String annot = (String)cb.getSelectedItem();
+//					String[] exptNames = framework.getData().get.getElementAnnotation(getSelectedCluster().getIndices(), MevAnnotation.fieldConsts.GENE_SYMBOL);
+					String[] exptNames = new String[getSelectedCluster().getSize()];
+//		        	for (int i=0; i<exptNames.length; i++){
+//		        		exptNames[i] = framework.getData().getAnnotationList(MevAnnotation.fieldConsts.GENE_SYMBOL, getSelectedCluster().getIndices());
+//		        	}
+					
+					exptNames = framework.getData().getAnnotationList(netSeedUID, getSelectedCluster().getIndices());
+					customSeedDialog = new CustomSeedDialog(exptNames);
+					if (customSeedDialog.display()){
+//						uploadSeedButton.setEnabled(false);
+//						seedFileLocField.setEnabled(false);
+//						netSeedCheckbox.setEnabled(false);
+//						netSeedComboUID.setEnabled(false);
+						useCreated = true;	
+						loadedLabel.setText("File Loaded");
+//						cancelCreatedSeed.setEnabled(true);
+//						createSeedButton.setEnabled(false);
+					}
+				}
+			});
+			cancelCreatedSeed = new JButton("Remove Created Network Seed");
+			cancelCreatedSeed.setEnabled(false);
+			cancelCreatedSeed.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ae) {
+					useCreated = false;
+					cancelCreatedSeed.setEnabled(false);
+					createSeedButton.setEnabled(true);
+				}
+			});
+			/*
+			partialSeedRadio = new JRadioButton("Partial network seed (will be used with LM Priors)"); 
+			partialSeedRadio.setBackground(Color.white);
+			partialSeedRadio.setEnabled(false);
+			partialSeedRadio.addItemListener(new ItemListener(){
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						priorsPanel.keggSourceCheckbox.setEnabled(true);
+						priorsPanel.litSourceCheckbox.setEnabled(true);
+						priorsPanel.ppiSourceCheckbox.setEnabled(true);
+						//fullSeedRadio.setSelected(false);
+						//partialSeedRadio.setSelected(false);
+					}
+				}
+			});
+
+			fullSeedRadio = new JRadioButton("Full network seed With [", true);           	
+			fullSeedRadio.setBackground(Color.white);
+			fullSeedRadio.setEnabled(false);
+			fullSeedRadio.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						if (usePriorsRadio.isSelected()) {
+							priorsPanel.keggSourceCheckbox.setEnabled(true);
+							priorsPanel.litSourceCheckbox.setEnabled(true);
+							priorsPanel.ppiSourceCheckbox.setEnabled(true);
+						}
+						if (noPriorsRadio.isSelected()) {
+							priorsPanel.keggSourceCheckbox.setEnabled(false);
+							priorsPanel.litSourceCheckbox.setEnabled(false);
+							priorsPanel.ppiSourceCheckbox.setEnabled(false);
+						}
+					}
+				}
+			});
+			 
+			seedGroup = new ButtonGroup();
+			seedGroup.add(partialSeedRadio);
+			seedGroup.add(fullSeedRadio);
+			*/
+			
+			usePriorsRadio = new JRadioButton("With LM Priors"); 
+			usePriorsRadio.setBackground(Color.white);
+			usePriorsRadio.setEnabled(false);
+			usePriorsRadio.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						//priorsPanel.keggSourceCheckbox.setEnabled(true);
+						//priorsPanel.litSourceCheckbox.setEnabled(true);
+						//priorsPanel.ppiSourceCheckbox.setEnabled(true);
+						toggleState(priorsPanel, true);
+						toggleState(bootStrapPanel, true);
+						//bootStrapPanel.isBootstrappingCheckbox.setSelected(true);
+						//bootStrapPanel.isBootstrappingCheckbox.setEnabled(true);
+						//bootStrapPanel.setEnabled(true);
+					}
+				}
+			});
+
+			noPriorsRadio = new JRadioButton("Without LM Priors", true);
+			noPriorsRadio.setBackground(Color.white);
+			noPriorsRadio.setEnabled(false);
+			noPriorsRadio.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						//priorsPanel.keggSourceCheckbox.setEnabled(false);
+						//priorsPanel.litSourceCheckbox.setEnabled(false);
+						//priorsPanel.ppiSourceCheckbox.setEnabled(false);
+						toggleState(priorsPanel, false);
+						toggleState(bootStrapPanel, true);
+						//Component cmp[] = bootStrapPanel.getComponents();
+						//for(int i=0; i < cmp.length; i++)
+							//cmp[i].setEnabled(true);
+						//bootStrapPanel.isBootstrappingCheckbox.setSelected(true);
+						//bootStrapPanel.isBootstrappingCheckbox.setEnabled(true);
+						//bootStrapPanel.setEnabled(true);
+						//fullSeedRadio.setSelected(true);
+						//partialSeedRadio.setSelected(false);
+					}
+				}
+			});
+			
+			onlyCptRadio = new JRadioButton("Learn CPT only", true);
+			onlyCptRadio.setBackground(Color.white);
+			onlyCptRadio.setEnabled(false);
+			onlyCptRadio.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent ie) {
+					if (ie.getStateChange() == ItemEvent.SELECTED) {
+						//priorsPanel.keggSourceCheckbox.setEnabled(false);
+						//priorsPanel.litSourceCheckbox.setEnabled(false);
+						//priorsPanel.ppiSourceCheckbox.setEnabled(false);
+						toggleState(priorsPanel, false);
+						bootStrapPanel.isBootstrappingCheckbox.setSelected(false);
+						toggleState(bootStrapPanel, false);
+						//bootStrapPanel.isBootstrappingCheckbox.setEnabled(false);
+						//bootStrapPanel.setEnabled(false);
+					}
+				}
+			});
+
+			priorsGroup = new ButtonGroup();
+			priorsGroup.add(usePriorsRadio);
+			priorsGroup.add(noPriorsRadio);
+			priorsGroup.add(onlyCptRadio);
+
+			// Create the layout
+			GridBagConstraints c = new GridBagConstraints();
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 0;
+			c.gridwidth = 1;
+			c.anchor = GridBagConstraints.LINE_START;
+			c.insets = new Insets(0,5,0,5);
+			add(netSeedCheckbox, c);
+
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1; 
+			c.gridy = 0;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(usePriorsRadio, c);
+
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 2; 
+			c.gridy = 0;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(noPriorsRadio, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 3; //6;
+			c.gridy = 0;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(onlyCptRadio, c); 
+			
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(netSeedComboUID, c);
+			
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(uploadSeedButton, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 2;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(createSeedButton, c);
+			
+			c.fill = GridBagConstraints.BOTH;
+			c.gridx = 3;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.anchor = GridBagConstraints.LINE_END;
+			c.insets = new Insets(0,5,0,5);
+			add(seedFileLocField, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 4;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.insets = new Insets(0,5,0,5);
+			add(loadedLabel, c);
+			
+		}
+
+		protected void setLoadingSeedsButtons() {
+			if (networkSeedPanel.netSeedComboUID.getSelectedIndex()!=0){
+				networkSeedPanel.createSeedButton.setEnabled(true);
+				networkSeedPanel.uploadSeedButton.setEnabled(true);
+			} else {
+				networkSeedPanel.createSeedButton.setEnabled(false);
+				networkSeedPanel.uploadSeedButton.setEnabled(false);				
+			}			
+		}
+
+		protected void toggleState(Container item, boolean state) {
+			Component cmp[] = item.getComponents();
+			for(int i=0; i < cmp.length; i++)
+				cmp[i].setEnabled(state);
+		}
+
+	}
+
 	/** Contains mode controls. (anal. or survey)
 	 */
 	private class DiscretizingPanel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private JTextField numLevelsField;
 		private JLabel numLevelsLabel;
 
@@ -494,7 +1064,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			setBackground(Color.white);
 			setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Sample Classification", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
 
-			numClassesField = new JTextField("0", 2);
+			numClassesField = new JTextField("1", 2);
 			numClassesField.setBackground(Color.white);
 
 			numClassesLabel = new JLabel(" Number of Sample Classes");
@@ -882,6 +1452,347 @@ public class BNInitDialog extends AlgorithmDialog {
 		}
 	}
 
+	private class CustomSeedDialog extends JDialog {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		NodeButtons[] nodeButtons;
+        JLabel instructionsLabel;
+        GridBagConstraints constraints;
+        GridBagLayout gridbag;
+        JTextField selectedParent, selectedChild;
+        JButton removeSelectedParentButton;
+        JButton removeInteractionButton;
+        JList interactionsList;
+        DefaultListModel interactionModel;
+        boolean currentParentFilled, currentChildFilled;
+        int currentParentNode, currentChildNode;
+        Vector<Integer> parentNodes, childNodes;
+        String[] nodeNames;
+        JButton OKButton, cancelButton;
+        boolean success = false;
+	        
+	      
+        public CustomSeedDialog(String[] strarr) {
+	        	this.setSize(800, 600);
+	        	this.setTitle("Create Network Seed");
+	        	this.nodeNames = strarr;
+	        	OKButton = new JButton("Create Network Seed");
+	        	OKButton.addActionListener(new ActionListener() {
+		              public void actionPerformed(ActionEvent evt) { 
+		            	  	String fileloc = createSeedFile();
+							if (fileloc ==null)
+								return;
+							networkSeedPanel.seedFileLocField.setText(fileloc);
+							dispose();
+					  }
+				});     
+
+	        	cancelButton = new JButton("Cancel");
+	        	cancelButton.addActionListener(new ActionListener() {
+		              public void actionPerformed(ActionEvent evt) { 
+		            		  dispose();
+				          }
+				      });     
+	            currentParentNode = -1;
+	            currentChildNode = -1;
+	            int numPanels = 0;
+	            currentParentFilled = false;
+	            currentChildFilled = false;
+	            parentNodes = new Vector<Integer>();
+	            childNodes = new Vector<Integer>();
+	            constraints = new GridBagConstraints();
+	            gridbag = new GridBagLayout();
+	            this.setLayout(gridbag);  
+	            
+	            interactionModel = new DefaultListModel();
+	            interactionsList = new JList(interactionModel);
+	            
+	            nodeButtons = new NodeButtons[nodeNames.length];
+	            numPanels = nodeNames.length/512 + 1;
+	            JPanel [] panels = new JPanel[numPanels];
+	            
+	            int currPanel = 0;
+	            for(int i = 0; i < panels.length; i++) {
+	                panels[i] = new JPanel(gridbag);
+	            }
+	            
+	            int maxWidth = 0,i=0;
+	            int maxNameLength = 0;
+	           
+	            for ( i = 0; i <nodeNames.length ; i++) {
+	                nodeButtons[i] = new NodeButtons(i);
+	                
+	                if (nodeButtons[i].getPreferredSize().getWidth() > maxWidth) {
+	                    maxWidth = (int)Math.ceil(nodeButtons[i].getPreferredSize().getWidth());
+	                }
+	                
+	                String s = (String)(nodeNames[i]);
+	                int currentNameLength = s.length();
+	                
+	                if (currentNameLength > maxNameLength) {
+	                    maxNameLength = currentNameLength;
+	                }
+	                currPanel = i / 512;
+	 
+	                buildConstraints(constraints, 0, i%512, 1, 1, 100, 100);
+	                gridbag.setConstraints(nodeButtons[i], constraints);
+	                panels[currPanel].add(nodeButtons[i]);
+	            }
+	            
+	            selectedParent = new JTextField("", maxNameLength + 2);
+	            selectedChild = new JTextField("", maxNameLength + 2);
+	            
+	            selectedParent.setBackground(Color.white);
+	            selectedChild.setBackground(Color.white);
+	            selectedParent.setEditable(false);
+	            selectedChild.setEditable(false);   
+	            
+	            JPanel bigPanel = new JPanel(new GridBagLayout());
+	            
+	            for(int m = 0; m < numPanels; m++) {
+	                bigPanel.add(panels[m] ,new GridBagConstraints(0,m,1,1,1,1, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+	            }
+	            JScrollPane scroll = new JScrollPane(bigPanel);
+	            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);            
+	            scroll.getHorizontalScrollBar().setUnitIncrement(20);
+	            scroll.getVerticalScrollBar().setUnitIncrement(20);
+	            
+	            buildConstraints(constraints, 0, 1, 1, 1, 40, 100);
+	            constraints.fill =GridBagConstraints.BOTH;
+	            gridbag.setConstraints(scroll, constraints);
+	            this.add(scroll);
+	            
+	            constraints.fill = GridBagConstraints.NONE;
+	            
+	            JPanel currentSelectionPanel = new JPanel();
+	            GridBagLayout grid2 = new GridBagLayout();
+	            currentSelectionPanel.setLayout(grid2);
+	            removeSelectedParentButton = new JButton("Clear");
+	            removeInteractionButton = new JButton("<< Remove Interaction");
+	            removeSelectedParentButton.setEnabled(false);
+	            removeInteractionButton.setEnabled(false);
+	            removeSelectedParentButton.addActionListener(new ActionListener() {
+	                public void actionPerformed(ActionEvent evt) {
+	                    nodeButtons[currentParentNode].setEnabled(true);
+	                    currentParentNode = -1;
+	                    selectedParent.setText("");
+	                    currentParentFilled = false;
+	                    removeSelectedParentButton.setEnabled(false);
+	                }
+	            });
+	            
+	            
+	            removeInteractionButton.addActionListener(new ActionListener() {
+	                public void actionPerformed(ActionEvent evt) {
+	                    int index = interactionsList.getSelectedIndex();
+	                    interactionModel.removeElementAt(index);
+	                    int removedAIndex = ((Integer)(parentNodes.remove(index))).intValue();
+	                    int removedBIndex = ((Integer)(childNodes.remove(index))).intValue();
+	                    nodeButtons[removedAIndex].setEnabled(true);
+	                    nodeButtons[removedBIndex].setEnabled(true);
+	                    if (interactionModel.isEmpty()) {
+	                        removeInteractionButton.setEnabled(false);
+	                    } else {
+	                        interactionsList.setSelectedIndex(interactionModel.size() - 1);
+	                    }
+	                }
+	            });
+
+	            JScrollPane selectedParentScr = new JScrollPane(selectedParent);
+	            selectedParentScr.setMinimumSize(new Dimension(90, 50));
+	            JScrollPane currentBScroll = new JScrollPane(selectedChild);
+	            currentBScroll.setMinimumSize(new Dimension(90, 50));
+	            
+	            selectedParentScr.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	            selectedParentScr.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);   
+	            
+	            selectedParentScr.getHorizontalScrollBar().setUnitIncrement(20);
+	            selectedParentScr.getVerticalScrollBar().setUnitIncrement(20);
+	            
+	            currentBScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	            currentBScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);            
+	            
+	            currentBScroll.getHorizontalScrollBar().setUnitIncrement(20);
+	            currentBScroll.getVerticalScrollBar().setUnitIncrement(20);
+	            
+	            buildConstraints(constraints, 2, 1, 1, 1, 20, 50);
+	            grid2.setConstraints(removeSelectedParentButton, constraints);
+	            currentSelectionPanel.add(removeSelectedParentButton);
+
+	            instructionsLabel = new JLabel("Select the parent node of an interaction... ");
+	            buildConstraints(constraints, 1, 0, 1, 1, 20, 0);
+	            grid2.setConstraints(instructionsLabel, constraints);
+	            currentSelectionPanel.add(instructionsLabel); 
+	            
+	            JLabel selectedParentLabel = new JLabel(" Selected Parent: ");
+	            buildConstraints(constraints, 0, 1, 1, 1, 20, 0);
+	            grid2.setConstraints(selectedParentLabel, constraints);
+	            currentSelectionPanel.add(selectedParentLabel);    
+	            
+	            buildConstraints(constraints, 1, 1, 1, 1, 60, 0);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            grid2.setConstraints(selectedParentScr, constraints);
+	            currentSelectionPanel.add(selectedParentScr);   
+	            
+	            constraints.fill = GridBagConstraints.NONE;
+	            
+	            buildConstraints(constraints, 0, 0, 1, 1, 10, 0);
+	            gridbag.setConstraints(currentSelectionPanel, constraints);
+	            this.add(currentSelectionPanel);   
+	            
+	            constraints.fill = GridBagConstraints.NONE;
+	            
+	            JPanel pairButtonsPanel = new JPanel();
+	            GridBagLayout grid3 = new GridBagLayout();
+	            pairButtonsPanel.setLayout(grid3);
+
+	            buildConstraints(constraints, 0, 1, 1, 1, 0, 50);
+	            grid3.setConstraints(removeInteractionButton, constraints);
+	            pairButtonsPanel.add(removeInteractionButton);            
+	            
+	            buildConstraints(constraints, 1, 0, 1, 1, 5, 0);
+	            gridbag.setConstraints(pairButtonsPanel, constraints);
+	            this.add(pairButtonsPanel);  
+	            
+	            buildConstraints(constraints, 1, 1, 1, 1, 45, 0);
+	            constraints.fill = GridBagConstraints.BOTH;
+	            JScrollPane pairScroll = new JScrollPane(interactionsList);
+	            pairScroll.setBorder(new TitledBorder("Interactions"));
+	            gridbag.setConstraints(pairScroll, constraints);
+	            this.add(pairScroll);              
+
+	            buildConstraints(constraints, 0, 2, 1, 1, 45, 0);
+	            constraints.fill = GridBagConstraints.NONE;
+	            gridbag.setConstraints(cancelButton, constraints);
+	            this.add(cancelButton);     
+	            
+	            buildConstraints(constraints, 1, 2, 1, 1, 45, 0);
+	            constraints.fill = GridBagConstraints.NONE;
+	            gridbag.setConstraints(OKButton, constraints);
+	            this.add(OKButton);            
+	            
+	        }
+	        public boolean display() {
+				this.setModal(true);					
+				this.setVisible(true);
+				return success;					
+	        }	
+			void buildConstraints(GridBagConstraints gbc, int gx, int gy,
+	        	    int gw, int gh, int wx, int wy) {
+	        	        
+	        	        gbc.gridx = gx;
+	        	        gbc.gridy = gy;
+	        	        gbc.gridwidth = gw;
+	        	        gbc.gridheight = gh;
+	        	        gbc.weightx = wx;
+	        	        gbc.weighty = wy;
+	        	    }
+	     
+	        public void reset() {
+	        	
+	            for (int i = 0; i < nodeButtons.length; i++) {
+	                nodeButtons[i].setEnabled(true);
+	                selectedParent.setText("");
+	                selectedChild.setText("");
+	                removeSelectedParentButton.setEnabled(false);
+	                removeInteractionButton.setEnabled(false);
+	                interactionModel.clear();
+	                currentParentFilled = false;
+	                currentChildFilled = false;
+	                currentParentNode = -1;
+	                currentChildNode = -1;
+	                parentNodes.clear();
+	                childNodes.clear();
+	            }
+	        }
+
+			private String createSeedFile() {
+				File file;		
+		   		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());	
+		   		
+		   		if(fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+		   			file = fileChooser.getSelectedFile();			
+		   			try {
+		   				PrintWriter pw = new PrintWriter(new FileWriter(file));
+		   				for (int i=0; i<parentNodes.size(); i++){
+		   					pw.println(nodeNames[parentNodes.get(i)]+"\t"+nodeNames[childNodes.get(i)]);
+		   					System.out.println(nodeNames[parentNodes.get(i)]+"\t"+nodeNames[childNodes.get(i)]);
+		   				}
+		   				pw.flush();
+		   				pw.close();		
+		   				success = true;
+		   				return file.getAbsolutePath();
+		   			} catch (Exception e){
+		   				e.printStackTrace();
+		   			}
+		   		} 
+		   		return null;				
+			}
+			
+	        class NodeButtons extends JButton{
+	            /**
+				 * 
+				 */
+				private static final long serialVersionUID = 1L;
+				String s;
+	            int index;
+	            public NodeButtons(int i) {
+	                this.index = i;
+	                s = (String)(nodeNames[i]);
+	                this.setText(s);
+	                this.addActionListener(new ActionListener() {
+	                    public void actionPerformed(ActionEvent evt) {
+	                        if ((currentParentFilled)&&(currentChildFilled)) {
+	                            JOptionPane.showMessageDialog(null, "Please clear at least one current field first.", "Error", JOptionPane.ERROR_MESSAGE);
+	                        } else if (!currentParentFilled) {
+	                            currentParentNode = index;
+	                            selectedParent.setText(s);
+	                            currentParentFilled = true;
+	                            NodeButtons.this.setEnabled(false);
+	                            removeSelectedParentButton.setEnabled(true);
+	                            instructionsLabel.setText("Select the child node of an interaction... ");
+	                        } else if (!currentChildFilled) {
+	                            currentChildNode = index;
+	                            selectedChild.setText(s);
+	                            currentChildFilled = true;
+	                            NodeButtons.this.setEnabled(false);
+	                        }
+	                        
+	                        if ((currentParentFilled) && (currentChildFilled)) {
+	                        	String currentPair = " Parent: " + (String)(nodeNames[currentParentNode]) + " -> Child: " + (String)(nodeNames[currentChildNode]);
+	                          if (interactionModel.contains(currentPair)){
+	                                JOptionPane.showMessageDialog(null, "This interaction has already been loaded.", "Error", JOptionPane.ERROR_MESSAGE);
+									nodeButtons[currentChildNode].setEnabled(true);
+									currentChildNode = -1;
+									selectedChild.setText("");
+									currentChildFilled = false;
+	                                return;
+	                          }
+	                          interactionModel.addElement(currentPair);
+	                          parentNodes.add(new Integer(currentParentNode));
+	                          childNodes.add(new Integer(currentChildNode));
+	                          nodeButtons[currentParentNode].setEnabled(true);
+	                          nodeButtons[currentChildNode].setEnabled(true);
+	                          currentParentNode = -1;
+	                          currentChildNode = -1;
+	                          selectedParent.setText("");
+	                          selectedChild.setText("");
+	                          currentParentFilled = false;
+	                          currentChildFilled = false;
+	                          removeSelectedParentButton.setEnabled(false);
+	                          removeInteractionButton.setEnabled(true);
+	                          interactionsList.setSelectedIndex(interactionModel.size() - 1);
+	                          instructionsLabel.setText("Select the parent node of an interaction... ");
+	                        } else {
+	                        }
+	                    }
+	                });
+	            }
+	        }
+	}
+	
 	private class ConfigPanel extends ParameterPanel {
 		JTextField defaultFileBaseLocation;
 		JComboBox organismListBox;
@@ -910,15 +1821,17 @@ public class BNInitDialog extends AlgorithmDialog {
 			defaultFileBaseLocation.setEditable(true);
 
 			//Borrowed from EASE for RM
-			getBNSupportFileButton = new JButton("Download");
+			getBNSupportFileButton = new JButton("(Download)");
 			getBNSupportFileButton.setActionCommand("download-support-file-command");
 			getBNSupportFileButton.addActionListener(listener);
 			getBNSupportFileButton.setToolTipText("<html>Downloads BN support files<br>for a selected species and array type.</html>");
 
 			chooseOrg = new JLabel("Organism");
 			chooseArray = new JLabel("Array Platform");
-			browseLabel = new JLabel("or browse for another BN data file system:");
+			browseLabel = new JLabel("OR browse for BN file:");
 			statusLabel = new JLabel("Click to download");
+			statusLabel.setFont(new Font("Monospaced", Font.PLAIN, 9));
+			statusLabel.setForeground(Color.ORANGE);
 
 			if(speciestoarrays == null || speciestoarrays.size() == 0) {
 				organismListBox = new JComboBox();
@@ -950,20 +1863,73 @@ public class BNInitDialog extends AlgorithmDialog {
 			organismListBox.addActionListener(listener);
 			organismListBox.setActionCommand("organism-selected-command");
 
-			add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
-			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
-			add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
-			add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
-			add(statusLabel, 				new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20),0, 0));
-			add(getBNSupportFileButton, 	new GridBagConstraints(4, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
-			add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
-			add(defaultFileBaseLocation, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
-			add(cngFilesButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+			//add(chooseOrg, 				new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			//add(organismListBox, 			new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			//add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			//add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 30, 0, 0), 0, 0));
+			//add(statusLabel, 				new GridBagConstraints(4, 0, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20),0, 0));
+			//add(getBNSupportFileButton, 	new GridBagConstraints(4, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 0, 20), 0, 0));
+			//add(browseLabel, 				new GridBagConstraints(0, 2, 2, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 0, 0),0, 0));
+			//add(defaultFileBaseLocation, 	new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 30, 5, 0), 0, 0));
+			//add(cngFilesButton, 	new GridBagConstraints(4, 3, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 25, 5, 20), 0, 0));
+
+			GridBagConstraints c = new GridBagConstraints();
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 0;
+			add(chooseOrg, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 1;
+			c.gridy = 0;
+			c.insets = new Insets(0,0,0,5);
+			add(organismListBox, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 2;
+			c.gridy = 0;
+			c.insets = new Insets(0,0,0,0);
+			add(chooseArray, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 3;
+			c.gridy = 0;
+			c.insets = new Insets(0,0,0,5);
+			add(arrayListBox, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 4;
+			c.gridy = 0;
+			c.insets = new Insets(0,0,0,0);
+			add(statusLabel, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 5;
+			c.gridy = 0;
+			add(getBNSupportFileButton, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 0;
+			c.gridy = 2;
+			c.gridwidth = 2;
+			c.insets = new Insets(0,0,0,0);
+			add(browseLabel, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 2;
+			c.gridy = 2;
+			c.gridwidth = 3;
+			add(defaultFileBaseLocation, c);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.gridx = 5;
+			c.gridy = 2;
+			add(cngFilesButton, c);
 
 			try {
 				boolean b = resourceManager.fileIsInRepository(new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
 				if(b) {
-					getBNSupportFileButton.setText("Select This");
+					getBNSupportFileButton.setText("(Select This)");
 				} else {
 					getBNSupportFileButton.setText("Download");
 				}
@@ -993,7 +1959,7 @@ public class BNInitDialog extends AlgorithmDialog {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			if(chooser.showOpenDialog(BNInitDialog.this) == JOptionPane.OK_OPTION) {
 				String dir = chooser.getSelectedFile().getAbsolutePath().trim();
-				
+
 				/* Work around in Useful.getWekaArgsArray
 				if(dir.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
@@ -1005,7 +1971,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					//defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
-				*/
+				 */
 
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
 				//TMEV.setDataPath(defaultFileBaseLocation.getText());
@@ -1146,6 +2112,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				BNUpdateManager manager = new BNUpdateManager((JFrame)parent,configPanel.getBaseFileLocation());
 				manager.updateFiles();
 			} else if (command.equals("ok-command")) {
+				// Start OK Command
 				result = JOptionPane.OK_OPTION;
 				//System.out.println("BN Dlg. OK Cmd");
 				//Check to see if user is connected to Internet
@@ -1158,7 +2125,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					JOptionPane.showMessageDialog(new JFrame(), "Internet Connection error or Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				System.out.println("Jnlp codeBase: " + codeBase);
 				System.out.println("Jnlp libDir: " + libDir);
 				System.out.println("Jnlp pluginsDir: " + pluginsDir);
@@ -1174,7 +2141,7 @@ public class BNInitDialog extends AlgorithmDialog {
 
 				// Validate if selected options have supporting file(s)
 				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
-				
+
 				/* Work around in Useful.getWekaArgsArray
 				if(fileBase.contains(" ")){
 					JOptionPane.showMessageDialog(parent, 
@@ -1186,9 +2153,43 @@ public class BNInitDialog extends AlgorithmDialog {
 					//configPanel.defaultFileBaseLocation.setCaretPosition(0);
 					return;
 				}
-				*/
+				 */
+				// Network Seed validation
+				boolean priors = false;
+				boolean netseed = false;
+				if (networkSeedPanel.netSeedCheckbox.isSelected()) {
+					netseed = true;
+					//Check if File is uploaded and valid
+					File netSeedFile = new File(networkSeedPanel.seedFileLocField.getText().trim());
+					if (!netSeedFile.exists()) {
+						JOptionPane.showMessageDialog(
+								parent, 
+								"File: " + 
+								netSeedFile.getAbsolutePath() + " is missing or un-readable",
+								"BN Initialization: Missing Network Seed File", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					if(!validateNetSeedUID()) {
+						JOptionPane.showMessageDialog(parent, "Please select a UID for Network Seed File", "Error", JOptionPane.ERROR_MESSAGE); 
+						networkSeedPanel.netSeedComboUID.grabFocus();
+						return;
+					}
+					//if (networkSeedPanel.partialSeedRadio.isSelected()) {
+						//priors = true;
+					//} else 
+					if (/* networkSeedPanel.fullSeedRadio.isSelected() && */
+							networkSeedPanel.usePriorsRadio.isSelected()) {
+						priors = true;
+					} else if (/* networkSeedPanel.fullSeedRadio.isSelected() && */
+							networkSeedPanel.noPriorsRadio.isSelected()) {
+						priors = false;
+					}
+				} else {
+					priors = !priors;
+				}
 				
-				if(isLit()){
+				if(priors && isLit()){
 					//Check if Lit File(s) exist
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.RESOURCERER_FILE)).exists()) {
 						JOptionPane.showMessageDialog(
@@ -1227,7 +2228,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					}
 				}
 
-				if(isPPI()) {
+				if(priors && isPPI()) {
 					if(!(new File(fileBase + BNConstants.SEP + BNConstants.PPI_FILE)).exists()) {
 						JOptionPane.showMessageDialog(
 								parent, 
@@ -1238,8 +2239,9 @@ public class BNInitDialog extends AlgorithmDialog {
 					}
 				}
 
-				if(isKEGG()) {
-					//Make sure if KEGG is selected as priors the files are downloaded if it doesnot exist 
+				if(priors && isKEGG()) {
+					//Make sure if KEGG is selected as priors the files are downloaded 
+					//if it does not exist already
 					//Check if Species Name is available, if not prompt for it
 					kegg_sp = null;
 					//Array for KEGG supported oraganism
@@ -1298,7 +2300,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					}
 				}
 
-				if(isNone()) {
+				if(priors && isNone()) {
 					JOptionPane.showMessageDialog(
 							parent, 
 							"Network Priors Source(s) not selected",
@@ -1382,12 +2384,12 @@ public class BNInitDialog extends AlgorithmDialog {
 
 				//Number of Bins validation
 				try {
-					if(discPanel.getNumLevels() != 3) {
-						JOptionPane.showMessageDialog(parent, "Currently Supports 3 States only\n Up, Neutral and Down", "Error", JOptionPane.ERROR_MESSAGE); 
-						discPanel.numLevelsField.setText("3");
-						discPanel.numLevelsField.grabFocus();
-						return;
-					}
+//					if(discPanel.getNumLevels() != 3) {
+//						JOptionPane.showMessageDialog(parent, "Currently Supports 3 States only\n Up, Neutral and Down", "Error", JOptionPane.ERROR_MESSAGE); 
+//						discPanel.numLevelsField.setText("3");
+//						discPanel.numLevelsField.grabFocus();
+//						return;
+//					}
 				}
 				catch (NumberFormatException nfe){
 					//System.out.println("In Try block Excp");
@@ -1433,6 +2435,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				//TMEV.setDataPath(fileBase);
 				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, fileBase);
 				dispose();
+				// End OK Command
 			} else if (command.equals("cancel-command")) {
 				result = JOptionPane.CANCEL_OPTION;
 				dispose();
@@ -1476,7 +2479,16 @@ public class BNInitDialog extends AlgorithmDialog {
 			}
 			return false;
 		}
-
+		private void setLoadingSeedsButtons(){
+			if (networkSeedPanel.netSeedComboUID.getSelectedIndex()!=0){
+				networkSeedPanel.createSeedButton.setEnabled(true);
+				networkSeedPanel.uploadSeedButton.setEnabled(true);
+			} else {
+				networkSeedPanel.createSeedButton.setEnabled(false);
+				networkSeedPanel.uploadSeedButton.setEnabled(false);				
+			}
+		}
+		
 		public void itemStateChanged(ItemEvent e) {
 			//okButton.setEnabled(genes_box.isSelected() || cluster_box.isSelected());
 		}
@@ -1484,6 +2496,12 @@ public class BNInitDialog extends AlgorithmDialog {
 		public void windowClosing(WindowEvent e) {
 			result = JOptionPane.CLOSED_OPTION;
 			dispose();
+		}
+		
+		void toggleState(Container item, boolean state) {
+			Component cmp[] = item.getComponents();
+			for(int i=0; i < cmp.length; i++)
+				cmp[i].setEnabled(state);
 		}
 	}
 
@@ -1495,4 +2513,15 @@ public class BNInitDialog extends AlgorithmDialog {
 		BNInitDialog eid = new BNInitDialog(new JFrame(), labels);
 		eid.showModal();
 	}
+
+//	public static void main(String [] args) {
+//		String[] str =  {"sdfdsf","sdfsdfvsdv","sdvvvsd"};
+//		JDialog jd = new JDialog();
+//		JComboBox cb = new JComboBox(str);
+//		jd.add(cb);
+//		jd.setModal(true);
+//		jd.setVisible(true);
+//		String annot = (String)cb.getSelectedItem();
+//		
+//	}
 }

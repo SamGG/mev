@@ -155,7 +155,10 @@ public class LMGUI implements IClusterGUI {
 		
 		//Build Property file for Weka Params
 		//buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.useGoTerm(),dialog.getBaseFileLocation());
-		Useful.buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp);
+		Useful.buildPropertyFile(dialog.isLit(),dialog.isPPI(),dialog.isKEGG(), dialog.isBoth(), 
+				dialog.isLitAndKegg(), dialog.isPpiAndKegg(), dialog.isAll(),
+				dialog.useGoTerm(),dialog.getBaseFileLocation(),kegg_sp,
+				0, 0); //Last 2 params are ignored in LM
 		Thread thread1 = new Thread( new Runnable(){
 			public void run(){	
 				//literatureMining(dialog.isLit(),dialog.isPPI(),dialog.isBoth(),dialog.getBaseFileLocation());
@@ -191,7 +194,8 @@ public class LMGUI implements IClusterGUI {
 		//runProgressPanel.setVisible(true);
 		
 		while(!LMGUI.done){
-			try{				Thread.sleep(500);	
+			try{
+				Thread.sleep(500);	
 			}catch(InterruptedException x){
 				//ignore;
 			}
@@ -228,7 +232,7 @@ public class LMGUI implements IClusterGUI {
 		//Call Webstart wuth File(s)
 		String lmFile = basePath + BNConstants.RESULT_DIR + BNConstants.SEP + System.getProperty("LM_ONLY");
 		networkFiles.add(lmFile);
-		CytoscapeWebstart.onWebstartCytoscape(networkFiles);
+		CytoscapeWebstart.onWebstartCytoscapeBN(networkFiles);
 
 		return createResultTree(exp, info);
 
@@ -340,7 +344,8 @@ public class LMGUI implements IClusterGUI {
 	 * @param path
 	 */
 	public void prepareXMLBifFile(String path){
-		PrepareXMLBifModule getModule =  new PrepareXMLBifModule();		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
+		PrepareXMLBifModule getModule =  new PrepareXMLBifModule();
+		//getModule.test(path+sep+"prepareXMLBifMod.props"); //Raktim - USe tmp dir
 		PrepareXMLBifModule.test(
 				path +
 				BNConstants.SEP +

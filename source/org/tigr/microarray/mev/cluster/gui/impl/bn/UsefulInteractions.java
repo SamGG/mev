@@ -126,7 +126,7 @@ public class UsefulInteractions {
 	 * to the interactions with weights contained in the file denoted by the given file name.
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException{
+	public static ArrayList readInteractionsWithWeights(String fileName) throws FileNotFoundException {
 		//System.out.println("readInteractionsWithWeights(), File: " + fileName);
 		Useful.checkFile(fileName);
 		try {
@@ -342,19 +342,20 @@ public class UsefulInteractions {
 	 * @throws NullArgumentException
 	 */
 	public static void writeSifFileUndir(ArrayList inter, String fileName) throws NullArgumentException {
-		FileOutputStream fos=null;
-		String path=System.getProperty("user.dir");
-		String sep=System.getProperty("file.separator");
+		FileOutputStream fos = null;
+		//String path=System.getProperty("user.dir");
+		//String sep=System.getProperty("file.separator");
 		//path=path+sep+"data"+sep+"bn"+sep; //Raktim - Old Way
 		//path=path+sep+"data"+sep+"bn"+sep+BNConstants.RESULT_DIR+sep;
-		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
+		//path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {
 			if(inter == null){
 				//System.out.println("UsefulInteractions-writeSif");  
 				throw new NullArgumentException("Given inter was null!");
 			}
 
-			fos = new FileOutputStream(path + fileName);
+			//fos = new FileOutputStream(path + fileName);
+			fos = new FileOutputStream(fileName);
 			PrintWriter pw = new PrintWriter(fos, true);
 			SimpleGeneEdge sGE = null;
 			for(int i = 0; i < inter.size(); i++){
@@ -740,6 +741,39 @@ public class UsefulInteractions {
 				}
 				edges.add(curEdge);
 			}
+		}
+		return edges;
+	}
+
+	public static ArrayList<SimpleGeneEdge> mergeInteractions(
+			ArrayList<SimpleGeneEdge> networkSeedEdgeList,
+			ArrayList<SimpleGeneEdge> lmDirEdges, boolean netSeedRules) {
+
+		ArrayList<SimpleGeneEdge> edges = new ArrayList<SimpleGeneEdge>();
+		ArrayList<SimpleGeneEdge> to_test_list, searchWithin_list;
+		if(netSeedRules) {
+			to_test_list = lmDirEdges;
+			searchWithin_list = networkSeedEdgeList;
+			edges.addAll(networkSeedEdgeList);
+		} else { 
+			to_test_list = networkSeedEdgeList;
+			searchWithin_list = lmDirEdges;
+			edges.addAll(lmDirEdges);
+		}
+		
+		boolean add = true;
+		for(int i = 0; i < to_test_list.size(); i++){
+			SimpleGeneEdge curEdge = (SimpleGeneEdge)to_test_list.get(i);
+			for(int ii = 0; ii < searchWithin_list.size(); ii++){
+				if(curEdge.equals(searchWithin_list.get(ii)) 
+						|| 
+						curEdge.reverseEquals(searchWithin_list.get(ii))) {
+					add = false;
+					break;
+				}
+			}
+			if(add)
+				edges.add(curEdge);
 		}
 		return edges;
 	}

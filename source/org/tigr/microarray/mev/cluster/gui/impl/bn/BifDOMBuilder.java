@@ -80,18 +80,29 @@ public class BifDOMBuilder {
 		//Check first VARIABLE node. If CLASS check next. If still cannot be determined throw Exception
 		Node var = nodes_variables.item(0);
 		Node var1 = nodes_variables.item(1);
-		
-		if (var.getNodeType() == Node.ELEMENT_NODE && 
-				!(((Element) var).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
-			
-			BIN = ((Element) var).getElementsByTagName("OUTCOME").getLength();
-		} else if (var1.getNodeType() == Node.ELEMENT_NODE &&  
-				!(((Element) var1).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
-			
-			BIN = ((Element) var1).getElementsByTagName("OUTCOME").getLength();
-		} else {
-			throw new SAXException("Number of discrete states could not be determined");
+
+		ArrayList<Integer> binsInNode = new ArrayList<Integer>();
+
+		for (int nodeIndex=0; nodeIndex<nodes_variables.getLength(); nodeIndex++){
+			binsInNode.add( ((Element) nodes_variables.item(nodeIndex)).getElementsByTagName("OUTCOME").getLength());
 		}
+//		if (var.getNodeType() == Node.ELEMENT_NODE 
+//				// Making CLASS node available - Raktim Dec 17, 09
+//				//&& 
+//				/*!(((Element) var).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))*/) {
+//			
+////			BIN = ((Element) var).getElementsByTagName("OUTCOME").getLength();
+//			binsInNode.add( ((Element) var).getElementsByTagName("OUTCOME").getLength());
+//		} else if (var1.getNodeType() == Node.ELEMENT_NODE 
+//				// Making CLASS node available - Raktim Dec 17, 09
+//				//&&  
+//				/* !(((Element) var1).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))*/) {
+//			
+////			BIN = ((Element) var1).getElementsByTagName("OUTCOME").getLength();
+//			binsInNode.add( ((Element) var1).getElementsByTagName("OUTCOME").getLength());
+//		} else {
+//			throw new SAXException("Number of discrete states could not be determined");
+//		}
 		//System.out.println("Number of BINs " + BIN);
 		
 		//Grab all DEF nodes
@@ -101,7 +112,8 @@ public class BifDOMBuilder {
 			
 			//Create BifNode and set bin size
 			BifNode bnode = new BifNode();
-			bnode.setBins(BIN);
+//			bnode.setBins(BIN);
+			bnode.setBins(binsInNode.get(i));
 			
 			//Retrieve all FOR, GIVEN & TABLE nodes
 			NodeList nodes_j = def.getChildNodes();
@@ -109,9 +121,11 @@ public class BifDOMBuilder {
 				Node node_j = nodes_j.item(j);
 				
 				//Ignore Node labeled CLASS
-				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
-					break;
-				}
+				// Making CLASS node available - Raktim Dec 17, 09
+				//if (node_j.getNodeType() == Node.ELEMENT_NODE 	
+				//		&& ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
+				//	break;
+				//}
 				
 				//Node is FOR (child - 1)
 				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("FOR")) {
@@ -142,7 +156,8 @@ public class BifDOMBuilder {
 					
 					//Store string CPT as a nD array of floats
 					//System.out.println("Start stringCPTto3dArray()");
-					bnode.initCPTnD(nDArrayFromStringCPT(_tmp, BIN));
+//					bnode.initCPTnD(nDArrayFromStringCPT(_tmp, BIN));
+					bnode.initCPTnD(nDArrayFromStringCPT(_tmp, binsInNode.get(i)));
 					
 					//Also store CPT as a 1D array of floats whichever is helpful
 					//System.out.println("Start stringCPTtoArray()");
@@ -181,12 +196,16 @@ public class BifDOMBuilder {
 		Node var = nodes_variables.item(0);
 		Node var1 = nodes_variables.item(1);
 		
-		if (var.getNodeType() == Node.ELEMENT_NODE && 
-				!(((Element) var).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
+		if (var.getNodeType() == Node.ELEMENT_NODE 
+				// Making CLASS node available - Raktim Dec 17, 09
+				//&& 
+				/*!(((Element) var).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))*/) {
 			
 			BIN = ((Element) var).getElementsByTagName("OUTCOME").getLength();
-		} else if (var1.getNodeType() == Node.ELEMENT_NODE &&  
-				!(((Element) var1).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))) {
+		} else if (var1.getNodeType() == Node.ELEMENT_NODE 
+				// Making CLASS node available - Raktim Dec 17, 09
+				// &&  
+				/*!(((Element) var1).getElementsByTagName("NAME").item(0).getChildNodes().item(0).getNodeValue().equals("CLASS"))*/) {
 			
 			BIN = ((Element) var1).getElementsByTagName("OUTCOME").getLength();
 		} else {
@@ -209,9 +228,11 @@ public class BifDOMBuilder {
 				Node node_j = nodes_j.item(j);
 				
 				//Ignore Node labeled CLASS
-				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
-					break;
-				}
+				// Making CLASS node available - Raktim Dec 17, 09
+				//if (node_j.getNodeType() == Node.ELEMENT_NODE 
+				//		 && ((Element) node_j).getChildNodes().item(0).getNodeValue().equals("CLASS")) {
+				//	break;
+				//}
 				
 				//Node is FOR (child - 1)
 				if (node_j.getNodeType() == Node.ELEMENT_NODE && ((Element) node_j).getTagName().equals("FOR")) {
@@ -312,9 +333,11 @@ public class BifDOMBuilder {
 	private float [][][] nDArrayFromStringCPT(String _cpt[], int binSize) {
 //		System.out.println("_cpt.length " + _cpt.length);
 		float arr_1[][][] = new float[_cpt.length][binSize][binSize];
+		//System.out.println("_cpt.length = "+_cpt.length+ "    "+binSize);
 		for(int k = 0; k < _cpt.length;){
 			for(int l = 0; l < binSize; l++){
-				//System.out.println(_cpt[k+l]);
+				//System.out.println("k="+ k+" l="+l);
+				//System.out.println("_cpt[k+l] = "+_cpt[k+l]);
 				arr_1[k][l][l] = Float.parseFloat(_cpt[k+l]);
 			}
 			k += binSize;

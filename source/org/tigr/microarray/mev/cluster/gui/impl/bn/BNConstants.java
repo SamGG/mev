@@ -140,6 +140,8 @@ public class BNConstants {
 	 * List of organisims that currently has data for KEGG priors support
 	 */
 	public static final String KEGG_ORG[] = new String[]{"Human", "Mouse", "Rat" };
+
+	public static final String BN_NET_SEED_LOC_PROP = "bn_net_seed_loc_prop";
 	
 	/**
 	 * Cytoscape webstart params and getters & setters

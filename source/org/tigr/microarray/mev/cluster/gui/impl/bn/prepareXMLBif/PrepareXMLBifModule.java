@@ -28,6 +28,7 @@ import java.util.Vector;
 
 import org.tigr.microarray.mev.cluster.gui.impl.bn.algs.DFSModification;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.BNConstants;
+import org.tigr.microarray.mev.cluster.gui.impl.bn.SimpleGeneEdge;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.Useful;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NullArgumentException;
 import org.tigr.microarray.mev.cluster.gui.impl.bn.NotDAGException;
@@ -178,8 +179,8 @@ public class PrepareXMLBifModule {
 			String gbGOsFileName = path+props.getProperty(BNConstants.GB_GO_FILE_NAME, null); //"gbGOsFileName"
 			String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
 			long seed = (long) Integer.parseInt(props.getProperty("seed", "1"));
-			//System.out.println("test(): namesFileName " + namesFileName);
-			//System.out.println("test(): sifFileName " + sifFileName);
+			System.out.println("test(): namesFileName " + namesFileName);
+			System.out.println("test(): sifFileName " + sifFileName);
 			Useful.checkFile(sifFileName);
 			Useful.checkFile(namesFileName);
 			if(useGO){
@@ -253,6 +254,62 @@ public class PrepareXMLBifModule {
 			//newInter = getDAGFromUndirectedGraph(inter);
 			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
 			SifToXMLBif.createXMLBifGivenSifFile(inter, names, pw, props);
+			pw.close();
+		}
+		catch(IOException ioe){
+			//System.out.println(ioe);
+			//ioe.printStackTrace();
+			throw ioe;
+		}
+		catch(NullArgumentException nae){
+			//System.out.println(nae);
+			//nae.printStackTrace();
+			throw nae;
+		}
+		catch(NotDAGException nde){
+			//System.out.println(nde);
+			//nde.printStackTrace();
+			throw nde;
+		}
+		catch (Exception ex) {
+			throw ex;
+		}
+	}
+	
+	/**
+	 * Given a List of SimpleGeneEdge generates XML Sif file
+	 * @param path
+	 * @param propsFileName
+	 * @param interList
+	 * @throws Exception
+	 */
+	public static void createXMLBifFromSimpleGeneEdge(String namesFileName, String outXMLBifFileName, String propsFileName, ArrayList<SimpleGeneEdge> interList) throws Exception {	
+		//String path = BNConstants.getBaseFileLocation();
+		//System.out.println("PrepareXMLBifModule path: " + path);
+		//path = path+BNConstants.SEP + BNConstants.TMP_DIR + BNConstants.SEP;
+		try {
+			Properties props = new Properties();
+			props.load(new FileInputStream(propsFileName));
+			
+			//TODO May not need sif file, as interactions are already loaded in ArrayList
+			//String sifFileName = path+props.getProperty(BNConstants.SIF_FILE_NAME, null);
+			//String namesFileName = path+props.getProperty(BNConstants.NAMES_FILE_NAME,null);
+			
+			//System.out.println("test(): namesFileName " + namesFileName);
+			//System.out.println("test(): sifFileName " + sifFileName);
+			//Useful.checkFile(sifFileName);
+			Useful.checkFile(namesFileName);
+			
+			//ArrayList inter = UsefulInteractions.readInteractions(fixedNetworkInter);
+			//System.out.println("Reading Weights before creating DAG");
+			//System.out.println("Num. of interaction to be considered: " + inter.size());
+			ArrayList names = Useful.readNamesFromFile(namesFileName);
+			//TODO We may not need to create the DAG. The DAG is already there, we just populate the 
+			//ArrayList with the interactions
+			//ArrayList newInter = null;
+			//newInter = getDAGFromUndirectedGraph(inter);
+			PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);	    
+			SifToXMLBif.createXMLBifGivenSifFile(interList, names, pw, props);
 			pw.close();
 		}
 		catch(IOException ioe){
