@@ -86,6 +86,7 @@
 	<property name="USC" value="y"/>
 	<property name="BN" value="y" />
 	<property name="LM" value="y" />
+	<property name="MINET" value="y"/>
 	
 	<!-- Module category names -->
 	<property name="CLUSTERING" value="Clustering"/>
@@ -119,7 +120,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
     </target>
 
 
@@ -141,7 +142,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
     </target>
 
 
@@ -1423,6 +1424,42 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	            <entry key="RP.tooltip" value="Rank Products"/>
 	        </propertyfile>
 	</target>
+	
+	<target name="MINET" depends="MINET-GUI" if="MINET">
+		        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+		            <include name="MINET.java"/>
+		            <classpath>
+		                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+		                <!-- jars to support module compilation -->
+		                <pathelement location="${lib.dir}/mev-util.jar"/>
+		                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+		                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+		                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+		                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+		                <pathelement location="${lib.dir}/mev-base.jar"/>
+		            	<pathelement location="${lib.dir}/JRI.jar"/>
+		            </classpath>
+			  </javac>
+			  <propertyfile file="${alg.properties.file}">
+		            <entry key="MINET" value="org.tigr.microarray.mev.cluster.algorithm.impl.MINET"/>
+		        </propertyfile>
+		    </target>
+
+		    <target name="MINET-GUI">
+		        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
+		            <classpath refid="module.build.class.path"/>
+			  </javac>
+			  <propertyfile file="${gui.properties.file}">
+				<entry key="gui.names" value="MINET:" operation="+"/>
+		            <entry key="MINET.name" value="MINET"/>
+		            <entry key="MINET.class" value="org.tigr.microarray.mev.cluster.gui.impl.minet.MINETGUI"/>
+			  	<entry key="MINET.category" value="${STATISTICS}"/> 
+			  	<entry key="MINET.smallIcon" value="analysis16.gif"/>
+		            <entry key="MINET.largeIcon" value="minet_button.gif"/>
+		            <entry key="MINET.tooltip" value="Mutual Information Network"/>
+		        </propertyfile>
+		</target>
 	
     <target name="SVM" depends="SVM-GUI" if="SVM">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
