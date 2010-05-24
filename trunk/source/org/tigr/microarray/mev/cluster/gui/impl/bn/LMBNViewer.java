@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Expression;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -44,6 +45,7 @@ public class LMBNViewer extends ViewerAdapter {
 	private JLabel label;
 
 	private Vector<String> networkFiles;
+	private ArrayList<String> badItems;
 
 	/**
 	 * Main constructor called from IClusterGui Implementation of the module
@@ -61,6 +63,13 @@ public class LMBNViewer extends ViewerAdapter {
 		setMaxWidth(content, header);
 		createJPopupMenu();
 		content.addMouseListener(new EvtListener());
+	}
+
+	public LMBNViewer(ArrayList<String> anyList) {
+		header  = createHeader();
+		content = createContent(anyList);
+		setBadItems(anyList);
+		setMaxWidth(content, header);
 	}
 
 	/**
@@ -108,7 +117,53 @@ public class LMBNViewer extends ViewerAdapter {
 		//panel.add(new JLabel("<html><body bgcolor='#FBB917'><font face='serif' color='#000080'><h1>LM/BN Network File<h1></font></body></html>"), gbc);
 		return panel;
 	}
+	
+	/**
+	 * 
+	 * @param anyList
+	 * @return
+	 */
+	private JTextPane createContent(ArrayList<String> anyList) {
+		JTextPane area = new JTextPane();
+		area.setContentType("text/html");
+		area.setEditable(false);
+		area.setMargin(new Insets(0, 0, 0, 0));
+		Font font = new Font("San-Serif", Font.PLAIN, 10);
+		area.setFont(font);
 
+		String text = "<html><body bgcolor='#ECE5B6' ><font face='sanserif' color='#000000'>";
+		
+		text += "<h2>Un Mappable Metwork Seed Entries</h2>";
+		text += "<ul>";
+		text += "<li type='1'><table border='0' bgcolor='#F88017' width='90%'>";
+		text += "<tr bgcolor='#C9BE62'>";
+			text += "<th>#Item</th>";
+			text += "<th>Value</th>";
+		text += "</tr>";
+		
+			for(int i=0; i < anyList.size(); i++) {
+				if(i % 2 == 0) {
+				text += "<tr bgcolor='#ECD872'>";
+					text += "<td>"+i+"</td>";
+					text += "<td>"+anyList.get(i)+"</td>";
+				text += "</tr>";
+				} else {
+					text += "<tr bgcolor='#FFE87C'>";
+					text += "<td>"+i+"</td>";
+					text += "<td>"+anyList.get(i)+"</td>";
+				text += "</tr>";
+				}
+			}
+			text += "</table></li>";
+		
+		text += "</font></body></html>";
+
+		area.setText(text);
+		area.setCaretPosition(0);
+
+		label = new JLabel(text);
+		return area;
+	}
 
 	/**
 	 * Creates the viewer content component.
@@ -238,7 +293,7 @@ public class LMBNViewer extends ViewerAdapter {
 	 * Calls the static funtion to launch webstart
 	 */
 	private void onWebstartCytoscape() {
-		CytoscapeWebstart.onWebstartCytoscape(this.getNetworkFiles());
+		CytoscapeWebstart.onWebstartCytoscapeBN(this.getNetworkFiles());
 	}
 
 	/**
@@ -315,6 +370,14 @@ public class LMBNViewer extends ViewerAdapter {
 
 	public Vector getNetworkFiles() {
 		return this.networkFiles;
+	}
+	
+	public void setBadItems(ArrayList<String> anyList) {
+		this.badItems = anyList;
+	}
+
+	public ArrayList<String> getBadItems() {
+		return this.badItems;
 	}
 
 	/**

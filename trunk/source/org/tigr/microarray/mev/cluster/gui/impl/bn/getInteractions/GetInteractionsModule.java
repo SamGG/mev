@@ -54,12 +54,12 @@ public class GetInteractionsModule {
 	static String sep = BNConstants.SEP;
 	static String path;
 	static HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
-	
+
 	public GetInteractionsModule(String basepath){
 		path=basepath;
 		//System.out.println("Base PAth Loc....................: " + path);
 	}
-	
+
 	public GetInteractionsModule(String basepath, HashMap<String, String> probeIndexAssocHash) {
 		path = basepath;
 		this.probeIndexAssocHash = probeIndexAssocHash;
@@ -130,78 +130,78 @@ public class GetInteractionsModule {
 			if(debug){
 				Useful.writeHashMapToFile(gbArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromGeneDb_test.txt");
 			}
-			
+
 			GeneInteractions gI = new GeneInteractions();
-			
+
 			HashMap articlesGbs = gI.backwards(gbArticlesFromGeneDb);
 			gbArticlesFromGeneDb = gI.filter(articlesGbs, gbArticlesFromGeneDb, articleRemovalThreshold);
 			ArrayList interGeneDb = (ArrayList) gI.createInteractions(gbArticlesFromGeneDb);
 			if(articlesGbs != null && gbArticlesFromGeneDb != null && interGeneDb != null){
 				//if(articlesGbs.size() == 0)
-					//System.out.println("articlesGbs size is 0");
+				//System.out.println("articlesGbs size is 0");
 				//else
-					//System.out.println("articlesGbs size is " + articlesGbs.size());
+				//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromGeneDb.size() == 0)
-					//System.out.println("gbArticlesFromGeneDb size is 0");
+				//System.out.println("gbArticlesFromGeneDb size is 0");
 				//else
-					//System.out.println("gbArticlesFromGeneDb size is " + gbArticlesFromGeneDb.size());
+				//System.out.println("gbArticlesFromGeneDb size is " + gbArticlesFromGeneDb.size());
 				//if (interGeneDb.size() == 0)
-					//System.out.println("interGeneDb size is 0");
+				//System.out.println("interGeneDb size is 0");
 				//else
-					//System.out.println("interGeneDb size is " + interGeneDb.size());
+				//System.out.println("interGeneDb size is " + interGeneDb.size());
 			} else {
 				System.out.println("One of the vectors for GeneDB is null");
 			}
-			
+
 			articlesGbs = null;
 			articlesGbs = gI.backwards(gbArticlesFromPubmed);
 			gbArticlesFromPubmed = gI.filter(articlesGbs, gbArticlesFromPubmed, articleRemovalThreshold);	
 			ArrayList interPubmed = (ArrayList) gI.createInteractions(gbArticlesFromPubmed);
 			if(articlesGbs != null && gbArticlesFromPubmed != null && interPubmed != null){
 				//if(articlesGbs.size() == 0)
-					//System.out.println("articlesGbs size is 0");
+				//System.out.println("articlesGbs size is 0");
 				//else
-					//System.out.println("articlesGbs size is " + articlesGbs.size());
+				//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromPubmed.size() == 0)
-					//System.out.println("gbArticlesFromPubmed size is 0");
+				//System.out.println("gbArticlesFromPubmed size is 0");
 				//else
-					//System.out.println("gbArticlesFromPubmed size is " + gbArticlesFromPubmed.size());
+				//System.out.println("gbArticlesFromPubmed size is " + gbArticlesFromPubmed.size());
 				//if (interPubmed.size() == 0)
-					//System.out.println("interPubmed size is 0");
+				//System.out.println("interPubmed size is 0");
 				//else
-					//System.out.println("interPubmed size is " + interPubmed.size());
+				//System.out.println("interPubmed size is " + interPubmed.size());
 			} else {
 				System.out.println("One of the vectors for Pubmed is null");
 			}
-			
+
 			articlesGbs = null;
 			articlesGbs = gI.backwards(gbArticlesFromRes);
 			gbArticlesFromRes = gI.filter(articlesGbs, gbArticlesFromRes, articleRemovalThreshold);		
 			ArrayList interRes = (ArrayList) gI.createInteractions(gbArticlesFromRes);	
 			if(articlesGbs != null && gbArticlesFromRes != null && interRes != null){
 				//if(articlesGbs.size() == 0)
-					//System.out.println("articlesGbs size is 0");
+				//System.out.println("articlesGbs size is 0");
 				//else
-					//System.out.println("articlesGbs size is " + articlesGbs.size());
+				//System.out.println("articlesGbs size is " + articlesGbs.size());
 				//if (gbArticlesFromRes.size() == 0)
-					//System.out.println("gbArticlesFromRes size is 0");
+				//System.out.println("gbArticlesFromRes size is 0");
 				//else
-					//System.out.println("gbArticlesFromRes size is " + gbArticlesFromRes.size());
+				//System.out.println("gbArticlesFromRes size is " + gbArticlesFromRes.size());
 				//if (interRes.size() == 0)
-					//System.out.println("interRes size is 0");
+				//System.out.println("interRes size is 0");
 				//else
-					//System.out.println("interRes size is " + interRes.size());
+				//System.out.println("interRes size is " + interRes.size());
 			} else {
 				System.out.println("One of the vectors for Res is null");
 			}
-			
+
 			debug=false;
 			if(debug){
 				UsefulInteractions.writeSifFileUndirWithWeights(interGeneDb,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interGeneDb");
 				UsefulInteractions.writeSifFileUndirWithWeights(interPubmed,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interPubmed");
 				UsefulInteractions.writeSifFileUndirWithWeights(interRes,gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"interRes");	    
 			}
-			
+
 			//System.out.println("******* Merging interGeneDb, interRes, interPubmed ********");
 			ArrayList unionOfInter = GetInteractionsUtil.uniquelyMergeArrayLists(interGeneDb, interRes, interPubmed);
 			if(unionOfInter == null || unionOfInter.size() == 0){
@@ -210,7 +210,7 @@ public class GetInteractionsModule {
 			}
 			//System.out.println("Edges Before KEGG " + unionOfInter.size());
 			//for(int i = 0; i < unionOfInter.size(); i++){
-				//System.out.println(unionOfInter.get(i).toString());
+			//System.out.println(unionOfInter.get(i).toString());
 			//}
 			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
 			//E.g - if there is an edge A -> B, there *cannot be an Edge B -> A to make it a DAG
@@ -258,7 +258,7 @@ public class GetInteractionsModule {
 			String ppiFileName = resFileLoc+props.getProperty(BNConstants.PPI_FILE_NAME, null);
 			String resFileName = resFileLoc+props.getProperty(BNConstants.RES_FILE_NAME, null);
 			String gbAccessionsFileName = fileLoc+props.getProperty(BNConstants.GB_ACC_FILE_NAME, null);
-			
+
 			ArrayList interFromPpiSyms = getInteractionsFromPpiSyms(props);
 			//System.out.println(interFromPpiSyms.size());
 			// replace symbols with gbs in interFromPpi
@@ -283,7 +283,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * The <code>getInteractionsFromPpi</code> method gets protein protein interactions from
 	 * given <code>ArrayList</code> representing ppi, given <code>ArrayList</code> representing 
@@ -356,7 +356,7 @@ public class GetInteractionsModule {
 		if(ppiIner == null)
 			System.out.println("GetInteractionsModule.getInteractionsFromPpi() NO interactions!!");
 		//else
-			//System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
+		//System.out.println("GetInteractionsModule.getInteractionsFromPpi() " +  ppiIner.size() + " interaction");
 		return ppiIner;
 	}
 
@@ -389,7 +389,7 @@ public class GetInteractionsModule {
 			ArrayList keggList = GetInteractionsUtil.getEdgesfromKegg(keggListAll, gbAccessionsFileName);
 			//System.out.println("Edges From KEGG " + keggList.size());
 			//for(int i = 0; i < keggList.size(); i++){
-				//System.out.println(keggList.get(i).toString());
+			//System.out.println(keggList.get(i).toString());
 			//}
 
 			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
@@ -416,7 +416,7 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			
+
 			ArrayList unionLitKegg = null;
 			ArrayList kegg = getInteractionsFromKegg(props);
 			ArrayList lit = getInteractionsFromLiterature(props);
@@ -446,10 +446,10 @@ public class GetInteractionsModule {
 					//return unionLitKegg;
 				}
 			}
-			
+
 			//System.out.println("\nEdges From KEGG & LIT " + unionLitKegg.size());
 			//for(int i = 0; i < unionLitKegg.size(); i++){
-				//System.out.println(unionLitKegg.get(i).toString());
+			//System.out.println(unionLitKegg.get(i).toString());
 			//}
 			return unionLitKegg;
 		}
@@ -463,7 +463,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * The <code>getInteractions</code> method gets interactions from the given properties, 
 	 * corresponding to interactions obtained either from the literature by co-occurrences 
@@ -547,7 +547,7 @@ public class GetInteractionsModule {
 			ArrayList unionLitPpi = new ArrayList();
 			unionLitPpi = getInteractionsFromLiteraturePpi(props);
 			return unionLitPpi;
-			
+
 		}
 		// get interactions from both literature and kegg and NOT ppi
 		else if(isLiteratureStr.equals("true") && !isPpiStr.equals("true") && isKeggStr.equals("true")){
@@ -577,7 +577,7 @@ public class GetInteractionsModule {
 			// replace symbols with gbs in interFromPpi
 			//interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
 			//if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
-				//prepareGBsForPpiNotDirectly(interFromPpi, props);	
+			//prepareGBsForPpiNotDirectly(interFromPpi, props);	
 			//}
 			return interFromPpi;
 		}
@@ -603,7 +603,7 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			
+
 			ArrayList unionPpiKegg = null;
 			ArrayList kegg = getInteractionsFromKegg(props);
 			ArrayList ppi = getInteractionsFromPpi(props);
@@ -633,10 +633,10 @@ public class GetInteractionsModule {
 					//return unionLitKegg;
 				}
 			}
-			
+
 			//System.out.println("\nEdges From KEGG & PPI " + unionPpiKegg.size());
 			//for(int i = 0; i < unionLitKegg.size(); i++){
-				//System.out.println(unionLitKegg.get(i).toString());
+			//System.out.println(unionLitKegg.get(i).toString());
 			//}
 			return unionPpiKegg;
 		}
@@ -646,7 +646,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param props
@@ -685,7 +685,7 @@ public class GetInteractionsModule {
 			//Merged functinalilty from getINteractions 
 			//interFromPpi = GetInteractionsUtil.replaceSymsWithGBsInInter(path  + BNConstants.SEP + props.getProperty(BNConstants.RES_FILE_NAME), interFromPpiSyms);
 			//if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false") || props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
-				//prepareGBsForPpiNotDirectly(interFromPpi, props);	
+			//prepareGBsForPpiNotDirectly(interFromPpi, props);	
 			//}
 			//return interFromPpi;
 			//Raktim - New function to remove reverse edges between 2 nodes (cycles) from Lit mining interaction.
@@ -707,7 +707,7 @@ public class GetInteractionsModule {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param props
@@ -719,11 +719,11 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			
+
 			ArrayList unionLitPpi = null;
 			ArrayList interFromPpi = getInteractionsFromPpi(props);
 			ArrayList interFromLit = getInteractionsFromLiterature(props);
-			
+
 			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + interFromPpi.size());
 			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + interFromLit.size());
 			if(props.getProperty(BNConstants.USE_PPI_WITHIN, "true").equals("false")|| props.getProperty(BNConstants.USE_PPI_DIRECT, "true").equals("false")){
@@ -734,7 +734,7 @@ public class GetInteractionsModule {
 			else { // usePpiDirectlyOnlyWithin was true
 				interFromLit = getInteractionsFromLiterature(props);
 				unionLitPpi = GetUnionOfInters.uniquelyMergeArrayLists(interFromLit, interFromPpi);
-				
+
 			}
 			unionLitPpi = UsefulInteractions.removeReverseEdge(unionLitPpi);
 			//System.out.println("getInteractionsFromLiteraturePpi edgesUnion: " + unionLitPpi.size());
@@ -829,7 +829,7 @@ public class GetInteractionsModule {
 			Properties props = new Properties();
 			props.load(new FileInputStream(propertiesFileName));
 			//System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
-			
+
 			//Magic Happens Here. This is where Lit netwrok is created//
 			ArrayList interactions = getInteractions(props); 
 			if(interactions == null || interactions.size() == 0){
@@ -848,9 +848,12 @@ public class GetInteractionsModule {
 			//Check if annotation is loaded
 			if(!data.isAnnotationLoaded()) {
 				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.sif";
-			//System.out.println("fname_cyto " + fname_cyto);
-			System.setProperty("LM_ONLY", fname_cyto);
-			UsefulInteractions.writeSifFileUndir(interactions, fname_cyto);
+				//System.out.println("fname_cyto " + fname_cyto);
+				System.setProperty("LM_ONLY", fname_cyto);
+				UsefulInteractions.writeSifFileUndir(
+						interactions, 
+						path+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+fname_cyto
+						);
 			} else {
 				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.xgmml";
 				System.setProperty("LM_ONLY", fname_cyto);
@@ -862,7 +865,11 @@ public class GetInteractionsModule {
 				} else {
 					throw new NullArgumentException("Given Probe-Index Hash was null!");
 				}
-				UsefulInteractions.writeXgmmlFileUndir(interactions, fname_cyto, probeIndexAssocHash, data);
+				UsefulInteractions.writeXgmmlFileUndir(
+						interactions, 
+						path+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + fname_cyto, 
+						probeIndexAssocHash, 
+						data);
 			}
 			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);
 			return interactions.size();
@@ -878,11 +885,85 @@ public class GetInteractionsModule {
 			nae.printStackTrace(); 
 			return -1;
 		}
-		
+
 		catch(OutOfRangeException oore){
 			System.out.println(oore);
 			oore.printStackTrace();
 			return -1;
+		}
+	}
+	
+	public static ArrayList getInteractions(String propertiesFileName, IData data) throws OutOfRangeException, IOException, NullArgumentException{
+		try {
+			//System.out.print(propertiesFileName);
+			//System.exit(1);
+			Properties props = new Properties();
+			props.load(new FileInputStream(propertiesFileName));
+			//System.out.print(props.getProperty(BNConstants.RES_FILE_NAME));
+
+			//Magic Happens Here. This is where Lit netwrok is created//
+			ArrayList interactions = getInteractions(props); 
+			if(interactions == null || interactions.size() == 0){
+				System.out.print("Oh no NULL Interaction object. Bad...");
+				JOptionPane.showMessageDialog(
+						new JFrame() , 
+						"No interactions found, aborting ....",
+						"Info", JOptionPane.INFORMATION_MESSAGE);
+				return null;
+			}
+			String outInteractionsFileName = props.getProperty(
+					BNConstants.OUT_INTER_FILE_NAME, 
+					BNConstants.OUT_INTERACTION_FILE
+					);
+			//System.out.print(outInteractionsFileName);
+			//Raktim - Modified. Name File(s) uniquely
+			//String fname_cyto= "liter_mining_alone_network.sif"; // Raktim - Old Way
+
+			//Check if annotation is loaded
+			if(!data.isAnnotationLoaded()) {
+				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.sif";
+				//System.out.println("fname_cyto " + fname_cyto);
+				System.setProperty("LM_ONLY", fname_cyto);
+				UsefulInteractions.writeSifFileUndir(
+						interactions, 
+						path+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP+fname_cyto
+						);
+			} else {
+				String fname_cyto= Useful.getUniqueFileID() +"_"+ "LM.xgmml";
+				System.setProperty("LM_ONLY", fname_cyto);
+				if(probeIndexAssocHash != null ) {
+					if (probeIndexAssocHash.size() <= 0) {
+						//System.out.println("probeIndexAssocHash Size: " + probeIndexAssocHash.size());
+						//System.out.println("First Entry : " + probeIndexAssocHash.entrySet().toArray()[0]);
+					}
+				} else {
+					throw new NullArgumentException("Given Probe-Index Hash was null!");
+				}
+				UsefulInteractions.writeXgmmlFileUndir(
+						interactions, 
+						path+BNConstants.SEP+BNConstants.RESULT_DIR+BNConstants.SEP + fname_cyto, 
+						probeIndexAssocHash, 
+						data);
+			}
+			UsefulInteractions.writeSifFileUndirWithWeights(interactions, outInteractionsFileName);
+			return interactions;
+		}
+		catch(IOException ioe){
+			System.out.println(ioe);
+			ioe.printStackTrace();
+			throw ioe;
+		}
+
+		catch(NullArgumentException nae){
+			System.out.println(nae);
+			nae.printStackTrace(); 
+			throw nae;
+		}
+
+		catch(OutOfRangeException oore){
+			System.out.println(oore);
+			oore.printStackTrace();
+			throw oore;
 		}
 	}
 
@@ -894,5 +975,5 @@ public class GetInteractionsModule {
 		System.out.println("java GetInteractionsModule propsFileName\njava GetInteractionsModule getInteractions.props");
 		System.exit(0);
 	}
-	
+
 }

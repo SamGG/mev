@@ -291,13 +291,14 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 			labelsDescItem[i].addActionListener(new SortListener(false, false));
 		}
 
-		classItem = new JMenuItem[numClasses + 1];
+		//classItem = new JMenuItem[numClasses + 1];
+		classItem = new JMenuItem[numClasses];
 
 		for (int i = 0; i < numClasses; i++) {
 			classItem[i] = new JMenuItem("Class " + (i + 1));
 		}
 
-		classItem[numClasses] = new JMenuItem("Neutral");
+		//classItem[numClasses] = new JMenuItem("Neutral");
 
 		for (int i = 0; i < classItem.length; i++) {
 			classItem[i].addActionListener(new AssignListener());
@@ -317,36 +318,6 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 	protected void onOk() {
 		result = JOptionPane.OK_OPTION;
 		dispose();
-	}
-	
-	/**
-	 * Cleans up the tmp directory
-	 *
-	 */
-	private void cleanUpFile(){
-		File file;
-		String path = basePath + BNConstants.TMP_DIR;
-		System.out.println("Cleaning UP temporary files at: " + path);
-		try {
-			file = new File(path);
-		} catch (Exception e) {
-			file = null;
-			e.printStackTrace();
-		}
-		if (file != null) {
-			String files[] = file.list();
-			for(int x = 0; x < files.length ; x ++){
-				File f = new File (files[x]);
-				if(f.isFile()){
-					f.delete();
-				}else{
-					//System.out.println("Not a file to delete");
-				}
-			} 
-		} else {
-			System.out.println("No such Location");
-		}
-		//System.out.println("Done !!");
 	}
 
 	/**
@@ -399,17 +370,21 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		int indexLastClass;
 
 		public BNClassTableModel() {
-			indexLastClass = numClasses;
+			//indexLastClass = numClasses;
+			indexLastClass = numClasses-1;
 			if (classifyGenes) {
-				columnNames = new String[fieldNames.length + numClasses + 2];
+				//columnNames = new String[fieldNames.length + numClasses + 2];
+				columnNames = new String[fieldNames.length + numClasses + 1];
 				columnNames[0] = "Index";
 				for (int i = 0; i < numClasses; i++) {
 					columnNames[i + 1] = "Class " + (i+1);
 				}
-				columnNames[numClasses + 1] = "Neutral";
+				
+				//columnNames[numClasses + 1] = "Neutral";
 
 				for (int i = 0; i < fieldNames.length; i++) {
-					columnNames[numClasses + 2 + i] = fieldNames[i];
+					//columnNames[numClasses + 2 + i] = fieldNames[i];
+					columnNames[numClasses + 1 + i] = fieldNames[i];
 				}
 
 				tableData = new Object[numGenes][columnNames.length];
@@ -418,35 +393,43 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 					for (int j = 0; j < columnNames.length; j++) {
 						if (j == 0) {
 							tableData[i][j] = new Integer(i);
-						} else if ((j > 0) && (j < (numClasses + 1))) {
+						//} else if ((j > 0) && (j < (numClasses + 1))) {
+						} else if ((j > 0) && (j < (numClasses))) {
 							tableData[i][j] = new Boolean(false);
-						} else if (j == numClasses + 1) {
+						//} else if (j == numClasses + 1) {
+						} else if (j == numClasses) {
 							tableData[i][j] = new Boolean(true);
 						} else {
-							tableData[i][j] = data.getElementAttribute(i, j - (numClasses + 2));
+							//tableData[i][j] = data.getElementAttribute(i, j - (numClasses + 2));
+							tableData[i][j] = data.getElementAttribute(i, j - (numClasses + 1));
 						}
 					}
 				}
 
 			} else { // (!classifyGenes)
-				columnNames = new String[numClasses + 3];
+				//columnNames = new String[numClasses + 3];
+				columnNames = new String[numClasses + 2];
 				columnNames[0] = "Index";
 				for (int i = 0; i < numClasses; i++) {
 					columnNames[i + 1] = "Class " + (i+1);
 				}
-				columnNames[numClasses + 1] = "Neutral";
-				columnNames[numClasses + 2] = "Sample Name";
+				//columnNames[numClasses + 1] = "Neutral";
+				//columnNames[numClasses + 2] = "Sample Name";
+				columnNames[numClasses + 1] = "Sample Name";
 				tableData = new Object[numExps][columnNames.length];
 
 				for (int i = 0; i < tableData.length; i++) {
 					for (int j = 0; j < columnNames.length; j++) {
 						if (j == 0) {
 							tableData[i][j] = new Integer(i);
-						} else if ((j > 0) && (j < (numClasses + 1))) {
+						//} else if ((j > 0) && (j < (numClasses + 1))) {
+						} else if ((j > 0) && (j < (numClasses))) {
 							tableData[i][j] = new Boolean(false);
-						} else if (j == numClasses + 1) {
+						//} else if (j == numClasses + 1) {
+						} else if (j == numClasses) {
 							tableData[i][j] = new Boolean(true);
-						} else if (j == numClasses + 2) {
+						//} else if (j == numClasses + 2) {
+						} else if (j == numClasses + 1) {
 							tableData[i][j] = data.getFullSampleName(i);
 						}
 					}
@@ -503,7 +486,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		public Class getColumnClass(int c) {
 			if (c == 0) {
 				return java.lang.Integer.class;
-			} else if ((c > 0) && (c <= (numClasses + 1))) {
+			//} else if ((c > 0) && (c <= (numClasses + 1))) {
+			} else if ((c > 0) && (c <= (numClasses))) {
 				return java.lang.Boolean.class;
 			} else {
 				return getValueAt(0, c).getClass();
@@ -514,7 +498,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		public boolean isCellEditable(int row, int col) {
 			//Note that the data/cell address is constant,
 			//no matter where the cell appears onscreen.
-			if ((col > 0) && (col <= (numClasses + 1))) {
+			//if ((col > 0) && (col <= (numClasses + 1))) {
+			if ((col > 0) && (col <= (numClasses))) {
 				return true;
 			} else {
 				return false;
@@ -584,7 +569,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		}
 
 		public void moveColumn(int from, int to) {
-			if (from <= (numClasses + 1) || to <= (numClasses + 1)) {
+			//if (from <= (numClasses + 1) || to <= (numClasses + 1)) {
+			if (from <= (numClasses) || to <= (numClasses)) {
 				return;
 			} else {
 				tcm.moveColumn(from, to);
@@ -621,7 +607,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 			int selectedCol = tme.getColumn(); //
 			int selectedRow = tme.getFirstRow(); //
 
-			if ((selectedCol < 1) || (selectedCol > (numClasses + 1) )) {
+			//if ((selectedCol < 1) || (selectedCol > (numClasses + 1) )) {
+			if ((selectedCol < 1) || (selectedCol > (numClasses) )) {
 				return;
 			}
 
@@ -633,7 +620,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 
 			origData[origDataRow][selectedCol] = new Boolean(true);
 
-			for (int i = 1; i <= (numClasses + 1); i++) {
+			//for (int i = 1; i <= (numClasses + 1); i++) {
+			for (int i = 1; i <= (numClasses); i++) {
 				if (i != selectedCol) {
 					origData[origDataRow][i] = new Boolean(false);
 				}
@@ -641,7 +629,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		}
 
 		private void changeNeighbors(int first, int col){
-			for (int i = 1; i <= (numClasses + 1); i++) {
+			//for (int i = 1; i <= (numClasses + 1); i++) {
+			for (int i = 1; i <= (numClasses); i++) {
 				if (i != col) {
 					BNClassTable.setValueAt(new Boolean(false), first, i);
 					//origData[first][i] = new Boolean(false); 
@@ -658,7 +647,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 				return true;
 			} else {
 				Vector truthValues = new Vector();
-				for (int i = 1; i <=(numClasses + 1); i++) {
+				//for (int i = 1; i <=(numClasses + 1); i++) {
+				for (int i = 1; i <=(numClasses); i++) {
 					if (i != col) {
 						boolean value = ((Boolean)(BNClassTable.getValueAt(row,i))).booleanValue();
 						truthValues.add(new Boolean(value));
@@ -782,13 +772,15 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 	}
 
 	private void sortByClassification() {
-		Vector[] classVectors = new Vector[numClasses + 1];
+		//Vector[] classVectors = new Vector[numClasses + 1];
+		Vector[] classVectors = new Vector[numClasses];
 		for (int i = 0; i < classVectors.length; i++) {
 			classVectors[i] = new Vector();
 		}
 
 		for (int i = 0; i < kModel.getRowCount(); i++) {
-			for (int j = 1; (j <= numClasses + 1); j++) {
+			//for (int j = 1; (j <= numClasses + 1); j++) {
+			for (int j = 1; (j <= numClasses); j++) {
 				boolean b = ((Boolean)(kModel.getValueAt(i, j))).booleanValue();
 				if (b) {
 					classVectors[j - 1].add(new Integer(i));
@@ -826,7 +818,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 	}
 
 	private void validateTable(Object[][] tabData, int row) {
-		for (int i = 1; i <= (numClasses + 1); i++) {
+		//for (int i = 1; i <= (numClasses + 1); i++) {
+		for (int i = 1; i <= (numClasses); i++) {
 			boolean check = ((Boolean)(tabData[row][i])).booleanValue();
 			if (check) {
 				kModel.setValueAt(new Boolean(true), row, i);
@@ -857,7 +850,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 				int currCl = ((Integer)(classVector.get(i))).intValue();
 
 				if (currCl == (-1)) {
-					kModel.setValueAt(new Boolean(true), currInd, (numClasses + 1));
+					//kModel.setValueAt(new Boolean(true), currInd, (numClasses + 1));
+					kModel.setValueAt(new Boolean(true), currInd, (numClasses));
 				} else {
 					kModel.setValueAt(new Boolean(true), currInd, currCl);
 				}
@@ -887,7 +881,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 		Vector[] vectArray = new Vector[2];
 
 		for (int i = 0; i < kModel.getRowCount(); i++) {
-			if (((Boolean)(kModel.getValueAt(i, numClasses + 1))).booleanValue()) {
+			//if (((Boolean)(kModel.getValueAt(i, numClasses + 1))).booleanValue()) {
+			if (((Boolean)(kModel.getValueAt(i, numClasses))).booleanValue()) {
 				continue;
 			} else {
 				indicesVector.add((Integer)(kModel.getValueAt(i, 0)));
@@ -906,7 +901,8 @@ public class BNClassificationEditor extends JDialog {// JFrame {
 
 	private int getClass(int row) {
 		int i;
-		for (i = 1; i <= numClasses + 1; i++) {
+		//for (i = 1; i <= numClasses + 1; i++) {
+		for (i = 1; i <= numClasses; i++) {
 			if (((Boolean)(kModel.getValueAt(row, i))).booleanValue()) {
 				break;
 			}

@@ -104,6 +104,43 @@ public class XGMMLGenerator {
 	}
 
 	/**
+	 * Special node for CLASS variable
+	 * Has no attached annotation hence ..
+	 * @param nodelabel
+	 * @param string
+	 * @return
+	 */
+	public static String createClassNode(String label, String id, IData data) {
+		String node = "";
+		String nodeType = "string";
+		//node = "  <node label='" + NM_001964 + " 'id='" + -1 + "'>";
+		node = "  <node label='" + label + "' id='" + id + "' >" + lineSep;
+		//EH
+		String[] fieldNames = data.getFieldNames();//MevAnnotation.getFieldNames();
+		//System.out.println("XGMML Field Count " + fieldNames.length);
+		for(int i = 0; i < fieldNames.length; i++) {
+			if(fieldNames[i].equals("GENE_SYMBOL") 
+					|| fieldNames[i].equals("GENE_TITLE")
+					|| fieldNames[i].equals("ENTREZ_ID")
+					|| fieldNames[i].equals("GENBANK_ACC")
+					)
+				nodeType = "list";
+			// No annotation for CLASS. Gene Name is set to CLASS
+			node += createNodeAttribute(fieldNames[i], "CLASS", nodeType);
+			nodeType = "string";
+		}
+		
+		node += "    <graphics type='ELLIPSE' width='2' fill='#FFCC99' outline='#CC9900' >" + lineSep;
+		node += "    	<att name='cytoscapeNodeGraphicsAttributes'>" + lineSep;
+		node += "    		<att name='nodeLabelFont' value='Default-0-12'/>" + lineSep;
+		node += "    		<att name='borderLineType' value='solid'/>" + lineSep;
+		node += "    	</att>" + lineSep;
+		node += "    </graphics>" + lineSep;
+		node += "  </node>" + lineSep;
+		return node;
+	}
+	
+	/**
 	 * Replaces char ' that XML cannot handle if not escaped properly
 	 * @param string
 	 * @return

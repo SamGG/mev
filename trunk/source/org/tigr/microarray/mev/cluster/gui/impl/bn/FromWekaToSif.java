@@ -80,8 +80,10 @@ public class FromWekaToSif {
 			if(s.startsWith("LogScore")){
 				toProcess = false;
 			}
-			if(s.startsWith("CLASS"))
-				continue;
+			
+			// Making CLASS node available - Raktim Dec 17, 09
+			//if(s.startsWith("CLASS"))
+			//	continue;
 			if(toProcess){
 				//if(map)
 				//fromWekaToSifOneLine(s, pw, map);
@@ -109,9 +111,10 @@ public class FromWekaToSif {
 			index = s.indexOf(" ", startIndex+1);
 			if(index != -1){
 				from = s.substring(startIndex,index).trim();
-				if(!from.equals("CLASS") || !to.equals("CLASS")){
+				// Making CLASS node available - Raktim Dec 17, 09
+				//if(!from.equals("CLASS") || !to.equals("CLASS")){
 					pw.println(from + " pd "+ to);
-				}
+				//}
 				startIndex = index;	    
 			}	
 			else {
@@ -119,9 +122,10 @@ public class FromWekaToSif {
 			}
 		}
 		from = s.substring(startIndex, s.length()).trim();
-		if(!from.equals("CLASS") || !to.equals("CLASS")){
+		// Making CLASS node available - Raktim Dec 17, 09
+		//if(!from.equals("CLASS") || !to.equals("CLASS")){
 			pw.println(from + " pd "+ to);
-		}
+		//}
 	}
 
 	/**
@@ -160,8 +164,9 @@ public class FromWekaToSif {
 			if(s.startsWith("LogScore")){
 				toProcess = false;
 			}
-			if(s.startsWith("CLASS"))
-				continue;
+			// Making CLASS node available - Raktim Dec 17, 09
+			//if(s.startsWith("CLASS"))
+				//continue;
 			if(toProcess){
 				Vector<String> _tmpEdges = fromWekaToNodes(s);
 				if(_tmpEdges != null) {
@@ -306,8 +311,9 @@ public class FromWekaToSif {
 			if(s.startsWith("LogScore")){
 				toProcess = false;
 			}
-			if(s.startsWith("CLASS"))
-				continue;
+			// Making CLASS node available - Raktim Dec 17, 09
+			//if(s.startsWith("CLASS"))
+				//continue;
 			if(toProcess){
 				Vector<String> _tmpEdges = fromWekaToNodes(s);
 				if(_tmpEdges != null) {
@@ -450,6 +456,11 @@ public class FromWekaToSif {
 		String xgmmlEdgeContent = "";
 		int probeInd;
 		
+		// Making CLASS node available - Raktim Dec 17, 09
+		if (nodelabel.trim().equals("CLASS")) {
+			xgmmlNodeContent = XGMMLGenerator.createClassNode(nodelabel, (String) probeIdMap.get(nodelabel), data);
+			return xgmmlNodeContent;
+		}
 		//Convert to XGMML node & Edge
 		//Get index from hash map encoded into the form NM_23456 to 1-Afy_X1234 where 1 is the probe index
 		String tmp[] = ((String)probeIndexAssocHash.get(nodelabel)).split("-");
@@ -507,13 +518,21 @@ public class FromWekaToSif {
 			//System.out.println("writeXGMML Edge Indices From: " + fromTo[0] + " To: " + fromTo[1]);
 			String srcId = (String)nodesWithId.get(labelFrom);
 			if(!nodeCreated.contains(labelFrom)) {
-				xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
+				// If CLASS var use dummy anno
+				if (labelFrom.equals("CLASS"))
+					xgmmlNodeContent += XGMMLGenerator.createClassNode(labelFrom, srcId, data);
+				else
+					xgmmlNodeContent += XGMMLGenerator.createNode(labelFrom, srcId, data, fromTo[0]);
 				nodeCreated.add(labelFrom);
 			}
 
 			String tgtId = (String)nodesWithId.get(labelTo);
 			if(!nodeCreated.contains(labelTo)) {
-				xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
+				// If CLASS var use dummy anno
+				if (labelTo.equals("CLASS"))
+					xgmmlNodeContent += XGMMLGenerator.createClassNode(labelTo, tgtId, data);
+				else
+					xgmmlNodeContent += XGMMLGenerator.createNode(labelTo, tgtId, data, fromTo[1]);
 				nodeCreated.add(labelTo);
 			}
 
@@ -535,8 +554,8 @@ public class FromWekaToSif {
 	 */
 	public static void fromSimpleGeneEdgeToXgmml(boolean dir, ArrayList<SimpleGeneEdge> inter, String fileName, HashMap probeIndexAssocHash, IData data) throws NullArgumentException, IOException {
 		//FileOutputStream fos = null;
-		String path=System.getProperty("user.dir");
-		path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
+		//String path=System.getProperty("user.dir");
+		//path = BNConstants.getBaseFileLocation() + BNConstants.SEP + BNConstants.RESULT_DIR + BNConstants.SEP;
 		try {	    
 			if(inter == null){
 				System.out.println("UsefulInteractions-writeSif");  
@@ -602,7 +621,8 @@ public class FromWekaToSif {
 			}
 			xgmmlContent += XGMMLGenerator.getFooter();
 			try {
-				XGMMLGenerator.writeFileXGMML(path + fileName, xgmmlContent);
+				//XGMMLGenerator.writeFileXGMML(path + fileName, xgmmlContent);
+				XGMMLGenerator.writeFileXGMML(fileName, xgmmlContent);
 			} catch (IOException ioe) {
 				throw ioe;
 			}
@@ -634,11 +654,11 @@ public class FromWekaToSif {
 			index = s.indexOf(" ", startIndex+1);
 			if(index != -1){
 				labelFrom = s.substring(startIndex,index).trim();
-				if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
-					//pw.println(labelFrom + " pd " + labelTo);
+				// Making CLASS node available - Raktim Dec 17, 09
+				//if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 					//System.out.println(labelFrom + "-" + labelTo);
 					edges.add(labelFrom + "-" + labelTo);
-				}
+				//}
 				startIndex = index;	    
 			}	
 			else {
@@ -646,11 +666,11 @@ public class FromWekaToSif {
 			}
 		}
 		labelFrom = s.substring(startIndex, s.length()).trim();
-		if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
-			//pw.println(labelFrom + " pd " + labelTo);
+		// Making CLASS node available - Raktim Dec 17, 09
+		//if(!labelFrom.equals("CLASS") || !labelTo.equals("CLASS")){
 			//System.out.println(labelFrom + "-" + labelTo);
 			edges.add(labelFrom + "-" + labelTo);
-		}
+		//}
 		return edges;
 
 	}

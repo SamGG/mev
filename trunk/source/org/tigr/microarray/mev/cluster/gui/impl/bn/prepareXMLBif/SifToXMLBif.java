@@ -18,6 +18,7 @@
  *******************************************************************************/
 package org.tigr.microarray.mev.cluster.gui.impl.bn.prepareXMLBif;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -81,6 +82,7 @@ public class SifToXMLBif {
 	 * @exception NullArgumentException if an error occurs because at least one of the 
 	 * given parameters interactions or names was null.
 	 */
+	@SuppressWarnings("unchecked")
 	public static void createXMLBifGivenSifFile(ArrayList interactions, ArrayList names, PrintWriter pw, Properties props) throws NullArgumentException, NotDAGException {
 		if((interactions == null) || (names == null) || props == null){
 			throw new NullArgumentException("At least one of interactions or names or props was null\ninteractions="+interactions+"\nnames="+names+"\nprops="+props);
@@ -94,7 +96,11 @@ public class SifToXMLBif {
 		}	
 		System.gc();
 		ArrayList values = new ArrayList();
+		//TODO
+		// Verify what happens when numStates was not set
 		int numStates = Integer.parseInt(props.getProperty("numStates", "3"));
+		System.out.println("createXMLBifGivenSifFile, numStates: -- " + numStates);
+		
 		ArrayList gene1values = new ArrayList(numStates);
 		for(int i = 0; i < numStates; i++){
 			gene1values.add(props.getProperty("state"+i, "state"+i));
@@ -102,7 +108,10 @@ public class SifToXMLBif {
 		for(int i = 0; i < names.size(); i++){
 			values.add((ArrayList)gene1values.clone());
 		}
+		//TODO
+		// Verify what happens when numClasses is not set
 		int numClasses = Integer.parseInt(props.getProperty("numClasses", "2"));
+		System.out.println("createXMLBifGivenSifFile, numClasses: -- " + numClasses);
 		ArrayList classValues = new ArrayList(numClasses);
 		for(int i = 0; i < numClasses; i++){
 			classValues.add(props.getProperty("class"+i, "class"+i));
@@ -124,6 +133,61 @@ public class SifToXMLBif {
 		}
 		//System.out.println("before toXMLBIF");
 		toXMLBIF03(classValues,interactions,names.size(),names,values,distributions,pw);
+	}
+	
+	public static void createXMLBifGivenSifFile(ArrayList interactions, ArrayList names, boolean distributionFromWeights, int numStates, int numClasses, String outXMLBifFileName) throws NullArgumentException, NotDAGException, FileNotFoundException {
+		if((interactions == null) || (names == null)){
+			throw new NullArgumentException("At least one of interactions or names or props was null\ninteractions="+interactions+"\nnames="+names);
+		}	
+		if(Cyclic.isCyclic(interactions)){
+			throw new NotDAGException("The given graph is cyclic!\ninteractions="+interactions);
+		}
+		boolean uniform = true;
+		if(!distributionFromWeights){
+			uniform = false;
+		}	
+		System.gc();
+		ArrayList values = new ArrayList();
+		//TODO
+		// Verify what happens when numStates was not set
+		//int numStates = Integer.parseInt(props.getProperty("numStates", "3"));
+		System.out.println("createXMLBifGivenSifFile, numStates: -- " + numStates);
+		
+		ArrayList gene1values = new ArrayList(numStates);
+		for(int i = 0; i < numStates; i++){
+			gene1values.add("state"+i);
+		}
+		for(int i = 0; i < names.size(); i++){
+			values.add((ArrayList)gene1values.clone());
+		}
+		//TODO
+		// Verify what happens when numClasses is not set
+		//int numClasses = Integer.parseInt(props.getProperty("numClasses", "2"));
+		System.out.println("createXMLBifGivenSifFile, numClasses: -- " + numClasses);
+		ArrayList classValues = new ArrayList(numClasses);
+		for(int i = 0; i < numClasses; i++){
+			classValues.add("class"+i);
+		}
+		int maxParents = SifToXMLBifUtil.getMaxParents(interactions, names);
+		if(debug){
+			System.out.println("maxParents="+maxParents);
+		}
+		ArrayList[][] distributions = null;
+		//System.out.println("before distributions");
+		if(!uniform){
+			distributions = SifToXMLBifUtil.computeDistributions(names, values, maxParents, interactions);
+			// System.out.println("after distributions by weights");
+		}
+		else {
+			System.gc();
+			distributions = SifToXMLBifUtil.makeUniformDistributions(names, values, maxParents, interactions);
+			// System.out.println("after distributions uniform");
+		}
+		
+		PrintWriter pw = new PrintWriter(new FileOutputStream(outXMLBifFileName), true);
+		//System.out.println("before toXMLBIF");
+		toXMLBIF03(classValues,interactions,names.size(),names,values,distributions,pw);
+		pw.close();
 	}
 
 	/**

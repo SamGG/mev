@@ -153,7 +153,7 @@ public class Useful {
 	 * @return an <code>ArrayList</code> containing String objects corresponding to all the lines in the given file
 	 * @exception FileNotFoundException if an error occurs because the file denoted by the given fileName was not found
 	 */
-	public static ArrayList readNamesFromFile(String fileName) throws FileNotFoundException{
+	public static ArrayList<String> readNamesFromFile(String fileName) throws FileNotFoundException{
 		try {
 			//System.out.println("readNamesFromFile: " + fileName);
 			ArrayList<String> names = new ArrayList<String>();
@@ -518,14 +518,14 @@ public class Useful {
 	 * @param kfolds
 	 * @return
 	 */
-	public static String[] getWekaArgsArray(String path, String outArffFileName, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
+	public static String[] getWekaArgsArray(String outArffFileName, String bifFile, String sAlgorithm, boolean useArc, String numParents, String sType, int kfolds) {
 
 		ArrayList<String> args = new ArrayList<String>(); 
 		args.add("");
 		//System.out.println("user.dir: " + System.getProperty("user.dir") + "\n outArffFileName: " + fName);
 		//String arguments = " -t " + path + outArffFileName + " -c 1 -x " + kfolds + " -Q weka.classifiers.bayes.net.search.local."+sAlgorithm+" -- ";
 		args.add("-t");
-		args.add(path + outArffFileName);
+		args.add(outArffFileName);
 		args.add("-c");
 		args.add("1");
 		args.add("-x");
@@ -533,7 +533,7 @@ public class Useful {
 		args.add("-Q");
 		args.add("weka.classifiers.bayes.net.search.local."+sAlgorithm);
 		args.add("--");
-		
+
 		if(useArc){
 			//arguments +="-R";
 			args.add("-R");
@@ -543,11 +543,11 @@ public class Useful {
 		args.add(numParents);
 		args.add("-S");
 		args.add(sType);
-		
+
 		//if(BNGUI.prior){     
 		//arguments += " -X " + path+ "resultBif.xml";
 		args.add("-X");
-		args.add(path+ "resultBif.xml");
+		args.add(bifFile);
 		//System.out.print("my prior");
 		//}
 		//arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
@@ -556,15 +556,15 @@ public class Useful {
 		args.add("--");
 		args.add("-A");
 		args.add("0.5");
-		
+
 		String[] argsWeka = args.toArray(new String[args.size()]);
 		//Debug only
 		//for(int i = 0;i < argsWeka.length; i++) {
-			//System.out.println("Arg["+i+"]: " + argsWeka[i]);
+		//System.out.println("Arg["+i+"]: " + argsWeka[i]);
 		//}
 		return argsWeka;
 	}
-	
+
 	/**
 	 * Function to create weka arguments list to learn CPT from using a Fixed Net struct
 	 * @param outArffFileName
@@ -585,25 +585,25 @@ public class Useful {
 		args.add("1");
 		args.add("-x");
 		args.add(String.valueOf(kfolds));
-		
+
 		//modelArgs += " -Q weka.classifiers.bayes.net.search.fixed.FromFile -- -B ";
 		args.add("-Q");
 		args.add("weka.classifiers.bayes.net.search.fixed.FromFile");
 		args.add("--");
 		args.add("-B");
 		args.add(bifFile);
-		
+
 		//arguments += " -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5";
 		args.add("-E");
 		args.add("weka.classifiers.bayes.net.estimate.SimpleEstimator");
 		args.add("--");
 		args.add("-A");
 		args.add("0.5");
-		
+
 		String[] argsWeka = args.toArray(new String[args.size()]);
 		//Debug only
 		//for(int i = 0;i < argsWeka.length; i++) {
-			//System.out.println("Arg["+i+"]: " + argsWeka[i]);
+		//System.out.println("Arg["+i+"]: " + argsWeka[i]);
 		//}
 		return argsWeka;
 	}
@@ -699,6 +699,12 @@ public class Useful {
 				probeIndexAssocHash.put(accList[i], new Integer(rows[i]).toString()+"-"+probeId[i]);
 				//System.out.println("Clone - Acc, Hash Value: " + probeId[i] + " - " + accList[i] + " , " + new Integer(rows[i]).toString()+"-"+probeId[i] );
 			}
+			
+			// Hack for CLASS variable as node
+			// Make an entry so that XGMML file genberator class
+			// complain
+			if (probeIndexAssocHash.size() > 1)
+				probeIndexAssocHash.put("CLASS", "9999-CLASS");
 			// TODO - Raktim Why write to file ?
 			writeAccToFile(accList,path);
 			return probeIndexAssocHash;
@@ -744,13 +750,13 @@ public class Useful {
 	private static void writeAccToFile (String[] accList, String path) throws Exception {
 		String outFile = path + BNConstants.SEP+ BNConstants.TMP_DIR + BNConstants.SEP + BNConstants.OUT_ACCESSION_FILE;
 		//System.out.println(outFile);
-		BufferedWriter out = null;
+		PrintWriter out = null;
 		int nRows = accList.length;
 		try {
-			out = new BufferedWriter (new FileWriter(outFile));
+			out = new PrintWriter (new BufferedWriter (new FileWriter(outFile)));
 			for (int row = 0; row < nRows; row++) {
-				out.write(accList[row]);
-				out.newLine();
+				out.print(accList[row]);
+				out.print("\n");
 				//System.out.println(accList[row]);
 			}
 			out.flush();
@@ -774,7 +780,11 @@ public class Useful {
 	 * @param goTerms
 	 * @param path
 	 */
-	public static void buildPropertyFile(boolean lit,boolean ppi,boolean kegg, boolean LitPpi, boolean LitKegg, boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,String path, String keggSpecies){
+	public static void buildPropertyFile(boolean lit,boolean ppi,
+			boolean kegg, boolean LitPpi, boolean LitKegg, 
+			boolean KeggPpi, boolean LitPpiKegg,boolean goTerms,
+			String path, String keggSpecies,
+			int numClasses, int numStates){
 		//String sep= System.getProperty("file.separator");    
 		final int fileSize = 8;
 		String[] propFile = new String[fileSize];
@@ -916,6 +926,8 @@ public class Useful {
 			out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
 			out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
 			out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
+			out.println("numClasses" + "=" + numClasses);
+			out.println("numStates" + "=" + numStates);
 			if(LitPpiKegg){
 				out.println(BNConstants.SIF_FILE_NAME + "=" + outFile[6]);
 			}else if(LitPpi){
@@ -938,6 +950,20 @@ public class Useful {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	public static void createXmlBifPropFile(
+			String fileLoc, int numClasses, int numStates) 
+	throws IOException {
+		PrintWriter out = null;
+		out= new PrintWriter(new FileOutputStream(new File(fileLoc)));
+		out.println(BNConstants.NAMES_FILE_NAME + "=" + BNConstants.OUT_ACCESSION_FILE);
+		out.println(BNConstants.DISTRIBUTION_FRM_WEIGHTS + "=" + "true");
+		out.println(BNConstants.OUT_XML_BIF_FILE_NAME + "=" + BNConstants.BIF_RESULT_FILE);
+		out.println("numClasses" + "=" + numClasses);
+		out.println("numStates" + "=" + numStates);
+		out.flush();
+		out.close();
 	}
 
 	/**
@@ -1073,6 +1099,33 @@ public class Useful {
 		}
 		in.close();
 		out.close();
+	}
+
+	public static void cleanUpDir(String path) throws IOException {
+
+		File dir = new File(path);
+		if(!dir.exists())
+			throw new IOException("Not a valid path " + path);
+		if (!dir.isDirectory())
+			throw new IOException("Not a directory");
+		String[] children = dir.list();
+		if (!dir.canWrite())
+			throw new IOException(
+					"Insuficient permission to remove files " +
+					path);
+		for (int i=0; i<children.length; i++)
+		{
+			// Get filename of file or directory
+			String filename = children[i];
+			File f = new File(path + "/" + children[i] + "/");
+
+			if (f.isFile()) {
+				boolean success= f.delete();
+				if(! success) {
+					System.out.println("Unable to remove tmp File " + f.getAbsolutePath());
+				}
+			}
+		}
 	}
 }
 

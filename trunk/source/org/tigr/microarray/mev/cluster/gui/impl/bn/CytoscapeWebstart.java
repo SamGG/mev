@@ -30,13 +30,19 @@ public class CytoscapeWebstart {
 	/**
      * Public static function invokes webstart and creates the jnlp file
      */
-    public static void onWebstartCytoscape(Vector netFiles) {
+    public static void onWebstartCytoscapeBN(Vector netFiles) {
     	//TODO
     	//Read code base and lib path from property file
     	String codeBase = ""; //"'http://www.cytoscape.org/tut/webstart/'";
     	String libDir = "";
     	String pluginsDir = "";
     	
+    	Hashtable<String, String> cytoSettings = getJNLPsettingsForCytoscape();
+    	codeBase = cytoSettings.get("codeBase");
+    	libDir = cytoSettings.get("libDir");
+    	pluginsDir = cytoSettings.get("pluginsDir");
+    	
+    	/*
     	if(BNConstants.isSetCytoscapeParams()) {
     		codeBase = BNConstants.getCodeBaseLocation();
     		libDir = BNConstants.getLibDirLocation();
@@ -56,6 +62,7 @@ public class CytoscapeWebstart {
     		libDir = "/webstart/cytoscape/lib/";
     		pluginsDir = "/webstart/cytoscape/plugins/";
     	}
+    	*/
     	
     	//String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
     	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles);
@@ -77,6 +84,80 @@ public class CytoscapeWebstart {
         
     	//JOptionPane.showMessageDialog( new JFrame(), jnlpLoc, "Popup", JOptionPane.PLAIN_MESSAGE );
         startCytoscape(jnlpURI);
+    }
+    
+    /**
+     * 
+     * @param netFiles
+     */
+    public static void onWebstartCytoscapeMINET(Vector netFiles) {
+    	//TODO
+    	//Read code base and lib path from property file
+    	String codeBase = ""; //"'http://www.cytoscape.org/tut/webstart/'";
+    	String libDir = "";
+    	String pluginsDir = "";
+    	String MINET_URI = "minet.jnlp";
+    	
+    	Hashtable<String, String> cytoSettings = getJNLPsettingsForCytoscape();
+    	codeBase = cytoSettings.get("codeBase");
+    	libDir = cytoSettings.get("libDir");
+    	pluginsDir = cytoSettings.get("pluginsDir");
+    	
+    	//String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
+    	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles);
+    	// Figure out the location of the file location from the netFiles
+    	String filePath = (String)(netFiles.get(0));
+    	int index = filePath.lastIndexOf("/");
+    	String fileLoc = filePath.substring(0, index);
+    	//String jnlpURI = TMEV.getDataPath() + File.separator + BNConstants.RESULT_DIR + File.separator + BNConstants.CYTOSCAPE_URI;
+    	String jnlpURI = fileLoc + "/" + MINET_URI;
+    	//System.out.println("jnlpURI: " + jnlpURI);
+    	
+    	try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(jnlpURI));
+            out.write(jnlpLoc);
+            out.close();
+        } catch (IOException e) {
+        	JOptionPane.showMessageDialog(new JFrame(), "Error creating jnlp file", "Cytoscape will not launch", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    	//JOptionPane.showMessageDialog( new JFrame(), jnlpLoc, "Popup", JOptionPane.PLAIN_MESSAGE );
+        startCytoscape(jnlpURI);
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    private static Hashtable<String, String> getJNLPsettingsForCytoscape() {
+		
+    	Hashtable<String, String> cytoSets = new Hashtable<String, String>();
+    	String codeBase = ""; //"'http://www.cytoscape.org/tut/webstart/'";
+    	String libDir = "";
+    	String pluginsDir = "";
+    	if(BNConstants.isSetCytoscapeParams()) {
+    		codeBase = BNConstants.getCodeBaseLocation();
+    		libDir = BNConstants.getLibDirLocation();
+    		pluginsDir = BNConstants.gePluginsDirLocation();
+    	} else {
+    		Hashtable<String, String> repInfo = BNDownloadManager.getRepositoryInfoCytoscape();
+        	codeBase = ((String)repInfo.get("cytoscape_webstart")).trim();
+        	libDir = ((String)repInfo.get("cytoscape_lib_dir")).trim();
+        	pluginsDir = ((String)repInfo.get("cytoscape_plugins_dir")).trim();
+    	}
+    		
+    	if(codeBase == null || libDir == null || pluginsDir == null) {
+    		JOptionPane.showMessageDialog(new JFrame(), "Error reading properties file, will try with default values", "Cytoscape may not launch", JOptionPane.ERROR_MESSAGE);
+    		//codeBase = "gaggle.systemsbiology.net/2007-04/cy/blankSlate/cy2.6.0";
+    		//libDir = "/2007-04/jars_cy2.6.0/";
+    		codeBase = "compbio.dfci.harvard.edu";
+    		libDir = "/webstart/cytoscape/lib/";
+    		pluginsDir = "/webstart/cytoscape/plugins/";
+    	}
+    	cytoSets.put("codeBase", codeBase);
+    	cytoSets.put("libDir", libDir);
+    	cytoSets.put("pluginsDir", pluginsDir);
+    	return cytoSets;
     }
     
     /**
@@ -244,14 +325,20 @@ public class CytoscapeWebstart {
     	xml += "    <argument>edu.ucsd.bioeng.coreplugin.tableImport.TableImportPlugin</argument>";
     	xml += "    <argument>-p</argument>";
     	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
-    	xml += "    <argument>-p</argument>";
-    	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
-    	xml += "    <argument>-p</argument>";
-    	xml += "    <argument>plugin.bn_predict.BN_Predict</argument>";
+    	
+    	/* Not req for MINET */
+    	//xml += "    <argument>-p</argument>";
+    	//xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
+    	//xml += "    <argument>-p</argument>";
+    	//xml += "    <argument>plugin.bn_predict.BN_Predict</argument>";
+    	//
+    	
+    	/* Can we set a properties fil efor dosplay in MINET */
     	//xml += "    <argument>-V</argument>";
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
     	//xml += "    <argument>-N</argument>";
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/data/BN_RnaI/results/May_27_08_22_55_27_343TabuSearch_BAYES_boot_result_4_0.7.sif</argument>";
+    	
     	for(int i=0; i < files.size(); i++) {
     		xml += "<argument>-N</argument>";
     		//Replaces 2 things in file path
