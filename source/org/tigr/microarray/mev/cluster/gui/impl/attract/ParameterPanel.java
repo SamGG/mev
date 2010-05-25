@@ -678,7 +678,7 @@ public void createDownloadPanel(String label, String buttonName, String actionCo
 					ISupportFileDefinition thisDef = e.nextElement();
 					File temp = results.get(thisDef);
 					if(thisDef.isValid(temp)) {
-						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
+//						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
 						this.genesetFilePath=temp.getParent();
 						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
 						
