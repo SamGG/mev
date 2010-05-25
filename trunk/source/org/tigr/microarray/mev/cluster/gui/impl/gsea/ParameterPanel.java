@@ -811,7 +811,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 					ISupportFileDefinition thisDef = e.nextElement();
 					File temp = results.get(thisDef);
 					if(thisDef.isValid(temp)) {
-						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
+//						System.out.println("support file downloaded correctly: " + temp.getAbsolutePath());
 						this.genesetFilePath=temp.getParent();
 						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
 						
