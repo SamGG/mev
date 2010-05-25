@@ -193,7 +193,7 @@ public class TMEV {
                      
             configure();
             ImageScreen is = new ImageScreen();
-            is.showImageScreen(1500);
+            is.showImageScreen(3000);
             
             Manager manager = new Manager();
             
