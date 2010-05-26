@@ -314,7 +314,8 @@ public class SURV extends AbstractAlgorithm{
 		try {
 			System.out.println("Testing Survival install");
 			RHook.testPackage("survival");
-			RHook.testPackage("penalized");
+			// Raktim - testPackage() tests for all pkgs associated with a module
+			// RHook.testPackage("penalized");
 			RHook.log("Starting R Algorithim");
 	
 			String rCmd = "library(survival)";
