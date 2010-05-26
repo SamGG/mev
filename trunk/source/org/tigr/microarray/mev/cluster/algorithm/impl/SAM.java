@@ -1195,7 +1195,7 @@ public class SAM extends AbstractAlgorithm {
 		}
 
 		try {
-			RHook.testPackage("samarg");
+			RHook.testPackage("sam");
 			RHook.log("Starting R Algorithim");
 
 			System.out.println("start of load lib");
