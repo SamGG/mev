@@ -239,10 +239,7 @@ public class RHook  {
 		logger.writeln("Checking Package - " + pkgName);
 
 		// install a package from a local zip or tar based on OS
-		String pkgPath = System.getProperty("user.dir")+
-		System.getProperty("file.separator")+
-		RConstants.R_PACKAGE_DIR+
-		System.getProperty("file.separator");
+		String pkgPath = getPkgPath();
 
 		// Get list of packages for the module
 		String r_ver = TMEV.getSettingForOption("cur_r_ver");
@@ -256,13 +253,13 @@ public class RHook  {
 		String pkgs[] = pkg.split(":");
 
 		// check if packages are down-loaded in MEV.home/RPackages
-		String pkgFolder = System.getProperty("user.dir") + "/" + RConstants.R_PACKAGE_DIR + "/";
-		ArrayList<String> pkgsToDownload = markPkgsToDownload(pkgFolder, pkgs);
+		//String pkgFolder = getPkgPath();
+		ArrayList<String> pkgsToDownload = markPkgsToDownload(pkgPath, pkgs);
 
 		if(pkgsToDownload.size() > 0) {
 			// create complete url for each pkg associated with the module
 			// based on R version, OS and architecture
-			String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+			String ver = getCurrentRversion();
 			String os = getOSbyName();
 			String arch = getARCHbyName();
 			ArrayList<String> pkg_url_list = createPkgUrls(
@@ -274,8 +271,8 @@ public class RHook  {
 					repHash);
 
 			// try downloading the packages to MEV.home/RPackages
-			String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
-			updatePackages(pkg_url_list, pkg_dest);
+			//String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
+			updatePackages(pkg_url_list, pkgPath);
 		}
 
 		// install the pkgs in R if not already installed
@@ -293,9 +290,33 @@ public class RHook  {
 				logger.writeln("**** Attempting to install" + pkgs[i]+ " from local rep *****");
 
 				//re.eval("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
-				evalR("install.packages('" + pkgPath.replace("\\", "/")+pkgs[i] + "', repos=NULL)");
+				evalR("install.packages('" + pkgPath.replace("\\", "/")+"/"+pkgs[i] + "', repos=NULL)");
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws IOException 
+	 */
+	private static String getCurrentRversion() throws IOException {
+		if (getOS() == RConstants.MAC_OS)
+			return getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+		
+		// for all other OS
+		return TMEV.getSettingForOption("cur_r_ver").trim();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private static String getPkgPath() {
+		String pkgPath = System.getProperty("user.dir")+
+		System.getProperty("file.separator")+
+		RConstants.R_PACKAGE_DIR;
+		return pkgPath;
 	}
 
 	/**
@@ -307,7 +328,7 @@ public class RHook  {
 		ArrayList<String> pkgsToDownload = new ArrayList<String>();
 
 		for (int i=0; i < pkgs.length; i++) {
-			File f = new File(lookupfolder+pkgs[i].trim());
+			File f = new File(lookupfolder+"/"+pkgs[i].trim());
 			if(!f.exists())
 				pkgsToDownload.add(pkgs[i].trim());
 		}
@@ -382,76 +403,22 @@ public class RHook  {
 		}
 	}
 
-	// Try Running LIMMA
-	// This should go into Algorithm module
-	public void runLIMMA() {
-		System.out.println("Loading Lib LIMMA");
-		//guiFrame.cmdText.append("Running LIMMA \nLoading Lib LIMMA\n");
-
-		//guiFrame.cmdText.append("\t library(limma)");
-		//guiFrame.cmdText.append("\n");
-		re.eval("library(limma)");
-
-		System.out.println("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
-		//guiFrame.cmdText.append("\t design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
-		//guiFrame.cmdText.append("\n");
-		re.eval("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
-
-		// Ordinary fit
-		System.out.println("fit <- lmFit(y,design)");
-		//guiFrame.cmdText.append("\t fit <- lmFit(y,design)");
-		//guiFrame.cmdText.append("\n");
-		re.eval("fit <- lmFit(y,design)");
-		System.out.println("fit <- eBayes(fit)");
-		//guiFrame.cmdText.append("\t fit <- eBayes(fit)");
-		//guiFrame.cmdText.append("\n");
-		re.eval("fit <- eBayes(fit)");
-
-		// Various ways of summarizing or plotting the results
-		System.out.println("Summarizing LIMMA result");
-		//guiFrame.cmdText.append("Summarizing LIMMA result");
-		//guiFrame.cmdText.append("\n");
-		System.out.println("res <- topTable(fit,coef=2)");
-		//guiFrame.cmdText.append("\t res <- topTable(fit,coef=2)");
-		//guiFrame.cmdText.append("\n");
-		re.eval("res <- topTable(fit,coef=2)");
-		System.out.println("res$ID");
-		//guiFrame.cmdText.append("\t res$ID");
-		//guiFrame.cmdText.append("\n");
-		REXP x = re.eval("res$ID");
-		String gene[]=x.asStringArray();
-		x = re.eval("res$logFC");
-		double logFC[]=x.asDoubleArray();
-		x = re.eval("res$t");
-		double t[]=x.asDoubleArray();
-		x = re.eval("res$P.Value");
-		double pValue[]=x.asDoubleArray();
-		x = re.eval("res$adj.P.Val");
-		double adj_pValue[]=x.asDoubleArray();
-		String tmp1 = "\t ID \t logFC \t\t t \t\t P.Value \t\t adj.P.Val\n";
-		if (gene!=null) {
-			int i=0;
-			System.out.println(tmp1);
-			while (i<gene.length) { 
-				System.out.println("["+i+"] \""+gene[i]+"\""); 
-				tmp1+= i+ "\t" + gene[i]+ "\t" + logFC[i] + "\t" + t[i] + "\t" + pValue[i] + "\t" + adj_pValue[i] + "\n"; 
-				i++; 
-			}
-
-		}
-
-	}
-
+	/**
+	 * Suppose to end R session
+	 * Unpredictable results  - UnUsed
+	 */
 	public static void endR(){
 		re.end();
 		System.out.println("ended R session");
 
 	}
 
+	/**
+	 * Variables 
+	 */
 	static Rengine re;
 	protected static RLogger logger;
 	private static Hashtable<String, String> repHash;
-	//JRIJFrame guiFrame;
 
 	/* MeV API Functions */
 	/**
@@ -578,9 +545,7 @@ public class RHook  {
 	 * @throws Exception
 	 */
 	private static void cleanUp() throws Exception {
-		//re.eval("rm(list = ls())");		
 		evalR("rm(list = ls())");
-		//logger.stop();
 	}
 
 	/**
@@ -1040,8 +1005,9 @@ public class RHook  {
 	 * 
 	 * @param curRpath
 	 * @return
+	 * @throws IOException 
 	 */
-	public static String getMacRversionFromSymLink (String curRpath) {
+	public static String getMacRversionFromSymLink (String curRpath) throws IOException {
 		// Detecting a link
 		File file = new File(curRpath);
 		try {
@@ -1058,7 +1024,7 @@ public class RHook  {
 			return ver;
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			return null;
+			throw ioe;
 		}
 
 		/*
@@ -1101,7 +1067,7 @@ public class RHook  {
 		// Mac OS
 		if (getOS() == RConstants.MAC_OS){
 			lib = System.getProperty("user.dir") + "/" + 
-					"MeV.app/Contents/Resources/Java/" + 
+					RConstants.MAC_MEV_RES_LOC+"/" + 
 					getLibraryName();
 		} 
 		// all other os
