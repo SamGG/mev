@@ -80,7 +80,7 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
     protected Progress progress;
     protected Experiment experiment;
     
-    boolean debug = false;
+    boolean debug = true;
     protected String methodName = null;
     protected String estimatorName = null;
     protected String discretizationName = null;
@@ -163,6 +163,13 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
         	if(groupAssignments[i] == 1)
         		samplesUsed++;
         }
+        // get samples indices used
+        int sampleIndices[] = new int[samplesUsed];
+        for(int i = 0, ii = 0; i < groupAssignments.length; i++) {
+        	if(groupAssignments[i] == 1)
+        		sampleIndices[ii++] = i;
+        }
+        
         System.out.println(samplesUsed + " out of " + groupAssignments.length + " used.");
         if(!discretizationName.equals("none"))
         	bins = (int) Math.round(Math.sqrt(samplesUsed));
@@ -175,10 +182,10 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
 	        }
         }
         // Make FloatMAtrix based on genes in cluster - sub matrix
-        FloatMatrix fm = new FloatMatrix(geneIndices.length, number_of_samples);
+        FloatMatrix fm = new FloatMatrix(geneIndices.length, samplesUsed);
         for(int row=0; row < geneIndices.length; row++) {
-        	for(int col=0; col < geneIndices.length; col++) {
-        		fm.set(row, col, this.experiment.get(row, col));
+        	for(int col=0; col < sampleIndices.length; col++) {
+        		fm.set(row, col, this.experiment.get(geneIndices[row], sampleIndices[col]));
         	}
         }
        
