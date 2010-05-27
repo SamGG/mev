@@ -126,6 +126,11 @@ public class RHook  {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public static Rengine startRSession() throws Exception {
 		// Start Logging
 		if(logger != null) {
@@ -235,8 +240,8 @@ public class RHook  {
 	 * @param pkgName
 	 * @throws Exception
 	 */
-	public static void testPackage(String pkgName) throws Exception {
-		logger.writeln("Checking Package - " + pkgName);
+	public static void testPackage(String moduleName) throws Exception {
+		logger.writeln("Checking Package - " + moduleName + " and dependencies..");
 
 		// install a package from a local zip or tar based on OS
 		String pkgPath = getPkgPath();
@@ -244,7 +249,7 @@ public class RHook  {
 		// Get list of packages for the module
 		String r_ver = TMEV.getSettingForOption("cur_r_ver");
 		String pkg = TMEV.getSettingForOption(
-				pkgName+"_"+
+				moduleName+"_"+
 				getOSbyName()+"_"+
 				r_ver+"_"+
 				getARCHbyName()
@@ -259,9 +264,13 @@ public class RHook  {
 		if(pkgsToDownload.size() > 0) {
 			// create complete url for each pkg associated with the module
 			// based on R version, OS and architecture
+			System.out.println("To Download: " + pkgsToDownload.size() + " packages");
+			System.out.println("First Pkg: " + pkgsToDownload.get(0));
+			System.out.println("Last Pkg: " + pkgsToDownload.get(pkgsToDownload.size()-1));
 			String ver = getCurrentRversion();
 			String os = getOSbyName();
 			String arch = getARCHbyName();
+			/*
 			ArrayList<String> pkg_url_list = createPkgUrls(
 					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os,
 					ver,
@@ -269,6 +278,11 @@ public class RHook  {
 					arch,
 					os,
 					repHash);
+			*/
+			ArrayList<String> pkg_url_list = createPkgUrls(
+					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/" + moduleName,
+					pkgsToDownload
+					);
 
 			// try downloading the packages to MEV.home/RPackages
 			//String pkg_dest = System.getProperty("user.dir")+"/"+RConstants.R_PACKAGE_DIR;
@@ -277,19 +291,19 @@ public class RHook  {
 
 		// install the pkgs in R if not already installed
 		for (int i=0; i < pkgs.length; i++) {
-
-			REXP x = evalR("which(as.character(installed.packages()[,1])=='"+pkgs[i]+"')");
+			// R pkg names have the name of the library followed by ver etc
+			// e.g. survival_2.35-8.zip where library is survival
+			String libName = pkgs[i].substring(0, pkgs[i].indexOf("_"));
+			REXP x = evalR("which(as.character(installed.packages()[,1])=='"+libName+"')");
 			if(x.asInt() != 0 ) {
 				System.out.println(pkgs[i] + " Package Installed");
 				logger.writeln(pkgs[i] + " Package Installed");
 			}
 			else {
 				System.out.println(pkgs[i] + " Package NOT Installed");
-				System.out.println("**** Attempting to install" + pkgs[i]+ " from local rep *****");
-				logger.writeln(pkgName + " Package NOT Installed");
-				logger.writeln("**** Attempting to install" + pkgs[i]+ " from local rep *****");
-
-				//re.eval("install.packages('" + pkg.replace("\\", "/") + "', repos=NULL)");
+				System.out.println("**** Attempting to install" + libName + " from local rep ***** " + pkgs[i]);
+				logger.writeln(moduleName + " Package NOT Installed");
+				logger.writeln("**** Attempting to install" + libName + " from local rep ***** " + pkgs[i]);
 				evalR("install.packages('" + pkgPath.replace("\\", "/")+"/"+pkgs[i] + "', repos=NULL)");
 			}
 		}
@@ -416,7 +430,7 @@ public class RHook  {
 	/**
 	 * Variables 
 	 */
-	static Rengine re;
+	static Rengine re;	// singleton Rengine
 	protected static RLogger logger;
 	private static Hashtable<String, String> repHash;
 
@@ -650,7 +664,9 @@ public class RHook  {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		//String ver = System.getProperty("os.version");
-		if (arch.toLowerCase().contains("386") || arch.toLowerCase().contains("32")) {
+		if (arch.toLowerCase().contains("386") || 
+				arch.toLowerCase().contains("x86") ||
+				arch.toLowerCase().contains("32")) {
 			return RConstants.OS_ARCH_32;
 		}
 		if (arch.toLowerCase().contains("686") || arch.toLowerCase().contains("64")) {
@@ -731,7 +747,10 @@ public class RHook  {
 		String arch = getARCHbyName();
 
 		// read R hook repository info from Web
-		getPropInfoRhook();
+		if (getPropInfoRhook() == null){
+			// try reading in local settings
+			//TODO
+		}
 
 		// parse keys
 		ArrayList<String> r_versionList = getValuesFrmHash(repHash, os+"_r_versions");
@@ -849,16 +868,15 @@ public class RHook  {
 	 * @return
 	 */
 	private static ArrayList<String> createPkgUrls(String baseUrl,
-			String ver, ArrayList<String> rModuleList,
-			String arch, String os, Hashtable<String, String> repHash) {
+			ArrayList<String> rModuleList) {
 
 		System.out.println("createPkgUrls: baseUrl " + baseUrl);
 		ArrayList<String> result = new ArrayList<String>();
 		// module name loop
 		for(int i = 0; i < rModuleList.size(); i++) {
-			String tmp = rModuleList.get(i) + "_" + os + "_" + ver + "_" + arch;
-			result.add(baseUrl + "/" + rModuleList.get(i) + "/" + repHash.get(tmp));
-			System.out.println("createPkgUrls " + result.get(result.size()-1));
+			String tmp = rModuleList.get(i);
+			result.add(baseUrl + "/" + rModuleList.get(i));
+			System.out.println("added PkgUrls " + result.get(result.size()-1));
 		}
 		return result;
 	}
@@ -899,7 +917,7 @@ public class RHook  {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static Hashtable<String, String> getPropInfoRhook() throws Exception {
+	public static Hashtable<String, String> getPropInfoRhook() {
 		if (repHash != null)
 			return repHash; 
 
@@ -920,11 +938,11 @@ public class RHook  {
 			}
 			 */
 		} catch (Exception e) {
-			System.out.println("Could not retreive Web Repository Info.");
+			System.err.println("Could not retreive Web Repository Info.");
 			e.printStackTrace();
 			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
 			//return null;
-			throw e;
+			return null;
 		}
 
 		//return the vector of repository hashes

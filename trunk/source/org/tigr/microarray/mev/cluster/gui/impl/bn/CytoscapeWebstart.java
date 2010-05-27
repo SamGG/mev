@@ -65,7 +65,7 @@ public class CytoscapeWebstart {
     	*/
     	
     	//String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
-    	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles);
+    	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles, true);
     	// Figure out the location of the file location from the netFiles
     	String filePath = (String)(netFiles.get(0));
     	int index = filePath.indexOf(BNConstants.RESULT_DIR);
@@ -104,7 +104,7 @@ public class CytoscapeWebstart {
     	pluginsDir = cytoSettings.get("pluginsDir");
     	
     	//String jnlpLoc = createGaggleCytoscapeJNLP(codeBase, libDir, netFiles);
-    	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles);
+    	String jnlpLoc = createDfciCytoscapeJNLP(codeBase, libDir, pluginsDir, netFiles, false);
     	// Figure out the location of the file location from the netFiles
     	String filePath = (String)(netFiles.get(0));
     	int index = filePath.lastIndexOf("/");
@@ -190,7 +190,7 @@ public class CytoscapeWebstart {
      * @param files
      * @return
      */
-    private static String createDfciCytoscapeJNLP(String codeBase, String libDir, String pluginsDir, Vector<String> files) {
+    private static String createDfciCytoscapeJNLP(String codeBase, String libDir, String pluginsDir, Vector<String> files, boolean useBnPredict) {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='utf-8'?>";
     	xml += "<jnlp";
@@ -275,8 +275,10 @@ public class CytoscapeWebstart {
     	xml += "	<jar href='" + libDir + "BrowserLauncher2-1_3.jar'/>";
 
     	xml += "	<jar href='" + pluginsDir + "AutomaticLayout.jar'/>";
-    	xml += "	<jar href='" + pluginsDir + "CyGoose.jar'/>";
-    	xml += "	<jar href='" + pluginsDir + "bn_predict.jar'/>";
+    	if(useBnPredict) {
+    		xml += "	<jar href='" + pluginsDir + "CyGoose.jar'/>";
+    		xml += "	<jar href='" + pluginsDir + "bn_predict.jar'/>";
+    	}
     	xml += "	<jar href='" + pluginsDir + "CytoscapeEditor.jar'/>";
     	xml += "	<jar href='" + pluginsDir + "GraphMerge.jar'/>";
     	xml += "	<jar href='" + pluginsDir + "ManualLayout.jar'/>";
@@ -327,13 +329,14 @@ public class CytoscapeWebstart {
     	xml += "    <argument>yfiles.YFilesLayoutPlugin</argument>";
     	
     	/* Not req for MINET */
-    	//xml += "    <argument>-p</argument>";
-    	//xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
-    	//xml += "    <argument>-p</argument>";
-    	//xml += "    <argument>plugin.bn_predict.BN_Predict</argument>";
-    	//
+    	if(useBnPredict) {
+	    	xml += "    <argument>-p</argument>";
+	    	xml += "    <argument>org.systemsbiology.cytoscape.GagglePlugin</argument>";
+	    	xml += "    <argument>-p</argument>";
+	    	xml += "    <argument>plugin.bn_predict.BN_Predict</argument>";
+    	}
     	
-    	/* Can we set a properties fil efor dosplay in MINET */
+    	/* Can we set a properties file for display in MINET */
     	//xml += "    <argument>-V</argument>";
     	//xml += "    <argument>file:///C:/cscie75/Projects/MeV/MeV_SVN/plugins/vizmap.props</argument>";
     	//xml += "    <argument>-N</argument>";

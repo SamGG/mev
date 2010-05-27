@@ -100,7 +100,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 	private Vector<String> interactionsfinal = null;
 	private String finalBootFile = null;
 	private ArrayList<SimpleGeneEdge> networkSeedEdgeList;
-	private ArrayList<String> unMappedNetworkSeedEdgeList;
+	private ArrayList<String> unMappedNetworkSeedEdgeList = null;
 
 	private static ProgressMonitor pbar;
 	private static int counter = 0;
@@ -490,7 +490,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 
 		fileViewer = createLMBNViewer(this.networkFiles);
 		DefaultMutableTreeNode node;
-		if (unMappedNetworkSeedEdgeList.size() > 0) {
+		if (unMappedNetworkSeedEdgeList != null && unMappedNetworkSeedEdgeList.size() > 0) {
 			badNetSeedViewer = new LMBNViewer(unMappedNetworkSeedEdgeList);
 			node = createResultTree(exp, fileViewer, badNetSeedViewer, wekaOutputViewer, info);
 		} else {
