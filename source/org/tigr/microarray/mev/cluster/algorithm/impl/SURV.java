@@ -397,15 +397,14 @@ public class SURV extends AbstractAlgorithm{
 				System.out.println("Console users: Do not trust the above printed number (# nonzero coefficients: XX)\n" +
 						"This number may not be correctly reported to the console by R. \n" +
 						"The actual number of nonzero coefficients calculated by R is " + nonzero);
-	
-				int fold=100;
+				//TODO add fold parameter. Error-check for valid values: btw 2 and number of results
+//				int fold=100;
 				RHook.evalR(
 						"cvl <- cvl(Surv(alldata$eventtime, alldata$censoredflag), " + 
 										"penalized = data.matrix(alldata[,c(3:dim(alldata)[[2]])])," + 
 										"data = alldata, " + 
 										"lambda1 = " + lambda1 + ", " + 
-										"model='cox'," + 
-										"fold = " + fold + 
+										"model='cox'" +
 						")"
 					);
 				crossValidationLikelihood = RHook.evalR("cvl$cvl").asDouble();
