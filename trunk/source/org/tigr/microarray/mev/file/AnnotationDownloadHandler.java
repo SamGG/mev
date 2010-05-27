@@ -262,6 +262,8 @@ public class AnnotationDownloadHandler {
 								getAdditionalSupportFiles(organismName, arrayName);
 								annotationSelected = true;
 								inProgress = false;
+						       	TMEV.storeProperty(TMEV.LAST_LOADED_SPECIES, organismName);
+						       	TMEV.storeProperty(TMEV.LAST_LOADED_ARRAY, arrayName);
 								updateLabel();
 							} catch (Exception e) {
 								annotationSelected = false;
