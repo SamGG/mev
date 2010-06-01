@@ -117,20 +117,20 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
 		// For Mac OS X only --
 		// Check for R ver and dyn lib compatibility
 		// If mismatched try upgrading to correct version
-		if (RHook.getOS() == RConstants.MAC_OS) {
-			try {
-				if (RHook.Mac_R_ver_Changed()) {
-					if (!RHook.checkRDynLib("globalanc")) {
-						JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
-						throw new AbortException(); 
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Error updating R library\n **" + e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
-				throw new AbortException();
-			}
-		}
+//		if (RHook.getOS() == RConstants.MAC_OS) {
+//			try {
+//				if (RHook.Mac_R_ver_Changed()) {
+//					if (!RHook.checkRDynLib("globalanc")) {
+//						JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
+//						throw new AbortException(); 
+//					}
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				JOptionPane.showMessageDialog(null, "Error updating R library\n **" + e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
+//				throw new AbortException();
+//			}
+//		}
 		//System.out.println("Checking for R_HOME in properties: " + System.getProperty("R_HOME"));
 		//System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
         this.experiment = framework.getData().getExperiment();        
