@@ -220,7 +220,12 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         		! new File(algorithmData.getImpliesFileLocation()).isDirectory() 
         		) {
 //        	System.out.println("bad implies file location: " + algorithmData.getImpliesFileLocation());
-        	algorithmData.setImpliesFileLocation(baseImpliesFileLocation);
+        	if(dialog.wasCustomDataSet()){
+        		algorithmData.setImpliesFileLocation(dialog.getImpliesFileLocation());	
+        	}else{
+        		algorithmData.setImpliesFileLocation(baseImpliesFileLocation);
+        	}
+        	
         }
         if(algorithmData.getTagFileLocation() == null ||        		
         		! new File(algorithmData.getTagFileLocation()).exists() ||
