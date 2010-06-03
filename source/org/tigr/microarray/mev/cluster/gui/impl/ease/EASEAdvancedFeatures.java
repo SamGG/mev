@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
+import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.ResultContainer;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -56,36 +57,26 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 
 	private EventListener listener;
 	private String defaultFileLocation;
+	/*Saves the initial location of the EASE custom Directory for reset purposes*/
 	private Frame parent;
 	protected String sep;
 	private int result = JOptionPane.CANCEL_OPTION;
-	ClusterRepository repository;
+	private ClusterRepository repository;
 	protected Font font;
-	// private static String ANNOTATION_LINK =
-	// AnnotationFieldConstants.ENTREZ_ID;
+	private int index=0;
 	/* Specifies the kind of analysis to carry out */
 	private boolean isClusterAnalysis = false;
 
 	private boolean useLoadedAnnotationFile = false;
 
 	/* Panel where Annotation support Files are selected */
-	private ConfigPanelExtension configPanelExtension;
+	protected ConfigPanelExtension configPanelExtension;
 
 	/* Panel for population selection */
-	private PopSelectionPanel popPanel;
+	protected PopSelectionPanel popPanel;
 
 	/* Panel for Annotation type selection */
-	private EaseParameterPanel paramPanel;
-
-	/**
-	 * Provides JFileChoosers and JTextFields with the location of previously
-	 * selected annotation files
-	 * 
-	 * @return location in memory of previously selected annotation files
-	 * */
-	public String getDefaultBaseFileLocation() {
-		return defaultFileLocation;
-	}
+	protected EaseParameterPanel paramPanel;
 
 	/**
 	 * Constructor
@@ -188,6 +179,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			useAnnBox.setBackground(Color.white);
 			useAnnBox.setFocusPainted(false);
 			useAnnBox.setEnabled(true);
+			
 
 			converterFileField = new JTextField(30);
 			converterFileField.setBorder(BorderFactory.createBevelBorder(
@@ -296,6 +288,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			this.fieldNamesBox.setEditable(false);
 			this.fieldNamesBox.setEnabled(true);
 			fieldNamesBox.setSelectedItem(AnnotationFieldConstants.PROBE_ID);
+			index=fieldNamesBox.getSelectedIndex();
 
 			this.setLayout(new GridBagLayout());
 
@@ -477,11 +470,9 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			setLayout(new GridBagLayout());
 
 			statusLabel = new JLabel("Choose a custom EASE filesystem");
-			supportFileLocationField = new JTextField(
-					getDefaultBaseFileLocation(), 25);
+			supportFileLocationField = new JTextField(25);
 			supportFileLocationField.setEditable(true);
-			supportFileLocationField.setText(defaultFileLocation);
-
+			supportFileLocationField.setText("Please select a directory");
 			browseSupportFileButton = new JButton("Browse");
 			browseSupportFileButton
 					.setActionCommand("select-file-base-command");
@@ -502,8 +493,8 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 		public void browseForSupportFiles() {
 			String startDir = TMEV
 					.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
-			if (startDir == null)
-				startDir = supportFileLocationField.getText();
+//			if (startDir == null)
+//				startDir = supportFileLocationField.getText();
 			File file = new File(startDir);
 			if (!file.exists()) {
 				file = TMEV.getFile("data/ease");
@@ -547,6 +538,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			fileButton.setBackground(Color.white);
 			fileButton.setFocusPainted(false);
 			fileButton.setSelected(true);
+			
 			bg.add(fileButton);
 
 			fileButton.addActionListener(new ActionListener() {
@@ -559,6 +551,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 					browseButton.setEnabled(fileButton.isSelected());
 					popField.setEnabled(fileButton.isSelected());
 					popField.setBackground(Color.white);
+					popField.setText("Please select a population file");
 					fileLabel.setEnabled(fileButton.isSelected());
 
 				}
@@ -601,6 +594,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			fileButton.setSelected(!useLoadedAnnotationFile);
 			popField.setEnabled(fileButton.isSelected());
 			fileLabel.setEnabled(fileButton.isSelected());
+			popField.setText("Please select a population file");
 
 			if (fileButton.isSelected())
 				popField.setBackground(Color.white);
@@ -658,6 +652,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 					paramPanel.converterFileField.setEnabled(true);
 					paramPanel.converterFileField.setBackground(Color.white);
 					paramPanel.fileLabel.setEnabled(true);
+					paramPanel.converterFileField.setText("Please select a conversion file");
 				} else {
 					paramPanel.browserButton.setEnabled(false);
 					paramPanel.converterFileField.setEnabled(false);
@@ -695,7 +690,8 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			} else if (command.equals("ok-command")) {
 				if (getNewSupportFileLocation() == null
 						|| getNewSupportFileLocation().equals("")
-						|| getNewSupportFileLocation().equals(" ")) {
+						|| getNewSupportFileLocation().equals(" ")
+						|| getNewSupportFileLocation().equals("Please select a directory")) {
 					JOptionPane
 							.showMessageDialog(
 									parent,
@@ -745,13 +741,14 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 						return;
 					}
 				}
+			
 				result = JOptionPane.OK_OPTION;
 				dispose();
 			} else if (command.equals("cancel-command")) {
 				result = JOptionPane.CANCEL_OPTION;
 				dispose();
 			} else if (command.equals("reset-command")) {
-
+				resetControls();
 				result = JOptionPane.CANCEL_OPTION;
 				return;
 			} else if (command.equals("info-command")) {
@@ -772,6 +769,41 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 		public void itemStateChanged(ItemEvent arg0) {
 
 		}
+	}
+	
+	/**
+	 * Resets dialog controls. It does not perform a master reset of all dialogs
+	 */
+	public void resetControls() {
+		/*Resets options in directory selection panel*/
+		configPanelExtension.supportFileLocationField.setText("Please select a directory");
+		
+		/*Resets options in the population selection panel*/
+		popPanel.fileButton.setSelected(true);
+		popPanel.popField.setText(" ");
+		popPanel.popField.setBackground(Color.white);
+		popPanel.popField.setEnabled(true);
+		popPanel.browseButton.setEnabled(true);
+		popPanel.fileLabel.setEnabled(true);
+		
+		/*Resets options for the annotation key panel*/
+		paramPanel.fieldNamesBox.setSelectedIndex(index);
+		
+		/*Resets options for the annotation conversion file*/
+		paramPanel.useAnnBox.setSelected(false);
+		paramPanel.browserButton.setEnabled(false);
+		paramPanel.converterFileField.setText(" ");
+		paramPanel.converterFileField.setEnabled(false);
+		paramPanel.converterFileField
+				.setBackground(Color.lightGray);
+		paramPanel.fileLabel.setEnabled(false);
+		
+		/*Reset options for the gene ontology linking files*/
+		((DefaultListModel) paramPanel.annFileList.getModel())
+					.removeAllElements();
+		paramPanel.removeButton.setEnabled(false);
+		paramPanel.annFileList.validate();
+		
 	}
 
 	public static void main(String[] args) {

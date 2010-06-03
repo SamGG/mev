@@ -36,10 +36,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -83,6 +85,10 @@ public class EASEInitDialog extends AlgorithmDialog {
 	 * Result when dialog is dismissed
 	 */
 	private int result = JOptionPane.CANCEL_OPTION;
+	
+	private int resultStat= JOptionPane.CANCEL_OPTION;
+	
+	private int resultAdvanced= JOptionPane.CANCEL_OPTION;
 
 	/* File updates and configuration panel */
 	private ConfigPanel configPanel;
@@ -93,9 +99,15 @@ public class EASEInitDialog extends AlgorithmDialog {
 
 	/* Statistical parameters panel */
 	private EASEStatParam statParam;
+	
+	/*Extra reference to EASEStatParam*/
+	private EASEStatParam statParamTemp;
 
 	/* Frame with extra parameters */
 	private EASEAdvancedFeatures advancedFeat;
+	
+	/* Extra reference to EASEAdvancedFeatures */
+	private EASEAdvancedFeatures advancedFeatTemp;
 
 	/* NestedEase Panel */
 	private NEasePanel nEasePanel;
@@ -111,7 +123,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 
 	private static String ANNOTATION_LINK = AnnotationFieldConstants.ENTREZ_ID;
 	private boolean useLoadedAnnotationFile = false;
-	File annotationFile;
+	protected File annotationFile;
 	private String defaultFileBaseLocation;
 	private String defaultFileLocation;
 
@@ -147,10 +159,6 @@ public class EASEInitDialog extends AlgorithmDialog {
 	private JPanel popNClusterPanel;
 
 	private File f = null;
-
-	public String getDefaultBaseFileLocation() {
-		return defaultFileBaseLocation;
-	}
 
 	public File getAnnotationFile() {
 		return annotationFile;
@@ -190,16 +198,15 @@ public class EASEInitDialog extends AlgorithmDialog {
 		if (defaultFileLocation == null) {
 			defaultFileBaseLocation = TMEV
 					.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
-			supportFileLocation = defaultFileBaseLocation;
 		} else {
 			defaultFileBaseLocation = defaultFileLocation;
-			supportFileLocation = defaultFileLocation;
 		}
 		if (defaultFileBaseLocation == null
 				|| !new File(defaultFileBaseLocation).canRead()) {
 			defaultFileBaseLocation = "./data/ease";
-			supportFileLocation = defaultFileBaseLocation;
 		}
+		
+		supportFileLocation=defaultFileBaseLocation;
 
 		sep = System.getProperty("file.separator");
 		font = new Font("Dialog", Font.BOLD, 12);
@@ -372,10 +379,44 @@ public class EASEInitDialog extends AlgorithmDialog {
 	}
 
 	/**
-	 * Resets dialog controls.
+	 * Resets dialog controls. It does not perform a master reset of all dialogs
 	 */
 	public void resetControls() {
+		// Resets components in ConfigPanel
+		if (speciestoarrays == null || speciestoarrays.size() == 0) {
+			configPanel.organismListBox = new JComboBox();
+			configPanel.organismListBox.addItem("No organisms listed");
+			configPanel.organismListBox.setEnabled(false);
 
+			configPanel.arrayListBox = new JComboBox();
+			configPanel.arrayListBox.addItem("No species listed");
+			configPanel.arrayListBox.setEnabled(false);
+
+			configPanel.getEaseSupportFileButton.setEnabled(false);
+		} else {
+			try {
+				if (speciesName != null && arrayName!=null) {
+					configPanel.organismListBox.setSelectedItem(speciesName);
+					configPanel.arrayListBox.setSelectedItem(arrayName);
+				} else {
+					configPanel.organismListBox.setSelectedIndex(0);
+				}
+
+			} catch (NullPointerException npe) {
+				configPanel.arrayListBox.setSelectedItem(0);
+			}
+		}
+
+		// Resets options in ModePanel
+		if (repository == null || repository.isEmpty()) {
+
+		} else {
+			modePanel.clusterAnalysisButton.setSelected(true);
+			enableClusterSelection();
+		}
+
+		// resets options in NestedEase panel
+		nEasePanel.nEaseBox.setSelected(false);
 	}
 
 	/**
@@ -394,6 +435,13 @@ public class EASEInitDialog extends AlgorithmDialog {
 	 */
 	public Cluster getSelectedCluster() {
 		return this.browser.getSelectedCluster();
+	}
+	/**
+	 * 
+	 * @return flag indicating whether the user customized EASE
+	 */
+	public boolean wasCustomDataSet(){
+		return isAdvancedAnnotParams;
 	}
 
 	/**
@@ -443,7 +491,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 	 * Returns the base file location for EASE file system
 	 */
 	public String getBaseFileLocation() {
-		return configPanel.getBaseFileLocation();
+		return supportFileLocation;
 	}
 
 	/**
@@ -795,7 +843,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 			getEaseSupportFileButton
 					.setToolTipText("<html>Downloads EASE annotation files<br>for a selected species and array type.</html>");
 
-			configureExtras = new JButton("Advanced");
+			configureExtras = new JButton("Custom");
 			configureExtras.setActionCommand("select_extra_parameters");
 			configureExtras.addActionListener(listener);
 			configureExtras
@@ -924,6 +972,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 				getEaseSupportFileButton.setText("Done");
 				statusLabel.setText("     Selected");
 				getEaseSupportFileButton.setEnabled(false);
+				configureExtras.setText("Advanced");
 				isSelected = true;
 			} catch (SupportFileAccessError sfae) {
 				statusLabel.setText("Failure");
@@ -944,10 +993,6 @@ public class EASEInitDialog extends AlgorithmDialog {
 						ShowThrowableDialog.ERROR, npe,
 						"Unable to download EASE files at this time. ");
 			}
-		}
-
-		public String getBaseFileLocation() {
-			return supportFileLocation;
 		}
 
 		public void selectSpecies() {
@@ -1006,22 +1051,50 @@ public class EASEInitDialog extends AlgorithmDialog {
 			if (command.equals("select_stat_parameters")) {
 				if (!isAdvancedStatParams) {
 					statParam = new EASEStatParam(parent);
-					statParam.showModal();
+					statParamTemp=new EASEStatParam(parent);
+					resultStat=statParam.showModal();
 				} else {
-					statParam.showModal();
+					/*Copies the contents of the components in the current dialog*/
+					copyStatElements(statParam,statParamTemp);
+					resultStat=statParam.showModal();
 				}
-				isAdvancedStatParams = true;
+				if(resultStat==JOptionPane.OK_OPTION){
+					/* Update default values if user hits OK */
+					isAdvancedStatParams = true;
+				}else{
+					/*Copies the contents of the components from the previous version 
+					 into the dialog*/
+					copyStatElements(statParamTemp,statParam);
+				}
+				
 			} else if (command.equals("select_extra_parameters")) {
-				advancedFeat = new EASEAdvancedFeatures(parent,
-						supportFileLocation, isClusterModeSelected(),
-						repository, labels);
-
-				/* Update default values if user hit OK */
-				if (advancedFeat.showModal() == JOptionPane.OK_OPTION) {
+				if(!isAdvancedAnnotParams){
+					advancedFeat = new EASEAdvancedFeatures(parent,
+					supportFileLocation, isClusterModeSelected(),
+					repository, labels);
+					advancedFeatTemp= new EASEAdvancedFeatures(parent,
+							supportFileLocation, isClusterModeSelected(),
+							repository, labels);
+					resultAdvanced=advancedFeat.showModal();
+				}else{
+					copyAnnotationElements(advancedFeat,advancedFeatTemp);
+					resultAdvanced=advancedFeat.showModal();
+				}
+				/* Update default values if user hits OK */
+				if (resultAdvanced == JOptionPane.OK_OPTION) {
 					updateSupportFileSelection();
 					isAdvancedAnnotParams = true;
+					
+					/*Disables the Accept Button so that users know that they have chosen all parameters needed*/
+					configPanel.configureExtras.setText("Configured");
+					configPanel.statusLabel.setText("     Selected");
+					configPanel.getEaseSupportFileButton.setText("Done");
+					configPanel.getEaseSupportFileButton.setEnabled(false);
+				}else{
+					/* If not, keep current default values in place */
+					copyAnnotationElements(advancedFeatTemp,advancedFeat);
 				}
-				/* If not, keep current default values in place */
+				
 			} else if (command.equals("organism-selected-command")) {
 				configPanel.selectSpecies();
 				configPanel.updateSelection();
@@ -1044,20 +1117,21 @@ public class EASEInitDialog extends AlgorithmDialog {
 
 			} else if (command.equals("ok-command")) {
 				result = JOptionPane.OK_OPTION;
-				//if the user has clicked on the select button or accessed advanced options then proceed
+				// if the user has clicked on the select button or accessed
+				// advanced options then proceed
 				if (isSelected || isAdvancedAnnotParams) {
 					if (!useLoadedAnnotationFile && f.length() == 0) {
 						JOptionPane
 								.showMessageDialog(
 										parent,
-										"Annotation Support Files for the organism/array selected were not previously downloaded"
+										"You have not provided Annotation Files for the organism/array selected."
 												+ "\n"
-												+ "Please select an organism/array plataform or go to advanced options to browse for a directory.",
+												+ "Please load annotation files into Mev by selecting Import Resourcerer Gene Annotation on the utilities menu.",
 										"EASE Initialization: Missing Parameter",
 										JOptionPane.WARNING_MESSAGE);
 
-						// To validate that the url of support files was
-						// obtained
+						/*To validate that the path of support files was
+						 obtained*/
 					} else {
 						dispose();
 					}
@@ -1094,6 +1168,84 @@ public class EASEInitDialog extends AlgorithmDialog {
 					hw.dispose();
 				}
 			}
+		}
+
+		/**
+		 * Copies the contents of the components in one EASEAdvancedFeatures dialog to another
+		 * */
+		public void copyAnnotationElements(EASEAdvancedFeatures source,
+				EASEAdvancedFeatures destination) {
+	
+			destination.configPanelExtension.supportFileLocationField.setText(source.configPanelExtension.supportFileLocationField.getText());	
+			
+			destination.popPanel.fileButton.setSelected(source.popPanel.fileButton.isSelected());
+			destination.popPanel.dataButton.setSelected(source.popPanel.dataButton.isSelected());
+			destination.popPanel.popField.setText(source.popPanel.popField.getText());
+			destination.popPanel.popField.setBackground(source.popPanel.popField.getBackground());
+			destination.popPanel.popField.setEnabled(source.popPanel.popField.isEnabled());
+			destination.popPanel.browseButton.setEnabled(source.popPanel.browseButton.isEnabled());
+			destination.popPanel.fileLabel.setEnabled(source.popPanel.fileLabel.isEnabled());
+
+			destination.paramPanel.fieldNamesBox.setSelectedIndex(source.paramPanel.fieldNamesBox.getSelectedIndex());
+			destination.paramPanel.useAnnBox.setSelected(source.paramPanel.useAnnBox.isSelected());
+			destination.paramPanel.browserButton.setEnabled(source.paramPanel.browserButton.isEnabled());
+			destination.paramPanel.converterFileField.setText(source.paramPanel.converterFileField.getText());
+			destination.paramPanel.converterFileField.setEnabled(source.paramPanel.converterFileField.isEnabled());
+			destination.paramPanel.converterFileField.setBackground(source.paramPanel.converterFileField.getBackground());
+			destination.paramPanel.fileLabel.setEnabled(source.paramPanel.fileLabel.isEnabled());
+			
+			destination.paramPanel.removeButton.setEnabled(source.paramPanel.removeButton.isEnabled());		
+	
+			int destinationSize= destination.paramPanel.annFileList.getModel().getSize();
+			int sourceSize=source.paramPanel.annFileList.getModel().getSize();
+		
+			Object [] baseFiles=((DefaultListModel) source.paramPanel.annFileList.getModel()).toArray();
+			Object [] files=((DefaultListModel)destination.paramPanel.annFileList.getModel()).toArray();
+			for (int i = 0; i < sourceSize; i++) {
+				if(sourceSize>=destinationSize){
+				if (!((DefaultListModel) destination.paramPanel.annFileList.getModel()).contains(baseFiles[i])) {
+					((DefaultListModel) destination.paramPanel.annFileList.getModel())
+							.addElement(baseFiles[i]);
+				}
+				}
+//			}else if (sourceSize<destinationSize){
+//				File file; 
+//				for (int j=0; j<destinationSize;j++){
+//					file=(File) baseFiles[j];
+//					if(!((DefaultListModel)source.paramPanel.annFileList.getModel()).contains(file)){
+//						((DefaultListModel)destination.paramPanel.annFileList.getModel()).removeElement(file);
+//					}
+//				}
+//			}
+			}
+			
+		}
+
+		/**
+		 * Copies the contents of the components in one EASEStatParam dialog to another
+		 * */
+		public void copyStatElements(EASEStatParam source, EASEStatParam destination) {
+			
+			destination.fisherBox.setSelected(source.fisherBox.isSelected());
+			destination.hochbergBox.setSelected(source.hochbergBox.isSelected());
+			destination.trimBox.setSelected(source.trimBox.isSelected());
+			destination.bonferroniBox.setSelected(source.bonferroniBox.isSelected());
+			destination.bonferroniStepBox.setSelected(source.bonferroniStepBox.isSelected());
+			destination.sidakBox.setSelected(source.sidakBox.isSelected());
+			destination.permBox.setSelected(source.permBox.isSelected());
+			destination.permField.setText(source.permField.getText());
+			destination.trimNBox.setSelected(source.trimNBox.isSelected());
+			destination.trimNField.setText(source.trimNField.getText());
+			destination.trimPercentBox.setSelected(source.trimPercentBox.isSelected());
+			destination.trimPercentField.setText(source.trimPercentField.getText());
+			destination.permLabel.setEnabled(source.permLabel.isEnabled());
+			destination.permField.setEnabled(source.permField.isEnabled());
+			destination.trimNBox.setEnabled(source.trimNBox.isEnabled());
+			destination.trimNLabel.setEnabled(source.trimNLabel.isEnabled());
+			destination.trimNField.setEnabled(source.trimNField.isEnabled());
+			destination.trimPercentBox.setEnabled(source.trimPercentBox.isEnabled());
+			destination.trimPercentLabel.setEnabled(source.trimPercentLabel.isEnabled());
+			destination.trimPercentField.setEnabled(source.trimPercentField.isEnabled());
 		}
 
 		/**
@@ -1178,50 +1330,78 @@ public class EASEInitDialog extends AlgorithmDialog {
 			 * Prints all variables passed to a from all frames involving EASE
 			 * analysis
 			 */
-
-			// System.out.println("Window active" + eid.isAdvancedAnnotParams);
-			// /* Testing File location */
-			// System.out.println("File Location: " + eid.supportFileLocation);
-			//
-			// /* Testing Mode Selection */
-			// System.out.println("Is cluster Mode selected:"
-			// + eid.isClusterModeSelected());
-			//
-			// System.out.println(eid.summarizeSelections());
-			// System.out.println("Annotation Key Type: "
-			// + eid.getAnnotationKeyType());
-			// System.out.println("Nested ease" + eid.isNEaseSelected());
-			//
-			// System.out.println("These are the annotation files: ");
-			// String[] files = eid.getAnnToGOFileList();
-			//
-			// for (int c = 0; c < files.length; c++) {
-			// System.out.println(files[c]);
-			// }
-			//
-			// System.out.println("Is popFile mode selected: "
-			// + eid.isPopFileModeSelected());
-			//
-			// /* Testing of Statistical Parameter Selections */
-			// System.out.println("Ease score Selected:"
-			// + eid.isEaseScoreSelected());
-			// System.out.println("Bonferroni selected:"
-			// + eid.isBonferroniSelected());
-			// System.out.println("Step down bonferroni selected:"
-			// + eid.isStepDownBonferroniSelected());
-			// System.out.println("Sidak :" + eid.isSidakSelected());
-			// System.out.println("Hochberg: " + eid.isHochbergSelected());
-			// System.out.println("Perm selected:"
-			// + eid.isPermutationAnalysisSelected());
-			// System.out
-			// .println("the perm count is:" + eid.getPermutationCount());
-			// String[] argss = eid.getTrimOptions();
-			// System.out.println("Trim options:" + argss[0]);
-			// System.out.println("Trim options:" + argss[1]);
-
+//
+//			 System.out.println("Advanced params active" + eid.isAdvancedAnnotParams);
+//			 /* Testing File location */
+//			 System.out.println("File Location: " + eid.supportFileLocation);
+//			
+//			 /* Testing Mode Selection */
+//			 System.out.println("Is cluster Mode selected:"
+//			 + eid.isClusterModeSelected());
+//			
+//			 System.out.println(eid.summarizeSelections());
+//			 System.out.println("Annotation Key Type: "
+//			 + eid.getAnnotationKeyType());
+//			 System.out.println("Nested ease" + eid.isNEaseSelected());
+//			
+//			 System.out.println("These are the annotation files: ");
+//			 String[] files = eid.getAnnToGOFileList();
+//			
+//			 for (int c = 0; c < files.length; c++) {
+//			 System.out.println(files[c]);
+//			 }
+//			 System.out.println("Converter File name:" +eid.getConverterFileName());
+//			
+//			 System.out.println("Is popFile mode selected: "
+//			 + eid.isPopFileModeSelected());
+//			
+//			 /* Testing of Statistical Parameter Selections */
+//			 System.out.println("Ease score Selected:"
+//			 + eid.isEaseScoreSelected());
+//			 System.out.println("Bonferroni selected:"
+//			 + eid.isBonferroniSelected());
+//			 System.out.println("Step down bonferroni selected:"
+//			 + eid.isStepDownBonferroniSelected());
+//			 System.out.println("Sidak :" + eid.isSidakSelected());
+//			 System.out.println("Hochberg: " + eid.isHochbergSelected());
+//			 System.out.println("Perm selected:"
+//			 + eid.isPermutationAnalysisSelected());
+//			 System.out
+//			 .println("the perm count is:" + eid.getPermutationCount());
+//			 String[] argss = eid.getTrimOptions();
+//			 System.out.println("Trim options:" + argss[0]);
+//			 System.out.println("Trim options:" + argss[1]);
+//			 
+//			 System.out.println("This is the path of the class files"+ eid.getImpliesFileLocation());
+//			 if(!new File(eid.getImpliesFileLocation()+"Implies").exists() ||
+//		        		! new File(eid.getImpliesFileLocation()+"Implies").isDirectory()){
+//				 System.out.println("The path provided for the implies file was incorrect");
+//			 }
 		} catch (RepositoryInitializationError rie) {
 			rie.printStackTrace();
 		}
+	}
+
+	/**
+	 * Extracts the base file path from one of the GO linking annotation files
+	 * */
+	public String getImpliesFileLocation() {
+		String [] path= getAnnToGOFileList();
+		String anyPath= "";
+		StringTokenizer tok; 
+		String temporary="";
+		if(path.length>0){
+			tok=new StringTokenizer(path[0], sep);
+			while(tok.hasMoreTokens()){
+				anyPath=tok.nextToken();
+				temporary+=anyPath+sep;
+				if(anyPath.equals("Class")){
+					break;
+				}
+				
+			}
+		}
+		return temporary+"Implies";
 	}
 
 }
