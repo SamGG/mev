@@ -121,7 +121,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
     </target>
 
 
@@ -143,7 +143,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
     </target>
 
 
@@ -1341,6 +1341,21 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
       </propertyfile>
 	</target>
 
+	<target name="SURV-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/surv" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	    </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="SURV:" operation="+"/>
+            <entry key="SURV.name" value="SURV"/>
+            <entry key="SURV.class" value="org.tigr.microarray.mev.cluster.gui.impl.surv.SURVGUI"/>
+	  	<entry key="SURV.category" value="${STATISTICS}"/> 
+	  	<entry key="SURV.smallIcon" value="analysis16.gif"/>
+            <entry key="SURV.largeIcon" value="SURV1.gif"/>
+            <entry key="SURV.tooltip" value="Survival Analysis"/>
+      </propertyfile>
+	</target>
+	
 	<target name="GLOBANC" depends="GLOBANC-GUI" if="GLOBANC">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="GLOBANC.java"/>
@@ -1360,22 +1375,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	  <propertyfile file="${alg.properties.file}">
             <entry key="GLOBANC" value="org.tigr.microarray.mev.cluster.algorithm.impl.GLOBANC"/>
       </propertyfile>
-	</target>
-	
-	<target name="SURV-GUI">
-        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/surv" destdir="${dest.dir}">
-            <classpath refid="module.build.class.path"/>
-	    </javac>
-	  <propertyfile file="${gui.properties.file}">
-		<entry key="gui.names" value="SURV:" operation="+"/>
-            <entry key="SURV.name" value="SURV"/>
-            <entry key="SURV.class" value="org.tigr.microarray.mev.cluster.gui.impl.surv.SURVGUI"/>
-	  	<entry key="SURV.category" value="${STATISTICS}"/> 
-	  	<entry key="SURV.smallIcon" value="analysis16.gif"/>
-            <entry key="SURV.largeIcon" value="SURV1.gif"/>
-            <entry key="SURV.tooltip" value="Survival Analysis"/>
-      </propertyfile>
-	</target>
+	</target>	
 	
 	<target name="GLOBANC-GUI">
         <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/globanc" destdir="${dest.dir}">
