@@ -72,6 +72,7 @@
     <property name="BETR" value="y"/>
 	<property name="LIMMA" value="y"/>
 	<property name="SURV" value="y"/>
+	<property name="GLOBANC" value="y"/>
     <property name="RP" value="y"/>
     <property name="NMF" value="y"/>
     <property name="SVM" value="y"/>
@@ -1339,6 +1340,27 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
             <entry key="SURV" value="org.tigr.microarray.mev.cluster.algorithm.impl.SURV"/>
       </propertyfile>
 	</target>
+
+	<target name="GLOBANC" depends="GLOBANC-GUI" if="GLOBANC">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="GLOBANC.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>   
+            	<pathelement location="${lib.dir}/JRI.jar"/>
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="GLOBANC" value="org.tigr.microarray.mev.cluster.algorithm.impl.GLOBANC"/>
+      </propertyfile>
+	</target>
 	
 	<target name="SURV-GUI">
         <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/surv" destdir="${dest.dir}">
@@ -1352,6 +1374,21 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	  	<entry key="SURV.smallIcon" value="analysis16.gif"/>
             <entry key="SURV.largeIcon" value="SURV1.gif"/>
             <entry key="SURV.tooltip" value="Survival Analysis"/>
+      </propertyfile>
+	</target>
+	
+	<target name="GLOBANC-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/globanc" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	    </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="GLOBANC:" operation="+"/>
+            <entry key="GLOBANC.name" value="GLOBANC"/>
+            <entry key="GLOBANC.class" value="org.tigr.microarray.mev.cluster.gui.impl.globanc.GLOBANCGUI"/>
+	  	<entry key="GLOBANC.category" value="${STATISTICS}"/> 
+	  	<entry key="GLOBANC.smallIcon" value="analysis16.gif"/>
+            <entry key="GLOBANC.largeIcon" value="out_class.gif"/>
+            <entry key="GLOBANC.tooltip" value="Global Ancova"/>
       </propertyfile>
 	</target>
 	
