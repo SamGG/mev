@@ -47,7 +47,7 @@ public class GLOBANC extends AbstractAlgorithm{
 	private int[][] geneLists;
 	private int[] mapping, mapping2;
 	private String nameA, nameB;
-
+	private String geneSetFilePath = "C:\\Users\\Dan\\.mev\\repository\\org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets\\genesigdb_genesets3.txt";
 	private int numGenes, numExps, numGroups, iteration, numAGroups, numBGroups;
 	private float alpha;
 	private boolean  drawSigTreesOnly;
@@ -98,7 +98,7 @@ public class GLOBANC extends AbstractAlgorithm{
 
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
-
+		geneSetFilePath = map.getString("geneSetFilePath");
 		hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
 		hcl_absolute = map.getBoolean("hcl-distance-absolute", false);     
 		hcl_genes_ordered = map.getBoolean("hcl-genes-ordered", false);  
@@ -767,7 +767,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		cmd[0] = "genesvector <- list(";
 		cmd[1] = "names(genesvector) <- c(";
 		try {						
-			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Dan\\.mev\\repository\\org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets\\genesigdb_genesets3.txt"));
+			BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath));
 			String line;
 			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
 			ArrayList<String> namesal = new ArrayList<String>();

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -63,11 +64,14 @@ import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-//import org.tigr.microarray.mev.cluster.gui.impl.limma.LIMMAInitBox.MultiClassPanel.ExperimentsSelectionPanel;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
 import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.mev.resources.FileResourceManager;
+import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.SupportFileAccessError;
 import org.tigr.microarray.util.FileLoaderUtility;
 import org.tigr.util.swing.GeneMatrixFileFilter;
 import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
@@ -98,14 +102,15 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     boolean step2 = false;
     Vector<String> exptNames;    
     MultiClassPanel mPanel;
+    GeneSetFilePanel gsfPanel;
     JTabbedPane selectionPanel;
     HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
     
-    /** Creates new LIMMAInitBox */
+    /** Creates new Global AncovaInitBox */
     public GLOBANCInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
-        super(parentFrame, "LIMMA Initialization", modality);
+        super(parentFrame, "Global Ancova Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;
         
@@ -126,6 +131,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
         pane.add(mPanel);   
+        
+        
         
         addContent(pane);
         EventListener listener = new EventListener();
@@ -271,119 +278,118 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         
     }
 	private JComboBox geneSetSelectionBox;
-//    class GeneSetFilePanel extends JPanel {
-//
-//		private JButton browse;
-//
-//		public GeneSetFilePanel(){
-//			String buttonName = "Download";
-//			String actionCommand = "genesigdb_download";
-//    		String[] selectionMethods=new String[3];
-//            selectionMethods[0]="Load local geneset file/files";
-//            selectionMethods[1]="Download from MSigDB";
-//            selectionMethods[2]="Download from GeneSigDB";
-//            
-//            geneSetSelectionBox=new JComboBox(selectionMethods);
-//            geneSetSelectionBox.addActionListener(new Listener());
-//            
-//            browse = new JButton(buttonName);
-//    		browse.setName(buttonName);
-//    		browse.setActionCommand(actionCommand);
-//    		browse.setSize(new Dimension(100, 30));
-//    		browse.setPreferredSize(new Dimension(100, 30));
-//    		browse.addActionListener(new Listener(){
-//    			public void actionPerformed(ActionEvent e){
-//    				if(e.getActionCommand().equalsIgnoreCase("browse")) {
-//    				onBrowse();
-//    				}else if(e.getActionCommand().equalsIgnoreCase("msigdb_download")) {
-//    					if(pathTextField.getText().length()> 0) {
+	private FileResourceManager frm;
+	private String genesetFilePath="";
+	private AbstractButton pathTextField;
+	private boolean geneSigValid = false;
+    class GeneSetFilePanel extends JPanel {
+
+        JLabel chooseFileLabel = new JLabel("Choose file: ");
+		private JButton browseDownloadButton;
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints constraints = new GridBagConstraints();
+        public JTextField filePath = new JTextField();
+		public GeneSetFilePanel(){
+			this.setBackground(Color.white);
+			this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Gene Set File",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
+            setLayout(gridbag);
+			String buttonName = "Browse";
+			String actionCommand = "genesigdb_download";
+    		String[] selectionMethods=new String[3];
+            selectionMethods[0]="Load local geneset file/files";
+            selectionMethods[1]="Download from MSigDB";
+            selectionMethods[2]="Download from GeneSigDB";
+            
+            geneSetSelectionBox=new JComboBox(selectionMethods);
+            geneSetSelectionBox.addActionListener(new Listener());
+            
+            filePath.setEditable(false);
+            
+            browseDownloadButton = new JButton(buttonName);
+    		browseDownloadButton.setName(buttonName);
+    		browseDownloadButton.setActionCommand(actionCommand);
+    		browseDownloadButton.setSize(new Dimension(100, 30));
+    		browseDownloadButton.setPreferredSize(new Dimension(100, 30));
+    		browseDownloadButton.addActionListener(new Listener(){
+    			public void actionPerformed(ActionEvent e){
+    				if(geneSetSelectionBox.getSelectedIndex()==0) {//browse local file
+    					onBrowse();
+    					filePath.setText(genesetFilePath); 
+    				}else if(e.getActionCommand().equalsIgnoreCase("msigdb_download")) {
+    					if(pathTextField.getText().length()> 0) {
 //    						errorMessageLabel.setText("");
 //    						BROADDownloads(pathTextField.getText());
 //    						geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
 //    						geneIdentifierBox.setEnabled(false);
-//    					}else {
-//    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
-//    						"</font></html>";
+    					}else {
+    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
+    						"</font></html>";
 //    						errorMessageLabel.setText(eMsg);
-//    						
-//    					}
-//    				
-//    				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
-//    					GeneSigDBDownloads();
-//    					
-//    				}
-//    			}
-//    			
-//    		});
-//    	}
-//    	
-//    }
-//	public void onBrowse(){
-//		FileLoaderUtility fileLoad=new FileLoaderUtility();
-//		Vector retrievedFileNames=new Vector();
-//		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-//		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-//		fileChooser.addChoosableFileFilter(new TXTFileFilter());
-//		fileChooser.addChoosableFileFilter(new GeneMatrixFileFilter());
-//		fileChooser.addChoosableFileFilter(new GeneMatrixTransposeFileFilter());
-//		fileChooser.setAcceptAllFileFilterUsed(false);
-//		
-//		int retVal = fileChooser.showOpenDialog(this);
-//
-//		if (retVal == JFileChooser.APPROVE_OPTION) {
-//			
-//			((DefaultListModel) availableList.getModel()).clear();
-//			((DefaultListModel) selectedList.getModel()).clear();
-//
-//			File selectedFile = fileChooser.getSelectedFile();
-//			String path=selectedFile.getAbsolutePath();
-//			retrievedFileNames=fileLoad.getFileNameList(selectedFile.getAbsolutePath());
-//			pathTextField.setText(path);
-//			
-//			if(fileChooser.getFileFilter().getDescription().equalsIgnoreCase("Gene Matrix Files (*.gmx)")
-//					||fileChooser.getFileFilter().getDescription().equalsIgnoreCase("Gene Matrix Transpose File(*.gmt)")){
-//				geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
-//				geneIdentifierBox.setEnabled(false);
-//			}else{	
-//				geneIdentifierBox.setSelectedItem(geneIdentifierBox.getItemAt(0));
-//				geneIdentifierBox.setEnabled(true);
-//			}
-//				
-//				
-//
-//		
-//			if(retrievedFileNames.size()==0){
-//				pathTextField.setText("No files of type "+fileChooser.getFileFilter().getDescription()+"were found");
-//				
-//			}
-//			
-//			for (int i = 0; i < retrievedFileNames.size(); i++) {
-//				
-//				Object fileName=retrievedFileNames.get(i);
-//				boolean acceptFile=fileChooser.getFileFilter().accept((File)fileName);
-//								
-//				if(acceptFile) {
-//					pathTextField.setText(path);
-//					String Name=fileChooser.getName((File) fileName);
-//					setFileFilter(fileChooser.getFileFilter().getDescription());
-//					
-//					((DefaultListModel) availableList.getModel())
-//						.addElement(new File(Name));
-//				}
-//			}
-//			
-//			if(((DefaultListModel)availableList.getModel()).getSize()==0){
-//				String eMsg="<html><font color=red>" +"No files matching the selected filter<br> "+
-//				fileChooser.getFileFilter().getDescription()+"<br>"+"were found!!</font></html>";
-//				
-//				((DefaultListModel)availableList.getModel()).add(0, eMsg);
-//			}
-//			
-//
-//		}
-//	
-//
-//	}
+    						
+    					}
+    				
+    				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
+    					GeneSigDBDownloads();
+    					browseDownloadButton.setEnabled(!geneSigValid);
+    					geneSetSelectionBox.setEnabled(!geneSigValid);
+    					chooseFileLabel.setForeground((geneSigValid ? Color.red: Color.black));
+    					chooseFileLabel.setText(geneSigValid ? "File Loaded": "Choose File:");
+    					filePath.setText(genesetFilePath);    					
+    				}
+    			}
+    			
+    		});
+
+            constraints.anchor = GridBagConstraints.EAST;
+            int xind = 0;
+            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
+            constraints.anchor = GridBagConstraints.EAST;
+            this.add(chooseFileLabel, constraints);
+            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
+            gridbag.setConstraints(geneSetSelectionBox, constraints);
+            this.add(geneSetSelectionBox);
+            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
+            gridbag.setConstraints(browseDownloadButton, constraints);
+            this.add(browseDownloadButton);
+            buildConstraints(constraints, xind = 0, 1, 1, 1, 5, 10);
+            constraints.anchor = GridBagConstraints.EAST;
+            this.add(new JLabel("File Location: "), constraints);
+            buildConstraints(constraints, ++xind, 1, 2, 1, 5, 10);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            gridbag.setConstraints(filePath, constraints);
+            this.add(filePath);
+    	}    	
+    }
+	private void GeneSigDBDownloads() {
+			
+		try {
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
+			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
+			File geneSigs = frm.getSupportFile(temp, true);
+			if(temp.isValid(geneSigs)) {
+				System.out.println("GeneSigDb download file is valid.");
+				genesetFilePath=geneSigs.getParent();
+				geneSigValid = true;
+//				pathTextField.setText(this.genesetFilePath);
+//				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			System.out.println("Could not download GeneSigDbGeneSets file.");
+		} catch (RepositoryInitializationError e) {
+				e.printStackTrace();
+		}
+	}
+	public void onBrowse(){
+		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+		
+		int retVal = fileChooser.showOpenDialog(this);
+
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
+			this.genesetFilePath = selectedFile.getAbsolutePath();
+		}
+	}
     
 	private class Listener implements ActionListener{
 
@@ -392,7 +398,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 			
 //			updateLabel((String)geneSetSelectionBox.getSelectedItem());
 			if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
-				
+				gsfPanel.browseDownloadButton.setText("Download");
 //				genesetPanel.removeAll();
 //				revalidate();
 //				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -401,6 +407,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 //				revalidate();
 
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
+				gsfPanel.browseDownloadButton.setText("Browse");
 //				genesetPanel.removeAll();
 //				revalidate();
 //				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -408,6 +415,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 //			    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 //				revalidate();
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
+				gsfPanel.browseDownloadButton.setText("Download");
 //				genesetPanel.removeAll();
 //				revalidate();
 //				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -467,6 +475,11 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 	initiatePanels();
                 }
             });
+
+            gsfPanel = new GeneSetFilePanel();            
+            buildConstraints(constraints, 0, 0,1,1,100,10);
+            gridbag.setConstraints(gsfPanel, constraints);
+            this.add(gsfPanel); 
             
             JPanel topPanel =  new JPanel();
             topPanel.setBackground(Color.white);
@@ -485,27 +498,28 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             gridbag.setConstraints(step2Button, constraints);
             topPanel.add(step2Button);
 
-            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "LIMMA Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
-            buildConstraints(constraints, 0, 0,1,1,100,10);
+            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Global Ancova Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
+            buildConstraints(constraints, 0, 1,1,1,100,10);
             gridbag.setConstraints(topPanel, constraints);
             this.add(topPanel);
+            
+
             
             infoLabel = new JLabel("Sample Group Assignment");
             infoLabel.setMaximumSize(new Dimension(50,50));
             Font font = infoLabel.getFont();
             infoLabel.setFont(font.deriveFont(20.0f));
-            buildConstraints(constraints, 0, 1, 1, 1, 0, 5,GridBagConstraints.CENTER,GridBagConstraints.NONE);
+            buildConstraints(constraints, 0, 2, 1, 1, 0, 5,GridBagConstraints.CENTER,GridBagConstraints.NONE);
             gridbag.setConstraints(infoLabel, constraints);
             
             this.add(infoLabel, constraints);
-            infoLabel2 = new JLabel("Please select the type of LIMMA analysis to be run, then click 'Continue'.");
-            buildConstraints(constraints, 0, 2, 1, 1, 100, 5,GridBagConstraints.CENTER);
+            infoLabel2 = new JLabel("Please select the Global Ancova parameters on which to run the analysis, then click 'Continue'.");
+            buildConstraints(constraints, 0, 3, 1, 1, 100, 5,GridBagConstraints.CENTER);
             gridbag.setConstraints(infoLabel2, constraints);
             
             this.add(infoLabel2, constraints);
             
-            
-            buildConstraints(constraints, 0, 3, 1, 1, 100, 90);
+            buildConstraints(constraints, 0, 4, 1, 1, 100, 90);
             dummyPanel = new JPanel();
             dummyPanel.setBackground(Color.white);
             
@@ -553,14 +567,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             	JOptionPane.showMessageDialog(null, "Please enter an alpha value between 0 and 1.", "Error", JOptionPane.ERROR_MESSAGE);
             	return;
             }
-//            if (numFullGroups<2){//&&getExperimentalDesign()!=4&&getExperimentalDesign()!=1){ //excludes factorial and one-class design when checking for enough timepoints
-//            	JOptionPane.showMessageDialog(null, "The number of groups must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
-//            if (getExperimentalDesign()==4&&(factorAName.contains(" ")||factorBName.contains(" "))){
-//            	JOptionPane.showMessageDialog(null, "Factor names may not contain spaces.", "Error", JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
+
             if (getExperimentalDesign()==4&&(numFullGroups<2||numRedGroups<2)){ //checks factorial design group amounts
             	JOptionPane.showMessageDialog(null, "The number of groups in each factor must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -573,32 +580,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             buildConstraints(cnstr, 0, 0, 1, 1, 1, 1);
             cnstr.fill = GridBagConstraints.BOTH;
             JPanel clusterSelectorPanel = new JPanel();
-//            clusterSelectorPanel.setLayout(new GridBagLayout());
-//            JLabel clusterInstructions = new JLabel("Use the drop-down menus to assign clusters of samples to their corresponding groups.");
-//            GridBagConstraints c = new GridBagConstraints();
-//            c.gridwidth=2;
-//            clusterSelectorPanel.add(clusterInstructions, c);
-//    		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numFullGroups, ngPanel.getExperimentDesign(), "Group", true);
-//    		selectionPanel.add(sampleSelectionPanel, cnstr);
-//    		cnstr.gridy++;
-//    		cnstr.weighty = 0;
-//    		selectionPanel.add(createSaveLoadPanel(), cnstr);
-//    		
-//    		
-//    		
-//    		if(getExperimentalDesign()==5){//ever occur?
-//    			groupsCS= new ClusterSelector(repository, numFullGroups, "Timepoint");
-//            	groupsCS.setClusterType("Timepoint");
-//    		}else{
-//    			groupsCS= new ClusterSelector(repository, numFullGroups, "Class");
-//    			groupsCS.setClusterType("Class");
-//    		}
-//            	
-//            buildConstraints(c, 0, 1, 1, 1, 1, 1);
-//            c.fill = GridBagConstraints.BOTH;
-//            c.gridx = 1;
-//            clusterSelectorPanel.add(groupsCS, c);
-//
             MultiClassPanel.this.remove(dummyPanel);
             tabbedmulg = new JTabbedPane();
 
@@ -633,7 +614,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             tabbedmulg.setSelectedIndex(1);
             if (repository==null||repository.isEmpty())
             	tabbedmulg.setSelectedIndex(0);
-            buildConstraints(constraints, 0, 1, 2, 1, 0, 90);
+            buildConstraints(constraints, 0, 2, 2, 1, 0, 90);
             constraints.fill = GridBagConstraints.BOTH;
             gridbag.setConstraints(tabbedmulg, constraints);
             MultiClassPanel.this.add(tabbedmulg);
@@ -819,7 +800,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     				//save group names..?
     				
     				pw.print("Module:\t");
-    				pw.println("LIMMA");
+    				pw.println("Global Ancova");
     				pw.print("Design:\t");
     				pw.println(ngPanel.getExperimentDesign());
     				int groupMax;
@@ -1097,7 +1078,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         					
         					//check what module saved the file
         					if(lineArray[0].startsWith("Module:")) {
-        						if (!lineArray[1].equals("LIMMA")){
+        						if (!lineArray[1].equals("Global Ancova")){
         							Object[] optionst = { "Continue", "Cancel" };
         							if (JOptionPane.showOptionDialog(null, 
         		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
@@ -1765,7 +1746,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
 	public int[][] getGroupMatrix(){
     	int[] timeAssignments;
-//    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
+//    	if (getSelectionDesign()==Global AncovaInitBox.CLUSTER_SELECTION){
 //    		timeAssignments = getClusterGroupAssignments();
 //    	}else{
     		timeAssignments = getGroupAssignments();
@@ -1887,4 +1868,9 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 //        }
         System.exit(0);
     }
+
+
+	public String getGeneSetFilePath() {
+		return this.genesetFilePath;
+	}
 }

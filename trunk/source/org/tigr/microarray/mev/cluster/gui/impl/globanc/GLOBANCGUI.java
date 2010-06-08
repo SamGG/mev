@@ -96,6 +96,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected ArrayList<String> sampleLabels;
 	private String[] geneListNames;
 	private FloatMatrix resultMatrix;
+	private String geneSetFilePath;
 	
 	
     
@@ -171,6 +172,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         factorAName = GLOBALANCDialog.getFactorAName();
         factorBName = GLOBALANCDialog.getFactorBName();
         groupAssignments=GLOBALANCDialog.getGroupAssignments();
+        geneSetFilePath = GLOBALANCDialog.getGeneSetFilePath();
         if (groupAssignments == null)
         	return null;
         
@@ -230,6 +232,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("numBGroups",String.valueOf(numRedGroups));
             data.addParam("nameA",String.valueOf(factorAName));
             data.addParam("nameB",String.valueOf(factorBName));
+            data.addParam("geneSetFilePath", geneSetFilePath);
             if (dataDesign==5){
                 data.addParam("numAGroups",String.valueOf(2));
                 data.addParam("numBGroups",String.valueOf(numGroups));
