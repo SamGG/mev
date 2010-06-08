@@ -247,7 +247,7 @@ public class RHook  {
 		String pkgPath = getPkgPath();
 
 		// Get list of packages for the module
-		String r_ver = TMEV.getSettingForOption("cur_r_ver");
+		String r_ver = getCurrentRversion(); //TMEV.getSettingForOption("cur_r_ver");
 		String pkg = TMEV.getSettingForOption(
 				moduleName+"_"+
 				getOSbyName()+"_"+
@@ -267,7 +267,7 @@ public class RHook  {
 			System.out.println("To Download: " + pkgsToDownload.size() + " packages");
 			System.out.println("First Pkg: " + pkgsToDownload.get(0));
 			System.out.println("Last Pkg: " + pkgsToDownload.get(pkgsToDownload.size()-1));
-			String ver = getCurrentRversion();
+			//String ver = getCurrentRversion();
 			String os = getOSbyName();
 			String arch = getARCHbyName();
 			/*
@@ -280,7 +280,7 @@ public class RHook  {
 					repHash);
 			*/
 			ArrayList<String> pkg_url_list = createPkgUrls(
-					RConstants.RHOOK_BASE_URL + "R" + ver + "/" + os + "/" + moduleName,
+					RConstants.RHOOK_BASE_URL + "R" + r_ver + "/" + os + "/" + moduleName,
 					pkgsToDownload
 					);
 
@@ -316,7 +316,8 @@ public class RHook  {
 	 */
 	private static String getCurrentRversion() throws IOException {
 		if (getOS() == RConstants.MAC_OS)
-			return getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+			return TMEV.getSettingForOption("cur_mac_r_ver");
+			//getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
 		
 		// for all other OS
 		return TMEV.getSettingForOption("cur_r_ver").trim();
@@ -715,11 +716,11 @@ public class RHook  {
 		}
 
 		// Get current version of R
-		String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+		String ver = getMacRversionFromRFramework(RConstants.MAC_R_PATH).trim();
 		System.out.println("Mac OS X current R version: " + ver);
 		// Check if R version has changed since last use by 
 		// comparing the version in MeV props.
-		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
+		String last_used_ver = TMEV.getSettingForOption("cur_mac_r_ver").trim();
 		System.out.println("Mac OS X last R version: " + last_used_ver);
 
 		// if version changed, check if lib and package for module is 
@@ -735,11 +736,11 @@ public class RHook  {
 	 */
 	public static boolean updateRDynLib() throws Exception {
 		// Get current version of R
-		String ver = getMacRversionFromSymLink(RConstants.MAC_R_PATH).trim();
+		String ver = getMacRversionFromRFramework(RConstants.MAC_R_PATH).trim();
 		//System.out.println("Mac OS X current R version: " + ver);
 		// Check if R version has changed since last use by 
 		// comparing the version in MeV props.
-		String last_used_ver = TMEV.getSettingForOption("cur_r_ver").trim();
+		String last_used_ver = getCurrentRversion(); // TMEV.getSettingForOption("cur_mac_r_ver").trim();
 		//System.out.println("Mac OS X last R version: " + last_used_ver);
 
 		// Get system os and arch
@@ -776,8 +777,8 @@ public class RHook  {
 		updateRLib(lib_url);
 
 		// update TMEV properties
-		TMEV.storeProperty("cur_r_ver", ver);
-		TMEV.storeProperty("prev_r_ver", last_used_ver);
+		TMEV.storeProperty("cur_mac_r_ver", ver);
+		TMEV.storeProperty("prev_mac_r_ver", last_used_ver);
 		// storeModuleProperty(ver, r_moduleList, arch, os, repHash);
 		return true;
 
@@ -837,6 +838,8 @@ public class RHook  {
 		System.out.println("To Download: " + newFName);
 		File old = new File(newFName);
 		if (old.exists()) {
+			// TODO 
+			// replace cur_r_ver
 			// if file already exists re-name it
 			String reNameTo = newFName + "_" + TMEV.getSettingForOption("cur_r_ver") + "_" + getDateTime();
 			if (!old.renameTo(new File(reNameTo)))
@@ -853,7 +856,7 @@ public class RHook  {
 			fos.write(buf, 0, bytesRead);
 		fos.close();
 		uis.close();
-		System.out.println("Downloaded: " + newFName);
+		System.out.print("Downloaded: " + newFName);
 		System.out.println("	 >>>>>>>>>>>>>>>>>>>");
 	}
 
@@ -955,12 +958,11 @@ public class RHook  {
 	 * If mismatched try upgrading to correct version
 	 */
 	static void checkMacR() throws Exception {
-		if (RHook.getOS() != RConstants.MAC_OS)
+		if (getOS() != RConstants.MAC_OS)
 			return;
 		try {
 			if (Mac_R_ver_Changed()) {
-				//if (!RHook.checkRDynLib("limma")) {
-				if (!RHook.updateRDynLib()) {
+				if (!updateRDynLib()) {
 					//JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
 					throw new Exception("Error updating R library"); 
 				}
@@ -1025,7 +1027,7 @@ public class RHook  {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static String getMacRversionFromSymLink (String curRpath) throws IOException {
+	public static String getMacRversionFromRFramework (String curRpath) throws IOException {
 		// Detecting a link
 		File file = new File(curRpath);
 		try {
@@ -1038,7 +1040,7 @@ public class RHook  {
 			String can = file.getCanonicalPath();
 			String ver = can.substring(can.lastIndexOf("/")+1);
 			//Get R version
-			System.out.println("R version: " + ver);
+			System.out.println("Mac R version from Link: " + ver);
 			return ver;
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
