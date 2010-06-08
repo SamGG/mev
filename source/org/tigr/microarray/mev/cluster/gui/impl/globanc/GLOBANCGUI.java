@@ -67,7 +67,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected Algorithm algorithm;
     protected Progress progress;
     protected Experiment experiment;
-    protected int[][] clusters;
+    protected int[][] geneLists;
     protected int[][] errorGenesArray = new int[1][];
     protected FloatMatrix means;
     protected FloatMatrix variances;
@@ -94,6 +94,10 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     
     protected ArrayList<String> geneLabels;
     protected ArrayList<String> sampleLabels;
+	private String[] geneListNames;
+	private FloatMatrix resultMatrix;
+	
+	
     
     /** Creates new GLOBALANCGUI */
     public GLOBANCGUI() {
@@ -259,16 +263,11 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
             
-            this.clusters = result.getIntMatrix("sigGenesArrays");
-            FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
-            
+            this.geneLists = result.getIntMatrix("geneListsMatrix");
+            this.geneListNames = result.getStringArray("gene-list-names");
+            this.resultMatrix = result.getMatrix("result-matrix");      
+            FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");            
             FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
-            FloatMatrix pValues = result.getMatrix("pValues");
-            FloatMatrix adjpValues = result.getMatrix("adjPValues");
-            FloatMatrix lfc = result.getMatrix("lfc");
-            FloatMatrix logOdds = result.getMatrix("logOdds");
-            FloatMatrix tStat = result.getMatrix("tStat");
-            FloatMatrix fValues = result.getMatrix("fValues");
             
             iterations = result.getParams().getInt("iterations");
             
@@ -325,14 +324,14 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
                     auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
                     auxData[i][counter++] = new Float(geneGroupSDs[i][j]);
                 }
-                auxData[i][counter++] = fValues.get(i, 0);
-                for (int j=0; j<getTotalInteractions(numGroups); j++) {
-	                auxData[i][counter++] = pValues.get(i, j);
-	                auxData[i][counter++] = adjpValues.get(i, j);
-	                auxData[i][counter++] = lfc.get(i, j);
-	                auxData[i][counter++] = tStat.get(i, j);
-	                auxData[i][counter++] = logOdds.get(i, j);
-                }
+//                auxData[i][counter++] = fValues.get(i, 0);
+//                for (int j=0; j<getTotalInteractions(numGroups); j++) {
+//	                auxData[i][counter++] = pValues.get(i, j);
+//	                auxData[i][counter++] = adjpValues.get(i, j);
+//	                auxData[i][counter++] = lfc.get(i, j);
+//	                auxData[i][counter++] = tStat.get(i, j);
+//	                auxData[i][counter++] = logOdds.get(i, j);
+//                }
             }
             return createResultTree(result_cluster, info);
             
@@ -473,9 +472,9 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             //AlgorithmParameters resultMap = result.getParams();
             int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
                        
-            this.clusters = new int[k][];
+            this.geneLists = new int[k][];
             for (int i=0; i<k; i++) {
-                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+                geneLists[i] = nodeList.getNode(i).getFeaturesIndexes();
             }
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
@@ -542,59 +541,60 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     	
     }
     protected String getNodeTitle(int ind,int x, int y){
+    	return this.geneListNames[ind];
     	
-    	if (dataDesign==1){
-    		if (ind==0)
-                return "Significant Genes ";
-            else 
-                return "Non-significant Genes ";
-    	}
-    	else if (dataDesign==3){
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-        	if (ind<getTotalInteractions(numGroups)*2)
-        		str = str+x+" vs. "+y;
-        	else
-        		str = str+"(All Groups)";
-        	return str;
-        }
-    	else if (dataDesign==4){
-    		int index = ind/2;
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-        	if (index == 0)
-        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
-        	if (index == 1)
-        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
-        	if (index == 2)
-        		str = str + "Difference";
-        	return str;
-        }
-    	else if (dataDesign==5){
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
-        	
-        	if (ind<(numGroups-1)*2)
-        		str = str+"cond. = 1, ";
-        	else if (ind<(numGroups-1)*4)
-        		str = str+"cond. = 2, ";
-        	if (ind<(numGroups-1)*4)
-        		str = str+"t = "+(ind/2%(numGroups-1)+1);
-        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
-        		str = str+"cond. = 1 (All) ";
-        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
-        		str = str+"cond. = 2 (All) ";
-        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
-        		str = str+"(All) ";
-
-        	return str;
-        }else{
-            if (ind%2==0) {
-                return "Significant Genes "+x+" vs. "+y;
-            } else {
-                return "Non-significant Genes "+x+" vs. "+y;
-            }
-    	}
+//    	if (dataDesign==1){
+//    		if (ind==0)
+//                return "Significant Genes ";
+//            else 
+//                return "Non-significant Genes ";
+//    	}
+//    	else if (dataDesign==3){
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+//        	if (ind<getTotalInteractions(numGroups)*2)
+//        		str = str+x+" vs. "+y;
+//        	else
+//        		str = str+"(All Groups)";
+//        	return str;
+//        }
+//    	else if (dataDesign==4){
+//    		int index = ind/2;
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+//        	if (index == 0)
+//        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
+//        	if (index == 1)
+//        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
+//        	if (index == 2)
+//        		str = str + "Difference";
+//        	return str;
+//        }
+//    	else if (dataDesign==5){
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
+//        	
+//        	if (ind<(numGroups-1)*2)
+//        		str = str+"cond. = 1, ";
+//        	else if (ind<(numGroups-1)*4)
+//        		str = str+"cond. = 2, ";
+//        	if (ind<(numGroups-1)*4)
+//        		str = str+"t = "+(ind/2%(numGroups-1)+1);
+//        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
+//        		str = str+"cond. = 1 (All) ";
+//        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
+//        		str = str+"cond. = 2 (All) ";
+//        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
+//        		str = str+"(All) ";
+//
+//        	return str;
+//        }else{
+//            if (ind%2==0) {
+//                return "Significant Genes "+x+" vs. "+y;
+//            } else {
+//                return "Non-significant Genes "+x+" vs. "+y;
+//            }
+//    	}
     	
     }
     /**
@@ -620,9 +620,9 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     
     protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
-        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.geneLists, this.data, this.auxTitles, this.auxData);
         int x=1; int y=2;
-        for (int i=0; i<this.clusters.length; i++) {
+        for (int i=0; i<this.geneLists.length; i++) {
         	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), tabViewer, new Integer(i))));
         	if (i%2==1)
         		y++;
@@ -639,9 +639,9 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addExpressionImages(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-        IViewer expViewer = new GLOBANCExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
+        IViewer expViewer = new GLOBANCExperimentViewer(this.experiment, geneLists, null, null, null, null, null, null, null, null, null);
         int x=1; int y=2;
-        for (int i=0; i<this.clusters.length; i++) {
+        for (int i=0; i<this.geneLists.length; i++) {
         	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), expViewer, new Integer(i))));
         	if (i%2==1)
         		y++;
@@ -703,7 +703,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new GLOBANCInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups))));
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new GLOBANCInfoViewer(this.geneLists, this.geneListNames, this.resultMatrix, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups))));
         root.add(node);
     }
     
@@ -713,10 +713,10 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected void addCentroidViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
-        GLOBANCCentroidViewer centroidViewer = new GLOBANCCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
+        GLOBANCCentroidViewer centroidViewer = new GLOBANCCentroidViewer(this.experiment, geneLists, null, null, null, null, null, null, null, null, null);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
-        for (int i=0; i<this.clusters.length; i++) {
+        for (int i=0; i<this.geneLists.length; i++) {
             if (i == 0) {
                 centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
                 expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
@@ -726,7 +726,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             }
         }
         
-        GLOBANCCentroidsViewer centroidsViewer = new GLOBANCCentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, null, null, null, null, null, null, null);
+        GLOBANCCentroidsViewer centroidsViewer = new GLOBANCCentroidsViewer(this.experiment, geneLists, geneGroupMeans, geneGroupSDs, null, null, null, null, null, null, null);
 
         centroidsViewer.setMeans(this.means.A);
         centroidsViewer.setVariances(this.variances.A);
