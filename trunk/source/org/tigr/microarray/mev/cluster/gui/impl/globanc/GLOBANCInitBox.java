@@ -39,8 +39,10 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -57,11 +59,19 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 //import org.tigr.microarray.mev.cluster.gui.impl.limma.LIMMAInitBox.MultiClassPanel.ExperimentsSelectionPanel;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
+import org.tigr.microarray.mev.file.GBA;
+import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+import org.tigr.microarray.util.FileLoaderUtility;
+import org.tigr.util.swing.GeneMatrixFileFilter;
+import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
+import org.tigr.util.swing.TXTFileFilter;
 
 /**
  *
@@ -260,6 +270,155 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         }    
         
     }
+	private JComboBox geneSetSelectionBox;
+//    class GeneSetFilePanel extends JPanel {
+//
+//		private JButton browse;
+//
+//		public GeneSetFilePanel(){
+//			String buttonName = "Download";
+//			String actionCommand = "genesigdb_download";
+//    		String[] selectionMethods=new String[3];
+//            selectionMethods[0]="Load local geneset file/files";
+//            selectionMethods[1]="Download from MSigDB";
+//            selectionMethods[2]="Download from GeneSigDB";
+//            
+//            geneSetSelectionBox=new JComboBox(selectionMethods);
+//            geneSetSelectionBox.addActionListener(new Listener());
+//            
+//            browse = new JButton(buttonName);
+//    		browse.setName(buttonName);
+//    		browse.setActionCommand(actionCommand);
+//    		browse.setSize(new Dimension(100, 30));
+//    		browse.setPreferredSize(new Dimension(100, 30));
+//    		browse.addActionListener(new Listener(){
+//    			public void actionPerformed(ActionEvent e){
+//    				if(e.getActionCommand().equalsIgnoreCase("browse")) {
+//    				onBrowse();
+//    				}else if(e.getActionCommand().equalsIgnoreCase("msigdb_download")) {
+//    					if(pathTextField.getText().length()> 0) {
+//    						errorMessageLabel.setText("");
+//    						BROADDownloads(pathTextField.getText());
+//    						geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+//    						geneIdentifierBox.setEnabled(false);
+//    					}else {
+//    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
+//    						"</font></html>";
+//    						errorMessageLabel.setText(eMsg);
+//    						
+//    					}
+//    				
+//    				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
+//    					GeneSigDBDownloads();
+//    					
+//    				}
+//    			}
+//    			
+//    		});
+//    	}
+//    	
+//    }
+//	public void onBrowse(){
+//		FileLoaderUtility fileLoad=new FileLoaderUtility();
+//		Vector retrievedFileNames=new Vector();
+//		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+//		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//		fileChooser.addChoosableFileFilter(new TXTFileFilter());
+//		fileChooser.addChoosableFileFilter(new GeneMatrixFileFilter());
+//		fileChooser.addChoosableFileFilter(new GeneMatrixTransposeFileFilter());
+//		fileChooser.setAcceptAllFileFilterUsed(false);
+//		
+//		int retVal = fileChooser.showOpenDialog(this);
+//
+//		if (retVal == JFileChooser.APPROVE_OPTION) {
+//			
+//			((DefaultListModel) availableList.getModel()).clear();
+//			((DefaultListModel) selectedList.getModel()).clear();
+//
+//			File selectedFile = fileChooser.getSelectedFile();
+//			String path=selectedFile.getAbsolutePath();
+//			retrievedFileNames=fileLoad.getFileNameList(selectedFile.getAbsolutePath());
+//			pathTextField.setText(path);
+//			
+//			if(fileChooser.getFileFilter().getDescription().equalsIgnoreCase("Gene Matrix Files (*.gmx)")
+//					||fileChooser.getFileFilter().getDescription().equalsIgnoreCase("Gene Matrix Transpose File(*.gmt)")){
+//				geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+//				geneIdentifierBox.setEnabled(false);
+//			}else{	
+//				geneIdentifierBox.setSelectedItem(geneIdentifierBox.getItemAt(0));
+//				geneIdentifierBox.setEnabled(true);
+//			}
+//				
+//				
+//
+//		
+//			if(retrievedFileNames.size()==0){
+//				pathTextField.setText("No files of type "+fileChooser.getFileFilter().getDescription()+"were found");
+//				
+//			}
+//			
+//			for (int i = 0; i < retrievedFileNames.size(); i++) {
+//				
+//				Object fileName=retrievedFileNames.get(i);
+//				boolean acceptFile=fileChooser.getFileFilter().accept((File)fileName);
+//								
+//				if(acceptFile) {
+//					pathTextField.setText(path);
+//					String Name=fileChooser.getName((File) fileName);
+//					setFileFilter(fileChooser.getFileFilter().getDescription());
+//					
+//					((DefaultListModel) availableList.getModel())
+//						.addElement(new File(Name));
+//				}
+//			}
+//			
+//			if(((DefaultListModel)availableList.getModel()).getSize()==0){
+//				String eMsg="<html><font color=red>" +"No files matching the selected filter<br> "+
+//				fileChooser.getFileFilter().getDescription()+"<br>"+"were found!!</font></html>";
+//				
+//				((DefaultListModel)availableList.getModel()).add(0, eMsg);
+//			}
+//			
+//
+//		}
+//	
+//
+//	}
+    
+	private class Listener implements ActionListener{
+
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			
+//			updateLabel((String)geneSetSelectionBox.getSelectedItem());
+			if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
+				
+//				genesetPanel.removeAll();
+//				revalidate();
+//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				createDownloadPanel("Please enter your MSigDB registration email address:", "Download", "msigdb_download");
+//				gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				revalidate();
+
+			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
+//				genesetPanel.removeAll();
+//				revalidate();
+//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				createDownloadPanel("Select the directory containing your gene sets", "Browse", "browse");
+//			    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				revalidate();
+			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
+//				genesetPanel.removeAll();
+//				revalidate();
+//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				createDownloadPanel("Please select gene set files", "Download", "genesigdb_download");
+//			    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+//				revalidate();
+			}
+			
+		}
+	}
+    
     class MultiClassPanel extends JPanel {
         /**
 		 * 
@@ -561,7 +720,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(numGroupsLabel, constraints);
                 this.add(numGroupsLabel);
                 
-                numFullGroupsField = new JTextField("4", 7);
+                numFullGroupsField = new JTextField("2", 7);
                 numFullGroupsField.setVisible(true);
                 numFullGroupsField.setMinimumSize(new Dimension(50,20));
                 constraints.anchor = GridBagConstraints.WEST;

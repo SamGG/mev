@@ -44,7 +44,7 @@ public class GLOBANC extends AbstractAlgorithm{
 	private FloatMatrix expMatrix,collapsedExpMatrix;
 	private boolean stop = false;
 	private int[] groupAssignments;
-	private int[][] sigGenesArrays;
+	private int[][] geneLists;
 	private int[] mapping, mapping2;
 	private String nameA, nameB;
 
@@ -68,7 +68,9 @@ public class GLOBANC extends AbstractAlgorithm{
 	private float[][] pValues;
 	private float[][] adjPvalues;
 	private float[] fValues;
+	float[][] resultMatrix;
 	int validN;
+	private String[] geneListsNames;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -147,11 +149,11 @@ public class GLOBANC extends AbstractAlgorithm{
 		Cluster result_cluster = new Cluster();
 		NodeList nodeList = result_cluster.getNodeList();
 		int[] features;        
-		for (int i=0; i<sigGenesArrays.length; i++) {
+		for (int i=0; i<geneLists.length; i++) {
 			if (stop) {
 				throw new AbortException();
 			}
-			features = sigGenesArrays[i];
+			features = geneLists[i];
 			Node node = new Node(features);
 			nodeList.addNode(node);
 			if (hierarchical_tree) {
@@ -169,32 +171,34 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 		}
 		//remap genes to expmatrix
-		int[][]sigReturn = new int[sigGenesArrays.length][];
+		int[][]sigReturn = new int[geneLists.length][];
 		//System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
-		for (int i=0; i<sigGenesArrays.length; i++){
+		for (int i=0; i<geneLists.length; i++){
 			//System.out.println("sga "+i);
-			sigReturn[i]=new int[sigGenesArrays[i].length];
-			for (int j=0; j<sigGenesArrays[i].length; j++){
-				sigReturn[i][j]=mapping2[mapping[sigGenesArrays[i][j]]];
+			sigReturn[i]=new int[geneLists[i].length];
+			for (int j=0; j<geneLists[i].length; j++){
+				sigReturn[i][j]=mapping2[mapping[geneLists[i][j]]];
 			}
 		}
 
 		// prepare the result
-		result.addIntMatrix("sigGenesArrays", sigReturn);
+		result.addIntMatrix("geneListsMatrix", sigReturn);
+		result.addStringArray("gene-list-names",this.geneListsNames);
 		result.addParam("iterations", String.valueOf(iteration-1));
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
 //		result.addMatrix("clusters_means", means);
 //		result.addMatrix("clusters_variances", variances); 
+		result.addMatrix("result-matrix", new FloatMatrix(resultMatrix));
 		result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
 		result.addMatrix("geneGroupSDsMatrix", getAllGeneGroupSDs());
 
-		result.addMatrix("pValues", getPValues());
-		result.addMatrix("adjPValues", getAdjPValues());
-		result.addMatrix("lfc", getLogFoldChanges());
-		result.addMatrix("logOdds", getLogOdds());
-		result.addMatrix("tStat", getTStatistic());
-		result.addMatrix("fValues", getFValues());
+//		result.addMatrix("pValues", getPValues());
+//		result.addMatrix("adjPValues", getAdjPValues());
+//		result.addMatrix("lfc", getLogFoldChanges());
+//		result.addMatrix("logOdds", getLogOdds());
+//		result.addMatrix("tStat", getTStatistic());
+//		result.addMatrix("fValues", getFValues());
 		return result;   
 	}
 
@@ -469,7 +473,7 @@ public class GLOBANC extends AbstractAlgorithm{
 
 		try {
 		//System.out.println("Testing GLOBANC install");
-//		RHook.testPackage("globanc");
+		RHook.testPackage("globalanc");
 		//System.out.println("Loading Lib GLOBANC");
 		RHook.log("dataDesign = " + dataDesign);
 		RHook.log("Starting R Algorithim");
@@ -517,7 +521,7 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 			phenoData = phenoData.substring(0, phenoData.length()-1);
 			phenoData = phenoData+")))";
-			RHook.log(phenoData);
+//			RHook.log(phenoData);
 			RHook.evalR(phenoData);
 			System.out.println("phenodata: " + phenoData);
 
@@ -525,27 +529,28 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 		
 		String gv = "genesvector <- c(rownames(y)[40:60])";
-		RHook.log(gv);
+//		RHook.log(gv);
 		RHook.evalR(gv);
-		String pathways = "genesvector <-data(pathways)";
-		RHook.log(pathways);
-		RHook.evalR(pathways);
+//		String pathways = "genesvector <-data(pathways)";
+//		RHook.log(pathways);
+//		RHook.evalR(pathways);
 		String[] geneset = getPathwaysCMD();// 
-		RHook.log(geneset[0]);
+//		RHook.log(geneset[0]);
 		RHook.evalR(geneset[0]);
-		RHook.log(geneset[1]);
+//		RHook.log(geneset[1]);
 		RHook.evalR(geneset[1]);
 
 		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = 100)";
-		RHook.log(runGA);
+//		RHook.log(runGA);
 		RHook.evalR(runGA);
 		
 		REXP x = RHook.evalR("GA.obj");
 		double[][] matrix = x.asMatrix();
-		
+		resultMatrix = new float[matrix.length][matrix[0].length];
 		for (int i=0; i<matrix.length; i++){
 			for (int j=0; j<matrix[i].length; j++){
-				System.out.print(matrix[i][j]+"\t");
+				resultMatrix[i][j] = (float)matrix[i][j];
+				System.out.print(resultMatrix[i][j]+"\t");
 			}
 			System.out.println();
 		}
@@ -554,367 +559,197 @@ public class GLOBANC extends AbstractAlgorithm{
 //		RHook.log(phenodata);
 //		RHook.evalR(phenodata);
 		int a=0;
+		RHook.endRSession();
 		if (a==0)
 			return;
 		
-		if (dataDesign == 3){
-			// fit with contrasts
-			rCmd = "fit <- lmFit(y,design)";
-			RHook.evalR(rCmd);
-			//System.out.println("fit <- lmFit(y,design)");
-			
-			rCmd = "contrast.matrix <- makeContrasts(";
-			for (int i=0; i<numGroups; i++){
-				for (int j=i+1; j<numGroups; j++){
-					rCmd = rCmd + "Grp"+(i+1)+"-Grp"+(j+1)+",";
-				}
-			}
-			rCmd = rCmd + "levels = design)";
-			RHook.evalR(rCmd);
-			//System.out.println("contrasts comm: " + rCmd);
-			
-			rCmd = "fit2 <- contrasts.fit(fit, contrast.matrix)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2 <- eBayes(fit2)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-		} else if (dataDesign == 4){
-			rCmd = "colnames(design) <-levels(TS)";
-			RHook.evalR(rCmd);
-			
-
-//			rCmd = "design <- design[c(1:"+groupAssignments.length+"),c(1:"+(numAGroups*numBGroups)+")]";
+//		if (dataDesign == 3){
+//			// fit with contrasts
+//			rCmd = "fit <- lmFit(y,design)";
 //			RHook.evalR(rCmd);
-			rCmd = "y <- y[,c(as.numeric(rownames(design)))]";
-			RHook.evalR(rCmd);
-			
-			
-			rCmd = "fit <- lmFit(y,design)";
-			RHook.evalR(rCmd);
-
-			rCmd = "cont.matrix <- makeContrasts(";
-			rCmd += "FactorA1.B1vsB2 = "+this.nameA+"1."+this.nameB+"1 - "+this.nameA+"1."+this.nameB+"2,";
-			rCmd += "FactorA2.B1vsB2 = "+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2,";
-			rCmd += "Diff = ("+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2) - ("+this.nameA+"1."+this.nameB+"1 - "+this.nameA+"1."+this.nameB+"2),levels = design)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2 <- contrasts.fit(fit, cont.matrix)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2 <- eBayes(fit2)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-		} else if (dataDesign == 5){
-			rCmd = "colnames(design) <-levels(TS)";
-			RHook.evalR(rCmd);
-			
-//			rCmd = "design <- design[c(1:"+groupAssignments.length+"),c(1:"+(numAGroups*numBGroups)+")]";
+//			//System.out.println("fit <- lmFit(y,design)");
+//			
+//			rCmd = "contrast.matrix <- makeContrasts(";
+//			for (int i=0; i<numGroups; i++){
+//				for (int j=i+1; j<numGroups; j++){
+//					rCmd = rCmd + "Grp"+(i+1)+"-Grp"+(j+1)+",";
+//				}
+//			}
+//			rCmd = rCmd + "levels = design)";
 //			RHook.evalR(rCmd);
-			rCmd = "y <- y[,c(as.numeric(rownames(design)))]";
-			RHook.evalR(rCmd);
-			
-			
-			rCmd = "fit <- lmFit(y,design)";
-			RHook.evalR(rCmd);
-
-			rCmd = "cont1.matrix <- makeContrasts(";
-			for (int i=0; i<numGroups-1; i++){
-				rCmd = rCmd + "\"Condition1."+nameB+(i+2)+"-"+"Condition1."+nameB+(i+1)+"\",";
-			}
-			rCmd = rCmd + "levels = design)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-
-			rCmd = "fit2a <- contrasts.fit(fit, cont1.matrix)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2a <- eBayes(fit2a)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "cont2.matrix <- makeContrasts(";
-			for (int i=0; i<numGroups-1; i++){
-				rCmd = rCmd + "\"Condition2."+nameB+(i+2)+"-"+"Condition2."+nameB+(i+1)+"\",";
-			}
-			rCmd = rCmd + "levels = design)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-
-			rCmd = "fit2b <- contrasts.fit(fit, cont2.matrix)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2b <- eBayes(fit2b)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-
-			rCmd = "cont3.matrix <- makeContrasts(";
-			for (int i=0; i<numGroups-1; i++){
-				rCmd = rCmd + "Dif"+i+" = (Condition1."+nameB+(i+2)+"-"+"Condition1."+nameB+(i+1)+") - " +
-					"(Condition2."+nameB+(i+2)+"-"+"Condition2."+nameB+(i+1)+"),";
-			}
-			rCmd = rCmd + "levels = design)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-
-			rCmd = "fit2c <- contrasts.fit(fit, cont3.matrix)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-			rCmd = "fit2c <- eBayes(fit2c)";
-			RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			
-		}else {
-			// Ordinary fit
-			rCmd = "fit <- lmFit(y,design)";
-			//System.out.println(rCmd);
-			RHook.evalR(rCmd);
-			rCmd = "fit <- eBayes(fit)";
-			//System.out.println(rCmd);
-			RHook.evalR(rCmd);
-		}
-
-		String[] topTabString;
-		switch (dataDesign){
-			case 1:{ //one-class design
-				topTabString = new String[1];
-				topTabString[0] = "res0 <- toptable(fit,number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-				//System.out.println(" one class : "+topTabString[0]);
-				sigGenesArrays = new int[2][]; //sig genes	
-				break;
-			}
-			case 2:{ //two-class design
-				topTabString = new String[1];
-				topTabString[0] = "res0 <- toptable(fit, coef = 2, number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-				//System.out.println(" two class : "+topTabString[0]);
-				sigGenesArrays = new int[2][]; //sig genes	
-				break;
-			}
-			case 3: {//multiple-class design 
-				int ttCases = 0;
-				for (int i=0; i<numGroups; i++)
-					ttCases = ttCases+i;
-				topTabString = new String[ttCases];
-				for (int i=0; i<ttCases; i++){
-					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					//System.out.println(" multi class ["+i+"] : "+topTabString[i]);
-				}
-				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
-				break;
-			}
-			case 4:{ //two-factor design
-				topTabString = new String[3];
-				for (int i=0; i<3; i++){
-					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					//System.out.println(" 2-factor ["+i+"] : "+topTabString[i]);
-				}
-				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
-				break;
-				}
-			case 5:{ //time-course design
-				topTabString = new String[2*(numGroups-1)];
-				for (int i=0; i<numGroups-1; i++){
-					topTabString[i] = "res"+i+" <- toptable(fit2a,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
-				}
-				for (int i=numGroups-1; i<2*(numGroups-1); i++){
-					topTabString[i] = "res"+i+" <- toptable(fit2b,coef="+(i-numGroups+2)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
-					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
-				}
-				sigGenesArrays = new int[topTabString.length*2+6][]; //sig genes	
-				break;
-				}
-			default:{ //no design
-				topTabString = new String[1];
-				topTabString[0] = "default";	
-				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
-			}
-		}
-		int grpPairs = topTabString.length;
-		lfc = new float[grpPairs][numProbes];
-		t = new float[grpPairs][numProbes];
-		logOdds = new float[grpPairs][numProbes];
-		pValues = new float[grpPairs][numProbes];
-		adjPvalues = new float[grpPairs][numProbes];
-		fValues = new float[numProbes];
-		for (int interax=0; interax<grpPairs; interax++){
-			RHook.evalR(topTabString[interax]);
-			rCmd = "as.numeric(rownames(res"+interax+"))-1";
-			x = RHook.evalR(rCmd);
-			double rowIndices[] = x.asDoubleArray();
-	
-			//System.out.println("rowIndices[] "+ rowIndices[0] + " " + rowIndices[numProbes-1]);
-			//System.out.println("res$ID");
-			rCmd = "res"+interax+"$ID";
-			x = RHook.evalR(rCmd);
-			String sigGenes[]=x.asStringArray(); //Basically all genes 
-			
-			rCmd = "res"+interax+"$logFC";
-			x = RHook.evalR(rCmd);
-			double tmp[]=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				lfc[interax][(int)rowIndices[i]] = (float)tmp[i];
-			}
-			
-			rCmd = "res"+interax+"$t";
-			x = RHook.evalR(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				t[interax][(int)rowIndices[i]] = (float)tmp[i];
-			}
-			
-			rCmd = "res"+interax+"$P.Value";
-			x = RHook.evalR(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				pValues[interax][(int)rowIndices[i]] = (float)tmp[i];
-			}
-			
-			rCmd = "res"+interax+"$adj.P.Val";
-			x = RHook.evalR(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				adjPvalues[interax][(int)rowIndices[i]] = (float)tmp[i];
-				//System.out.print(tmp[i]+"\t");
-			}
-			
-			rCmd = "res"+interax+"$B";
-			x = RHook.evalR(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				logOdds[interax][(int)rowIndices[i]] = (float)tmp[i];
-			}
-	
-			updateProgressBar();
-	
-			//Record sig and non-sig gene indices based on user defined alpha
-			ArrayList<Integer> sig = new ArrayList<Integer>();
-			ArrayList<Integer> nonsig = new ArrayList<Integer>();
-			for(int i = 0; i < adjPvalues[interax].length; i++) {
-				if(adjPvalues[interax][i] <= alpha)
-					sig.add(new Integer(i));
-				else
-					nonsig.add(new Integer(i));
-			}
-			//System.out.println("sig# = "+sig.size()+ "  non-sig# = "+ nonsig.size());
-			sigGenesArrays[interax*2] = new int[sig.size()]; //sig genes
-			sigGenesArrays[interax*2+1] = new int[numProbes - sig.size()]; //non-sig genes
-	
-			//Hashtable _tmpsigGenesTable = new Hashtable();
-			for (int i=0; i<sigGenesArrays[interax*2].length; i++){
-				sigGenesArrays[interax*2][i] = sig.get(i);
-			}
-			//System.out.println(sigGenesArrays[interax*2+1].length);
-			//System.out.println(nonsig.size());
-			for (int i=0; i<sigGenesArrays[interax*2+1].length; i++){
-				sigGenesArrays[interax*2+1][i] = nonsig.get(i);
-			}
-		}
-
-		if (dataDesign==3||dataDesign==4){
-			rCmd = "fit2$F.p.value";
-			x = RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			double[] tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				fValues[i] = (float)tmp[i];
-			}
-			ArrayList<Integer> sig = new ArrayList<Integer>();
-			ArrayList<Integer> nonsig = new ArrayList<Integer>();
-			for(int i = 0; i < fValues.length; i++) {
-				if(fValues[i] <= alpha)
-					sig.add(new Integer(i));
-				else
-					nonsig.add(new Integer(i));
-			}
-			sigGenesArrays[grpPairs*2] = new int[sig.size()];
-			sigGenesArrays[grpPairs*2+1] = new int[nonsig.size()];
-			for (int i=0; i<sigGenesArrays[grpPairs*2].length; i++){
-				sigGenesArrays[grpPairs*2][i] = sig.get(i);
-			}
-			for (int i=0; i<sigGenesArrays[grpPairs*2+1].length; i++){
-				sigGenesArrays[grpPairs*2+1][i] = nonsig.get(i);
-			}
-		}
-		if (dataDesign==5){
-			rCmd = "fit2a$F.p.value";
-			x = RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			double[] tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				fValues[i] = (float)tmp[i];
-			}
-			ArrayList<Integer> sig = new ArrayList<Integer>();
-			ArrayList<Integer> nonsig = new ArrayList<Integer>();
-			for(int i = 0; i < fValues.length; i++) {
-				if(fValues[i] <= alpha)
-					sig.add(new Integer(i));
-				else
-					nonsig.add(new Integer(i));
-			}
-			sigGenesArrays[grpPairs*2+0] = new int[sig.size()];
-			sigGenesArrays[grpPairs*2+1] = new int[nonsig.size()];
-			for (int i=0; i<sigGenesArrays[grpPairs*2+0].length; i++){
-				sigGenesArrays[grpPairs*2+0][i] = sig.get(i);
-			}
-			for (int i=0; i<sigGenesArrays[grpPairs*2+1].length; i++){
-				sigGenesArrays[grpPairs*2+1][i] = nonsig.get(i);
-			}
-
-			rCmd = "fit2b$F.p.value";
-			x = RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				fValues[i] = (float)tmp[i];
-			}
-			sig = new ArrayList<Integer>();
-			nonsig = new ArrayList<Integer>();
-			for(int i = 0; i < fValues.length; i++) {
-				if(fValues[i] <= alpha)
-					sig.add(new Integer(i));
-				else
-					nonsig.add(new Integer(i));
-			}
-			sigGenesArrays[grpPairs*2+2] = new int[sig.size()];
-			sigGenesArrays[grpPairs*2+3] = new int[nonsig.size()];
-			for (int i=0; i<sigGenesArrays[grpPairs*2+2].length; i++){
-				sigGenesArrays[grpPairs*2+2][i] = sig.get(i);
-			}
-			for (int i=0; i<sigGenesArrays[grpPairs*2+3].length; i++){
-				sigGenesArrays[grpPairs*2+3][i] = nonsig.get(i);
-			}
-
-			rCmd = "fit2c$F.p.value";
-			x = RHook.evalR(rCmd);
-			//System.out.println(rCmd);
-			tmp=x.asDoubleArray();
-			for(int i=0; i < tmp.length; i++) {
-				fValues[i] = (float)tmp[i];
-			}
-			sig = new ArrayList<Integer>();
-			nonsig = new ArrayList<Integer>();
-			for(int i = 0; i < fValues.length; i++) {
-				if(fValues[i] <= alpha)
-					sig.add(new Integer(i));
-				else
-					nonsig.add(new Integer(i));
-			}
-			sigGenesArrays[grpPairs*2+4] = new int[sig.size()];
-			sigGenesArrays[grpPairs*2+5] = new int[nonsig.size()];
-			for (int i=0; i<sigGenesArrays[grpPairs*2+4].length; i++){
-				sigGenesArrays[grpPairs*2+4][i] = sig.get(i);
-			}
-			for (int i=0; i<sigGenesArrays[grpPairs*2+5].length; i++){
-				sigGenesArrays[grpPairs*2+5][i] = nonsig.get(i);
-			}
-		}
+//			//System.out.println("contrasts comm: " + rCmd);
+//			
+//			rCmd = "fit2 <- contrasts.fit(fit, contrast.matrix)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2 <- eBayes(fit2)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//		} else if (dataDesign == 4){
+//			rCmd = "colnames(design) <-levels(TS)";
+//			RHook.evalR(rCmd);
+//			
+//
+////			rCmd = "design <- design[c(1:"+groupAssignments.length+"),c(1:"+(numAGroups*numBGroups)+")]";
+////			RHook.evalR(rCmd);
+//			rCmd = "y <- y[,c(as.numeric(rownames(design)))]";
+//			RHook.evalR(rCmd);
+//			
+//			
+//			rCmd = "fit <- lmFit(y,design)";
+//			RHook.evalR(rCmd);
+//
+//			rCmd = "cont.matrix <- makeContrasts(";
+//			rCmd += "FactorA1.B1vsB2 = "+this.nameA+"1."+this.nameB+"1 - "+this.nameA+"1."+this.nameB+"2,";
+//			rCmd += "FactorA2.B1vsB2 = "+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2,";
+//			rCmd += "Diff = ("+this.nameA+"2."+this.nameB+"1 - "+this.nameA+"2."+this.nameB+"2) - ("+this.nameA+"1."+this.nameB+"1 - "+this.nameA+"1."+this.nameB+"2),levels = design)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2 <- contrasts.fit(fit, cont.matrix)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2 <- eBayes(fit2)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//		} else if (dataDesign == 5){
+//			rCmd = "colnames(design) <-levels(TS)";
+//			RHook.evalR(rCmd);
+//			
+////			rCmd = "design <- design[c(1:"+groupAssignments.length+"),c(1:"+(numAGroups*numBGroups)+")]";
+////			RHook.evalR(rCmd);
+//			rCmd = "y <- y[,c(as.numeric(rownames(design)))]";
+//			RHook.evalR(rCmd);
+//			
+//			
+//			rCmd = "fit <- lmFit(y,design)";
+//			RHook.evalR(rCmd);
+//
+//			rCmd = "cont1.matrix <- makeContrasts(";
+//			for (int i=0; i<numGroups-1; i++){
+//				rCmd = rCmd + "\"Condition1."+nameB+(i+2)+"-"+"Condition1."+nameB+(i+1)+"\",";
+//			}
+//			rCmd = rCmd + "levels = design)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//
+//			rCmd = "fit2a <- contrasts.fit(fit, cont1.matrix)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2a <- eBayes(fit2a)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "cont2.matrix <- makeContrasts(";
+//			for (int i=0; i<numGroups-1; i++){
+//				rCmd = rCmd + "\"Condition2."+nameB+(i+2)+"-"+"Condition2."+nameB+(i+1)+"\",";
+//			}
+//			rCmd = rCmd + "levels = design)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//
+//			rCmd = "fit2b <- contrasts.fit(fit, cont2.matrix)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2b <- eBayes(fit2b)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//
+//			rCmd = "cont3.matrix <- makeContrasts(";
+//			for (int i=0; i<numGroups-1; i++){
+//				rCmd = rCmd + "Dif"+i+" = (Condition1."+nameB+(i+2)+"-"+"Condition1."+nameB+(i+1)+") - " +
+//					"(Condition2."+nameB+(i+2)+"-"+"Condition2."+nameB+(i+1)+"),";
+//			}
+//			rCmd = rCmd + "levels = design)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//
+//			rCmd = "fit2c <- contrasts.fit(fit, cont3.matrix)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//			rCmd = "fit2c <- eBayes(fit2c)";
+//			RHook.evalR(rCmd);
+//			//System.out.println(rCmd);
+//			
+//		}else {
+//			// Ordinary fit
+//			rCmd = "fit <- lmFit(y,design)";
+//			//System.out.println(rCmd);
+//			RHook.evalR(rCmd);
+//			rCmd = "fit <- eBayes(fit)";
+//			//System.out.println(rCmd);
+//			RHook.evalR(rCmd);
+//		}
+//
+//		String[] topTabString;
+//		switch (dataDesign){
+//			case 1:{ //one-class design
+//				topTabString = new String[1];
+//				topTabString[0] = "res0 <- toptable(fit,number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//				//System.out.println(" one class : "+topTabString[0]);
+//				sigGenesArrays = new int[2][]; //sig genes	
+//				break;
+//			}
+//			case 2:{ //two-class design
+//				topTabString = new String[1];
+//				topTabString[0] = "res0 <- toptable(fit, coef = 2, number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//				//System.out.println(" two class : "+topTabString[0]);
+//				sigGenesArrays = new int[2][]; //sig genes	
+//				break;
+//			}
+//			case 3: {//multiple-class design 
+//				int ttCases = 0;
+//				for (int i=0; i<numGroups; i++)
+//					ttCases = ttCases+i;
+//				topTabString = new String[ttCases];
+//				for (int i=0; i<ttCases; i++){
+//					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//					//System.out.println(" multi class ["+i+"] : "+topTabString[i]);
+//				}
+//				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
+//				break;
+//			}
+//			case 4:{ //two-factor design
+//				topTabString = new String[3];
+//				for (int i=0; i<3; i++){
+//					topTabString[i] = "res"+i+" <- toptable(fit2,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//					//System.out.println(" 2-factor ["+i+"] : "+topTabString[i]);
+//				}
+//				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
+//				break;
+//				}
+//			case 5:{ //time-course design
+//				topTabString = new String[2*(numGroups-1)];
+//				for (int i=0; i<numGroups-1; i++){
+//					topTabString[i] = "res"+i+" <- toptable(fit2a,coef="+(i+1)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
+//				}
+//				for (int i=numGroups-1; i<2*(numGroups-1); i++){
+//					topTabString[i] = "res"+i+" <- toptable(fit2b,coef="+(i-numGroups+2)+",number="+ numProbes +",genelist=fit$genes,adjust.method='fdr',sort.by='B',p.value=1,lfc=0)"; //List all genes with lfc
+//					//System.out.println(" timecourse ["+i+"] : "+topTabString[i]);
+//				}
+//				sigGenesArrays = new int[topTabString.length*2+6][]; //sig genes	
+//				break;
+//				}
+//			default:{ //no design
+//				topTabString = new String[1];
+//				topTabString[0] = "default";	
+//				sigGenesArrays = new int[topTabString.length*2+2][]; //sig genes	
+//			}
+//		}
+//		int grpPairs = topTabString.length;
+//		lfc = new float[grpPairs][numProbes];
+//		t = new float[grpPairs][numProbes];
+//		logOdds = new float[grpPairs][numProbes];
+//		pValues = new float[grpPairs][numProbes];
+//		adjPvalues = new float[grpPairs][numProbes];
+//		fValues = new float[numProbes];
+		
 		RHook.endRSession();
 		removeTmps(filePath);
 		} catch (Exception e) {
@@ -932,27 +767,52 @@ public class GLOBANC extends AbstractAlgorithm{
 		cmd[0] = "genesvector <- list(";
 		cmd[1] = "names(genesvector) <- c(";
 		try {						
-			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Dan\\.mev\\repository\\org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets\\genesigdb_genesets2.txt"));
+			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Dan\\.mev\\repository\\org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets\\genesigdb_genesets3.txt"));
 			String line;
+			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
+			ArrayList<String> namesal = new ArrayList<String>();
 			while( (line = br.readLine()) != null){
 				line.trim();
 				String[] genes = line.split("\t");
+				
 				if (genes.length<3)
 					continue;
 				//if enough genes...
+				al.add(new ArrayList<Integer>());
+//				namesal.add(genes[1]);
 				cmd[0] = cmd[0] + "c(";
-				cmd[1] = cmd[1] + "'"+genes[1].replace("'", "")+"',";
 				boolean first = true;
 				for (int i=2; i<genes.length; i++){
-					if (geneNameAL.contains(genes[i])){
+					if (geneNameAL.contains(genes[i])){//TODO remove gene lists with 0 values
+						al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
 						cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
 						first = false;
 					}
 				}
-				cmd[0] = cmd[0] + "),";
+				if (first){  //checks to see if there were no matching indices
+					cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
+					al.remove(al.size()-1);
+				} else {
+					cmd[0] = cmd[0] + "),";
+					cmd[1] = cmd[1] + "'"+genes[1].replace("'", "")+"',";
+					namesal.add(genes[1]);
+				}
 			}
 			cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
 			cmd[1] = cmd[1].substring(0, cmd[1].length()-1)+")";
+			
+			this.geneLists = new int[al.size()][];
+			this.geneListsNames = new String[namesal.size()];
+			
+			for (int i=0; i<al.size(); i++){
+				geneLists[i]=new int[al.get(i).size()];
+				for (int j=0; j<al.get(i).size(); j++){
+					geneLists[i][j] = (Integer)al.get(i).get(j);
+				}
+			}
+			for (int i=0; i<namesal.size(); i++){
+				geneListsNames[i]=namesal.get(i);
+			}
 			
 			br.close();
 		} catch (Exception e){
