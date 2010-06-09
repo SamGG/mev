@@ -46,7 +46,10 @@ public class BNDownloadManager {
 	private String FTP_REMOTE_FILE_OR_DIR;
 	private boolean isDir = false;
 	//TODO Change testing URL
-	private static String FTP_CONFIG_URL = "http://cbwebdev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt"; //"http://compbio.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt"; //"http://www.tm4.org/mev/mev_url.properties";
+	private static String FTP_CONFIG_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/webstart/cytoscape/cyto_props.txt";
+	// Webdev http://cbwebdev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt";
+	// production "http://compbio.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt";
+	// older "http://www.tm4.org/mev/mev_url.properties";
 	private static String FTP_CONFIG_URL_TEST = "http://cbwebdev.dfci.harvard.edu/webstart/cytoscape/cyto_props.txt";
 	private String FTP_SERVER;    
 	private String REPOSITORY_ROOT;
