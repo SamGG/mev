@@ -194,7 +194,9 @@ public class CytoscapeWebstart {
     	String xml = "";
     	xml = "<?xml version='1.0' encoding='utf-8'?>";
     	xml += "<jnlp";
-    	xml += "  codebase='http://" + codeBase + "'>";
+    	// TODO change back from FTP to HTTP
+    	// xml += "  codebase='http://" + codeBase + "'>";
+    	xml += "  codebase='ftp://" + codeBase + "'>";
     	xml += "  <information>";
     	xml += "    <title>Cytoscape 2.6 - MeV Bn Predict</title>";
     	xml += "    <vendor>DFCI (2009-04)</vendor>";
