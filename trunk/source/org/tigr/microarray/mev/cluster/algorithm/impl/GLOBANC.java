@@ -795,9 +795,7 @@ public class GLOBANC extends AbstractAlgorithm{
 			BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath));
 			
 			genesout.write("genesvector <- list(");
-			int genes_offset = "genesvector <- list(".length();
 			namesout.write("names(genesvector) <- c(");
-			int names_offset = "names(genesvector) <- c(".length();
 			
 			String line;
 			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
@@ -826,7 +824,6 @@ public class GLOBANC extends AbstractAlgorithm{
 						//cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
 						if(tmp != null) {
 							genesout.write(tmp);
-							genes_offset += tmp.length();
 							tmp = null;
 						}
 						genesout.write((first?"":",")+"'"+genes[i]+"'");
