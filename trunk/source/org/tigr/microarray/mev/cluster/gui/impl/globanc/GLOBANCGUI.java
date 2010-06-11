@@ -154,7 +154,8 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         
         //Raktim Use probe index as the gene labels in R
         for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
-        	geneLabels.add(framework.getData().getElementAnnotation(i, data.getFieldNames()[9])[0]); 
+//        	geneLabels.add(framework.getData().getElementAnnotation(i, data.getFieldNames()[9])[0]); 
+        	geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.GENE_SYMBOL)[0]);
 //        	geneLabels.add(String.valueOf(i));
         }
         
