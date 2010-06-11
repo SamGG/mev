@@ -741,7 +741,7 @@ public class ParameterPanel extends JPanel implements IWizardParameterPanel{
 			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
 			File geneSigs = frm.getSupportFile(temp, true);
 			if(temp.isValid(geneSigs)) {
-				System.out.println("GeneSigDb download file is valid.");
+//				System.out.println("GeneSigDb download file is valid.");
 				this.genesetFilePath=geneSigs.getParent();
 				pathTextField.setText(this.genesetFilePath);
 				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
