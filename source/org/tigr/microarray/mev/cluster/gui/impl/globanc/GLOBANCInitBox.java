@@ -368,7 +368,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 			File geneSigs = frm.getSupportFile(temp, true);
 			if(temp.isValid(geneSigs)) {
 				System.out.println("GeneSigDb download file is valid.");
-				genesetFilePath=geneSigs.getParent();
+				genesetFilePath=geneSigs.getAbsolutePath();
 				geneSigValid = true;
 //				pathTextField.setText(this.genesetFilePath);
 //				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));

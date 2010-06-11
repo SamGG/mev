@@ -32,9 +32,9 @@ public class GeneSigDbGeneSets extends ISupportFileDefinition {
 
 	@Override
 	public boolean isValid(File f) {
+		FileReader fr = null;
+		BufferedReader buff = null;	
 		try {
-			FileReader fr = null;
-			BufferedReader buff = null;
 			fr = new FileReader(f);
 			buff = new BufferedReader(fr);
 //            StringSplitter st = new StringSplitter((char)0x09);
@@ -53,6 +53,15 @@ public class GeneSigDbGeneSets extends ISupportFileDefinition {
 			return true;
 		} catch (IOException ioe) {
 			return false;
+		} finally {
+			try {
+			if(fr != null) {
+				fr.close();
+			}
+			if(buff != null) {
+				buff.close();
+			}
+			} catch (IOException ioe) {}
 		}
 	}
 	public boolean fileNeedsUnzipping() {
