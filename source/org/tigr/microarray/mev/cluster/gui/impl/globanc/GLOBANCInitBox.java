@@ -40,7 +40,6 @@ import java.util.Vector;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -60,22 +59,15 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.file.AnnotationDownloadHandler;
-import org.tigr.microarray.mev.file.GBA;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.resources.FileResourceManager;
 import org.tigr.microarray.mev.resources.RepositoryInitializationError;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
-import org.tigr.microarray.util.FileLoaderUtility;
-import org.tigr.util.swing.GeneMatrixFileFilter;
-import org.tigr.util.swing.GeneMatrixTransposeFileFilter;
-import org.tigr.util.swing.TXTFileFilter;
 
 /**
  *
@@ -198,7 +190,11 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
     class HCLoptionPanel extends JPanel {
     	 
-        private JCheckBox hclCluster;  
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private JCheckBox hclCluster;  
         private JRadioButton sigOnly, allClusters;
         GridBagConstraints constraints = new GridBagConstraints();
         GridBagLayout gridbag = new GridBagLayout();
@@ -284,7 +280,11 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	private boolean geneSigValid = false;
     class GeneSetFilePanel extends JPanel {
 
-        JLabel chooseFileLabel = new JLabel("Choose file: ");
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		JLabel chooseFileLabel = new JLabel("Choose file: ");
 		private JButton browseDownloadButton;
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
@@ -374,6 +374,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 //				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
 			}
 			
+
+			
 		} catch (SupportFileAccessError sfae) {
 			System.out.println("Could not download GeneSigDbGeneSets file.");
 		} catch (RepositoryInitializationError e) {
@@ -447,11 +449,9 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         JLabel infoLabel2;
         int numFullGroups=-1;
         int numRedGroups=-1;
-        int factorAlevels=-1;
-        int factorBlevels=-1;
         float alpha;
-        String factorAName;
-        String factorBName;
+        String factorAName = "Full Model";
+        String factorBName = "Reduced Model";
         //Vector exptNames;
         
         public MultiClassPanel(/*Vector exptNames*/) {
@@ -568,7 +568,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             	return;
             }
 
-            if (getExperimentalDesign()==4&&(numFullGroups<2||numRedGroups<2)){ //checks factorial design group amounts
+            if ((numFullGroups<2||numRedGroups<2)){ //checks factorial design group amounts
             	JOptionPane.showMessageDialog(null, "The number of groups in each factor must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -583,8 +583,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             MultiClassPanel.this.remove(dummyPanel);
             tabbedmulg = new JTabbedPane();
 
-    		fullModelESP = new ExperimentsSelectionPanel(exptNames, this.numFullGroups, ngPanel.getExperimentDesign(), "Full Model", false);
-    		reducedModelESP = new ExperimentsSelectionPanel(exptNames, this.numRedGroups, ngPanel.getExperimentDesign(), "Reduced Model", false);
+    		fullModelESP = new ExperimentsSelectionPanel(exptNames, this.numFullGroups, "Full Model", false);
+    		reducedModelESP = new ExperimentsSelectionPanel(exptNames, this.numRedGroups, "Reduced Model", false);
             selectionPanel.add(fullModelESP, cnstr);
     		cnstr.gridx = 1;
     		selectionPanel.add(reducedModelESP, cnstr);
@@ -595,8 +595,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     		selectionPanel.add(createSaveLoadPanel(), cnstr);
 
             
-            factorACS= new ClusterSelector(repository, factorAlevels, "Level");
-            factorBCS= new ClusterSelector(repository, factorBlevels, "Level");
+            factorACS= new ClusterSelector(repository, numFullGroups, "Full Model");
+            factorBCS= new ClusterSelector(repository, numRedGroups, "Reduced Model");
             if (repository!=null){
             	factorACS.setClusterType(factorAName);
             	factorBCS.setClusterType(factorBName);
@@ -629,11 +629,14 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             step2 = true;
         }
         class DesignPanel extends JPanel {
-            JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField, alphaField;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField, alphaField;
             JLabel numGroupsLabel;
             JPanel factorPanel;
             boolean okPressed = false;
-//            JRadioButton multiClass;
             public DesignPanel() {
                 setBackground(Color.white);
                 GridBagLayout gridbag = new GridBagLayout();
@@ -641,58 +644,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 
                 this.setLayout(gridbag);
                 this.setMinimumSize(new Dimension(300,100));
-                
-//                JLabel dataTypeLabel = new JLabel("Experimental Design:   ");
-//                buildConstraints(constraints, 0, 0, 1, 1, 30, 100,GridBagConstraints.EAST);
-//                gridbag.setConstraints(dataTypeLabel, constraints);
-//                this.add(dataTypeLabel);
-                
-//                oneClass=new JRadioButton("One Class", true);
-//                twoClass=new JRadioButton("Two Class", false);
-//                multiClass=new JRadioButton("Multi-Class", false);
-//                factorialDesign=new JRadioButton("Two-Factor", false);
-//                timeCourse=new JRadioButton("Time Course", false);
-//                oneClass.setBackground(Color.white);
-//                oneClass.setBorder(null);
-//                twoClass.setBackground(Color.white);
-//                twoClass.setBorder(null);
-//                multiClass.setBackground(Color.white);
-//                multiClass.setBorder(null);
-//                factorialDesign.setBackground(Color.white);
-//                factorialDesign.setBorder(null);
-//                timeCourse.setBackground(Color.white);
-//                timeCourse.setBorder(null);
-//                ButtonGroup dataType = new ButtonGroup();
-//                dataType.add(oneClass);
-//                dataType.add(twoClass);
-//                dataType.add(multiClass);
-//                dataType.add(factorialDesign);
-//                dataType.add(timeCourse);
-//                oneClass.addActionListener(new RadioButtonListener());
-//                twoClass.addActionListener(new RadioButtonListener());
-//                multiClass.addActionListener(new RadioButtonListener());
-//                factorialDesign.addActionListener(new RadioButtonListener());
-//                timeCourse.addActionListener(new RadioButtonListener());
-//                buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(oneClass, constraints);
-//                this.add(oneClass);
-//                buildConstraints(constraints, 1, 1, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(twoClass, constraints);
-//                this.add(twoClass);
-//                buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(multiClass, constraints);
-//                this.add(multiClass);
-//                buildConstraints(constraints, 1, 3, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(factorialDesign, constraints);
-//                this.add(factorialDesign);
-//                buildConstraints(constraints, 1, 4, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(timeCourse, constraints);
-//                this.add(timeCourse);
                 
                 numGroupsLabel = new JLabel("Number of full model groups: ");
                 numGroupsLabel.setVisible(true);
@@ -737,20 +688,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(alphaField, constraints);
                 this.add(alphaField);
             }
-            
-            public int getExperimentDesign(){
-//            	if (oneClass.isSelected())
-//            		return 1;
-//            	if (twoClass.isSelected())
-//            		return 2;
-//            	if (multiClass.isSelected())
-//            		return 3;
-//            	if (factorialDesign.isSelected())
-//            		return 4;
-//            	if (timeCourse.isSelected())
-//            		return 5;
-            	return 3;
-            }
+           
             
             public void setVisible(boolean visible) {
                 //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -802,12 +740,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     				pw.print("Module:\t");
     				pw.println("Global Ancova");
     				pw.print("Design:\t");
-    				pw.println(ngPanel.getExperimentDesign());
+    				pw.println(getExperimentalDesign());
     				int groupMax;
-    				if (ngPanel.getExperimentDesign()!=4)
+    				if (getExperimentalDesign()!=4)
     					groupMax=this.numFullGroups;
     				else
-    					groupMax = Math.max(this.factorAlevels,this.factorBlevels);
+    					groupMax = Math.max(this.numFullGroups,this.numRedGroups);
     				for (int i=0; i<groupMax; i++){
         				pw.print("Group "+(i+1)+" Label:\t");
     					pw.println("Group "+(i+1));
@@ -818,7 +756,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     				pw.println("Sample Index\tSample Name\tGroup Assignment");
 
     				
-    				if (ngPanel.getExperimentDesign()<4){
+    				if (getExperimentalDesign()<4){
     					int[] groupAssgn=getGroupAssignments();
         				for(int sample = 0; sample < exptNames.size(); sample++) {
         					pw.print(String.valueOf(sample+1)+"\t"); //sample index
@@ -836,7 +774,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         					pw.print(exptNames.get(sample)+"\t");
         					int a = 0;
         		        	int b = 0;
-            				if (ngPanel.getExperimentDesign()==4){
+            				if (getExperimentalDesign()==4){
 	        		            for (int j = 0; j < mPanel.fullModelESP.assignmentRBs.length; j++) {
 	        		                if (mPanel.fullModelESP.assignmentRBs[j][sample].isSelected()) {
 	        		                    a = j+1;
@@ -876,13 +814,15 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     		}
     	}
         class ExperimentsSelectionPanel extends JPanel {
-        	int design = 0;
-            int numPanels = 0;
+            /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+			int numPanels = 0;
             JLabel[] expLabels;
             JRadioButton[][] assignmentRBs;
             JRadioButton[] notInTimeGroupRadioButtons;
-            ExperimentsSelectionPanel(Vector<String> exptNames, int numGroups, int design, String title, boolean firstPanel) {
-            	this.design = design;
+            ExperimentsSelectionPanel(Vector<String> exptNames, int numGroups, String title, boolean firstPanel) {
                 this.setBorder(new TitledBorder(new EtchedBorder(), title+" Assignments", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.black));
                 setBackground(Color.white);
 
@@ -911,21 +851,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                     expLabels[i] = new JLabel(s1);
                     chooseTime[i] = new ButtonGroup();
                     chooseCondition[i] = new ButtonGroup();
-                    if (design==1){
-	                    assignmentRBs[0][i] = new JRadioButton("Include ", false);
-	                    chooseTime[i].add(assignmentRBs[0][i]);
-	                    assignmentRBs[0][i].setSelected(true);
-                    }else if (design==5){
-                    	for (int j = 0; j < numGroups; j++) {
-		                    assignmentRBs[j][i] = new JRadioButton(title+" " + (j) + "     ", false);
-		                    chooseTime[i].add(assignmentRBs[j][i]);
-		                }
-                    }else{
-		                for (int j = 0; j < numGroups; j++) {
-		                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", true);
-		                    chooseTime[i].add(assignmentRBs[j][i]);
-		                }
-                    }
+	                for (int j = 0; j < numGroups; j++) {
+	                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", true);
+	                    chooseTime[i].add(assignmentRBs[j][i]);
+	                }
                     
                     
                     //set current panel
@@ -1056,9 +985,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         			
         			//factor names
         			Vector<String> groupNames = new Vector<String>();
-//        			Vector<String> factorNames = new Vector<String>();
-        			
-        			
         			Vector<Integer> sampleIndices = new Vector<Integer>();
         			Vector<String> sampleNames = new Vector<String>();
         			Vector<String> groupAssignments = new Vector<String>();		
@@ -1103,16 +1029,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	        						continue;
 	        					}
         						continue;
-        					}
-//        					if (design==4){
-//        						factorNames.add(getFactorAName());
-//        						factorNames.add(getFactorBName());
-//        					}
-//        					if (design==5){
-//        						factorNames.add("Condition 1");
-//        						factorNames.add("Condition 2");
-//        					}
-        						
+        					}        						
 
         					//non-comment line, non-header line and not a group label line
         					
@@ -1182,38 +1099,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         				}
         				
         				//set state
-//        				try{
-//        					exptTimeRadioButtons[groupIndex][sample].setSelected(true);
-//        				}catch (Exception e){
-//        					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
-//        				}
-//        				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
-//	        				if(condIndex == 1)
-//	        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
-//	        				else
-//	        					exptConditionRadioButtons[0][sample].setSelected(true);
-//        				}
-        				//set state
         				try{
-                        	if (getExperimentalDesign()==4){
-                        		mPanel.reducedModelESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.fullModelESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else if (getExperimentalDesign()==5){
-                        		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.TimePointESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else {
-                        		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	}
+                    		mPanel.reducedModelESP.assignmentRBs[condIndex][sample].setSelected(true);
+                    		mPanel.fullModelESP.assignmentRBs[groupIndex][sample].setSelected(true);
         				}catch (Exception e){
-                        	if (getExperimentalDesign()==4){
-                        		mPanel.fullModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        		mPanel.reducedModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	} else if (getExperimentalDesign()==5){
-                        		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	} else {
-                        		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	}
+                    		mPanel.fullModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+                    		mPanel.reducedModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
         				}
         			}
         			
@@ -1242,33 +1133,11 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     				condIndex = groupNames.indexOf(condName);
 				}
     			try{
-                	if (getExperimentalDesign()==4){
-                		mPanel.fullModelESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                		mPanel.reducedModelESP.assignmentRBs[condIndex][sample].setSelected(true);
-                	} else if (getExperimentalDesign()==5){
-                		mPanel.TimePointESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
-                	} else {
-                		mPanel.sampleSelectionPanel.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                	}
-//    				exptTimeRadioButtons[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-//    				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
-//        				if(condIndex == 1)
-//        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
-//        				else
-//        					exptConditionRadioButtons[0][sample].setSelected(true);
-//    				}
+            		mPanel.fullModelESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+            		mPanel.reducedModelESP.assignmentRBs[condIndex][sample].setSelected(true);
     			}catch(Exception e){
-                	if (getExperimentalDesign()==4){
-                		mPanel.fullModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                		mPanel.reducedModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	} else if (getExperimentalDesign()==5){
-                		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	} else {
-                		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	}
-//					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
+            		mPanel.fullModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
+            		mPanel.reducedModelESP.notInTimeGroupRadioButtons[sample].setSelected(true);
     			}
     		}
     	}
@@ -1294,15 +1163,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             resetButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     for (int i = 0; i < finNum; i++) {
-                    	if (getExperimentalDesign()==4){
-                    		mPanel.fullModelESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    		mPanel.reducedModelESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	} else if (getExperimentalDesign()==5){
-                    		mPanel.TimePointESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    		mPanel.ConditionESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	} else {
-                    		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	}
+                		mPanel.fullModelESP.notInTimeGroupRadioButtons[i].setSelected(true);
+                		mPanel.reducedModelESP.notInTimeGroupRadioButtons[i].setSelected(true);
                     }
                 }
             });
@@ -1345,7 +1207,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             constraints.insets = new Insets(0,0,0,0);
             buildConstraints(constraints, 0, 2, 1, 1, 0, 5);
             constraints.anchor = GridBagConstraints.CENTER;
-//            gridbag2.setConstraints(panel2, constraints);
         	return panel2;
         }
         protected void reset(){
@@ -1358,29 +1219,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
   
     public class RadioButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent ae) {
-        	if (getExperimentalDesign()==3){
-        		mPanel.ngPanel.numGroupsLabel.setText("Number of Groups: ");
-        		mPanel.ngPanel.numFullGroupsField.setVisible(true);
-        		mPanel.ngPanel.numGroupsLabel.setVisible(true);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
-        	}else if (getExperimentalDesign()==4){
         		mPanel.ngPanel.numFullGroupsField.setVisible(false);
         		mPanel.ngPanel.numGroupsLabel.setVisible(false);
         		mPanel.ngPanel.factorPanel.setVisible(true);
-        		
-        	}else if (getExperimentalDesign()==5){
-        		mPanel.ngPanel.numGroupsLabel.setText("Number of Timepoints: ");
-        		mPanel.ngPanel.numFullGroupsField.setVisible(true);
-        		mPanel.ngPanel.numGroupsLabel.setVisible(true);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
-        		
-        	}else{
-        		mPanel.ngPanel.numFullGroupsField.setVisible(false);
-        		mPanel.ngPanel.numGroupsLabel.setVisible(false);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
-        	}
-        }
-    	
+        }    	
     }
     public class EventListener extends WindowAdapter implements ActionListener{
         
@@ -1427,234 +1269,162 @@ public class GLOBANCInitBox extends AlgorithmDialog {
      * false, if the group assignment is lacking.
      */
     private boolean isParamSufficient(){
-    	switch (getExperimentalDesign()){
-	    	case 1:{
-	    		int inc = 0;
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]==1)
-	    				inc++;
-	    		}
-	    		if (inc < 2){
-	    			JOptionPane.showMessageDialog(null, "Please select at least 2 samples.", "Error", JOptionPane.WARNING_MESSAGE);
-	        		return false;
-	    		}
-	    		return true;
-	    	}
-	    	case 2:{
-	    		int[] inc = new int[2];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		if (inc[0] < 2 || inc[1] < 2){
-	    			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each group.", "Error", JOptionPane.WARNING_MESSAGE);
-	        		return false;
-	    		}
-	    		return true;
-	    	}	
-	    	case 3:{
-	    		int[] inc = new int[getNumGroups()];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each group.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-	    	case 4:{
-	    		int[] inc = new int[getNumGroups()];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-	    	case 5:{
-	    		int[] inc = new int[getNumGroups()*2];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each timepoint and condition combination.\n" +
-	        					"Samples must be assigned to each possible combination of timepoints and conditions.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-    	}
-    	return false;
+		int[] inc = new int[getNumGroups()];
+		int[] grpAssign = getGroupAssignments();
+		for (int i=0; i<grpAssign.length; i++){
+			if (grpAssign[i]!=0)
+				inc[grpAssign[i]-1]++;
+		}
+		for (int i=0; i<inc.length; i++){
+			if (inc[i] < 1){
+				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
+	    		return false;
+			}
+		}
+		return true;
     }
+
+//    private int[] getClusterSelectorGroupAssignments(){
+//    	boolean doubleAssigned;
+//    	int[]groupAssignments = new int[exptNames.size()];
+//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
+//    	for (int i=0; i<mPanel.numFullGroups; i++){
+//    		int j = i+1;
+//    		arraylistArray[i] = mPanel.groupsCS.getGroupSamples("Class "+j);
+//    		
+//    	}
+//    	for (int i = 0; i < exptNames.size(); i++) {
+//    		doubleAssigned = false;
+//    		groupAssignments[i] = 0;
+//    		for (int j = 0;j<mPanel.numFullGroups;j++){
+//	    		if (arraylistArray[j].contains(i)){
+//	    			if (doubleAssigned){
+//	    		        Object[] optionst = { "OK" };
+//	    				JOptionPane.showOptionDialog(null, 
+//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+//	    						optionst, optionst[0]);
+//	    				return null;
+//
+//	    			}
+//	    			groupAssignments[i] = j+1;
+//	    			doubleAssigned = true;
+//	    		}
+//    		}
+//        }
+//    	return groupAssignments;
+//    }
     
-    public int[] getGroupAssignments() {
-    	if (getExperimentalDesign()<4)
-    		return getSimpleGroupAssignments();
-    	if (getExperimentalDesign()==4)
-    		return getFactorGroupAssignments();
-    	if (getExperimentalDesign()==5)
-    		return getTimeCourseGroupAssignments();
-        return null;
-    }  
-
-    private int[] getClusterSelectorGroupAssignments(){
-    	boolean doubleAssigned;
-    	int[]groupAssignments = new int[exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
-    	for (int i=0; i<mPanel.numFullGroups; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.groupsCS.getGroupSamples("Class "+j);
-    		
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[i] = 0;
-    		for (int j = 0;j<mPanel.numFullGroups;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	return groupAssignments;
-    }
+//    private int[] getSimpleGroupAssignments() {
+//    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
+//    		return getClusterSelectorGroupAssignments();
+//        int[] groupAssignments = new int[exptNames.size()];
+//        for (int i = 0; i < exptNames.size(); i++) {
+//            if (mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
+//                groupAssignments[i] = 0;
+//            } else {
+//                for (int j = 0; j < mPanel.sampleSelectionPanel.assignmentRBs.length; j++) {
+//                    if (mPanel.sampleSelectionPanel.assignmentRBs[j][i].isSelected()) {
+//                        groupAssignments[i] = j + 1;
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        return groupAssignments;
+//    }
+//    private int[] getTimeCourseGroupAssignments() {
+//    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
+//    		return getClusterSelectorTimeCourseAssignments();
+//    	int[]timeCourseGroupAssignments = new int[exptNames.size()];
+//
+//        for (int i = 0; i < exptNames.size(); i++) {
+//        	if (mPanel.ConditionESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.TimePointESP.notInTimeGroupRadioButtons[i].isSelected()){
+//        		timeCourseGroupAssignments[i]=0;
+//        		continue;
+//        	}
+//        	int a = 0;
+//        	int b = 0;
+//            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
+//                if (mPanel.ConditionESP.assignmentRBs[j][i].isSelected()) {
+//                    a = j;
+//                    break;
+//                }
+//            }
+//            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
+//                if (mPanel.TimePointESP.assignmentRBs[j][i].isSelected()) {
+//                    b = j;
+//                    break;
+//                }
+//            }
+//            timeCourseGroupAssignments[i]=a*getNumGroups()+b+1;
+//        }
+//    	return timeCourseGroupAssignments;
+//    }
     
-    private int[] getSimpleGroupAssignments() {
-    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
-    		return getClusterSelectorGroupAssignments();
-        int[] groupAssignments = new int[exptNames.size()];
-        for (int i = 0; i < exptNames.size(); i++) {
-            if (mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
-                groupAssignments[i] = 0;
-            } else {
-                for (int j = 0; j < mPanel.sampleSelectionPanel.assignmentRBs.length; j++) {
-                    if (mPanel.sampleSelectionPanel.assignmentRBs[j][i].isSelected()) {
-                        groupAssignments[i] = j + 1;
-                        break;
-                    }
-                }
-            }
-        }
-        return groupAssignments;
-    }
-    private int[] getTimeCourseGroupAssignments() {
-    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
-    		return getClusterSelectorTimeCourseAssignments();
-    	int[]timeCourseGroupAssignments = new int[exptNames.size()];
-
-        for (int i = 0; i < exptNames.size(); i++) {
-        	if (mPanel.ConditionESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.TimePointESP.notInTimeGroupRadioButtons[i].isSelected()){
-        		timeCourseGroupAssignments[i]=0;
-        		continue;
-        	}
-        	int a = 0;
-        	int b = 0;
-            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
-                if (mPanel.ConditionESP.assignmentRBs[j][i].isSelected()) {
-                    a = j;
-                    break;
-                }
-            }
-            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
-                if (mPanel.TimePointESP.assignmentRBs[j][i].isSelected()) {
-                    b = j;
-                    break;
-                }
-            }
-            timeCourseGroupAssignments[i]=a*getNumGroups()+b+1;
-        }
-    	return timeCourseGroupAssignments;
-    }
-    
-    private int[] getClusterSelectorTimeCourseAssignments() {
-    	boolean doubleAssigned;
-    	int[][]groupAssignments = new int[2][exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
-    	for (int i=0; i<mPanel.numFullGroups; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.timepointCS.getGroupSamples("Time-Point "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[0][i] = 0;
-    		for (int j = 0;j<mPanel.numFullGroups;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[0][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	arraylistArray = new ArrayList[2];
-    	for (int i=0; i<2; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.conditionCS.getGroupSamples("Condition "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[1][i] = 0;
-    		for (int j = 0;j<2;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[1][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	int[] groupAssignments2 = new int[exptNames.size()];
-    	for (int i=0; i<groupAssignments2.length; i++){
-    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
-    			groupAssignments2[i]=0;
-    		else
-    			groupAssignments2[i] = (groupAssignments[1][i]-1)*mPanel.numFullGroups+(groupAssignments[0][i]-1)+1;
-    	}
-    	return groupAssignments2;
-	}
+//    private int[] getClusterSelectorTimeCourseAssignments() {
+//    	boolean doubleAssigned;
+//    	int[][]groupAssignments = new int[2][exptNames.size()];
+//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
+//    	for (int i=0; i<mPanel.numFullGroups; i++){
+//    		int j = i+1;
+//    		arraylistArray[i] = mPanel.timepointCS.getGroupSamples("Time-Point "+j);
+//    	}
+//    	for (int i = 0; i < exptNames.size(); i++) {
+//    		doubleAssigned = false;
+//    		groupAssignments[0][i] = 0;
+//    		for (int j = 0;j<mPanel.numFullGroups;j++){
+//	    		if (arraylistArray[j].contains(i)){
+//	    			if (doubleAssigned){
+//	    		        Object[] optionst = { "OK" };
+//	    				JOptionPane.showOptionDialog(null, 
+//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+//	    						optionst, optionst[0]);
+//	    				return null;
+//
+//	    			}
+//	    			groupAssignments[0][i] = j+1;
+//	    			doubleAssigned = true;
+//	    		}
+//    		}
+//        }
+//    	arraylistArray = new ArrayList[2];
+//    	for (int i=0; i<2; i++){
+//    		int j = i+1;
+//    		arraylistArray[i] = mPanel.conditionCS.getGroupSamples("Condition "+j);
+//    	}
+//    	for (int i = 0; i < exptNames.size(); i++) {
+//    		doubleAssigned = false;
+//    		groupAssignments[1][i] = 0;
+//    		for (int j = 0;j<2;j++){
+//	    		if (arraylistArray[j].contains(i)){
+//	    			if (doubleAssigned){
+//	    		        Object[] optionst = { "OK" };
+//	    				JOptionPane.showOptionDialog(null, 
+//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+//	    						optionst, optionst[0]);
+//	    				return null;
+//
+//	    			}
+//	    			groupAssignments[1][i] = j+1;
+//	    			doubleAssigned = true;
+//	    		}
+//    		}
+//        }
+//    	int[] groupAssignments2 = new int[exptNames.size()];
+//    	for (int i=0; i<groupAssignments2.length; i++){
+//    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
+//    			groupAssignments2[i]=0;
+//    		else
+//    			groupAssignments2[i] = (groupAssignments[1][i]-1)*mPanel.numFullGroups+(groupAssignments[0][i]-1)+1;
+//    	}
+//    	return groupAssignments2;
+//	}
 
 
-	private int[] getFactorGroupAssignments() {
+	public int[] getGroupAssignments() {
     	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorFactorAssignments();
     	int[]factorGroupAssignments = new int[exptNames.size()];
@@ -1688,7 +1458,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     	ArrayList[] arraylistArray = new ArrayList[getNumRedGroups()];
     	for (int i=0; i<getNumRedGroups(); i++){
     		int j = i+1;
-    		arraylistArray[i] = mPanel.factorACS.getGroupSamples("Level "+j);
+    		arraylistArray[i] = mPanel.factorACS.getGroupSamples("Full Model "+j);
     	}
     	for (int i = 0; i < exptNames.size(); i++) {
     		doubleAssigned = false;
@@ -1712,7 +1482,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     	arraylistArray = new ArrayList[2];
     	for (int i=0; i<2; i++){
     		int j = i+1;
-    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Level "+j);
+    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Reduced Model "+j);
     	}
     	for (int i = 0; i < exptNames.size(); i++) {
     		doubleAssigned = false;
@@ -1746,11 +1516,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
 	public int[][] getGroupMatrix(){
     	int[] timeAssignments;
-//    	if (getSelectionDesign()==Global AncovaInitBox.CLUSTER_SELECTION){
-//    		timeAssignments = getClusterGroupAssignments();
-//    	}else{
-    		timeAssignments = getGroupAssignments();
-//    	}
+		timeAssignments = getGroupAssignments();
     	int[] numEachTime = new int[getNumGroups()];
     	for (int i=0; i< timeAssignments.length; i++){
     		if (timeAssignments[i]!=0)
@@ -1776,16 +1542,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
      */
     public int getExperimentalDesign() {
     	int design = 4;
-//    	if (mPanel.ngPanel.oneClass.isSelected())
-//    		design = 1;
-//    	if (mPanel.ngPanel.twoClass.isSelected())
-//    		design = 2;
-//    	if (mPanel.ngPanel.multiClass.isSelected())
-//    		design = 3;
-//    	if (mPanel.ngPanel.factorialDesign.isSelected())
-//    		design = 4;
-//    	if (mPanel.ngPanel.timeCourse.isSelected())
-//    		design = 5;
     	return design;
     }
     
@@ -1799,38 +1555,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         return design;
     }
 
-//    public int[] getClusterGroupAssignments(){
-//    	boolean doubleAssigned;
-//    	int[]groupAssignments = new int[exptNames.size()];
-//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
-//    	for (int i=0; i<mPanel.numGroups; i++){
-//    		int j = i+1;
-//    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Time "+j);
-//    		
-//    	}
-//    	for (int i = 0; i < exptNames.size(); i++) {
-//    		doubleAssigned = false;
-//    		groupAssignments[i] = 0;
-//    		for (int j = 0;j<mPanel.numGroups;j++){
-//	    		if (arraylistArray[j].contains(i)){
-//	    			if (doubleAssigned){
-//	    		        Object[] optionst = { "OK" };
-//	    				JOptionPane.showOptionDialog(null, 
-//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-//	    						optionst, optionst[0]);
-//	    				return null;
-//
-//	    			}
-//	    			
-//	    			groupAssignments[i] = j+1;
-//	    			doubleAssigned = true;
-//	    		}
-//    		}
-//        }
-//    	return groupAssignments;
-//    }
-    
     public int getNumGroups() {
     	if (getExperimentalDesign()==4)
     		return getNumFullGroups()*getNumRedGroups();
