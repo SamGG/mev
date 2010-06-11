@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -534,11 +535,19 @@ public class GLOBANC extends AbstractAlgorithm{
 //		String pathways = "genesvector <-data(pathways)";
 //		RHook.log(pathways);
 //		RHook.evalR(pathways);
-		String[] geneset = getPathwaysCMD();// 
+		String[] geneset = getPathwaysCMD_fast();// 
 //		RHook.log(geneset[0]);
-		RHook.evalR(geneset[0]);
+		// Source the R File genesfile.R
+		RHook.evalR("source('" + geneset[0] + "')");
 //		RHook.log(geneset[1]);
-		RHook.evalR(geneset[1]);
+		// Source the R File namesfile.R
+		RHook.evalR("source('" + geneset[1] + "')");
+		// List objects created in R
+		REXP e = RHook.evalR("ls()");
+		String objs[] = e.asStringArray();
+		for(int i=0; i < objs.length; i++) {
+			System.out.println("\tR Obj name: " + objs[i]);
+		}
 
 		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = 100)";
 //		RHook.log(runGA);
@@ -762,6 +771,112 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 	}
 
+	/**
+	 * getPathwaysCMD_fast()
+	 * 
+	 * Raktim - faster version of getPathwaysCMD
+	 * 
+	 * can be improved further if gene set file is directly loaded into
+	 * R and lists created there.
+	 * @return
+	 */
+	private String[] getPathwaysCMD_fast() {
+		String[] cmd = new String[2];
+		String genesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"genesfile.R";
+		String namesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"namesfile.R";
+		
+		
+		
+		cmd[0] = genesFile.replace("\\", "/"); //"genesvector <- list(";
+		cmd[1] = namesFile.replace("\\", "/"); //"names(genesvector) <- c(";
+		try {						
+			PrintWriter genesout  = new PrintWriter(new BufferedWriter(new FileWriter(genesFile)));
+			PrintWriter namesout  = new PrintWriter(new BufferedWriter(new FileWriter(namesFile)));
+			BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath));
+			
+			genesout.write("genesvector <- list(");
+			int genes_offset = "genesvector <- list(".length();
+			namesout.write("names(genesvector) <- c(");
+			int names_offset = "names(genesvector) <- c(".length();
+			
+			String line;
+			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
+			ArrayList<String> namesal = new ArrayList<String>();
+			
+			line = br.readLine();
+			while( line != null){
+				line.trim();
+				String[] genes = line.split("\t");
+				//String[] genes = line.split("\\s+");
+				System.out.println("gene set gene count " + genes.length);
+				
+				if (genes.length<3)
+					continue;
+				//if enough genes...
+				al.add(new ArrayList<Integer>());
+
+				// cmd[0] = cmd[0] + "c(";
+				String tmp ="c(";
+				
+				boolean first = true;
+				
+				for (int i=2; i<genes.length; i++){
+					if (geneNameAL.contains(genes[i])){//TODO remove gene lists with 0 values
+						al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
+						//cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
+						if(tmp != null) {
+							genesout.write(tmp);
+							genes_offset += tmp.length();
+							tmp = null;
+						}
+						genesout.write((first?"":",")+"'"+genes[i]+"'");
+						first = false;
+					}
+				}
+				if (first){  //checks to see if there were no matching indices
+					//cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
+					al.remove(al.size()-1);
+					line = br.readLine();
+				} else {
+					if ((line = br.readLine()) != null) {
+						//cmd[0] = cmd[0] + "),";
+						genesout.write("),");
+						//cmd[1] = cmd[1] + "'"+genes[1].replace("'", "")+"',";
+						namesout.write("'"+genes[1].replace("'", "")+"',");
+					} else {
+						genesout.write(")");
+						namesout.write("'"+genes[1].replace("'", "")+"'");
+					}
+					namesal.add(genes[1]);
+				}
+			}
+			//cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
+			genesout.write(")");
+			//cmd[1] = cmd[1].substring(0, cmd[1].length()-1)+")";
+			namesout.write(")");
+			
+			this.geneLists = new int[al.size()][];
+			this.geneListsNames = new String[namesal.size()];
+			
+			for (int i=0; i<al.size(); i++){
+				geneLists[i]=new int[al.get(i).size()];
+				for (int j=0; j<al.get(i).size(); j++){
+					geneLists[i][j] = (Integer)al.get(i).get(j);
+				}
+			}
+			for (int i=0; i<namesal.size(); i++){
+				geneListsNames[i]=namesal.get(i);
+			}
+			
+			br.close();
+			genesout.flush(); genesout.close();
+			namesout.flush(); namesout.close();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		return cmd;
+	}
+	
 	private String[] getPathwaysCMD() {
 		String[] cmd = new String[2];
 		cmd[0] = "genesvector <- list(";
@@ -820,6 +935,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 		return cmd;
 	}
+	
 	ArrayList<String> geneNameAL;
 	private void collapseProbesToGenes() {
 		geneNameAL = new ArrayList<String>();
