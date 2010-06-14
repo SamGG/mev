@@ -2,55 +2,43 @@
     <body bgcolor = "#FFFFCC"><basefont face = "Arial">
 	<h1>SURV: Survival Analysis</h1><h2>Parameter Information</h2>
             <hr size = 10>
-(Smyth, G. K. (2004). Linear models and empirical Bayes methods for assessing differential expression in microarray experiments. 
-Statistical Applications in Genetics and Molecular Biology 3, No. 1, Article 3)<br>
+R package <i>penalized</i>: Goeman, J.J., 2010. L(1) penalized estimation in the cox proportional hazards model. Biometrical Journal. Biometrische Zeitschrift, 52(1), 70-84.<br>
+R package <i>survival</i>: R Development Core Team, 2009. R: A Language and Environment for Statistical Computing, Vienna, Austria. Available at: http://www.R-project.org.
+
 <br>
-LIMMA, a new module to MeV 4.5, is a technique for identifying differentially expressed genes based off of the fitting of each gene 
-to a linear model.  
-This method can be applied to a number of experimental designs such as single class, two or more groups, factorial and time-course experiments.
-<h3>Running LIMMA:</h3>
-After opening the LIMMA initialization dialog, select the type of data you intend to run the analysis on.  Your options are:<br>
-1.)  One Class: Only one group is to be evaluated.<br>
-2.)  Two Class: The data exists as two groups, and differential expression is to be found between the two groups.<br>
-3.)  Multi-Class: The data exists as multiple groups, and differential expression is to be found between the groups.  <br>
-Enter the number of groups in the visible field.<br>
-4.) Two-factor:  The data will be evaluated to find genes that vary significantly across levels of two independent variables.<br>
-Enter factor names, without spaces, and the number of levels for each factor.<br>
-5.) Time-course: The data exists as two separate conditions taken at specific intervals of time.<br>
-Enter the number of time points in your data.<br>
-<br>
-Assign a significance level.  Genes with a p-value less than alpha will be deemed significant.<br>
-Click “Continue” to move to the next step.<br>
-<br>
-Assign your samples:<br>
-Depending on the type of data you have selected, you will need to assign your samples to groups, factors or time-points, if necessary.<br>
-<br>
-Button Selection:<br>
-Use this option if you have not created clusters for your samples and want to assign each sample individually.<br>
-Each group must contain at least two samples assigned to it.  For factorial and time-course data, each combination of levels in 
-factor A and factor B must contain at least 2 samples.  
+
 <br><br>
-For example: if an experiment has 3 levels for factor “age” (<40, 40-55, >55) and 2 levels for factor “sex” (male, female).  
-There must be at least two samples in each of the following:<br>
-<h4>1.) <40, male<br>
-2.) <40, female<br>
-3.) 40-55, male<br>
-4.) 40-55, female<br>
-5.) >55, male<br>
-6.) >55, female<br></h4>
+
+The Survival (SURV) module contains two functions for the analysis of censored survival data. The first is a basic comparison of the survival curves of two groups of samples. Sample data loaded into MeV is compared using the R package survival and the degree to which the curves differ is reported, along with a p-value.
 <br>
+The second feature of the module is the creation of a cox proportional hazards model based on the loaded gene expression data, using survival time as the reporting value. The R packaged penalized is used to build the model and to select the most informative genes. The L1-norm of the expression vector is used as a shrinkage parameter; users can select the lambda value. The module performs cross-validation of the model after it is built and reports a log likelihood as an indicator of model utility. 
+
+<h3>Running Survival:</h3>
+Censored survival data<br>
+No matter which of these options you choose, you will need to select the sample annotation types that hold the survival data. There are two fields: survival time should point to a set of sample annotation that contains a floating-point number representing a time to event. The Censored field should point to a sample annotation field containing flags that indicate whether a given datapoint is censored or not. MeV can recognize several censoring flag types, including "Yes" or "No", "Censored/Uncensored", or 1/0. 
+<br><br>
+After opening the SURV initialization dialog, select the type of analysis you want to run.  Your options are:<br>
+1.)  Kaplan-Meier Plot: Choose this option if you have already selected groups of samples that are of interest to you. This option will compare the survival time of the two groups and calculate a p-value indicating whether the difference is significant. <br>
+2.)  Cox Proportional Hazard Model: Choose this option if you are interested in identifying genes that appear to have predictive value relative to survival time.<br>
+
+<br>
+After choosing the analysis type, click the Continue button to generate a cluster selection panel. This panel is different depending on which analysis type you have chosen.
+<br><br>
+For the Kaplan-Meier plot:<br>
+A sample cluster selection panel will be generated. Select which samples belong in which groups and click ok to compare the survival profiles.
 Cluster Selection:<br>
 Use the cluster selection panel if you have previously made clusters and wish to run your analysis based on those clusters.  
 Use the drop-down boxes to choose which clusters’ samples are to be assigned to which time-points.  For clusters you are not 
 using, leave “unassigned”.  The same condition and time-point requirements exist for this method, but the cluster selector makes 
 for easier and more organized sample assignment.
- <br><br>
-Hierarchical Clustering:<br>
-To have LIMMA construct hierarchical trees for your results, check the corresponding check box.  Select whether this feature is to be 
-applied to significant genes or significant and non-significant genes.  This process may add significantly to the computation time.
 <br><br>
-The LIMMA module outputs standard viewers and tables for MeV’s statistics analyses.<br>
-      
+For the Cox Proportional Hazard Model:<br>
+A gene cluster selection panel with be generated. You can choose to select a group of genes to build the model with (faster) or choose to build the model based on all of the genes in the currently-loaded dataset (slow).
+<br>
+The Cox model will be build using an L1 Norm (lasso) penalty. Select the value of lambda to be used for this penalty. Higher values will result in faster-calculated models with fewer coefficients. 
+<br><br>
+The SURV module outputs standard viewers and tables for MeV’s statistics analyses. It also creates survival curves for the selected sample groups.<br>
+<br>
        </basefont>
     </body>
 </html>
