@@ -618,11 +618,33 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         addHierarchicalTrees(root, result_cluster, info);
 //        addCentroidViews(root);
         addTableViews(root);
+        addGeneSetInfo(root);
         addClusterInfo(root);
+        
         addGeneralInfo(root, info);
     }
     
-    protected void addTableViews(DefaultMutableTreeNode root) {
+    private void addGeneSetInfo(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Results Table");
+        Object[][] results = new Object[this.resultMatrix.A.length][this.resultMatrix.A[0].length+1];
+        for (int i=0; i<results.length; i++){
+        	for (int j=1; j<results[0].length; j++){
+        		results[i][j]= resultMatrix.A[i][j-1];
+        	}
+        }
+
+        for (int i=0; i<results.length; i++){
+        	results[i][0] = geneListNames[i];
+        }
+        String[] columns = {"Gene List","Gene Count", "F-value", "p.perm", "p.approx"};
+        
+        IViewer tabViewer = new GLOBALANCResultTable(results,columns);
+    	node.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
+        root.add(node);
+		
+	}
+
+	protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.geneLists, this.data, this.auxTitles, this.auxData);
         int x=1; int y=2;

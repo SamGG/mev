@@ -139,8 +139,6 @@ public class GLOBANCInfoViewer extends ViewerAdapter {
 		area.setEditable(false);        
 	        area.setMargin(new Insets(0, 10, 0, 0));        
 		StringBuffer sb = new StringBuffer(clusters.length*3*10);
-		int x=1;
-		int y=2;
 		for (int counter = 0; counter < clusters.length; counter++) {
 	
 //			sb.append(this.geneListNames[counter]);
