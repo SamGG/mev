@@ -625,7 +625,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     }
     
     private void addGeneSetInfo(DefaultMutableTreeNode root) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Results Table");
+//        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Results Table");
         Object[][] results = new Object[this.resultMatrix.A.length][this.resultMatrix.A[0].length+1];
         for (int i=0; i<results.length; i++){
         	for (int j=1; j<results[0].length; j++){
@@ -636,11 +636,10 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         for (int i=0; i<results.length; i++){
         	results[i][0] = geneListNames[i];
         }
-        String[] columns = {"Gene List","Gene Count", "F-value", "p.perm", "p.approx"};
+        String[] columns = {"Gene List","Gene Count", "F-value", "p-value (permutation)", "p-value (approximate)"};
         
         IViewer tabViewer = new GLOBALANCResultTable(results,columns);
-    	node.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
-        root.add(node);
+    	root.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
 		
 	}
 
@@ -774,7 +773,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         if (this.isHierarchicalTree)
         	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
-        node.add(new DefaultMutableTreeNode(info.function));
         root.add(node);
     }
     

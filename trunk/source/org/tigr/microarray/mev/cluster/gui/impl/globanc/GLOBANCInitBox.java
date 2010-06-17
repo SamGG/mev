@@ -33,16 +33,22 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -59,14 +65,19 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
+import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.resources.FileResourceManager;
+import org.tigr.microarray.mev.resources.ISupportFileDefinition;
 import org.tigr.microarray.mev.resources.RepositoryInitializationError;
+import org.tigr.microarray.mev.resources.SelectMultiFilesDialog;
 import org.tigr.microarray.mev.resources.SupportFileAccessError;
 
 /**
@@ -284,11 +295,17 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		JLabel chooseFileLabel = new JLabel("Choose file: ");
+		JLabel chooseFileLabel = new JLabel("Choose File: ");
+		JLabel chooseAnnoLabel = new JLabel("Choose Annotation Type: ");
+		JDialog jd;
 		private JButton browseDownloadButton;
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         public JTextField filePath = new JTextField();
+        JTextField jtf;
+		private JComboBox geneIdentifierBox;
+		String broademail = "";
+		boolean msigOK = false;
 		public GeneSetFilePanel(){
 			this.setBackground(Color.white);
 			this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Gene Set File",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
@@ -303,6 +320,37 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             geneSetSelectionBox=new JComboBox(selectionMethods);
             geneSetSelectionBox.addActionListener(new Listener());
             
+            jd = new JDialog();
+            jd.setLayout(gridbag);
+			jd.setTitle("Please enter a valid MSigDB email address");
+			jtf = new JTextField(25);
+			jd.add(jtf);
+			JButton jb = new JButton("OK");
+			jb.addActionListener(new Listener(){
+    			public void actionPerformed(ActionEvent e){
+    				broademail = jtf.getText();
+    				msigOK = true;
+    				jd.dispose();
+    				
+    			}
+			});
+			
+            buildConstraints(constraints, 0, 0, 2, 2, 0, 0);
+            constraints.fill = GridBagConstraints.HORIZONTAL;
+            gridbag.setConstraints(jtf, constraints);
+            jd.add(jtf);
+            buildConstraints(constraints, 0, 1, 1, 1, 0, 0);
+            gridbag.setConstraints(jb, constraints);
+            jd.add(jb);
+			jd.setPreferredSize(new Dimension(400, 130));
+			jd.setMinimumSize(new Dimension(400, 130));
+			jd.setSize(new Dimension(400, 130));
+			jd.setLocationRelativeTo(this);
+			jd.pack();
+			
+			jd.setModal(true);
+
+            constraints.fill = GridBagConstraints.NONE;
             filePath.setEditable(false);
             
             browseDownloadButton = new JButton(buttonName);
@@ -315,18 +363,22 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     				if(geneSetSelectionBox.getSelectedIndex()==0) {//browse local file
     					onBrowse();
     					filePath.setText(genesetFilePath); 
-    				}else if(e.getActionCommand().equalsIgnoreCase("msigdb_download")) {
-    					if(pathTextField.getText().length()> 0) {
-//    						errorMessageLabel.setText("");
-//    						BROADDownloads(pathTextField.getText());
-//    						geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
-//    						geneIdentifierBox.setEnabled(false);
-    					}else {
-    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
-    						"</font></html>";
-//    						errorMessageLabel.setText(eMsg);
+    				}else if(geneSetSelectionBox.getSelectedIndex()==1) {
+//    					if(pathTextField.getText().length()> 0) {
     						
-    					}
+    						jd.setVisible(true);
+//    						errorMessageLabel.setText("");
+    						if (msigOK){
+    							BROADDownloads(broademail);
+    							geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+    						}
+//    						geneIdentifierBox.setEnabled(false);
+//    					}else {
+//    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
+//    						"</font></html>";
+////    						errorMessageLabel.setText(eMsg);
+//    						
+//    					}
     				
     				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
     					GeneSigDBDownloads();
@@ -337,17 +389,37 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     					filePath.setText(genesetFilePath);    					
     				}
     			}
+
+				
     			
     		});
+
+            Field[]fields=AnnotationFieldConstants.class.getFields();
+            String[]annotation=new String[fields.length+1];
+            annotation[0]="";
+            try{
+            for(int index=0; index<fields.length; index++){
+            	annotation[index+1]=(String)fields[index].get(new AnnotationFieldConstants());
+            }
+            }catch(Exception e){
+            	
+            }
+            
+            geneIdentifierBox=new JComboBox(annotation);
 
             constraints.anchor = GridBagConstraints.EAST;
             int xind = 0;
             buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
-            constraints.anchor = GridBagConstraints.EAST;
             this.add(chooseFileLabel, constraints);
             buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
             gridbag.setConstraints(geneSetSelectionBox, constraints);
             this.add(geneSetSelectionBox);
+            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
+            gridbag.setConstraints(chooseAnnoLabel, constraints);
+            this.add(chooseAnnoLabel);
+            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
+            gridbag.setConstraints(geneIdentifierBox, constraints);
+            this.add(geneIdentifierBox);
             buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
             gridbag.setConstraints(browseDownloadButton, constraints);
             this.add(browseDownloadButton);
@@ -360,6 +432,72 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             this.add(filePath);
     	}    	
     }
+    private void BROADDownloads(String broademail) {
+		try {
+			
+			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));
+			
+			//Get the file containing the list of available geneset files.
+			File geneSetList = frm.getSupportFile(new BroadGeneSetList(), true);
+			try {
+				//Parse the list of geneset files into filename strings
+				ArrayList<String> genesetFilenames = BroadGeneSetList.getFileNames(geneSetList);
+
+				//get email address from user
+				String email = broademail;
+				String[] genesetFileNameArray=new String[genesetFilenames.size()];				
+				int index=0;
+				ArrayList<ISupportFileDefinition> defs = new ArrayList<ISupportFileDefinition>();
+				Iterator<String> it = genesetFilenames.iterator();
+				//Add each geneset file name to a String array
+				while(it.hasNext()) {
+					genesetFileNameArray[index] = it.next();
+					index=index+1;
+					
+				}
+				//Ask the resource manager to download a file for each definition
+				SelectMultiFilesDialog dialog = new SelectMultiFilesDialog(new JFrame(), "Select files to download", ((new BroadGeneSetList()).getURL().getHost()), genesetFileNameArray);
+				dialog.setVisible(true);
+				
+				int[] indices = dialog.getSelectedFilesIndices();
+				String[] selectedFiles = new String[indices.length];
+				for(int i=0; i<indices.length; i++) {
+					selectedFiles[i] = genesetFilenames.get(indices[i]);
+					//Create a definition for each geneset file
+				//	System.out.println("Selected file names:"+selectedFiles[i]);
+					defs.add(new BroadGeneSet(selectedFiles[i], email));
+				}
+				
+				
+				Hashtable<ISupportFileDefinition, File> results = frm.getSupportFiles(defs, true);
+				
+				//Check each file for validity, print a list of the valid downloaded files
+				Enumeration<ISupportFileDefinition> e = results.keys();
+				while(e.hasMoreElements()) {
+					ISupportFileDefinition thisDef = e.nextElement();
+					File temp = results.get(thisDef);
+					if(thisDef.isValid(temp)) {
+						this.genesetFilePath=temp.getParent();
+//						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
+						
+						
+						
+					}
+					else 
+						System.out.println("support file not downloaded " + temp.getAbsolutePath());
+				}
+				
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			}
+			
+		} catch (SupportFileAccessError sfae) {
+			sfae.printStackTrace();
+		}catch (RepositoryInitializationError rie) {
+			rie.printStackTrace();
+		}
+	
+	}
 	private void GeneSigDBDownloads() {
 			
 		try {
@@ -401,6 +539,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 //			updateLabel((String)geneSetSelectionBox.getSelectedItem());
 			if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
 				gsfPanel.browseDownloadButton.setText("Download");
+				
 //				genesetPanel.removeAll();
 //				revalidate();
 //				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
@@ -531,7 +670,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             infoLabel2.setVisible(true);
             ngPanel.numFullGroupsField.setEnabled(true);
             ngPanel.numReducedGroupsField.setEnabled(true);
-            ngPanel.alphaField.setEnabled(true);
+//            ngPanel.alphaField.setEnabled(true);
 //            ngPanel.oneClass.setEnabled(true);
 //            ngPanel.twoClass.setEnabled(true);
 //            ngPanel.multiClass.setEnabled(true);
@@ -556,7 +695,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             ngPanel.okPressed = true;
             okReady = true;
             try {
-            	alpha = Float.parseFloat(ngPanel.alphaField.getText());
+//            	alpha = Float.parseFloat(ngPanel.alphaField.getText());
         		numFullGroups = Integer.parseInt(ngPanel.numFullGroupsField.getText());
             	numRedGroups = Integer.parseInt(ngPanel.numReducedGroupsField.getText());
             }catch (NumberFormatException nfe) {
@@ -622,7 +761,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             enableOK();
             ngPanel.numFullGroupsField.setEnabled(false);
             ngPanel.numReducedGroupsField.setEnabled(false);
-            ngPanel.alphaField.setEnabled(false);
+//            ngPanel.alphaField.setEnabled(false);
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
@@ -633,7 +772,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField, alphaField;
+			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField;//, alphaField;
             JLabel numGroupsLabel;
             JPanel factorPanel;
             boolean okPressed = false;
@@ -675,18 +814,19 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(numReducedGroupsField, constraints);
                 this.add(numReducedGroupsField);
                 
-                JLabel alphaLabel = new JLabel("Significance Level: Alpha = ");
-                buildConstraints(constraints, 0, 4, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.EAST;
-                gridbag.setConstraints(alphaLabel, constraints);
-                this.add(alphaLabel);
                 
-                alphaField = new JTextField(".05", 7);
-                alphaField.setMinimumSize(new Dimension(50,20));
-                constraints.anchor = GridBagConstraints.WEST;
-                buildConstraints(constraints, 1, 4, 1, 1, 30, 0);
-                gridbag.setConstraints(alphaField, constraints);
-                this.add(alphaField);
+//                JLabel alphaLabel = new JLabel("Significance Level: Alpha = ");
+//                buildConstraints(constraints, 0, 4, 1, 1, 30, 100);
+//                constraints.anchor = GridBagConstraints.EAST;
+//                gridbag.setConstraints(alphaLabel, constraints);
+//                this.add(alphaLabel);
+//                
+//                alphaField = new JTextField(".05", 7);
+//                alphaField.setMinimumSize(new Dimension(50,20));
+//                constraints.anchor = GridBagConstraints.WEST;
+//                buildConstraints(constraints, 1, 4, 1, 1, 30, 0);
+//                gridbag.setConstraints(alphaField, constraints);
+//                this.add(alphaField);
             }
            
             
@@ -1573,7 +1713,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         return mPanel.factorBName;
     }
     public float getAlpha() {
-    	return Float.parseFloat(mPanel.ngPanel.alphaField.getText());
+    	return 0f;//Float.parseFloat(mPanel.ngPanel.alphaField.getText());
     }
     
     
