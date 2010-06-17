@@ -32,13 +32,11 @@ public class RConstants {
 	
 	//Location of R packages
 	public static String R_PACKAGE_DIR = "RPackages";
-	
-	//LIMMA package Names
-	//public final static String LIMMA_WIN = "limma_2.16.5.zip";
-	//public final static String LIMMA_LINUX_32 = "limma_2.18.2.tar.gz";
-	//public final static String LIMMA_LINUX_64 = "limma_2.18.2.tar.gz";
-	//public final static String LIMMA_MAC = "limma_2.18.2.tgz";
-	
+		
 	public final static String MAC_MEV_RES_LOC = "MeV.app/Contents/Resources/Java";
 	public final static String MAC_R_PATH = "/Library/Frameworks/R.framework/Versions/Current";
+	
+	// property names
+	protected final static String PROP_NAME_CUR_R_VER = "cur_r_ver";
+	protected final static String PROP_NAME_CUR_MAC_R_VER = "cur_mac_r_ver";
 }
