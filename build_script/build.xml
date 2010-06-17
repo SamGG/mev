@@ -374,6 +374,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
         </javac>
         <!-- Copy html files from source to dest directory so they can
          be jar-ed up with the .class files -->
+    	<copy todir="${dest.dir}/org/tigr/rhook/">
+    	    <fileset dir="${source.dir}/org/tigr/rhook/">
+    	    	<include name="*.properties"/>
+    		</fileset>
+    	</copy>
+    	
     	<copy todir="${dest.dir}/org/tigr/microarray/mev/">
     	    <fileset dir="${source.dir}/org/tigr/microarray/mev/">
     	    	<include name="*.html"/>
