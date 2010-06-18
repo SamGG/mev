@@ -45,12 +45,17 @@ import org.tigr.util.FloatMatrix;
 class TextConsole implements RMainLoopCallbacks 
 {
 	public void rWriteConsole(Rengine re, String text, int oType)  {
-		System.out.print(text);
+		System.err.println(text);
 		if(RHook.logger == null) {
 			RHook.logger.start();
 		} 
 		if (oType == 1) { //Error/Warning
-			//RHook.log("Error/Warning -> ");
+			if(text.toLowerCase().contains("error"))
+				RHook.log("Error -> ");
+			else if(text.toLowerCase().contains("warning"))
+				RHook.log("Warning -> ");
+			else
+				RHook.log("Unknown -> ");
 		}
 		RHook.log(text);
 	}
@@ -137,8 +142,9 @@ public class RHook  {
 			}
 			logger = new RLogger(RLogger.getLogFileName());
 			logger.start();
-			System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
+
 			String r_home = System.getenv("R_HOME");
+			System.out.println("Checking for R_HOME : " + r_home);
 
 			// if RHOME variable is set
 			isRhomeSet(r_home);
@@ -216,6 +222,8 @@ public class RHook  {
 					InputStream in = new FileInputStream(rhookPropFile);
 					rHookProps.load(in);
 					in.close();
+					System.out.println("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
+					logger.writeln("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
 				} else {
 					// load default.rhook.properties
 					InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/rhook/rhook.default.properties");
@@ -223,6 +231,8 @@ public class RHook  {
 						rHookProps.load(in);
 					}
 					in.close();
+					System.out.println("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
+					logger.writeln("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
 				}
 			} else {
 				// overwrite/create rhook.properties in user home directory

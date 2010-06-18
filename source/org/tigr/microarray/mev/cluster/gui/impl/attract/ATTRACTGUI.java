@@ -136,8 +136,10 @@ public class ATTRACTGUI implements IClusterGUI{
 			ProbetoGene ptg=new ProbetoGene(algData, idata);
 			logger.append("Collapsing probes to genes \n");
 			
-			if(stop)
+			if(stop){
+				logger.dispose();
 				return null;
+			}
 			
 			grpAssignments=algData.getIntMatrix("factor-assignments");
 			factorLevels=algData.getIntArray("factor-levels");
@@ -164,8 +166,10 @@ public class ATTRACTGUI implements IClusterGUI{
 			
 			logger.append("Reading gene set files \n");
 			
-			if(stop)
+			if(stop){
+				logger.dispose();
 				return null;
+			}
 			
 			ReadGeneSet rgset=new ReadGeneSet(extension, genesetFilePath);
 			try{
@@ -180,8 +184,10 @@ public class ATTRACTGUI implements IClusterGUI{
 			//which do not satisfy the minimum number of genes criteria
 			logger.append("Creating Association Matrix \n");
 			
-			if(stop)
+			if(stop){
+				logger.dispose();
 				return null;
+			}
 			
 			FloatMatrix amat=rgset.createAssociationMatrix(gene_set, genesInExpressionData, min_genes);
 			algData.addGeneMatrix("association-matrix", amat);
@@ -199,8 +205,6 @@ public class ATTRACTGUI implements IClusterGUI{
 			//Add the Gene set names to AlgorithmData
 			algData.addVector("gene-set-names", new GSEAUtils().getGeneSetNames(geneset));
 			
-					
-						
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -224,8 +228,10 @@ public class ATTRACTGUI implements IClusterGUI{
 			
 			//Get gene sets sorted by over enrichment pvalues and size
 			geneset=((AttractAlgorithmParameters)result.getAlgorithmParameters("attract")).getGenesets();
-			if(stop)
+			if(geneset.length == 0 || stop) {
+				logger.dispose();
 				return null;
+			}
 			logger.append("Generating Viewers...\n");
 			
 		try {
