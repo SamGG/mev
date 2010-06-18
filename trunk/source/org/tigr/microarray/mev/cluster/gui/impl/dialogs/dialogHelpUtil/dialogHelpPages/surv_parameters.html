@@ -15,7 +15,8 @@ The second feature of the module is the creation of a cox proportional hazards m
 
 <h3>Running Survival:</h3>
 Censored survival data<br>
-No matter which of these options you choose, you will need to select the sample annotation types that hold the survival data. There are two fields: survival time should point to a set of sample annotation that contains a floating-point number representing a time to event. The Censored field should point to a sample annotation field containing flags that indicate whether a given datapoint is censored or not. MeV can recognize several censoring flag types, including "Yes" or "No", "Censored/Uncensored", or 1/0. 
+No matter which of these options you choose, you will need to select the sample annotation types that hold the survival data. There are two fields: survival time should point to a set of sample annotation that contains a floating-point number representing a time to event. The Censored field should point to a sample annotation field containing flags that indicate whether a given datapoint is censored or not. MeV can recognize several censoring flag types, including "Yes" or "No", "Censored/Uncensored", or 1/0.
+Values of "Yes", "Censored" or "1" indicate that the datapoint should be treated as a censored event, whereas "No", "Uncensored" and "0" are treated as valid, observed events.  
 <br><br>
 After opening the SURV initialization dialog, select the type of analysis you want to run.  Your options are:<br>
 1.)  Kaplan-Meier Plot: Choose this option if you have already selected groups of samples that are of interest to you. This option will compare the survival time of the two groups and calculate a p-value indicating whether the difference is significant. <br>

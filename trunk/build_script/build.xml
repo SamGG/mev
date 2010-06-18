@@ -1248,7 +1248,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		            <entry key="ATTRACT.class" value="org.tigr.microarray.mev.cluster.gui.impl.attract.ATTRACTGUI"/>
 			  	<entry key="ATTRACT.category" value="${META_ANALYSIS}"/> 
 			  	<entry key="ATTRACT.smallIcon" value="analysis16.gif"/>
-		            <entry key="ATTRACT.largeIcon" value="gsealogo.gif"/>
+		            <entry key="ATTRACT.largeIcon" value="attract_button.gif"/>
 		            <entry key="ATTRACT.tooltip" value="Attract"/>
 		        </propertyfile>
 		    </target>
