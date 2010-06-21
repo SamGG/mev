@@ -83,7 +83,13 @@ public class ATTRACTGUI implements IClusterGUI{
 	
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		
-		
+		// Temp code to disable launch in Mac & Linux
+		// to be reverted when Mac R issue is resolved
+		if (!System.getProperty("os.name").toLowerCase().contains("win")) {
+			System.out.println("ATTARCT module not supported on Mac or Linux OS yet.");
+			JOptionPane.showMessageDialog(framework.getFrame(), "ATTARCT module not supported on Mac or Linux OS yet.", "OS not supported", JOptionPane.INFORMATION_MESSAGE);
+			return null;
+		}
 		 DefaultMutableTreeNode resultNode = null;
 		 JFrame mainFrame = (JFrame)(framework.getFrame());
 		 
