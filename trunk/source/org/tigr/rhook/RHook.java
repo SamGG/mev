@@ -55,7 +55,7 @@ class TextConsole implements RMainLoopCallbacks
 			else if(text.toLowerCase().contains("warning"))
 				RHook.log("Warning -> ");
 			else
-				RHook.log("Unknown -> ");
+				RHook.log("Message -> ");
 		}
 		RHook.log(text);
 	}
