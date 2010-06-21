@@ -227,6 +227,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 				new Insets(0, 0, 0, 0), 0, 0));
 
 		JPanel parameters = new JPanel(new GridBagLayout());
+		popNClusterPanel.setPreferredSize(new Dimension(500, 350));
 		parameters.setBackground(Color.white);
 
 		// mode panel
