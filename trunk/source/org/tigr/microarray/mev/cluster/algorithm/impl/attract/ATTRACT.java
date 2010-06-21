@@ -290,14 +290,14 @@ public class ATTRACT extends AbstractAlgorithm{
 			
 			//Removing these flat genes 
 			//System.out.println("Removing flat genes");
-			rCmd="removeTheseGenes<-remove.flat.genes(eset, cellType, contrasts=NULL, limma.cutoff=0.05)";
+			rCmd="remove.these.genes<-removeFlatGenes(eset, cellType, contrasts=NULL, limma.cutoff=0.05)";
 			x=RHook.evalR(rCmd);
 				
 				
 			excludedGenes=x.asStringArray();
 		
 			//Keep the remaining genes
-			rCmd="keepTheseGenes<-setdiff(featureNames(eset), removeTheseGenes)";
+			rCmd="keepTheseGenes<-setdiff(featureNames(eset), remove.these.genes)";
 			x=RHook.evalR(rCmd);
 			
 		
@@ -319,16 +319,11 @@ public class ATTRACT extends AbstractAlgorithm{
 			//Append the newly excluded gene sets to the existing list
 			excludedGeneSets.addAll(rgset.getExcludedGeneSets());
 			
-			System.out.println("geneSets length " + geneSets.length);
-			System.out.println("geneSetNames.length && excludedGeneSets.size() " + geneSetNames.length + ", " + excludedGeneSets.size());
-			if (geneSets == null || geneSets.length == 0){
-				//stop = true;
-				RHook.endRSession();
-				return;
-			}
-			
 			//Order the gene sets by size
 			geneSets=new GSEAUtils().getGeneSetSortedBySize(geneSets);
+			
+			
+	
 			
 			//Loop through gene sets (number specified by user in GUI, default is 5) of size X and with significant p value
 			//Each gene set may have different number of syn expression groups.
@@ -340,28 +335,27 @@ public class ATTRACT extends AbstractAlgorithm{
 			
 			String geneSetName=geneSets[geneSetIndex].getGeneSetName();	
 		
-			rCmd="mapkSyn<-find.synexprs('"+geneSetName+"', eModuleSet, removeTheseGenes)";
+			rCmd="mapk.syn<-findSynexprs('"+geneSetName+"', eModuleSet, remove.these.genes)";
 			RHook.evalR(rCmd);
 			
 			//Find genes in the expression data that are correlated to the synexpression groups
-			rCmd="mapkCor<-find.corr.partners(mapkSyn, eset, removeTheseGenes)";
+			rCmd="mapk.cor<-findCorrPartners(mapk.syn, eset, remove.these.genes)";
 			RHook.evalR(rCmd);
 			
 			
 			//Number of synexpression groups found
-			rCmd="length(mapkSyn@groups)";
+			rCmd="length(mapk.syn@groups)";
 			x=RHook.evalR(rCmd);
 			int numGroups=x.asInt();
 			//Synexpression groups found for a geneset and the corresponding correlated genes
 			for(int groups=0; groups<numGroups; groups++) {
-				rCmd="asMatrix<-t(as.matrix(unlist(mapkSyn@groups[["+(groups+1)+"]]), nrow=length((mapkSyn@groups[["+(groups+1)+"]])), ncol=length(unlist(mapkSyn@groups[["+(groups+1)+"]])), byrow=true))";
+				rCmd="asMatrix<-t(as.matrix(unlist(mapk.syn@groups[["+(groups+1)+"]]), nrow=length((mapk.syn@groups[["+(groups+1)+"]])), ncol=length(unlist(mapk.syn@groups[["+(groups+1)+"]])), byrow=true))";
 				RHook.evalR(rCmd);
 				rCmd="asVector<-as.vector(asMatrix)";
 				x=RHook.evalR(rCmd);
 				geneSets[geneSetIndex].setSynExpressionGroup("Group"+(groups+1),x.asStringArray());
 				
-				//rCmd="asMatrix<-t(as.matrix(unlist(mapkCor@groups[["+(groups+1)+"]]), nrow=length((mapkCor@groups[["+(groups+1)+"]])), ncol=length(unlist(mapkCor@groups[["+(groups+1)+"]])), byrow=true))";
-				rCmd="asMatrix<-t(as.matrix(unlist(mapkCor[["+(groups+1)+"]]), nrow=length((mapkCor[["+(groups+1)+"]])), ncol=length(unlist(mapkCor[["+(groups+1)+"]])), byrow=true))";
+				rCmd="asMatrix<-t(as.matrix(unlist(mapk.cor@groups[["+(groups+1)+"]]), nrow=length((mapk.cor@groups[["+(groups+1)+"]])), ncol=length(unlist(mapk.cor@groups[["+(groups+1)+"]])), byrow=true))";
 				//x=RHook.evalR(rCmd);
 				RHook.evalR(rCmd);
 				rCmd="asVector<-as.vector(asMatrix)";
@@ -371,7 +365,7 @@ public class ATTRACT extends AbstractAlgorithm{
 				
 			}
 			
-			rCmd="mapkSyn@profiles";
+			rCmd="mapk.syn@profiles";
 			x=RHook.evalR(rCmd);
 		
 			double[][]doubleArray=x.asMatrix();
@@ -380,8 +374,7 @@ public class ATTRACT extends AbstractAlgorithm{
 			//Set Average gene expression profile of genes found in the synexpression group
 			geneSets[geneSetIndex].setSynExpressionProfiles(new FloatMatrix(floatArray));
 			
-			//rCmd="mapkCor@profiles";
-			rCmd="mapkCor";
+			rCmd="mapk.cor@profiles";
 			x=RHook.evalR(rCmd);
 		
 			doubleArray=x.asMatrix();
@@ -390,12 +383,22 @@ public class ATTRACT extends AbstractAlgorithm{
 			//Set gene expression profile of genes similar to ones in the synexpression group
 			geneSets[geneSetIndex].setSimilarGeneExpressionProfile(new FloatMatrix(floatArray));
 			
+			
+			
+			
+			
 		}
+		
+	
 						
 		//	System.out.println("end r session");
+			
 			RHook.endRSession();
 			//Remove all temporary files
 			removeAllTmps();
+			
+			
+			
 			
 			
 		}catch(Exception e) {
@@ -406,7 +409,14 @@ public class ATTRACT extends AbstractAlgorithm{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-		}		
+		}
+		
+		
+		
+		
+		
+		
+		
 	}
 	
 	/**
@@ -415,8 +425,7 @@ public class ATTRACT extends AbstractAlgorithm{
 	 * @return
 	 */
 	private float[][]convertDoubleToFloat(double[][]doubleArray){
-		System.out.println("double Array Length: " + doubleArray.length);
-		float[][]floatArray=new float[doubleArray.length][];
+		float[][]floatArray=new float[doubleArray.length][];;
 		//Convert double array to float array			
 		for(int index=0; index<doubleArray.length; index++) {
 			floatArray[index]=new float[doubleArray[index].length];
