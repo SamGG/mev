@@ -79,7 +79,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected Object[][] auxData;
     
     protected float[][] geneGroupMeans, geneGroupSDs;
-    protected boolean drawSigTreesOnly;
+//    protected boolean drawSigTreesOnly;
     
     Vector<String> exptNamesVector;
     protected int[] groupAssignments;
@@ -89,7 +89,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected float alpha;
     protected String factorAName, factorBName;
     protected boolean errorGenes;
-    protected boolean isHierarchicalTree;
+//    protected boolean isHierarchicalTree;
     protected int iterations;
     
     protected ArrayList<String> geneLabels;
@@ -158,6 +158,11 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         	geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.GENE_SYMBOL)[0]);
 //        	geneLabels.add(String.valueOf(i));
         }
+        if (!framework.getData().isAnnotationLoaded()){
+        	JOptionPane.showMessageDialog(null, "Annotation not found", "Missing Annotation", JOptionPane.ERROR_MESSAGE);
+        	return null;
+        }
+        	
         
         GLOBANCInitBox GLOBALANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1));
         GLOBALANCDialog.setVisible(true);
@@ -177,12 +182,12 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         if (groupAssignments == null)
         	return null;
         
-        isHierarchicalTree = GLOBALANCDialog.drawTrees();
-        drawSigTreesOnly = true;
-        if (isHierarchicalTree) {
-            drawSigTreesOnly = GLOBALANCDialog.drawSigTreesOnly();
-        }      
-        
+//        isHierarchicalTree = GLOBALANCDialog.drawTrees();
+//        drawSigTreesOnly = true;
+//        if (isHierarchicalTree) {
+//            drawSigTreesOnly = GLOBALANCDialog.drawSigTreesOnly();
+//        }      
+//        
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
@@ -190,26 +195,26 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         }
         
         // hcl init
-        int hcl_method = 0;
-        boolean hcl_samples = false;
-        boolean hcl_genes = false;
-        int hcl_function = 4;
-        boolean hcl_absolute = false;
-        boolean hcl_samples_ordered=false;
-        boolean hcl_genes_ordered=false;
-        if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
-            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-                return null;
-            }
-            hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperiments();
-            hcl_genes = hcl_dialog.isClusterGenes();
-            hcl_function = hcl_dialog.getDistanceMetric();
-            hcl_absolute = hcl_dialog.getAbsoluteSelection();
-            hcl_genes_ordered = hcl_dialog.isGeneOrdering();
-            hcl_samples_ordered = hcl_dialog.isSampleOrdering();
-        }
+//        int hcl_method = 0;
+//        boolean hcl_samples = false;
+//        boolean hcl_genes = false;
+//        int hcl_function = 4;
+//        boolean hcl_absolute = false;
+//        boolean hcl_samples_ordered=false;
+//        boolean hcl_genes_ordered=false;
+//        if (isHierarchicalTree) {
+//            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+//            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+//                return null;
+//            }
+//            hcl_method = hcl_dialog.getMethod();
+//            hcl_samples = hcl_dialog.isClusterExperiments();
+//            hcl_genes = hcl_dialog.isClusterGenes();
+//            hcl_function = hcl_dialog.getDistanceMetric();
+//            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+//            hcl_genes_ordered = hcl_dialog.isGeneOrdering();
+//            hcl_samples_ordered = hcl_dialog.isSampleOrdering();
+//        }
         
         Listener listener = new Listener();
         
@@ -246,17 +251,17 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             data.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
             
             // hcl parameters
-            if (isHierarchicalTree) {
-                data.addParam("hierarchical-tree", String.valueOf(true));
-                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
-                data.addParam("method-linkage", String.valueOf(hcl_method));
-                data.addParam("calculate-genes", String.valueOf(hcl_genes));
-                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
-                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
-                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
-                data.addParam("hcl-genes-ordered", String.valueOf(hcl_genes_ordered));
-                data.addParam("hcl-samples-ordered", String.valueOf(hcl_samples_ordered));
-            }
+//            if (isHierarchicalTree) {
+//                data.addParam("hierarchical-tree", String.valueOf(true));
+//                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
+//                data.addParam("method-linkage", String.valueOf(hcl_method));
+//                data.addParam("calculate-genes", String.valueOf(hcl_genes));
+//                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+//                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+//                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
+//                data.addParam("hcl-genes-ordered", String.valueOf(hcl_genes_ordered));
+//                data.addParam("hcl-samples-ordered", String.valueOf(hcl_samples_ordered));
+//            }
             
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
@@ -288,11 +293,11 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             //ADD MORE INFO PARAMETERS HERE
             info.alpha = alpha;
             info.function = menu.getFunctionName(function);
-            info.hcl = isHierarchicalTree;
-            info.hcl_genes = hcl_genes;
-            info.hcl_samples = hcl_samples;
-            info.hcl_method = hcl_method;
-            
+//            info.hcl = isHierarchicalTree;
+//            info.hcl_genes = hcl_genes;
+//            info.hcl_samples = hcl_samples;
+//            info.hcl_method = hcl_method;
+//            
             Vector<String> titlesVector = new Vector<String>();
             for (int i = 0; i < geneGroupMeans[0].length; i++) {
                 titlesVector.add("Group " + (i+1) + " mean");
@@ -371,11 +376,11 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         if (groupAssignments == null)
         	return null;
         
-        boolean isHierarchicalTree = GLOBANCDialog.drawTrees();
-        drawSigTreesOnly = true;
-        if (isHierarchicalTree) {
-            drawSigTreesOnly = GLOBANCDialog.drawSigTreesOnly();
-        }         
+//        boolean isHierarchicalTree = GLOBANCDialog.drawTrees();
+//        drawSigTreesOnly = true;
+//        if (isHierarchicalTree) {
+//            drawSigTreesOnly = GLOBANCDialog.drawSigTreesOnly();
+//        }         
         
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
@@ -384,22 +389,22 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         }
         
         // hcl init
-        int hcl_method = 0;
-        boolean hcl_samples = false;
-        boolean hcl_genes = false;
-        int hcl_function = 4;
-        boolean hcl_absolute = false;
-        if (isHierarchicalTree) {
-            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
-            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-                return null;
-            }
-            hcl_method = hcl_dialog.getMethod();
-            hcl_samples = hcl_dialog.isClusterExperiments();
-            hcl_genes = hcl_dialog.isClusterGenes();
-            hcl_function = hcl_dialog.getDistanceMetric();
-            hcl_absolute = hcl_dialog.getAbsoluteSelection();
-        }        
+//        int hcl_method = 0;
+//        boolean hcl_samples = false;
+//        boolean hcl_genes = false;
+//        int hcl_function = 4;
+//        boolean hcl_absolute = false;
+//        if (isHierarchicalTree) {
+//            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+//            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+//                return null;
+//            }
+//            hcl_method = hcl_dialog.getMethod();
+//            hcl_samples = hcl_dialog.isClusterExperiments();
+//            hcl_genes = hcl_dialog.isClusterGenes();
+//            hcl_function = hcl_dialog.getDistanceMetric();
+//            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+//        }        
         AlgorithmData data = new AlgorithmData();
         
         data.addParam("distance-factor", String.valueOf(1.0f));
@@ -410,15 +415,15 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         data.addParam("alpha-value", String.valueOf(GLOBANCDialog.mPanel.alpha));
         data.addParam("numGroups", String.valueOf(numGroups));
         // hcl parameters
-        if (isHierarchicalTree) {
-            data.addParam("hierarchical-tree", String.valueOf(true));
-            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));              
-            data.addParam("method-linkage", String.valueOf(hcl_method));
-            data.addParam("calculate-genes", String.valueOf(hcl_genes));
-            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
-            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
-            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
-        }
+//        if (isHierarchicalTree) {
+//            data.addParam("hierarchical-tree", String.valueOf(true));
+//            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));              
+//            data.addParam("method-linkage", String.valueOf(hcl_method));
+//            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+//            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+//            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+//            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
+//        }
         
         
         // alg name
@@ -447,7 +452,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         this.experiment = experiment;
         this.data = framework.getData();
         this.groupAssignments = algData.getIntArray("group_assignments");
-        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
+//        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
         
         exptNamesVector = new Vector<String>();
         int number_of_samples = experiment.getNumberOfSamples();
@@ -615,7 +620,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
         addExpressionImages(root);
-        addHierarchicalTrees(root, result_cluster, info);
+//        addHierarchicalTrees(root, result_cluster, info);
 //        addCentroidViews(root);
         addTableViews(root);
         addGeneSetInfo(root);
@@ -681,25 +686,25 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display hierarchical trees.
      */
-    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
-        if (!info.hcl) {
-            return;
-        }
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
-        NodeList nodeList = result_cluster.getNodeList();
-        if (!drawSigTreesOnly) {        
-            for (int i=0; i<nodeList.getSize(); i++) {
-                if (i < nodeList.getSize() - 1 ) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                } else if (i == nodeList.getSize() - 1) {
-                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-                }
-            }
-        } else {
-            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
-        }
-        root.add(node);
-    }
+//    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+//        if (!info.hcl) {
+//            return;
+//        }
+//        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+//        NodeList nodeList = result_cluster.getNodeList();
+//        if (!drawSigTreesOnly) {        
+//            for (int i=0; i<nodeList.getSize(); i++) {
+//                if (i < nodeList.getSize() - 1 ) {
+//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+//                } else if (i == nodeList.getSize() - 1) {
+//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+//                }
+//            }
+//        } else {
+//            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
+//        }
+//        root.add(node);
+//    }
     
     /**
      * Creates an <code>HCLViewer</code>.
@@ -770,8 +775,8 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
         if (dataDesign!=5)
         	node.add(getGroupAssignmentInfo());
-        if (this.isHierarchicalTree)
-        	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
+//        if (this.isHierarchicalTree)
+//        	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         root.add(node);
     }

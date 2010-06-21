@@ -466,17 +466,17 @@ public class GLOBANC extends AbstractAlgorithm{
 			//phenodata <-data.frame(cbind(Sample=1:19), cbind(metastases=c(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1)), cbind(grade=rep(1,19)),cbind(ERStatus=pon))
 		}
 		
-//		String[] geneset = getPathwaysCMD_fast();// 
-//		// Source the R File genesfile.R
-//		RHook.evalR("source('" + geneset[0] + "')");
-//		// Source the R File namesfile.R
-//		RHook.evalR("source('" + geneset[1] + "')");		
-
-		String[] geneset = getPathwaysCMD();// 
+		String[] geneset = getPathwaysCMD_fast();// 
 		// Source the R File genesfile.R
-		RHook.evalR(geneset[0]);
+		RHook.evalR("source('" + geneset[0] + "')");
 		// Source the R File namesfile.R
-		RHook.evalR(geneset[1]);
+		RHook.evalR("source('" + geneset[1] + "')");		
+
+//		String[] geneset = getPathwaysCMD();// 
+//		// Source the R File genesfile.R
+//		RHook.evalR(geneset[0]);
+//		// Source the R File namesfile.R
+//		RHook.evalR(geneset[1]);
 		
 		// List objects created in R
 		REXP e = RHook.evalR("ls()");
