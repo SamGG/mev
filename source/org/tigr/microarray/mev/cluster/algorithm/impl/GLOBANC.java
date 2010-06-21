@@ -556,7 +556,7 @@ public class GLOBANC extends AbstractAlgorithm{
 				line.trim();
 				String[] genes = line.split("\t");
 				//String[] genes = line.split("\\s+");
-				System.out.println("gene set gene count " + genes.length);
+//				System.out.println("gene set gene count " + genes.length);
 				
 				if (genes.length<3)
 					continue;

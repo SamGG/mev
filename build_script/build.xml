@@ -1393,7 +1393,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
             <entry key="GLOBANC.class" value="org.tigr.microarray.mev.cluster.gui.impl.globanc.GLOBANCGUI"/>
 	  	<entry key="GLOBANC.category" value="${STATISTICS}"/> 
 	  	<entry key="GLOBANC.smallIcon" value="analysis16.gif"/>
-            <entry key="GLOBANC.largeIcon" value="out_class.gif"/>
+            <entry key="GLOBANC.largeIcon" value="global_ancova_button.gif"/>
             <entry key="GLOBANC.tooltip" value="Global Ancova"/>
       </propertyfile>
 	</target>

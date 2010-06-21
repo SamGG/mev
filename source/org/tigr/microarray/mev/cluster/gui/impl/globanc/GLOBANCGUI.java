@@ -224,7 +224,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             
             this.progress = new Progress(framework.getFrame(), "Running Global ANCOVA Analysis", listener);
             this.progress.setIndeterminate(true);
-            this.progress.setIndeterminantString("Finding Significant Genes");
+            this.progress.setIndeterminantString("Running Analysis...");
             this.progress.show();
             
             AlgorithmData data = new AlgorithmData();
@@ -468,7 +468,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             
             this.progress = new Progress(framework.getFrame(), "Running GLOBANC Analysis", listener);
             this.progress.setIndeterminate(true);
-            this.progress.setIndeterminantString("Finding Significant Genes");
+            this.progress.setIndeterminantString("Running Analysis");
             this.progress.show();
             
             long start = System.currentTimeMillis();
