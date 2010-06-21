@@ -222,6 +222,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 //        	System.out.println("bad implies file location: " + algorithmData.getImpliesFileLocation());
         	if(dialog.wasCustomDataSet()){
         		algorithmData.setImpliesFileLocation(dialog.getImpliesFileLocation());	
+        		algorithmData.setTagFileLocation(baseFileSystem + sep + "Data" + sep + "Class" + sep + "URL data" + sep + "Tags");
         	}else{
         		algorithmData.setImpliesFileLocation(baseImpliesFileLocation);
         	}
