@@ -198,6 +198,11 @@ public class ATTRACTGUI implements IClusterGUI{
 			
 			logger.append("Removing gene sets that do not pass the minimum genes criteria \n");
 			geneset=rgset.removeGenesetsWithoutMinimumGenes(rgset.getExcludedGeneSets(), gene_set);
+			System.out.println("ATTRACTGUI geneset.length after filters" + geneset.length);
+			if (geneset.length == 0) {
+				logger.dispose();
+				return null;
+			}
 			
 			//Add to excluded genes to Algorithm Data
 			algData.addVector("excluded-gene-sets", rgset.getExcludedGeneSets());
@@ -205,6 +210,8 @@ public class ATTRACTGUI implements IClusterGUI{
 			//Add the Gene set names to AlgorithmData
 			algData.addVector("gene-set-names", new GSEAUtils().getGeneSetNames(geneset));
 			
+					
+						
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -228,7 +235,12 @@ public class ATTRACTGUI implements IClusterGUI{
 			
 			//Get gene sets sorted by over enrichment pvalues and size
 			geneset=((AttractAlgorithmParameters)result.getAlgorithmParameters("attract")).getGenesets();
-			if(geneset.length == 0 || stop) {
+			System.out.println("ATTRACTGUI geneset.length afterexecute()" + geneset.length);
+			if (geneset.length == 0) {
+				logger.dispose();
+				return null;
+			}
+			if(stop) {
 				logger.dispose();
 				return null;
 			}
