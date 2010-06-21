@@ -23,8 +23,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,12 +39,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -59,7 +54,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -107,7 +101,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     MultiClassPanel mPanel;
     GeneSetFilePanel gsfPanel;
     JTabbedPane selectionPanel;
-    HCLoptionPanel hclOpsPanel;
+//    HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
     
@@ -191,103 +185,9 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     	this.okButton.setEnabled(true);
     }
     
-    public boolean drawTrees() {
-        return this.hclOpsPanel.isHCLSelected();
-    }   
-    
-    public boolean drawSigTreesOnly() {
-        return hclOpsPanel.drawSigTreesOnly();
-    }    
-
-    class HCLoptionPanel extends JPanel {
-    	 
-        /**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private JCheckBox hclCluster;  
-        private JRadioButton sigOnly, allClusters;
-        GridBagConstraints constraints = new GridBagConstraints();
-        GridBagLayout gridbag = new GridBagLayout();
-        /** Creates a new instance of HCLSigOnlyPanel */
-        public HCLoptionPanel() {
-            super();
-            this.setBackground(Color.white);
-            Font font = new Font("Dialog", Font.BOLD, 12);
-            this.setLayout(gridbag);
-            this.setBorder( BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Hierarchical Clustering", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));
-            hclCluster = new JCheckBox("Construct Hierarchical Trees for :            ");
-            hclCluster.setFocusPainted(false);
-            hclCluster.setBackground(Color.white);
-            hclCluster.setForeground(UIManager.getColor("Label.foreground"));
-            
-            sigOnly = new JRadioButton("Significant genes only", true);
-            sigOnly.setBackground(Color.white);
-            sigOnly.setForeground(UIManager.getColor("Label.foreground"));     
-            
-            allClusters = new JRadioButton("All clusters", false);
-            allClusters.setBackground(Color.white);
-            allClusters.setForeground(UIManager.getColor("Label.foreground"));        
-
-            sigOnly.setEnabled(false);
-            allClusters.setEnabled(false);
-            
-            ButtonGroup allOrSig = new ButtonGroup();
-            allOrSig.add(sigOnly);
-            allOrSig.add(allClusters);
-            
-            hclCluster.addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getStateChange() == ItemEvent.DESELECTED) {
-                        sigOnly.setEnabled(false);
-                        allClusters.setEnabled(false);
-                    } else {
-                        sigOnly.setEnabled(true);
-                        allClusters.setEnabled(true);                    
-                    }
-                }
-            });        
-
-            buildConstraints(constraints, 0, 0, 1, 1, 25, 10, GridBagConstraints.WEST);
-            gridbag.setConstraints(hclCluster, constraints);
-            add(hclCluster);
-            buildConstraints(constraints, 0, 1, 1, 1, 25, 10);
-            gridbag.setConstraints(sigOnly, constraints);
-            add(sigOnly);
-            buildConstraints(constraints, 0, 2, 1, 1, 25, 10);
-            gridbag.setConstraints(allClusters, constraints);
-            add(allClusters);
-            
-            JPanel dummyPanel = new JPanel();
-
-            buildConstraints(constraints, 0, 3, 1, 1, 25, 100);
-            gridbag.setConstraints(dummyPanel, constraints);
-            dummyPanel.setBackground(Color.white);
-            add(dummyPanel);
-        }
-        
-        public HCLoptionPanel(Color background){
-            this();
-            setBackground(background);
-        }
-        
-        public boolean isHCLSelected(){
-            return hclCluster.isSelected();
-        }  
-        
-        public boolean drawSigTreesOnly() {
-            return sigOnly.isSelected();
-        }
-        
-        public void setHCLSelected(boolean value){
-                hclCluster.setSelected(value);
-        }    
-        
-    }
 	private JComboBox geneSetSelectionBox;
 	private FileResourceManager frm;
 	private String genesetFilePath="";
-	private AbstractButton pathTextField;
 	private boolean geneSigValid = false;
     class GeneSetFilePanel extends JPanel {
 
@@ -406,7 +306,9 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             }
             
             geneIdentifierBox=new JComboBox(annotation);
-
+            geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+            
+            
             constraints.anchor = GridBagConstraints.EAST;
             int xind = 0;
             buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
@@ -415,18 +317,20 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             gridbag.setConstraints(geneSetSelectionBox, constraints);
             this.add(geneSetSelectionBox);
             buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
-            gridbag.setConstraints(chooseAnnoLabel, constraints);
-            this.add(chooseAnnoLabel);
-            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
-            gridbag.setConstraints(geneIdentifierBox, constraints);
-            this.add(geneIdentifierBox);
-            buildConstraints(constraints, xind++, 0, 1, 1, 5, 10);
             gridbag.setConstraints(browseDownloadButton, constraints);
             this.add(browseDownloadButton);
-            buildConstraints(constraints, xind = 0, 1, 1, 1, 5, 10);
+            
+            buildConstraints(constraints, xind=0, 1, 1, 1, 5, 10);
+            gridbag.setConstraints(chooseAnnoLabel, constraints);
+            this.add(chooseAnnoLabel);
+            buildConstraints(constraints, ++xind, 1, 1, 1, 5, 10);
+            gridbag.setConstraints(geneIdentifierBox, constraints);
+            this.add(geneIdentifierBox);
+            
+            buildConstraints(constraints, xind=0, 2, 1, 1, 5, 10);
             constraints.anchor = GridBagConstraints.EAST;
             this.add(new JLabel("File Location: "), constraints);
-            buildConstraints(constraints, ++xind, 1, 2, 1, 5, 10);
+            buildConstraints(constraints, ++xind, 2, 2, 1, 5, 10);
             constraints.fill = GridBagConstraints.HORIZONTAL;
             gridbag.setConstraints(filePath, constraints);
             this.add(filePath);
@@ -501,15 +405,19 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	private void GeneSigDBDownloads() {
 			
 		try {
-			frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
-			GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
-			File geneSigs = frm.getSupportFile(temp, true);
-			if(temp.isValid(geneSigs)) {
-				System.out.println("GeneSigDb download file is valid.");
-				genesetFilePath=geneSigs.getAbsolutePath();
-				geneSigValid = true;
-//				pathTextField.setText(this.genesetFilePath);
-//				((DefaultListModel) selectedList.getModel()).addElement(new File(geneSigs.getName()));
+			File file = new File(new File(System.getProperty("user.home"), ".mev"), "repository/org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets/genesigdb_genesets.txt");
+			if (!file.exists()){
+				frm = new FileResourceManager(new File(new File(System.getProperty("user.home"), ".mev"), "repository"));	
+				GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
+				File geneSigs = frm.getSupportFile(temp, true);
+				if(temp.isValid(geneSigs)) {
+					genesetFilePath=geneSigs.getAbsolutePath();
+					geneSigValid = true;
+				}
+			} else {
+				genesetFilePath=file.getAbsolutePath();
+				geneSigValid = true;				
+				System.out.println(file.getAbsolutePath());
 			}
 			
 
@@ -534,9 +442,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	private class Listener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
-			String command = e.getActionCommand();
-			
-//			updateLabel((String)geneSetSelectionBox.getSelectedItem());
 			if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
 				gsfPanel.browseDownloadButton.setText("Download");
 				
@@ -549,20 +454,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
 				gsfPanel.browseDownloadButton.setText("Browse");
-//				genesetPanel.removeAll();
-//				revalidate();
-//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				createDownloadPanel("Select the directory containing your gene sets", "Browse", "browse");
-//			    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				revalidate();
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
 				gsfPanel.browseDownloadButton.setText("Download");
-//				genesetPanel.removeAll();
-//				revalidate();
-//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				createDownloadPanel("Please select gene set files", "Download", "genesigdb_download");
-//			    gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				revalidate();
 			}
 			
 		}
@@ -626,23 +519,19 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             buildConstraints(constraints, 0, 0, 1, 2, 75, 100);
             gridbag.setConstraints(ngPanel, constraints);
             topPanel.add(ngPanel);
-
-            hclOpsPanel = new HCLoptionPanel();
-            hclOpsPanel.setBorder(null);
-            buildConstraints(constraints, 1, 0, 1, 1, 25, 100);
-            gridbag.setConstraints(hclOpsPanel, constraints);
-            topPanel.add(hclOpsPanel);
             
             buildConstraints(constraints, 1, 1, 1, 1, 0, 10);
+            constraints.anchor = GridBagConstraints.WEST;
+            constraints.fill = GridBagConstraints.NONE;
             gridbag.setConstraints(step2Button, constraints);
             topPanel.add(step2Button);
+            constraints.fill = GridBagConstraints.BOTH;
 
             topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Global Ancova Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
             buildConstraints(constraints, 0, 1,1,1,100,10);
             gridbag.setConstraints(topPanel, constraints);
             this.add(topPanel);
             
-
             
             infoLabel = new JLabel("Sample Group Assignment");
             infoLabel.setMaximumSize(new Dimension(50,50));
@@ -670,16 +559,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             infoLabel2.setVisible(true);
             ngPanel.numFullGroupsField.setEnabled(true);
             ngPanel.numReducedGroupsField.setEnabled(true);
-//            ngPanel.alphaField.setEnabled(true);
-//            ngPanel.oneClass.setEnabled(true);
-//            ngPanel.twoClass.setEnabled(true);
-//            ngPanel.multiClass.setEnabled(true);
-//            ngPanel.factorialDesign.setEnabled(true);
-//            ngPanel.timeCourse.setEnabled(true);
-//            ngPanel.factorALevel.setEnabled(true);
-//            ngPanel.factorBLevel.setEnabled(true);
-//            ngPanel.factorAName.setEnabled(true);
-//            ngPanel.factorBName.setEnabled(true);
             step2Button.setText("Continue...");
             step2 = false;
             tabbedmulg.setVisible(false);
@@ -1423,145 +1302,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 		}
 		return true;
     }
-
-//    private int[] getClusterSelectorGroupAssignments(){
-//    	boolean doubleAssigned;
-//    	int[]groupAssignments = new int[exptNames.size()];
-//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
-//    	for (int i=0; i<mPanel.numFullGroups; i++){
-//    		int j = i+1;
-//    		arraylistArray[i] = mPanel.groupsCS.getGroupSamples("Class "+j);
-//    		
-//    	}
-//    	for (int i = 0; i < exptNames.size(); i++) {
-//    		doubleAssigned = false;
-//    		groupAssignments[i] = 0;
-//    		for (int j = 0;j<mPanel.numFullGroups;j++){
-//	    		if (arraylistArray[j].contains(i)){
-//	    			if (doubleAssigned){
-//	    		        Object[] optionst = { "OK" };
-//	    				JOptionPane.showOptionDialog(null, 
-//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-//	    						optionst, optionst[0]);
-//	    				return null;
-//
-//	    			}
-//	    			groupAssignments[i] = j+1;
-//	    			doubleAssigned = true;
-//	    		}
-//    		}
-//        }
-//    	return groupAssignments;
-//    }
-    
-//    private int[] getSimpleGroupAssignments() {
-//    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
-//    		return getClusterSelectorGroupAssignments();
-//        int[] groupAssignments = new int[exptNames.size()];
-//        for (int i = 0; i < exptNames.size(); i++) {
-//            if (mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].isSelected()) {// "NOT IN GROUP" IS STORED AS ZERO, AND GROUP J IS STORED AS THE INTEGER J (I.E., THERE IS NO GROUP 0)
-//                groupAssignments[i] = 0;
-//            } else {
-//                for (int j = 0; j < mPanel.sampleSelectionPanel.assignmentRBs.length; j++) {
-//                    if (mPanel.sampleSelectionPanel.assignmentRBs[j][i].isSelected()) {
-//                        groupAssignments[i] = j + 1;
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        return groupAssignments;
-//    }
-//    private int[] getTimeCourseGroupAssignments() {
-//    	if (getSelectionDesign()==GLOBANCInitBox.CLUSTER_SELECTION)
-//    		return getClusterSelectorTimeCourseAssignments();
-//    	int[]timeCourseGroupAssignments = new int[exptNames.size()];
-//
-//        for (int i = 0; i < exptNames.size(); i++) {
-//        	if (mPanel.ConditionESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.TimePointESP.notInTimeGroupRadioButtons[i].isSelected()){
-//        		timeCourseGroupAssignments[i]=0;
-//        		continue;
-//        	}
-//        	int a = 0;
-//        	int b = 0;
-//            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
-//                if (mPanel.ConditionESP.assignmentRBs[j][i].isSelected()) {
-//                    a = j;
-//                    break;
-//                }
-//            }
-//            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
-//                if (mPanel.TimePointESP.assignmentRBs[j][i].isSelected()) {
-//                    b = j;
-//                    break;
-//                }
-//            }
-//            timeCourseGroupAssignments[i]=a*getNumGroups()+b+1;
-//        }
-//    	return timeCourseGroupAssignments;
-//    }
-    
-//    private int[] getClusterSelectorTimeCourseAssignments() {
-//    	boolean doubleAssigned;
-//    	int[][]groupAssignments = new int[2][exptNames.size()];
-//    	ArrayList[] arraylistArray = new ArrayList[mPanel.numFullGroups];
-//    	for (int i=0; i<mPanel.numFullGroups; i++){
-//    		int j = i+1;
-//    		arraylistArray[i] = mPanel.timepointCS.getGroupSamples("Time-Point "+j);
-//    	}
-//    	for (int i = 0; i < exptNames.size(); i++) {
-//    		doubleAssigned = false;
-//    		groupAssignments[0][i] = 0;
-//    		for (int j = 0;j<mPanel.numFullGroups;j++){
-//	    		if (arraylistArray[j].contains(i)){
-//	    			if (doubleAssigned){
-//	    		        Object[] optionst = { "OK" };
-//	    				JOptionPane.showOptionDialog(null, 
-//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-//	    						optionst, optionst[0]);
-//	    				return null;
-//
-//	    			}
-//	    			groupAssignments[0][i] = j+1;
-//	    			doubleAssigned = true;
-//	    		}
-//    		}
-//        }
-//    	arraylistArray = new ArrayList[2];
-//    	for (int i=0; i<2; i++){
-//    		int j = i+1;
-//    		arraylistArray[i] = mPanel.conditionCS.getGroupSamples("Condition "+j);
-//    	}
-//    	for (int i = 0; i < exptNames.size(); i++) {
-//    		doubleAssigned = false;
-//    		groupAssignments[1][i] = 0;
-//    		for (int j = 0;j<2;j++){
-//	    		if (arraylistArray[j].contains(i)){
-//	    			if (doubleAssigned){
-//	    		        Object[] optionst = { "OK" };
-//	    				JOptionPane.showOptionDialog(null, 
-//	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-//	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-//	    						optionst, optionst[0]);
-//	    				return null;
-//
-//	    			}
-//	    			groupAssignments[1][i] = j+1;
-//	    			doubleAssigned = true;
-//	    		}
-//    		}
-//        }
-//    	int[] groupAssignments2 = new int[exptNames.size()];
-//    	for (int i=0; i<groupAssignments2.length; i++){
-//    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
-//    			groupAssignments2[i]=0;
-//    		else
-//    			groupAssignments2[i] = (groupAssignments[1][i]-1)*mPanel.numFullGroups+(groupAssignments[0][i]-1)+1;
-//    	}
-//    	return groupAssignments2;
-//	}
 
 
 	public int[] getGroupAssignments() {
