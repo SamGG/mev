@@ -1,0 +1,22 @@
+The analysis files stored in the test_datasets directory contain a variety of datasets representing various data types that can be loaded into MeV. Some of these are normal cases, such as single-color data loaded with auto-downloaded annotation, while others represent unusual circumstances, such as the files containing large numbers of NAs. 
+
+affy_partial_na.anl
+single-color data, including annotation. Normal except for a few genes where >50% of expression values are NA.
+
+affy_many_na.anl
+Same as above, but with more genes with >50% NA. 
+
+affy_mostly_na.anl
+Same as above, but most genes have all NA values. 
+
+affy_zero_variance.anl
+Single-color data, including annotation. Normal except for a few genes where expression values are identical across all samples. 
+
+boolean_data.anl
+All expression values are 1 or 0. Loaded with two-color TDMS file loader. No annotation.
+
+two_color_ann.anl
+Two-color array data loaded with annotation. MeV file loader used. 
+
+two_color_no_ann.anl
+Same as above, but no annotation loaded.  
