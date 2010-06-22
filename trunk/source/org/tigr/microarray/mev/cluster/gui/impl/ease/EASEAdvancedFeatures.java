@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -226,6 +227,7 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 			annFileList.setCellRenderer(new ListRenderer());
 			annFileList.setBorder(BorderFactory
 					.createBevelBorder(BevelBorder.LOWERED));
+			annFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			JScrollPane annPane = new JScrollPane(annFileList);
 
 			JButton annButton = new JButton("Add Files");

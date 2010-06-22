@@ -1197,29 +1197,15 @@ public class EASEInitDialog extends AlgorithmDialog {
 			
 			destination.paramPanel.removeButton.setEnabled(source.paramPanel.removeButton.isEnabled());		
 	
-			int destinationSize= destination.paramPanel.annFileList.getModel().getSize();
-			int sourceSize=source.paramPanel.annFileList.getModel().getSize();
-		
+			/*I pull out all objects contained in the source ListModel, clear out the destination ListModel 
+			 * and add new elements to it */
+			int sourceSize=source.paramPanel.annFileList.getModel().getSize();			
 			Object [] baseFiles=((DefaultListModel) source.paramPanel.annFileList.getModel()).toArray();
-			Object [] files=((DefaultListModel)destination.paramPanel.annFileList.getModel()).toArray();
-			for (int i = 0; i < sourceSize; i++) {
-				if(sourceSize>=destinationSize){
-				if (!((DefaultListModel) destination.paramPanel.annFileList.getModel()).contains(baseFiles[i])) {
-					((DefaultListModel) destination.paramPanel.annFileList.getModel())
-							.addElement(baseFiles[i]);
-				}
-				}
-//			}else if (sourceSize<destinationSize){
-//				File file; 
-//				for (int j=0; j<destinationSize;j++){
-//					file=(File) baseFiles[j];
-//					if(!((DefaultListModel)source.paramPanel.annFileList.getModel()).contains(file)){
-//						((DefaultListModel)destination.paramPanel.annFileList.getModel()).removeElement(file);
-//					}
-//				}
-//			}
-			}
+		    ((DefaultListModel) destination.paramPanel.annFileList.getModel()).clear();
 			
+			for (int i = 0; i < sourceSize; i++) {
+				((DefaultListModel) destination.paramPanel.annFileList.getModel()).addElement(baseFiles[i]);			
+			}
 		}
 
 		/**
