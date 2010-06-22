@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -101,7 +102,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     MultiClassPanel mPanel;
     GeneSetFilePanel gsfPanel;
     JTabbedPane selectionPanel;
-//    HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
     
@@ -187,8 +187,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     
 	private JComboBox geneSetSelectionBox;
 	private FileResourceManager frm;
-	private String genesetFilePath="";
+	private String[] genesetFilePath={""};
 	private boolean geneSigValid = false;
+	private String errorString = "ERROR:";
+	boolean msigOK = false;
     class GeneSetFilePanel extends JPanel {
 
         /**
@@ -205,7 +207,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         JTextField jtf;
 		private JComboBox geneIdentifierBox;
 		String broademail = "";
-		boolean msigOK = false;
 		public GeneSetFilePanel(){
 			this.setBackground(Color.white);
 			this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Gene Set File",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
@@ -229,7 +230,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 			jb.addActionListener(new Listener(){
     			public void actionPerformed(ActionEvent e){
     				broademail = jtf.getText();
-    				msigOK = true;
     				jd.dispose();
     				
     			}
@@ -261,37 +261,46 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     		browseDownloadButton.addActionListener(new Listener(){
     			public void actionPerformed(ActionEvent e){
     				if(geneSetSelectionBox.getSelectedIndex()==0) {//browse local file
-    					onBrowse();
-    					filePath.setText(genesetFilePath); 
+    					if (!onBrowse())
+    						return;
+    					filePath.setText(genesetFilePath[0]); 
+    					browseDownloadButton.setEnabled(false);
+    					geneSetSelectionBox.setEnabled(false);
+    					chooseFileLabel.setForeground(Color.red);
+    					chooseFileLabel.setText("File Loaded");
+    					step2Button.setEnabled(true);
     				}else if(geneSetSelectionBox.getSelectedIndex()==1) {
-//    					if(pathTextField.getText().length()> 0) {
-    						
-    						jd.setVisible(true);
-//    						errorMessageLabel.setText("");
-    						if (msigOK){
-    							BROADDownloads(broademail);
-    							geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
-    						}
-//    						geneIdentifierBox.setEnabled(false);
-//    					}else {
-//    						String eMsg="<html><font color=red>" +"Please enter your registered MSigDB email address<br> "+
-//    						"</font></html>";
-////    						errorMessageLabel.setText(eMsg);
-//    						
-//    					}
-    				
+						jd.setVisible(true);
+						if (broademail.length()==0)
+							return;
+						BROADDownloads(broademail);
+						if (msigOK){
+							geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);						
+        					browseDownloadButton.setEnabled(false);
+        					geneSetSelectionBox.setEnabled(false);
+        					chooseFileLabel.setForeground(Color.red);
+        					chooseFileLabel.setText("File Loaded");
+        					String allfiles = "";
+        					for (int i=0; i<genesetFilePath.length; i++){
+        						allfiles = allfiles +genesetFilePath[i];
+        						if (i<genesetFilePath.length-1)
+        							allfiles = allfiles +"; ";
+        					}
+        					filePath.setText(allfiles);    		
+        					step2Button.setEnabled(true);		
+						} else {
+							JOptionPane.showMessageDialog(null, "Invalid MSigDB email address.", "Error", JOptionPane.ERROR_MESSAGE);
+		                }
     				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
     					GeneSigDBDownloads();
     					browseDownloadButton.setEnabled(!geneSigValid);
     					geneSetSelectionBox.setEnabled(!geneSigValid);
     					chooseFileLabel.setForeground((geneSigValid ? Color.red: Color.black));
     					chooseFileLabel.setText(geneSigValid ? "File Loaded": "Choose File:");
-    					filePath.setText(genesetFilePath);    					
+    					filePath.setText(genesetFilePath[0]);    		
+    					step2Button.setEnabled(true);			
     				}
     			}
-
-				
-    			
     		});
 
             Field[]fields=AnnotationFieldConstants.class.getFields();
@@ -377,18 +386,25 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				
 				//Check each file for validity, print a list of the valid downloaded files
 				Enumeration<ISupportFileDefinition> e = results.keys();
+				ArrayList<String> arl = new ArrayList<String>();
 				while(e.hasMoreElements()) {
 					ISupportFileDefinition thisDef = e.nextElement();
 					File temp = results.get(thisDef);
+					if (!isValidAddress(temp)){
+						msigOK = false;
+						temp.deleteOnExit();
+						return;
+					}					
 					if(thisDef.isValid(temp)) {
-						this.genesetFilePath=temp.getParent();
-//						((DefaultListModel) selectedList.getModel()).addElement(new File(temp.getName()));
-						
-						
-						
-					}
-					else 
+						arl.add(temp.getAbsolutePath());
+						msigOK = true;
+					} else {
 						System.out.println("support file not downloaded " + temp.getAbsolutePath());
+					}
+				}
+				this.genesetFilePath = new String[arl.size()];
+				for (int i=0; i<genesetFilePath.length; i++){
+					genesetFilePath[i] = arl.get(i);
 				}
 				
 			} catch (IOException ioe) {
@@ -411,11 +427,13 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				GeneSigDbGeneSets temp = new GeneSigDbGeneSets();
 				File geneSigs = frm.getSupportFile(temp, true);
 				if(temp.isValid(geneSigs)) {
-					genesetFilePath=geneSigs.getAbsolutePath();
+					genesetFilePath = new String[1];
+					genesetFilePath[0]=geneSigs.getAbsolutePath();
 					geneSigValid = true;
 				}
 			} else {
-				genesetFilePath=file.getAbsolutePath();
+				genesetFilePath = new String[1];
+				genesetFilePath[0]=file.getAbsolutePath();
 				geneSigValid = true;				
 				System.out.println(file.getAbsolutePath());
 			}
@@ -428,15 +446,35 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				e.printStackTrace();
 		}
 	}
-	public void onBrowse(){
+	
+	private boolean isValidAddress(File f){
+		try {
+			FileReader fr = null;
+			BufferedReader buff = null;
+			fr = new FileReader(f);
+			buff = new BufferedReader(fr);
+            String line = buff.readLine();
+            if (line.startsWith(errorString)){
+            	return false;
+            }            
+			return true;
+		} catch (IOException ioe) {
+			return false;
+		}
+	}
+	
+	public boolean onBrowse(){
 		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
 		
 		int retVal = fileChooser.showOpenDialog(this);
 
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
-			this.genesetFilePath = selectedFile.getAbsolutePath();
+			genesetFilePath = new String[1];
+			this.genesetFilePath[0] = selectedFile.getAbsolutePath();
+			return true;
 		}
+		return false;
 	}
     
 	private class Listener implements ActionListener{
@@ -507,7 +545,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 	initiatePanels();
                 }
             });
-
+            step2Button.setEnabled(false);
+            
             gsfPanel = new GeneSetFilePanel();            
             buildConstraints(constraints, 0, 0,1,1,100,10);
             gridbag.setConstraints(gsfPanel, constraints);
@@ -1265,7 +1304,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GLOBANCInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
+                HelpWindow hw = new HelpWindow(GLOBANCInitBox.this, "Global Ancova- Initialization Dialog");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);
@@ -1474,7 +1513,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     }
 
 
-	public String getGeneSetFilePath() {
+	public String[] getGeneSetFilePath() {
 		return this.genesetFilePath;
+	}
+
+
+	public int getGeneSetOrigin() {
+		return this.geneSetSelectionBox.getSelectedIndex();
 	}
 }
