@@ -36,7 +36,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import java.util.Vector;
 
@@ -47,31 +46,27 @@ public class GLOBANC extends AbstractAlgorithm{
 	private int[] groupAssignments;
 	private int[][] geneLists;
 	private int[] mapping, mapping2;
-	private String nameA, nameB;
-	private String geneSetFilePath = "C:\\Users\\Dan\\.mev\\repository\\org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets\\genesigdb_genesets3.txt";
-	private int numGenes, numExps, numGroups, iteration, numAGroups, numBGroups;
-	private float alpha;
+	private String[] geneSetFilePath;
+	private int numGenes, numExps, numGroups, iteration, numBGroups;
 	private boolean  drawSigTreesOnly;
 	private int hcl_function;
 	private boolean hcl_absolute;
 	private boolean hcl_genes_ordered;  
 	private boolean hcl_samples_ordered; 
+	ArrayList<String> geneNameAL;
 
 	private int dataDesign;
+	private static int MSigDBFile = 1;
+//	private static int GeneSigDBFile = 2;
 
 	private AlgorithmEvent event;
 
 	private String[] geneNames, collapsedGeneNames;
 	private String[] sampleNames;
-	private float[][] lfc;
-	private float[][] t;
-	private float[][] logOdds;
-	private float[][] pValues;
-	private float[][] adjPvalues;
-	private float[] fValues;
 	float[][] resultMatrix;
 	int validN;
 	private String[] geneListsNames;
+	private int geneSetOrigin;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -89,18 +84,13 @@ public class GLOBANC extends AbstractAlgorithm{
 		expMatrix = data.getMatrix("experiment");
 		groupAssignments = data.getIntArray("group_assignments");
 		dataDesign = map.getInt("dataDesign");
-		alpha = map.getFloat("alpha"); 
 		numGroups = map.getInt("numGroups");
-		nameA = map.getString("nameA");
-		nameB = map.getString("nameB");
-		numAGroups = map.getInt("numAGroups");
 		numBGroups = map.getInt("numBGroups");
-		//logFileName = map.getString("logfile");
 
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
-		geneSetFilePath = map.getString("geneSetFilePath");
-		hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
+		geneSetFilePath = data.getStringArray("geneSetFilePaths");
+		geneSetOrigin = map.getInt("geneSetOrigin", 0);
 		hcl_absolute = map.getBoolean("hcl-distance-absolute", false);     
 		hcl_genes_ordered = map.getBoolean("hcl-genes-ordered", false);  
 		hcl_samples_ordered = map.getBoolean("hcl-samples-ordered", false);    
@@ -188,18 +178,10 @@ public class GLOBANC extends AbstractAlgorithm{
 		result.addParam("iterations", String.valueOf(iteration-1));
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
-//		result.addMatrix("clusters_means", means);
-//		result.addMatrix("clusters_variances", variances); 
 		result.addMatrix("result-matrix", new FloatMatrix(resultMatrix));
 		result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
 		result.addMatrix("geneGroupSDsMatrix", getAllGeneGroupSDs());
 
-//		result.addMatrix("pValues", getPValues());
-//		result.addMatrix("adjPValues", getAdjPValues());
-//		result.addMatrix("lfc", getLogFoldChanges());
-//		result.addMatrix("logOdds", getLogOdds());
-//		result.addMatrix("tStat", getTStatistic());
-//		result.addMatrix("fValues", getFValues());
 		return result;   
 	}
 
@@ -419,7 +401,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		String rCmd = "library(GlobalAncova)";
 		RHook.evalR(rCmd);
 
-		int numProbes = expMatrix.getRowDimension();
+//		int numProbes = expMatrix.getRowDimension();
 		int numSamples = expMatrix.getColumnDimension();
 
 		String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
@@ -433,38 +415,23 @@ public class GLOBANC extends AbstractAlgorithm{
 		//Create data matrix in R, in memory - Inefficient
 		//RHook.createRDataMatrix("yy", expMatrix, geneNames, sampleNames);
 
-		//TODO
-		//define design vector based on experiment. COMPLICATED
-
-		//System.out.println("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
-		int grp1, grp2;
-		if(numSamples % 2 == 0) grp1 = numSamples/2;
-		else grp1 = (numSamples-1)/2;
-		grp2 = numSamples - grp1;
-
-//		String phenodata = "";// = "design <- cbind(Grp1=1,Grp2vs1=c(rep(0," + grp1 + "),rep(1," + grp2 + ")))";
-		//System.out.println("Study Design: " + design);
-
-		if (dataDesign == 4||dataDesign == 5){
-			String phenoData = "phenodata <-data.frame(cbind(Sample=1:" +numSamples+"), cbind(full=c(";
-			for (int i=0; i<numSamples; i++){
-				phenoData = phenoData + ((this.groupAssignments[i]-1)/numBGroups+1)+",";//+this.nameB+((groupAssignments[i]-1)%numBGroups+1)+"\",";
-			}
-			phenoData = phenoData.substring(0, phenoData.length()-1);
-			
-			phenoData = phenoData+")), cbind(grade = rep(1,"+numSamples+")),cbind(reduced=c(";
-						
-			for (int i=0; i<numSamples; i++){
-				phenoData = phenoData + ((groupAssignments[i]-1)%numBGroups+1)+",";
-			}
-			phenoData = phenoData.substring(0, phenoData.length()-1);
-			phenoData = phenoData+")))";
-//			RHook.log(phenoData);
-			RHook.evalR(phenoData);
-			System.out.println("phenodata: " + phenoData);
-
-			//phenodata <-data.frame(cbind(Sample=1:19), cbind(metastases=c(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1)), cbind(grade=rep(1,19)),cbind(ERStatus=pon))
+	
+		String phenoData = "phenodata <-data.frame(cbind(Sample=1:" +numSamples+"), cbind(full=c(";
+		for (int i=0; i<numSamples; i++){
+			phenoData = phenoData + ((this.groupAssignments[i]-1)/numBGroups+1)+",";//+this.nameB+((groupAssignments[i]-1)%numBGroups+1)+"\",";
 		}
+		phenoData = phenoData.substring(0, phenoData.length()-1);
+		
+		phenoData = phenoData+")), cbind(grade = rep(1,"+numSamples+")),cbind(reduced=c(";
+					
+		for (int i=0; i<numSamples; i++){
+			phenoData = phenoData + ((groupAssignments[i]-1)%numBGroups+1)+",";
+		}
+		phenoData = phenoData.substring(0, phenoData.length()-1);
+		phenoData = phenoData+")))";
+		RHook.evalR(phenoData);
+		System.out.println("phenodata: " + phenoData);
+
 		
 		String[] geneset = getPathwaysCMD_fast();// 
 		// Source the R File genesfile.R
@@ -531,6 +498,7 @@ public class GLOBANC extends AbstractAlgorithm{
 	 * @return
 	 */
 	private String[] getPathwaysCMD_fast() {
+		int titleIndex = (geneSetOrigin == MSigDBFile) ? 0:1;
 		String[] cmd = new String[2];
 		String genesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"genesfile.R";
 		String namesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"namesfile.R";
@@ -539,63 +507,58 @@ public class GLOBANC extends AbstractAlgorithm{
 		
 		cmd[0] = genesFile.replace("\\", "/"); //"genesvector <- list(";
 		cmd[1] = namesFile.replace("\\", "/"); //"names(genesvector) <- c(";
-		try {						
+		try {
 			PrintWriter genesout  = new PrintWriter(new BufferedWriter(new FileWriter(genesFile)));
 			PrintWriter namesout  = new PrintWriter(new BufferedWriter(new FileWriter(namesFile)));
-			BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath));
-			
 			genesout.write("genesvector <- list(");
 			namesout.write("names(genesvector) <- c(");
-			
 			String line;
 			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
 			ArrayList<String> namesal = new ArrayList<String>();
 			
-			line = br.readLine();
-			while( line != null){
-				line.trim();
-				String[] genes = line.split("\t");
-				//String[] genes = line.split("\\s+");
-//				System.out.println("gene set gene count " + genes.length);
+			for (int fileIndex=0; fileIndex<geneSetFilePath.length; fileIndex++){
+				BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath[fileIndex]));
 				
-				if (genes.length<3)
-					continue;
-				//if enough genes...
-				al.add(new ArrayList<Integer>());
-
-				// cmd[0] = cmd[0] + "c(";
-				String tmp ="c(";
-				
-				boolean first = true;
-				
-				for (int i=2; i<genes.length; i++){
-					if (geneNameAL.contains(genes[i])){//TODO remove gene lists with 0 values
-						al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
-						//cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
-						if(tmp != null) {
-							genesout.write(tmp);
-							tmp = null;
+				line = br.readLine();
+				while( line != null){
+					line.trim();
+					String[] genes = line.split("\t");					
+					if (genes.length<3)
+						continue;
+					//if enough genes...
+					al.add(new ArrayList<Integer>());
+	
+					String tmp ="c(";					
+					boolean first = true;
+					
+					for (int i=2; i<genes.length; i++){
+						if (geneNameAL.contains(genes[i])){
+							al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
+							//cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
+							if(tmp != null) {
+								genesout.write(tmp);
+								tmp = null;
+							}
+							genesout.write((first?"":",")+"'"+genes[i]+"'");
+							first = false;
 						}
-						genesout.write((first?"":",")+"'"+genes[i]+"'");
-						first = false;
 					}
-				}
-				if (first){  //checks to see if there were no matching indices
-					//cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
-					al.remove(al.size()-1);
-					line = br.readLine();
-				} else {
-					if ((line = br.readLine()) != null) {
-						//cmd[0] = cmd[0] + "),";
-						genesout.write("),");
-						//cmd[1] = cmd[1] + "'"+genes[1].replace("'", "")+"',";
-						namesout.write("'"+genes[1].replace("'", "")+"',");
+					if (first){  //checks to see if there were no matching indices
+						//cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
+						al.remove(al.size()-1);
+						line = br.readLine();
 					} else {
-						genesout.write(")");
-						namesout.write("'"+genes[1].replace("'", "")+"'");
+						if ((line = br.readLine()) == null && fileIndex==geneSetFilePath.length-1) {
+							genesout.write(")");
+							namesout.write("'"+genes[titleIndex].replace("'", "")+"'");
+						} else {
+							genesout.write("),");
+							namesout.write("'"+genes[titleIndex].replace("'", "")+"',");
+						}
+						namesal.add(genes[titleIndex]);
 					}
-					namesal.add(genes[1]);
 				}
+				br.close();
 			}
 			//cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
 			genesout.write(")");
@@ -613,11 +576,10 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 			for (int i=0; i<namesal.size(); i++){
 				geneListsNames[i]=namesal.get(i);
-			}
-			
-			br.close();
+			}			
 			genesout.flush(); genesout.close();
 			namesout.flush(); namesout.close();
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
@@ -625,40 +587,44 @@ public class GLOBANC extends AbstractAlgorithm{
 	}
 	
 	private String[] getPathwaysCMD() {
+		int titleIndex = (geneSetOrigin == MSigDBFile) ? 0:1;
 		String[] cmd = new String[2];
 		cmd[0] = "genesvector <- list(";
 		cmd[1] = "names(genesvector) <- c(";
-		try {						
-			BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath));
-			String line;
-			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
-			ArrayList<String> namesal = new ArrayList<String>();
-			while( (line = br.readLine()) != null){
-				line.trim();
-				String[] genes = line.split("\t");
-				
-				if (genes.length<3)
-					continue;
-				//if enough genes...
-				al.add(new ArrayList<Integer>());
-//				namesal.add(genes[1]);
-				cmd[0] = cmd[0] + "c(";
-				boolean first = true;
-				for (int i=2; i<genes.length; i++){
-					if (geneNameAL.contains(genes[i])){//TODO remove gene lists with 0 values
-						al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
-						cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
-						first = false;
+		ArrayList<ArrayList> al = new ArrayList<ArrayList>();
+		ArrayList<String> namesal = new ArrayList<String>();
+		try {			
+			for (int fileIndex=0; fileIndex<geneSetFilePath.length; fileIndex++){			
+				BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath[fileIndex]));
+				String line;
+				while( (line = br.readLine()) != null){
+					line.trim();
+					String[] genes = line.split("\t");
+					
+					if (genes.length<3)
+						continue;
+					//if enough genes...
+					al.add(new ArrayList<Integer>());
+	//				namesal.add(genes[1]);
+					cmd[0] = cmd[0] + "c(";
+					boolean first = true;
+					for (int i=2; i<genes.length; i++){
+						if (geneNameAL.contains(genes[i])){
+							al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
+							cmd[0] = cmd[0]+(first?"":",")+"'"+genes[i]+"'";
+							first = false;
+						}
+					}
+					if (first){  //checks to see if there were no matching indices
+						cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
+						al.remove(al.size()-1);
+					} else {
+						cmd[0] = cmd[0] + "),";
+						cmd[1] = cmd[1] + "'"+genes[titleIndex].replace("'", "")+"',";
+						namesal.add(genes[titleIndex]);
 					}
 				}
-				if (first){  //checks to see if there were no matching indices
-					cmd[0] = cmd[0].substring(0, cmd[0].length()-2);
-					al.remove(al.size()-1);
-				} else {
-					cmd[0] = cmd[0] + "),";
-					cmd[1] = cmd[1] + "'"+genes[1].replace("'", "")+"',";
-					namesal.add(genes[1]);
-				}
+				br.close();
 			}
 			cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
 			cmd[1] = cmd[1].substring(0, cmd[1].length()-1)+")";
@@ -676,14 +642,12 @@ public class GLOBANC extends AbstractAlgorithm{
 				geneListsNames[i]=namesal.get(i);
 			}
 			
-			br.close();
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 		return cmd;
 	}
 	
-	ArrayList<String> geneNameAL;
 	private void collapseProbesToGenes() {
 		geneNameAL = new ArrayList<String>();
 		ArrayList<Integer> indicesMap = new ArrayList<Integer>();
@@ -729,101 +693,6 @@ public class GLOBANC extends AbstractAlgorithm{
 			return null;
 		}
 		return fileLoc;
-	}
-
-	private String getStudyDesign(){
-		switch (dataDesign){
-		case 1:
-			return getOneClassDesign();
-		case 2:
-			return getTwoClassDesign();
-		case 3:
-			return getMultiClassDesign();
-		case 4:
-			return getTwoFactorDesign();
-		case 5:
-			return getTimeCourseDesign();
-		default: return "";
-		}
-	}
-
-	private String getOneClassDesign(){
-		String str = "design <- c(";
-		for (int i=0; i<groupAssignments.length; i++){
-			str = str + Integer.toString(groupAssignments[i]);
-			if (i<groupAssignments.length-1)
-				str = str  + ", ";
-		}
-		str = str + ")";
-		//System.out.println("str design: " + str);
-		return str;
-	}
-
-	private String getTwoClassDesign(){
-		String grp1 = "";
-		String grp2 = "";
-		for (int i=0; i<groupAssignments.length; i++){
-			if (groupAssignments[i]==1){
-				grp1 = grp1 + "1";
-				grp2 = grp2 + "0";
-			} else if (groupAssignments[i]==2){
-				grp1 = grp1 + "1";
-				grp2 = grp2 + "1";
-			} else {
-				grp1 = grp1 + "0";
-				grp2 = grp2 + "0";
-			}
-			if (i<groupAssignments.length-1){
-				grp1 = grp1 + ", ";
-				grp2 = grp2 + ", ";
-			}
-		}
-		String str = "design <- cbind(Grp1=c(" + grp1 + "),Grp2=c(" + grp2 + "))";
-		//System.out.println("str design: " + str);
-		return str;
-	}
-
-	private String getMultiClassDesign(){
-		String[] grpArray = new String[numGroups];
-		for (int i=0; i<numGroups; i++){
-			grpArray[i] = "";
-		}
-		for (int i=0; i<groupAssignments.length; i++){
-			for (int j=0; j<numGroups; j++){
-				if (groupAssignments[i]==j+1)
-					grpArray[j] = grpArray[j] + "1";
-				else
-					grpArray[j] = grpArray[j] + "0";
-			}
-
-			if (i<groupAssignments.length-1){
-				for (int j=0; j<numGroups; j++){
-					grpArray[j] = grpArray[j] + ", ";
-				}
-			}
-		}
-		String str = "design <- cbind(";
-		for (int i=0; i<numGroups; i++){
-			str = str + "Grp"+(i+1)+"=c("+grpArray[i]+")";
-			if (i<numGroups-1){
-				str = str + ", ";
-			}
-		}
-		str = str +")";
-		//System.out.println("str design: " + str);
-		return str;
-	}
-
-	private String getTwoFactorDesign(){
-		String str = "design <- model.matrix(~0 + TS)";
-
-		return str;		
-	}
-
-	private String getTimeCourseDesign(){
-		String str = "design <- model.matrix(~0 + TS)";
-
-		return str;		
 	}
 
 

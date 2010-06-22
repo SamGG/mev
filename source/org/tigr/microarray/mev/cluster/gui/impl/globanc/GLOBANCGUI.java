@@ -15,11 +15,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.globanc;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -28,9 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.Node;
 import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -49,13 +43,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
-import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
-import org.tigr.rhook.RConstants;
-import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 
 /**
@@ -79,24 +67,22 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected Object[][] auxData;
     
     protected float[][] geneGroupMeans, geneGroupSDs;
-//    protected boolean drawSigTreesOnly;
     
     Vector<String> exptNamesVector;
     protected int[] groupAssignments;
     protected double falseProp;
     protected IData data;
-    protected int numGroups, dataDesign, numFullGroups, numRedGroups;
+    protected int numGroups, dataDesign, numFullGroups, numRedGroups, geneSetOrigin;
     protected float alpha;
     protected String factorAName, factorBName;
     protected boolean errorGenes;
-//    protected boolean isHierarchicalTree;
     protected int iterations;
     
     protected ArrayList<String> geneLabels;
     protected ArrayList<String> sampleLabels;
 	private String[] geneListNames;
 	private FloatMatrix resultMatrix;
-	private String geneSetFilePath;
+	private String[] geneSetFilePath;
 	
 	
     
@@ -136,8 +122,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
 //				throw new AbortException();
 //			}
 //		}
-		//System.out.println("Checking for R_HOME in properties: " + System.getProperty("R_HOME"));
-		//System.out.println("Checking for R_HOME in environment: " + System.getenv("R_HOME"));
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
@@ -152,11 +136,8 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
         }
         
-        //Raktim Use probe index as the gene labels in R
         for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
-//        	geneLabels.add(framework.getData().getElementAnnotation(i, data.getFieldNames()[9])[0]); 
         	geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.GENE_SYMBOL)[0]);
-//        	geneLabels.add(String.valueOf(i));
         }
         if (!framework.getData().isAnnotationLoaded()){
         	JOptionPane.showMessageDialog(null, "Annotation not found", "Missing Annotation", JOptionPane.ERROR_MESSAGE);
@@ -171,7 +152,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         
         alpha = GLOBALANCDialog.getAlpha();
         dataDesign = 4;
-    	//System.out.println("dataDesigngui " +dataDesign);
         numGroups = GLOBALANCDialog.getNumGroups();
         numFullGroups = GLOBALANCDialog.getNumFullGroups();
         numRedGroups = GLOBALANCDialog.getNumRedGroups();
@@ -179,42 +159,16 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         factorBName = GLOBALANCDialog.getFactorBName();
         groupAssignments=GLOBALANCDialog.getGroupAssignments();
         geneSetFilePath = GLOBALANCDialog.getGeneSetFilePath();
+        geneSetOrigin = GLOBALANCDialog.getGeneSetOrigin();
         if (groupAssignments == null)
         	return null;
         
-//        isHierarchicalTree = GLOBALANCDialog.drawTrees();
-//        drawSigTreesOnly = true;
-//        if (isHierarchicalTree) {
-//            drawSigTreesOnly = GLOBALANCDialog.drawSigTreesOnly();
-//        }      
-//        
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
         }
         
-        // hcl init
-//        int hcl_method = 0;
-//        boolean hcl_samples = false;
-//        boolean hcl_genes = false;
-//        int hcl_function = 4;
-//        boolean hcl_absolute = false;
-//        boolean hcl_samples_ordered=false;
-//        boolean hcl_genes_ordered=false;
-//        if (isHierarchicalTree) {
-//            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
-//            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-//                return null;
-//            }
-//            hcl_method = hcl_dialog.getMethod();
-//            hcl_samples = hcl_dialog.isClusterExperiments();
-//            hcl_genes = hcl_dialog.isClusterGenes();
-//            hcl_function = hcl_dialog.getDistanceMetric();
-//            hcl_absolute = hcl_dialog.getAbsoluteSelection();
-//            hcl_genes_ordered = hcl_dialog.isGeneOrdering();
-//            hcl_samples_ordered = hcl_dialog.isSampleOrdering();
-//        }
         
         Listener listener = new Listener();
         
@@ -238,7 +192,8 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("numBGroups",String.valueOf(numRedGroups));
             data.addParam("nameA",String.valueOf(factorAName));
             data.addParam("nameB",String.valueOf(factorBName));
-            data.addParam("geneSetFilePath", geneSetFilePath);
+            data.addParam("geneSetOrigin",String.valueOf(geneSetOrigin));
+            data.addStringArray("geneSetFilePaths", geneSetFilePath);
             if (dataDesign==5){
                 data.addParam("numAGroups",String.valueOf(2));
                 data.addParam("numBGroups",String.valueOf(numGroups));
@@ -249,19 +204,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             //Raktim
             data.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
             data.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
-            
-            // hcl parameters
-//            if (isHierarchicalTree) {
-//                data.addParam("hierarchical-tree", String.valueOf(true));
-//                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
-//                data.addParam("method-linkage", String.valueOf(hcl_method));
-//                data.addParam("calculate-genes", String.valueOf(hcl_genes));
-//                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
-//                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
-//                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
-//                data.addParam("hcl-genes-ordered", String.valueOf(hcl_genes_ordered));
-//                data.addParam("hcl-samples-ordered", String.valueOf(hcl_samples_ordered));
-//            }
             
             long start = System.currentTimeMillis();
             AlgorithmData result = algorithm.execute(data);
@@ -293,11 +235,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             //ADD MORE INFO PARAMETERS HERE
             info.alpha = alpha;
             info.function = menu.getFunctionName(function);
-//            info.hcl = isHierarchicalTree;
-//            info.hcl_genes = hcl_genes;
-//            info.hcl_samples = hcl_samples;
-//            info.hcl_method = hcl_method;
-//            
             Vector<String> titlesVector = new Vector<String>();
             for (int i = 0; i < geneGroupMeans[0].length; i++) {
                 titlesVector.add("Group " + (i+1) + " mean");
@@ -683,51 +620,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         root.add(node);
     }
     
-    /**
-     * Adds nodes to display hierarchical trees.
-     */
-//    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
-//        if (!info.hcl) {
-//            return;
-//        }
-//        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
-//        NodeList nodeList = result_cluster.getNodeList();
-//        if (!drawSigTreesOnly) {        
-//            for (int i=0; i<nodeList.getSize(); i++) {
-//                if (i < nodeList.getSize() - 1 ) {
-//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-//                } else if (i == nodeList.getSize() - 1) {
-//                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
-//                }
-//            }
-//        } else {
-//            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
-//        }
-//        root.add(node);
-//    }
-    
-    /**
-     * Creates an <code>HCLViewer</code>.
-     */
-    protected IViewer createHCLViewer(Node clusterNode, GeneralInfo info) {
-        HCLTreeData genes_result = info.hcl_genes ? getResult(clusterNode, 0) : null;
-        HCLTreeData samples_result = info.hcl_samples ? getResult(clusterNode, info.hcl_genes ? 4 : 0) : null;
-        return new HCLViewer(this.experiment, clusterNode.getFeaturesIndexes(), genes_result, samples_result);
-    }
-    
-    /**
-     * Returns a hcl tree data from the specified cluster node.
-     */
-    protected HCLTreeData getResult(Node clusterNode, int pos) {
-        HCLTreeData data = new HCLTreeData();
-        NodeValueList valueList = clusterNode.getValues();
-        data.child_1_array = (int[])valueList.getNodeValue(pos).value;
-        data.child_2_array = (int[])valueList.getNodeValue(pos+1).value;
-        data.node_order = (int[])valueList.getNodeValue(pos+2).value;
-        data.height = (float[])valueList.getNodeValue(pos+3).value;
-        return data;
-    }
-    
+
     /**
      * Adds node with cluster information.
      */
@@ -895,11 +788,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     	//EH constructor added so AMP could extend
         protected GeneralInfo(){
     		super();
-    	}        
-        public String getMethodName() {
-            return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
-        }
-        
+    	}      
     }
     
 }
