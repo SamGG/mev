@@ -4,13 +4,7 @@
  * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
-/*
- * $RCSfile: LIMMAGUI.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-11-07 17:27:40 $
- * $Author: eleanorahowe $
- * $State: Exp $
- */
+
 package org.tigr.microarray.mev.cluster.gui.impl.globanc;
 
 import java.awt.event.ActionEvent;
@@ -270,14 +264,6 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
                     auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
                     auxData[i][counter++] = new Float(geneGroupSDs[i][j]);
                 }
-//                auxData[i][counter++] = fValues.get(i, 0);
-//                for (int j=0; j<getTotalInteractions(numGroups); j++) {
-//	                auxData[i][counter++] = pValues.get(i, j);
-//	                auxData[i][counter++] = adjpValues.get(i, j);
-//	                auxData[i][counter++] = lfc.get(i, j);
-//	                auxData[i][counter++] = tStat.get(i, j);
-//	                auxData[i][counter++] = logOdds.get(i, j);
-//                }
             }
             return createResultTree(result_cluster, info);
             
@@ -313,35 +299,12 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         if (groupAssignments == null)
         	return null;
         
-//        boolean isHierarchicalTree = GLOBANCDialog.drawTrees();
-//        drawSigTreesOnly = true;
-//        if (isHierarchicalTree) {
-//            drawSigTreesOnly = GLOBANCDialog.drawSigTreesOnly();
-//        }         
-        
         IDistanceMenu menu = framework.getDistanceMenu();
         int function = menu.getDistanceFunction();
         if (function == Algorithm.DEFAULT) {
             function = Algorithm.EUCLIDEAN;
         }
         
-        // hcl init
-//        int hcl_method = 0;
-//        boolean hcl_samples = false;
-//        boolean hcl_genes = false;
-//        int hcl_function = 4;
-//        boolean hcl_absolute = false;
-//        if (isHierarchicalTree) {
-//            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
-//            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
-//                return null;
-//            }
-//            hcl_method = hcl_dialog.getMethod();
-//            hcl_samples = hcl_dialog.isClusterExperiments();
-//            hcl_genes = hcl_dialog.isClusterGenes();
-//            hcl_function = hcl_dialog.getDistanceMetric();
-//            hcl_absolute = hcl_dialog.getAbsoluteSelection();
-//        }        
         AlgorithmData data = new AlgorithmData();
         
         data.addParam("distance-factor", String.valueOf(1.0f));
@@ -349,19 +312,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         
         data.addParam("distance-function", String.valueOf(function));
         data.addIntArray("group_assignments", groupAssignments);
-        data.addParam("alpha-value", String.valueOf(GLOBANCDialog.mPanel.alpha));
-        data.addParam("numGroups", String.valueOf(numGroups));
-        // hcl parameters
-//        if (isHierarchicalTree) {
-//            data.addParam("hierarchical-tree", String.valueOf(true));
-//            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));              
-//            data.addParam("method-linkage", String.valueOf(hcl_method));
-//            data.addParam("calculate-genes", String.valueOf(hcl_genes));
-//            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
-//            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
-//            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
-//        }
-        
+        data.addParam("numGroups", String.valueOf(numGroups));        
         
         // alg name
         data.addParam("name", "GLOBANC");
@@ -666,10 +617,15 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
-        if (dataDesign!=5)
-        	node.add(getGroupAssignmentInfo());
-//        if (this.isHierarchicalTree)
-//        	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
+        
+    	node.add(getGroupAssignmentInfo());
+        
+        node.add(new DefaultMutableTreeNode("Full Model Groups: "+this.numFullGroups));  
+        node.add(new DefaultMutableTreeNode("Reduced Model Groups: "+this.numRedGroups));  
+        node.add(new DefaultMutableTreeNode("Gene set: "+(geneSetOrigin==0 ? "local file" :geneSetOrigin==1 ? "MSigDB":"GeneSigDB")));
+        for (int i=0; i<geneSetFilePath.length; i++){
+        	node.add(new DefaultMutableTreeNode("File location: "+geneSetFilePath[i]));        	
+        }
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         root.add(node);
     }
@@ -678,12 +634,9 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
-        //System.out.println("ng "+numGroups);
         for (int i = 0; i < numGroups; i++) {
-            groups[i] = new DefaultMutableTreeNode("Group " + (i+1));
-            
-        }
-        
+            groups[i] = new DefaultMutableTreeNode("Group " + (i+1));            
+        }        
         for (int i = 0; i < groupAssignments.length; i++) {
             int currentGroup = groupAssignments[i];
             if (currentGroup == 0) {

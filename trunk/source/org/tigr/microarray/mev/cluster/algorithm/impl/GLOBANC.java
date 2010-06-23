@@ -17,10 +17,6 @@ import org.rosuda.JRI.Rengine;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeList;
-import org.tigr.microarray.mev.cluster.NodeValue;
-import org.tigr.microarray.mev.cluster.NodeValueList;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -40,33 +36,20 @@ import javax.swing.JOptionPane;
 import java.util.Vector;
 
 public class GLOBANC extends AbstractAlgorithm{
-	private int progress;
 	private FloatMatrix expMatrix,collapsedExpMatrix;
+	float[][] resultMatrix;
 	private boolean stop = false;
-	private int[] groupAssignments;
+	private int dataDesign;
+	private int numGenes, numExps, numGroups, iteration, numBGroups, progress, geneSetOrigin;
+	private int[] groupAssignments,mapping, mapping2;;
 	private int[][] geneLists;
-	private int[] mapping, mapping2;
-	private String[] geneSetFilePath;
-	private int numGenes, numExps, numGroups, iteration, numBGroups;
-	private boolean  drawSigTreesOnly;
-	private int hcl_function;
-	private boolean hcl_absolute;
-	private boolean hcl_genes_ordered;  
-	private boolean hcl_samples_ordered; 
+	private String[] geneNames, sampleNames, geneSetFilePath, collapsedGeneNames, geneListsNames;
 	ArrayList<String> geneNameAL;
 
-	private int dataDesign;
 	private static int MSigDBFile = 1;
 //	private static int GeneSigDBFile = 2;
 
 	private AlgorithmEvent event;
-
-	private String[] geneNames, collapsedGeneNames;
-	private String[] sampleNames;
-	float[][] resultMatrix;
-	int validN;
-	private String[] geneListsNames;
-	private int geneSetOrigin;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -91,16 +74,6 @@ public class GLOBANC extends AbstractAlgorithm{
 		sampleNames = data.getStringArray("sampleLabels");
 		geneSetFilePath = data.getStringArray("geneSetFilePaths");
 		geneSetOrigin = map.getInt("geneSetOrigin", 0);
-		hcl_absolute = map.getBoolean("hcl-distance-absolute", false);     
-		hcl_genes_ordered = map.getBoolean("hcl-genes-ordered", false);  
-		hcl_samples_ordered = map.getBoolean("hcl-samples-ordered", false);    
-		boolean hierarchical_tree = map.getBoolean("hierarchical-tree", false);
-		if (hierarchical_tree) {
-			drawSigTreesOnly = map.getBoolean("draw-sig-trees-only");
-		}        
-		int method_linkage = map.getInt("method-linkage", 0);
-		boolean calculate_genes = map.getBoolean("calculate-genes", false);
-		boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
 
 		mapping = new int[expMatrix.getRowDimension()];
 		for (int i=0; i<mapping.length; i++){
@@ -135,37 +108,10 @@ public class GLOBANC extends AbstractAlgorithm{
 		numExps = expMatrix.getColumnDimension();
 
 		AlgorithmData result = new AlgorithmData();
-//		FloatMatrix means = getMeans(sigGenesArrays);       
-//		FloatMatrix variances = getVariances(sigGenesArrays, means); 
 		Cluster result_cluster = new Cluster();
-		NodeList nodeList = result_cluster.getNodeList();
-		int[] features;        
-		for (int i=0; i<geneLists.length; i++) {
-			if (stop) {
-				throw new AbortException();
-			}
-			features = geneLists[i];
-			Node node = new Node(features);
-			nodeList.addNode(node);
-			if (hierarchical_tree) {
-				if (drawSigTreesOnly) {
-					if (i == 0) {
-						node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
-						event.setIntValue(i+1);
-						fireValueChanged(event);                       
-					}                    
-				} else {                
-					node.setValues(calculateHierarchicalTree(features, method_linkage, calculate_genes, calculate_experiments));
-					event.setIntValue(i+1);
-					fireValueChanged(event);
-				}                
-			}
-		}
 		//remap genes to expmatrix
 		int[][]sigReturn = new int[geneLists.length][];
-		//System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
 		for (int i=0; i<geneLists.length; i++){
-			//System.out.println("sga "+i);
 			sigReturn[i]=new int[geneLists[i].length];
 			for (int j=0; j<geneLists[i].length; j++){
 				sigReturn[i][j]=mapping2[mapping[geneLists[i][j]]];
@@ -184,68 +130,6 @@ public class GLOBANC extends AbstractAlgorithm{
 
 		return result;   
 	}
-
-
-
-	private FloatMatrix getSubExperiment(FloatMatrix experiment, int[] features) {
-		FloatMatrix subExperiment = new FloatMatrix(features.length, experiment.getColumnDimension());
-		for (int i=0; i<features.length; i++) {
-			subExperiment.A[i] = experiment.A[features[i]];
-		}
-		return subExperiment;
-	}
-	/**
-	 * Checking the result of hcl algorithm calculation.
-	 * @throws AlgorithmException, if the result is incorrect.
-	 */
-	private void validate(AlgorithmData result) throws AlgorithmException {
-		if (result.getIntArray("child-1-array") == null) {
-			throw new AlgorithmException("parameter 'child-1-array' is null");
-		}
-		if (result.getIntArray("child-2-array") == null) {
-			throw new AlgorithmException("parameter 'child-2-array' is null");
-		}
-		if (result.getIntArray("node-order") == null) {
-			throw new AlgorithmException("parameter 'node-order' is null");
-		}
-		if (result.getMatrix("height") == null) {
-			throw new AlgorithmException("parameter 'height' is null");
-		}
-	}
-	private NodeValueList calculateHierarchicalTree(int[] features, int method, boolean genes, boolean experiments) throws AlgorithmException {
-		NodeValueList nodeList = new NodeValueList();
-		AlgorithmData data = new AlgorithmData();
-		FloatMatrix experiment = getSubExperiment(expMatrix, features);
-		data.addMatrix("experiment", experiment);
-		data.addParam("hcl-distance-function", String.valueOf(this.hcl_function));
-		data.addParam("hcl-distance-absolute", String.valueOf(this.hcl_absolute));
-		data.addParam("method-linkage", String.valueOf(method));
-		HCL hcl = new HCL();
-		AlgorithmData result;
-		if (genes) {
-			data.addParam("calculate-genes", String.valueOf(true));
-			data.addParam("optimize-gene-ordering", String.valueOf(hcl_genes_ordered));
-			result = hcl.execute(data);
-			validate(result);
-			addNodeValues(nodeList, result);
-		}
-		if (experiments) {
-			data.addParam("calculate-genes", String.valueOf(false));
-			data.addParam("optimize-sample-ordering", String.valueOf(hcl_samples_ordered));
-			result = hcl.execute(data);
-			validate(result);
-			addNodeValues(nodeList, result);
-		}
-		return nodeList;
-	}
-
-	private void addNodeValues(NodeValueList target_list, AlgorithmData source_result) {
-		target_list.addNodeValue(new NodeValue("child-1-array", source_result.getIntArray("child-1-array")));
-		target_list.addNodeValue(new NodeValue("child-2-array", source_result.getIntArray("child-2-array")));
-		target_list.addNodeValue(new NodeValue("node-order", source_result.getIntArray("node-order")));
-		target_list.addNodeValue(new NodeValue("height", source_result.getMatrix("height").getRowPackedCopy()));
-	}
-
 
 	private float[] getGeneGroupMeans(int gene) {
 		float[] geneValues = new float[numExps];
@@ -407,7 +291,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 		//if(fileLoc.contains("\\"));
 		fileLoc = fileLoc.replace("\\", "/");
-		collapseProbesToGenes();
+		collapseProbesAndRemoveNaNs();
 		String filePath = writeMatrixToFile(fileLoc, collapsedExpMatrix, collapsedGeneNames);
 		//Create data matrix in R from a file
 		//logger.writeln("RHook.createRDataMatrixFromFile(\"y\","+ filePath+", true,"+ sampleNames+")");
@@ -462,14 +346,9 @@ public class GLOBANC extends AbstractAlgorithm{
 		for (int i=0; i<matrix.length; i++){
 			for (int j=0; j<matrix[i].length; j++){
 				resultMatrix[i][j] = (float)matrix[i][j];
-				System.out.print(resultMatrix[i][j]+"\t");
 			}
-			System.out.println();
 		}
 		
-//		phenodata = getStudyDesign();
-//		RHook.log(phenodata);
-//		RHook.evalR(phenodata);
 		int a=0;
 		RHook.endRSession();
 		if (a==0)
@@ -648,10 +527,22 @@ public class GLOBANC extends AbstractAlgorithm{
 		return cmd;
 	}
 	
-	private void collapseProbesToGenes() {
+	private void collapseProbesAndRemoveNaNs() {
 		geneNameAL = new ArrayList<String>();
 		ArrayList<Integer> indicesMap = new ArrayList<Integer>();
 		for (int i=0; i<expMatrix.getRowDimension(); i++){
+			//determine if gene has NaNs
+			boolean hasNaNs = false;
+			for (int j=0; j<expMatrix.getColumnDimension(); j++){
+				if (Float.isNaN(expMatrix.A[i][j])){
+					hasNaNs = true;
+					break;
+				}
+			}
+			if (hasNaNs)
+				continue;
+			
+			//add to data if not already added
 			if (!geneNameAL.contains(geneNames[i])){
 				geneNameAL.add(geneNames[i]);
 				indicesMap.add(i);
