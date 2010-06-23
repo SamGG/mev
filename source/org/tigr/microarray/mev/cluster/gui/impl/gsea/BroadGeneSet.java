@@ -46,7 +46,7 @@ public class BroadGeneSet extends ISupportFileDefinition {
                 if (line == null) {
                 	eof = true;
                 } else {
-                    if(Pattern.matches(errorString, line.subSequence(0, line.length())))
+                    if(line.startsWith(errorString))//(Pattern.matches(errorString, line.subSequence(0, line.length())))
                     	return false;
                 	else
                 		return true;

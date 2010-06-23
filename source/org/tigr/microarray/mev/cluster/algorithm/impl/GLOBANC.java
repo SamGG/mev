@@ -389,6 +389,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		try {
 			PrintWriter genesout  = new PrintWriter(new BufferedWriter(new FileWriter(genesFile)));
 			PrintWriter namesout  = new PrintWriter(new BufferedWriter(new FileWriter(namesFile)));
+			String comma = "";
 			genesout.write("genesvector <- list(");
 			namesout.write("names(genesvector) <- c(");
 			String line;
@@ -407,7 +408,7 @@ public class GLOBANC extends AbstractAlgorithm{
 					//if enough genes...
 					al.add(new ArrayList<Integer>());
 	
-					String tmp ="c(";					
+					String tmp =comma+"c(";					
 					boolean first = true;
 					
 					for (int i=2; i<genes.length; i++){
@@ -429,11 +430,12 @@ public class GLOBANC extends AbstractAlgorithm{
 					} else {
 						if ((line = br.readLine()) == null && fileIndex==geneSetFilePath.length-1) {
 							genesout.write(")");
-							namesout.write("'"+genes[titleIndex].replace("'", "")+"'");
+							namesout.write(comma+"'"+genes[titleIndex].replace("'", "")+"'");
 						} else {
-							genesout.write("),");
-							namesout.write("'"+genes[titleIndex].replace("'", "")+"',");
+							genesout.write(")");
+							namesout.write(comma+"'"+genes[titleIndex].replace("'", "")+"'");
 						}
+						comma = ",";
 						namesal.add(genes[titleIndex]);
 					}
 				}
