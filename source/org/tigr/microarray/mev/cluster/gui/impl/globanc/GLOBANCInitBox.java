@@ -4,13 +4,6 @@
  * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
-/*
- * $RCSfile: OneWayANOVAInitBox.java,v $
- * $Revision: 1.10 $
- * $Date: 2006-11-07 17:27:40 $
- * $Author: dschlauch $
- * $State: Exp $
- */
 
 package org.tigr.microarray.mev.cluster.gui.impl.globanc;
 
@@ -38,7 +31,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -437,9 +429,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				geneSigValid = true;				
 				System.out.println(file.getAbsolutePath());
 			}
-			
-
-			
+						
 		} catch (SupportFileAccessError sfae) {
 			System.out.println("Could not download GeneSigDbGeneSets file.");
 		} catch (RepositoryInitializationError e) {
@@ -464,10 +454,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	}
 	
 	public boolean onBrowse(){
-		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
-		
+		JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);		
 		int retVal = fileChooser.showOpenDialog(this);
-
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
 			genesetFilePath = new String[1];
@@ -482,27 +470,15 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 		public void actionPerformed(ActionEvent e) {
 			if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from MSigDB")){
 				gsfPanel.browseDownloadButton.setText("Download");
-				
-//				genesetPanel.removeAll();
-//				revalidate();
-//				gba.add(genesetPanel, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				createDownloadPanel("Please enter your MSigDB registration email address:", "Download", "msigdb_download");
-//				gba.add(genesetPanel, identifierSelectionPanel, 0, 5, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-//				revalidate();
-
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Load local geneset file/files")){
 				gsfPanel.browseDownloadButton.setText("Browse");
 			}else if(((String)geneSetSelectionBox.getSelectedItem()).equalsIgnoreCase("Download from GeneSigDB")) {
 				gsfPanel.browseDownloadButton.setText("Download");
-			}
-			
+			}			
 		}
 	}
     
     class MultiClassPanel extends JPanel {
-        /**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		DesignPanel ngPanel;
         GridBagConstraints constraints;
@@ -519,16 +495,13 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         JLabel infoLabel2;
         int numFullGroups=-1;
         int numRedGroups=-1;
-        float alpha;
         String factorAName = "Full Model";
         String factorBName = "Reduced Model";
-        //Vector exptNames;
         
-        public MultiClassPanel(/*Vector exptNames*/) {
+        public MultiClassPanel() {
             constraints = new GridBagConstraints();
             gridbag = new GridBagLayout();
             this.setBackground(Color.white);
-            //this.exptNames = exptNames;
             this.setLayout(gridbag);
             ngPanel = new DesignPanel();
 
@@ -569,8 +542,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Global Ancova Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
             buildConstraints(constraints, 0, 1,1,1,100,10);
             gridbag.setConstraints(topPanel, constraints);
-            this.add(topPanel);
-            
+            this.add(topPanel);            
             
             infoLabel = new JLabel("Sample Group Assignment");
             infoLabel.setMaximumSize(new Dimension(50,50));
@@ -613,16 +585,11 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             ngPanel.okPressed = true;
             okReady = true;
             try {
-//            	alpha = Float.parseFloat(ngPanel.alphaField.getText());
         		numFullGroups = Integer.parseInt(ngPanel.numFullGroupsField.getText());
             	numRedGroups = Integer.parseInt(ngPanel.numReducedGroupsField.getText());
             }catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(null, "Error reading parameter input.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
-            }
-            if (alpha>1||alpha<0){//checks alpha value
-            	JOptionPane.showMessageDialog(null, "Please enter an alpha value between 0 and 1.", "Error", JOptionPane.ERROR_MESSAGE);
-            	return;
             }
 
             if ((numFullGroups<2||numRedGroups<2)){ //checks factorial design group amounts
@@ -650,7 +617,6 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     		cnstr.gridwidth=2;
     		cnstr.weighty = 0;
     		selectionPanel.add(createSaveLoadPanel(), cnstr);
-
             
             factorACS= new ClusterSelector(repository, numFullGroups, "Full Model");
             factorBCS= new ClusterSelector(repository, numRedGroups, "Reduced Model");
@@ -663,8 +629,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             cnstr.fill = GridBagConstraints.BOTH;
         	clusterSelectorPanel.add(factorACS, cnstr);
         	cnstr.gridx = 1;
-            clusterSelectorPanel.add(factorBCS, cnstr);
-            
+            clusterSelectorPanel.add(factorBCS, cnstr);            
             
             tabbedmulg.add("Button Selection", selectionPanel);
             tabbedmulg.add("Cluster Selection", clusterSelectorPanel);
@@ -679,16 +644,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             enableOK();
             ngPanel.numFullGroupsField.setEnabled(false);
             ngPanel.numReducedGroupsField.setEnabled(false);
-//            ngPanel.alphaField.setEnabled(false);
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
             step2 = true;
         }
         class DesignPanel extends JPanel {
-            /**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField;//, alphaField;
             JLabel numGroupsLabel;
@@ -730,39 +691,17 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 2, 1, 1, 30, 0);
                 gridbag.setConstraints(numReducedGroupsField, constraints);
-                this.add(numReducedGroupsField);
-                
-                
-//                JLabel alphaLabel = new JLabel("Significance Level: Alpha = ");
-//                buildConstraints(constraints, 0, 4, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.EAST;
-//                gridbag.setConstraints(alphaLabel, constraints);
-//                this.add(alphaLabel);
-//                
-//                alphaField = new JTextField(".05", 7);
-//                alphaField.setMinimumSize(new Dimension(50,20));
-//                constraints.anchor = GridBagConstraints.WEST;
-//                buildConstraints(constraints, 1, 4, 1, 1, 30, 0);
-//                gridbag.setConstraints(alphaField, constraints);
-//                this.add(alphaField);
-            }
-           
+                this.add(numReducedGroupsField);                
+            }           
             
             public void setVisible(boolean visible) {
-                //Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 setLocation((MultiClassPanel.this.getWidth() - getSize().width)/2, (MultiClassPanel.this.getHeight() - getSize().height)/2);
-                
-                super.setVisible(visible);
-                
-                if (visible) {
-                    //bPanel.okButton.requestFocus(); //UNCOMMMENT THIS LATER
-                }
+                super.setVisible(visible);               
             }
             
             public boolean isOkPressed() {
                 return okPressed;
-            }
-            
+            }            
         }
         
 
@@ -871,10 +810,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     			}
     		}
     	}
+    	
         class ExperimentsSelectionPanel extends JPanel {
-            /**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 			int numPanels = 0;
             JLabel[] expLabels;
@@ -912,8 +849,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 	                for (int j = 0; j < numGroups; j++) {
 	                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", true);
 	                    chooseTime[i].add(assignmentRBs[j][i]);
-	                }
-                    
+	                }                    
                     
                     //set current panel
                     currPanel = i / 512;
@@ -932,9 +868,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                     gridbag.setConstraints(notInTimeGroupRadioButtons[i], constraints);
                     
                     
-                    panels[currPanel].add(notInTimeGroupRadioButtons[i]);                    
-                    
-                    
+                    panels[currPanel].add(notInTimeGroupRadioButtons[i]);
                 }
                 
                 int maxLabelWidth = 0;
@@ -953,10 +887,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 
                 JScrollPane scroll = new JScrollPane(bigPanel);
                 scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-                
-                
-                
+                scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);                
+                             
                 JPanel [] exptNameHeaderPanels = new JPanel[this.numPanels];
                 GridBagLayout exptHeaderGridbag = new GridBagLayout();
                 for(int i = 0; i < exptNameHeaderPanels.length; i++) {
@@ -984,10 +916,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 
                 buildConstraints(constraints, 0, 0, 1, 1, 100, 90,GridBagConstraints.CENTER,GridBagConstraints.BOTH);
                 gridbag2.setConstraints(scroll, constraints);
-                this.add(scroll);
-                
-                
-          
+                this.add(scroll);              
             }
             /**
              *  resets all group assignments
@@ -996,8 +925,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 for (int i = 0; i < exptNames.size(); i++) {
                 	notInTimeGroupRadioButtons[i].setSelected(true);
                 }
-            }
-        	
+            }        	
         }
 
     	/**
@@ -1175,6 +1103,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         		}
         	}
     	}
+    	
     	private void setStateBasedOnIndex(Vector<String>groupAssignments,Vector<String>groupNames, int cond,Vector<String>condAssignments){
     		Object[] optionst = { "Continue", "Cancel" };
     		if (JOptionPane.showOptionDialog(null, 
@@ -1244,9 +1173,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 	loadAssignments();
                 	
                 }
-            });
-            
-            
+            });           
             
             constraints.anchor = GridBagConstraints.CENTER;
             constraints.fill = GridBagConstraints.NONE;
@@ -1334,8 +1261,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				inc[grpAssign[i]-1]++;
 		}
 		for (int i=0; i<inc.length; i++){
-			if (inc[i] < 1){
-				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
+			if (inc[i] < 2){
+				JOptionPane.showMessageDialog(null, "Please select at least 2 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
 	    		return false;
 			}
 		}
