@@ -66,7 +66,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     protected int[] groupAssignments;
     protected double falseProp;
     protected IData data;
-    protected int numGroups, dataDesign, numFullGroups, numRedGroups, geneSetOrigin;
+    protected int numGroups, dataDesign, numFullGroups, numRedGroups, geneSetOrigin, numPerms;
     protected float alpha;
     protected String factorAName, factorBName;
     protected boolean errorGenes;
@@ -145,6 +145,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         alpha = GLOBALANCDialog.getAlpha();
         dataDesign = 4;
         numGroups = GLOBALANCDialog.getNumGroups();
+        numPerms = GLOBALANCDialog.getNumPerms();
         numFullGroups = GLOBALANCDialog.getNumFullGroups();
         numRedGroups = GLOBALANCDialog.getNumRedGroups();
         factorAName = GLOBALANCDialog.getFactorAName();
@@ -181,6 +182,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             data.addParam("numGroups", String.valueOf(numGroups));
             data.addParam("alpha", String.valueOf(alpha));
             data.addParam("numAGroups",String.valueOf(numFullGroups));
+            data.addParam("numPerms",String.valueOf(numPerms));
             data.addParam("numBGroups",String.valueOf(numRedGroups));
             data.addParam("nameA",String.valueOf(factorAName));
             data.addParam("nameB",String.valueOf(factorBName));
@@ -620,11 +622,12 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         
         node.add(new DefaultMutableTreeNode("Full Model Groups: "+this.numFullGroups));  
         node.add(new DefaultMutableTreeNode("Reduced Model Groups: "+this.numRedGroups));  
+        node.add(new DefaultMutableTreeNode("Number of Permutations: "+numPerms)); 
         node.add(new DefaultMutableTreeNode("Gene set: "+(geneSetOrigin==0 ? "local file" :geneSetOrigin==1 ? "MSigDB":"GeneSigDB")));
         node.add(new DefaultMutableTreeNode("Annotation Type: "+annotChosen));  
         for (int i=0; i<geneSetFilePath.length; i++){
         	node.add(new DefaultMutableTreeNode("File location: "+geneSetFilePath[i]));        	
-        }
+        } 
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
         root.add(node);
     }

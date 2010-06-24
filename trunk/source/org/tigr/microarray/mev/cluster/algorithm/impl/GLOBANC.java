@@ -40,7 +40,7 @@ public class GLOBANC extends AbstractAlgorithm{
 	float[][] resultMatrix;
 	private boolean stop = false;
 	private int dataDesign;
-	private int numGenes, numExps, numGroups, iteration, numBGroups, progress, geneSetOrigin;
+	private int numGenes, numExps, numGroups, iteration, numBGroups, numPerms, progress, geneSetOrigin;
 	private int[] groupAssignments,mapping, mapping2;;
 	private int[][] geneLists;
 	private String[] geneNames, sampleNames, geneSetFilePath, collapsedGeneNames, geneListsNames;
@@ -69,6 +69,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		dataDesign = map.getInt("dataDesign");
 		numGroups = map.getInt("numGroups");
 		numBGroups = map.getInt("numBGroups");
+		numPerms = map.getInt("numPerms");
 
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
@@ -342,8 +343,7 @@ public class GLOBANC extends AbstractAlgorithm{
 			System.out.println("\tR Obj name: " + objs[i]);
 		}
 
-		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = 100)";
-//		RHook.log(runGA);
+		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = " + numPerms + ")";
 		RHook.evalR(runGA);
 		
 		REXP x = RHook.evalR("GA.obj");
@@ -354,12 +354,6 @@ public class GLOBANC extends AbstractAlgorithm{
 				resultMatrix[i][j] = (float)matrix[i][j];
 			}
 		}
-		
-		int a=0;
-		RHook.endRSession();
-		if (a==0)
-			return;
-		
 		
 		RHook.endRSession();
 		removeTmps(filePath);
