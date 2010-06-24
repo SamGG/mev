@@ -129,12 +129,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         for (int i = 0; i < number_of_samples; i++) {
             exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
             sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
-        }
-        
-        if (!framework.getData().isAnnotationLoaded()){
-        	JOptionPane.showMessageDialog(null, "Annotation not found", "Missing Annotation", JOptionPane.ERROR_MESSAGE);
-        	return null;
-        }
+        }        
         	
         
         GLOBANCInitBox GLOBALANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getData().getAllFilledAnnotationFields(), framework.getClusterRepository(1));
@@ -616,7 +611,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
     
     
     /**
-     * Adds node with general iformation.
+     * Adds node with general information.
      */
     protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
