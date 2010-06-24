@@ -317,7 +317,13 @@ public class GLOBANC extends AbstractAlgorithm{
 		System.out.println("phenodata: " + phenoData);
 
 		
-		String[] geneset = getPathwaysCMD_fast();// 
+		String[] geneset = getPathwaysCMD_fast();
+		if (geneset==null){
+			stop = true;
+			JOptionPane.showMessageDialog(null, "The gene annotation you have selected does not match the annotation in the gene sets.", "No Matching Annotation", JOptionPane.ERROR_MESSAGE);
+			throw new AbortException();
+		}
+		
 		// Source the R File genesfile.R
 		RHook.evalR("source('" + geneset[0] + "')");
 		// Source the R File namesfile.R
@@ -440,6 +446,9 @@ public class GLOBANC extends AbstractAlgorithm{
 					}
 				}
 				br.close();
+			}
+			if (al.size()==0){
+				return null;
 			}
 			//cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
 			genesout.write(")");
