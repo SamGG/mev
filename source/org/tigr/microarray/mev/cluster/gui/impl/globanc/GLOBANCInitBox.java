@@ -498,6 +498,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         JLabel infoLabel2;
         int numFullGroups=-1;
         int numRedGroups=-1;
+        int numPerms = 100;
         String factorAName = "Full Model";
         String factorBName = "Reduced Model";
         
@@ -573,6 +574,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             infoLabel2.setVisible(true);
             ngPanel.numFullGroupsField.setEnabled(true);
             ngPanel.numReducedGroupsField.setEnabled(true);
+            ngPanel.numPermsField.setEnabled(true);
             step2Button.setText("Continue...");
             step2 = false;
             tabbedmulg.setVisible(false);
@@ -590,6 +592,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             try {
         		numFullGroups = Integer.parseInt(ngPanel.numFullGroupsField.getText());
             	numRedGroups = Integer.parseInt(ngPanel.numReducedGroupsField.getText());
+            	numPerms = Integer.parseInt(ngPanel.numPermsField.getText());
             }catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(null, "Error reading parameter input.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -647,6 +650,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             enableOK();
             ngPanel.numFullGroupsField.setEnabled(false);
             ngPanel.numReducedGroupsField.setEnabled(false);
+            ngPanel.numPermsField.setEnabled(false);
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
@@ -654,8 +658,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         }
         class DesignPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
-			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField,numReducedGroupsField;//, alphaField;
-            JLabel numGroupsLabel;
+			JTextField factorAName, factorBName, factorALevel, factorBLevel, numFullGroupsField, numReducedGroupsField, numPermsField;//, alphaField;
+            JLabel numGroupsLabel,numPermsLabel;
             JPanel factorPanel;
             boolean okPressed = false;
             public DesignPanel() {
@@ -694,7 +698,22 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 2, 1, 1, 30, 0);
                 gridbag.setConstraints(numReducedGroupsField, constraints);
-                this.add(numReducedGroupsField);                
+                this.add(numReducedGroupsField);         
+
+                numPermsLabel = new JLabel("Number of permutations: ");
+                numPermsLabel.setVisible(true);
+                buildConstraints(constraints, 0, 3, 1, 1, 30, 100);
+                constraints.anchor = GridBagConstraints.EAST;
+                gridbag.setConstraints(numPermsLabel, constraints);
+                this.add(numPermsLabel);
+
+                numPermsField = new JTextField("100", 7);
+                numPermsField.setVisible(true);
+                numPermsField.setMinimumSize(new Dimension(50,20));
+                constraints.anchor = GridBagConstraints.WEST;
+                buildConstraints(constraints, 1, 3, 1, 1, 30, 0);
+                gridbag.setConstraints(numPermsField, constraints);
+                this.add(numPermsField);  
             }           
             
             public void setVisible(boolean visible) {
@@ -1264,8 +1283,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 				inc[grpAssign[i]-1]++;
 		}
 		for (int i=0; i<inc.length; i++){
-			if (inc[i] < 2){
-				JOptionPane.showMessageDialog(null, "Please select at least 2 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
+			if (inc[i] < 1){
+				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
 	    		return false;
 			}
 		}
@@ -1455,5 +1474,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
 	public String getSelectedAnnotation() {
 		return (String)this.gsfPanel.geneIdentifierBox.getSelectedItem();
+	}
+
+
+	public int getNumPerms() {
+		return mPanel.numPerms;
 	}
 }
