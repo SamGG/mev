@@ -96,10 +96,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     JTabbedPane selectionPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
+    String[] annotFields;
     
     /** Creates new Global AncovaInitBox */
-    public GLOBANCInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
+    public GLOBANCInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, String[] annotFields, ClusterRepository repository) {
         super(parentFrame, "Global Ancova Initialization", modality);
+        this.annotFields = annotFields;
         this.exptNames = exptNames;  
         this.repository = repository;
         
@@ -296,6 +298,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
     		});
 
             Field[]fields=AnnotationFieldConstants.class.getFields();
+            
             String[]annotation=new String[fields.length+1];
             annotation[0]="";
             try{
@@ -306,7 +309,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             	
             }
             
-            geneIdentifierBox=new JComboBox(annotation);
+            geneIdentifierBox=new JComboBox(annotFields);
             geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
             
             
@@ -1429,8 +1432,8 @@ public class GLOBANCInitBox extends AlgorithmDialog {
         for (int i = 0; i < 24; i++) {
             dummyVect.add("Expt " + i);
         }
-        
-        GLOBANCInitBox oBox = new GLOBANCInitBox(dummyFrame, true, dummyVect, null);
+        String[] anf = {"asd","dfgdfg","GENE_SYMBOL", "PROBE_ID"};
+        GLOBANCInitBox oBox = new GLOBANCInitBox(dummyFrame, true, dummyVect, anf, null);
         oBox.setVisible(true);
 //        int[] k = oBox.getGroupAssignments();
 //        for (int i=0; i<k.length; i++){
@@ -1447,5 +1450,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 
 	public int getGeneSetOrigin() {
 		return this.geneSetSelectionBox.getSelectedIndex();
+	}
+
+
+	public String getSelectedAnnotation() {
+		return (String)this.gsfPanel.geneIdentifierBox.getSelectedItem();
 	}
 }

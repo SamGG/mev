@@ -77,6 +77,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
 	private String[] geneListNames;
 	private FloatMatrix resultMatrix;
 	private String[] geneSetFilePath;
+	private String annotChosen;
 	
 	
     
@@ -130,17 +131,19 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
         }
         
-        for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
-        	geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.GENE_SYMBOL)[0]);
-        }
         if (!framework.getData().isAnnotationLoaded()){
         	JOptionPane.showMessageDialog(null, "Annotation not found", "Missing Annotation", JOptionPane.ERROR_MESSAGE);
         	return null;
         }
         	
         
-        GLOBANCInitBox GLOBALANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1));
+        GLOBANCInitBox GLOBALANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getData().getAllFilledAnnotationFields(), framework.getClusterRepository(1));
         GLOBALANCDialog.setVisible(true);
+        
+        annotChosen = GLOBALANCDialog.getSelectedAnnotation();
+        for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
+        	geneLabels.add(framework.getData().getElementAnnotation(i, annotChosen)[0]);
+        }
         
         if (!GLOBALANCDialog.isOkPressed()) return null;
         
@@ -287,7 +290,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
-        GLOBANCInitBox GLOBANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1));
+        GLOBANCInitBox GLOBANCDialog = new GLOBANCInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getData().getAllFilledAnnotationFields(),framework.getClusterRepository(1));
         GLOBANCDialog.setVisible(true);
         
         if (!GLOBANCDialog.isOkPressed()) return null;
@@ -623,6 +626,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
         node.add(new DefaultMutableTreeNode("Full Model Groups: "+this.numFullGroups));  
         node.add(new DefaultMutableTreeNode("Reduced Model Groups: "+this.numRedGroups));  
         node.add(new DefaultMutableTreeNode("Gene set: "+(geneSetOrigin==0 ? "local file" :geneSetOrigin==1 ? "MSigDB":"GeneSigDB")));
+        node.add(new DefaultMutableTreeNode("Annotation Type: "+annotChosen));  
         for (int i=0; i<geneSetFilePath.length; i++){
         	node.add(new DefaultMutableTreeNode("File location: "+geneSetFilePath[i]));        	
         }
