@@ -1282,12 +1282,12 @@ public class GLOBANCInitBox extends AlgorithmDialog {
 			if (grpAssign[i]!=0)
 				inc[grpAssign[i]-1]++;
 		}
-		for (int i=0; i<inc.length; i++){
-			if (inc[i] < 1){
-				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
-	    		return false;
-			}
-		}
+//		for (int i=0; i<inc.length; i++){
+//			if (inc[i] < 1){
+//				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
+//	    		return false;
+//			}
+//		}
 		return true;
     }
 
