@@ -1243,8 +1243,10 @@ public class GLOBANCInitBox extends AlgorithmDialog {
             		return;
             	}
             	//check parameters
-            	if (!isParamSufficient())
+            	if (!isParamSufficient()){
+            		JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
+            	}
                 okPressed = true;
             	dispose();
             } else if (command.equals("reset-command")) {
@@ -1276,19 +1278,38 @@ public class GLOBANCInitBox extends AlgorithmDialog {
      * false, if the group assignment is lacking.
      */
     private boolean isParamSufficient(){
-		int[] inc = new int[getNumGroups()];
-		int[] grpAssign = getGroupAssignments();
-		for (int i=0; i<grpAssign.length; i++){
-			if (grpAssign[i]!=0)
-				inc[grpAssign[i]-1]++;
-		}
+    	boolean[] full = new boolean[this.mPanel.numFullGroups];
+    	boolean[] reduced = new boolean[this.mPanel.numRedGroups];
+    	for (int i = 0; i < exptNames.size(); i++) {
+        	if (mPanel.fullModelESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.reducedModelESP.notInTimeGroupRadioButtons[i].isSelected()){
+        		continue;
+        	}
+            for (int j = 0; j < mPanel.fullModelESP.assignmentRBs.length; j++) {
+                if (mPanel.fullModelESP.assignmentRBs[j][i].isSelected()) {
+                	full[j]=true;
+                }
+            }
+            for (int j = 0; j < mPanel.reducedModelESP.assignmentRBs.length; j++) {
+                if (mPanel.reducedModelESP.assignmentRBs[j][i].isSelected()) {
+                    reduced[j]=true;
+                }
+            }
+        }
+    	for (int i=0; i<full.length; i++){
+    		if (!full[i])
+    			return false;
+    	}
+    	for (int i=0; i<reduced.length; i++){
+    		if (!reduced[i])
+    			return false;
+    	}
+		return true;
 //		for (int i=0; i<inc.length; i++){
 //			if (inc[i] < 1){
 //				JOptionPane.showMessageDialog(null, "Please select at least 1 sample for each group combination.", "Error", JOptionPane.WARNING_MESSAGE);
 //	    		return false;
 //			}
 //		}
-		return true;
     }
 
 
