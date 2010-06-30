@@ -891,7 +891,7 @@ public class SURVInitBox extends AlgorithmDialog {
     				//save group names..?
     				
     				pw.print("Module:\t");
-    				pw.println("LIMMA");
+    				pw.println("SURVIVAL");
     				pw.print("Design:\t");
     				pw.println(ngPanel.getExperimentDesign());
     				int groupMax;
@@ -1171,7 +1171,7 @@ public class SURVInitBox extends AlgorithmDialog {
         					
         					//check what module saved the file
         					if(lineArray[0].startsWith("Module:")) {
-        						if (!lineArray[1].equals("LIMMA")){
+        						if (!lineArray[1].equals("SURVIVAL")){
         							Object[] optionst = { "Continue", "Cancel" };
         							if (JOptionPane.showOptionDialog(null, 
         		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
@@ -1267,6 +1267,7 @@ public class SURVInitBox extends AlgorithmDialog {
         				
         				//set state
         				try{
+                    		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
         				}catch (Exception e){
                         	if (getExperimentalDesign()==4){
                         		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
@@ -1905,8 +1906,8 @@ public class SURVInitBox extends AlgorithmDialog {
        	data.setFeaturesList(features);
        	
 //       	
-//        SURVInitBox oBox = new SURVInitBox(dummyFrame, true, dummyVect, new ClusterRepository(0), new ClusterRepository(0), data, dummySampleAnns);
-//        oBox.setVisible(true);
+        SURVInitBox oBox = new SURVInitBox(dummyFrame, true, dummyVect, new ClusterRepository(0), new ClusterRepository(0), data, dummySampleAnns);
+        oBox.setVisible(true);
         System.exit(0);
     }
 }
