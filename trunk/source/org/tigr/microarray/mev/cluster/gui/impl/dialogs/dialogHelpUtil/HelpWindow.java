@@ -445,6 +445,9 @@ public class HelpWindow extends JDialog {
 		if(key.equals("LM Initialization Dialog")) {
 			return "lm_parameters.html";
 		}
+		if(key.equals("MINET Initialization Dialog")) {
+			return "minet.html";
+		}
         	if(key.equals("LEM Initialization Dialog"))
         		return "lem_parameters.html";
         	if(key.equals("LEM Bin Color and Limits Selection Dialog"))
