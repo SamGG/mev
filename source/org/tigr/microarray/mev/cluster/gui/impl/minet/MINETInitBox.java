@@ -1324,7 +1324,7 @@ public class MINETInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(MINETInitBox.this, "MINET- Initialization Dialog");
+                HelpWindow hw = new HelpWindow(MINETInitBox.this, "MINET Initialization Dialog");
                 okPressed = false;
                 if(hw.getWindowContent()){
                     hw.setSize(450,600);

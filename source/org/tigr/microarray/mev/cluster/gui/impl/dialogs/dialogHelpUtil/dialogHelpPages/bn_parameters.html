@@ -6,6 +6,16 @@
 <h2> Location of Support File(s) </h2>
 This option allows users to select the location where all support files needed to run BN.
 <br>
+<h2> Network Seed </h2>
+<p>If this option is selected the user is expected to provide a file representing network. The file should contain a list of edges, one of each line, and the nodes are separated by a tab. The identifier of the node should be one of the following provided in the drop down identified as “Select Seed UID”. Directionality is assumed in each edge specified such that node_A tab node_B is read as node_A to node_B. Cycles are not allowed.</p>
+<p>A network seed can also be built from using the “Create Network Seed” button. It allows user to create list of edges selecting nodes from the data directly. This option is limited in feature.</p>
+Network seed can be used in one of the three ways:
+<ol>
+	<li>Using the user network seed alone and bypassing literature based network seeding altogether.</li>
+	<li>Using the user network seed along with Literature mining seed. In this case conflicts (A to B in user seed vs. B to A in Lit mining) in directions are resolved by giving precedence to used provided network seed.</li>
+	<li>User provided network is used as a complete network and the network structure is not learned, only the Conditional Probability Tables (CPTs) associated with the network is learned for downstream exploration.</li>
+</ol>
+<br>
 <h2> Network Priors Sources </h2>
 The checkboxes provide the users to select the source of Bayesian prior probablities in constructing a seeded network.
 Currently Literature Mining and KEGG priors are avaialble. The Protein - Protein Interaction as a source of priors is still under development.
