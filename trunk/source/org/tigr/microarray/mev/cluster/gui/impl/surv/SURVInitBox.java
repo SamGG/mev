@@ -473,11 +473,9 @@ public class SURVInitBox extends AlgorithmDialog {
                 useAllGenes.addActionListener(new ActionListener(){
                   public void actionPerformed(ActionEvent ae) {
                 	  if(useAllGenes.isSelected()) {
-                		  System.out.println("disabling gene cluster selector");
                 		  geneClusterBrowser.setEnabled(false);
                 	  } else {
                 		  if (useCluster.isSelected()) {
-                    		  System.out.println("enabling gene cluster selector");
                 			  geneClusterBrowser.setEnabled(true);
                 		  }
                 	  }
@@ -486,11 +484,9 @@ public class SURVInitBox extends AlgorithmDialog {
                 useCluster.addActionListener(new ActionListener(){
                     public void actionPerformed(ActionEvent ae) {
                   	  if(useAllGenes.isSelected()) {
-                		  System.out.println("disabling gene cluster selector");
                   		  geneClusterBrowser.setEnabled(false);
                   	  } else {
                   		  if (useCluster.isSelected()) {
-                    		  System.out.println("enabling gene cluster selector");
                   			  geneClusterBrowser.setEnabled(true);
                   		  }
                   	  }
@@ -588,6 +584,8 @@ public class SURVInitBox extends AlgorithmDialog {
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
+            ngPanel.oneClass.setEnabled(false);
+            ngPanel.twoClass.setEnabled(false);
             step2 = true;
         }
         
@@ -1129,7 +1127,7 @@ public class SURVInitBox extends AlgorithmDialog {
     		 */
     		
     		File file;		
-    		JFileChooser fileChooser = new JFileChooser("./data");
+    		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
     		
     		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
     		
