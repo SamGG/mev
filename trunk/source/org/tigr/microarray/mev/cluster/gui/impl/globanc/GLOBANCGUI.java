@@ -512,7 +512,7 @@ public class GLOBANCGUI implements IClusterGUI, IScriptGUI {
 //        addCentroidViews(root);
         addTableViews(root);
         addGeneSetInfo(root);
-        addClusterInfo(root);
+//        addClusterInfo(root);
         
         addGeneralInfo(root, info);
     }

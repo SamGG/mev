@@ -213,7 +213,7 @@ public class SAM extends AbstractAlgorithm {
 		qLowestFDR = new double[1];
 
 		if (!usePreviousGraph&&!this.useRSAM) {
-
+			SAMState.useRSAM = useRSAM;
 			imputedMatrix = new FloatMatrix(numGenes, numExps);
 
 			if (useKNearest) {

@@ -277,9 +277,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 
 		try {
-		//System.out.println("Testing GLOBANC install");
 		RHook.testPackage("globalanc");
-		//System.out.println("Loading Lib GLOBANC");
 		RHook.log("dataDesign = " + dataDesign);
 		RHook.log("Starting R Algorithim");
 		
@@ -315,7 +313,6 @@ public class GLOBANC extends AbstractAlgorithm{
 		phenoData = phenoData.substring(0, phenoData.length()-1);
 		phenoData = phenoData+")))";
 		RHook.evalR(phenoData);
-		System.out.println("phenodata: " + phenoData);
 
 		
 		String[] geneset = getPathwaysCMD_fast();
@@ -339,10 +336,6 @@ public class GLOBANC extends AbstractAlgorithm{
 		// List objects created in R
 		REXP e = RHook.evalR("ls()");
 		String objs[] = e.asStringArray();
-		for(int i=0; i < objs.length; i++) {
-			System.out.println("\tR Obj name: " + objs[i]);
-		}
-
 		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = " + numPerms + ")";
 		RHook.evalR(runGA);
 		
@@ -356,7 +349,7 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 		
 		RHook.endRSession();
-		removeTmps(filePath);
+//		removeTmps(filePath);
 		} catch (Exception e) {
 			RHook.log(e);
 			try {
@@ -570,7 +563,6 @@ public class GLOBANC extends AbstractAlgorithm{
 
 			int row = fm.getRowDimension();
 			int col = fm.getColumnDimension();
-			System.out.println("row="+row+"  col="+col);
 			String srtVector = "";
 
 			for(int iRow = 0; iRow < row; iRow++) {
