@@ -645,7 +645,7 @@ public class BNInitDialog extends AlgorithmDialog {
 					);
 			setBackground(Color.white);
 			*/
-			netSeedCheckbox = new JCheckBox("Use Network Seed",false);
+			netSeedCheckbox = new JCheckBox("Use Custom Network Seed",false);
 			netSeedCheckbox.setFocusPainted(false);
 			netSeedCheckbox.setBackground(Color.white);
 			netSeedCheckbox.setHorizontalAlignment(JRadioButton.CENTER);
@@ -2164,7 +2164,7 @@ public class BNInitDialog extends AlgorithmDialog {
 						JOptionPane.showMessageDialog(
 								parent, 
 								"File: " + 
-								netSeedFile.getAbsolutePath() + " is missing or un-readable",
+								netSeedFile.getAbsolutePath() + " is missing or unreadable",
 								"BN Initialization: Missing Network Seed File", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
