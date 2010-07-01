@@ -507,6 +507,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 lowerCutoff = Float.NEGATIVE_INFINITY;
             }
             boolean useFoldChange = resultMap.getBoolean("useFoldChange");
+            useRSAM = resultMap.getBoolean("useR");
             float foldChangeValue = resultMap.getFloat("foldChangeValue");
             FloatMatrix dValuesMatrix = result.getMatrix("dValuesMatrix");
             FloatMatrix rValuesMatrix = result.getMatrix("rValuesMatrix");

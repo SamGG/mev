@@ -105,14 +105,16 @@ public class SAM extends AbstractAlgorithm {
 			timeCourseData[i] = tcData.A[0][i];
 		}
 		int[]startOrEndInt = data.getIntArray("start-or-end");
-		startOrEnd = new String[startOrEndInt.length];
-		for (int i=0; i<startOrEndInt.length; i++){
-			if (startOrEndInt[i]==0)
-				startOrEnd[i] = "";
-			else if (startOrEndInt[i]==1)
-				startOrEnd[i] = "Start";
-			else if (startOrEndInt[i]==2)
-				startOrEnd[i] = "End";
+		if (startOrEnd!=null){
+			startOrEnd = new String[startOrEndInt.length];
+			for (int i=0; i<startOrEndInt.length; i++){
+				if (startOrEndInt[i]==0)
+					startOrEnd[i] = "";
+				else if (startOrEndInt[i]==1)
+					startOrEnd[i] = "Start";
+				else if (startOrEndInt[i]==2)
+					startOrEnd[i] = "End";
+			}
 		}
 		AlgorithmParameters map = data.getParams();
 		useRSAM = map.getBoolean("use-r-sam", true);
@@ -793,9 +795,10 @@ public class SAM extends AbstractAlgorithm {
 
 		} else { 
 
-			if (this.useRSAM){//Use R, 
+			if (this.useRSAM&&!usePreviousGraph){//Use R, 
 				this.runRAlg();
 			}else{// if (usePreviousGraph)
+				useRSAM = SAMState.useRSAM;
 				imputedMatrix = SAMState.imputedMatrix;
 				// oneClassMean = SAMState.oneClassMean;
 				dBarValues = SAMState.dBarValues;
@@ -1130,6 +1133,7 @@ public class SAM extends AbstractAlgorithm {
 		result.addParam("FDRMedian", FDRMedian);
 		result.addParam("FDR90th", FDR90th);
 		result.addParam("useFoldChange", String.valueOf(useFoldChange));
+		result.addParam("useR", String.valueOf(this.useRSAM));
 		result.addParam("foldChangeValue", String.valueOf((float) foldChange));
 		result.addMatrix("clusters_means", means);
 		result.addMatrix("clusters_variances", variances);
