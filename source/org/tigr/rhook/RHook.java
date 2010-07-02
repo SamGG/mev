@@ -240,7 +240,7 @@ public class RHook  {
 					rhookPropFile.createNewFile();
 
 				FileOutputStream out = new FileOutputStream(rhookPropFile);
-				rHookProps.store(out, "----- Last Saved @" + getDateTime() + " -----");
+				rHookProps.store(out, "----- Last Saved @ " + getDateTime() + " -----");
 				out.close();
 			}
 		}
