@@ -363,7 +363,7 @@ public class HCL extends AbstractAlgorithm {
 	    	LeavesUnder[leavesInit][0]= leavesInit;
 	    }
 		MakeLeavesUnderMatrix(2*n-2, Child1, Child2, n, LeavesUnder, NumberOfChildren);
-		
+
 		float[][] OptimalSum = new float[n][n];
 		float match;
 		float bestMatch = Float.POSITIVE_INFINITY;
@@ -389,7 +389,7 @@ public class HCL extends AbstractAlgorithm {
 			Child1[reset]=-1;
 			Child2[reset]=-1;
 		}
-	   	 
+
 		//uses OptimalSum matrix to find leaves generating the best possible sum of similarities
 		if (!stop) {
 			for (int u = 0; u < NumberOfChildren[Child1[two_n - 2]];u++){
@@ -402,6 +402,7 @@ public class HCL extends AbstractAlgorithm {
 					}
 				}
 			}
+
 			//recursive method determines optimal ordering and rotates nodes appropriately
 			OptimizeLeafOrder(two_n - 2, NumberOfChildren, LeavesUnder, Child1, Child2, OptimalSum, bestU, bestW, n);	
 		}
@@ -424,6 +425,7 @@ public class HCL extends AbstractAlgorithm {
                 
       //      }
 	result.addParam("function", String.valueOf(function));
+
 	return result;
     }
     

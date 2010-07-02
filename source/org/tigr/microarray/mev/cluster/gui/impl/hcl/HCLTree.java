@@ -205,9 +205,6 @@ public class HCLTree extends JPanel {
 		    	similarityFactor = -1.0f;
 		    }
 		}
-		System.out.println("nodeHeightOffset = "+ nodeHeightOffset);
-		System.out.println("similarityFactor = "+ similarityFactor);
-		System.out.println("function = "+ function);
 	}
 
 //    private HCLTree() { }
