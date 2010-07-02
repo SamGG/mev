@@ -48,6 +48,8 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
+
+import com.sun.corba.se.spi.activation.Repository;
 /**
  * DataPanel class creates the data selection component or the first panel of GSEA Wizard dialog
  * @author sarita
@@ -489,7 +491,9 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
         tabbedSelectors=new JTabbedPane();
 		tabbedSelectors.insertTab("Cluster Selection",null,clusterSelectorPanel, null, 0);
 		tabbedSelectors.insertTab("Button Selection", null, gPanel, null, 1);  
-     
+		if (clusterRepository==null||clusterRepository.isEmpty())
+			tabbedSelectors.setSelectedIndex(1);
+		
 		constraints=buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
 		constraints.fill=GridBagConstraints.BOTH;
 		((GridBagLayout)pane.getLayout()).setConstraints(tabbedSelectors, constraints);
