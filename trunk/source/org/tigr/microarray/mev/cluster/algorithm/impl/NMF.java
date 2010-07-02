@@ -659,8 +659,9 @@ public class NMF extends AbstractAlgorithm{
     			connMatForHCL[i][j] = connectivityMatrix[i][j];
 
     	data.addMatrix("experiment", new FloatMatrix(connMatForHCL));
+    	data.addParam("hcl-distance-function", String.valueOf(PEARSON));
 	    data.addParam("calculate-genes", String.valueOf(false));
-	    data.addParam("optimize-sample-ordering", String.valueOf(true));
+	    data.addParam("optimize-sample-ordering", String.valueOf(doSamples));
 	    result = hcl.executeNMF(data, connMatForHCL);
 	    validate(result);
 	    addNodeValues(nodeList, result);
