@@ -1517,6 +1517,12 @@ public class SURVInitBox extends AlgorithmDialog {
 	    			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each group.", "Error", JOptionPane.WARNING_MESSAGE);
 	        		return false;
 	    		}
+	    		if(mPanel.ngPanel.validEventData && 
+		    			mPanel.ngPanel.validCensoringData) {
+		    		} else {
+		    			JOptionPane.showMessageDialog(null, "Please select valid event and censoring data.", "Error", JOptionPane.WARNING_MESSAGE);
+		        		return false;
+	    		}
 	    		return true;
 	    	}	
     	}
