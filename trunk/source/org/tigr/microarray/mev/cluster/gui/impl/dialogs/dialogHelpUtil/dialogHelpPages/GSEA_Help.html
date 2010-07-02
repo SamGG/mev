@@ -1,14 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
-		<title>MeV: GSEA Documentation</title>
-		<link type="text/css" rel="stylesheet" href="../../tm4online.css"></link>
-		<link rel="icon" href="../../tm4.ico"></link>
+
 	</head>
 	<body>
  		<div id="frame">
 			<div id="contentheader">
-				<a href="http://www.tm4.org/"><img src="../../banner_logo.png" alt=""/></a><img src="../../banner_montage.png" alt=""/> 
 			</div>
 			<div id="contentleft">
 			</div>
@@ -18,7 +15,7 @@
 				<p>
 				<b>Gene Set Enrichment Analysis (GSEA)</b> is a computational method that determines whether an a priori defined set of genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes).
 				<br />
-				Reference: <a href="http://www.broad.mit.edu/gsea/">http://www.broad.mit.edu/gsea/</a>
+				Reference: http://www.broad.mit.edu/gsea/
 				</p> 
 			<h1>Why GSEA?</h1>
 				<p>
@@ -49,28 +46,21 @@
 				<p>
 				GSEA uses a set of parameter input dialogs that open sequentially to provide input options that correspond to each step of the process.  The first step in the processes is the selection of all the requisite data and supplementary files.
 				</p>
-				<img src="gsea1.jpg">
 				<p>
 				The “Phenotype/Class Assignment” panel as the name suggests lets you assign phenotype/class labels to your samples. On clicking the “Assign” button, a dialog box pops up asking you the number of factors.
 				</p>
-				<img src="gsea2.jpg">
 				<p>
 				For example, if sex is the phenotype (factors) that influences your data the most, enter 1 in the textbox provided.
 				</p>
-				<br />
-				
 				<p>
 				The next step in assigning phenotypes would be to specify the level of each phenotye/factor.
 				</p>
-				<img src="gsea3.jpg">
 				<p>
 				In the example above, MALE and FEMALE are the two levels of the phenotype “SEX.” So, enter 2 in the textbox provided.
 				</p>
-				<br />
 				<p>
 				The final step in assigning phenotype labels to your samples would be to assign which sample corresponds to what level
 				</p>
-				<img src="gsea4.jpg">
 				<p>
 				Going by our example, Group1 and Group2 symbolize MALE and FEMALE. <br />
  				</p>
@@ -80,12 +70,11 @@
 				<p>
 				This is what you will see once the phenotype assignment is completed.
 				</p>
-				<img src="gsea5.jpg">
 				<p>
 				The “Geneset” panel allows you to load the gene set of your choice. You can load an existing geneset using the Browse button.
 				</p>
 				<p>
-				 You can download genesets from the MIT/Broad website <a href="http://www.broad.mit.edu/gsea/msigdb/downloads.jsp">http://www.broad.mit.edu/gsea/msigdb/downloads.jsp</a> 
+				 You can download genesets from the MIT/Broad website http://www.broad.mit.edu/gsea/msigdb/downloads.jsp
 				</p>
 				<p>
 				The “Annotation” panel lets you upload annotations. Annotations are a MUST for running GSEA. Details on how to load annotations is described in the MeV Manual.
@@ -93,7 +82,6 @@
 				<p>
 				The next step in running GSEA is to assign parameters. On hitting the Next button, you will see something like this:
 				</p>
-				<img src="gsea9.jpg">
 				<p>
 				The GUI is pretty self explanatory, but here is some better clarification about the available methods for collapsing probes to genes.
 				</p>
@@ -138,13 +126,12 @@
 				<p>
 				The output from the algorithm is two sets of p values: “Lower p values” and “Upper p values” for the gene sets. Lower p values are the probability of seeing a test statistic lower than the observed one. Upper p values are the probability of seeing a test statistic higher than the observed one.
 				</p>
-				<img src="gsea10.jpg">
 				<p>
 				This is the result screen that you would see on clicking: Table Viewer -> “Significant Genes”. Another piece of information that MeV would provide you is the list of gene sets which have been excluded from the analysis because they do not meet the minimum genes per gene set criteria. This is determined by adding up the number of genes per gene set which are also present in the expression data.
 				</p>
 				<h1>Useful links</h1>
 				<p>
-				A description of the gene set files, provided by MIT is available at: <a href="http://www.broad.mit.edu/gsea/msigdb/index.jsp">http://www.broad.mit.edu/gsea/msigdb/index.jsp</a>.  
+				A description of the gene set files, provided by MIT is available at: http://www.broad.mit.edu/gsea/msigdb/index.jsp.  
 				</p>
 			
 				<br clear="all" /><!-- without this little <br /> NS6 and IE5PC do not stretch the frame div down to encopass the content DIVs -->
