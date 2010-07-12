@@ -495,8 +495,8 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 		public void browseForSupportFiles() {
 			String startDir = TMEV
 					.getSettingForOption(EASEGUI.LAST_EASE_FILE_LOCATION);
-//			if (startDir == null)
-//				startDir = supportFileLocationField.getText();
+			if (startDir == null)
+				startDir = supportFileLocationField.getText();
 			File file = new File(startDir);
 			if (!file.exists()) {
 				file = TMEV.getFile("data/ease");
