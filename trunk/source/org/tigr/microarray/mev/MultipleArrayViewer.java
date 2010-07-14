@@ -4093,6 +4093,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	        historyLog = new HistoryViewer();
 			tree.updateUI();
 	        tree.repaint();
+	        systemDisable(TMEV.DATA_AVAILABLE);
 	        this.data = new MultipleArrayData();
 	        initSessionMetaData();
 	        this.viewer.onSelected(framework);
