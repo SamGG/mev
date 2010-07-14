@@ -210,9 +210,11 @@ public class MultipleArrayToolbar extends JToolBar {
 		setEnable(ActionManager.SAVE_IMAGE_COMMAND, false);
 		setEnable(ActionManager.PRINT_IMAGE_COMMAND, false);
 		setEnable(ActionManager.ANALYSIS_COMMAND, false);
-			for (int i=0; i<steppedComboArray.length; i++){
-				steppedComboArray[i].setEnabled(false);  //uncomment before committing
-			}
+		for (int i=0; i<steppedComboArray.length; i++){
+			steppedComboArray[i].setEnabled(false);
+			steppedComboArray[i].insertItemAt(this.disabledCategoryIcon[i], 0);
+			steppedComboArray[i].removeItemAt(1);
+		}
 		break;
 	    case TMEV.DB_AVAILABLE:
 		setEnable(ActionManager.LOAD_DB_COMMAND, false);
