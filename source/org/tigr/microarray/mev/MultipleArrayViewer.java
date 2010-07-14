@@ -4521,7 +4521,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 
 			 if(importDialog.showModal() == JOptionPane.OK_OPTION) {
                  data.addResourcererGeneAnnotation(importDialog.getDataAnnotationKey(), reader.getAffyAnnotation());
-                
+                 data.chipAnnotation = reader.getAffyChipAnnotation();
                     menubar.replaceLabelMenuItems(data.getFieldNames());
                     
                     //add event to history log
