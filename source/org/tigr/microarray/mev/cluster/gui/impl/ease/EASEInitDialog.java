@@ -1027,8 +1027,13 @@ public class EASEInitDialog extends AlgorithmDialog {
 				try {
 					ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(
 							speciesName, arrayName);
+					if(speciesName==null || arrayName==null){
+						
+					}else{
 					annotationFile = resourceManager.getSupportFile(def, false);
+					}
 				} catch (SupportFileAccessError sfae) {
+					sfae.printStackTrace();
 					useLoadedAnnotationFile = false;
 				}
 			} else {
@@ -1120,8 +1125,8 @@ public class EASEInitDialog extends AlgorithmDialog {
 				result = JOptionPane.OK_OPTION;
 				// if the user has clicked on the select button or accessed
 				// advanced options then proceed
-				if (isSelected || isAdvancedAnnotParams) {
-					if (!useLoadedAnnotationFile && f.length() == 0) {
+				if (isSelected && !isAdvancedAnnotParams) {
+					if (!useLoadedAnnotationFile) {						
 						JOptionPane
 								.showMessageDialog(
 										parent,
@@ -1130,13 +1135,12 @@ public class EASEInitDialog extends AlgorithmDialog {
 												+ "Please load annotation files into Mev by selecting Import Resourcerer Gene Annotation on the utilities menu.",
 										"EASE Initialization: Missing Parameter",
 										JOptionPane.WARNING_MESSAGE);
-
 						/*To validate that the path of support files was
 						 obtained*/
 					} else {
 						dispose();
 					}
-				} else {
+				} else if (!isSelected && !isAdvancedAnnotParams) {
 					JOptionPane
 							.showMessageDialog(
 									parent,
@@ -1147,6 +1151,8 @@ public class EASEInitDialog extends AlgorithmDialog {
 									JOptionPane.WARNING_MESSAGE);
 					configPanel.getEaseSupportFileButton.requestFocusInWindow();
 
+				}else {
+					dispose();
 				}
 
 			} else if (command.equals("cancel-command")) {
