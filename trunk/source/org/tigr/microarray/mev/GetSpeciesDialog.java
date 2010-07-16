@@ -89,7 +89,7 @@ public class GetSpeciesDialog extends org.tigr.microarray.mev.cluster.gui.impl.d
         this.supplantButtonPanel(buttonPanel);
         this.addContent(paramPanel);
         
-        this.setSize(480, 260);
+        this.setSize(480, 280);
     }
     
     
