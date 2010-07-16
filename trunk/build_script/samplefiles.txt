@@ -10,8 +10,8 @@ Annotation/kingdom_species_cloneset_list.txt
 
 # Mage Tab files
 magetab/E-AFMX-10.idf.txt
-magetab/E-AFMX-10.test.sdrf.txt
-magetab/E-AFMX-10-data.txt
+magetab/E-AFMX-10.sdrf.txt
+magetab/E-AFMX-10.data.txt
 
 
 # BN datafiles & folders

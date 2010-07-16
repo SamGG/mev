@@ -1592,15 +1592,15 @@ for(int k=0;k<dataTypes.length;k++) {
 					File dataFile = new File(selectedDataMatrix.getText());
     				processAffyGCOSFile(dataFile);
 					//check for SOME form of 'signal' in the comboboxes
-					if(sflp.signalComboBox.equals("none") && 
-    						sflp.ratioComboBox.equals("none") &&
-    						sflp.dye1ComboBox.equals("none") &&
-    						sflp.dye2ComboBox.equals("none")) {
-    						setLoadEnabled(false);
-    				} else {
-    					setLoadEnabled(true);
-    				}
 				}
+        		if(sflp.signalComboBox.equals("none") && 
+						sflp.ratioComboBox.equals("none") &&
+						sflp.dye1ComboBox.equals("none") &&
+						sflp.dye2ComboBox.equals("none")) {
+					setLoadEnabled(false);
+				} else {
+					setLoadEnabled(true);
+        		}
         	}
         	dir = fileChooser.getCurrentDirectory();
         	pathName = dir.getPath();
