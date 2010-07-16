@@ -4471,7 +4471,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
          JPanel annotationPanel=new JPanel();
   	    annotationPanel.setLayout(new GridBagLayout());
           annotationPanel.setBorder(new EtchedBorder());
-         
   	       
   	    adh = new AnnotationDownloadHandler(this.framework);
   	  
@@ -4484,13 +4483,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
   		}
   		adh.addListener(new EventListener());
   		annotationPanel = adh.getAnnotationLoaderPanel(gba);
-  		annotationPanel.setBackground(Color.white);
   		
   		adh.setDownloadEnabled(!this.framework.getData().isAnnotationLoaded());
          
         HTMLMessageFileChooser dialog = new HTMLMessageFileChooser(getFrame(), "Gene Annotation File Selection", msg, annotationPanel, true);
-        dialog.setSize(new Dimension(700,500));
-        
+        dialog.setSize(new Dimension(640, 450));
         if(dialog.showModal()==JOptionPane.OK_OPTION) {
         	processAnnotationFile();
         }

@@ -131,14 +131,14 @@ public class HTMLMessageFileChooser extends JDialog {
          JPanel buttonPanel = new JPanel();
          okButton = new JButton("OK");
          okButton.setActionCommand("ok-command");
-         okButton.setSize(60,30);
-         okButton.setPreferredSize(new Dimension(60,30));
+         okButton.setSize(75,28);
+         okButton.setPreferredSize(new Dimension(75,28));
          okButton.setFocusPainted(false);
          okButton.addActionListener(new Listener());
          cancelButton = new JButton("Cancel");
          cancelButton.setActionCommand("cancel-command");
-         cancelButton.setSize(60,30);
-         cancelButton.setPreferredSize(new Dimension(60,30));
+         cancelButton.setSize(75,28);
+         cancelButton.setPreferredSize(new Dimension(75,28));
          cancelButton.setFocusPainted(false);
          cancelButton.addActionListener(new Listener());
          
