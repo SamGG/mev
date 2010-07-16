@@ -53,6 +53,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     private JMenu adjustMenu;
     private JMenu filterMenu;
     private JMenu clusterMenu;
+    private JMenuItem searchMenu;
     private ButtonGroup labelGroup;
     private ActionListener listener;
     private boolean affyNormAdded = false;
@@ -296,7 +297,8 @@ public class MultipleArrayMenubar extends JMenuBar {
         add(displayMenu);
         
         JMenu utilMenu = new JMenu("Utilities");
-        utilMenu.add(createJMenuItem(manager.getAction(ActionManager.SEARCH_ACTION)));
+        searchMenu = createJMenuItem(manager.getAction(ActionManager.SEARCH_ACTION));
+        utilMenu.add(searchMenu);
         utilMenu.addSeparator();
         
         clusterMenu = new JMenu("Cluster Utilities");
@@ -489,6 +491,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Display", true);
                 setEnableMenu("Sort", true);
                 clusterMenu.setEnabled(true);
+                searchMenu.setEnabled(true);
                 break;
             case TMEV.ANALYSIS_LOADED:
                 setEnableMenuItem("File", ActionManager.SAVE_ANALYSIS_COMMAND, true);
@@ -536,6 +539,7 @@ public class MultipleArrayMenubar extends JMenuBar {
                 setEnableMenu("Normalization", false);
                 setEnableMenu("Metrics", false);
                 clusterMenu.setEnabled(false);
+                searchMenu.setEnabled(false);
                 //setEnableMenu("Utilities", false);
                 break;
             case TMEV.DB_AVAILABLE:
