@@ -16,18 +16,15 @@ package org.tigr.microarray.mev;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.GrayFilter.*;
 import javax.swing.plaf.metal.*;
 import javax.swing.plaf.basic.*;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
-import javax.swing.event.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,15 +33,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.ListCellRenderer;
 import javax.swing.JList;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.BorderFactory; 
 
 import org.tigr.microarray.mev.action.ActionManager;
-import org.tigr.microarray.mev.cluster.algorithm.AbortException;
-import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 
 public class MultipleArrayToolbar extends JToolBar {
     
+	private static final long serialVersionUID = 1L;
 	boolean tempDeletion = true;
     /**
      * Construct a <code>MultipleArrayToolbar</code> using
@@ -56,6 +51,7 @@ public class MultipleArrayToolbar extends JToolBar {
     }
     
     Action actiontester;
+    int totalModules;
     ActionManager manager;
     SteppedComboBox[] steppedComboArray;
     SteppedComboBox cghSteppedComboBox;
@@ -64,21 +60,11 @@ public class MultipleArrayToolbar extends JToolBar {
 
 	ImageIcon[] categoryIcon = new ImageIcon[category.length];
 	ImageIcon[] disabledCategoryIcon = new ImageIcon[category.length];
-    /**
-     * Adds actions into the toolbar.
-     */
-  
-    private int algorithmCount(ActionManager manager){
-    	int count=0;
-    	Action action;
-    	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(count)))!=null){
-    		count++;
-    	}
-    	return count;
-    }
+
     
     private void addAlgorithmActions(ActionManager manager) {
     	this.manager = manager;
+    	totalModules = 0;
     	Action action;
     	steppedComboArray = new SteppedComboBox[category.length];
     	
@@ -112,6 +98,7 @@ public class MultipleArrayToolbar extends JToolBar {
    					steppedComboArray[i].setActionCommand(ActionManager.ANALYSIS_COMMAND);
    		    		steppedComboArray[i].putClientProperty("categoryIconExists", true);
    		    		steppedComboArray[i].putClientProperty("categoryIcon",categoryIcon[i]);
+   		    		totalModules++;
    				}
    				index++;
    			 }
@@ -124,8 +111,8 @@ public class MultipleArrayToolbar extends JToolBar {
    			steppedComboArray[i].setPopupWidth(preferredWidth);
    			
    			add(steppedComboArray[i]);
-   			 this.addSeparator();
-   			 index=0;
+   			this.addSeparator();
+   			index=0;
     		}
     	}
  
@@ -137,8 +124,7 @@ public class MultipleArrayToolbar extends JToolBar {
     	cghSteppedComboBox.setMaximumRowCount(100);
         
     	cghSteppedComboBox.addItem("CGH Analysis");int index = 0;
-        Action action;
-        while ((action = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index)))!=null) {
+        while ((manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index)))!=null) {
             cghSteppedComboBox.addItem((String)manager.getActionNames().get(ActionManager.CGH_NAME_OF_ANALYSIS+String.valueOf(index)));
             index++;
         }
@@ -174,9 +160,9 @@ public class MultipleArrayToolbar extends JToolBar {
 	for (int i = 0; i < components.length; i++) {
 	    if (components[i] instanceof AbstractButton) {
 		    	if (((AbstractButton)components[i]).getActionCommand().equals(command)){
-		    list.add(components[i]);
-	    }
-	}
+				    list.add(components[i]);
+			    }
+			}
 		}
 	return (AbstractButton[])list.toArray(new AbstractButton[list.size()]);
     }
@@ -254,7 +240,7 @@ public class MultipleArrayToolbar extends JToolBar {
 	}
     }
     private class ComboListener implements ActionListener{
-    	public void actionPerformed(ActionEvent e){          
+    	public void actionPerformed(ActionEvent e){      		
     		JComboBox cb = (JComboBox)e.getSource();
     		if (cb == cghSteppedComboBox){
     			
@@ -273,11 +259,14 @@ public class MultipleArrayToolbar extends JToolBar {
     			cb.setSelectedIndex(0);
     			return;
     		}
-    		int[] error = new int[3];
-    		//error[5]=4;
     		int index = 0;
-    		while (manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)).getValue(ActionManager.LARGE_ICON)!= cb.getItemAt(cb.getSelectedIndex()))
-    		{index++;}
+    		while (manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)).getValue(ActionManager.LARGE_ICON)!= cb.getItemAt(cb.getSelectedIndex())){
+    			index++;
+    			if (index>=totalModules){
+//    	    		cb.putClientProperty("categoryIconExists", false);
+    				return;
+    			}
+    		}
     		actiontester = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index));
     		manager.forwardAction(new ActionEvent(actiontester, e.getID(), (String)actiontester.getValue(Action.ACTION_COMMAND_KEY)));
     		cb.putClientProperty("categoryIconExists", true);
@@ -288,7 +277,12 @@ public class MultipleArrayToolbar extends JToolBar {
     
 
     class ComboBoxRenderer extends JLabel implements ListCellRenderer {
-        public ComboBoxRenderer() {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public ComboBoxRenderer() {
             setOpaque(true);
             setHorizontalAlignment(LEFT);
             setVerticalAlignment(CENTER);
@@ -357,33 +351,27 @@ public class MultipleArrayToolbar extends JToolBar {
     	  protected ComboPopup createPopup() {
     	    BasicComboPopup popup = new BasicComboPopup( comboBox ) {
     	    	
-    	      public void show() {
-    	       
-    	        int selectedIndex = comboBox.getSelectedIndex();
-    	        tempDeletion = true;
-    	        if (comboBox.getClientProperty("categoryIconExists")==(Object)true){
-    	        	comboBox.removeItemAt(0);
-    	        	comboBox.putClientProperty("categoryIconExists", false);
-    	        }
-    	        tempDeletion = false;
-    	        Dimension popupSize = ((SteppedComboBox)comboBox).getPopupSize();
-    	        popupSize.setSize( popupSize.width,
-    	          getPopupHeightForRowCount( comboBox.getMaximumRowCount() ) );
-    	        Rectangle popupBounds = computePopupBounds( 0,
-    	          comboBox.getBounds().height, popupSize.width, popupSize.height);
-    	        scroller.setMaximumSize( popupBounds.getSize() );
-    	        scroller.setPreferredSize( popupBounds.getSize() );
-    	        scroller.setMinimumSize( popupBounds.getSize() );
-    	        list.invalidate();
-    	        if (true  ) {
-    	          list.clearSelection();
-    	        } else {
-    	          list.setSelectedIndex( selectedIndex );
-    	        }
-    	        list.ensureIndexIsVisible( list.getSelectedIndex() );
-    	        setLightWeightPopupEnabled( comboBox.isLightWeightPopupEnabled() );
-    	        comboBox.setFocusable(false);
-    	        show( comboBox, popupBounds.x, popupBounds.y );
+    	      public void show() {    	       
+	    	        tempDeletion = true;
+	    	        if (comboBox.getClientProperty("categoryIconExists")==(Object)true){
+	    	        	comboBox.removeItemAt(0);
+	    	        	comboBox.putClientProperty("categoryIconExists", false);
+	    	        }
+	    	        tempDeletion = false;
+	    	        Dimension popupSize = ((SteppedComboBox)comboBox).getPopupSize();
+	    	        popupSize.setSize( popupSize.width,
+	    	          getPopupHeightForRowCount( comboBox.getMaximumRowCount() ) );
+	    	        Rectangle popupBounds = computePopupBounds( 0,
+	    	          comboBox.getBounds().height, popupSize.width, popupSize.height);
+	    	        scroller.setMaximumSize( popupBounds.getSize() );
+	    	        scroller.setPreferredSize( popupBounds.getSize() );
+	    	        scroller.setMinimumSize( popupBounds.getSize() );
+	    	        list.invalidate();
+	    	        list.clearSelection();
+	    	        list.ensureIndexIsVisible( list.getSelectedIndex() );
+	    	        setLightWeightPopupEnabled( comboBox.isLightWeightPopupEnabled() );
+	    	        comboBox.setFocusable(false);
+	    	        show( comboBox, popupBounds.x, popupBounds.y );
     	      }
     	    };
     	    popup.getAccessibleContext().setAccessibleParent(comboBox);
@@ -393,7 +381,11 @@ public class MultipleArrayToolbar extends JToolBar {
     	 
     	 
     	public class SteppedComboBox extends JComboBox {
-    	  protected int popupWidth;
+    	  /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+		protected int popupWidth;
     	 
     	  public SteppedComboBox(ComboBoxModel aModel) {
     	    super(aModel);
