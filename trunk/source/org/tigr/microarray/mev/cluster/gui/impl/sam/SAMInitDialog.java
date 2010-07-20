@@ -2467,7 +2467,7 @@ public class SAMInitDialog extends AlgorithmDialog {
             
             useRSAM = new JCheckBox("Use R");
             useRSAM.setBackground(Color.white);
-            useRSAM.setSelected(true);
+            useRSAM.setSelected(false);
             useRSAM.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                 	if (!useRSAM.isSelected()){
