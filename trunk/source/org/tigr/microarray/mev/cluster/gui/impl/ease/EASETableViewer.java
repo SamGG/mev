@@ -195,7 +195,12 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
         menu.addSeparator();
         
-        item = new JMenuItem("Save EASE Table");
+        if(isEaseConsolidatedResult){
+        	item = new JMenuItem("Save Nested EASE Table");
+        }else{
+        	item = new JMenuItem("Save EASE Table");
+        }
+        
         item.setActionCommand(SAVE_EASE_TABLE_COMMAND);
         item.addActionListener(listener);
         menu.add(item);
