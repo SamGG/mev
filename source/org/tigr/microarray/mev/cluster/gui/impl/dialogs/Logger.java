@@ -14,9 +14,13 @@
 package org.tigr.microarray.mev.cluster.gui.impl.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -36,6 +40,9 @@ import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 public class Logger extends JDialog {
     
     private JTextArea log = new JTextArea(10, 30);
+    GradientPaint gp;
+    Color backgroundColor = new Color(25,25,169);
+    Color fadeColor = new Color(140,220,240);
     
     /**
      * Constructs a <code>Logger</code> with specified parent frame, title
@@ -56,6 +63,34 @@ public class Logger extends JDialog {
 	addWindowListener(listener);
 	pack();
     }
+    
+    public class FillPanel extends JPanel{
+        
+        public void paint(Graphics g){
+            super.paint(g);
+            Graphics2D g2 = (Graphics2D)g;
+            Dimension dim = this.getSize();
+            gp = new GradientPaint(0,dim.height/2,backgroundColor,dim.width,dim.height/2,fadeColor);
+            g2.setPaint(gp);
+            g2.fillRect(0,0,dim.width, dim.height);
+            g2.setColor(Color.black);
+        }
+    }
+    
+    public class HeaderImagePanel extends JPanel{
+        public HeaderImagePanel(){
+            setLayout(new GridBagLayout());
+            JLabel iconLabel = new JLabel(GUIFactory.getIcon("dialog_banner2.gif"));            
+            iconLabel.setOpaque(false);
+            iconLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+            FillPanel fillPanel = new FillPanel();
+            fillPanel.setBackground(Color.blue);
+            add(iconLabel, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+            add(fillPanel, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        }
+        }
+    
+    
     
     /**
      * Shows the dialog.
@@ -86,9 +121,8 @@ public class Logger extends JDialog {
 	log.setAutoscrolls(true);
 	
 	JScrollPane scroll = new JScrollPane(log);
-	
 	GridBagConstraints gbc = new GridBagConstraints();
-	panel.add(new JLabel(GUIFactory.getIcon("dialog_banner2.gif")), gbc);
+	panel.add(new HeaderImagePanel(), new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 1,0));
 	gbc.gridy = 1;
 	gbc.weightx = 1.0;
 	gbc.weighty = 1.0;
@@ -114,4 +148,7 @@ public class Logger extends JDialog {
 	return panel;
     }
     
+    
 }
+
+
