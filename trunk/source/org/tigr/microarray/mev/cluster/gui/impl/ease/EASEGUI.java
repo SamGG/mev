@@ -615,7 +615,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 						addTableViewer(nestedEaseNode, thisNeaseResult, theseClusters);
 						addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
 						addGeneralInfo(nestedEaseNode, thisNeaseResult);
-						addGOTree(nestedEaseNode, (String[][])thisNeaseResult.getObjectMatrix("result-matrix"), thisNeaseResult.getStringArray("header-names"));
 
 						nestedEaseRoot.add(nestedEaseNode);
 					} else {
