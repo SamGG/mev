@@ -192,7 +192,7 @@ public class AlgorithmDialog extends JDialog {
             iconLabel.setAlignmentX(JLabel.LEFT_ALIGNMENT);
             FillPanel fillPanel = new FillPanel();
             fillPanel.setBackground(Color.blue);
-            add(iconLabel, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,5,0,0),0,0));
+            add(iconLabel, new GridBagConstraints(0,0,1,1,0.0,0.0,GridBagConstraints.WEST,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
             add(fillPanel, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
         }
         
