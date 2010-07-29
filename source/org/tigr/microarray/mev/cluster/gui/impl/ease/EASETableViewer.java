@@ -195,10 +195,15 @@ public class EASETableViewer extends TableViewer implements Serializable {
         
         menu.addSeparator();
         
+        /*Correctly sets the pop-up panel label depending on what table is being built*/
         if(isEaseConsolidatedResult){
-        	item = new JMenuItem("Save Nested EASE Table");
+        	item = new JMenuItem("Save Nested EASE Summary Table");
         }else{
-        	item = new JMenuItem("Save EASE Table");
+        	if(checkHeaderFor("nEASE Gene Enrich.")){
+        		item = new JMenuItem("Save Nested EASE Table");
+        	}else{
+        		item = new JMenuItem("Save EASE Table");
+        	}
         }
         
         item.setActionCommand(SAVE_EASE_TABLE_COMMAND);
@@ -230,7 +235,20 @@ public class EASETableViewer extends TableViewer implements Serializable {
         return menu;
     }
     
-    public void onSelected(IFramework framework) {
+    /**
+     * @param targetHeader table header to be found
+     * @return flag indicating whether a table header was found
+     * */
+    public boolean checkHeaderFor(String targetHeader) {
+    	for(int i=0;i<headerNames.length;i++){
+    		if(targetHeader.equalsIgnoreCase(headerNames[i])){
+    			return true;
+    		}    		
+    	}
+    	return false;
+	}
+
+	public void onSelected(IFramework framework) {
         super.onSelected(framework);
         if(this.easeRoot == null){
             try {
@@ -258,7 +276,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
 
         //This is the node marked "Expression Viewers"
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)easeRoot.getChildAt(1);
-
+        
     	//Jump to nEASE sub-result for term that matches summary results
         if(isEaseConsolidatedResult) {
         	int fileindex = 1;
@@ -297,7 +315,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     }
     
     
-    /** Handles sotrage of clusters from selected line.
+    /** Handles storage of clusters from selected line.
      */
     protected void onStoreCluster(){
         int [] tableIndices = table.getSelectedRows();
