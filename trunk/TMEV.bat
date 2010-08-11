@@ -27,4 +27,4 @@ REM For R Dlls
 set PATH=%PATH%;%CurrDIR%\R-2.9.1\bin;%CurrDIR%\R-2.9.1\lib
 
 set ClassPath=lib/*;
-java -Djava.library.path=lib -Xss1M -Xmx512m -cp %ClassPath% org.tigr.microarray.mev.TMEV
+java -Djava.library.path=lib -Xss1M -Xmx768m -cp %ClassPath% org.tigr.microarray.mev.TMEV

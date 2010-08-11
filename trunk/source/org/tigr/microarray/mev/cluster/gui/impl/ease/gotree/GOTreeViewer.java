@@ -46,6 +46,7 @@ import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ease.EaseAlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
@@ -83,8 +84,6 @@ public class GOTreeViewer extends JPanel implements IViewer {
     private double upper = 0.05;
     private double lower = 0.01;
     
-    private String baseFileSystem;
-    
     private GONode[][] storedNodes;
     private String[] headerFields;
     private int exptID = 0;
@@ -93,6 +92,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
     private MouseOverListener mouseOverListener;
     //10/8/06 always true but if we want to supress tool tip we can use this later
     private boolean showToolTip = true;
+    String impliesFile;
+    EaseAlgorithmData data;
     
     /** Creates a new instance of GOTreeViewer */
     public GOTreeViewer() {
@@ -111,7 +112,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public GOTreeViewer(GONode [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
         super(new GridBagLayout());
         this.storedNodes = data;
-        this.baseFileSystem = baseFileSystem;
+        impliesFile = baseFileSystem;
+        
         tree = new Ktree(data);
         header = new GOTreeHeader(data[0][0], this, upper, lower);
         this.viewerNode = viewerNode;
@@ -132,14 +134,22 @@ public class GOTreeViewer extends JPanel implements IViewer {
         setVerboseNodeStyle(false);  
     }
 
-    
-    public GOTreeViewer(String goCategory, String [] headerFields, String [][] data, DefaultMutableTreeNode viewerNode, String baseFileSystem) {
+    /**
+     * State-saving
+     * @param goCategory
+     * @param headerFields
+     * @param data
+     * @param viewerNode
+     * @param impliesfilepath
+     */
+    public GOTreeViewer(String goCategory, String [] headerFields, EaseAlgorithmData data, DefaultMutableTreeNode viewerNode) {
         super(new GridBagLayout());
         
+    	this.data = data;
         this.viewerNode = viewerNode;
-        this.baseFileSystem = baseFileSystem;
         category = goCategory;
-        this.storedNodes = constructTree(goCategory, headerFields, data);
+        impliesFile = new File(data.getImpliesFileLocation(), category + ".txt").getAbsolutePath();
+        this.storedNodes = constructTree(goCategory, headerFields, data.getResultMatrix());
         this.headerFields = headerFields;
         tree = new Ktree(storedNodes);
         header = new GOTreeHeader(storedNodes[0][0], this, upper, lower);
@@ -160,9 +170,8 @@ public class GOTreeViewer extends JPanel implements IViewer {
      */
     public Expression getExpression(){
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{storedNodes, viewerNode, "",
-    		});
-
+   			new Object[]{category, headerFields, data, viewerNode}
+   		);
     	}
     
     /**
@@ -406,14 +415,13 @@ public class GOTreeViewer extends JPanel implements IViewer {
             currNode.setLevel(currNode.getMaxPathLengthToRoot()-1);
         }
     }
-    
     private Hashtable<String, Vector<String>> getAllAssociations() throws FileNotFoundException, IOException {
         //create hash table for implies using (implies_associator)
         //This will then be used to add implied categories
         int idx;
         String line;
         Hashtable<String, Vector<String>> implied_associations = new Hashtable<String, Vector<String>>(10000);
-        File file = new File(baseFileSystem, category + ".txt");
+        File file = new File(impliesFile); 
         if(!file.exists() || !file.isFile())  //if implies file is missing move on
             return null;
         

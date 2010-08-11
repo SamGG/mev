@@ -10,19 +10,21 @@ package org.tigr.microarray.mev.persistence;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.CGHSlideDataElement;
@@ -35,7 +37,10 @@ import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
 import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
 import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ease.EaseAlgorithmData;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
 import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.sampleannotation.SampleAnnotation;
 import org.tigr.util.FloatMatrix;
@@ -636,7 +641,44 @@ public class PersistenceObjectFactory {
 		dis.close();
 		return new BufferedImageWrapper(bi);
 	}
+	
+	public static EaseAlgorithmData makeEASEResult(String filename) {
+    	try {
+    		BufferedReader br = new BufferedReader(new FileReader(new File(
+				MultipleArrayViewer.CURRENT_TEMP_DIR, filename)));
+    		Vector<String[]> datatemp = new Vector<String[]>();
+	    	while(br.ready()) {
+	    		datatemp.add(br.readLine().split("\t"));
+	    	}
+	    	br.close();
+	    	String[][] data = datatemp.toArray(new String[datatemp.size()][]);
+	    	EaseAlgorithmData edata = new EaseAlgorithmData();
+	    	edata.setResultMatrix(data);
+	    	edata.setImpliesFileLocation(MultipleArrayViewer.CURRENT_TEMP_DIR);
+	    	return edata;
+    	} catch (IOException ioe) {
+    		System.out.println("Unable to read EASETableViewer data.");
+    		return null;
+    	}
+	}
+	
 
+	public static EASETableViewer makeEASETableViewer(String[] headerNames,
+			DefaultMutableTreeNode analysisNode, Experiment experiment,
+			ClusterWrapper clusters, boolean haveAccessionNumbers,
+			boolean clusterAnalysis, boolean isEaseConsolidatedResult,
+			String outfileFullPath) {
+		try {
+			return new EASETableViewer(headerNames, EASETableViewer
+					.readData(new BufferedReader(new FileReader(new File(
+							MultipleArrayViewer.CURRENT_TEMP_DIR,
+							outfileFullPath)))), analysisNode, experiment,
+					clusters.getClusters(), haveAccessionNumbers,
+					clusterAnalysis, isEaseConsolidatedResult);
+		} catch (FileNotFoundException fnfe) {
+			return null;
+		}
+	}
 
 	public static void writeSlideDataIAnnotation(PrintWriter pw,
 		SlideData sd) throws Exception {

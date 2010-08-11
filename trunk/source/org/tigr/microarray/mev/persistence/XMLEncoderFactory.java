@@ -26,10 +26,13 @@ import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.ResultContainer;
 import org.tigr.microarray.mev.cluster.ClusterWrapper;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ease.EaseAlgorithmData;
 import org.tigr.microarray.mev.cluster.clusterUtil.*;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.*;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.EASETableViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.ease.gotree.EASEResultPersistenceDelegate;
 import org.tigr.microarray.mev.cluster.gui.impl.fom.*;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTree;
 import org.tigr.microarray.mev.cluster.gui.impl.ptm.PTMExperimentHeader;
@@ -204,6 +207,14 @@ public abstract class XMLEncoderFactory {
 		oos.setPersistenceDelegate(
 				CentroidExperimentHeader.class,
 				CentroidExperimentHeader.getPersistenceDelegate()
+			);
+		oos.setPersistenceDelegate(
+				EASETableViewer.class,
+				EASETableViewer.getPersistenceDelegate()
+			);
+		oos.setPersistenceDelegate(
+				EaseAlgorithmData.class,
+				new EASEResultPersistenceDelegate()
 			);
 		return oos;
 	}

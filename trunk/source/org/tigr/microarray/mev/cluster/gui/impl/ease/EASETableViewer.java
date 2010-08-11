@@ -24,11 +24,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Expression;
+import java.beans.PersistenceDelegate;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -42,9 +45,9 @@ import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentHeader;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.microarray.mev.persistence.EASETableViewerPersistenceDelegate;
 import org.tigr.util.BrowserLauncher;
 
 /** Displays ease results
@@ -68,6 +71,7 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected JMenuItem launchMenuItem;
     protected Object[][] data;
     protected boolean isEaseConsolidatedResult = false;
+
     /**
      * Kept for state-saving backwards-compatibility
      * @param headerNames
@@ -152,14 +156,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
     public EASETableViewer(String [] headerNames, Object [][] data) {
    		super(headerNames, data);
     }
-    /*
-    public EASETableViewer(String[] headerNames, Object[][] data, boolean isNestedEase) {
-    	super(headerNames, data);
-        menu = createPopupMenu();
-        table.addMouseListener(new Listener());
-        for(int i = 4; i < headerNames.length-2; i++)
-            setNumerical(i, true);
-    }*/
     
     /** Creats the context menu
      * @return  */
@@ -277,31 +273,34 @@ public class EASETableViewer extends TableViewer implements Serializable {
         //This is the node marked "Expression Viewers"
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)easeRoot.getChildAt(1);
         
-    	//Jump to nEASE sub-result for term that matches summary results
+    	//Jump to nEASE result node
         if(isEaseConsolidatedResult) {
+        	
         	int fileindex = 1;
-        	int termindex = 14;
-        	String term = (String) this.table.getValueAt(index, fileindex) + ": " + (String) this.table.getValueAt(index, termindex);
+        	int easetermindex = 14;
+        	int neasetermindex = 3;
+        	String easeterm = (String) this.table.getValueAt(index, easetermindex);
+        	String neaseterm = (String) this.table.getValueAt(index, neasetermindex);
         	int neaseindex = 0;
         	for(int i=2; i<easeRoot.getChildCount(); i++) {
-        		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(term)) {
+	       		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(easeterm) &&
+       				((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().startsWith(neaseterm)
+        		) {
         			neaseindex = i;
         			break;
         		}
         	}
 
-        	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
-        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);//Expression Viewers folder within nease result number neaseindex	
-        }
-        
+        	node = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
+        } else {
         index = new Integer((String)this.table.getValueAt(index, 0)) -1;
-        
         if(node.getChildCount() < index) {
             return;
         }
-        
         //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
         node = (DefaultMutableTreeNode)(node.getChildAt(index));
+        }
+        
         if(viewerType.equals("expression image")){
             node = (DefaultMutableTreeNode)(node.getChildAt(0));
         } else if(viewerType.equals("centroid graph")){
@@ -426,11 +425,42 @@ public class EASETableViewer extends TableViewer implements Serializable {
     /**
      * @inheritDoc
      */
-    public Expression getExpression(){
+    public Expression getExpression(PrintWriter pw, String filename){
+    	writeData(pw);
+    	  //TODO Use Result data persistenceDelegate and store data. 
     	return new Expression(this, this.getClass(), "new", 
-    			new Object[]{this.headerNames, this.data, this.easeRoot, this.experiment, ClusterWrapper.wrapClusters(this.clusters), this.haveAccessionNumbers, this.clusterAnalysis, this.isEaseConsolidatedResult});
+    			new Object[]{this.headerNames, this.easeRoot, this.experiment, ClusterWrapper.wrapClusters(this.clusters), this.haveAccessionNumbers, this.clusterAnalysis, this.isEaseConsolidatedResult, filename});
     }  
-    
+    public static PersistenceDelegate getPersistenceDelegate(){
+    	return new EASETableViewerPersistenceDelegate();
+    }
+    public void writeData(PrintWriter pw) {
+    	if(data != null)
+    	for(int i=0; i<data.length; i++) {
+    		for(int j=0; j<data[i].length; j++) {
+    			pw.print(data[i][j]);
+    			if(j == data[i].length-1) {
+    				pw.print("\n");
+    			} else {
+    				pw.print("\t");
+    			}
+    		}
+    	}
+    }
+
+	public static Object[][] readData(BufferedReader br) {
+    	Vector<String[]> datatemp = new Vector<String[]>();
+    	try {
+	    	while(br.ready()) {
+	    		datatemp.add(br.readLine().split("\t"));
+	    	}
+	    	return datatemp.toArray(new Object[datatemp.size()][]);
+    	} catch (IOException ioe) {
+    		System.out.println("Unable to read EASETableViewer data.");
+    		return null;
+    	}
+    }
+	
     /** Handles events
      */
     protected class Listener extends MouseAdapter implements ActionListener{
@@ -480,5 +510,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
     protected void broadcastNamelistGaggle() {
     	framework.broadcastNamelist(framework.getData().getExperiment(), getGeneIndices(table.getSelectedRows()));
     }
+
     
 }
