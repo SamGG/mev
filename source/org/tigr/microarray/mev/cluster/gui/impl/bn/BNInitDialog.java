@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -1777,17 +1778,19 @@ public class BNInitDialog extends AlgorithmDialog {
 		JComboBox organismListBox;
 		JComboBox arrayListBox;
 		JLabel chooseOrg, chooseArray, browseLabel, statusLabel;
-		JButton getBNSupportFileButton;
+		JButton getBNFileButton, cngFilesButton;
+		boolean getBNFileButtonClicked, cngFilesButtonClicked;
 
 		public ConfigPanel() {
 			super("Location of Support File(s)");
 			setLayout(new GridBagLayout());
 
-			JButton cngFilesButton = new JButton("Change");
+			cngFilesButton = new JButton("Change");
 			cngFilesButton.setActionCommand("select-file-base-command");
 			cngFilesButton.addActionListener(listener);
 			cngFilesButton.setToolTipText("<html>Select the directory where BN  files reside.</html>");
-
+			cngFilesButtonClicked = false;
+			
 			JLabel fileLocation = new JLabel("File(s) Location:");
 			//defaultFileBaseLocation = new JTextField(TMEV.getFile("data/bn").getAbsolutePath(), 25);
 			//defaultFileBaseLocation = new JTextField(new File(System.getProperty("user.dir")).getAbsolutePath());
@@ -1800,11 +1803,12 @@ public class BNInitDialog extends AlgorithmDialog {
 			defaultFileBaseLocation.setEditable(true);
 
 			//Borrowed from EASE for RM
-			getBNSupportFileButton = new JButton("(Download)");
-			getBNSupportFileButton.setActionCommand("download-support-file-command");
-			getBNSupportFileButton.addActionListener(listener);
-			getBNSupportFileButton.setToolTipText("<html>Downloads BN support files<br>for a selected species and array type.</html>");
-
+			getBNFileButton = new JButton("(Download)");
+			getBNFileButton.setActionCommand("download-support-file-command");
+			getBNFileButton.addActionListener(listener);
+			getBNFileButton.setToolTipText("<html>Downloads BN support files<br>for a selected species and array type.</html>");
+			getBNFileButtonClicked = false;
+			
 			chooseOrg = new JLabel("                     Organism");
 			chooseArray = new JLabel("            Array Platform");
 			browseLabel = new JLabel("Or browse for BN file:");
@@ -1866,74 +1870,21 @@ public class BNInitDialog extends AlgorithmDialog {
 			
 			add(chooseArray, 				new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(5, 20, 0, 0), 0, 0));
 			add(arrayListBox, 				new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.CENTER, 	GridBagConstraints.BOTH, new Insets(5, 20, 0, 0), 0, 0));
-			add(getBNSupportFileButton, 	new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 20, 0, 20), 0, 0));
+			add(getBNFileButton, 			new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 20, 0, 20), 0, 0));
 			
 			add(cngFilesButton, 	        new GridBagConstraints(2, 2, 1, 1, 0, 0, GridBagConstraints.EAST, 	GridBagConstraints.BOTH, new Insets(5, 20, 5, 20), 0, 0));
 			add(browseLabel, 				new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 20, 0, 0),0, 0));
 			add(defaultFileBaseLocation, 	new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.WEST, 	GridBagConstraints.BOTH, new Insets(10, 20, 5, 0), 0, 0));
 
-//			GridBagConstraints c = new GridBagConstraints();
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 0;
-//			c.gridy = 0;
-//			add(chooseOrg, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 1;
-//			c.gridy = 0;
-//			c.insets = new Insets(0,0,0,5);
-//			add(organismListBox, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 2;
-//			c.gridy = 0;
-//			c.insets = new Insets(0,0,0,0);
-//			add(chooseArray, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 3;
-//			c.gridy = 0;
-//			c.insets = new Insets(0,0,0,5);
-//			add(arrayListBox, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 4;
-//			c.gridy = 0;
-//			c.insets = new Insets(0,0,0,0);
-//			add(statusLabel, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 5;
-//			c.gridy = 0;
-//			add(getBNSupportFileButton, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 0;
-//			c.gridy = 2;
-//			c.gridwidth = 2;
-//			c.insets = new Insets(0,0,0,0);
-//			add(browseLabel, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 2;
-//			c.gridy = 2;
-//			c.gridwidth = 3;
-//			add(defaultFileBaseLocation, c);
-//
-//			c.fill = GridBagConstraints.HORIZONTAL;
-//			c.gridx = 5;
-//			c.gridy = 2;
-//			add(cngFilesButton, c);
-
 			try {
 				boolean b = resourceManager.fileIsInRepository(new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString()));
 				if(b) {
-					getBNSupportFileButton.setText("(Select This)");
+					getBNFileButton.setText("(Select This)");
 				} else {
-					getBNSupportFileButton.setText("Download");
+					getBNFileButton.setText("Download");
 				}
 			} catch (NullPointerException npe) {
-				getBNSupportFileButton.setText("Download");
+				getBNFileButton.setText("Download");
 			}
 			updateSelection();
 			//
@@ -1944,6 +1895,7 @@ public class BNInitDialog extends AlgorithmDialog {
 		}
 
 		public void selectFileSystem() {
+			cngFilesButtonClicked = true;
 			String startDir = defaultFileBaseLocation.getText();
 
 			File file = new File(startDir);
@@ -1975,7 +1927,8 @@ public class BNInitDialog extends AlgorithmDialog {
 				defaultFileBaseLocation.setText(chooser.getSelectedFile().getAbsolutePath());
 				//TMEV.setDataPath(defaultFileBaseLocation.getText());
 				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
-			}
+			} else
+				cngFilesButtonClicked = false;
 		}
 
 		public String getBaseFileLocation() {
@@ -2000,12 +1953,12 @@ public class BNInitDialog extends AlgorithmDialog {
 			if(selectedOrganism != null && selectedArray != null) {
 				if(resourceManager.fileIsInRepository(new BNSupportDataFile(selectedOrganism, selectedArray))) {
 					statusLabel.setText("Click to Select");
-					getBNSupportFileButton.setText("Select");
+					getBNFileButton.setText("Select");
 				} else {
 					statusLabel.setText("Click to Download");
-					getBNSupportFileButton.setText("Download");
+					getBNFileButton.setText("Download");
 				}
-				getBNSupportFileButton.setEnabled(true);
+				getBNFileButton.setEnabled(true);
 				try {
 					ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(speciesName, arrayName);
 					annotationFile = resourceManager.getSupportFile(def, false);
@@ -2014,12 +1967,38 @@ public class BNInitDialog extends AlgorithmDialog {
 					useLoadedAnnotationFile = false;
 				}
 			} else {
-				getBNSupportFileButton.setEnabled(false);
+				getBNFileButton.setEnabled(false);
 			}
 		}
-
+		
+		public boolean is_getBNFileButtonClicked() {
+			return getBNFileButtonClicked;
+		}
+		
+		public boolean is_cngFilesButtonClicked() {
+			return cngFilesButtonClicked;
+		}
+		
+		// cursor states: normal = true, HrGlass = false
+		private void setCursor(boolean state) {
+			//Hour glass cursor
+			if(!state) {
+			Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
+			setCursor(hourglassCursor);
+			}
+			
+			// Reset cursor
+			if(state) {
+				Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+				setCursor(normalCursor);
+			}
+		}
+		
 		private void onDownloadSupportFile() {
 			try {
+				//Hr Glass
+				setCursor(false);
+				
 				BNSupportDataFile bnSuppFile = new BNSupportDataFile(organismListBox.getSelectedItem().toString(), arrayListBox.getSelectedItem().toString());
 				if(bnSuppFile == null) {
 					System.out.println("BNSuppFile obj is null");
@@ -2040,18 +2019,23 @@ public class BNInitDialog extends AlgorithmDialog {
 				File srcDir = new File(srcDirPath);
 				String dstDirPath = System.getProperty("user.dir") + BNConstants.SEP + "data" + BNConstants.SEP + "BN_files" + BNConstants.SEP + bnSuppFile.getUniqueName();
 				File dstDir = new File(dstDirPath);
+				
 				//Copy files to data directory
-				try {
-					Useful.copyDirectory(srcDir, dstDir);
-				} catch (IOException ioe){
-					ioe.printStackTrace();
-				}
+				Useful.copyDirectory(srcDir, dstDir);
+				
 				//End Copying Files
 				defaultFileBaseLocation.setText(dstDir.getAbsolutePath());
 				TMEV.storeProperty(BNConstants.BN_LM_LOC_PROP, defaultFileBaseLocation.getText());
-				getBNSupportFileButton.setText("Select This");
+				getBNFileButton.setText("Select This");
 				statusLabel.setText("Selected");
-				getBNSupportFileButton.setEnabled(false);
+				getBNFileButton.setEnabled(false);
+				getBNFileButtonClicked = true;
+				// Normal
+				setCursor(true);
+			} catch (IOException ioe){
+				statusLabel.setText("Failure");
+				ioe.printStackTrace();
+				System.out.println("LMDialog.onDownloadSupportFile() - File Copy Failed");
 			} catch (SupportFileAccessError sfae) {
 				statusLabel.setText("Failure");
 				sfae.printStackTrace();
@@ -2059,6 +2043,9 @@ public class BNInitDialog extends AlgorithmDialog {
 				statusLabel.setText("Failure");
 				npe.printStackTrace();
 				System.out.println("LMDialog.onDownloadSupportFile() - NullPointerException");
+			} finally {
+				Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+				setCursor(normalCursor);
 			}
 		}		
 	}
@@ -2138,8 +2125,21 @@ public class BNInitDialog extends AlgorithmDialog {
 					return;
 				}
 
+				// Validate if File selection buttons are clicked
+				System.out.println("configPanel.is_getBNFileButtonClicked() & configPanel.is_cngFilesButtonClicked()" + 
+						configPanel.is_getBNFileButtonClicked() + ":" +configPanel.is_cngFilesButtonClicked());
+				if (!(configPanel.is_getBNFileButtonClicked() ^ configPanel.is_cngFilesButtonClicked())) {
+					String statusLbl = configPanel.statusLabel.getText();
+					JOptionPane.showMessageDialog(
+							parent, 
+							"Please use appropriate button below the label \"" + statusLbl + "\" to select \n and/or download species and array specfic BN files", 
+							"Missing Selection for Files",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				// Validate if selected options have supporting file(s)
-				String fileBase =  getBaseFileLocation(); //configPanel.getBaseFileLocation();
+				String fileBase = getBaseFileLocation(); //configPanel.getBaseFileLocation();
 
 				/* Work around in Useful.getWekaArgsArray
 				if(fileBase.contains(" ")){
