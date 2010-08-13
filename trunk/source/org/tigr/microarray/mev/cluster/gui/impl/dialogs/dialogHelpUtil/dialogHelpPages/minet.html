@@ -5,17 +5,53 @@
 	
     <hr size = 10>
     <h2>Description</h2>
-    <p>For a given dataset, minet infers the network in two steps. First, the mutual information between all pairs of variables in dataset is computed according to the estimator argument. Then the algorithm given by method considers the estimated mutual information in order to build the network.</p>
-
+    <p>For a given dataset, minet infers the network in two steps. First, the mutual information between all pairs of 
+    	</br>variables in dataset is computed according to the estimator argument. 
+    	</br>Then the algorithm given by method considers the estimated mutual information in order to build the network.</p>
 	<p>
 	<h2>Parameters</h2>
 	<ol>
 		<li><b>Dataset</b>: A cluster of genes.</li>
-		<li><b>Method</b>: The inference algorithm: "clr", "aracne", "mrnet" or "mrnetb"</li>
-		<li><b>Estimator</b>: The name of the entropy estimator to be used for mutual information computation: "mi.empirical", "mi.mm", "mi.shrink", "mi.sg", "spearman", "kendall", "pearson".</li> 
-		<li><b>Discretization</b>: The name of the discretization method to be used, if required by the estimator "none”, "equalfreq", "equalwidth" or "globalequalwidth".</li>
-		<li><b>Number of Bins</b>:  Integer specifying the number of bins to be used for the discretization if disc is set properly. By default the number of bins is set to √N where N is the number of samples.</li>
-		<li><b>Output</b>: Minet returns a matrix which is the weighted adjacency matrix of the network. The weights range from 0 to 1 and can be seen as a confidence measure on the presence of the arcs. In order to display the network, MeV launches Cytoscape via webstart and displays the network in that application.</li>
+		<li><b>Method</b>: The inference algorithm: 
+			<ol>
+			<li><b>CLR: </b>
+				The CLR algorithm is an extension of relevance network. This algorithm computes the mutual information for each pair 
+				</br>of genes and derives a score related to the empirical distribution of the MI values.Instead of considering the mutual 
+				</br>information I(Xi;Xj) between features Xi and Xj, it takes into account the score from the mean and the standard deviation 
+				</br>of the empirical distribution of the mutual information values I(Xi;Xk), k=1,...,n.
+			</li>
+			<li><b>Aracne: </b>
+				The Aracne procedure starts by assigning to each pair of nodes a weight equal to their mutual
+				</br>information. Then, the weakest edge of each triplet is interpreted as an indirect interaction and is
+				</br>removed if the difference between the two lowest weights is above a threshold eps.
+			</li>
+			<li><b>MRNET: </b>
+				The MRNET approach consists in repeating a MRMR (Maximum Relevance Minimum Redundancy) feature selection procedure 
+				</br>for each variable of the dataset. The MRMR method starts by selecting the variable Xi having the highest mutual
+				</br>information with the target Y. In the following steps, given a set S of selected variables, the criterion
+				</br>updates S by choosing the variable Xk that maximizes the MRMR score. The weight of each pair Xi;Xj will be the maximum 
+				</br>score between the one computed when Xi is the target and the one computed when Xj is the target.
+			</li>
+			<li><b>MRNETB: </b>
+				MRNETB takes the mutual information matrix as input in order to infer the network using the maximum
+				</br>relevance/minimum redundancy feature selection method - see MRNET. 
+				</br>This method is a variant of MRNET (not yet available).
+			</li>
+			</ol>
+		</li>
+		<li><b>Estimator</b>: The name of the entropy estimator to be used for mutual information computation: 
+				</br>"mi.empirical", "mi.mm", "mi.shrink", "mi.sg", "spearman", "kendall", "pearson".
+		</li> 
+		<li><b>Discretization</b>: The name of the discretization method to be used, if required by the estimator 
+				</br>"none", "equalfreq", "equalwidth" or "globalequalwidth".
+		</li>
+		<li><b>Number of Bins</b>:  Integer specifying the number of bins to be used for the discretization 
+				</br>if disc is set properly. By default the number of bins is set to sqrt(N) where N is the number of samples.
+		</li>
+		<li><b>Output</b>: Minet returns a matrix which is the weighted adjacency matrix of the network. 
+				</br>The weights range from 0 to 1 and can be seen as a confidence measure on the presence of the arcs. 
+				</br>In order to display the network, MeV launches Cytoscape via webstart and displays the network in that application.
+		</li>
 	</ol>
 	</p>
 	
@@ -24,7 +60,7 @@
 	<ol>
 		<li>Create Cluster</li>
 		<li>Launch MINET from ToolBar -> Statistics -> MINET</li>
-		<li>Un-select samples to be excluded from analysis</li>
+		<li>Un-select samples to be excluded from analysis (optional)</li>
 		<li>Select one cluster from Cluster selection Panel.</li>
 		<li>Click on Parameters tab to change method, estimator etc or leave them as is to accept default</li>
 		<li>Hit OK</li>
@@ -33,7 +69,8 @@
 	
 	<p>
 	<h2>Viewing the network</h2>
-	The network is displayed in Cytoscape. IN the initial view all nodes are stacked up on top of each other. In Cytoscape follow MenuBar -> Layout -> yFiles –> Organic (or any layout of your choice) to layout the nodes. 
+	The network is displayed in Cytoscape. In the initial view all nodes are stacked up on top of each other. 
+	</br>In Cytoscape follow MenuBar -> Layout -> yFiles –> Organic (or any layout of your choice) to layout the nodes. 
  	</p>
     
     </basefont>
