@@ -1,0 +1,148 @@
+<html>
+	<head>
+		<title>Scripting</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="lm.html">Previous:  LM-Literature Mining Analysis</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="compare.html">Next: Comparative Genomic Hybridization Viewer</a></div>
+	<h3>Scripting </h3>
+		<p>The scripting capabilities within MeV permit the execution of multiple algorithms to be performed without user oversight or intervention once processing begins.  The execution steps are dictated by a user-defined script that describes the parameters to use for the selected algorithms.  Scripting in MeV allows one to document the algorithms run and the selected parameters during data analysis.  The script document can be shared with collaborators so that analysis steps can be replicated on the common data set.  Scripting is also useful when running several long analysis steps that would normally require monitoring in MeV's interactive mode.  Each algorithm and the parameters are pre-selected in the script so the next algorithm kicks off as soon as the previous run finishes.  Despite the advantages of scripting, there may be times when careful evaluation of a result before deciding on the next algorithms is needed.  In this setting scripting might be used as a first pass analysis and the multiple results of the script run can lead to the selection of different algorithms or new parameter selections. </p>
+	<a name="script"><h4>The Script</h4></a>
+			<p>The MeV script is an XML based text document containing information about which algorithms to run, the order of the algorithms, and the source data for each algorithm.  Script creation is accomplished through a graphical representation of the script to eliminate the need for the user to understand the complex structure of the script.  The Document Type Definition (DTD) can be found in Section 14 Appendix (MeV’s Script DTD) for those interested in the details of script structure.</p>
+		<h5>Creating a New Script</h5>	
+			<div class="screenshots">
+		<a href="scr1.jpg">
+					<img src="scr1.jpg">
+				</a>
+				<br/>
+				<span class="caption">New Script Attribute Dialog</span>
+				</div>
+			<p>Creating a script is a simple process that can be initiated by selecting New Script from the <span class="widget2">File</span> menu in the Multiple Array Viewer.  Data must be loaded before this menu option can be enabled since many algorithms require data-specific information (e.g. group assignments for TTEST or SAM depend on the number and order of the loaded experiments).  Once the New Script menu option has been selected, an initial dialog form will come up to allow one to enter a script name and description. </p>
+			<p>The script name, description, and the creation date will be stored in the script as comments.  Once the initialization dialog is dismissed the script manager node will become populated with a script table and two viewers associated with the new script.  The viewer that opens automatically is called the <span class="widget2">Script Tree Viewer</span>. This viewer is a graphical representation of the script and it is from this viewer that the user constructs the script.  The other script viewer is the <span class="widget2">Script XML viewer</span>, which displays the actual text of the script during script creation.  </p>
+			<div class="screenshots">
+		<a href="scr2.jpg">
+					<img src="scr2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Tree Viewer with Initial Primary Data Node and Pop-up Menu</span>
+				</div>
+		<a name="script"><h4>The Script Tree Viewer: Script Construction </h4></a>
+			<p>The Script Tree Viewer is the main viewer used to construct the script.  The viewer's graphical nature permits the user to focus on script creation without undue consideration of complex script syntax.  The Script Tree Viewer represents the script as a set of connected nodes.  Each node is either a <span class="widget2">data node</span> or an <span class="widget2">algorithm node</span>. <div class="screenshots leftsidecorrection">
+		<a href="scr3.jpg">
+					<img src="scr3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Algorithm Selection Dialog, Analysis Algorithm Panel</span>
+				</div> Data nodes, shown as light green, are sources for data for attached algorithms.  
+			Any number of algorithms can be attached to a data node.  Algorithm nodes, shown as light yellow, represent processes that transform the data or act on the data to produce results. </p>
+		
+		<h5>Adding an Algorithm</h5>
+						<div class="screenshots">
+		<a href="scr4.jpg">
+					<img src="scr4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Algorithm Selection Dialog, Adjustment Algorithm Panel</span>
+				</div>
+			<p>Select a data node to use as source data by left clicking a data node.  Selected nodes will have a blue highlighted border when selected.  A right click will reveal a menu containing an <span class="widget2">Add Algorithm Node</span> menu option.  Add Algorithm Node will present a dialog used to select the algorithm and parameters to append to the data node.
+						
+			<p>The algorithms fall into three main categories represented on three tabbed panels in the Algorithm Selection Dialog.  Analysis Algorithms include gene and experiment clustering algorithms, classification algorithms, statistical algorithms, and data visualizations.  The analysis algorithms are all described in the <span class="widget2">Modules</span> section of the manual. The Adjustment algorithms are those algorithms found in the Adjustment menu of the Multiple Array Viewer interface and include the Affymetrix™ based filters if Affymetrix ™ data is currently loaded.  The Adjustment algorithms either filter the data based on some criteria or are used to perform a mathematical transformation of the data.
+			<div class="screenshots leftsidecorrection">
+		<a href="scr5.jpg">
+					<img src="scr5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Diversity Ranking Cluster Selection Dialog</span>
+				</div>
+			<p>The cluster selection algorithms are specific to scripting in MeV.  Automatic Cluster Selection allows the user to provide criteria for evaluating cluster results where clusters have no intrinsic identity such as “significant genes”.  One scenario is the result from K-Means Clustering (KMC) where K=10.  In this case, 10 clusters will be produced and the cluster selection algorithms could be used to extract clusters based supplied criteria.</p>
+
+		<h5>More on Cluster Selection Algorithms</h5>
+			<p>Two main options are available for cluster selection.  <span class="widget2">Diversity Ranking Cluster Selection</span> computes cluster diversity for each of the input clusters and then ranks the clusters from least variable to most variable.  Clusters are selected that satisfy a minimum size (population) but are as least variable as possible.  In Diversity Ranking Cluster Selection two possibilities exist for determination of cluster diversity:</p>
+
+			<p>(1)<span class="widget1"> Centroid Based Diversity </span>(mean gene to centroid distance)</p>
+				<p><img src="scr17.jpg">/n;c is the cluster centroid, g<sub>i</sub> is the ith expression vector of n vectors. </p>
+			<p>(2)<span class="widget1"> Intra-gene Based Diversity  </span>(mean gene to centroid distance)</p>
+				<p><img src="scr18.jpg"></p>
+		<p>The output is a list ranking the clusters by diversity with cluster population listed.  Clusters that pass the size criteria and are least diverse are selected and are indicated in the list by bold type. 			<div class="screenshots">
+		<a href="scr6.jpg">
+					<img src="scr6.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Selection Information Viewer</span>
+				</div> The output nodes from cluster selection on the Script Tree can be used as input data to new algorithms.</p>
+		<p>The other option for cluster selection is <span class="widget2">Centroid Entropy/Variance Ranking Cluster Selection</span>.  This method places either a variance or an entropy value on the cluster’s <span class="widget1">centroid</span> (mean expression pattern).  While the previous method selects tightly constructed clusters, this method focuses on finding clusters having variable centroids.  The selected clusters are clusters that have a lot of variability on average over the expression measurements.  The clusters are ranked on decreasing centroid entropy or variance, and clusters are selected with the highest centroid variability.  The selected clusters must also pass a minimum cluster population.  A Cluster Selection Information Viewer is created to describe the selection process.  This viewer is similar to the viewer pictured for the Diversity Ranking Cluster Selection algorithm.  Two options are available to describe centroid behavior, variance and entropy:</p>
+							<div class="screenshots leftsidecorrection">
+					<a href="scr7.jpg">
+					<img src="scr7.jpg">
+				</a>
+				<br/>
+				<span class="caption">Centroid Entropy/Variance Ranking Cluster Selection Dialog</span>
+				</div>
+					<p>(1)<span class="widget1"> Centroid Variance</span></p>
+						<p><img src="scr19.jpg">is centroid variance where  is the centroid mean, is the ith centroid value of m values.
+					<p>(2)<span class="widget1"> Centroid Entropy</span></p>
+						<p>Entropy in this case describes the dispersion of expression values within the expression limits of the centroid.  Centroid values are binned within 10 bins evenly dividing the expression value range for the centroid.  P(x) is the fraction of centroid points falling in bin x.</p>
+						<p><img src="scr20.jpg"></p>
+			<div class="screenshots">
+		<a href="scr8.jpg">
+					<img src="scr8.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Tree Viewer with Constructed Script</span>
+				</div>
+			<h5>Script Tree Viewer Options</h5>
+				<p>Right click menus displayed from the script tree viewers vary depending on whether the selected node is a data node or an algorithm node. The menu displayed from a data node provides the <span class="widget2">Add Algorithm Node, Execute Script,</span> and <span class="widget2"> Save Script </span> options. The menu displayed from an algorithm node provides the <span class="widget2">Delete Algorithm, View XML Section, Execute Script,</span> and <span class="widget2">Save Script</span> options. The Delete Algorithm option deletes the algorithm, the associated output data nodes and any downstream algorithms that rely on the output of the deleted algorithm.  The View XML Section option is a shortcut to the <span class="widget2"> Script XML Viewer</span>When selected this option will open the XML viewer and will highlight the algorithm section associated with the node selected in the Script Tree Viewer.  <span class="widget1">One note on saving a script, scripts should be saved to the script directory inside MeV’s Data directory. 
+		<div class="screenshots leftsidecorrection">
+		<a href="scr9.jpg">
+					<img src="scr9.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script XML Viewer, highlighted algorithm and script line selected</span>
+				</div>
+				This location of the script ensures that when the script is loaded the files supporting script validation are located and used to validate script integrity.</span>
+			<h5>Script XML Viewer</h5>
+				<p>The Script XML Viewer is a text rendering of the script, as it would appear when saved to an output file.  The main purpose of the viewer is to get a view of the script during script creation and to review parameter value selections for particular algorithms.  When the XML viewer is opened via the Script Tree Viewer the selected algorithm in the XML viewer is highlighted in light green as shown in the Script XML Viewer figure.  Script lines are selected by clicking on the row number displayed on the left side of the viewer.  If the selected line corresponds to a parameter key-value pair, then the Edit menu option will be enabled so that the value can be altered. </p>
+			<h5>Editing Parameter Values within the XML Viewer</h5>
+						<div class="screenshots">
+		<a href="scr10.jpg">
+					<img src="scr10.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script XML Viewer, highlighted algorithm and script line selected</span>
+				</div>
+				<p>Limited editing capabilities are available in the Script XML Viewer.  If the selected script line is a parameter line then hitting the <span class="widget2">Edit</span> menu option will display an input dialog to permit altering the value of the parameter.  
+				<div class="screenshots leftsidecorrection">
+		<a href="scr11.jpg">
+					<img src="scr11.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Algorithm Parameter Table</span>
+				</div>
+				Keep in mind that caution should be used when changing script parameters so that downstream algorithms that are dependent on results are still valid.  The parameter input dialog only permits alteration of the parameter’s value.  A button on the dialog, labeled <span class="widget2">View Valid Parameters</span> will produce a table of possible parameters for the algorithm being modified.  The list contains parameter names, parameter types, optional constraints (value limits), and whether the parameter is required in all cases or if it is dependent on other parameter selections.</p>
+			
+		<h5>Loading a Script</h5>
+			<p>Loading of saved scripts is done by selecting <span class="widget2">Load Script</span> from the File menu of the Multiple Array Viewer.  A file selection dialog will automatically launch to prompt for the selection of a script file.  Scripts should be stored in the script directory of MeV’s data directory to ensure proper validation.</p>				
+			<div class="screenshots">
+		<a href="scr12.jpg">
+					<img src="scr12.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Error Log (with XML editor opened)</span>
+				</div>
+				<div class="screenshots leftsidecorrection">
+		<a href="scr13.jpg">
+					<img src="scr13.jpg">
+				</a>
+				<br/>
+				<span class="caption">Script Output Nodes on the Result Tree (Single KMC run)</span>
+				</div>
+			<p>During script loading several levels of script validation occur.  <span class="widget2">Fatal Errors</span> (usually malformed XML), <span class="widget2">Validation Errors</span> (script that does not match the Document Type Description (DTD)), <span class="widget2">Parser Warnings</span>, and algorithm <span class="widget2">Parameter Errors</span> (missing required parameters, parameter type mismatch, or parameter out-of-bounds errors) are caught during the validation.  If multiple validation errors exist, all will be reported.  All validation errors are reported in a Script Error Log dialog.  The Error Log initially lists the errors and indicates a line number for each error.  The <span class="widget2">Edit Script</span> button launches an XML viewer that can be modified and saved to address the errors.  Once the dialog is closed, the script should be re-loaded using the File menu to begin a fresh script loading and validation.  </p>
+		<h5>Running a Script</h5>
+			<p>Script execution can be initiated from the Script Table viewer, the Script Tree Viewer, or the Script XML Viewer by using the right click menu option, <span class="widget2">Execute Script</span>.  The script is logically split up into units called <span class="widget2">Algorithm Sets</span> that represent one or more algorithms sharing a common input data source.  The output results are grouped into algorithm sets and since each algorithm set has a unique input data set that can be a subset of the loaded data, an input data node is used to display the input data for the algorithm set.  The figure displaying script analysis output clearly shows the expected output from a script containing one algorithm (SAM).  The <span class="widget2">Input Data</span> node shows the number of experiments and the number of genes as well as three cluster viewers.  The <span class="widget2">Script Tree</span> node in the output for an algorithm set helps to orient the researcher as to which part of the script falls within the enclosing algorithm set.  The algorithm set, input data, attached algorithms and the result data nodes, are highlighted while other script nodes are semi transparent.</p>
+			<p>If an algorithm fails to produces a data node that is a source data node for another algorithm set then that algorithm set (using the null input) is aborted and an empty node with a text label indicating empty source data is displayed. </p>
+<div class="navigation-bar"><a  class="prev" href="lm.html">Previous:  LM-Literature Mining Analysis</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="compare.html">Next: Comparative Genomic Hybridization Viewer</a></div>
+</body>
+</html>		
+			
+			

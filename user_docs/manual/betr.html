@@ -1,0 +1,56 @@
+<html>
+	<head>
+		<title>BETR: Bayesian Estimation of Temporal Regulation </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="nonpar.html">Previous: NonpaR-Nonparametric Statistical Tests </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="limma.html">Next: LIMMA-Linear Models for Microarray Data </a></div>
+<h3>BETR: Bayesian Estimation of Temporal Regulation </h3>
+	<p>(Aryee, Martin et al , submitted 2008)</p>
+<div class="screenshots ">
+		<a href="betr1.jpg">
+					<img src="betr1.jpg">
+				</a>
+				<br/>
+				<span class="caption">BETR Parameters</span>
+				</div>
+<p>Most analyses treat time-points as independent samples and ignore potentially useful information that can be gained if the data contains non-uniform serial correlations. BETR is a flexible linear random-effects modeling framework that takes into account correlations between samples and sampling times.  The method makes use of information intrinsic to the data by modeling the joint distribution across all samples. Each gene is given a probability of differential expression that is derived from an empirical Bayes approach that uses the whole data set to reduce the number of parameters to be estimated.</p>
+<p>The BETR method can be applied to one-color or two-color microarray data.  The user may also select one-condition which will find differences between a baseline, t = 0, in a single condition. </p>
+<a name="para"><h4>Parameters</h4></a>
+<div class="screenshots ">
+		<a href="betr2.jpg">
+					<img src="betr2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Data Options</span>
+				</div>
+<p>After opening the BETR initialization dialog, select the type of data you intend to run.  Your 3 options are:</p>
+<ol>
+<li>2-Condition: Each condition must have multiple replicates for each time-point.</li>
+<li>1-Condition: Only one condition, the initial time-point will be treated as the control.</li>
+<li>Paired data: Data exists as a difference between two-conditions.</li>
+</ol> 
+<p>Input the number of time-points that your data contains.  If you are running 1-Condition data, the control is treated as the first time-point.</p>
+<p><em>Assign a significance level</em></p>
+			<p>Genes assigned a significance greater than 1-alpha will be deemed significant. Click “Continue” to move to the next step.</p>
+<p><em>Assign your samples</em></p>
+			<p>Depending on the type of data you have selected, you will need to assign your samples to time-points and conditions, if necessary.</p>
+<div class="screenshots ">
+		<a href="betr3.jpg">
+					<img src="betr3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Selection</span>
+				</div>
+<p><em>Button Selection</em></p>
+			<p>Use this option if you have not created clusters for your samples and want to assign each sample individually.<br/>Each time-point must contain at least two samples assigned to it.<br/>For 2-Condition data, both conditions must have at least two samples assigned to each of its genes.<br>If you have failed to adequately assign samples a dialog will pop up helping you find the condition and/or time-point that has insufficient samples. </p>
+<p><em>Cluster Selection</em></p>
+			<p>Use the cluster selection panel if you have previously made clusters and wish to run your analysis based on those clusters.  Use the drop-down boxes to choose which clusters’ samples are to be assigned to which time-points.  For clusters you are not using, leave “unassigned”.  The same condition and time-point requirements exist for this method, but the cluster selector makes for easier and more organized sample assignment.</p>
+<p><em>Hierarchical Clustering</em></p>
+			<p>To have BETR construct hierarchical trees for your results, check the corresponding check box.  Select whether this feature is to be applied to significant genes or significant and non-significant genes.  This process may add significantly to the computation time.</p>
+			<p>The BETR module outputs standard viewers and tables for MeV’s statistics analyses.</p>
+<div class="navigation-bar"><a class="prev" href="nonpar.html">Previous: NonpaR-Nonparametric Statistical Tests </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="limma.html">Next: LIMMA-Linear Models for Microarray Data </a></div>
+</body>			
+</html>	
+			

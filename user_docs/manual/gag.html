@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>The Gaggle Implementation</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+<div class="navigation-bar"><a class="prev" href="createout.html">Previous: Creating Output</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="Mod.html">Next: Modules</a></div>
+<h3>The Gaggle Implementation</h3>
+<a name="IntroGag"><h4>Introduction to the Gaggle</h4></a>
+		<p>The Gaggle is a framework, developed at the Institute for Systems Biology in Seattle, WA, for exchanging data between software tools. It is specifically designed to handle systems biology data, and allow for the transfer of biological data between independently-developed software tools on a users’ desktop computer. The Gaggle defines a set of data types that software tools can “broadcast” to one another, thereby allowing easy communication between applications without the use of intermediate data files. </p>
+		<p>Applications that implement the Gaggle framework are referred to as <span class="widget2">geese</span>. Each MultipleArrayViewer window can act as a goose. They can broadcast data to each other and to other geese connected to the Gaggle network. They can also receive data from other geese, if they have no data already loaded.</p>
+<a name="GagMenu"><h4>The Gaggle Menu</h4></a>
+		<p>The Gaggle submenu is located under the <span class="widget2">Utilities</span> menu in the MultipleArrayViewer toolbar. It contains the functions used to connect, disconnect, and direct traffic to the Gaggle Network.</p>
+	<p><em>Connect to Gaggle</em></p>
+		<p>Connect the current MultipleArrayViewer to the Gaggle network. This option will only function correctly if the computer is connected to the internet. After the first MultipleArrayViewer has been connected, new MAV windows will automatically connect themselves when they are opened.</p>
+	<p><em>Disconnect from Gaggle</em></p>
+		<p>Disconnect from the Gaggle network. Choosing this option will only disconnect the currently open MultipleArrayViewer from the Gaggle network. If other MultipleArrayViewer windows are open and connected to Gaggle, they will need to be disconnected separately. MeV will automatically disconnect all MultipleArrayViewers from the Gaggle network when the application is closed.</p>
+	<p><em>Broadcast Target</em></p>
+		<p>Select the target of Gaggle broadcasts. This submenu will contain the names of all currently-connected geese. If “Boss” is selected, all broadcasts will be sent to the boss and to all other connected members of the Gaggle network. If another goose is selected, the data will be broadcast only to that goose.</p>
+	<p><em>Show Goose</em></p>
+		<p>Select a currently-connected goose to bring to focus in the screen.</p>
+<h4><a name="Gagmev">Using the Gaggle with MeV</a></h4>
+	<p>MeV is capable of sending and receiving some of these types of data, including expression (matrix) data, lists of genes, and gene networks. Before MeV can send or receive, however, it must be connected to the internet and the Gaggle network. In a Multiple Array Viewer window, select <span class="widget2">Utilities-->Gaggle-->Connect to Gaggle</span>. The Gaggle Boss program will launch and minimize itself. This program must remain running while you use the Gaggle network.</p>
+	<p>If MeV is connected to the Gaggle network and has an empty MultipleArrayViewer window open, it will listen for the broadcast of a matrix of data. This data will then be loaded into the MultipleArrayViewer as if it had been loaded via the standard file loaders. If the MultipleArrayViewer window is not empty, incoming matrix broadcasts will be ignored.</p>
+	<p>To broadcast data from MeV to other members of the Gaggle network, use the right-click menu in the standard module result viewers. From these viewers, expression matrix data and/or gene lists can be broadcast.</p>
+	<p>More details on the workings of MeV with the Gaggle and a tutorial on its use are available on the TM4 website and the Gaggle website. </p>
+<div class="navigation-bar"><a class="prev" href="createout.html">Previous: Creating Output</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="Mod.html">Next: Modules</a></div>
+</body>
+</html>		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

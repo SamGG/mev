@@ -1,0 +1,91 @@
+<html>
+	<head>
+		<title>NMF: Non-negative Matrix Factorization</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="QTC.html">Previous: QTC-QT CLUSTER</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="ptm.html">Next: PTM-Template Matching   </a></div>
+<h3>NMF: Non-negative Matrix Factorization</h3>
+	<p>(Brunet et al, 2004) </p>
+	<p>(Devarajan K, 2008)</p>
+	<p>(Lee, Seung 2001)</p>
+<p>Non-negative Matrix Factorization, a technique which makes use of an algorithm based on decomposition by parts of an extensive data matrix into a small number of relevant metagenes.  NMF’s ability to identify expression patterns and make class discoveries has been shown to able to have greater robustness over popular clustering techniques such as HCL and SOM.  </p>
+<p>MeV’s NMF uses a multiplicative update algorithm, introduced by Lee and Seung in 2001, to factor a non-negative data matrix into two factor matrices referred to as W and H.  Associated with each factorization is a user-specified rank.  This represents the columns in W, the rows in H, and the number of clusters to which the samples are to be assigned.  Starting with randomly seeded matrices and using an iterative approach with a specified cost measurement we can reach a locally optimal solution for these factor matrices.  H and W can then be evaluated as metagenes and metagenes expression patterns, respectively.  Using a “winner-take-all” approach, samples can be assigned to clusters based on their highest metagenes expression.  Multiple iterations of this process allow us to see the robustness of the cluster memberships.  Additionally, running multiple ranks consecutively can allow for the comparison between differing numbers of classes using cophenetic correlation.</p>
+<p>NMF is most frequently used to make class discoveries through identification of molecular patterns.  The module can also be used to cluster genes, generating metasamples rather than metagenes.</p>
+<a name="para"><h4>Parameters</h4></a>
+		<p><em>Sample Selection</em></p>	
+			<p>The sample selection option indicates whether to cluster genes or samples.  The default is sample clustering.</p>
+				<div class="screenshots ">
+		<a href="nmf1.jpg">
+					<img src="nmf1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Non-negative Matrix Factorization Dialog box</span>
+				</div>
+		<p><em>Run multiple ranks</em></p>	
+			<p>This checkbox determines if NMF will be performed on one rank or compared across multiple ranks.  Selecting this option will allow the user to choose a rank range.</p>
+		<p><em>Number of runs</em></p>	
+			<p>Specifies the number of factorization runs to perform on each rank.  Typically, this value is between 20 and 100.</p>
+	
+		<p><em>Rank Value/ Rank Range</em></p>		
+			<p>The value or range of ranks for which NMF is performed.  This is an integer, or set of integers greater than 1 which will also correspond to the number of clusters.</p>
+		<p><em>Maximum iterations</em></p>	
+			<p>The maximum number of iterations to be completed as W and H approach a local optimization.</p>
+		<p><em>Always perform maximum iterations</em></p>	
+			<p>Specifies whether or not MeV should complete the maximum number of iterations or stop after a certain convergence has been reached.</p>
+		<p><em>Cost convergence cutoff</em></p>	
+			<p>The point at which a run can be halted based on sufficient convergence.</p>
+		<div class="screenshots ">
+		<a href="nmf2.jpg">
+					<img src="nmf2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cophenetic Correlation Graph</span>
+				</div>
+		<p><em>Check Frequency</em></p>	
+			<p>The frequency, in iterations, of checking for convergence.</p>
+		<p><em>Update rules and cost measurement</em></p>	
+			<p>The algorithmic technique, as described by Lee and Seung, for iteratively updating the factor matrices and the manner in which their cost is measured.  The default is “Divergence”.</p>
+		<p><em>Data matrix pre-processing</em></p>	
+				<p>A requirement for running NMF is a data matrix free of negative values.  If your data includes negative values, a method must be selected to adjust the data.  If “Always adjust data” is checked, the selected operation will be performed, regardless of your data.  If unchecked, the selected operation will only be performed if a search through the data reveals negative values.  After running your analysis, the preprocessing step (if any) will be recorded in the General Info tab.<br/>Subtract minimum value means that the lowest value in the data, regardless of that value’s negativity, will be subtracted from all values, ensuring a non-negative matrix.<br/>Exponentially scale means that every value will be exponentiated, base 2. </p>
+
+		<p><em>Random Number Generation</em></p>
+			<p>For the purpose of reproducibility, NMF allows the addition of a seed value for the creation of initial generation of W and H matrices.  Use of the same seed value on runs of NMF with identical parameters will result in identical results.</p>
+			<div class="screenshots ">
+		<a href="nmf3.jpg">
+					<img src="nmf3.jpg">
+				</a>
+				<br/>
+				<span class="caption">The Consensus Matrix with Hierarchical Clustering</span>
+				</div>
+		<p><em>Store results as clusters</em></p>
+			<p>Selecting this option will cause the creation and storage of the results as clusters in MeV’s clustering system.  These clusters will be visible in the Cluster Manager as well as in MeV’s experiment viewers. </p>
+			<p><span class="widget1">Results</span></p>
+				<p>For each rank analyzed, MeV’s NMF calculates a cophenetic correlation that is used to quantify the robustness of the rank’s evaluation.  This is reported as a node at the top of the result tree for each rank.  In the case where multiple ranks are run, a Cophenetic Correlation Graph is created and displayed in the result tree.  This gives a visual representation of the relative strength of clustering associated with each rank.</p>
+
+	<p>For each rank, MeV displays standard result viewers for each of the clusters, including heatmaps, expression graphs, centroid graphs, tables, and general cluster information.  </p>
+	<p>The Consensus Matrix with Hierarchical Clustering is a visual representation of the clustering and its robustness.  The viewer is a square matrix with dimensions equal to the number of samples (or genes, if “Cluster Genes” was selected). 	<div class="screenshots ">
+		<a href="nmf4.jpg">
+					<img src="nmf4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Color coded graphs</span>
+				</div> In this viewer, each point on the map represents the frequency with which the two samples (or genes) were assigned the same cluster through the runs, with 1 meaning 100% consensus and 0 being 0% consensus.  The matrix has been reordered into a hierarchical tree with frequency of co-clustering used as the distance metric.  It was then reordered for leaf order optimization.</p>
+	<p>Metagene and metagene expression patterns are reported in subfolders for each rank.  Each rank will have a set of metagenes and metagene expressions corresponding to the factor matrices W and H of each run.  Each set are displayed in ranking order of cost, with the most optimal metagenes displayed first.  The raw values can be seen and extracted for further analysis in the “Metagenes (W)” and “Metagene Expressions (H)” folders.  </p>
+	<p>Color coded graphs for these values exist in the subfolders beneath the raw values.  These offer a visual representation of the strength of each metagene or metagene expression pattern on a particular sample or gene.  By right-clicking on the graph, a sorting function can be toggled which, when on, orders the samples (or genes) according to the metagene with the highest expression.</p>
+<div class="navigation-bar"><a class="prev" href="QTC.html">Previous: QTC-QT CLUSTER</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="ptm.html">Next: PTM-Template Matching   </a></div>
+</body>
+</html>			
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

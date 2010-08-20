@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<title> Display Options</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+<body>
+<div class="navigation-bar"><a class="prev" href="AdjustingtheData.html">Previous: Adjusting the Data</a>| <a class"="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="ViewerDescriptions.html">Next: Viewer Descriptions</a></div>
+<a name="displayoptions.html"><h3>Display Options</a></h3>
+	<p>The graphical display of data and analysis results is one of MeV’s strongest assets.  This section of the manual describes options that include selection of gene and sample annotation to display, adjustment of expression image color schemes, and adjustment of expression image element size.</p>
+<a name="SampleAnno"><h4>Sample Annotations</a></h4>
+	<h5>Changing Sample Labels</h5>
+		<p>Samples in MeV can be labeled in various ways to indicate natural groupings based on experimental design.  By default, samples are labeled with the file name or in the case of TDMS format files the names are in the header row.  Sample labels can be select by choosing <span class="widget2">Display-->Sample/Column Labels-->Select Sample Label.</span>  Expression images and expression graphs will label the samples by this selected annotation field.  TDMS format files can contain additional sample annotation as described in the file format appendix.  Two other options for providing additional sample annotation are to select <span class="widget2">Utilities-->Append Sample Annotation</span> or to use the Sample Label Editor as described below.</p>
+	<div class="screenshots">
+		<a href="SLE.jpg">
+					<img src="SLE.jpg">
+				</a>
+				<br/>
+				<span class="caption">Sample Label Editor</span>
+				</div> 
+	<h5>Editing Sample Labels and Sample Reordering</h5>
+		<p>The Sample Label Editor is launched from the <span class="widget2">Edit Labels/Reorder Samples</span> menu option.  One key point is that if samples names are added, merged, or if samples are reordered, the changes can be captured by selecting <span class="widget2">File-->Save Matrix</span> from the main menu .  This will save the loaded data in to a TDMS file and will preserve the added sample annotation and sample order, if altered. </p>
+		<p>The primary function of the Sample Label Editor is to permit the modification of labels (attributes) associated with the loaded samples. Note that the first row in the table contains the default sample name.  The Default Name cannot be edited nor can it be deleted. The second major function is to enable the order of loaded samples to be rearranged. Two menus are available within the editor frame for performing editor actions. The two menus contain the same menu options. One is in the main menu bar and the other is available using a right mouse click with the mouse cursor over a table cell.  **Note that the import of additional sample annotation can be done using the <span class="widget2">Append Sample Annotation</span> option from the <span class="widget2">utilities menu</span>.</p>
+	<h5>Sample Reordering</h5>
+		<p>The order of the columns in the table can be altered by clicking on the column header and dragging the column to the desired location. This action alone does not force the loaded data to be reordered. The table order can be imposed on the loaded data if the check box menu item is selected to <span class="widget2">Enable Sample Reordering</span>. This ordering is imposed as soon as the dialog is dismissed.</p>
+		<p><span class="widget1">Note: If analyses have been run on the loaded data, the reordering option is disabled. This is done as a precaution against misrepresentation of prior results that may have relied on the original ordering. Typically, the reordering of samples should be done just after data loading to place associated samples into an order that is reasonable based on study design.</span></p>
+	<h5>Adding Sample Labels</h5>
+		<p>The <span class="widget2">Add New Sample Label</span> menu item is used to create a new row in the table. Note that the first cell in the new row is light yellow and is used to indicate a <span class="widget2">Label Key</span>. This key will be placed into the <span class="widget2">Sample Label</span> menu in the <span class="widget2">Display</span> menu so that when selected this label type will be displayed for the loaded experiments. Once a Label Key is entered, a double click on the remaining cells will allow editing to add appropriate labels for each sample. Reopening the editor will allow you to alter any label or label key visible in the table except for the default primary label and key (shown in gray).  Blank entries are allowed.</p>
+	<div class="screenshots">
+		<a href="merge.jpg">
+					<img src="merge.jpg">
+				</a>
+				<br/>
+				<span class="caption">Sorter for Merging Sample Attributes</span>
+				</div> 
+	<h5>Merging Sample Labels</h5>
+		<p>Occasionally it is convenient to merge several attributes or labels to produce a more informative label for each sample. To merge labels start by selecting two or more rows using ctrl-left click and then selecting the <span class="widget2">Merge Selected Rows</span> menu item. A small list will be presented that can be used to order the selected labels before actual merging. Once attribute ordering is done, a new row is inserted in the table to display the merged labels and the merged label key. </p>
+<a name="SelectGene"><h4>Selecting Gene Annotations</h4></a>
+		<p>The <span class="widget2">Gene/Row Label</span> menu option from the <span class="widget2">Display</span> menu is used to select a gene annotation field from among the loaded annotation types.  Expression image viewers and other viewers that display gene annotation will be adjusted to display the selected annotation type.</p>
+<a name="Color"><h4>Color Scheme Selection</h4></a>
+		<p>The color scheme selection options pertain to the color gradients that are used to correlate color to an expression value for an element in expression viewers.
+		<div class="screenshots">
+			<a href="cosch.jpg">
+					<img src="cosch.jpg">
+				</a>
+				<br/>
+				<span class="caption">Color Scheme Selection Dialog</span>
+				</div>   
+		Color provides a means to easily view patterns of expression.  Three preset options can be selected by choosing <span class="widget2">Display-->Color Scheme</span>.  The default is a double gradient, green-black-red, and displays under expression (relative to the reference) as green, over expression as red, and spots where there is little differential expression as black.  A blue-black-yellow color scheme is available as an alternative scheme.  The rainbow scheme is a third selectable option. MeV also provides “Custom color schemes” and “Accessible Color Scheme.”</p>
+		<p>Custom color schemes can be created by selecting Color Scheme-->Custom Color Scheme.  The form will provide several options:</p>
+			<blockquote><p>Gradient Style: Allows the selection of a double gradient or a single gradient.  In some cases a single gradient is preferred if values are not compared to a reference.</p>
+			<p>Gradient Selection: This panel selects the endpoint color that is being selected and allows for the center color on a two gradient scheme to be black or white.</p>
+			<p>Color Selector: This area presents controls for selecting endpoint colors.</p>
+				<div class="screenshots">
+			<a href="coschdia.jpg">
+					<img src="coschdia.jpg">
+				</a>
+				<br/>
+				<span class="caption">Color Scheme Selection dialog for the Accessible color scheme</span>
+				</div>
+			Gradient Preview: This area displays the current settings.
+			</blockquote>
+		<p>The Accessible Color Scheme was developed to make the images that MeV generates accessible for people with the color blindness. The color palette contains eight colors adapted from the web based resource:<a href="http://jfly.iam.u-tokyo.ac.jp/color/index.html">http://jfly.iam.u-tokyo.ac.jp/color/index.html</a>.</p> 
+		<p>The Color Scheme Selection dialog (shown below), which appears when you select the <span class="widget2">Accessible Color Scheme</span> option from the <span class="widget2">Color Scheme</span> menu; provides choices similar to the <span class="widget2">Custom Color Scheme</span> option (Gradient Style, Gradient Selection, Color Selector and Gradient Preview).</p>
+<div class="screenshots">
+			<a href="CSLD.jpg">
+					<img src="CSLD.jpg">
+				</a>
+				<br/>
+				<span class="caption">Color Scale Limits Dialog</span>
+				</div>
+<a name="scllimits"><h4>Setting Color Scale Limits</h4></a>	
+		<p>Expression images convey expression levels by converting the numeric expression value (log<sub>2</sub>(A/B) or absolute expression value) as a color that is extracted from the color gradient.  By setting numeric limits or endpoints on the displayed gradient (seen in the preview panel above and at the top of expression image viewers), expression values within the limits can be displayed as a color selected from the gradient image.  The <span class="widget2">Set Color Scale Limits</span> option from the <span class="widget2">Display</span> menu provides a dialog to set the limits of the color gradient.</p>
+		<p>The color scale limits dialog, like the color scheme dialog also provides the choice of using a double or single gradient as appropriate.</p>
+		<p>The color range panel provides input boxes to set lower and upper limits for the color gradient and a midpoint when using a double gradient.  The labels next to the input boxes display the minimum, maximum, and median expression values as a rough guide when setting color scale limits.  When the <span class="widget2">Update Limits</span> button is pressed the <span class="widget2">Color Saturation Statistics</span> panel (below) and the gradient preview panel are updated.  The limits are also conveyed to MeV and the current viewer is updated to reflect the limits.  This permits you to adjust and update the limits while viewing the affect of the new limits on the expression image.</p>
+		<p> The  <span class="widget2">Color Saturation Statistics</span> panel displays the number of spots that are beyond the limits of the color scale.  These elements would be represented in the expression image as the saturated endpoint colors.  This panel also reports this information as a percentage of elements that are saturated relative to the total number of elements.  These numbers allow you to adjust the limits such that the expression is spread across the gradient with a limited number of saturated (off scale) elements.</p>
+		<p> The reset button of this dialog will reset the limits in the dialog to the original  limits present when the dialog was opened and MeV has it’s limits rolled back to the original limits.</p>
+<a name="EA"><h4>Element Appearance</h4></a>
+		<p>The final two options in the Display menu are options to alter the element size and to draw or omit borders around each element.  Element size can be selected from among four preset options or a customized size can be selected by entering an element height and width.</p>
+<div class="navigation-bar"><a class="prev" href="AdjustingtheData.html">Previous: Adjusting the Data</a>| <a class"="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="ViewerDescriptions.html">Next: Viewer Descriptions</a></div>
+</body>
+</html>

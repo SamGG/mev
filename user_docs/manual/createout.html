@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>Creating Output</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+<div class="navigation-bar"><a class="prev" href="UM.html">Previous: Utilities Menu</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="Gag.html">Next: The Gaggle Implementation</a></div>
+
+<h3> Creating Output</h3>
+	<p>While creating output files is not the main purpose of MeV, several options exist for saving files from the Multiple Array Viewer for later use.</p>
+<a name="SaveAny"><h4>Saving the Analysis</h4></a>	
+	<p>Saving the state of an ongoing analysis to file can be accomplished by selecting <span class="widget2"> File-->Save Analysis</span> As in the Multiple Array Viewer.  The analysis file will contain the loaded data, the current analysis results, and any clusters that are stored in the cluster manager.  Once it has been saved, the <span class="widget2">Save Analysis</span> option will be enabled. To reopen an analysis, select<span class="widget2"> File-->Open Analysis</span>.  This will restore the data and all algorithm results as they were last saved.</p>
+	<p><span class="widget1">One word of caution on analysis-saving:</span> this feature was dramatically re-written since MeV v4.0 to improve reliability and portability.  Because of these changes, MeV 4.0 and higher cannot open saved analysis files created by MeV 3.1 or earlier, or MeV4.0b.  In order to make saving analyses seamless and efficient, we have had to sacrifice backwards-compatibility with previous versions of the analysis saving features of MeV.  Versions of MeV higher than v4.0 are able to open analysis (*.anl) files created by MeV v4.0 and later.</p>
+	<p>Note that for sharing analysis techniques and results with collaborators, one option is to use MeV’s scripting ability to create an algorithm execution script so that others analyzing the same data can share techniques and view interesting results produced by specific analysis routines. (See Scripting for details. Chapter 10).</p>
+		<div class="screenshots">
+		<a href="Savemate.jpg">
+					<img src="Savemate.jpg">
+				</a>
+				<br/>
+				<span class="caption">Expression matrix saved as text file</span>
+				</div> 
+<a name="SaveMate"><h4>Saving the Expression Matrix</h4></a>
+	<p>The expression matrix can be saved as a tab delimited text file by selecting <span class="widget2">File-->Save Matrix</span>. Enter a name for the file in the save file dialog that is displayed.  The matrix saved reflects any data adjustments that are currently imposed on the data set such as percentage cutoffs or low intensity cutoffs.</p>
+<a name="SaveView"><h4>Saving Viewer Images</h4></a>
+	<p>To save a tiff file of the currently displayed image in the main view, select <span class="widget2">File-->Save Image</span>. To print the image, select <span class="widget2">Print Image</span> instead.</p>
+<a name="SaveClust"><h4>Saving Cluster Data</h4></a>
+	<p>You can also <span class="widget2">Save Cluster Data</span> to a tab-delimited text file.  Selecting this option from the right-click menu will cause a file chooser to appear.  Select a file name and a place to save row/column data, log ratio expression values, and (optionally) Cy3 and Cy5 values for each gene in the cluster (or each sample if the cluster is produced via clustering samples).  Selecting <span class="widget2">Save All Clusters</span> will allow you to save the elements in all clusters in a similar way.</p>
+<div class="navigation-bar"><a class="prev" href="UM.html">Previous: Utilities Menu</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="Gag.html">Next: The Gaggle Implementation</a></div>
+	</body>
+	</html>

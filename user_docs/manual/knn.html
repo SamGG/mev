@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<title>KNNC: K-Nearest-Neighbor Classification</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="usc.html">Previous: USC-Uncorrelated Shrunken Centroids</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="dam.html">Next: DAM-Discriminant Analysis Module</a></div>
+<h3>KNNC: K-Nearest-Neighbor Classification</h3>
+	<p>(Theilhaber et al. 2002)</p>
+	<p>KNN Classification is a supervised classification scheme. A subset of the entire data set (called the training set), for which the user specifies class assignments, is used as input to classify the remaining members of the data set. The user specifies the number of expected classes, and the training set should contain examples of each class. If the <span class="widget1">Classify</span> option is chosen from the initial dialog, an input dialog box is displayed for parameter input.</p>
+<div class="screenshots ">
+		<a href="k1.jpg">
+					<img src="k1.jpg">
+				</a>
+				<br/>
+				<span class="caption">KNN Classification Initialization Dialog</span>
+				</div>
+<a name="para"><h4>KNN Classification Parameter Information</h4></a>
+	<p><em>Classify genes or samples</em></p>	
+			<p>This is self-explanatory. Although the following description refers to genes, the same steps will apply to experiments if “Classify samples” is chosen. </p>
+
+	<p><em>Variance filter</em></p>	
+			<p>This is the first of two noise-reduction filters that can optionally be applied before classification. The variance filter keeps only those genes in the entire data set (including the classifier set) that have the highest variance across all samples. The number of genes to be retained is specified by the user. </p>
+	<p><em>Correlation filter</em></p>	
+			<p>The correlation filter is used to filter out those genes of the set to be classified, that are not significantly correlated with at least one member of the training set. The significance of correlation is determined by the p-value, which is calculated by a permutation test in which each gene is permuted a user-specified number of times. </p>
+<h5>KNN classification parameters</h5>
+	<p>This is where the user specifies the expected number of classes (which is also the number of classes present in the training set). </p>
+	<p>The number of neighbors is the number of genes from the training set that are chosen as neighbors to a given gene. Euclidean distance is used to determine the neighborhood. Let’s say we want to classify a gene g. Gene g is assigned to the class that is most frequently represented among its k nearest neighbors from the training set (where k is specified by the user). In case of a tie, gene g remains unassigned.</p>
+					<div class="screenshots ">
+		<a href="k2.jpg">
+					<img src="k2.jpg">
+				</a>
+				<br/>
+				<span class="caption">KNN Classification editor</span>
+				</div>
+	<p><em>Create/import training set</em></p>	
+			<p>If the user chooses to import a previously created training set (for instructions on saving a training set, see below), on hitting the “Next” button a file chooser is displayed from which the training file can be chosen. If an appropriate file is chosen, the KNN classification editor shown below in Fig xx is displayed with the class assignments from the file. If the option to create a new training set from data is chosen, on hitting the “Next” button the classification editor is directly displayed with all genes set to neutral.</p>
+	<p><em>Hierarchical Clustering</em></p>	
+			<p>This checkbox selects whether to perform hierarchical clustering on the elements in each cluster created.</p>
+<p><span class="widget1">Default Distance Metric: Euclidean (for finding nearest neighbors), Pearson (for Correlation test). Fixed, will not correspond to distance menu.</span></p>
+<p>Genes can be assigned to any of the specified classes by checking the box in the appropriate column for that gene. Genes designated as “Neutral” will be classified in subsequent steps, whereas those assigned to classes in this step will be treated as the training set. The “Edit” and “Tools” menus at the top of the classification editor allow searching, sorting and selection of data. The classification scheme can be saved in a text file if needed, to be loaded in a future KNNC run (as explained above).</p>
+	<div class="screenshots ">
+		<a href="k3.jpg">
+					<img src="k3.jpg">
+				</a>
+				<br/>
+				<span class="caption">KNN Classification cross-validation statistics viewer</span>
+				</div>
+<p>On hitting the “Next” button in the classification editor, the calculations proceed, and the output has the usual viewers as most other MeV runs. The main difference is that each type of viewer has several sub-viewers for Used Classifiers, Unused Classifiers (those that are possibly weeded out by variance filtering), Classified, Used Classifiers + Classified, Unclassified and All. This is done so that users can visually compare training vectors to trained vectors.</p>
+<p>The <span class="widget1">Validate</span> option in KNNC provides dialogs very much like the above, and is used to perform leave-one-out cross validation on the training set. The output viewers are also similar to the ones obtained in classification, with an additional viewer that provides cross-validation statistics.</p>
+<div class="navigation-bar"><a class="prev" href="usc.html">Previous: USC-Uncorrelated Shrunken Centroids</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="dam.html">Next: DAM-Discriminant Analysis Module</a></div>
+</body>
+</html>

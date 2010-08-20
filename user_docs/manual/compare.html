@@ -1,0 +1,302 @@
+<html>
+	<head>
+		<title>Comparative Genomic Hybridization Viewer</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="script.html">Previous: Scripting</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app.html">Next: Appendix: File Format Descriptions</a></div>
+	<h3>Comparative Genomic Hybridization Viewer </h3>
+	
+		<p>The scripting capabilities within MeV permit the execution of multiple algorithms to be performed without user oversight or intervention once processing begins.  The execution steps are dictated by a user-defined script that describes the parameters to use for the selected algorithms.  Scripting in MeV allows one to document the algorithms run and the selected parameters during data analysis.  The script document can be shared with collaborators so that analysis steps can be replicated on the common data set.  Scripting is also useful when running several long analysis steps that would normally require monitoring in MeV's interactive mode.  Each algorithm and the parameters are pre-selected in the script so the next algorithm kicks off as soon as the previous run finishes.  Despite the advantages of scripting, there may be times when careful evaluation of a result before deciding on the next algorithms is needed.  In this setting scripting might be used as a first pass analysis and the multiple results of the script run can lead to the selection of different algorithms or new parameter selections. </p>
+	<a name="exp"><h4>Loading Experiments</h4></a>
+		<p>Currently CGH Analyzer is capable of loading experiments only in one generic format. We will provide other loaders to accommodate various other formats in the future. Currently CGH Viewer supports only 2 species data: Human & Mouse.</p>
+				<div class="screenshots">
+		<a href="cgh1.jpg">
+					<img src="cgh1.jpg">
+				</a>
+				<br/>
+				<span class="caption">CGH File Loader</span>
+				</div>
+	<h5>Loading from Files</h5>
+		<p>CGH Analyzer allows data to be loaded from one format only. The format includes 4 mandatory columns followed by sample columns. The mandatory columns are: </p>
+			<ol>
+				<li>Probe/Marker </li>
+				<li>Probe Chromosome, </li>
+				<li>Probe Genomic Start in BP, </li>
+				<li>Probe Genomic End in BP </li>
+			</ol>
+		<p>The mandatory columns are followed by Sample observations where each observation for each probe is the log2 or simple intensity ratio of Cy3 & Cy5. If the observations are not log2 transformed they are done so by the module. </p>
+	<p>The protocol for loading data from files is as follows:</p>
+			<ol>
+				<li>Launch MeV </li>
+				<li>Click File-->Load Data to launch the file loading dialog.</li>
+				<li>Click Select-->CGH to invoke the CGH loader </li>
+				<li>Locate directory in which data files are located using the directory tree on left. To load a sample data set included with the MeV distribution, navigate to the installation directory of MeV, expand the Data directory, and select the CGH_sample_data.txt file.  Use default settings for Species & Log status. </li>
+				<li>At the bottom of the window, click "Load"</li>
+			</ol>
+				<div class="screenshots">
+		<a href="cgh2.jpg">
+					<img src="cgh2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Circle Viewer view of sample HPAC</span>
+				</div>
+	<a name="view"><h4>CGH Analyzer Viewers</h4></a>
+		<h5>The CGH Circle Viewer</h5>
+			<p>Once experiments have been loaded, the Main View node of the navigation tree should contain a subtree called Experiment Views.  Expand this subtree to display a list of all the samples that have been loaded.  Clicking on any of these samples will display the CGH Circle Viewer for that sample.</p>
+			<p>The CGH Circle Viewer is a circular representation of the entire genome of a sample.  This view provides easy identification of large scale abnormalities and overall aneuploidy of a sample.  The display consists of 24 concentric circles, each representing a chromosome, with chromosome 1 represented by the outermost circle and chromosome Y represented by the innermost circle.  Each circle is composed of a series of colored dots, each representing a probe.  The probes are arranged by their linear around the genome.  The p-arm of each chromosome begins at 180 degrees from the center of the display and subsequent probes are arranged clockwise by their position on the chromosome.</p>
+			<p>Click on any clone in the circle viewer to display its clone name and chromosome. Right Clicking on any region will display a menu to browse RefSeq genes in the region, Launch CGH browser on a sample, Map out to public domain sites like NCBI, etc.</p>
+	<h5>Clone Values</h5>
+		<p><span class="widget1">Log Values</span></p>
+			<p>The CGH Analyzer currently allows one method of determining the value for each probe, i.e. the log2 ratio.  All displays by default are a red/green ratio gradient color display. Each element is red, green, black or gray. Black elements have a log average inverted ratio of 0, while green elements have a log ratio of less than 0 and red elements have a log ratio greater than 0. The further the ratio from 0, the brighter the element is. Gray elements are missing or were determined as bad by the spot quality filtration criteria and are not used in any analyses. </p>
+			<p>By default, the lower and upper bounds of this display are -1 and 1, indicating that probes with log ratios less than or equal to -1 are shown with the maximum red intensity, and those greater than or equal to 1 are shown with the maximum green intensity.  This scale can be changed, allowing for display of a wider intensity range, by using the Set Ratio Scale item in the Display menu.  The colors used can be changed by selecting Set Color Scheme from the Display menu.  Notice how the color bar at the top of the display updates when these values are changed, indicating the current color scheme and ratio scale. </p>
+		<h5>Thresholds</h5>
+			<p>To change to discrete copy number determination based on clone ratio thresholds, select the Set Threshold item from the CloneValues menu.</p>
+			<p>Using this determination, each clone is assigned a copy number determination and corresponding color based on the criteria shown in the table</p>
+		<table border="1" width="400" cellpadding="3" cellspacing="3">
+	<tr>
+		<td>Copy Number</td>
+		<td>Color</td>
+		<td>Log2 Ratio</td>
+		<td>Other</td>
+	</tr>
+	<tr>
+		<td>2 Copy Deletion</td>
+		<td>Pink</td>
+		<td>< Deletion Threshold 2 Copy</td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>1 Copy Deletion</td>
+		<td>Red</td>
+		<td>< Deletion Threshold</td>
+		<td>Not 2 Copy Deletion</td>
+	</tr>
+	<tr>
+		<td>2 Copy (or greater) Amplification</td>
+		<td>Yellow</td>
+		<td>>Amplification Threshold 2 Copy</td>
+		<td>N/A</td>
+	</tr>
+	<tr>
+		<td>1 Copy Amplification</td>
+		<td>Green</td>
+		<td>>Amplification Threshold</td>
+		<td>Not 2 Copy Amplification</td>
+	</tr>
+	<tr>
+		<td>No Copy Change</td>
+		<td>Blue</td>
+		<td>N/A</td>
+		<td>Not Deleted or Amplified</td>
+	</tr>
+	<tr>
+		<td>Bad Clone</td>
+		<td>Grey</td>
+		<td>N/A</td>
+		<td>N/A</td>
+	</tr>
+</table>
+		<div class="screenshots">
+		<a href="cgh3.jpg">
+					<img src="cgh3.jpg">
+				</a>
+				<br/>
+				<span class="caption">CGH Position Graph view of chromosome 1</span>
+				</div>
+<p>Discrete copy number determination based on probe log2 ratio thresholds</p>
+<a name="graph"><h4>The CGH Position Graph</h4></a>
+	<p>The <span class="widget2">Main View</span> node of the navigation tree should contain a subtree called <span class="widget2">Chromosome Views</span>. Expand this subtree to display a list of all chromosomes.  Clicking on any of these chromosomes will display the CGH Position Graph Viewer for that chromosome.</p>
+	<p>The CGH Position Graph Viewer is used to display data values for a single chromosome for multiple experiments.  The left side of this view displays the cytogenetic bands of the selected chromosome.  Positional coordinates, in MB, are annotated to the left of the cytobands.  Probes are represented as horizontal bars beginning and ending at positions corresponding to the genomic coordinates of the clone. </p>
+	<p>Probes in this display are colored the same way as described for the Circle Viewer.  Clone values, color schemes, and ratio scales can be adjusted.</p>
+		<div class="screenshots">
+		<a href="cgh4.jpg">
+					<img src="cgh4.jpg">
+				</a>
+				<br/>
+				<span class="caption">The display order changer</span>
+				</div>
+	<h5>Changing Experiment Order</h5>
+		<p>The order in which experiment appear in the display can be changed by using the <span class="widget2">Display Order</span> item in the <span class="widget2">Display</span> menu.  The position of samples can be moved up and down using the buttons on the bottom of this dialog, and selecting <span class="widget2">Ok</span> will cause the experiments to be displayed using the new order.</p>
+		<h5>Element Size</h5>
+			<p>The width and length of the probes can be changed through the <span class="widget2">Element Length</span> and <span class="widget2">Element Width</span> items in the <span class="widget2">Display</span> menu.  By default the width and length are calculated to fit the entire display on the screen.  It is often useful to increase the length to look at a particular region because it is often difficult to distinguish probes that lie close to each other.</p>
+	<h5>Flanking Regions</h5>
+				<div class="screenshots">
+		<a href="cgh5.jpg">
+					<img src="cgh5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Position Graph view of chromosome 20 with flanking regions</span>
+				</div>
+		CGH arrays are used to determine a copy number profile throughout the genome.  In expression arrays, the values of importance are usually genes that are covered by probes, but in CGH arrays, the regions that lie between probes are often as important as those that are covered.  Therefore, unless a CGH array has complete genomic coverage, it is important to interpolate copy number change in the regions not covered by probes.  Flanking regions also allow experiments to be analyzed together that were generated using different arrays.  Flanking regions are used to approximate a complete genome copy number profile of each sample.  Flanking regions rely on assigning a discrete copy determination to each probe.  A region between two probes is considered altered if either of the probes that “flank” that region is altered.  If a data region is flanked by one or more “deleted” probes, the region is considered deleted, and if it is flanked by one or more “amplified” probes, the region is considered amplified.  If a region is flanked by one deleted and one amplified clone, the region is considered as deleted and amplified, allowing for maximum flexibility in algorithms that use flanking regions.  Flanking regions can be toggled through the
+		<span class="widget2">Flanking Regions </span>checkbox item in the <span class="widget2">Display</span> menu.  Right clicking on any flanking regions will allow for querying of the genes containing in the flanking region, querying the intensity ratios of the probes that make up the region, and to link to the CGH Browser. </p>
+	<h5>The Separated Viewer</h5>
+				<div class="screenshots leftsidecorrection">
+		<a href="cgh6.jpg">
+					<img src="cgh6.jpg">
+				</a>
+				<br/>
+				<span class="caption">View of chromosome 2</span>
+				</div>
+		<p>A common way to display CGH data is to draw all deletions on one side of the screen and all amplification on the other side.  The separated view of the CGH Postion Graph displays the cytogenetic bands and chromosome positions in the center of the panel, the flanking regions corresponding to deletions on the left of the screen and the flanking regions corresponding to amplifications on the right side of the screen.  To display this view, in the <span class="widget2">Display</span> menu, select <span class="widget2">Display Type-->Separated</span>. This display often looks better if the element width item is set to a smaller value.</p>
+	<a name="brow"><h4>The CGH Browser</h4></a>
+				<div class="screenshots">
+		<a href="cgh7.jpg">
+					<img src="cgh7.jpg">
+				</a>
+				<br/>
+				<span class="caption">CGH Browser with the data region selected</span>
+				</div>
+		<p>The CGH Browser displays a plot representation of one or more CGH experiments.  Right clicking on any flanking region or probe in the CGH Position Graph Viewer, or on any probe in the CGH Circle Viewer and selecting <span class="widget2">Show Browser</span> will launch the CGH Browser with the values corresponding to the selected data region highlighted on both the chart and the table.</p>
+		<p>The <span class="widget2">Experiment</span> menu of the CGH Browser can be used to toggle the display between each experiment that has been loaded, or all experiments. The <span class="widget2">Chromosome</span> menu of the CGH Browser can be used to toggle the display between one chromosome or all chromosomes.</p>
+				<div class="screenshots leftsidecorrection">
+		<a href="cgh8.jpg">
+					<img src="cgh8.jpg">
+				</a>
+				<br/>
+				<span class="caption">Log Ratios for chromosome 2 of all experiments</span>
+				</div>
+		<p>Clicking anywhere on the chart will highlight the data point closest to the selection, as well as the corresponding row in the table.  Selecting any number of rows in the table will highlight the corresponding region in the chart. The View menu can be used to change annotations and display styles in the browser.</p>
+	<a name="any"><h4>CGH Analysis</h4></a>
+		<p>The CGH Analysis menu contains a number of algorithms for searching for data regions that are consistently altered throughout the experiments.  These algorithms can be performed on probes, genes, and data regions (minimal common regions of alteration).</p>
+	<h5>Algorithms on Probes</h5>
+		<p>The items <span class="widget2">CloneAmplifications, CloneDeletions, CloneAmplifications2Copy, CloneDeletions2Copy,</span> are used to search for probes that are commonly altered throughout the experiments.  Click on the <span class="widget2">CloneDeletions</span> item.  Notice that a subtree has been added to the Analysis node of the navigation tree on the left side of the screen.  Expanding this tree and selecting the <span class="widget2">Results</span> node will set the main view to display a table showing the number and percentage of experiments in which each clone is deleted.  </p>
+	<div class="screenshots">
+		<a href="cgh9.jpg">
+					<img src="cgh9.jpg">
+				</a>
+				<br/>
+				<span class="caption">Clone deletions display with chromosome 4 deletions selected to be annotated</span>
+				</div>
+	<h5>Annotating Regions</h5>
+		<p>Highlight all of the probes on chromosome 1 with 4 or more alterations and select the <span class="widget2">Annotate Selected</span> item in the <span class="widget2">Annotations</span> menu. This will set the selected data regions to be annotated in the corresponding CGH Position graph. Click on the <span class="widget2">Chromosome 1</span> item on the <span class="widget2">Chromosome Views</span> subtree of the navigation tree on the left side of the screen to see the selected probes annotated.  The element length may have to be changed to view all annotated probes.</p>
+			<div class="screenshots leftsidecorrection">
+		<a href="cgh10.jpg">
+					<img src="cgh10.jpg">
+				</a>
+				<br/>
+				<span class="caption">CGH Position graph of chromosome 18 with probes annotated that are deleted in 4 or more samples</span>
+				</div>
+		<p>Right clicking on an annotation allows for querying of genes containing in the region, and to link to the CGH Browser with the selected annotation highlighted.  If the CGH Browser corresponding to an annotation is displayed, it will display the log average inverted clone values for all experiments for the chromosome corresponding to the annotation.</p>
+		<p>Annotations can be cleared by using the <span class="widget2">Clear Annotations</span> item in the <span class="widget2">Display</span> menu.</p>
+	<span class="widget1"><p>Saving Results</p></span>
+		<p>The Results of any CGH Analysis algorithm can be saved as a tab delimited text file.  To do this select the Save item from the File menu of the algorithm results viewer.</p>
+	<div class="screenshots leftsidecorrection">
+		<a href="cgh12.jpg">
+					<img src="cgh12.jpg">
+				</a>
+				<br/>
+				<span class="caption">Chromosome 1 deleted regions</span>
+				</div>
+	<h5>Algorithms on Data Regions</h5>
+		<p>The items <span class="widget2">RegionAmplification and RegionDeletions</span> are used to search for common regions of amplifications and deletions.  It is often important to identify minimal regions of alteration that are common between a number of experiments.  Select the <span class="widget2">RegionDeletions</span> item. 
+	<div class="screenshots">
+		<a href="cgh13.jpg">
+					<img src="cgh13.jpg">
+				</a>
+				<br/>
+				<span class="caption">Chromosome 1 data regions with six or more amplifications</span>
+				</div>
+		Select the <span class="widget2">Results</span> node in the newly created <span class="widget2">Region Deletions</span> subtree. 
+		Notice that there is one region on chromosome 1 that is deleted in all of the samples, and four regions that are deleted in six out of seven samples.</p>
+		<p>Select and annotate these five regions, and display the CGH Position Graph viewer for chromosome 1. The annotated data regions are represented by light blue rectangles on the right side of the display.  This technique can be used to significantly reduce the size of the data regions determined for further investigation.  Right-click on any of the blue rectangles and select <span class="widget2">Show Genes in Region</span> to check if there are any consistently deleted genes of interest. These are displayed in a tabular format.</p>
+		<div class="screenshots">
+		<a href="cgh14.jpg">
+					<img src="cgh14.jpg">
+				</a>
+				<br/>
+				<span class="caption">Gene amplifications on the dataset</span>
+				</div>
+			
+	<h5>Algorithms on Genes</h5>
+		<p>The items <span class="widget2">GeneAmplifications</span> and <span class="widget2">GeneDeletions</span> are used to search for genes that are commonly altered between experiments.  Select the <span class="widget2">GeneDeletions</span> item.  Select the <span class="widget2">Results</span> node in the newly created <span class="widget2">Gene Deletions</span> subtree.  This view displays the number of deletions for every gene stored in UCSC’s Golden Path database. </p>
+<div class="screenshots leftsidecorrection">
+		<a href="cgh14.jpg">
+					<img src="cgh15.jpg">
+				</a>
+				<br/>
+				<span class="caption">Gene amplifications on the dataset</span>
+				</div>
+	<h5>Loading a Gene List</h5>
+		<p>Selecting the <span class="widget2">LoadGeneList</span> item in the <span class="widget2">CGH Analysis</span> menu will calculate the number of amplifications and deletions for every gene in a customized gene list.  Select this button and load the file named “CGH_sample_genelist.txt”, included with the distribution of the MeV.  This list is a text file containing a large number of genes that have been identified as being associated with cancer.  Notice that the new Gene Alterations subtree now contains two subtrees, corresponding to the number of times the genes in the list are amplified and deleted.</p>
+	<h5>Deleting a Node</h5>
+		<p>Nodes in any tree can be deleted. Right click on the node and select <span class="widget2">Delete</span>.</p>
+	<h5>Searching for a Gene</h5>
+		<p>Selecting the <span class="widget2">Find Gene</span> item from the <span class="widget2">CGH Analysis</span> menu will display a dialog prompting for the name of a gene.  Enter the name of a gene of interest and click <span class="widget2">Ok</span>.  A dialog will appear showing how many times that gene is deleted and amplified in the dataset.  Selecting <span class="widget2">Annotate Selected</span> from the <span class="widget2">Annotations</span> menu of this dialog will display the CGH Position graph corresponding to this gene, with the gene annotated.</p>
+<a name="hl"><h4>Higher Level Analysis</h4></a>
+		<p><span class="widget1">Refer to other sections of the MeV manual  for a description of the analysis capabilities of the Multi Experiment Viewer.</span></p>
+		<h5>ChARM (Chromosome Aberration Region Miner) </h5>
+			<p>We have integrated a new module called ChARM, a robust expectation maximization based algorithm for identification of segments of chromosomal aberrations from CGH data. (ChARM, Meyers, C.L et al, 2004)</p>
+						<div class="screenshots">
+		<a href="cgh16.jpg">
+					<img src="cgh16.jpg">
+				</a>
+				<br/>
+				<span class="caption">Drop-down Menu</span>
+				</div>
+			<p><span class="widget1">Running Charm</span>: Please follow the series of screenshots and any instructions associated with it to start the analysis.</p>
+				<p>1. After loading the CGH data navigate to the main menu “CGH Analysis” option and select “ChARM” from the drop-down.</p>
+				<div class="screenshots leftsidecorrection">
+		<a href="cgh17.jpg">
+					<img src="cgh17.jpg">
+				</a>
+				<br/>
+				<span class="caption">ChARM Analysis</span>
+				</div>
+				<p>2. A new window opens which displays all CGH experiments that are loaded. Use the check boxes to select the experiments that needs to be analyzed and hit “Start Analysis”</p>
+		<h5>ChARM Results and Result window navigation & options:</h5>
+			<ol>
+			<li>Once analysis completes it adds a node called “ChARM” on the left hand panel. Under that “ChARM View” option displays the analysis results as shown below.</li>
+			<li>Holding the mouse cursor on any experiment shows the name of the experiment a shown in the highlighted circle.</li>
+			<div class="screenshots">
+		<a href="cgh18.jpg">
+					<img src="cgh18.jpg">
+				</a>
+				<br/>
+				<span class="caption">ChARM Results</span>
+				</div>
+			<li>By default it shows only the 1st experiment. Additional experiments can be loaded by ticking the checkbox against each sample name in the “Experiments Options Panel”.</li>
+			<li>The green bars below the experiment plots represent deletions or decrease in copy number.</li>
+			<li>By clicking on any of the red/green bars all probes/genes within that segment can be viewed in the “Result” panel below. A segment when selected is displayed in pink.</li>
+			<div class="screenshots leftsidecorrection">
+		<a href="cgh19.jpg">
+					<img src="cgh19.jpg">
+				</a>
+				<br/>
+				<span class="caption">ChARM Results</span>
+				</div>
+			<li>The result panel can be navigated by the up/down arrow key or by the scroll bars.</li>
+			
+			<li>Both single/multiple row selections are possible from the result table. Accordingly the corresponding probe/probes are circled in the plot above. </li>
+			<li>Probes or Segments can also be selected by clicking and drawing a box on the canvas around the target. The selections results are then displayed in the Result table as described above.</li>
+			<div class="screenshots ">
+		<a href="cgh20.jpg">
+					<img src="cgh20.jpg">
+				</a>
+				<br/>
+				<span class="caption">Probes and Segments Selection</span>
+				</div>
+			<li>Once selected, the Probes or Segments are displayed in color pink as shown in the figure..</li>
+			<div class="screenshots leftsidecorrection">
+		<a href="cgh22.jpg">
+					<img src="cgh22.jpg">
+				</a>
+				<br/>
+				<span class="caption">The ChARM viewer toolbar  </span>
+				</div>
+			<li>Segments are computed based on Sign And Mean Tests for a default p-value. Both, the type of test, their combination and corresponding p-value(s) can be changed from view for determining significant segments or regions of amplifications & deletions.</li>
+			<li>The ChARM viewer toolbar buttons can be used to do the following as highlighted in the figure below:<br/>
+				
+				<span class="widget1">a.</span>	Save the results of the analysis<br/>
+			<span class="widget1">b.</span>	Switch between zoom and selection mode.<br/>
+			<span class="widget1">c.</span>	Zoom In/OUT<br/>
+			<span class="widget1">d.</span>	Reset the zoom to fit the window.<br/>
+			<span class="widget1">e.</span>	Toggle view between only the plot and plot with detected segments.</li>
+			</ol>
+<div class="navigation-bar"><a  class="prev" href="script.html">Previous: Scripting</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app.html">Next: Appendix: File Format Descriptions</a></div>
+</body>
+</html>			
+			
+		
+		

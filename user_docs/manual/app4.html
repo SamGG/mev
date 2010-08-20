@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<title>Appendix: MeV Script DTD</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="app3.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app5.html">Next: Appendix-MeV R Integration</a></div>
+	<h3>Appendix: Distance Metrics</h3>
+	<h5>DTD</h5>
+	<pre>&lt!--&lt&#63;xml encoding=&quot;UTF-8&quot; ?> -->
+
+&lt!ELEMENT TM4ML (midas?, dbi_controller?, mev?)>
+&lt!ATTLIST TM4ML version CDATA #REQUIRED>
+
+&lt!-- midas and dbiController place holders -->
+&lt!ELEMENT midas EMPTY>
+&lt!ELEMENT dbi_controller EMPTY>
+
+
+&lt!ELEMENT mev (primary_data, analysis)>
+&lt!ATTLIST mev version CDATA #REQUIRED>
+
+&lt!ELEMENT analysis (alg_set+)>
+
+&lt!ELEMENT alg_set (algorithm*)>
+&lt!ATTLIST alg_set set_id CDATA #REQUIRED
+                  input_data_ref CDATA #REQUIRED>
+
+&lt!ELEMENT algorithm (plist, mlist?, output_data)>
+&lt!ATTLIST algorithm alg_id CDATA #REQUIRED
+	            input_data_ref CDATA #REQUIRED
+                    alg_name CDATA #REQUIRED
+                    alg_type ( cluster | cluster-genes | cluster-experiments | data-visualization | data-adjustment | cluster-selection | data-normalization ) #REQUIRED>
+
+&lt!ELEMENT plist (param*)>
+
+&lt!ELEMENT param EMPTY>
+&lt!ATTLIST param key CDATA #REQUIRED
+		value CDATA #REQUIRED>
+                
+&lt!ELEMENT mlist (matrix*)>
+&lt!ELEMENT matrix (element+)>
+&lt!ATTLIST matrix name CDATA #REQUIRED
+                 type ( int-array | string-array | FloatMatrix ) #REQUIRED
+                 row_dim CDATA #REQUIRED
+                 col_dim CDATA #REQUIRED>
+
+&lt!ELEMENT element EMPTY>
+&lt!ATTLIST element row CDATA #REQUIRED
+                  col CDATA #REQUIRED
+                  value CDATA #REQUIRED>
+
+&lt!ELEMENT output_data (data_node+)>
+&lt!ATTLIST output_data output_class 
+                ( single-output | multi-cluster-output | multi-gene-cluster-output 
+                | multi-expteriment-cluster-output | partition-output) #REQUIRED>
+
+&lt!-- single-output indicates that the result is one set 
+     (usually the result of normalization, filtering, or transform.
+     
+     multi-cluster-output is produced by many clustering algorithms and
+     represents multiple clusters in which each cluster contains vectors
+     that are similar.  There is no clear ordering of results.
+     Generally to act on this output a selection algorithm should be
+     used to select a cluster.
+     
+     partition-output is a multi cluster output where the clusters are
+     ordered and cluster members have a paricular shared quality.
+     e.g. Significant genes by a statistical algorithm, elements
+     partitioned by classification algorithms. -->                  
+                  
+&lt!ELEMENT data_node EMPTY>
+&lt!ATTLIST data_node data_node_id CDATA #REQUIRED
+	            name CDATA #REQUIRED>
+                                        
+&lt!ELEMENT primary_data (file_list?)>
+&lt!ATTLIST primary_data id CDATA #REQUIRED
+                       data_type ( mev | tav | stanford | gpr | affy_abs |
+                                   affy_ref | affy_mean) #IMPLIED>            
+&lt!-- want an enumeration of data types (mev|tav|stanford|affy|gpr) -->
+&lt!ELEMENT file_list (file+)>
+&lt!ELEMENT file EMPTY>
+&lt!ATTLIST file file_path CDATA #REQUIRED
+               file_type ( data | annot | preference ) #REQUIRED> 
+<a name="dtd"><h4>DTD UML Schema</h4></a>
+	<img src="app18.jpg">
+<div class="navigation-bar"><a  class="prev" href="app3.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app5.html">Next: Appendix-MeV R Integration</a></div>
+</body>
+</html>

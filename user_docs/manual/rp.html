@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<title>RP: Rank Products</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="gcova.html">Previous: GLOBANC-Global Analysis of Covariance </a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="minet.html">Next: MINET-Mutual Information Network</a></div>
+<h3>RP: Rank Products</h3>
+<p>(Breitling, Rainer et al, 2004)</p>
+<p>Rank Products is a novel test for determining differential expressed genes with multiple replicates.  This analysis differs from many other techniques in that it does not apply a sophisticated statistical model, but rather from the calculation of rank products, a faster and simpler method.</p>
+<p>Additionally, Rank Products is useful in highly noisy data and can significantly reduce the number of replicate experiments required to obtain reliable results.</p>
+	<div class="screenshots ">
+		<a href="rp1.jpg">
+					<img src="rp1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Rank Product Initilalization Dialog</span>
+				</div>
+<a name="run"><h4>Running Rank Products</h4></a>
+	<p>MeV’s RP currently supports 3 experimental designs.</p>
+<ol>
+<li><span class="widget1">One-class</span>, typically run on two-color data, this design determines genes that are significantly up or down-regulated within the included group. To exclude a sample from the analysis, uncheck the box next to that sample’s name in the left pane of the one-class screen.</li>
+<li><span class="widget1">Two-class unpaired,</span> where samples fall in one of two groups, and the subjects are different between the two groups (analogous to a between subjects t-test). The initialization dialog box is similar to the t-test dialog.<br/>The user inputs the group memberships of the samples in the top panel. In the two-class design, genes will be considered to be “positive significant” if their rank product in group B is significantly higher than in group A. They will be considered “negative significant” if the rank product of group A significantly exceeds that of group B.  </li>
+<li><span class="widget1">Two-class paired,</span> in which samples are not only assigned to two groups, but there is also a one-to-one pairing between a member of group A and a corresponding member of group B (e.g., gene expression measurements on a group of subjects, where measurements are taken before (Group A) and after (Group B) drug treatment on each subject).</li>
+</ol>
+	<div class="screenshots ">
+		<a href="rp2.jpg">
+					<img src="rp2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Targeted Genes</span>
+				</div>
+<p>As in most other modules, MeV offers two forms of sample selection: the individual button selectionthe cluster selection tabs to assign your samples to the analysis.  Samples left unassigned or unchecked will be ignored in the analysis.</p>
+<a name="para"><h4>Parameters</h4></a>
+<p><em>P-Value/ False Discovery Parameters</em></p>
+	<p>For determination of significance levels, specify the number of random permutations you want RP to run.  
+	If setting a significance cut-off using p-values, enter the alpha value you wish to set as the cut-off point.
+	If determining significance by false discovery rate, check the box next to either the number or percentage of false positives and input the corresponding value.</p>
+<p><em>Targeted Genes</em></p>
+	<p>Check the radio button for determining in the analysis significantly up-regulate genes, down-regulated genes or both.</p>
+	<div class="screenshots ">
+		<a href="rp3.jpg">
+					<img src="rp3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Hierarchical Clustering</span>
+				</div>
+<p><em>Hierarchical Clustering</em></p>
+	<p>To have RP construct hierarchical trees for your results, check the corresponding check box.  Select whether this feature is to be applied to significant genes or significant and non-significant genes.  This process may add significantly to the computation time.</p>
+<p>The RP module outputs standard viewers and tables for MeV’s statistics analyses.</p>
+<div class="navigation-bar"><a class="prev" href="gcova.html">Previous: GLOBANC-Global Analysis of Covariance </a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="minet.html">Next: MINET-Mutual Information Network</a></div>
+</body>
+</html>
+

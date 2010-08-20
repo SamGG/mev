@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<title>PTM: Template Matching </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="NMF.html">Previous: NMF-Non-negative Matrix Factorization</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="test.html">Next: TTEST-T-tests    </a></div>
+<h3>PTM: Template Matching </h3>
+	<p>(Pavlidis and Noble 2001)</p>
+	<p>The user can specify a template expression profile for a gene (a series of relative expression ratios between 0 and 1), and the data set will be searched for matches to the template, based on the Pearson Correlation between the template and the genes in the data set. The template profile can be specified in one of several ways: 1) by selecting one of the genes in the data set as a template from the list on the upper left, and then clicking the "Select highlighted gene" button; 2) doing the same thing with one of the cluster means, assuming that clusters have already been set by some other method; 3) entering values between 0 and 1 in the text input fields above the slider bars corresponding to each experiment; or, 4) Adjusting the slider bars to the desired values. Matches can be made by considering either the signed or the unsigned values of correlation coefficient (using the checkbox labeled "Match to Absolute R?"), and the threshold criterion for matching can be either the magnitude of the correlation coefficient, or the significance (p-value) of the correlation coefficient. </p>
+<a name="para"><h4>Parameters</h4></a>
+			<div class="screenshots ">
+		<a href="ptm1.jpg">
+					<img src="ptm1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Template Matching (PTM) initialization dialog</span>
+				</div>
+<h5>Template Selection Tabs</h5>
+			<p>The five tabbed panels at the top of the dialog select to view candidate templates from various sources. </p>
+			<p>The <span class="widget2">Gene Template</span> tab provides a list of genes in the data set and their expression profile graphs. Selection of elements in the list display the expression pattern for that gene. </p>
+			<p>The <span class="widget2">Sample Template</span>, and Sample Cluster Template tabs provide the same functionality but use experiment templates. </p>
+			<p>The <span class="widget2">Saved Template</span> tab provides an interface for loading gene and experiment templates. Templates loaded from files will populate a list from which a template may be selected. </p>
+			<p>A button in each of these areas is used to select the displayed template for matching.</p>
+	
+<h5>Threshold Parameters</h5>
+<p><em>Use Absolute R</em></p>	
+			<p>Using this option will select expression patterns that are either positively or negatively correlated with the template. </p>
+		<p><em>Use Threshold R</em></p>	
+			<p>This option will indicate that the threshold value for determining a match is the R value between the expression vector and the template.  </p>
+		<p><em>Use Threshold p-Value</em></p>	
+			<p>This option will indicate that the threshold value for determining a match is the p value on R between the expression vector and the template. </p>
+		<p><em>Threshold Input Value</em></p>		
+			<p>This is either a supplied value for R or a p-value ranging from 0.0 to 1.0. R values closer to 1.0 are more stringent. p-values closer to 0 are more stringent. </p>
+		<p><em>Save Template</em></p>		
+			<p>This button launches a file browser to allow the user to save the current template to a tab delimited text file. These files can be loaded from the Saved Template tab interface. </p>
+		<p><em>Hierarchical Clustering </em></p>
+			<p>This check box selects whether to perform hierarchical clustering on the elements in the resulting matched and unmatched element sets. </p>
+			<div class="screenshots ">
+		<a href="ptm2.jpg">
+					<img src="ptm2.jpg">
+				</a>
+				<br/>
+				<span class="caption">PTM results: Expression Graphs</span>
+				</div>
+			<p><span class="widget1">Default Distance Metric: Pearson (fixed, will not correspond to the distance menu)</span></p>
+		<p>Template matching is particularly useful when the researcher is searching for a specific expression pattern. Applying this method with the input parameters in the previous figure gives the following output, where the first panel on the right corresponds to genes that matched the template, and the second panel to genes that did not match:</p>
+<div class="navigation-bar"><a class="prev" href="NMF.html">Previous: NMF-Non-negative Matrix Factorization</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="test.html">Next: TTEST-T-tests    </a></div>
+</body>
+</html>
+		

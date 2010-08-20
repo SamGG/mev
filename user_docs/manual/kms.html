@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<title> KMS:K-Means/K-Medians Support  </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="KMC.html">Previous: KMC-K-Means/K-Medians Clustering  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="CAST.html">Next: CAST-Clustering Affinity Search Technique   </a></div>
+<h3>KMS: K-Means/K-Medians Support </h3>
+	<p>This module allows the user to run the K-Means or K-Medians algorithms multiple times using the same parameters in each run. Owing to the random initialization of K-Means and K-Medians, the clusters produced may vary substantially between runs, depending on the data set and the input parameters. The KMS module allows the user to generate clusters of genes that frequently group together in the same clusters (“consensus clusters”) across multiple runs. The output consists of consensus clusters in which all the member genes clustered together in at least x% of the K-Means/Medians runs, where x is the threshold percentage input by the user (see screenshot below).</p>
+<a name="para"><h4>Parameters</h4></a>
+<p><em>Sample Selection </em></p>
+	<p>The sample selection option indicates whether to cluster genes or samples. </p>
+<p><em>Means/Medians option</em></p>
+	<p>The Means or Medians option indicates whether each cluster's centroid vector should be calculated a mean or a median of the member expression patterns.</p>
+<p><em>Number of k-means/k-medians runs</em></p>
+	<p>This integer value indicates how many times KMC should be run.</p>
+<p><em>Number of k-means/k-medians runs</em></p>
+	<p>This integer value indicates how many times KMC should be run.</p>
+		<div class="screenshots">
+		<a href="kms.jpeg">
+					<img src="kms.jpeg">
+				</a>
+				<br/>
+				<span class="caption">K-Means/K-Medians Support:Initialization Dialog Box</span>
+				</div>
+
+<p><em>Threshold % of occurrence in same cluster</em></p>
+	<p>This parameter indicates the minimum percentage of times that two elements should cluster together in order consider the two elements in a cluster. For instance, if 10 KMC runs were run, and the percentage was 80% then a pair of expression elements found together at least 8 times would be considered to pass a criteria to be included in a cluster. </p>
+<p><em>Number of Clusters (K)</em></p>	
+	<p>This positive integer value indicates the number of clusters to be created during each KMC run. Note that for K-Means support the final number may turn out to be slightly smaller or larger than this entered value depending on the nature of the input data and the appropriate selection of K (number of clusters to create). Note that FOM can be used to estimate an appropriate value for K.</p>
+<p><em>Number of Iterations </em></p>	
+	<p>This positive integer value is the maximum number of times that all the elements in the data set will be tested for cluster fit. On each iteration each element is associated with the cluster with the closest mean (or median). 
+	Note that a KMC run will terminate when either no elements require migration (reassignment) to new clusters or when the maximum number of iterations has been reached. </p>
+<p><em>Hierarchical Clustering  </em></p>
+	<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created. </p>
+<p>Default Distance Metric: Euclidean</p>
+<p>The number of consensus clusters generated may be more than the input number of clusters per run. This is because some genes may cluster together frequently, yet they may form a subset of different clusters in different runs. Hence, a set of genes that appeared as a single cluster in any given run may be split up into two or more consensus clusters over several runs. Some genes may remain unassigned because they did not cluster with any other genes in enough runs to exceed the threshold percentage. </p>
+<div class="navigation-bar"><a class="prev" href="KMC.html">Previous: KMC-K-Means/K-Medians Clustering  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="CAST.html">Next: CAST-Clustering Affinity Search Technique   </a></div>
+</body>
+</html>
+
+
+
+

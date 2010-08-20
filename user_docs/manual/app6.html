@@ -1,0 +1,154 @@
+<html>
+	<head>
+		<title>Appendix: Bayesian Network & Literature Mining</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="app5.html">Previous:Appendix-MeV R Integration</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app7.html">Next: Appendix-MeV Dependencies</a></div>
+	<h3>Appendix: Bayesian Network & Literature Mining supporting files description</h3>
+		<p><span class="widget1">Using Support Files created for standard arrays</span></p>
+			<ul>
+				<li><span class="widget1">Support file FTP Location:  Human, Mouse &  Rat</span></li>
+					<ul>
+						<li><a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Human">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Human</a></li>
+						<li><a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Mouse">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Mouse</a>
+						<li><a href="ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Rat">ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer/Rat</a>
+					</ul>
+				<li>File Naming Conventions:</li>
+					<ul>
+						<li>All BN/LM related files ends with *_BN.zip.</li>
+							<ul>
+								<li><span class="widget1">E.g.: affy_HG-U133_Plus_2<span class="widget3">_BN.zip</span></span></li>
+							</ul>
+						<li>All files start with array/chip vendor name, affy for Afymetrix</li>
+							<ul>
+								<li><span class="widget1">E.g.: <span class="widget3">affy</span>_HG-U133_Plus_2_BN.zip</span></li>
+							</ul>
+						<li>Vendor name is followed by chip/array name</li>
+							<ul>
+								<li><span class="widget1">E.g.: affy_<span class="widget3">HG-U133_Plus_2</span>_BN.zip</span></li>
+							</ul>
+							</ul>
+				<li>Contents of zip files:</li>
+						<ul>
+							<li>All zip files contain 6 files</li>
+								<ol>
+									<li>affyID_accession.txt</li>
+									<li>res.txt</li>
+									<li>symArtsGeneDb.txt</li>
+									<li>symArtsPubmed.txt</li>
+									<li>all_ppi.txt</li>
+									<li>gbGO.txt</li>
+								</ol>
+							</ul>
+				<li><span class="widget1">Steps to use the pre-designed support files. Example array chosen for illustration is Affymetrix Human U133 Plus 2. To use any array follow the steps below:</span></li>
+					<ol>
+						<li>Download your species & array specific file from the FTP location mentioned above. E.g. <span class="widget1">affy_HG-U133_Plus_2_BN.zip</span></li>
+						<li>Extract the contents of the zip under the following MeV directory:<span class="widget4"> ./data/BN_files/</span></li>
+						<li>Once extracted, a folder by the array name will be created. In this case if the example file was downloaded, the following location will now exist:<span class="widget4">./data/BN_files/affy_HG-U133_Plus_2_BN</span></li>
+						<li>Verify all 6 files exist.</li>
+						<li>From Mev launch LM or BN module.</li>
+						<li>In the start-up dialogue make sure the ‘File(s) Location’ box points to the folder where the supporting files are downloaded for the species and array concerned. If the example array was chosen, the text box should point to <span class="widget4">./data/BN_files/affy_HG-U133_Plus_2_BN</span> folder.</li>
+						<li>Now you are ready to start the algorithm.</li>
+					</ol>
+				</ul>
+	<h5>Rules for creating custom BN/LM support files:</h5>
+		<ul>
+			<li>All files should reside under the <span class="widget1">same directory</span>. This directory should be chosen as “File(s) Location” during analysis as shown in BN/LM analysis section.</li>
+			<li>All <span class="widget1">file names</span> should be exactly as shown here.</li>
+			<li>All <span class="widget1">column names</span> (headers) should be named exactly as described here.</li>
+			<li>Some files may <span class="widget1">not</span> have column headers/names viz. <a href="#symArtsGeneDb">symArtsGeneDb.txt</a>, <a href="#symArtsPubmed">symArtsPubmed.txt</a>,<a href="#affy">all_ppi.txt</a>.</li>
+			<li>All columns with or without headers should appear in the exact same order as shown here.</li>
+			<li><span class="widget4">NOTE</span>: Examples of all the files described below are provided at the following location:<span class="widget4"> ./data/BN_files</span>, where ‘.’ Represents the directory where MeV is installed. The supporting files are created based on the dataset provided in the file <span class="widget4">./data/BN_files/affy_U133plus2_dataset.txt</span></li>
+		</ul>
+<p>	Files for BN and LM module:</p>
+	<ul>
+		<li><span class="widget1"><span class="widget4">affyID_accession.txt</span></span><br/>
+		<img src="app10.jpg"></li>
+			<p><span class="widget1">Notes:</span></p>
+			<ol>
+				<li>Both columns are mandatory along with the column names.</li>
+				<li>The entry in the first line is mandatory but its content can be anything that describes the source of the data.</li>
+				<li><span class="widget3">“Genbank Acc”</span>contains Genbank Accession numbers associated with each <span class="widget3">“Probe ID”.</span> </li>
+				<li><span class="widget3">“Probe ID”</span> here represents Affymetrix probe ids. This ID can be of any other type depending on the source of the data but it must follow these rules:</li>
+					<ol>
+						<li>The entry in this column must uniquely identify each row in the loaded dataset.</li>
+						<li>Associated <span class="widget3">“Genbank Acc”</span> information must be provided.</li>
+						<li>The entry in this column must match the <span class="widget3">“Probe ID”</span> entry in the  <span class="widget5">res.txt</span> file.</li>
+					</ol>
+			</ol>
+		<li><span class="widget1"><span class="widget4"><a name="affy">all_ppi.txt</a></span></span></li><br/>
+			<img src="app11.jpg"></li>
+		<p><span class="widget1">Notes:</span></p>
+			<ol>
+				<li>This file is only required if protein-protein interaction is selected as the source of priors for network.</li>
+				<li>This file does not have a column header/name</li>
+				<li>This file has just 1 column</li>
+				<li>Each entry represents a protein-protein interaction (pp) where X pp Y means an interaction between gene X & gene Y.</li>
+				<li>Gene X and Y are represented by their <span class="widget1">official gene symbol</span>.</li>
+			</ol>
+		<li><span class="widget1"><span class="widget4">gbGO.txt</span></span><br/>
+			<img src="app12.jpg"></li>
+		<p><span class="widget1">Notes:</span></p>
+			<ol>
+				<li>This file is only required if GO Terms are selected as an option in the initial <span class="widget5">BN</span> or  <span class="widget5">LM</span> window for directing network edges (which is not very mature at this stage). <span class="widget1"><span class="widget2">DFS is strongly suggested as an alternative.</span></span></li>
+				<li>This file has 2 columns which have same name and order as shown in the sample.</li>
+				<li>The <span class="widget3">“Genbank Acc”</span> column contains genbank accession numbers associated with each probe in the cluster selected for analysis or all the genbank accession numbers associated with all the probes in the entire dataset.</li>
+				<li>The <span class="widget3">“GO”</span> column contains multiple GO entries separated by whitespace associated with each genbank accession number.<br/><span class="widget1">E.g.</span>: GO:000015(nucleotide binding) GO:0000016(protein kinase) </li>
+			</ol>
+		<li><span class="widget1"><span class="widget4">res.txt</span></span><br/><img src="app13.jpg"></li>
+		<p><span class="widget1">Notes:</span></p>
+			<ol>
+				<li>There are 12 columns</li>
+				<li>All columns should appear in the <span class="widget1">exact</span> order as shown.</li>
+				<li>All columns colored <span class="widget3"><span class="widget1">red</span></span> must have appropriate entries as indicated by the column names.</li>
+				<li>All columns colored <span class="widget5">blue</span> may be empty, but the columns should be present as empty columns.</li>
+				<li><span class="widget3">“Probe ID” </span>here represents Affymetrix probe ids. This ID can be of any other type depending on the source of the data but it must follow these rules:</li>
+					<ol>
+						<li>The entry in this column must uniquely identify each row in the loaded dataset.</li>
+						<li>Associated <span class="widget3">“Genbank Acc”</span> information must be provided.</li>
+						<li>The entry in this column must match the <span class="widget3">“Probe ID”</span> entry in the <span class="widget5">affyID_accession.txt file</span>.</li>
+					</ol>
+				<li>“<span class="widget5">Clone Name</span>” column is mandatory but it can be empty.</li>
+				<li><span class="widget3">“Genbank Acc”</span> contains Genbank Accession numbers associated with each <span class="widget3">“Probe ID”</span>. </li>
+				<li><span class="widget5">“UniGene ID”</span> column is mandatory but it can be empty.</li>
+				<li><span class="widget3">“EntrezGene ID”</span> contains entrez gene Ids (previously locuslink ID) wherever available that best represents the <span class="widget3">“Probe ID”</span>.</li>
+				<li>The <span class="widget3">Gene Symbol & Name</span> column has Gene Symbol and description. They are separated by the delimiter “;”.</li>
+				<li><span class="widget3">“Gene Synonyms”</span> are aliases for the official gene symbol separated by whitespace.</li>
+				<li><span class="widget5">“Human TC”</span> & <span class="widget5">“Human GC”</span> columns are mandatory but can be empty.</li>
+				<li><span class="widget3">“RefSeq Acc”</span> column contains mRna RefSeq ID wherever available that best represents the <span class="widget3">“Probe ID”</span>.</li>
+				<li><span class="widget3">“TC PubMed Ref”</span> column contains?????????</li>
+				<li><span class="widget3">“GO”</span> column is formatted in the same way as described in the previous file’s description (#3).</li>
+			</ol>
+		<li><span class="widget1"><span class="widget4"><a name="symArtsGeneDb">symArtsGeneDb.txt</a></span></span><br/><img src="app14.jpg">
+			<p><span class="widget1">Notes:</span></p>
+				<ol>
+					<li>There are 2 columns</li>
+					<li>There are no column headers/names</li>
+					<li>The columns should appear in the <span class="widget1">exact order</span> as shown.</li>
+					<li>The 1st column contains official Gene Symbol</li>
+					<li>The 2nd column contains PubMed IDs. <span class="widget1">The PubMed IDs are obtained by querying the EntrezGene annotation for the given gene.</span></li>
+					<li>The 2nd column contains multiple values which are separated by the delimiter “,”.</li>
+				</ol>
+		<li><span class="widget1"><span class="widget4"><a name="symArtsPubmed">symArtsPubmed.txt</a></span></span><br/><img src="app16.jpg">
+			<p><span class="widget1">Notes:</span></p>
+				<ol>
+					<li>There are 2 columns</li>
+					<li>There are no column headers/names</li>
+					<li>The columns should appear in the <span class="widget1">exact order</span> as shown.</li>
+					<li>The 1st column contains official Gene Symbol</li>
+					<li>The 2nd column contains PubMed IDs. <span class="widget1">The PubMed IDs are obtained by querying Pubmed abstracts (text query) for the gene symbol, and then collecting all the PubmedIDs of those abstracts that match that gene symbol</span>.</li>
+					<li>The 2nd column contains multiple values which are separated by the delimiter “,”.</li>
+				</ol>
+		<li><span class="widget1"><span class="widget4">Sample Label file for BN analysis:</span></span></li>
+			<p><span class="widget1">Notes:</span></p>
+				<ol>
+					<li>Once samples are assigned to classes in the classification window, shown, the classification can be saved into a text file by clicking the button.</li>
+					<li>The file names could be anything the user chooses with any extension the user wants. We suggest using <span class="widget1">.txt</span> as an extension.</li>
+					<li>On subsequent analysis of the same data with same sample classification, the class assignments can be loaded automatically from the saved file by clicking the “Load Settings” button and selecting the previously saved file.</li>
+<div class="navigation-bar"><a  class="prev" href="app5.html">Previous:Appendix-MeV R Integration</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app7.html">Next: Appendix-MeV Dependencies</a></div>
+</body>
+</html>
+					
+						

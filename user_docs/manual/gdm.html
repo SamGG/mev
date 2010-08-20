@@ -1,0 +1,79 @@
+<html>
+	<head>
+		<title> GDM: Gene Distance Matrix </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="lem.html">Previous: LEM-Linear Expression Maps</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="bn.html">Next: BN-Bayesian Network Analysis</a></div>
+	<h3> GDM: Gene Distance Matrix </h3>
+	<p>Most of the clustering methods found in MeV form clusters by algorithms that group genes based on similarity of expression pattern.  The distance, inverse of similarity, between two genes is calculated using a distance metric (see ‘Distance’ menu and manual section 13, the appendix on metrics).  The GDM gives an intuitive and comprehensive view of the distance (or similarity) between any two genes loaded into MeV by creating a colored matrix representing all gene-to-gene distances.   The GDM module is useful for taking a distance survey as well as discovering which genes are similar in expression pattern to a particular gene of interest.  Like most of the MeV modules, the GDM module can also be used with experiments as input.</p>
+		<div class="screenshots">
+		<a href="gdm1.jpg">
+					<img src="gdm1.jpg">
+				</a>
+				<br/>
+				<span class="caption">GDM Initialization Dialog</span>
+				</div>	
+	<h5>GDM Initialization</h5>
+		<p>The GDM module can be started by using the GDM button or by selecting the GDM menu item from the analysis menu.  When creating a gene matrix it is possible to display a subset of the full data set.  The creation of an nxn matrix is expensive from a computer memory standpoint and by using the “Display Interval” option it is possible to make a smaller matrix and conserve memory.</p>
+<a name="view"><h4>Matrix Viewer Basics</h4></a>
+	<p>The matrix viewer has annotation headers that can be used to identify the gene associated with a column or row.  Each square element within the matrix is rendered as a color that represents the distance between the two genes associated with the element.  The main diagonal is simply rendered as white for identification.</p>
+<h5> Menu Options </h5>
+	<p>Like most viewers in MeV, the GDM has a right click menu that provides options for extracting information from the viewer and manipulating the appearance of the viewer.  In the sections below each of the menu options are described.</p>
+<div class="screenshots">
+		<a href="gdm2.jpg">
+					<img src="gdm2.jpg">
+				</a>
+				<br/>
+				<span class="caption">GDM showing borders and popup menu</span>
+				</div>	
+<p><em>Color Scheme</em></p>
+	<p>Two default color schemes are available as well as the option to select a custom color scheme.</p>
+<p><em>Element Size</em></p>
+	<p>Five preset element sizes are offered as well as the option to select a custom size.  Changing the size is a good way to get either a detailed look at specific genes or to take a broad survey of the matrix.</p>	
+<p><em>Draw Borders</em></p>
+	<p>The Draw Borders options places borders between elements and can help with visual alignment when viewing the distance of one gene to several other genes on a single row of the matrix.  The color of the border can be selected from the menu to contrast the colors used to represent distance.</p>	
+	<div class="screenshots">
+		<a href="gdm3.jpg">
+					<img src="gdm3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Color Scale Dialog</span>
+				</div>	
+<p><em>Set Color Scale</em></p>
+	<p>The GDM menu provides the option of selecting the limits of the displayed color scale.   By altering the lower and upper limits of the scale, gene distances map to a different location on the color scale.  The figure of the Color Scale Dialog illustrates this.  The lower limit is at 0.0 while the upper limit is set to 0.4.   Any element having a distance greater than 0.4 will appear <span class="widget2">saturated</span> in color at the bright red end of the gradient.  The effective range is 0.0 to 0.4 and this will accentuate distances in this low-end range.  By imposing different limits it is possible to get better resolution (color differentiation) within a given range.  When setting the upper or lower limit to values other than 0.0 and 1.0 respectively, there will always be some gene pairs that have distances that fall off of the upper or lower effective range.  The percentage of elements in the matrix that are saturated is displayed as a guide to the percentage of elements that are off of the effective range.  When altering color scale it is often useful to hit the <span class="widget2">preview</span> button to view the effects on the actual matrix.  <span class="widget2">Reset</span> will return the values to the values that were in effect when the dialog was launched. <span class="widget2">Cancel</span> will return the limits to the original values in effect when the dialog was launched and will dismiss the dialog.  Note that the current limits are always displayed in the labels on the header color gradient.</p>	
+<p><em>Toggle Sort on Proximity</em></p>
+	<p>In the main matrix figure you may note that a gene in the column header is selected as denoted by the rectangle around the gene identifier.  Moving the mouse cursor over the header enacts item selection.  If you click on the label in the header then that element is moved to the left (or top if in row header) and the remaining elements are ordered by proximity to the selected element.  Typically you should see the first row and column appear as a gradient since the neighbors are ordered by proximity.  The sort menu options can be used to impose other orderings.  The Toggle Sort on Proximity menu item turns this capability on or off.</p>	
+<p><em>Save k Neighbors</em></p>
+	<p>The Save k Neighbors menu option is used in conjunction with proximity sort.  Once sorted by proximity the Save k Neighbors options saves any number of the selected gene’s (or sample’s) nearest neighbors as displayed in the viewer.</p>	
+<div class="screenshots">
+		<a href="gdm4.jpg">
+					<img src="gdm4.jpg">
+				</a>
+				<br/>
+				<span class="caption">GDM matrix with a KMC clustering result imposed (k = 5)</span>
+				</div>
+<p><em>Sort</em></p>
+	<p>The Sort menu provides methods to sort the genes or samples according to the order specified in the input file (default) or by a selected annotation key.  This provides a useful method to be used with proximity sort.  First one can order by annotation which enables easy selection of the gene of interest.  Once found, clicking on the gene’s label will shift it to the corner position with its nearest neighbors in order of proximity.</p>	
+<p><em>Impose Cluster Result</em></p>
+	<p>The Impose Cluster Result option is among the most useful features of the GDM.  When selected the current MeV session is surveyed for appropriate clustering results to apply to the GDM.  Application of the clustering result reorders the genes such that the rows and columns are grouped by cluster membership.  Cluster boundaries are represented by a white border.  Notice the figure displaying a distance matrix with a K-means clustering result imposed with five clusters.  The elements within a cluster are similar as evidenced by the very dark squares on the main diagonal.  	
+	Note that the element size was reduced in order to view the entire matrix and that every third gene was displayed. </p>		
+<div class="screenshots">
+		<a href="gdm5.jpg">
+					<img src="gdm5.jpg">
+				</a>
+				<br/>
+				<span class="caption">GDM Element Information Record</span>
+				</div>
+<p><em>Change Annotation</em></p>
+	<p>The change annotation feature allows the selection of an annotation type to be displayed in the headers.  </p>	
+<p><em>Change Annotation Width</em></p>
+	<p>This option allows the expansion or contraction of the header to permit viewing of the header without excessive scrolling or if contracted more of the matrix will be visible.</p>		
+<h5>Additional GDM Features</h5>
+	<p>If one clicks on a spot an information record is displayed describing several attributes of the element.  The annotation identifying each element as well as the raw and scaled (0-1) distances and parameters related to taking the distance such as distance metric are reported.  From this report page a graph can be displayed using the Expression Graph button.  The graph overlays the expression graphs of the two genes. </p>
+<div class="navigation-bar"><a  class="prev" href="lem.html">Previous: LEM-Linear Expression Maps</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="bn.html">Next: BN-Bayesian Network Analysis</a></div>
+</body>
+</html>
+	
+	

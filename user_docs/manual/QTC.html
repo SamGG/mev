@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<title> QTC: QT CLUSTER</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="FOM.html">Previous: FOM-Figures of Merit  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="SOM.html">Next: SOM-Self Organizing Maps   </a></div>
+<h3>QTC: QT CLUSTER</h3>
+	<p>(modified from Heyer et al. 1999)</p>
+	<div class="screenshots ">
+		<a href="QTC1.jpg">
+					<img src="QTC1.jpg">
+				</a>
+				<br/>
+				<span class="caption">QT CLUSTER: Expression Graphs</span>
+				</div>
+	<p>The dialog will prompt the user for the cluster diameter and the minimum cluster size. The <span class="widget1">cluster diameter</span> is the largest distance allowed between two genes in a cluster, expressed as a fraction between 0 and 1. A diameter of 1 corresponds to the largest possible distance between two genes. For Pearson Correlation, Pearson Uncentered, Pearson Correlation Squared, Kendall's Tau and Cosine Correlation, the maximum possible distance is 1, and therefore the user-input diameter is the actual maximum allowed distance between two genes in a cluster. For the other distance metrics, which do not have a fixed upper bound, the maximum distance between two genes in the current dataset is set to 1, and the diameter is calculated accordingly. To reduce bias resulting from outliers, the distances used for computing clusters are jackknifed, i.e., each experiment is left out in turn while computing the distance between two genes, and the maximum of the distances is taken.</p> 
+		<p>The<span class="widget1"> minimum cluster size</span> specifies the stopping criterion for the algorithm as it searches through the data set finding smaller and smaller clusters with each iteration. Checking the<span class="widget1">Use Absolute</span>
+		box is unchecked, only genes of similar trends will be considered for inclusion in the same cluster. As with the previous two methods, it is possible to construct hierarchical trees from the clusters. The last displayed group of genes consists of genes that remain unassigned to any cluster. The subnodes on the left panel are similar to the ones previously described for k-means and SOM.</p>
+<a name="para"><h4>Parameters</h4></a>
+	<p><em>Sample Selection </em></p>
+		<p>The sample selection option indicates whether to cluster genes or samples.</p>
+	<p><em>Maximum Cluster Diameter</em></p>
+		<p>Cluster Diameter is related to the overall variability between the member elements within a cluster. Maximum Cluster Diameter is a constraint on that variance such that all formed clusters must have a diameter (variability) smaller that the entered maximum. Increasing the maximum diameter tends to make larger and more variable clusters and decreasing the maximum diameter tends to produce smaller less variable clusters. </p>
+		<div class="screenshots ">
+		<a href="QTC2.jpg">
+					<img src="QTC2.jpg">
+				</a>
+				<br/>
+				<span class="caption">QTC Initialization Dialog</span>
+				</div>
+	<p><em>Minimum Cluster Population</em></p>
+		<p>The minimum number of elements required to be present in order to form a cluster. For instance a Minimum Cluster Population of 10 insures that all formed clusters will have at least 10 members. </p>
+	<p><em>Use Absolute R</em></p>
+		<p>Using this option will group expression patterns that are positively and negatively correlated. </p>
+	<p><em>Hierarchical Clustering </em></p>
+		<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created.</p>
+		<p>Default Distance Metric: Pearson
+	This module works very poorly with the average dot-product and covariance distance metrics.
+<div class="navigation-bar"><a class="prev" href="FOM.html">Previous: FOM-Figures of Merit  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="SOM.html">Next: SOM-Self Organizing Maps   </a></div>
+</body>
+</html>
+
+		
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
