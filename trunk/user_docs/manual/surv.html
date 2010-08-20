@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>Survival Analysis </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="limma.html">Previous: LIMMA-Linear Models for Microarray Data  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="gcova.html">Next: GLOBANC-Global Analysis of Covariance </a></div>
+<h3>Survival Analysis </h3>
+	<p>(Goeman, J.J., 2010. L(1) penalized estimation in the cox proportional hazards model. Biometrical Journal. Biometrische Zeitschrift, 52(1), 70-84.; R Development Core Team, 2009. R: A Language and Environment for Statistical Computing, Vienna, Austria. Available at: http://www.R-project.org.)</p>
+	<p>The Survival (SURV) module contains two functions for the analysis of censored survival data. The first is a basic comparison of the survival curves of two groups of samples. Sample data loaded into MeV is compared using the R package survival and the degree to which the curves differ is reported, along with a p-value.</p>
+	<p>The second feature of the module is the creation of a cox proportional hazards model based on the loaded gene expression data, using survival time as the reporting value. The R packaged penalized is used to build the model and to select the most informative genes. The L1-norm of the expression vector is used as a shrinkage parameter; users can select the lambda value. The module performs cross-validation of the model after it is built and reports a log likelihood as an indicator of model utility. </p>
+<a name="run"><h4>Running the module</h4></a>
+	<p>Censored survival data</p>
+	<p>No matter which of the analysis options you choose, you will need to select the sample annotation types that hold the survival data. There are two fields: survival time should point to a set of sample annotation that contains a floating-point number representing a time to event. The Censored field should point to a sample annotation field containing flags that indicate whether a given datapoint is censored or not. MeV can recognize several censoring flag types, including "Yes" or "No", "Censored/Uncensored", or 1/0.
+Values of "Yes", "Censored" or "1" indicate that the datapoint should be treated as a censored event, whereas "No", "Uncensored" and "0" are treated as valid, observed events.</p>
+	<p>After opening the SURV initialization dialog, select the type of analysis you want to run.  Your options are:</p>
+	<ol>
+<li><span class="widget2">Kaplan-Meier Plot</span>: Choose this option if you have already selected groups of samples that are of interest to you. This option will compare the survival time of the two groups and calculate a p-value indicating whether the difference is significant. </li>
+<li><span class="widget2">Cox Proportional Hazard Model</span>: Choose this option if you are interested in identifying genes that appear to have predictive value relative to survival time.</li>
+</ol> 
+<p>After choosing the analysis type, click the Continue button to generate a cluster selection panel. This panel is different depending on which analysis type you have chosen.</p>
+<span class="widget2"><p>For the Kaplan-Meier plot</p></span>
+	<p>A sample cluster selection panel will be generated. Select which samples belong in which groups and click ok to compare the survival profiles.<br/>Use the cluster selection panel if you have previously made clusters and wish to run your analysis based on those clusters.<br/>Use the drop-down boxes to choose which clusters’ samples are to be assigned to which time-points.  For clusters you are not using, leave “unassigned”.  The same condition and time-point requirements exist for this method, but the cluster selector makes for easier and more organized sample assignment.</p>
+<span class="widget2"><p>For the Cox Proportional Hazard Model</p></span>
+	<p>A gene cluster selection panel with be generated. You can choose to select a group of genes to build the model with (faster) or choose to build the model based on all of the genes in the currently-loaded dataset (slow).<br/>The Cox model will be build using an L1 Norm (lasso) penalty. Select the value of lambda to be used for this penalty. Higher values will result in faster-calculated models with fewer coefficients.<br/>The SURV module outputs standard viewers and tables for MeV’s statistics analyses. It also creates survival curves for the selected sample groups.</p>
+<div class="navigation-bar"><a class="prev" href="limma.html">Previous: LIMMA-Linear Models for Microarray Data  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="gcova.html">Next: GLOBANC-Global Analysis of Covariance </a></div>
+</body>
+</html>
+
+

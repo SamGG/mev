@@ -1,0 +1,88 @@
+<html>
+	<head>
+		<title> TRN: Expression Terrain Maps </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev"href="coa.html">Previous: COA-Correspondence Analysis </a> | <<a class="toc"href="TableofContents.html">Table of Contents</a>|<<a class="next"href="gsea.html">Next: GSEA-Gene Set Enrichment Analysis   </a></div>
+	<h3>TRN: Expression Terrain Maps</h3>
+		<p> (Kim et al.  2001)</p>
+		<p>Terrain maps provide a three dimensional overview of the major clusters inherent in the data.  Terrain maps can represent gene or experiment groupings depending on the mode selected in the input dialog.  The input elements are first mapped into a two dimensional grid in which the placement of each element is influenced by a user selected number of nearest neighbors.  
+					<div class="screenshots">
+		<a href="trn1.jpg">
+					<img src="trn1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Terrain Map Initialization Dialog</span>
+				</div>
+		Once the two dimensional layout is finished the third dimension is determined by the density of points over discrete areas of the 2d grid.  This value is projected as a surface in the third dimension.  The higher peaks indicate large numbers of very similar elements while the lower peaks are composed of fewer elements that tend to be not so similar in expression.  </p>
+		<p>It is very important to note that like many algorithms TRN uses a default distance metric that greatly affects the outcome of the terrain created.  The default metric for TRN is Pearson Squared, which groups elements based on correlation and tends to place strongly correlated and strongly anti-correlated elements in similar groups.  Explicit selection of Euclidean distance can sometimes reveal more obvious groupings.  See the distance metric appendix, for more details on available metrics in MeV. </p>
+		<h5>Data Element Identification</h5>
+			<p>Data element identification can be achieved by four major methods.  The right click menu allows one to turn on labels.  The utility of the labels depends on how close the elements are to one another.  It is also possible to move the mouse cursor over an element and reveal the annotation label currently selected in the main <span class="widget2">Display</span> menu (<span class="widget2">Label</span> submenu).  A third option is to click on an element, which will open an element information table listing annotation for the selected element.  The fourth option is to select one or more elements in an area and either write them to a file or open a new mev session with the selected elements.  Details about element selection are provided below.</p>
+<a name="tn"><h4>Terrain Navigation</h4></a>
+						<div class="screenshots">
+		<a href="trn2.jpg">
+					<img src="trn2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Terrain Map with Navigation Controls</span>
+				</div>
+		<p>The main visible controls below the terrain view are related to navigation through the terrain.  The navigation panel consists of nine buttons that will alter the point of view (pov) relative to the terrain. There are three major navigation modes for moving through the terrain viewer.  Each mode is selected by clicking on the center square of the navigation control.</p>
+	<h5>Linear Axis Mode</h5>
+		<p>This mode selection is indicated by the four strait arrows icon in the center of the navigation control panel.  The arrow buttons move the point of view relative to the terrain in predictable strait line movements.  The up and down arrows move the pov higher or lower relative to the terrain.  The upper left and right arrows move the pov directly toward the terrain view while the lower right and left arrows move the pov directly away from the terrain.  The left and right arrows move the pov left and right relative to the terrain.</p>
+	<h5>Attitude Mode</h5>
+		<p>This mode controls the pitch angle and roll of the pov relative to the terrain.  The corner arrow buttons make the terrain roll about the center point of the viewer.  The left and right force a banking motion and the up and down arrows control the pitch or angle of view.</p>
+						<div class="screenshots">
+		<a href="trn3.jpg">
+					<img src="trn3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Map Navigational Controls, Various Navigation Modes</span>
+				</div>
+	<h5>Rotational Mode</h5>
+		<p>This mode forces rotation of the terrain about a central point in the terrain.  The up and down buttons tilt the terrain toward and away from the pov.  The left and right button forces the terrain to rotate about the central point while staying constant relative to the horizon.  The corner buttons permit a tight rolling motion of the terrain relative to the pov. </p>
+	<h5>Altitude Slider</h5>
+		<p>This moves the data points up and down relative to the terrain.  Sometimes it is preferable to have the points higher than the terrain to view the distribution.</p>
+<a name="tvm"><h4>The Terrain Viewer Menu</h4></a>
+	<p>The terrain viewer has a right click menu providing several options for altering aspects of data presentation and for extracting information such as gene lists.  Each option is describe below.</p>
+<p><em>Control Panel</em></p>
+		<p>This option determines whether the navigation control panel is visible or not.</p>
+<p><em>Grid</em></p>
+		<p>The Grid menu item permits the selection of the terrain’s resolution or smoothness.  Reducing the grid value can sometimes improve viewer response by saving computational expense on the computer.  Lowering the grid value will render the terrain as a series of planes.</p>
+	<div class="screenshots">
+		<a href="trn4.jpg">
+					<img src="trn4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Terrain Viewer Without Surface Rendering</span>
+				</div>
+	<p><em>Fill Polygon</em></p>
+		<p>This option alters whether the terrain’s surface is render or if simply the outline of adjacent planes.  Like the Grid option deselecting this can produce faster rendering of the viewer during navigation.</p>
+<p><em>Element Shape</em></p>
+		<p>Three optional element shapes are supported, point, cube, and sphere.</p>
+<p><em>Labels</em></p>
+		<p>Labels can be displayed or hidden.  If displayed there is a billboard option to help render the labels such that they can be seen from the current point of view.  Note that if identification of a cluster of elements is desired the best way to verify is to select the elements and store them as a cluster or launch a new viewer containing the elements.  Both options are described below.</p>
+<p><em>Links</em></p>
+		<p>Elements passing at threshold criteria can display a link between the points.
+The links menu option allows the user to display or hide displayed links between elements passing the threshold criteria.  Within the links menu the current threshold can also be set in order to visualize the strength of the associations within element groupings.  The thickness of the links is also adjustable from 1 to 10 on a relative scale.</p>
+<p><em>Drift (Auto-navigation Control)</em></p>
+		<p>Flying through the terrain to a selected point on the terrain or a data element is performed by holding down the <span class="widget2">Ctrl key and left clicking</span> on the desired destination.   The point of view will automatically navigate to the destination.  If the selected destination is a point on the terrain such as a peak or a plateau the point of view will orient such that the view is orthogonal to the plane on the terrain that contains the destination point.  This can be useful to quickly get to a top down view when clicking on flat areas between peaks.  If the selected destination is a data point, the final point of view on the element and in the plane containing the data elements.  The route will move toward the element and attempt to orient in a position to more easily read the label associated with the element.  Some further navigation may be required to avoid elements that may obstruct the element of interest.</p>
+		<p>The <span class="widget2">Drift</span> menu option permits entry of a relative distance parameter that can range from 0 up to but not including 1.0.  This represents the final distance between the point of view and the destination when drifting.  Small values will cause the drift auto-navigation mode end position to be close to the destination and is often preferred when visiting a specific data element.</p>
+<a name="cluster"><h4>Cluster Selection and Related Operations</h4></a>
+	<p>The following four options are only enabled if a group of elements has been selected in the selection area.  Points are selected by holding down shift and dragging the mouse in the viewer.  Once selected the following options are enabled:</p>
+<p><em>Store Cluster</em></p>
+		<p>The store cluster option will store the elements in the selection box in the Cluster Manager.  The clusters in the repository are viewable in the cluster table and if incomplete selections are made in TRN, several clusters can be made and then joined (Union operation) in the cluster table to capture all of the desired elements.</p>
+<p><em>Launch New Session</em></p>
+		<p>This feature launches a new Multiple Experiment Viewer containing the selected elements.  This is perhaps the fastest and most convenient means of viewing the selected elements.  An alternative to this is the Show Selection option described below.</p>
+<p><em>Deselect</em></p>
+		<p>This option dismisses the selection area.</p>
+<p><em>Show Selection</em></p>
+		<p>This option shows the selected elements within a small window.  Note that the window supports the selection of multiple elements using shift-click or ctrl-click and the list can be copied and pasted into other applications by ctrl-c.</p>
+<div class="navigation-bar"><a class="prev"href="coa.html">Previous: COA-Correspondence Analysis </a> | <<a class="toc"href="TableofContents.html">Table of Contents</a>|<<a class="next"href="gsea.html">Next: GSEA-Gene Set Enrichment Analysis   </a></div>
+</body>
+</html>
+		
+		
+		
+		

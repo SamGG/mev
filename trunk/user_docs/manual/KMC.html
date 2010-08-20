@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<title> KMC: K-Means/K-Medians Clustering </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="SOTA.html">Previous: SOTA-Self Organizing Tree Algorithm  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="KMS.html">Next: KMS-K-Means / K-Medians Support  </a></div>
+<h3>KMC: K-Means/K-Medians Clustering</h3>
+	<p>(Soukas et al. 2000)</p>
+		<div class="screenshots">
+		<a href="kmc.jpg">
+					<img src="kmc.jpg">
+				</a>
+				<br/>
+				<span class="caption">KMC Initialization Dialog</span>
+				</div>
+	<p>Selecting this analysis will display a dialog that allows the user to specify whether to use means or medians, as well as the number of clusters and iterations to run. Once the computations are complete, select the KMC node under Analysis to view the results. There are several sub-nodes beneath KMC, further divided by the clusters created based on the KMC input parameters. Hierarchical trees shows trees constructed for each cluster, if the option to draw hierarchical trees for clusters is selected. Expression images are similar to the main display. Cluster Information is a summary of each cluster based on size and % composition. Centroid graphs show the centroids for each cluster and experiment, individually or all at once. Expression graphs are similar to centroid graphs, but with each gene’s expression levels displayed alongside the centroids. Right clicking within an expression image displays a popup menu that allows the user to propagate the cluster to other displays (Set Public Cluster), save and delete the cluster. </p>
+	<p>This method of clustering is useful when the user has an a priori hypothesis about the number of clusters that the genes should subdivide into.</p>
+<a name="para"><h4> Parameters</h4></a>
+<p><em>Sample Selection </em></p>
+	<p>The sample selection option indicates whether to cluster genes or samples. </p>
+<p><em>Means/Medians option</em></p>
+	<p>The Means or Medians option indicates whether each cluster's centroid vector should be calculated a mean or a median of the member expression patterns.</p>
+	<div class="screenshots">
+		<a href="kmc2.jpg">
+					<img src="kmc2.jpg">
+				</a>
+				<br/>
+				<span class="caption">K-Means / K-Medians Clustering: Expression Graphs</span>
+				</div>
+<p><em>Number of Clusters </em></p>	
+	<p>This positive integer value indicates the number of clusters to be created. Note that FOM can be used to estimate an appropriate value.</p>
+<p><em>Number of Iterations </em></p>	
+	<p>This positive integer value is the maximum number of times that all the elements in the data set will be tested for cluster fit. On each iteration each element is associated with the cluster with the closest mean (or median). 
+		Note that the algorithm will terminate when either no elements require migration (reassignment) to new clusters or when the maximum number of iterations has been reached.</p>
+<p><em>Hierarchical Clustering </em></p>
+		<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created. </p>
+<p><span class="widget1">	Default Distance Metric: Euclidean	</span></p>
+<div class="navigation-bar"><a class="prev" href="SOTA.html">Previous: SOTA-Self Organizing Tree Algorithm  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="KMS.html">Next: KMS-K-Means / K-Medians Support  </a></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

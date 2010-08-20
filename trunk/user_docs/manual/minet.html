@@ -1,0 +1,52 @@
+<html>
+	<head>
+		<title>MINET:Mutual Information Network</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="rp.html">Previous: RP-Rank Products</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="svm.html">Next: SVM-Support Vector Machines</a>
+<h3>MINET:Mutual Information Network</h3>
+<p>(Patrick E. Meyer, Frederic Lafitte, and Gianluca Bontempi. minet: A R/Bioconductor Package for Inferring Large Transcriptional Networks Using Mutual Information. BMC Bioinformatics, Vol 9, 2008.)</p>
+<p>For a given dataset, minet infers the network in two steps. First, the mutual information between all pairs of variables in dataset is computed according to the estimator argument. Then the algorithm given by method considers the estimated mutual information in order to build the network.</p>
+	<div class="screenshots ">
+		<a href="m1.jpg">
+					<img src="m1.jpg">
+				</a>
+				<br/>
+				<span class="caption">MINET Initialization Dialog box</span>
+				</div>
+<a name="para"><h4>Parameters</h4></a>
+<p><span class="widget2">Dataset</span>: A cluster of genes.</p>
+<p><span class="widget2">Method</span>: The inference algorithm: "clr", "aracne", "mrnet" or "mrnetb" </p>
+<p><span class="widget2">Estimator</span>: The name of the entropy estimator to be used for mutual information computation: "mi.empirical", "mi.mm", "mi.shrink", "mi.sg", "spearman", "kendall", "pearson". </p>
+<p><span class="widget2">Discretization</span>:The name of the discretization method to be used, if required by the estimator "none”, "equalfreq", "equalwidth" or "globalequalwidth".</p>
+<p><span class="widget2">Number of Bins</span>:Integer specifying the number of bins to be used for the discretization if disc is set properly. By default the number of bins is set to vN where N is the number of samples.</p>
+<h5>Output</h5>
+	<p>Minet returns a matrix which is the weighted adjacency matrix of the network. The weights range from 0 to 1 and can be seen as a confidence measure on the presence of the arcs. In order to display the network, MeV launches Cytoscape via webstart and displays the network in that application.</p>
+<h5>How to Run MINET</h5>
+<ol>
+	<div class="screenshots ">
+		<a href="minet2.jpg">
+					<img src="minet2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cytoscape</span>
+				</div>
+<li>Create Cluster</li>
+<li>Launch MINET from ToolBar-->Statistics-->MINET</li>
+<li>Un-select samples to be excluded from analysis</li>
+<li>Select one cluster from Cluster selection Panel</li>
+<li>Click on Parameters tab to change method, estimator etc or leave them as is to accept default</li>
+<li>Hit OK</li>
+</ol>
+<h5>Viewing the Network</h5>
+	<p>The network is displayed in Cytoscape. IN the initial view all nodes are stacked up on top of each other. In Cytoscape follow <span class="widget2">MenuBar-->Layout-->File-–>Organic</span> (or any layout of your choice) to layout the nodes. 
+<div class="navigation-bar"><a class="prev" href="rp.html">Previous: RP-Rank Products</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="svm.html">Next: SVM-Support Vector Machines</a>
+</body>
+</html>
+
+
+
+
+

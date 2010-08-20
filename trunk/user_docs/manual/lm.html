@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<title> LM: Literature Mining Analysis </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="gdm.html">Previous:  BN-Bayesian Network Analysis</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="script.html">Next: Scripting</a></div>
+	<h3> LM: Literature Mining Analysis </h3>
+	<p>(Djebbari and Quackenbush, 2008)</p>
+	<div class="screenshots leftsidecorrection">
+		<a href="lm1.jpg">
+					<img src="lm1.jpg">
+				</a>
+				<br/>
+				<span class="caption">LM Intialization Dialog</span>
+				</div>
+	<p>Selection this analysis will display the following window. This window collects all the parameters and inputs required to run the analysis. All the options in this dialog are explained below.</p>
+	<p><span class="widget1">Location of Support File(s):</span>This option allows users to select the location where all support files needed to run BN. A description of files required can be found (see appendix for BN file descriptions).</p>
+<p><span class="widget1">Network Priors Sources:</span>The checkboxes provide the users to select the source of Bayesian prior probabilities in constructing a seeded network. Currently Literature Mining and KEGG priors are available. The Protein - Protein Interaction as a source of priors is still under development.</p>
+	<div class="screenshots ">
+		<a href="lm2.jpg">
+					<img src="lm2.jpg">
+				</a>
+				<br/>
+				<span class="caption">LM Viewer</span>
+				</div>
+<p>As of now, the KEGG support files are automatically downloaded from TN4 website by the application. The user is prompted for Species information if annotation is not available. All other prior sources must be made available.</p>
+<p><span class="widget1">Discretize Expression Values: </span>The data mining algorithm requires that the data be discretized into bins before it can be evaluated for network structure learning.
+It is strongly recommended that user selects the default value of 3, which means the data can exist in 3 states:<br/>
+	Under expressed<br/>
+	Over expressed<br/>
+	Unchanged<br/>
+	
+The algorithm functions and reports meaningfully if the 3 state rule is followed.</p>
+		<div class="screenshots leftsidecorrection ">
+		<a href="lm3.jpg">
+					<img src="lm3.jpg">
+				</a>
+				<br/>
+				<span class="caption">LM Viewer</span>
+				</div>
+	<p><span class="widget1">How to direct Edges for graph:</span>The algorithm uses DFS or Depth First Search to connect nodes in the initial seeded network. For large networks with lots of nodes this can take a while to complete. The GO Term option of directing edges is not yet fully developed.</p>
+		
+	<p><span class="widget1">Gene Cluster:</span>The input cluster on which the analysis runs. If the user has saved more than one cluster, one of those clusters must be selected from the clusters panel. By default the first is selected.</p>
+	<p><span class="widget1">LM Viewer:</span>The LM viewer displays the network file names and locations that were created during the analysis. On Right Click it displays a popup menu to launch Cytoscape via Webstart with all files created.</p>
+<h5>Results</h5>
+
+	<p>	All result files are stored in the <span class="widget1"><span class="widget2">{..}\results folder.</span></span> Where {..} represents the directory where the BN/LIT analysis supporting files are located.</p>
+	<p>Once the analysis completes it automatically launches Cytoscape <a href="http://www.cytoscape.org/">Cytoscape</a> via Webstart with the result networks displayed in it. </p>
+<div class="navigation-bar"><a  class="prev" href="gdm.html">Previous:  BN-Bayesian Network Analysis</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="script.html">Next: Scripting</a></div>
+</body>
+</html>	
+	

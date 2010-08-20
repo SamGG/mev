@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>Appendix:  MeV R Integration</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="app4.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app6.html">Next: Appendix-Bayesian Network & Literature Mining </a></div>
+	<h3>Appendix:  MeV R Integration</h3>
+		<p>MeV has integrated a R (CRAN) hook where by R functions and libraries can be called within the Java instance using shared libraries. Mev developed a library around the JRI (rForge) API which uses JNI, to make this happen. The user in *most cases would not have to set up or configure anything to run R dependent modules and it should be completely transparent. Please also note that MeV does not produce a command line interface to run R commands. This integration was done to leverage the R environment where many algorithms are readily available and does not need to be re-implemented in Java. MeV would use R internally as appropriate and the user should not expect to see any change in behavior of MeV.</p>
+	<p>**Notes**</p>
+		<ol>
+  <li>On Windows and Mac OS X (10.6) where the default JVM is 64 Bit, the user will be thrown a warning to change to 32 bit JVM. This is required because the API is not ready for 64 Bit environment yet and we are working on a solution. However once the default JVM is set to 32 Bit, the R dependent modules would run. To help the users setup the 32 bit JVM we will be providing help and assistance to do the following:
+    <ol type="a">
+    <li>On Windows: To install 32 Bit Java if not already installed and to modify the launch script TMEV.sh to point to it.</li>
+    <li>On Mac OS X we would provide instructions on how to set up 32bit JVM as default. The default in OS X 10.6 (Snow leopard is 64 bit).</li>
+    </ol>
+  </li>
+  <li>On Mac we expect the user to have R 2.9.x universal binary installed in the Application Framework. We do not expect such for Windows and Linux systems.</li>
+  <li>Please use MeV <a href="http://sourceforge.net/projects/mev-tm4/forums">SourceForge</a> page for submitting queries, questions and issues. We have set up a page for this particular JVM issue named <a href="http://sourceforge.net/projects/mev-tm4/forums/forum/378852/topic/3451531">R MeV Integration, JVM issues</a>.</p>
+  </ol>
+<div class="navigation-bar"><a  class="prev" href="app4.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app6.html">Next: Appendix-Bayesian Network & Literature Mining </a></div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<title>ANOVA: Analysis of Variance</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="sam.html">Previous: SAM-Significance Analysis of Microarrays</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="anova2.html">Next: TFA-Two-factor ANOVA</a></div>
+<h3>ANOVA: Analysis of Variance</h3>
+	<p>(Zar 1999, pp 178-182)</p>
+	<p>ANOVA is an extension of the t-test to more than two experimental conditions. It picks out genes that have significant differences in means across three or more groups of samples. Currently, only one-way or single-factor analysis of variance is implemented. 	<div class="screenshots ">
+		<a href="anova2.jpg">
+					<img src="anova2.jpg">
+				</a>
+				<br/>
+				<span class="caption">One-way ANOVA initialization dialog box</span>
+				</div>The user is initially required to enter the number of groups, following which a sample grouping panel similar to the t-test panel, with the appropriate number of groups, is created. Samples can be assigned to any group or excluded from the analysis. F-statistics are calculated for each gene, and a gene is considered significant if p-value associated with its F-statistic is smaller than the user-specified alpha or critical p-value. Currently, p-values are computed only from the F-distribution.</p>
+<a name="para"><h4>Parameters</h4></a>
+<h5>Group Assignments</h5>
+	<p><em>Group Selection Controls</em></p>	
+			<p>This set of buttons permits each experiment to be placed into any group, or no group. If a sample is placed in no group it will be ignored for the purposes the analysis. 
+				Note that each group must each have at least two members following the assignment. </p>
+	<p><em>Save Grouping</em></p>	
+			<p>The save grouping button allows you to save the grouping to file. This is particularly useful when there are many experiments. </p>
+	<p><em>Load Grouping</em></p>	
+			<p>This button allows you to select and load a saved grouping. </p>
+	<p><em>Reset</em></p>	
+			<p>The reset button returns all of the group selection control buttons to Group 1, the initial state. </p>
+	<p><em>P-Value Parameters</em></p>	
+			<p>This is used to input the critical p-value. P-values are computed from the theoretical F-distribution.</p>
+<div class="screenshots ">
+		<a href="anova1.jpg">
+					<img src="anova1.jpg">
+				</a>
+				<br/>
+				<span class="caption">One-way ANOVA: F-Ratio Information viewer</span>
+				</div>
+<p><em>Hierarchical Clustering </em></p>	
+			<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created</p>
+<p>In addition to the standard viewers, this module outputs gene-specific statistics under the “F-Ratio Information” tab, as shown below. These tables can be saved as tab-delimited text files by right-clicking on them. All the columns in the tables can be sorted in ascending or descending order. Clicking on a column header re-orders the rows in ascending order of the values in the selected column. Holding down the SHIFT key while clicking on the column header will re-order the rows in the descending order of that column. Holding down the CTRL key while clicking anywhere on the header will restore the original ordering.</p>
+<div class="navigation-bar"><a class="prev" href="sam.html">Previous: SAM-Significance Analysis of Microarrays</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="anova2.html">Next: TFA-Two-factor ANOVA</a></div>
+</body>
+</html>				
+				

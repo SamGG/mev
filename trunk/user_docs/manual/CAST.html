@@ -1,0 +1,37 @@
+<html>
+	<head>
+		<title> CAST: Clustering Affinity Search Technique   </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="kms.html">Previous: KMS-K-Means/K-Medians Support  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="FOM.html">Next: FOM-Figure of Merit </a></div>
+<h3>CAST: Clustering Affinity Search Technique</h3>
+<p>(Ben-Dor et al. 1999)</p>
+			<div class="screenshots ">
+		<a href="Cast2.jpg">
+					<img src="Cast2.jpg">
+				</a>
+				<br/>
+				<span class="caption">CAST Initialization Dialog</span>
+				</div>
+	<p>The user is prompted for a threshold affinity value between 0 and 1 (which may be thought of as the reciprocal of the distance metric between two genes, scaled between 0 and 1), that has to be exceeded by all genes within a cluster. The algorithm works by both adding and removing genes from a cluster, each time adjusting the affinities of the genes to the current cluster, and continuing this process until no further changes can be made to the current cluster.</p>
+<a name="para"><h4>Parameters</h4></a>
+	<p><em>Sample Selection </em></p>
+		<p>The sample selection option indicates whether to cluster genes or samples.</p>
+	<p><em>Threshold</em></p>
+		<p>The threshold parameter is a value ranging from 0.0 to 1.0 which is used as a cluster affinity threshold. Each expression element will have an affinity for the current cluster being created based on it's relationship to the elements currently in the cluster. If that affinity is greater than the supplied threshold the gene is permitted to be a member of the cluster. 
+		Note that thresholds near 1.0 are more stringent and tend to produce many clusters with rather low variability. <div class="screenshots leftsidecorrection">
+		<a href="Cast1.jpg">
+					<img src="Cast1.jpg">
+				</a>
+				<br/>
+				<span class="caption">CAST: Centroid View</span>
+				</div>Conversely, using a lower threshold will produce fewer, more variable clustersA balance by trail-and-error should be found between these extremes. 
+	<p><em>Hierarchical Clustering </em></p>
+		<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created.</p>
+		<p>Default Distance Metric: Euclidean</p><br/><br/>
+<div class="navigation-bar"><a class="prev" href="kms.html">Previous: KMS-K-Means/K-Medians Support  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="FOM.html">Next: FOM-Figure of Merit </a></div>
+</body>
+</html>		
+	

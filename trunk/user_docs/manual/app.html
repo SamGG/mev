@@ -1,0 +1,405 @@
+<html>
+	<head>
+		<title>Appendix: File Format Descriptions</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a></div>
+	<h3>Appendix: File Format Descriptions</h3>
+	<a name="tav"><h4>TAV Files</h4></a>
+						<div class="screenshots">
+		<a href="app1.jpg">
+					<img src="app1.jpg">
+				</a>
+				<br/>
+				<span class="caption">A TAV file containing only the required fields</span>
+				</div>
+		<p>The original TAV (TIGR ArrayViewer) file type was an eight-column, tab-delimited text format developed at TIGR for the purposes of storing the intensity values of the spots on a single slide.  It is written out by the program TIGR Spotfinder and contains one row for each spot.  The first six columns of the file contain positional data for the spots and are followed by two columns of intensity data.</p>
+		<p>These eight columns are required by MeV for display and analysis of experimental data.  Optional columns can contain flags, annotation, Genbank numbers, etc.  It is the variability of .tav files caused by these optional columns that make Preferences files necessary. Optional columns can be used to sort the spots in the <span class="widget2">Main View</span>, by choosing the appropriate column from the <span class="widget2">Sort</span> menu.  </p>
+	<p>A flag is simply a letter code corresponding to a description of the spot:</p>
+	<ul>
+	<ul type="circle">
+<div class="screenshots">
+		<a href="app2.jpg">
+					<img src="app2.jpg">
+				</a>
+				<br/>
+				<span class="caption">A TAV file with several extra fields</span>
+				</div>
+		<li>A–0 non-saturated pixels in the spot</li>
+		<li>B–0-50 non-saturated pixels in the spot</li>
+		<li>C–50 or more non-saturated pixels in the spot</li>
+		<li>X–spot is rejected, due to spot shape and intensity relative to background</li>
+		<li>Y–background is higher than spot intensity</li>
+		<li>Z–spot not detected by Spotfinder.</li>
+		</ul>
+	<a name="tdms"><h4>Tab Delimited, Multiple Sample Files (TDMS files)</h4></a>
+		<div class="screenshots">
+		<a href="app3.jpg">
+					<img src="app3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Tab Delimited, Multiple Sample File (TDMS) Format Image</span>
+				</div>
+		<p>TDMS files encapsulate the expression data from multiple samples into a single tab delimited file.  Each sample represented in the file will have a single dedicated column that contains the expression data for that sample.  Each row, below the header rows, represents information relating to a particular spot on the slide.</p>
+		<p>The following sections describe the format of the file in detail.  The image following the description contains color coded sections that relate to each of the distinct areas of the file.</p>
+		<p><span class="widget2">Header Rows </span>(yellow, light blue, and cyan, top 4 rows in the example)</p>
+			<p>TDMS files must contain one or more header rows.  These header rows must be at the top of the file.  The first header row is used primarily to contain the default sample name for each sample contained in the file.  The first header row also contains descriptive gene annotation field names (yellow) over the columns dedicated to gene annotation.  Additional header rows may be present and each additional header row contains additional sample annotation.</p>
+		<div class="screenshots">
+		<a href="app4.jpg">
+					<img src="app4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Loading Tab Delimited, Multiple Sample Files (TDMS Format)</span>
+				</div>
+		<p><span class="widget2">Gene Annotation Columns</span>(green (annotation), yellow (annotation field names)</p>
+			<p>The TDMS format permits any number of annotation columns, which must occupy the left most columns of data in the file.  Each of these annotation columns contains annotation corresponding to the spot represented by that row of the file.  Each of the annotation columns has a label in the top header row to indicate the annotation type.  </p>
+				
+		<p><span class="widget2">Expression Data </span>(uncolored section with numeric data)</p>
+			<p>The Expression data is arranged such that there is one column for each sample represented in the file. The position of the expression data column for a particular sample is beneath the header’s sample label for that sample.  See the TDMS file loader figure below as an example file displayed within the preview window.</p>  
+	<a name="gene"><h4>GenePix Files</h4></a>
+		<p>Microarray data in the Genepix file format can be easily converted to tav file format using TIGR’s Genepix Converter application.  This program is freely available from the TIGR website as part of the MADAM package).  The latest version of the converter can convert multiple files in batch mode.  See the help files for the Genepix Converter for more details.  Files converted when the “Keep all Genepix data” box is checked will be extremely large and may cause MeV to run slowly.  Leaving this box unchecked will cause only the data required by MeV to be written to the output tav file.  </p>
+	<a name="mev"><h4>MEV Files </h4></a>
+		<p>A MultiExperimentViewer or .mev file is a tab-delimited text file that contains coordinate and expression data for a single microarray experiment. A single header row is required to precede the expression data in order to identify the columns below. With the exception of optional comment lines, each remaining row of the file stores data for a particular spot/feature on the array.</p>
+		<p>MeV and other TM4 software tools will consider comment lines non-computational. A comment line must start with the pound symbol ‘#’, and can be included anywhere in the file. If the pound symbol is the first character on a line, the entire line (up to the newline character ‘\n’) will be ignored by the software tool.</p>
+		<p>.mev files will typically contain at least one comment at the top of the file with the following information. This information is optional. The format and fields contained within these comments are subject to change. </p>
+		<p><span class="widget1">Version</span>: Version number based on revisions of expression data<br/>
+		<span class="widget1">Format version</span>: The version of the .mev file format document<br/>
+		<span class="widget1">Date	</span>: Date of file creation or update<br/>
+		<span class="widget1">Analyst</span>: Owner or the person responsible for creating the file<br/>
+		<span class="widget1">analysis_id</span>: id from the analysis table that corresponds to this set of expression values<br/>
+		<span class="widget1">slide_type</span>: slide_type  that this array is based on<br/>
+		<span class="widget1">input_row_count</span>: Number of rows of expression (eg. non-header)data in input files<br/>
+		<span class="widget1">output_row_count</span>:Number of rows of expression (eg. non-header) data in this file<br/>
+		<span class="widget1">created_by</span>: Software tool used to create the file<br/>
+		<span class="widget1">Description</span>: Common name or other details about the experiment<br/></p>
+
+		<p>An example of the leading comments:</p>
+		<p><span class="widget1">#version</span>: V1.0<br/>
+		<span class="widget1">#format version</span>: V4.0<br/>
+		<span class="widget1">#date	</span>: 10/06/2004<br/>
+		<span class="widget1">#analyst</span>:  aisaeed<br/>
+		<span class="widget1">#analysis_id</span>: 10579<br/>
+		<span class="widget1">#slide_type</span>: IASCAG1<br/>
+		<span class="widget1">#input_row_count</span>: 32448<br/>
+		<span class="widget1">#output_row_count</span>:32448<br/>
+		<span class="widget1">#created_by</span>: TIGR Spotfinder 2.2.3<br/>
+		<span class="widget1">#TIFF files processed</span>: gpc30025a_532_nm.tif, gpc30025a_635_nm.tif<br/>
+		<span class="widget1">#description</span>: Tumor type comparison<br/>
+		# This is the 4th experiment in a series of 20 to identify tissue-specific genes.</p>
+		
+		<p>The header row consists of the field names for each subsequent row in this file (with the exception of comment lines). A minimum of seven columns must be present, and these must use a set of specifically named headers. Any number of additional columns may be included. The seven required column headers are:</p>
+		<p><span class="widget1">UID</span>:Unique identifier for this spot<br/>
+		<span class="widget1">IA</span>: Intensity value in channel A<br/>
+		<span class="widget1">IB</span>: Intensity value in channel B<br/>
+		<span class="widget1">R</span>:  Row (slide row)<br/>
+		<span class="widget1">C</span>: Column (slide column)<br/>
+		<span class="widget1">MR</span>: Meta-row (block row)<br/>
+		<span class="widget1">MC</span>: Meta-column (block column)<br/></p>
+		
+		<p>As of version 4.0 of this file format the IA and IB columns can be substituted with MedA and MedB. The new requirement is that at least one integrated intensity (IA, IB, etc.) <span class="widget1">or</span> one median (MedA, MedB, etc.) value be reported for each channel in the microarray. For example, a two channel microarray .mev file would require either IA and IB <span class="widget1">or</span> MedA and MedB.</p>
+		<p><span class="widget1">MedA</span>: Median intensity in channel A<br/>
+		<span class="widget1">MedB</span>: Median intensity in channel B<br/></p>
+		<p>.mev files may use one of the following formats for the header row, depending on the origin of the mev file. The non-required columns (i.e. anything after the 7<sup>th</sup> column) may be rearranged and their names are subject to change at this time.</p>
+		<p>1. Database created mev file:<br/>UID \t IA \t IB \t R \t C \t MR \t MC \t SR \t SC \t FlagA \t FlagB \t SAA \t SAB \t SFA \t SFB \t QCS \t QCA \t QCB \t BkgA \t BkgB
+			
+		<p><span class="widget1">UID</span>:Unique identifier for this spot<br/>
+		<span class="widget1">IA</span>: Intensity value in channel A<br/>
+		<span class="widget1">IB</span>: Intensity value in channel B<br/>
+		<span class="widget1">R</span>:  Row (slide row)<br/>
+		<span class="widget1">C</span>: Column (slide column)<br/>
+		<span class="widget1">MR</span>: Meta-row (block row)<br/>
+		<span class="widget1">MC</span>: Meta-column (block column)<br/>
+		<span class="widget1">SR</span>:Sub-row<br/>
+		<span class="widget1">SC</span>: Sub-column<br/>
+		<span class="widget1">FlagA	</span>: TIGR Spotfinder flag value in channel A<br/>
+		<span class="widget1">FlagB	</span>:  TIGR Spotfinder flag value in channel B<br/>
+		<span class="widget1">SAA</span>: Actual spot area (in pixels) in channel A<br/>
+		<span class="widget1">SAB</span>: Actual spot area (in pixels) in channel B<br/>
+		<span class="widget1">SFA</span>: Saturation factor in channel A<br/>
+		<span class="widget1">SFB</span>: Saturation factor in channel B<br/>
+		<span class="widget1">QC</span>: Cumulative quality control score<br/>
+		<span class="widget1">QCA</span>: Quality control score in channel A<br/>
+		<span class="widget1">QCB</span>: Quality control score in channel B<br/>
+		<span class="widget1">BkgA</span>: Background value in channel A<br/>
+		<span class="widget1">BkgB</span>: Background value in channel B<br/></p>
+		
+		<p>2. Spotfinder created mev file:<br/>UID \t IA \t IB \t R \t C \t MR \t MC \t SR \t SC \t FlagA \t FlagB \t SAA \t SAB \t SFA \t SFB \t QCS \t QCA \t QCB \t BkgA \t BkgB \t SDA \t SDB \t SDBkgA \t SDBkgB \t MedA \t MedB \t AID</p>
+			
+		<p><span class="widget1">UID</span>:Unique identifier for this spot<br/>
+		<span class="widget1">IA</span>: Intensity value in channel A<br/>
+		<span class="widget1">IB</span>: Intensity value in channel B<br/>
+		<span class="widget1">R</span>:  Row (slide row)<br/>
+		<span class="widget1">C</span>: Column (slide column)<br/>
+		<span class="widget1">MR</span>: Meta-row (block row)<br/>
+		<span class="widget1">MC</span>: Meta-column (block column)<br/>
+		<span class="widget1">SR</span>:Sub-row<br/>
+		<span class="widget1">SC</span>: Sub-column<br/>
+		<span class="widget1">FlagA	</span>: TIGR Spotfinder flag value in channel A<br/>
+		<span class="widget1">FlagB	</span>:  TIGR Spotfinder flag value in channel B<br/>
+		<span class="widget1">SAA</span>: Actual spot area (in pixels) in channel A<br/>
+		<span class="widget1">SAB</span>: Actual spot area (in pixels) in channel B<br/>
+		<span class="widget1">SFA</span>: Saturation factor in channel A<br/>
+		<span class="widget1">SFB</span>: Saturation factor in channel B<br/>
+		<span class="widget1">QC</span>: Cumulative quality control score<br/>
+		<span class="widget1">QCA</span>: Quality control score in channel A<br/>
+		<span class="widget1">QCB</span>: Quality control score in channel B<br/>
+		<span class="widget1">BkgA</span>: Background value in channel A<br/>
+		<span class="widget1">BkgB</span>: Background value in channel B<br/>
+		<span class="widget1">SDA</span>: Standard deviation for spot pixels in channel A<br/>
+		<span class="widget1">SDB</span>: Standard deviation for spot pixels in channel B<br/>
+		<span class="widget1">SFB</span>: Saturation factor in channel B<br/>
+		<span class="widget1">SDBkgA</span>: Standard deviation of the background value in channel A<br/>
+		<span class="widget1">SDBkgB</span>: Standard deviation of the background value in channel B<br/>
+		<span class="widget1">MedA</span>: Median intensity value in channel A<br/>
+		<span class="widget1">MedB</span>: Median intensity value in channel B<br/>
+		<span class="widget1">AID</span>: Alternative ID<br/>
+		
+		<p>The first seven fields (UID, IA, IB, R, C, MR and MC) are required as specified above. </p>
+		<p>This flexible format allows users to track slide-specific data of interest, such as background, spot size and alternate intensities without requiring them of all users or adopting a limited ‘vocabulary’ of field names. This header row serves to identify the required and additional data columns. UID must be the left-most column in the mev file. Other columns do not need to be present in a fixed order.</p>
+		<p>For mev files generated at TIGR, the UIDs may be of the form: <span class="widget1">database_name:spot_id (eg. cage:20238)</span>. For any given microarray database, the id field in the spot table will be unique. The combination of database and spot_id will therefore uniquely identify any spot on any array created at TIGR. It is important to note that this is not enough information to distinguish between spots in the same location on two slides of the same <span class="widget1">slide_type</span>, as this would typically require an <span class="widget1">analysis_id</span>. Since annotation data is based on <span class="widget1">slide_type</span>, it is not necessary to make this distinction, as all slides of a given type will use the same annotation file. </p>
+		<p>The AID column will usually contain an incremental sequence of numbers starting at 1. These can be used to return the file to the original sorted order and can function as a unique row identifier if necessary.</p>
+		<p>Applications that generate files of expression data (commonly in tav format) by retrieving records from the database access the spot table. <span class="widget1">TIGR Spotfinder</span>, <span class="widget1">Midas</span> and <span class="widget1">Madam</span> are all capable of generating UIDs of the form described above in addition to the typical coordinate and intensity data.</p>
+		<p>mev files are required to end with the extension ‘.mev’. At this time there are no further naming conventions for mev files.</p>
+	
+	<a name="anno"><h4>Annotation Files (.ann)</h4></a>
+		<p>An annotation file is a tab-delimited text file containing annotation data for a specific <span class="widget1">slide_type</span>. mev files can be associated with an annotation file only if both types of files are based on the same <span class="widget1">slide_type</span>. The keys to this association are the unique ids in both files. Rows of mev and annotation files can be associated with each other if the unique ids are identical. A single header row is required to precede the annotation data in order to identify the columns below. Each remaining row of the file stores annotation data for a particular spot/feature on the array.</p>
+		<p>Annotation files may contain any number of non-computational comment lines. These lines, starting with ‘#’, will be treated identically to comment lines in mev files, and should precede the header row.</p>
+		<p>Annotation files created at TIGR will use UIDs that match the format used in the mev files, most likely <span class="widget1">database_name:spot_id</span>. The structure of each annotation file is detailed below.</p>
+		<p>The header row consists of headers that identify each column of data. Each subsequent row of the file stores data for a particular spot/feature on the array. The annotation files created at TIGR will typically contain at least one comment at the top of the file with the following information:</p>
+		
+		<p><span class="widget1">Version</span>: Version number based on revisions of annotation data<br/>
+		<span class="widget1">Format version</span>: The version of the .mev file format document<br/>
+		<span class="widget1">Date	</span>: Date of file creation or update<br/>
+		<span class="widget1">Analyst</span>: Owner or the person responsible for creating the file<br/>
+		<p><span class="widget1">created_by	</span>: Software tool used to create the document<br/>
+		<span class="widget1">gi_version</span>: Version of the Gene Indices (or db?) that produced this <br/>
+		<span class="widget1">annotation data</span>: Date of file creation or update<br/>
+		<span class="widget1">slide_type</span>: type from the slide_type table that this array is based on<br/>
+		<p><span class="widget1">output_row_count</span>: Number of rows of annotation (eg. non-header) data<br/>
+		<span class="widget1">description</span>: Common name or other details about the experiment<br/>
+	<p>An example of the leading comments:</p>
+	<p><span class="widget1">#version</span>: V3.0<br/>
+		<span class="widget1">#format version</span>: V4.0<br/>
+		<span class="widget1">#date	</span>: 04/20/2004<br/>
+		<span class="widget1">#analyst</span>:  jwhite<br/>
+		<span class="widget1">#gi_version</span>: 3.0<br/>
+		<span class="widget1">#slide_type</span>: IASCAG1<br/>
+		<span class="widget1">#output_row_count</span>: 32448<br/>
+		<span class="widget1">#created_by</span>: Database script<br/>
+		<span class="widget1">#description</span>: Standard annotation file<br/></p>
+		
+		<p>The header row consists of the field names for each subsequent row in this file. Only the UID field is required. It must be the first field present and it must be named ‘UID’. Any number of additional fields may be included. Annotation files created at TIGR will always contain the following columns:</p>
+		<p><span class="widget1">UID</span>:Unique identifier for this spot<br/>
+		<span class="widget1">R</span>:  Row (slide row)<br/>
+		<span class="widget1">C</span>: Column (slide column)<br/></p>
+		
+		<p>The remaining fields may vary, and a standard set has yet to be determined. Such a list will be published on a future date. R and C have been included to allow for manual alignment of the mev and corresponding annotation files in the event that the mev files were not generated in a traditional manner (ie. using Madam, etc.).</p>
+		<p>Some varieties of annotation files follow. The format may vary depending on the purpose of the file:</p>
+		<p>UID \t R \t C \t FeatN \t GBNum \t TCNum \t ComN \t …<br/>
+		UID \t R \t C \t GeneN \t Rxn \t PathwayN \t …<br/>
+		UID \t R \t C \t FeatN \t End5 \t End3 \t ChrNum \t …<br/></p>
+		
+		<p>Of course, it would be possible to combine the fields of these files, or add fields that have not been mentioned here. The goal is to keep the annotation flexible and the processing seamless.</p>
+		<p>There are not any naming conventions for annotation files at this time. If such a standard is introduced in the future, it will be detailed here.</p>
+	<a name="bio"><h4>Bioconductor (MAS5) Files</h4></a>
+		<p>A Bioconductor (MAS5) expression file is a tab-delimited text file that contains Affymatric Gene chip ID and several columns of expression datum. The header line contains all CEL file names you use in the Bioconductor calculation.</p>
+		
+	<pre>Sample_A.CEL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	Sample_B.CEL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	Sample_C.CEL	
+1053_at	435.013780957768	488.838904739281	435.013780957768
+117_at	44.1563783495161	88.9787051028434	44.1563783495161	
+121_at	1222.87243433892	698.900718145166	1222.87243433892	
+1255_g_at 58.672587649119	47.0203292843508	58.672587649119	
+1294_at	336.502704708535	335.169154361150	336.502704708535	
+1316_at	163.254451578192	92.4927417614044	163.254451578192	
+1320_at	114.309125038560	105.223093019586	114.309125038560</pre>	
+<p>Users can use following scripts to generate above files by using Bioconductor.</p>
+	<pre>library(affy)
+data <-ReadAffy()
+   mas5data<-mas5(data)
+   write.exprs(mas5data,file="affy_mas5.txt")
+   mas5call<-mas5calls(data)
+   write.exprs(mas5call,file="affy_call.txt")</pre>
+ <div class="screenshots">
+		<a href="app5.jpg">
+					<img src="app5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Pivot Data File</span>
+				</div>
+ <a name="affy"><h4>Affymetrix GCOS (Pivot Data) File</h4></a>
+	<p>An Affymatrix GCOS file is a tab-delimited text file that contains Affymatric Gene chip ID and several experiment datum. In each experiment data it contains one column of intensity, one column of detection call and one column of p-value. The first line is head line.</p>
+<a name="geo"><h4>GEO SOFT Affymetrix File Format</h4></a>
+	<p>GEO  Simple Omnibus Format in Text (SOFT) file format is a kind of flexible tab delimited file format. Users can check the file format in details at this <a href="http://www.ncbi.nlm.nih.gov/projects/geo/info/soft2.html#SOFTsubmissionexamples">website</a>.</p>
+	<p>A template for a single channel Sample file:</p>
+	<pre>^SAMPLE=[required]
+!Sample_title = [required]
+!Sample_source_name = [required]
+!Sample_organism = [required]
+!Sample_characteristics = [required]
+!Sample_biomaterial_provider = [optional]
+!Sample_treatment_protocol = [optional]
+!Sample_growth_protocol = [optional]
+!Sample_molecule = [required][VALUE=total RNA, genomic DNA, polyA RNA, cytoplasmic RNA, nuclear RNA, protein, other]
+!Sample_extract_protocol = [optional]
+!Sample_label = [required]
+!Sample_label_protocol = [optional]
+!Sample_hyb_protocol = [optional]
+!Sample_scan_protocol = [optional]
+!Sample_description = [required]
+!Sample_data_processing = [required]
+!Sample_platform_id = [required; provide accession of existing GEO Platform for array used, e.g. "GPL96"]
+#ID_REF = [required; this column should correspond to the ID column of the reference platform]
+#VALUE = [required; typically supplied as normalized signal intensities]
+#HEADER_3 = [optional]
+#HEADER_4 = [optional]
+#HEADER_N = [optional; any number of user-defined columns can be included, and it is recommended that data tables be as comprehensive as possible excepting annotations that are provided on the platform entry]
+!Sample_table_begin
+ID_REF	VALUE	HEADER_3	HEADER_4	HEADER_N
+...insert data table here; columns may appear in any order after the ID_REF column...
+!Sample_table_end
+</pre>
+<p>A template for platform file:</p>
+<pre>^PLATFORM=[required]
+!Platform_title = [required]
+!Platform_technology = [required][VALUE=spotted DNA/cDNA, in situ oligonucleotide, spotted oligonucleotide, antibody, tissue, MS, MPSS] 
+!Platform_distribution = [required][VALUE=non-commercial, commercial, custom-commercial]
+!Platform_organism = [required]
+!Platform_manufacturer = [required]
+!Platform_manufacture_protocol = [required]
+!Platform_catalog_number = [optional]
+!Platform_support = [optional]
+!Platform_coating = [optional]
+!Platform_description = [optional]
+!Platform_web_link = [optional]
+!Platform_contributor = [optional; 1 per author; use 'firstname,lastname' or 'firstname,middleinitial,lastname']
+!Platform_pubmed_id = [optional]
+#ID = [required; a unique id should be provided for each 'spot' on the array]
+#HEADER_2 = [required; all elements of the array should be identified using one or more columns in addition to the ID column]
+#HEADER_3 = [optional]
+#HEADER_N = [optional; provide as many headers as needed to fully describe the elements of the array]
+!Platform_table_begin
+ID	HEADER_2	HEADER_3	HEADER_N
+...insert data table here; columns may appear in any order after the ID column...
+!Platform_table_end
+</pre>
+<a name="geos"><h4>GEO SOFT two channel file format</h4></a>
+		<p>GEO  Simple Omnibus Format in Text (SOFT) file format is a kind of flexible tab delimited file format for two channel data. Users can check the file format in details at this <a href="http://www.ncbi.nlm.nih.gov/projects/geo/info/soft2.html#SOFTsubmissionexamples">website</a>.</p>
+	<p>A template for two channel file:</p>
+	<pre>^SAMPLE=[required]
+!Sample_title = [required]
+!Sample_source_name_ch1 = [required]
+!Sample_organism_ch1 = [required]
+!Sample_characteristics_ch1 = [required]
+!Sample_biomaterial_provider_ch1 = [optional]
+!Sample_treatment_protocol_ch1 = [optional]
+!Sample_growth_protocol_ch1 = [optional]
+!Sample_molecule_ch1 = [required][VALUE=total RNA, polyA RNA, cytoplasmic RNA, nuclear RNA, genomic DNA, protein, other]
+!Sample_extract_protocol_ch1 = [optional]
+!Sample_label_ch1 = [required]
+!Sample_label_protocol_ch1 = [optional]
+!Sample_source_name_ch2 = [required]
+!Sample_organism_ch2 = [required]
+!Sample_characteristics_ch2 = [required]
+!Sample_biomaterial_provider_ch2 = [optional]
+!Sample_treatment_protocol_ch2 = [optional]
+!Sample_growth_protocol_ch2 = [optional]
+!Sample_molecule_ch2 = [required][VALUE=total RNA, polyA RNA, cytoplasmic RNA, nuclear RNA, genomic DNA, protein, other]
+!Sample_extract_protocol_ch2 = [optional]
+!Sample_label_ch2 = [required]
+!Sample_label_protocol_ch2 = [optional]
+!Sample_hyb_protocol = [optional]
+!Sample_scan_protocol = [optional]
+!Sample_description = [required]
+!Sample_data_processing = [required]
+!Sample_platform_id = [required; provide accession of existing GEO Platform for array used, e.g. "GPL1001"]
+#ID_REF = [required; this column should correspond to the ID column of the reference platform]
+#VALUE = [required; normalized log2 ratios are typically provided in this column]
+#HEADER_3 = [optional]
+#HEADER_4 = [optional]
+#HEADER_N = [optional; any number of user-defined columns can be included, and it is recommended that data tables be as comprehensive as possible excepting annotations that are provided on the platform entry]
+!Sample_table_begin
+ID_REF	VALUE	HEADER_3	HEADER_4	HEADER_N
+...insert data table here; columns may appear in any order after the ID_REF column...
+!Sample_table_end
+</pre>
+ <div class="screenshots">
+		<a href="app6.jpg">
+					<img src="app6.jpg">
+				</a>
+				<br/>
+				<span class="caption">dChip File Format</span>
+				</div>
+<a name="dchip"><h4>dChip or DFCI core file format</h4></a>
+	<p>Each dChip data output file contains one experiment data. It’s a tab delimited file which records a lot of information for the experiment. Right now only chip ID, intensity, detection and detection p-value are read into Mev for the analysis.	</p>
+<a name="afss"><h4>	Assignment File Saving System</h4></a>
+	<p>	Initialization dialogs for all modules save their information in a format that is logical, readable by other modules, and readable by humans.</p>
+	<p>Each module saves the header in the following way, with the abbreviated letters representing the module replacing *Module*. </p>
+	<p># Assignment File<br/>
+# User: user Save Date: Mon Jan 01 01:01:01 EST 2009<br/>
+#<br/>
+Module:	*ModuleName*<br/></p>
+
+<p>MeV then stores a key which is essential for cross-compatibility between modules, as well as preserving label names for those modules that use labels.<br/>
+Many modules contain a “not included” option for samples.  This is not added to the key, and any assignment not associated with the key will be determined to be “not included”.  This is important for cross-compatibility. </p>
+<p>Group 1 Label:	Alpha<br/>
+Group 2 Label:	Bravo<br/>
+Group 3 Label:	Charlie<br/></p>
+<p>The following lines are then written to the file for the purposes of human readability only.<br/>
+#<br/>
+Index	Name	Group Assignment<br/></p>
+<p>Each module will then write the group assignments for each sample, separated by a new line.  For each assignment, at least 3 markers will be assigned, separated by tabs.<br/>  
+1.) The sample’s index, which will be assigned based on its location within the currently loaded data.<br/>  
+2.) The sample’s currently selected annotation, usually the default slide name.<br/>
+3.) The sample’s group assignment that will match a String in the key above or a module defined “excluded” key.<br/></p>
+
+<p>Note:  In some cases (BETR, NonPar, GSEA and TFA), additional information is stored for additional factors, conditions, etc.  This information is added to the right of each key, and is ignored by other modules.</p>
+<p>1&nbsp;&nbsp;&nbsp;	Sample A&nbsp;&nbsp;&nbsp;	Alpha<br/>
+2&nbsp;&nbsp;&nbsp;	Sample B&nbsp;&nbsp;&nbsp;	Bravo<br/>
+3&nbsp;&nbsp;&nbsp;	Sample C&nbsp;&nbsp;&nbsp;	Charlie<br/>
+4&nbsp;&nbsp;&nbsp;	Sample D&nbsp;&nbsp;&nbsp;	Excluded<br/>
+5&nbsp;&nbsp;&nbsp;	Sample E&nbsp;&nbsp;&nbsp;	Alpha<br/>
+6&nbsp;&nbsp;&nbsp;	Sample F&nbsp;&nbsp;&nbsp;	Excluded<br/>
+7&nbsp;&nbsp;&nbsp;	Sample G&nbsp;&nbsp;&nbsp;	Alpha<br/>
+8&nbsp;&nbsp;&nbsp;	Sample H&nbsp;&nbsp;&nbsp;	Bravo<br/>
+9&nbsp;&nbsp;&nbsp;	Sample I&nbsp;&nbsp;&nbsp;	Charlie<br/></p>
+<a name="123"><h4>Special Cases</h4></a>
+<p><span class="widget1">BETR:</span>The BETR module adds an additional parameter, “Conditions \t *int*”, which is necessary to tell the BETR reader whether or not to read condition assignments in addition to time assignments.</p>
+<p><span class="widget1">t-Test:</span>The reader does distinguish between files saved with “one-class” and “between subjects”.  Though compatible, the user will be notified that the saved file was not saved for the current method.  For “one-class” compatibility, only samples with a key in the first class are added to the “included” checkbox list.  All others are excluded.  “Paired” does not use this saving system.</p>
+<p>Two-class paired:The loading file format is a tab-delimited file. Samples start from 0. Users define one pair in one line. Following is a sample file. The first sample and second sample are in one pair. The third sample and fourth sample are in one pair and so on.</p>
+<p>0&nbsp;&nbsp;&nbsp;	1<br/>	
+	2&nbsp;&nbsp;&nbsp;	3<br/>	
+	4&nbsp;&nbsp;&nbsp;	5<br/>	
+	6&nbsp;&nbsp;&nbsp;	7<br/></p>
+<p><span class="widget1">SAM:</span>The reader does distinguish between files saved with “one-class”, “multi-class” and “two-class unpaired”.  Though compatible, the user will be notified that the saved file was not saved for the current method.  For “one-class” compatibility, only samples with a key in the first class are added to the “included” checkbox list.  All others are excluded.  “Paired” and “Censored Survival” does not use this saving system.</p>
+<p>Two-class paired:The loading file format is a tab-delimited file. Samples start from 0. Users define one pair in one line. Following is a sample file. The first sample and second sample are in one pair. The third sample and fourth sample are in one pair and so on.</p>
+<p>0&nbsp;&nbsp;&nbsp;	1<br/>	
+	2&nbsp;&nbsp;&nbsp;	3<br/>	
+	4&nbsp;&nbsp;&nbsp;	5<br/>	
+	6&nbsp;&nbsp;&nbsp;	7</p>
+<p>Censored survival: The loading file format is a tab-delimited file. Users define one sample in one line. Following is a sample file.  The first column is 1(selected) or 0(unselected). The second column is time and third column is 1(censored) or 0(dead).
+<p>1&nbsp;&nbsp;&nbsp;	0.0&nbsp;&nbsp;&nbsp;	0<br/>
+	1&nbsp;&nbsp;&nbsp;	0.0&nbsp;&nbsp;&nbsp;	1<br/>
+	1&nbsp;&nbsp;&nbsp;	0.0&nbsp;&nbsp;&nbsp;	1<br/>
+	1&nbsp;&nbsp;&nbsp;	0.0&nbsp;&nbsp;&nbsp;	1</p>
+<p><span class="widget1">TFA:</span>Like BETR, TFA assignment files contain an additional column for keys belonging to the second factor.  When loading other assignment files that do not contain 2 factors, only the first factor is assigned and the second remains unchanged.</p>
+<p><span class="widget1">NonPar:</span>In addition to loading group assignments, the saved group labels replace the currently loaded group labels.  If the group label number does not match the current group label number, the loading process is stopped.</p>
+<p><span class="widget1">GSEA:</span>Like BETR and TFA, GSEA contains additional columns for additional factors.  If the assignment file being loaded does not contain the additional columns needed to fill the additional factor assignments, GSEA will load only the first factor(s).</p>
+<p><span class="widget1">SVM:</span>A “load file” feature has been added to the dialog box and is accessible from the “File” drop-down menu.
+All “excluded” samples from outside saved files are added to the “Neutral” group.</p>
+<p><span class="widget1">USC:</span>If a file is loaded with a different number of groups, MeV is able (at the user’s request) to replace the group label names with the saved names and add or subtract groups to match the saved file’s information.</p>
+<div class="navigation-bar"><a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a></div>
+</body>
+</html>
+
+
+
+
+
+
+		
+		
+		
+		
+		

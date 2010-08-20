@@ -1,0 +1,129 @@
+<html>
+	<head>
+		<title> Viewer Descriptions</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+<div class="navigation-bar"><a class="prev" href="displayoptions.html">Previous: Display Options</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="workingwithclusters.html">Next: Working with Clusters</a></div>
+
+<h3> Viewer Descriptions</h3>
+<a name="Overview"><h4>Overview</h4></a>
+	<p>Viewers are the graphical displays used by MeV to present the results of the modules’ calculations.  The viewers will appear as a subtree under the module’s Result Tree within the main navigation tree.  The viewers listed here are those which are used by more than one of the MeV modules.  Custom viewers, used by only one module, are described in that module’s section.  </p>
+<div class="screenshots">
+		<a href="EI.jpg">
+					<img src="EI.jpg">
+				</a>
+				<br/>
+				<span class="caption">Expression Images Viewer</span>
+				</div> 
+<a name="ExpressI"><h4>Expression Images</h4></a>
+	<p>This viewer is used in the main window of the Multiple Experiment Viewer as well as in most of the modules.  It consists of colored rectangles, representing genes, in a matrix.  Each column represents all the genes from a single experiment, and each row represents the expression of a gene across all experiments.  The default color scheme used to represent expression level is red/green (red for overexpression, green for underexpression) and can be adjusted by selecting  <span class="widget2">Display-->Color Scheme.</span></p> 
+	<div class="screenshots leftsidecorrection">
+		<a href="spotinfo.jpg">
+					<img src="spotinfo.jpg">
+				</a>
+				<br/>
+				<span class="caption">Spot Information Window</span>
+				</div> 
+	<p>Clicking on any of the rectangles in this view will open a window reporting information for that spot.  This window contains a great deal of information, including expression values and row/column coordinates. 
+	<div class="screenshots">
+		<a href="SLR.jpg">
+					<img src="SLR.jpg">
+				</a>
+				<br/>
+				<span class="caption">Gene Graph Window</span>
+				</div>  
+		Clicking the <span class="widget2">Gene Graph</span> button will open a window containing a graph of this gene’s expression level across all samples.  To view a Single Array Viewer displaying the entire experiment of which this spot is a part, click the <span class="widget2">Sample Detail</span> button in the <span class="widget2">Spot Information</span> window.  The <span class="widget2">Set Gene Color</span> button has not been enabled in this version of MeV.  
+<a name="ExpressI"><h4>Expression Graphs</h4></a>
+	<p>This viewer displays graphs of the expression levels of each gene across the experimental conditions. By default, the line color is gray or colored according to the cluster membership. <div class="screenshots">
+		<a href="ex1cl.jpg">
+					<img src="ex1cl.jpg">
+				</a>
+				<br/>
+				<span class="caption">Expression Graph of one cluster (with gradient color selected)</span>
+				</div>  
+	The lines can be set to display a gradient coloring option in which the lines are colored according to expression level. This option is found by selecting <span class="widget2">Display-->Color Scheme-->Use Color Gradient on Graphs.</span> This will toggle the feature on and off.  </p>
+	<p>The mean expression levels of genes in the cluster are shown as a centroid graph overlaid on top of the individual expression graphs. Each line represents the graph of an individual gene, and combined they created the whole centroid graph. The red line represents the graph of the mean of all the genes across the samples. If you previously saved and color coded your clusters, those colors will appear on the graph if you <span class="widget2">haven’t</span> turned on the <span class="widget2">Use Color Gradient on Graphs</span> feature. This allows you to see the patterns, if any, of the behavior of the genes across the samples.</p>
+	<div class="screenshots">
+		<a href="ex2cl.jpg">
+					<img src="ex2cl.jpg">
+				</a>
+				<br/>
+				<span class="caption">Expression Graphs of all clusters</span>
+				</div> 
+	<p>By default, the range of the Y-axis for an expression graph is the same for each viewer produced from an analysis, regardless of which subset of expression graphs is displayed.  The X-axis (y = 0) is centered  on the Y-axis, and the Y range is set to the distance of the element in the entire data set which is furthest from zero.  Use the <span class="widget2">Change Y Axis</span> option in the right-click menu to change the Y range to the maximum distance from zero only for elements within the current expression graph.  This option allows the expression graph to expand to increase the resolution of expression changes within a particular cluster.</p>
+<a name="CG"><h4>Centroid Graphs</h4></a>
+	<div class="screenshots">
+		<a href="CG.jpg">
+					<img src="CG.jpg">
+				</a>
+				<br/>
+				<span class="caption">Centroid Graph</span>
+				</div> 
+	<p>This viewer is very similar to the Expression Graph Viewer, except that line graphs for individual genes are omitted, leaving only the centroid graph.  Error bars represent the standard deviation of expression within the cluster. That is, the mean for all the genes of a sample is represented by a dot, and the standard deviation for the genes in that sample are shown above and below it. In fact, the red line connecting the centroids is the same red line as in the expression graphs.</p>
+<a name="TV"><h4>Table Views</h4></a>
+	<p>These views show element annotation and, where appropriate, auxiliary information such as element-specific statistical information for the elements in a cluster. </p>
+	<div class="screenshots">
+		<a href="TV.jpg">
+					<img src="TV.jpg">
+				</a>
+				<br/>
+				<span class="caption">Gene cluster table view</span>
+				</div> 
+	<p>Columns can be dragged horizontally across the table to change their relative ordering. Successive clicks on the header for any column will sort the rows in ascending or descending order of the entries in that column. Sorting of the “Stored Color” column will bring together elements that have been stored with the same cluster color. CTRL-clicking on any column header will sort the table in the original order of elements in that cluster, an option that is also available from the right-click menu (below).</p>
+	<p>Left-clicking on any of the blue-underlined cells in the table will launch a web browser and display the contents of that cell in a web page appropriate to the type of annotation contained within it. The mappings that determine which web site MeV will attempt to access for each annotation type can be changed my modifying the appropriate configuration file. A template for this file can be found on the TM4.org website, at <a href="http://www.tm4.org/mev/annotation_URLs.txt">http://www.tm4.org/mev/annotation_URLs.txt</a>.Simply download the file and modify it to contain annotation name / URL mappings you wish to use. These mappings will <span class="widget1">override</span> the default mappings MeV uses. Load the file using the <span class="widget2">Preferences-->Select Annotation Linkout File</span> option from the main MeV toolbar. The name and location of this file will be saved in MeV’s user preferences file, and re-loaded in subsequent sessions. </p>
+	<div class="screenshots">
+		<a href="TS.jpg">
+					<img src="TS.jpg">
+				</a>
+				<br/>
+				<span class="caption">Table search dialog</span>
+				</div>
+	<p>Right-clicking on the table view brings up a menu containing the options available from the right-click menus of other types of viewers, with a few important modifications. In addition to storing the entire cluster and launching the entire cluster as a new MeV session, as in the other types of viewers, users can also select a subset of rows in the table for these operations. Even individual elements can be stored and tracked one at a time. Contiguous row selections can be made by dragging the mouse over these rows, or by selecting the first row of the interval and then SHIFT-clicking on the last row of the interval (in Windows). Non-contiguous rows may be selected by CTRL-clicking on the desired rows.</p>
+	<p>To delete a cluster stored from this viewer (i.e., either all the rows in the table or a subset of them), select the rows corresponding to the stored cluster and choose the “Delete …” option on the right-click menu. Please note that for successful deletion, the stored cluster should have been created within the current algorithm run that the table view belongs to, and the row selection should exactly correspond to the rows in that cluster.</p>
+	<p>The “Search” function on the right-click menu pulls up a search dialog, as shown to the right:</p>
+	<p>Users may search any combination of columns for specific terms. Other options on this dialog are self-explanatory. The <span class="widget2">Link to URL</span> option allows users that are connected to the Internet to launch a web browser to open a page related to the selected gene.  First select a gene of interest (a row) and then click on the annotation key to use as the gene identifier.  MeV will attempt to construct a URL for the selected annotation key by checking a URL configuration file.  If it is unable to definitively decide what the selected annotation type is, a dialog will be presented to allow you to select an annotation field name (column header name) and an external resource to open.
+	<div class="screenshots">
+		<a href="LURL.jpg">
+					<img src="LURL.jpg">
+				</a>
+				<br/>
+				<span class="caption">Annotation/URL Association Dialog</span>
+				</div>
+	<p>Within the <span class="widget2">config</span> directory there is a file (<span class="widget1">annotation_URLs.txt</span>) that contains entries to support this feature in MeV.  This file can be modified with new external resources as needed, and the existing fields can also be modified, with the exception of the UniGene field (see below).  The file is arranged such that each row represents a different annotation label:resource pair with the following tab delimited fields (\t indicates a tab).</p>
+	<p>Annotation Label  \t URL \t Resource Name</p>
+	<p>The Annotation Label indicates the name of the annotation field that is loaded into mev. This is in the header of the annotation file or TDMS file.  For example, if in some files you call GenBank GB# and in other files it is referred to as GenBank then two entries in this annotation/url file can be made, one for each key.  If an input annotation file had the GenBank numbers identified as gb# then the Annotation/URL Association dialog would launch to allow you to manually indicate the desired external resource.</p>
+	<p>The URL entry is the URL for the resource.  Look in the file for examples.  It is important to note that the URL has a section labeled ‘FIELD1’.  This is a placeholder to indicate where the gene identifier should go when constructing the URL. The UniGene URL is the only exception, requiring two variable fields called FIELD1 and FIELD2, which are parsed out of the UniGene identifier. The UniGene Annotation Label is required in the <span class="widget1">annotation_URLs.txt</span> file to correctly parse UniGene Ids; therefore, please do not modify this line. 
+<a name="CVA"><h4>Common Viewer Activities</h4></a>
+		<p>A right click within most result viewers will launch a menu that is specific to the currently displayed viewer.  Some of the viewer specific options, such as searching in Table Viewers have been discussed however there are several common viewer options that are shared among the common viewer types.</p>
+	<h5>Store Cluster</h5>
+		<p>The Store Cluster option will save the currently viewed cluster to a cluster manager.  This feature will be described in detail in section 8.  The main use of this feature is to assign a color to the elements in the cluster so that the location of the marked elements in future results can be assessed.</p>
+	<h5>Launch New Session </h5>
+		<p>The Launch New Session option takes the elements in the current viewer an opens a new multiple array viewer with just those elements represented.  This is useful for quickly extracting elements of interest and further characterizing their expression.</p>
+	<h5>Save Cluster</h5>
+		<p>The Save Cluster option saves the currently viewed cluster to a file.  The expression values and annotation for the current cluster are saved in a format that can be reloaded as a Tab Delimited, Multiple Sample (TDMS) format file.  For several statistical method this output includes statistics such as F-values or T-values, and p-values depending on the particular statistical algorithm applied.</p>
+	<h5>Save All Clusters</h5>
+		<p>This saves all clusters from a clustering result as described above but where the file name has a cluster index appended to indicate cluster id.</p>
+	<h5>Delete Cluster</h5>
+		<p>This method is used if the Store Cluster method has been used to store the cluster to the repository.  This is a remote method to remove the cluster from the repository.  The cluster table viewer in the cluster manager also has a means to remove single or multiple clusters.</p>
+	<h5>Broadcast Matrix to Gaggle</h5>
+		<p>Choose this option to broadcast the entire contents of this viewer to the Gaggle network. To broadcast to a specific goose, choose that goose from the <span class="widget2">Utilities-->Gaggle--> Broadcast Target</span> menu. More details about the Gaggle network are available in the section x of this manual.</p>
+	<h5>Broadcast selected Matrix to Gaggle (some viewers only)</h5>
+		<p>The same as <span class="widget2">Broadcast Matrix to Gaggle</span>, but broadcasts values only for the table rows that are currently highlighted.</p>
+	<h5>Broadcast Namelist to Gaggle</h5>
+		<p>Broadcast the annotation of the genes displayed in the current viewer to the Gaggle network. The annotation values that are currently displayed in the viewer will be sent to the goose selected in the <span class="widget2">Broadcast Target</span> menu in the <span class="widget2">Utilities</span> menu. </p>
+	<h5>Broadcast selected Namelist to Gaggle (some viewers only)</h5>
+		<p>The same as <span class="widget2">Broadcast Namelist to Gaggle</span>, but broadcasts names only for the table rows that are currently highlighted.</p>
+<div class="navigation-bar"><a href="displayoptions.html">Previous: Display Options</a>| <a href="TableofContents.html">Table of Contents</a>|<a href="workingwithclusters.html">Next: Working with Clusters</a>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

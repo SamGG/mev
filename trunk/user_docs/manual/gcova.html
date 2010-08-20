@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>Global Analysis of Covariance</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="surv.html">Previous: SURV-Survival Analysis </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="rp.html">Next: RP-Rank Products </a></div>
+<h3>GLOBANC:Global Analysis of Covariance</h3>
+	<div class="screenshots ">
+		<a href="g1.jpg">
+					<img src="g1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Button Selection</span>
+				</div>
+	<p>Global ANCOVA, a new module to MeV 4.6, is a technique for identifying differentially expressed gene sets based off of the calculation of an F-test between groups of samples. Analyses are typically run in a two-class format but may also be applied to additional groups, time-course or other designs of arbitrary variables. Global Ancova fits linear models to the data and compares them using the extra sum of squares principle. The result table reports p-values, permutation p-values and asymptotic p-values. </p>
+<p>After opening the Global Ancova initialization dialog, select the file location of your gene set test terms. Your options are:</p>
+<ol>
+<li><span class="widget2">Local file</span>: A tab-delimited text file located on your machine.</li>
+	<div class="screenshots ">
+		<a href="g2.jpg">
+					<img src="g2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Selection</span>
+				</div>
+<li><span class="widget2">MSigDB</span>: : Download gene sets from the <a href="http://www.broad.mit.edu/gsea/msigdb/downloads.jsp">MIT/Broad website</a> .</li>
+<li><span class="widget2">GeneSigDB</span>: Download gene sets from GeneSigDB.</li>
+</ol> 
+<p>Choose an annotation type. The annotation used by your test terms must match those selected here.</p>
+<p><em>Assign your samples</em></p>
+	<p>Choose the number of groups in your data and use the button or cluster selector to assign the samples to those groups.</p>
+<p><em>Button Selection</em></p>
+	<p>Use this option if you have not created clusters for your samples and want to assign each sample individually.</p>
+<p><em>Cluster Selection</em></p>
+	<div class="screenshots ">
+		<a href="g3.jpg">
+					<img src="g3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Results Table</span>
+				</div>
+	<p>Use the cluster selection panel if you have previously made clusters and wish to run your analysis based on those clusters. Use the drop-down boxes to choose which clusters’ samples are to be assigned to which time-points. For clusters you are not using, leave “unassigned”. The same condition and time-point requirements exist for this method, but the cluster selector makes for easier and more organized sample assignment.</p>
+<p>The Global Ancova module outputs a table containg F-values, permutation-based p-values and approximation-based p-values.</p>
+<p>Additionally, the Global Ancova module outputs standard viewers for each of the supplied genesets. </p>
+<div class="navigation-bar"><a class="prev" href="surv.html">Previous: SURV-Survival Analysis </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="rp.html">Next: RP-Rank Products </a></div>
+</body>
+</html>
+

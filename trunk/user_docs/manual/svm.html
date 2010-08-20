@@ -1,0 +1,100 @@
+<html>
+	<head>
+		<title>SVM: Support Vector Machines</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="minet.html">Previous: MINET-Mutual Information Network</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="usc.html">Next: USC-Uncorrelated Shrunken Centroids </a></div>
+<h3>SVM: Support Vector Machines</h3>
+<p>(Brown et al., 2000)</p>
+<p>Although SVMs have been used in various fields of study, the use of SVMs for gene expression analysis was described in detail by Brown et al.  SVM is a supervised learning classification technique.  The algorithm uses supplied information about existing relationships between members of a subset of the elements to be classified.  The supplied information, an initial presumed relationship between a set of elements, coupled with the expression pattern data leads to a binary classification of each element.  Each element is considered either in or out of the initial presumptive classification.</p>
+	<div class="screenshots ">
+		<a href="svm1.jpg">
+					<img src="svm1.jpg">
+				</a>
+				<br/>
+				<span class="caption">SVM Process Overview</span>
+				</div>
+<p>The algorithm proceeds through two main phases.  The first of these phases, <span class="widget1">training</span>, uses the presumptive classification (supplied knowledge) and the expression data as inputs to produce a set of weights which will be used during the next phase.  The second phase, <span class="widget1">classification</span>, uses the weights created during training and the expression data to assign a discriminant or score to each element.  Based on this score each element is placed into or out of the class.</p>
+<a name="overview"><h4>SVM Dialog Overview</h4></a>
+	<p>The initial dialog is used to define the basic SVM mode.  One can select to classify genes or experiments and can select to perform one or both  phases of the algorithm.  The Train and Classify option allows one to run both phases of the algorithm.  Starting with a presumptive classification and expression data the result is a final classification of each element.  The Train only option produces a list of weights which can be stored as an ‘SVM’ file along with training parameters so that they can be applied to data to classify at a later time.  The Classify only option prompts the user for an SVM file of weights and parameters and results in final classification. The user also has an option to produce hierarchical trees on the two resulting sets of elements.<br/>
+		<div class="screenshots ">
+		<a href="svm2.jpg">
+					<img src="svm2.jpg">
+				</a>
+				<br/>
+				<span class="caption">SVM Process Selection Dialog</span>
+				</div>
+	The second dialog is used during either the Train and Classify mode or the Train Only mode.  The upper portion is used to indicate whether the initial presumptive classification will be defined using the SVM Classification Editor or supplied as an SVC file.</p>
+<a name="para"><h4>Process Initialization Parameter Information</h4></a>
+<p><em>Sample Selection </em></p>	
+			<p>The sample selection option indicates whether to cluster genes or experiments. </p>
+<p><em>Process Selection</em></p>	
+			<p>The SVM algorithm works by performing two main processes, training and classification. One can elect to perform training only, classification only, or both phases of the SVM classification technique.<br/>
+			The <span class="widget2">Training Only</span> option results in a set of numerical weights which can stored as an SVM file and used for classification at a later time.<br/>
+			The <span class="widget2">Classification Only</span> option takes a file input of weights generated from training and results in a binary classification of the elements. <br/>
+			The <span class="widget2">Training and Classification</span> option provides the ability to use the input set as a training set to produce weights which are immediately applied to perform the classification.<br/>
+			The <span class="widget2">One-out Iterative Validation</span> iteratively performs an SVM training and classification run.  On each iteration one element is moved to the neutral classification and therefore will not impact the SVM training nor the classification of elements.  The final classification will not be biased by an initial classification of the element.</p>
+<p><em>Hierarchical Clustering</em></p>	
+			<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created.</p>
+<p><em>Classification Input</em></p>	
+			<p>The SVM training process requires the supplied expression data and an additional initial presumptive classification which indicates which elements are initially presumed to have a relationship. Two options are provided for selecting members of the initial classification. </p>
+<p><em>Use SVM Classification Editor</em></p>	
+			<p>This option causes an editor application to be launched in order to allow a flexible tool for finding and marking elements to be positive members of the initial classification. This classification can be saved as an SVC file for later recovery of these initial settings. </p>
+<p><em>Use Classification File</em></p>	
+			<p>This allows the loading of an initial classification from an existing SVC file. </p>
+<p><em>Kernel Matrix Construction</em></p>	
+			<p>One can select to construct a polynomial or a radial kernel matrix.<br/>
+			<span class="widget1">Polynomial Kernel Function Parameters</span><br/>
+			Constant: An additive constant. (c)<br/>
+			Coefficient: A multiplicative constant. (w)<br/> 
+			Power: A power factor. (p)<br/></p>		
+<p><span class="widget1">Radial Basis Function Parameters</span></p>	
+			<p>The Radial Basis checkbox is used to select to use this type of Kernel generating function.<br/>
+			Width Factor: Radial width factor (w, see in below formula).<br/>
+			Radial Basis Kernel Function<br/>
+			K(x,y) = e<sup>( - (||x - y||^2)/(2w^2))</sup> 
+<p><span class="widget1">Training Parameters</span></p>	
+<p><em>Diagonal Factor</em></p>
+			<p>Constant added to the main diagonal of the kernel matrix. Adding this factor to the main diagonal of the kernel is required to force the matrix to be 'positive definite'. The definition of a positive definite matrix is best reviewed in books devoted to linear algebra but this state is achieved by selecting a constant of sufficient magnitude. </p>
+			<p>This positive definite state of the kernel matrix is required for the SVM algorithm to yield meaningful results. Testing values starting at 1.0 and increasing may be required to find an appropriate value. If the value is too low all elements will be partitioned in the negative class. For a range of values for this factor a stable set of elements may be classified as positive. At very high values there is a tendency to force all positive examples to be in the positive class regardless of their similarity of expression. </p>
+<p><em>Threshold</em></p>
+		<p>This value is used as a stopping criteria for the weight optimization phase of training. Optimizing the weights produced during training is an iterative process which converges on an optimal set of weights to separate the positive and negative examples. This threshold dictates how stable the weights must be before the optimization process is terminated. Selection of a threshold that is very low could cause the optimization process to take an extremely long time and yet yield similar results to those where a higher threshold value was used which terminated the process earlier. </p>
+<p><em>Constraints</em></p>
+		<p>This check box selects to apply limits to weights produced during training. </p>
+<p><em>Positive Constraint</em></p>
+		<p>The upper limit to produced weights. </p>
+<p><em>Negative Constraint</em></p>
+		<p>The lower limit to produced weights. </p>
+	<div class="screenshots ">
+		<a href="svm3.jpg">
+					<img src="svm3.jpg">
+				</a>
+				<br/>
+				<span class="caption">SVM Classification Editor</span>
+				</div>
+	<p><span class="widget1">Distance Metric: Dot Product using normalized expression vectors so that the norm of each vector is 1.  This metric is fixed for this algorithm and will not correspond to the distance menu.</span></p>
+<p>The SVC file format is a tab delimited text file with the following columns for each element,</p>	
+<ol>
+<li>Index -a sequential integer index.  </li>
+<li>Classification  - an integer value indicating class membership. (1 = in initial classification, 0 = neutral,  -1 = out of initial classification) </li>
+<li>Optional annotation columns</li>
+</ol> 			
+<p>	The SVM Classification Editor allows one to use searches on supplied annotation as well as SVC files to assign membership to the initial presumptive classification.  The editor allows the user to sort the list based on classification or annotation fields.  The constructed initial classification can be stored in SVC format and later reloaded to allow alterations to produce what could be several initial classifications for a given study.  The SVC files, once created, can be used to supply the initial classification thereby skipping the editor step.  If the editor is used a button or menu selection launches the algorithm based on the current classification selection.  </p>
+<p>The second dialog also defines parameters used for creating the kernel matrix.  The following is an overview of the training parameters.</p>
+<div class="screenshots ">
+		<a href="svm4.jpg">
+					<img src="svm4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Classification Information Viewer</span>
+				</div>
+<a name="out"><h4>SVM Output</h4></a>
+		<p>The final result of an SVM run depends upon the process run.  Training results in a set of weights that can be viewed along with the parameters for kernel construction.  Note that from this viewer the training results can be saved as an SVM file.  Classification results in a viewer that indicates each element’s discriminant value and a final classification.  The SVM Classification Information Viewer describes how many elements were initially selected as positive examples and how many elements were later recruited into the positive and negative classifications as well as other overview statistics. </p>
+		<p>Expression image viewers reveal which elements have been recruited into each of the final classification partitions by coloring the annotation red.  Other result viewers are essentially the same as those describe in the K-Means clustering section.</p>
+<div class="navigation-bar"><a class="prev" href="minet.html">Previous: MINET-Mutual Information Network</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="usc.html">Next: USC-Uncorrelated Shrunken Centroids </a></div>
+</body>	
+</html>
+
+	

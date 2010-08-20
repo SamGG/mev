@@ -1,0 +1,216 @@
+<html>
+	<head>
+	
+		<title> Loading the Data and Adjusting the Expression Data</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+		<div class="navigation-bar">
+			<a class="prev" href="StartingMEV.html">Previous: Starting MultiExperiment Viewer</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="AdjustingtheData.html">Next: Adjusting the Data</a>
+		</div>
+			<a name="LoadingExpress"><h3>Loading Expression Data</h3></a>
+			<p>MeV can interpret files of several types, including the MultiExperiment Viewer format (.mev), the TIGR ArrayViewer format (.tav), the TDMS file format (Tab Delimited, Multiple Sample format), the Affymetrix file format, and GenePix file format (.gpr).  See section 4 for details regarding the different file formats.</p>
+			<p>In addition to being formatted correctly, the input data should already be normalized.  Using normalized data as input will result in more statistically valid output. <a href="http://www.jcvi.org/cms/research/software/">MIDAS</a>, a member of the <a href="http://www.tigr.org/software/tm4/">TM4 software suite</a>, is one program that can do this normalization.</p>    
+		<a name="LoadingMEV"><h4>Loading MeV (.mev) Format File</h4></a>
+			<p>Select <span class="widget2">Load Data</span> from the <span class="widget2">File</span> menu to launch the file loading dialog.  At the top of this dialog, use the drop-down menu to select the type of expression files to load by choosing <span class="widget2">Select File Loader --> TIGR Files --> MeV Files</span>  Use this browse button in the <span class="widget2">File</span> panel to locate the files to be loaded.</p>  
+			<p>The default file type to load is the .mev file.  This file type is an update of the older .tav file format.  Details about this file format can be found in the appendix (4.4).  In the section of the loader labeled “MeV Expression Files (*.mev),” the contents of the folder selected in the file selection dialog box will be displayed in the box labeled “available”. Select the .mev files to load and click the “add” button to add them to the list of files to be loaded.  Similarly, select the file(s) containing the appropriate annotation information in the section labeled “MeV Annotation Files (*.ann, *.dat).”</p>
+			<div class="screenshots">
+				<a href="MEVFORMAT.jpg">
+					<img src="MEVFORMAT.jpg">
+				</a>
+				<br/>
+				<span class="caption">Loading MeV (.mev) Format File</span>
+			</div>
+			<p>The <span class="widget2">Load Integrated Intensities/Load Median Intensities</span> options specify that MeV should load either integrated intensities (default) or Median intensities.  Note that care should be taken to select the intensity measurements, integrated or median, that has been previously normalized in MIDAS so that the loaded data will have been normalized and possibly trimmed.
+			<p>The <span class="widget2">Load Auxiliary Spot Information</span>option will load spot background, spot pixel count and other spot specific items.  Loading this information will not impact the analysis results but will allow you to view this data when clicking on an expression element. The <span class="widget1">default is not to load</span> this spot information since it consumes significant system memory and can severely limit the number of mev files that can be loaded due to memory constraints.</p>
+			<p>The <span class="widget2">Use Annotation Contained in MeV File</span>option overrides the use of an annotation file by loading annotation that is contained within the MeV file.  This is a specialized case and for ease of annotation updates it is suggested that you adhere to using a separate annotation file even if the mev file contains annotation.This option is off by default.</p>
+			<p>The <span class="widget2">Remove Annotation Quotes</span> option removes quotations from annotation fields where the annotation entries start and end with quotation marks.  This option is provided to counteract the behavior of some popular ‘spread sheet’ programs where cells containing text with a delimiter such as a comma are automatically enclosed by quotation marks.  If MeV stalls on loading an annotation file, try loading it with this option selected.</p>
+		<a name="TIGR"><h4>Loading TIGR Array Viewer(.tav) Files</h4></a>
+			<p> To load .tav-formatted files, use the drop-down menu to select the <span class="widget2">TIGR Array Viewer (*.tav)</span> option.  This loader is very similar to the .mev loader.  Use the browse button in the <span class="widget2">File</span>panel to select the .tav files to load.  Instead of selecting annotation files to load alongside the data files, however, you must select a preferences file.  This preferences file contains information that MeV uses to determine what type of .tav file is being loaded.  See the Appendix (section 4.11) for more details on preferences files (4.11). </p>
+			<p> Insert screenshot </p>
+		<a name="TAB"><h4>Loading Tab Delimited, Multiple Sample(.txt) Files (TDMS Format)</h4></a>
+			<!-- Screenshots should be placed just above the text they should appear next to. 
+				So this screenshot for section 4.3.1 is one line above the paragraph for section 4.3. -->
+			<div class="screenshots leftsidecorrection">
+				<a href="4.3.1.jpg">
+					<img src="4.3.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Loading Tab Delimited, Multiple Sample Files (TDMS Format)</span>
+			</div>
+			<p>The Expression File Loader should be the screen that automatically comes up once you select <span class="widget2">Load Data</span> from the <span class="widget2">File</span> menu. If not, click <span class="widget2">Select File Loader-->Tab Delimited, Multiple Sample Files (TDMS) (*.*)</span> option from the drop-down menu to load TDMS format files.  Use the browse button in the <span class="widget2">File</span> panel to select the desired file.  The file will be displayed in a tabular format in the file loader preview table. Select either the <span class="widget2">Two-color Array OR Other</span> or the <span class="widget2">Single-color Array</span> radio button to indicate the data type of the expression data. Please read <a href="#annotation-feature">Using the Annotation Feature</a>, for information on the same. Click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file. That is, click the upper-leftmost cell that contains measuered data of the genes. MeV will color-code the cells of the display table to indicate which cells it will load as expression data (white and gray stripes), gene/row annotation (purple), sample annotation (blue) or sample annotation labels (yellow). Gene annotation labels will be displayed in the column headers. Data in cells with white backgrounds will not be loaded. MeV allows you to have as many columns as you want of labels and annotation, but you must tell it where the labels end and the expression data begins. Check that the correct fields are listed before clicking <span class="widget2">Load</span>.</p>   
+		<a name="Affy"><h4>Loading Affymetrix Data (.txt, .TXT) Files</h4></a>
+			<div class="screenshots">
+				<a href="4.4.1.jpg">
+					<img src="4.4.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">The Expression File Loader (Affymetrix Files)</span>
+				</div>
+			<p>Selecting <span class="widget2">Affymetrix Data Files (*.txt)</span> from the drop-down menu allows the loading of Affymetrix files.  We currently support five different Affymetrix file format namely: GW Affymetrix, dChip/DFCI_Core, Affymetrix GCOS, Bioconductor (using MAS5) and RMA Files.  Select the directory containing files to be loaded using the browse button in the <span class="widget2">File</span>  panel. The contents of the folder selected in the file selection dialog box will be displayed in the box labeled “Available”.  Select the files to load and click the “Add/ Add All” button to add them to the list of files to be loaded. Please read <a href="#annotation-feature">Using the Annotation Feature</a> section, for information on the same.</p>
+			<p> These files contain a single intensity value per spot, instead of the usual two that MeV requires.  The values loaded from these files will be used as a Cy5 value, that is, the numerator in the calculation of the ratio of intensities.  Therefore there are several options for simulating a second intensity value (the denominator).  Select from the radio button options to choose a method.  If <span class="widget2">Absolute</span>  is selected, the denominator is given a value of 1 for all ratio calculations.  If <span class="widget2">Mean Intensity</span>is selected, the average of all intensity values for that gene across all loaded Affymetrix files is used as the denominator for that spot.  Similarly, if <span class="widget2">Median Intensity</span> is selected, the median of all intensity values for that spot is used.  If <span class="widget2">Reference</span> is selected, a reference Affymetrix file, selected in the file selector at the bottom of the dialog, is used.  The intensity value of each record in the Affymetrix file is used as the denominator of the ratio calculation for the corresponding spot in each of the loaded data files.</p>
+		<a name="color"><h4>Automatically Setting Color Scale Limits</h4></a>
+			<p>When data are loaded in MeV, it automatically generates an expression image. Expression images convey expression levels by converting the numeric <span class="widget1">expression value</span> (log<sub>2</sub> (A/B) or absolute <span class="widget1">expression value</span>) as a color that is extracted from the color gradient. For Affymetrix data and two channels data, each has different data range in the data set. Now MeV has a new function to automatically sets the color scale limits according to different data sets.</p> 
+			<div class="screenshots">
+				<a href="4.6.1.jpg">
+					<img src="4.6.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">The Expression File Loader (GenePix Files)</span>
+				</div>
+			<p>For Affymetrix data the low end is set to 0 and midpoint is set as median and high end is set to the value so that 80% of the data fall below this value. </p> 
+			<p>For two color array data the low end is set to -3 and midpoint is set to 0 and high end is set to 3.</p>
+			<p>Users can change color scale limits after loading as instructed in the following section.</p>
+		<a name="Genepix"><h4>Loading GenePix (.gpr) Data Files</h4></a>
+			<p>GenePix (.gpr) files can be loaded by selecting the GenePix file loader option from the list of available file formats to load.  Use the <span class="widget2">Browse</span> button to select the directory containing the .gpr files.  Files appearing in the <span class="widget2">Available</span> file list can be added to the <span class="widget2">Selected</span> file list using the <span class="widget2">Add</span> or <span class="widget2">Add All</span> buttons.</p>
+		<div class="screenshots">
+				<a href="4.7.1.jpg">
+					<img src="4.7.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Agilent File Loader</span>
+				</div>
+		<a name="Agi"><h4>Loading Agilent Files</h4></a>
+			<p>Agilent format text files can be loaded by selecting the Agilent file loader option from the list of available file formats to load. Use the <span class="widget2">Browse</span> button to select the directory containing the files.  Files appearing in the Available file list can be added to the <span class="widget2">Selected</span> file list using the <span class="widget2">Add</span> or <span class="widget2">Add All</span> buttons.  The upper file selection area is for the selection of Agilent Oligo Feature Extraction text files and lower file selection area is for the text version of the pattern file that corresponds to your slide.</p>
+		<a name="GEOSOFT"><h4>Loading GEO Simple Omnibus Format in Text (SOFT) Affymatrix format File </h4></a>
+			<p> After Expression File Loader dialog is launched, SOFT Affymetrix format file can be loaded by selecting the GEO SOFT Affymetrix file loader option from the list of available file formats to load. </p>
+			<p> Use the <span class="widget2">Browse</span> button in the <span class="widget2">File</span> panel to locate the file to be loaded. The selected file will be displayed in a tabular format in the file loader preview table. We currently allow loading GPL and GSM format files using this loader.  The platform information contained in the GPL files is automatically loaded. There is no provision to load the platform information separately. Click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file, then click the Load button to load the file.</p>
+		<a name="GEOSOFT2"><h4>Loading GEO Simple Omnibus Format in Text (SOFT) two channel format File</h4></a>
+			<p>SOFT two channel format file can be loaded by selecting the GEO SOFT two channel file loader option from the list of available file formats to load.</p>
+			<a name="matrix"><h4>Loading GEO Series Matrix Files</h4></a>
+			<div class="screenshots">
+				<a href="4.10.1.jpg">
+					<img src="4.10.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">GEO Series Matrix File Loader</span>
+				</div>
+			<p>Use the <span class="widget2">Browse</span> button in the <span class="widget2">File</span> panel to locate the file to be loaded. We currently allow loading GPL and GSM format files using this loader.  The platform information contained in the GPL files is automatically loaded. There is no provision to load the platform information separately. The selected file will be displayed in a tabular format in the file loader preview table. Then click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file, then click the Load button to load file.</p>
+			<p>GEO Series Matrix files can be loaded using the <span class="widget2">Browse</span> button in the File panel. Select <span class="widget2">“Spotted DNA/cDNA Array” or “Affymetrix Array”</span> to indicate the data-type of the loaded expression data.</p>
+			<p>Series_matrix files are summary text files that include a tab-delimited value- matrix table generated from the 'VALUE' column of each Sample record, headed by Sample and Series metadata. These files include SOFT attribute labels. Data generated from multiple Platforms are contained in separate files. It is recommended to view Series_matrix files in a spreadsheet application like Excel. CAUTION: value data are extracted directly from the original records with no consideration as to whether the values are directly comparable.</p>	
+		<a name="GEOGDS"><h4>Loading GEO GDS Format Files</h4></a>
+			<strong style="float left"><div class="screenshots">
+				<a href="4.11.1.jpg">
+					<img src="4.11.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">GEO GDS Format File Loader</span>
+				</div></strong>
+			<p>GEO GDS format file can be loaded using the <span class="widget2">Browse</span> button in the File panel. Select <span class="widget2">“Spotted DNA/cDNA Array” or “Affymetrix Array”</span> to indicate the data-type of the loaded expression data.</p>
+			<p>GEO Datasets (GDS) are curated sets of comparable GEO Sample (GSM) data. GDS data tables contain VALUE measurements extracted from original Sample records.</p>
+		<a name="MAS5"><h4>Loading Bioconductor(MAS5) Format Files</h4></a>
+			<p>Bioconductor (MAS5) format file can be loaded by selecting the Bioconductor (MAS5) file loader option from the list of available file formats to load. Use the browse button to locate the files to be loaded. The file will be displayed in a tabular format in the file loader preview table. The call format file generated by Bioconductor can be selected using the browse button in the “Additional Requirements” panel.
+			<strong style="float left"><div class="screenshots">
+				<a href="4.12.1.jpg">
+					<img src="4.12.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Bioconductor (MAS5) Format file loader</span>
+				</div></strong>Please read <a href="#annotation-feature">Using the Annotation Feature</a> section, for information on the same. Click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file. Click button Load to load file.</p>
+		<a name="AFFYC"><h4>Loading Affymatrix GCOS Format Files</h4></a>
+			<p>Affymetrix GCOS (Gene chip operating software) output (pivot data) files can be loaded by selecting the Affymetrix GCOS file loader option from the list of available file formats to load.</p>
+			<p>This file loader can actually load three similar file formats by choosing data option radio buttons.<p>
+			<blockquote>Only Intensity-----only containing signal intensity for every experiment<br>Intensity with Detection -----containing detection for every experiment<br>Intensity with Detection and p-value-----containing detection and P-value for every experiment</br></blockquote>
+			<div class="screenshots">
+					<a href="4.13.1.jpg">
+						<img src="4.13.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Affymatrix GCOS Format file loader</span>
+				</div></strong>
+			<p>Use the <span class="widget2">Browse</span> button to locate the files to be loaded. The file will be displayed in a tabular format in the file loader preview table. Please read <a href="#annotation-feature">Using the Annotation Feature</a> section, for information on the same. Choose the data options by clicking proper radio button. Then click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file. Then click the Load button to load the file.</p>
+		<a name="MAGE"><h4>Loading MAGE-TAB formatted data files</h4></a>
+			<p>The MeV MAGE-TAB file loader allows a user to select and load expression data from MAGE-TAB (version 1.0) formatted files.  The MAGE-TAB specification can be found at:
+			<p>The MeV MAGE-TAB file loader can be accessed by selecting <span class="widget2">‘File > Load Data’</span> from the file menu, and then <span class="widget2">‘Select Loader’</span> from the loader menu.  The panel itself is different from other MeV file loaders in that it must load at least 3 files (defined in the MAGE-TAB spec.).  
+			There are 4 regions on the panel: 1) the files section, 2) the annotation section, 3) the channel data section, and 4) the data section.</p>
+			<p>In the files section, the individual data entry fields are initially blank.  Once the user browses to and identifies the location of one of the required files (IDF, SDRF or data matrix files), MeV will check for the existence of the others and report back with a file name or a message indicating that one of the file types was not found.  The user can then browse to find each file individually.  At this point MeV will only search for the file currently being selected.</p>
+			<div class="screenshots">
+					<a href="The MeV MAGE-TAB file loader.jpg">
+						<img src="The MeV MAGE-TAB file loader.jpg">
+				</a>
+				<span class="caption">MeV MAGE-TAB file loader</span>
+				<br/>
+				</div>
+			<p>The annotation section allows the user to either select gene annotation from a list of arrays that exist on the current system, or can be downloaded from the internet.  (Network access is required for the latter.)</p>
+			<p>The channels section will be populated once a user selects a data matrix file.  In fact the user should not set any values until selecting a data matrix because they will be changed once the file is selected.  After the file is selected and the panel is updated, the user can select appropriate values if they have not already been selected.</p>
+			<p>The 1 channel / 2 channel radio buttons indicate whether the data is derived from 1- or 2- channel hybridizations.  Depending upon which radio button is selected, MeV will display either Signal, Detection and p-Value combo boxes, or Intensity1, Intensity2 and Log Ratio/Ratio combo boxes.  The Log Ratio/Ratio combobox may be used for either Log(ratio) or ratio data.  Each drop-down list includes all of the data type items from the second row of the MAGE-TAB data matrix file plus one additional entry, “none”, to allow the user to select no value for the combobox.  
+			The user must know and understand the data well enough to make appropriate selections for these lists.  The data section merely displays the data from the selected data matrix file.  No interaction with this section is necessary.  The ‘Load’ button is inactive until the user provides a data matrix file.  The Load button will then be activated.</p>
+			<p>Once a data matrix file has been selected and displayed, the user can select ‘Load’ to load and parse the data matrix file.  MeV will display the data matrix as a heat map with row labels derived from the first column of the data matrix file.  Once the data have been presented as a heat map, all other MeV functionalities will be available for use.</p>
+			<p>The MAGE-TAB format defines categorical items that MeV can use to group data.  This data is found in the ExpermentalFactor tags of the MAGE-TAB IDF and the FactorValue columns in the SDRF.  MeV loads this data into a ClusterAnnotation viewer which will allow the user to view and edit this information.  
+			The user can there specify which fields should be used to group the data.  This is useful for analyses such as t-test, ANOVA, etc.</p>
+			<div class="screenshots">
+					<a href="expressionimage.jpg">
+						<img src="expressionimage.jpg">
+				</a>
+				<span class="caption">Expression Image</span>
+				<br/>
+				</div>	
+			<p>Where can you view all the data in the SDRF file?</p>
+			<p>The Cluster Manager ->Sample Clusters is where you will be able to view the data that you loaded from the SDRF file.</p>
+			<p>The contents of the SDRF file (Characteristics and FactorsValues) are displayed in a tabular view in Cluster Manager.</p>
+			<p>Where can I view and edit the contents of IDF file?</p>
+			<p>The IDF Editor lets you view and edit your IDF files. The first column (IDF fields) is not editable. If you want to add any missing fields to your data, click on the “Add Missing IDF Fields” option. This will automatically insert the missing rows.  Changes to the IDF or SDRF data are retained in memory until you exit MeV.  None of this data is saved in the current version of MeV.</p>
+			<div class="screenshots">
+					<a href="clustermanger.jpg">
+						<img src="clustermanger.jpg">
+				</a>
+				<span class="caption">Cluster Manager</span>
+				<br/>
+				</div>
+			<p>The current version of MeV will not save data in MAGE-TAB format; however, this feature is planned for a future release of MeV.</p>
+			<p>Example files can be found in the following links:<br> 
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">MAGE-TAB files supplied along with MeV</a>,<br> 
+			e.g.<br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">E-ATMX-12.idf.txt</a><br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12.sdrf.txt">E-ATMX-12.sdrf.txt</a><br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">E-ATMX-12-processed-data-1343527784.txt</a></br></p>
+			<p>NOTE: Although we have tested a variety of MAGE-TAB files with MeV, there are some MAGE-TAB files that may not load into MeV.  This may be due to flexibility in the MAGE-TAB v.1.0 specification.  Also note that not all the files available on the ArrayExpress web site that are in MAGE-TAB format can be loaded into MeV because the parser we currently use supports the MAGE-TAB v.1.0 specification.  The ArrayExpress web site includes files that conform to the as yet unpublished MAGE-TAB v.1.1 format.</p>
+		<a name="dchip"><h4>Loading dChip Output Files</h4></a>
+			<div class="screenshots">
+				<a href="4.14.1.jpg">
+					<img src="4.14.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">dChip File Loader</span>
+				</div>
+			<p>Selecting <span class="widget2">dChip/DFCI_core Format Files (*.*)</span> from the drop-down menu allows the loading of dChip or DFCI_core output files.  Select the directory containing data files using the <span class="widget2">Browse</span> button. Files appearing in the <span class="widget2">Available</span> file list can be added to the <span class="widget2">Selected</span> file list using the <span class="widget2">Add</span> or <span class="widget2">Add All</span> buttons.  Please read <a href="#annotation-feature">Using the Annotation Feature</a> section, for information on the same.</p>
+			<p>These files contain a single intensity value per spot, instead of the usual two that MeV requires.  The values loaded from these files will be used as a Cy5 value, that is, the numerator in the calculation of the ratio of intensities.  Therefore there are several options for simulating a second intensity value (the denominator).  Select from the radio button options to choose a method.  If <span class="widget2">Absolute</span> is selected, the denominator is given a value of 1 for all ratio calculations.  If <em>Mean Intensity</em> is selected, the average of all intensity values for that gene across all loaded Affymetrix files is used as the denominator for that spot.  If <span class="widget2">Reference</span> is selected, a reference Affymetrix file, selected in the file selector at the bottom of the dialog, is used.  The intensity value of each record in the Affymetrix file is used as the denominator of the ratio calculation for the corresponding spot in each of the loaded data files.</p>
+		</a>
+		<h4><a name="annotation-feature">Using the Annotation Feature</a></h4>
+		<div class="screenshots">
+				<a href="Step 1.jpg">
+					<img src="Step 1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Step 1</span>
+				</div>
+			<p>One of the features of MeV release 4.1 is enhanced support for gene annotations. MeV provides users an alternative to fetch additional gene annotation,  from the web based resource providing annotation based on The Gene Indices (TGI) for commonly available microarray resources, including widely used clone sets and Affymetrix GeneChip Arrays namely; RESOURCERER. Please refer to the developer’s manual for further information on the Annotation model.  This feature is currently provided only for Affymetrix data.</p>
+			<p>Steps for using this feature</p><br>1. Load the data file/files of your choice. If you are using the Tab delimited file loader (TDMS), check the <span class="widget2">“Affymetrix Array”</span> radio button. The TDMS loader considers the array platform to be <span class="widget2">“Spotted DNA/cDNA Array OR other”</span> by default.</br></p>
+			<p>Select the organism your expression data comes from using the Choose Organism drop-down menu. The list of arrays in the Choose Array drop-down menu will be updated with the available array types. Choose the one that your data was collected from. The button to the right of the Choose Array drop-down menu will update, and will ready “Download” if the file has not already been downloaded. Click this button and MeV will attempt to download the file from the internet. If the file has been previously downloaded, this button will read “Select” instead of Download, indicating that internet access is not required to use this annotation. Click “Select” to choose this annotation type.</p>
+			<p>If internet access is not available and you have an annotation file of the appropriate format, you can still select an annotation file from your filesystem. Click the “Browse” button, located beneath the “Download” button, and select the file. Annotation file formats that are accepted include the Resourcerer file format and the Affymetrix .csv file format.</p>
+			<p>Follow any further instructions present in the file loader panel before clicking the <span class="widget2">Load</span> button. In the example shown here, you will click on the upper leftmost <span class="widget1">expression value</span> in the <span class="widget2">Expression Table</span> panel before clicking the <span class="widget2">Load</span> button.</p>
+		<h4><a name="IVLD">Initial View of the Loaded Data, Main Expression Image</a></h4>
+			<div class="screenshots">
+				<a href="4.16.1.jpg">
+					<img src="4.16.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Main View in MeV.  (Borders drawn on image.)</span>
+				</div>
+			<p>For each set of <span class="widget1">expression value</span> loaded, a column is added to the main display (4.16.1).  This display is an <em>Expression Image viewer</em>, in which each column represents a single sample and each row represents a gene. The names of the samples are displayed vertically above each column, and any annotation field of interest from the input files can be displayed to the right of each row.   MeV expects that each sample loaded will have the same number of elements, in the same order, and that each gene (spot) is aligned with that element in every other sample loaded. For example, using that rule, all input files will have data for gene x in row y.  Clicking on a spot displays a dialog with detailed information about that spot.  For more detail regarding the <em>Expression Images</em> viewer, see section 7.2.</p>
+		<a name="RNT"><h4>Result Navigation Tree</h4></a>
+			<p>The left side of the main interface is a navigation tree. 		<div class="screenshots">
+				<a href="4.18.1.jpg">
+					<img src="4.18.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">The History Log</span>
+				</div>At any time, clicking on the <em>Main View</em> node will return to the main display. Output from any MeV module will be added as a new subtree under the <em>Analysis</em> node.  In general, clicking on a node in the tree will navigate to the associated result or data view and that view will be displayed in the right panel.  The initial tree will also include a Cluster Manager node to manage clusters stored from analysis results.  The Script Manager manages activities related to analysis script creation, loading, modification, and execution.  The Cluster Manager and the Script Manager will be covered in detail in is sections 7.2 and 10 respectively.</p>
+		<a name="HNL"><h4>The History Node and Log</h4></a>
+			<p>The History Node contains a log of most activities.  For each log entry a date and time is recorded.  Major events such as file loading, analysis loading, script loading, algorithm execution, and cluster storage events are logged to the History Log.  If the analysis is stored to a file, then the History is retained and restored so that new events can be logged.  The history log can be stored to a text file by right clicking in the viewer and selecting the Save <em>History</em> to <span class="widget2">File</span> menu option.</p>
+<div class="navigation-bar"><a href="StartingMEV.html">Previous: Starting MultiExperiment Viewer</a>| <a href="TableofContents.html">Table of Contents</a>|<a href="AdjustingtheData.html">Next: Adjusting the Data</a>
+	</body>
+	</html>

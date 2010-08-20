@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>SAM: Significance Analysis of Microarrays</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="test.html">Previous: TTEST-T-tests  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="anova.html">Next: ANOVA-Analysis of Variance  </a></div>
+<h3>SAM: Significance Analysis of Microarrays</h3>
+	<p>(Tusher et al. 2001 implemented as in Chu et al. 2002)</p>
+<p>SAM can be used to pick out significant genes based on differential expression between sets of samples. It is useful when there is an a-priori hypothesis that some genes will have significantly different mean expression levels between different sets of samples. For example, one could look at differential gene expression between tissue types, or differential response to exposure to a perturbation between groups of test subjects. A valuable feature of SAM is that it gives estimates of the False Discovery Rate (FDR), which is the proportion of genes likely to have been identified by chance as being significant. Furthermore, SAM is a very interactive algorithm. It allows users to eyeball the distribution of the test statistic, and then set thresholds for significance (through the tuning parameter delta) after looking at the distribution. The ability to dynamically alter the input parameters based on immediate visual feedback, even before completing the analysis, should make the data-mining process more sensitive.</p>
+<a name="para"><h4>Parameters</h4></a>
+<p>Currently, SAM is implemented for the following designs: </p>
+	<div class="screenshots ">
+		<a href="sam2.jpg">
+					<img src="sam2.jpg">
+				</a>
+				<br/>
+				<span class="caption">SAM Initialization Dialog</span>
+				</div>
+<p>1) <span class="widget1">Two-class unpaired</span>, where samples fall in one of two groups, and the subjects are different between the two groups (analogous to a between subjects t-test). The initialization dialog box is similar to the t-test dialog.<br/>The user inputs the group memberships of the samples in the top panel. In the two-class design, genes will be considered to be “positive significant” if their mean expression in group B is significantly higher than in group A. They will be considered “negative significant” if the mean of group A significantly exceeds that of group B. </p>
+<p>2) <span class="widget1">Two-class paired</span>,in which samples are not only assigned to two groups, but there is also a one-to-one pairing between a member of group A and a corresponding member of group B (e.g., gene expression measurements on a group of subjects, where measurements are taken before (Group A) and after (Group B) drug treatment on each subject).</p>
+<p>3) <span class="widget1">Multi-class, </span>where the user specifies the number of groups (>2) that samples fall into. Genes will be considered significant if they are significantly different in expression across some combination of the groups.</p>
+<p>4) <span class="widget1">Censored survival,</span>where each sample is associated with a time and a state (censored or dead). Censored samples are those for which the subject was alive at the time the data were collected, and no further data are available for those subjects.</p>
+<p>5) <span class="widget1">One-class, </span>in which the user specifies a value against which the mean expression of each gene is tested. A gene is considered significant if its mean log2 expression ratio over all included samples is significantly different from the user-specified mean. To exclude a sample from the analysis, uncheck the box next to that sample’s name in the left pane of the one-class screen.</p>
+	<div class="screenshots ">
+		<a href="sam1.jpg">
+					<img src="sam1.jpg">
+				</a>
+				<br/>
+				<span class="caption">SAM Output</span>
+				</div>
+<p>The data for each gene are permuted, and a test statistic d is computed for both the original and the permuted data for each gene. In the two-class unpaired design, d is analogous to the t-statistic in a t-test, in that it captures the difference among mean expression levels of experimental conditions, scaled by a measure of variance in the data. Missing values in the input data matrix are imputed by one of two methods: 1)<span class="widget1">Row average:</span> replacing missing expression measurements with the mean expression of a row (gene) across all columns (experiments), OR 2)<span class="widget1"> K-nearest neighbors:</span>where the “K” most similar genes (using Euclidean distance) to the gene with a missing value are used to impute the missing value.</p>
+
+<p>SAM generates an interactive plot of the observed vs. expected (based on the permuted data) d-values. The user can change the value of the tuning parameter delta using either the slider bar or the text input field below the plot. <span class="widget2">Delta</span> is a vertical distance (in graph units) from the solid line of slope 1 (i.e., where observed = expected).	<div class="screenshots ">
+	<a href="sam3.jpg">
+					<img src="sam3.jpg">
+				</a>
+				<br/>
+				<span class="caption">SAM Delta Table Viewer</span>
+				</div> The two dotted lines represent the region within +/- delta units from the “observed = expected” line. The genes whose plot values are represented by black dots are considered non-significant, those colored red are positive significant, and the green ones are negative significant. The user can also choose to apply a <span class="widget1">fold change</span> criterion for the two-class paired and unpaired designs. In this case, in addition to satisfying the delta criterion, a gene will also have to satisfy the following condition to be considered significant: For a given fold change <span class="widget1">F</span>,<br/>[Mean (unlogged group B) / Mean (unlogged group A values)] = F (for positive significant genes), or = 1/F (for negative significant genes), where F is the fold change.]</p>
+<p>If SAM has been used at least once during a run of MeV, the input parameters and SAM graph of the last run can be called up by default, thus bypassing the need to run SAM again for that set of parameters.</p>	
+	
+<p>In addition to the standard viewers and information tabs, SAM also outputs a SAM graph viewer, as well as a Delta table viewer, which contains output information for a range of SAM values. This information can be saved as a tab-delimited text file by right-clicking on the table. The clusters saved from the other viewers will store gene-specific SAM statistics in addition to the annotation and expression measurements stored in clusters from most other modules.</p>
+<div class="navigation-bar"><a class="prev" href="test.html">Previous: TTEST-T-tests  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="anova.html">Next: ANOVA-Analysis of Variance  </a></div>
+</body>
+</html>

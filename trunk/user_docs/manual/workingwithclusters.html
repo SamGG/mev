@@ -1,0 +1,111 @@
+<html>
+	<head>
+		<title> Working with Clusters</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+<div class="navigation-bar"><a class="prev" href="ViewerDescriptions.html">Previous: Viewer Descriptions</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="UM.html">Next: Utilities Menu</a>
+<h3> Working with Clusters </h3>
+		<p>The analysis modules available in MeV subdivide genes or samples into clusters by unsupervised techniques, statistical methods, classification algorithms, or biological relationships. These partitioned sets of elements are then individually displayed in one of the standard cluster viewers.</p>
+	<div class="screenshots">
+		<a href="CAD.jpg">
+					<img src="CAD.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Attributes Dialog</span>
+				</div> 
+	<a name="SCUCM"><h4>Storing Clusters and Using the Cluster Manager</h4></a>
+		<p>Clusters of interest can be stored to a repository from the basic cluster viewers. Highlight the cluster of interest by clicking it, then in the right click menu select  <span class="widget2">Store Cluster</span>. Once a cluster is stored, the <span class="widget2">Cluster Manager</span> node on the result navigation tree will contain a list of stored clusters. Gene clusters and sample clusters are maintained in separate spreadsheets which are viewable from the Cluster Manager node. When storing a cluster to the repository an input dialog is presented which allows for three user defined fields to be associated with the cluster. Two optional text fields are used to capture a cluster name and a description of the algorithm or interesting features of the cluster. The third user input is a color used to identify genes or experiments which are members of the clusters. These colors can be tracked while performing analyses so that clustering consensus can be established.  No two clusters may use the same identifying color.</p>
+	<p>The cluster tables contain the following columns:</p>
+	<p>-The Serial Number is a unique number which is sequentially assigned to easily identify a particular cluster.<br />
+	<p>-The Source field describes whether the cluster source was an algorithm, a cluster operation, or some other means of selecting a group of elements.<br />
+	<p>-The Algorithm Node or Factor field identifies the algorithm used, if the source was an algorithm, and includes the navigation tree result index (in parentheses).<br/>
+		<div class="screenshots">
+			<a href="GeneClus.jpg">
+						<img src="GeneClus.jpg">
+					</a>
+					<br/>
+					<span class="caption">Gene Cluster Manager </span>
+					</div> 
+	<p>-The <span class="widget2">Cluster Node</span> field identifies the specific cluster node under the Algorithm Node from which the cluster was stored.<br/>
+	<p>-The <span class="widget2">Cluster Label</span> is an optional user defined name for the cluster.<br/>
+	<p>-The <span class="widget2">Remarks</span> field can be used to contain details about the process used to create the cluster or specific features of interest in the cluster.<br />
+	<p>-The <span class="widget2">Size</span> field shows the number of elements in the cluster.<br />
+	<p>-The <span class="widget2">Color</span> displays the user defined color for the cluster. If you click the color box a screen will show that allows you to change the color if you wish.<br />
+	<p>-The <span class="widget2">Show Color</span> check box allows you to show or repress the displayed color.  This option can be useful when visualizing cluster intersections in viewers.
+		Selecting only one cluster color to view can simplify interpretation.<br /></p>
+<p>Users have 4 options for display types and 5 options for the data to display.<br/>
+Four MeV viewers are accessible from the Cluster Manager:
+	<ol>
+		<li><span class="widget1">Table</span>: This option displays a table in the Cluster Manager showing every available annotation for each gene or sample included.</li>
+		<li><span class="widget1">Expression Image</span>: This option displays a heatmap in the Cluster Manager showing expression values for each gene and sample included. </li>
+		<li><span class="widget1">Expression Graph</span>: This option displays a graph in the Cluster Manager showing expression values for each gene and sample included.</li>
+		<li><span class="widget1">Centroid Graph</span>: This option displays a graph similar to the Expression Graph, but individual lines are omitted.  Instead, a single mean expression line is displayed and bars representing standard deviation at a particular sample/gene are shown.</li>
+	</ol>
+<p>Five data options are available based on the clusters selected.</p>
+	<ol>
+		<li><span class="widget1">Show All</span>: All elements in the loaded data are shown, regardless of cluster membership.</li>
+		<li><span class="widget1">Show selected</span>: All elements belonging to <span class="widget2">any</span> of the currently selected clusters are displayed.</li>
+			<div class="screenshots">
+			<a href="CLustermange.jpg">
+						<img src="CLustermange.jpg">
+					</a>
+					<br/>
+					<span class="caption">Sample Cluster Manager with menu open</span>
+					</div>
+		<li><span class="widget1">Show excluded</span>: All elements that belong to <span class="widget2">none</span> of the currently selected clusters are displayed.</li>
+		<li><span class="widget1">Show intersect</span>:  All elements belonging to <span class="widget2">every</span> currently selected cluster are displayed.</li>
+		<li><span class="widget1">Show except</span>: All elements belonging to <span class="widget2">one and only one</span> of the currently selected clusters are displayed.</li>
+	</ol>
+<p>The spreadsheet allows single or multiple row selection (by holding down the control key when left clicking the mouse).  A right click with one or more rows selected will display a menu that contains several options detailed below.
+Double-clicking on a cluster will open the <span class="widget2">Modify Attributes</span> dialog.<br />
+<p>-The <span class="widget2">Modify Attributes</span> option allows the user to modify cluster label, remarks or the cluster color by displaying the input form with the current settings displayed.<br/>
+<p>-The <span class="widget2">Open/Launch</span> menu has two options. <span class="widget2">Open ClusterViewer</span> will pull up the source cluster viewer.  The second option is <span class="widget2">Launch MeV Session</span> which opens a new multiple array viewer containing only the data from the selected cluster or the union of the members of several clusters if several clusters are selected.<br/>
+<p>-The <span class="widget2">Cluster Operations</span> menu allows for three possible operations to be performed if two or more clusters are selected.  <span class="widget2">Union</span> combines the members of the selected clusters and stores the resulting cluster on the list.  Elements represented in more than one cluster of the input clusters are only represented once in the output cluster.  The <span class="widget2">Intersection</span> operation takes the elements from two or more clusters and produces a cluster containing all elements which are common to all clusters.  The XOR (exclusive OR) operation produces a cluster containing elements that are members of one cluster or another but not members of more than one cluster.<br/>
+<p>-Options also exist to delete selected clusters or all clusters in the list as well as to save a selected cluster to a specified file.<br/></p>
+<p>Deleting clusters can be performed by selecting a single or multiple clusters in the cluster table or by selecting delete public cluster option from the menu in the viewer which contains the cluster.</p>
+<p>You can also <span class="widget2">Save Cluster Data</span> to a tab-delimited text file.  Selecting this option from the right-click menu will cause a file chooser to appear.  Select a file name and a place to save row/column data, log ratio expression values, and (optionally) Cy3 and Cy5 values for each gene in the cluster.  Selecting <span class="widget2">Save All Clusters</span> will allow you to save the genes in all clusters in a similar way.   This option is available from the cluster table as well as in the viewer.</p>
+			<div class="screenshots">
+				<a href="Geneimport.jpg">
+								<img src="Geneimport.jpg">
+							</a>
+							<br/>
+							<span class="caption">List Import Dialog</span>
+							</div>
+<p>One additional option is the option to delete all gene clusters or sample clusters.  These global operations which effect all colored clusters is selected from the <span class="widget2">Utilities</span> menu in the multiple array viewer by selecting <span class="widget2">Delete All Gene Clusters</span> or <span class="widget2">Delete All Sample Clusters</span> or can be done from the cluster tables.</p>
+<p>The <span class="widget2">Import Gene/Experiment List</span> allows one to create a cluster based on supplied identifiers. For example, if you wish to make a cluster out of specific genes that you know are important, you can paste those genes into the dialog box and the cluster will be created out of those specific genes you pick. Identifiers belonging to the cluster are pasted into the text area.  The drop down list indicates the type of annotation being loaded. After searching for matches, the List Import Result dialog will be displayed. An intermediate dialog <span class="widget2">(Import Result Dialog)</span> will appear to display the results of the import and to allow you to select a subset of the identified elements before saving the elements as a cluster.  
+After review of identified elements a <span class="widget2">cluster attributes dialog</span> will be presented so that a cluster name, description, and color can be defined for the new cluster. This dialog also displays a table that contains matching elements.  The rows in the table can be selected to remove unwanted entries before hitting the <span class="widget2">Store Cluster</span> button to store the items to a cluster.  The bottom section of the dialog also reports which indices were found and which were not found in the loaded data set.</p>
+<div class="navigation-bar"><a class="prev" href="ViewerDescriptions.html">Previous: Viewer Descriptions</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="UM.html">Next: Utilities Menu</a>
+</body>
+</html>
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

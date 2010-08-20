@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<title>Appendix: Preferences Files</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="compare.html">Previous:Appendix-File Format Descriptions</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app3.html">Next: Appendix-Distance Metrics</a></div>
+	<h3>Appendix: Preferences Files</h3>
+			<p>Preferences files store information about a data input file’s format.   The number of file format variations, including the Stanford file format and various flavors of TAV file format, make it necessary to provide MeV with an instruction set for reading those files.  Preferences files are human-readable, tab-delimited text and contain the information MeV needs to understand the data layout in a microarray data file.  Three sample preference files are included with the MeV installation, serving as templates for TAV files, Stanford files, and cluster files.   Use a text editor such as Notepad to customize one of these files for a particular file type.  The names of Preferences files should always end with the word “Preferences” and have no period (.).  </p>
+			<p>Most lines in the preferences file are preceded by a double-slash (//) indicating that the following text is part of a comment and will be ignored by MeV.  These comments contain descriptions of the parameters listed below them.  Lines containing a parameter have no double-slash and consist of a parameter description followed by a tab and the parameter value.  Only the parameter value should be altered when customizing a preferences file.  It is also extremely important that the label and value are separated by <span class="widget1">one</span> tab character.  Below is a list of Preferences file parameters.  </p>
+			<p><span class="widget2">Input Preference</span><br/>
+Sets the method with which data is entered into MultiExperimentViewer<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;‘Database’ – Connects to database and loads slides from there.<br/> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;‘File’ – Loads slides from flat files as default, but can also connect to database.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;‘Only File’ – Loads slides from flat files only. No database connection.<br/></p>
+
+<p><span class="widget2">Database Server Name</span><br/>
+Sets the path to the database. This is not necessary if <span class="widget2">Input Preference</span> is set to ‘Only File’.<br/>
+For sybase, use the following string:<br/>
+   jdbc:sybase:Tds: &lt yourhost&gt: &lt yourport &gt<br/>
+For oracle, use the following string:<br/>
+  jdbc:oracle:thin: &lt yourhost&gt: &lt yourport &gt<br/>
+ 
+<p><span class="widget2">Database Names</span><br/>
+Sets the list of databases to choose arrays from. All stored procedures must be accessible from all of the available databases on this list. The database names should be separated by a colon, ':'. This is not necessary if <span class="widget2">Input Preference</span> is set to 'Only File'.</p>
+
+<p><span class="widget2">Element Info</span><br/>
+Sets the number of row and column pairs and the number of intensities per element, separated by a colon ':'. For example, 3:2 would indicate that each element has three pairs of row and column values, such as (row, column meta_row, meta_column, sub_row, sub_column), and two intensities, such as (Cy3, Cy5). The input file must have the row and column pairs listed at the beginning of the line, followed by the intensities and then by any additional fields such as common name or Genbank number (see below for details). This parameter is mandatory.</p>
+
+<p><span class="widget2">Headers</span><br/>
+Sets the number of non-element row and column headers in the input file, separated by a colon ':'. For example, 2:4 would indicate the first two rows and first four columns of every input file are considered headers.</p>
+
+<p><span class="widget2">Unique ID</span><br/>
+Sets the number of the column that represents the unique identifiers for each element. This column should not contain duplicate values, and every element should have a value in this column.</p>
+
+<p><span class="widget2">Spot Name</span><br/>
+Set the number of the column that represents the name of each element. These are usually descriptive and human decipherable strings. These values do not need to be unique.</p>
+
+<p><span class="widget2">Additional Fields</span><br/>
+Indicates the names of additional data fields (after row, column, cy3, cy5) to be stored and displayed. The field names should be separated by a colon ':'. If you have additional fields you want to have MeV process, each line of your input from the flat file or row returned from the database must have a number of additional columns equal to the number of additional fields. Each field name must be unique.</p>
+
+<p><span class="widget2">Algorithm Factory</span><br/> 
+The name of the Algorithm Factory implementation class.</p>
+<div class="navigation-bar"><a  class="prev" href="compare.html">Previous:Appendix-File Format Descriptions</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app3.html">Next: Appendix-Distance Metrics</a></div>
+</body>
+</html>
+
+
+
+
+
+

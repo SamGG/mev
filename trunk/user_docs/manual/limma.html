@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<title>LIMMA:Linear Models for Microarray Data </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="betr.html">Previous: BETR-Bayesian Estimation of Temporal Regulation  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="surv.html">Next: SURV-Survival Analysis </a></div>
+<h3>LIMMA:Linear Models for Microarray Data </h3>
+	<p>(Smyth, G. K. 2004)</p>
+	<p>LIMMA, a new module as of MeV 4.5, is a technique for identifying differentially expressed genes based off of the fitting of each gene to a linear model.  This method can be applied to a number of experimental designs such as single class, two or more groups, as well as factorial and time-course experiments.</p>
+	<div class="screenshots ">
+		<a href="limma1.jpg">
+					<img src="limma1.jpg">
+				</a>
+				<br/>
+				<span class="caption">LIMMA Intialization Dialog</span>
+				</div>
+	<a name="para"><h4>Parameters</h4></a>
+	<h5>Running LIMMA</h5>
+		<p>After opening the LIMMA initialization dialog, select the type of data you intend to run the analysis on.  Your options are:</p>
+<ol>
+<li><span class="widget2">One Class</span>: Only one group is to be evaluated.</li>
+<li><span class="widget2">Two Class</span>: The data exists as two groups, and differential expression is to be found between the two groups.</li>
+<li><span class="widget2">Multi-Class</span>: The data exists as multiple groups, and differential expression is to be found between the groups.  </li>
+<li><span class="widget2">Two-factor</span>:  The data will be evaluated to find genes that vary significantly across levels of two independent variables.<br/>Enter factor names, without spaces, and the number of levels for each factor.</li>
+<li><span class="widget2">Time-course</span>: The data exists as two separate conditions taken at specific intervals of time.</li>
+</ol> 
+<p>Enter the number of time points in your data.</p>
+	<p><em>Assign a significance level</em></p>	
+			<p>Genes with a p-value less than alpha will be deemed significant.
+Click “Continue” to move to the next step.</p>
+	<div class="screenshots ">
+		<a href="limma2.jpg">
+					<img src="limma2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Button Selection</span>
+				</div>
+	<p><em>Assign your samples</em></p>	
+			<p>Depending on the type of data you have selected, you will need to assign your samples to groups, factors or time-points, if necessary.</p>
+	<p><em>Button Selection</em></p>	
+			<p>Use this option if you have not created clusters for your samples and want to assign each sample individually.<br/>Each group must contain at least two samples assigned to it.  For factorial and time-course data, each combination of levels in factor A and factor B must contain at least 2 samples.  </p>
+<p>For example: if an experiment has 3 levels for factor “age” <span class="widget1">(<40, 40-55, >55)</span> and 2 levels for factor “sex” <span class="widget1">(male, female)</span>.  There must be at least two samples in each of the following:
+<ol>
+<li><span class="widget1"><40, male</span></li>
+<li><span class="widget1"><40, female</span></li>
+<li><span class="widget1">40-55, male</span></li>
+	<div class="screenshots ">
+		<a href="limma3.jpg">
+					<img src="limma3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Selection</span>
+				</div>
+<li><span class="widget1">40-55, female</span></li>
+<li><span class="widget1">>55, male</span></li>
+<li><span class="widget1">>55, female</span></li>
+</ol> 
+<p><em>Cluster Selection</em></p>	
+	<p>Use the cluster selection panel if you have previously made clusters and wish to run your analysis based on those clusters.  Use the drop-down boxes to choose which clusters’ samples are to be assigned to which time-points.  For clusters you are not using, leave “unassigned”.  The same condition and time-point requirements exist for this method, but the cluster selector makes for easier and more organized sample assignment.</p>
+<p><em>Hierarchical Clustering</em></p>	
+	<p>To have LIMMA construct hierarchical trees for your results, check the corresponding check box.  Select whether this feature is to be applied to significant genes or significant and non-significant genes.  This process may add significantly to the computation time.</p>
+	<p>The LIMMA module outputs standard viewers and tables for MeV’s statistics analyses.</p>
+<div class="navigation-bar"><a class="prev" href="betr.html">Previous: BETR-Bayesian Estimation of Temporal Regulation  </a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="surv.html">Next: SURV-Survival Analysis </a></div>
+</body>
+</html>
+
+	
+	
+	
+	
+	
+	

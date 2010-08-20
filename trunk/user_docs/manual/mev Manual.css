@@ -1,0 +1,79 @@
+body {
+	width: 800px;    
+	margin-left: auto;
+    margin-right: auto;
+
+}
+p {
+    font-family: Palatino, Bookman, serif;
+}
+h3 {
+   color: blue;
+   size: 7em;
+   font-weight: bold;
+   font-family: Ariel, Helvetica, sans-serif;
+  
+}
+h5 {
+	size: 3em;
+	}
+h4 {
+   color: 006633;
+   size: 3em;
+   font-family: Ariel, Helvetica, sans-serif;
+}
+span.widget1 {
+   font-weight: bold;
+}
+span.widget2 {
+	font-style: italic; 
+}
+span.widget3 {
+	color: red;
+}
+div.screenshots {
+	float: right;
+	width: 325px;
+	padding: 1em;
+}
+div.screenshots  img { 
+	width:300px; 
+}
+div.screenshots span.caption {
+	font-weight: bold;
+	color: 00275E;
+}
+div.leftsidecorrection {
+	float: left;
+}
+
+#Here's an example of how to select the links in the navigation bar for individual formatting. 
+div.navigation-bar a.prev {
+	color: red;
+	font-style: bold;
+}
+#Hash marks are used to mark the beginning of a line of comments. 
+#However, IE won't ignore them the way it should, so if you need an IE-specific hack, you can put it in with a hash mark.
+#The lines below (except the first one) will be read and interpreted by IE and ignored by Chrome and Firefox. 
+ul#toc {	list-style:none;
+		width:800px;}
+#toc li {background:url(dot.gif) repeat-x 0 0.85em;}
+#toc li a {float:left;
+		background:#FFF;
+		padding: 0 4px 0 0;}
+#toc li br {clear:both;}
+span.widget4{
+	color:990066;
+}
+span.widget5{
+	color:blue;
+	font-weight: bold;
+}
+
+
+
+
+
+
+
+

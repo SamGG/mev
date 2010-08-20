@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<title> ST: Support Trees</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="TEASE.html">Previous: Tease-Tree Ease</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="SOTA.html">Next: SOTA-Self Organizing Tree Algorithm </a></div>
+<h3> ST: Support Trees</h3>
+	<p>This option shows the hierarchical trees obtained using the previous module, but it also shows the statistical support for the nodes of the trees, based on resampling the data. The user can select two resampling methods: bootstrapping (resampling with replacement), and jackknifing (resampling by leaving out one observation in this implementation). Resampling can be conducted on genes and / or experiments for a user-specified number of iterations. The branches of the resulting tree are color-coded to denote the percentage of times a given node was supported over the resampling trials. The legend for the color code corresponding to a given level of support can be found under the Help menu. </p>
+	<p>The two most useful options for support trees are likely to be bootstrapping genes to build experiment trees, and bootstrapping experiments to build gene trees. </p>
+	<insert snapshot>
+<a name="para"><h4>Parameters</h4></a>
+	<p>The Support Tree algorithm permits the resampling options to be set separately for the gene tree and the sample tree. </p>
+	<div class="screenshots">
+		<a href="ST2.jpg">
+					<img src="ST2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Support Trees Initialization Dialog</span>
+				</div> 
+	<h5>Tree Construction Options</h5>
+		<p>The Draw Gene Tree and Draw Sample Tree options allow you to select to construct a gene tree, an experiment tree, or both.</p>
+	<h5>Resampling Options</h5>
+		<p>You can elect to resample either genes or samples or neither using either a bootstrapping or a jackknifing method.</p>
+	<h5>Bootstrapping</h5>
+		<p>The matrix is reconstructed such that each expression vector has the original number of values but the values are a random selection (with replacement) of the original values. Values in the original expression vector may occur more than once since the selection uses replacement.</p>
+	<h5>Jackknifing</h5>
+		<p>Jackknifing takes each expression vector and randomly selects to omit an element. This method produces expression vectors that have one fewer element and this is often done to minimize the effect of single outlier values.</p>
+	<h5>Iterations</h5>
+		<p>This indicates how many times the expression matrix should be reconstructed and clustered.</p>
+	<h5>Linkage Method </h5>
+		<p>This parameter is used to indicate the convention used for determining cluster-to-cluster distances when constructing the hierarchical tree.</p>
+		<p><span class="widget2">Single Linkage</span>: The distances are measured between each member of one cluster each member of the other cluster. The minimum of these distances is considered the cluster-to-cluster distance.</p>
+		<p><span class="widget2">Average Linkage</span>: The average distance of each member of one cluster to each member of the other cluster is used as a measure of cluster-to-cluster distance.</p>
+		<p><span class="widget2">Complete Linkage</span>: The distances are measured between each member of one cluster each member of the other cluster. The maximum of these distances is considered the cluster-to-cluster distance.</p>
+	<h5>Support Tree Legend</h5>
+		<p>A legend to relate support tree output colors to % support is displayed by selecting the support tree legend menu item in the main help menu.<p>
+	<p><span class="widget1">Default Distance Metric: Euclidean</span></p>
+<div class="navigation-bar"><a class="prev" href="TEASE.html">Previous: Tease-Tree Ease</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="SOTA.html">Next: SOTA-Self Organizing Tree Algorithm </a></div>
+</body>
+</html>	

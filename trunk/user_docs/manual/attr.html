@@ -1,0 +1,108 @@
+<html>
+	<head>
+		<title> ATTR: Attract Package   </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="gsea.html">Previous: GSEA-Gene Set Enrichment Analysis </a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="ease.html">Next: EASE-Expression Analysis Systematic Explorer </a></div>
+	<h3> ATTR: Attract Package  </h3>
+		<p>(Jessica Mar et al)</p>
+<h5>What is Attract?</h5>
+		<div class="screenshots">
+		<a href="attr1.jpg">
+					<img src="attr1.jpg">
+				</a>
+				<br/>
+				<span class="caption"></span>
+				</div>	
+	<p>The Attract algorithm identifies the core gene expression modules that are differentially activated between cell types or different sample groups, and elucidates the set of expression profiles which describe the range of transcriptional behavior within each module. </h5>
+	<p>The algorithm assists in understanding expression changes that are specific to cell types or cell fate transitions. A mammalian organism is made up of over 200 types of specialized cells. Each cell type carries out a specific task integral to maintaining homeostasis of the organism. Cell types can vary by morphology, structure, lifespan, functional ability and much more. Different cell or tissue types acquire their diversity by driving differentially coordinated expression patterns through interacting gene networks. The attractor hypothesis proposed by Stuart Kauffman describes how cell fate transitions between cell types occur through coordinated changes in genome-wide gene expression. </p>
+	<p>The Attract algorithm starts by using a GSEA step to identify the set of core pathway modules driving the cell types-specific expression changes. For each of these modules, the algorithm then constructs synexpression groups, which consist of genes with correlated expression profiles. The algorithm is also able to extrapolate out to identify genes with similar expression profiles which may not be currently annotated in current pathway databases like KEGG. </p>
+	<p>Ref: (Mar JC, Wells CA, Quackenbush J. (2010). Identifying Gene Expression Modules that Represent the Drivers of Kauffman’s Attractor Landscape)</p>
+<h5>When should Attract be used</h5>
+			<div class="screenshots">
+		<a href="attr2.jpg">
+					<img src="attr2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 1</span>
+				</div>	
+	<p>The Attract algorithm can be used for any expression data set where replicate samples (at least three) have been collected for various cell types or experimental groups such as a panel of drug treatments or a time course experiment. The algorithm is not well-suited for data generated under an experimental design that has only one experimental or covariate group, e.g. samples from 100 identical cell lines with no perturbations.</p>
+<h5>Brief Description of the algorithm</h5>
+<p>The Attract algorithm can be roughly divided in to four steps:</p>
+<dl><ol>
+<dt>1. Find core attractor state pathway modules in your data using GSEA.</dt>
+<dt>2. Remove flat or uninformative genes (i.e. genes that do not show expression changes across the different factor levels).  </dt>
+<dt>3. Find Synexpression  groups. (A synexpression group contains genes that share similar expression profiles across factor levels)</dt>
+	<dd>--	Use the informativeness metric to compute clusters (synexpression groups) in each geneset (Mar JC, Wells CA, Quackenbush J. (2010). Defining an informativeness metric for clustering gene expression data. Submitted).</dd>
+<dt>4. For every synexpression group in a geneset,  find genes in the expression data which have correlated expression profiles.</dt>
+</ol></dl> 
+			<div class="screenshots leftsidecorrection">
+		<a href="attr3.jpg">
+					<img src="attr3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 2</span>
+				</div>	
+<h5>How to run Attract?</h5>
+	<p>Attract uses a set of parameter input dialogs that open sequentially to provide input options that correspond to each step of the process.  The first step in the process is data selection which lets you assign phenotype/class labels to your samples</p>
+	<p>The default assignment (Figure 1) is two groups (factors) with two levels per group. This can be changed to reflect the groups present in your data. For example, if cancer subtype is the phenotype (factors) that influences your data the most, enter 1 in the “Enter number of groups in your sample” textbox.</p>
+	<p>	B-ALL and T-ALL are the two levels of this phenotype,  so enter 2 in the  <span class="widget2">“Number of levels of factor”</span> textbox.  If you have pre selected sample clusters and decide to use the <span class="widget2">“Cluster Selection”</span> tab just assign group numbers using the Group Assignment drop down as shown in Figure 2.  </p>
+	<p>	You can also use the <span class="widget2">“Button Selection”</span> tab shown in Figure 3 to achieve the same. Group1 and Group2 symbolize B-ALL and T-ALL. You can save these grouping using the <span class="widget2">“Save settings”</span> button. To load saved groupings, use the <span class="widget2">“Load settings”</span> button. <span class="widget2">Reset</span> button will clear all your choices. <div class="screenshots leftsidecorrection">
+		<a href="attr4.jpg">
+					<img src="attr4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 3</span>
+				</div>Once you are done, click the <span class="widget2">Next</span> button. 
+	<p>This brings you to the “Parameter Selection” section shown in Figure 4. The GUI is pretty self explanatory, but here is some better clarification about the available methods for collapsing probes to genes, loading gene sets and loading annotations. </p>
+	<div class="screenshots">
+		<a href="attr5.jpg">
+					<img src="attr5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 4</span>
+				</div>
+	<p>Attract uses LIMMA to remove flat or uninformative genes. “Select <span class="widget2">significance level: Alpha text box</span>” lets you choose a significance level. The default significance level is 0.05.   Attract aims to find synexpression groups which contain genes that share similar expression profile across different factor levels. <span class="widget2">“Select maximum gene sets for synexpression calculation”</span> lets you choose the number of gene sets for which you want to calculate synexpression groups.  By default we calculate synexpression groups for the top five enriched gene sets.</p>
+		<div class="screenshots leftsidecorrection">
+		<a href="attr6.jpg">
+					<img src="attr6.jpg">
+				</a>
+				<br/>
+				<span class="caption">Directory</span>
+				</div>
+	<p>The <span class="widget2">‘Browse’</span> button corresponding to <span class="widget2">“Select the directory containing your gene sets”</span> lets you choose the directory containing gene set files. You can select the files you want to use from the <span class="widget2">“Available”</span> panel. <span class="widget2">“Selected”</span> panel indicates the gene set files that you chose to use for this analysis. In addition to this gene sets can also be downloaded from the <a href="http://www.broad.mit.edu/gsea/msigdb/downloads.jsp"> MIT/Broad website</a> </p>
+<div class="screenshots">
+		<a href="attr7.jpg">
+					<img src="attr7.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 5</span>
+				</div>
+	<p>	If your gene set file is *.gmt or *.gmx format,  <span class="widget2">“Select the identifier used to annotate genes in your selected gene set”</span> drop down is automatically populated with “GENE_SYMBOL” as shown in figure above. In case of  a custom gene set file, you must manually choose the gene identifier from the drop down.</p>
+	<p>The <span class="widget2">“Load Annotation Data”</span> panel lets you upload annotations. Annotations are a MUST for running Attract. Details on how to load annotations is described in <a href="Loading the Data.html#annotation-feature">Using the Annotation Feature</a>.
+	<div class="screenshots leftsidecorrection">
+		<a href="attr8.jpg">
+					<img src="attr8.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 6</span>
+				</div>
+	<p>The last step is to hit the Execute button.  Attract  outputs besides the standard MeV viewers a new viewer named <span class="widget2">“SynExpression Graph”.  “Excluded Gene Sets”, “Excluded Genes”</span> under <span class="widget2">“Table Views”</span> </p>
+	<p><span class="widget2">“SynExpression graph” (Figure 5)</span> represents the average expression profile of a geneset within a synexpression group. The orange line represents the average expression profile of genes that belong to the synexpression group. The gray line indicates the average expression profile of genes in the expression data that share a similar expression profile.</p>
+	<div class="screenshots">
+		<a href="attr9.jpg">
+					<img src="attr9.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 7</span>
+				</div>
+	<p><span class="widget2">“Excluded gene sets”</span> table (Figure 6) contains gene sets which do not pass the minimum genes criteria and which do not contain at least 5 genes after the algorithm removes flat or uninformative genes. </p>
+	<p><span class="widget2">“Excluded Genes”</span> table (Figure 7) contains the genes deemed uninformative or flat by LIMMA.</p>	
+<div class="navigation-bar"><a  class="prev" href="gsea.html">Previous: GSEA-Gene Set Enrichment Analysis </a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="ease.html">Next: EASE-Expression Analysis Systematic Explorer </a></div>
+</body>
+</html>		
+		
+		
+		

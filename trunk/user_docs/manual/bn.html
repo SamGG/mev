@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<title> BN: Bayesian Network Analysis </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a  class="prev" href="gdm.html">Previous: GDM-Gene Distance Matrix</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="lm.html">Next: LM-Literature Mining Analysis</a></div>
+	<h3> BN: Bayesian Network Analysis </h3>
+	<p>(Djebbari and Quackenbush, 2008)</p>
+<p>Selection this analysis will display the following window. This window collects all the parameters and inputs required to run the analysis. All the options in this dialog are explained below.</p>
+<p><span class="widget1">Location of Support File(s):</span>This option allows users to select the location where all support files needed to run BN. A description of files required can be found (see appendix for BN file descriptions).</p>
+<p><span class="widget1">Network Seed:</span>If this option is selected the user is expected to provide a file representing network. The file should contain a list of edges, one of each line, and the nodes are separated by a tab. The identifier of the node should be one of the following provided in the drop down identified as “Select Seed UID”. Directionality is assumed in each edge specified such that node_A tab node_B is read as node_A to node_B. Cycles are not allowed. A network seed can also be built from using the “Create Network Seed” button. It allows user to create list of edges selecting nodes from the data directly. This option is limited in feature.</p>
+<p><em>Network seed can be used in one of the three ways:</em></p>
+<ol>
+<li>Using the user network seed alone and bypassing literature based network seeding altogether</li>
+<li>Using the user network seed along with Literature mining seed. In this case conflicts (A to B in user seed vs. B to A in Lit mining) in directions are resolved by giving precedence to used provided network seed.</li>
+<li>User provided network is used as a complete network and the network structure is not learned, only the Conditional Probability Tables (CPTs) associated with the network is learned for downstream exploration.</li>
+</ol>
+
+<p><span class="widget1">Network Priors Sources:</span>The checkboxes provide the users to select the source of Bayesian prior probabilities in constructing a seeded network. Currently Literature Mining and KEGG priors are available. The Protein - Protein Interaction as a source of priors is still under development.</p>
+<p>As of now, the KEGG support files are automatically downloaded from TN4 website by the application. The user is prompted for Species information if annotation is not available. All other prior sources must be made available.</p>
+<p><span class="widget1">Discretize Expression Values: </span>The data mining algorithm requires that the data be discretized into bins before it can be evaluated for network structure learning.
+It is strongly recommended that user selects the default value of 3, which means the data can exist in 3 states:<br/>
+	Under expressed<br/>
+	Over expressed<br/>
+	Unchanged<br/>
+The algorithm functions and reports meaningfully if the 3 state rule is followed.</p>
+<h5>Sample Classification:</h5>
+	<p>The samples or experiments can be classified based on some knowledge that the user might have and the user might want to preserve the classification while learning the network structure. In that case the user might want specify a numerical value > 1 denoting the number of groups the samples belongs to. The default is 1 or all belonging to one class. <div class="screenshots">
+		<a href="bn1.jpg">
+					<img src="bn1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Bayesian Network Analysis</span>
+				</div>The same also is true for large sample size but the user is strongly recommended not to exceed more than 2 or 3 groups. The samples classification can be saved and loaded in to a file. See the label file as described(here).
+	<p><span class="widget1">Note</span>that the user is presented with a Classification Dialog where samples can be assigned to group of users’ choice. The sample classification dialog shows up once the user navigates from the main dialog by hitting OK. If number of classes is chosen as one the classification dialog is not shown. A node by the name of “CLASS” shows up in the network which captures the effect of sample groups on the network. Once the network is displayed the “CLASS” node behaves and can be treated as any other node in the network. The CLASS node has no annotation.</p>
+	<p><span class="widget1">How to direct Edges for graph:</span>The algorithm uses DFS or Depth First Search to connect nodes in the initial seeded network. For large networks with lots of nodes this can take a while to complete. The GO Term option of directing edges is not yet fully developed.</p>
+	<p><span class="widget1">Bootstrapping Parameters:</span>The user has the option of bootstrapping the samples to generate random networks. This feature is optional. This panel allows the user provide the number of time random samples will be generated in the <span class="widget1">'Number of Iterations'</span> box.The <span class="widget1">'Confidence Threshold'</span> box allows defining a confidence level cut-off. The default is 0.7 means the algorithm will select an edge if it 	<div class="screenshots">
+		<a href="bn2.jpg">
+					<img src="bn2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Classification Editor</span>
+				</div>appears in 70% of the bootstrap networks. </span>
+	<p><span class="widget1">Note</span>that if bootstrap is chosen, the user is given a chance to play with diffrent cut-offs after the algorithm runs via a small dialog box. It creates new networks for each new threshold that can be viewed in Cytoscape via Gaggle broadcast.</p>
+	<p><span class="widget1">Population and Cluster Selection: </span>The user has to choose a cluster that BN algorithm would use to run the analysis. By default the first cluster is highlighted.</p>
+	<p><span class="widget1">Note</span>, that there is max limit in terms of number of genes that this algorithm can handle. If a cluster is chosen that exceeds the maximum genes limit an error window is displayed showing the maximum allowable number of genes. At this point the user can choose a new cluster, if one is already defined and is below the limit. If a cluster of allowable size is not defined, the user needs to cancel out of BN window, create new cluster(s) and then launch the BN Analysis window again.</p>
+	<p><span class="widget1">Running BN Parameters:</span>This tab allows the user to customize some advanced options of the algorithm. Most users would be OK to accept the default settings in this panel. Below is a concise description of each available option:</p>
+		<ul>
+		<div class="screenshots leftsidecorrection">
+		<a href="bn3.jpg">
+					<img src="bn3.jpg">
+				</a>
+				<br/>
+				<span class="caption">BN Viewer</span>
+				</div>
+		<li><span class="widget1">Search Algorithm</span> - The algorithm to search for best network</li>
+		<li><span class="widget1">Scoring Scheme</span> - The scoring mechanism to choose from top networks</li>
+		<li><span class="widget1">Max. Number of Parents</span> - Maximum number of parents each network node may have</li>
+		<li><span class="widget1">Cross Validation Folds (K)</span> - In absence of a training dataset how many cross validation(s) are needed</li>
+		</ul>
+	<p><span class="widget1">BN Viewer:</span>The BN viewer displays the network file names and locations that were created during the analysis. It also shows the ‘final’ network that the user selected from the bootstrapped networks. On Right Click it displays a popup menu to launch Cytoscape via Webstart with all files created.</p>
+<h5>BN Results</h5>
+	<p>The following result files are stored in the {..}\results folder. Where {..} represents the directory where the BN/LIT analysis supporting files are located.</p>
+		<ol>
+		<li>Literature Mining Network</li>
+		<li>Observed Network with Priors</li>
+		<li>Network from the bootstrap networks for the default confidence threshold of 0.7 (if bootstrap was chosen)</li>
+		<li>The ‘final’ network from the bootstrap networks for the confidence threshold of users’ choice (if bootstrap was chosen).</li>
+		</ol>
+				<div class="screenshots leftsidecorrection">
+		<a href="bn4.jpg">
+					<img src="bn4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Results from Weka</span>
+				</div>
+				<div class="screenshots">
+		<a href="bn5.jpg">
+					<img src="bn5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cytoscape</span>
+				</div>
+	<p>Once the analysis completes the following small window is presented. The buttons/options are explained below:</p>
+	<p><span class="widget1"><span class="widget2">“Network from Bootstrap”</span></span> button:This button shows up only if bootstrapping option was selected as an option in the initial BN parameter window. This shows the bootstrapped resulted network with the confidence threshold as set in the initial BN parameter window. On clicking this button the resulting network is shown in Cytoscape. If Cytoscape is already open it adds another network view or else it launches the application. The result network window will have a title with the following format: <span class="widget1"><span class="widget2">DateTimeStamp_”SearchAlgorithm”_boot_result_”ScoringScheme”_”#ofBootstraps”_”confidenceThreshold”.sif</span></span></p>
+	<p><span class="widget1"><span class="widget2">“Update Network” </span></span>button: The bootstrapped network can be viewed for different confidence threshold (70%, 80%, 95% etc) by changing the value in the text box preceding the button. The value should be a float where 0.7 means 70% confidence, 0.95 means 95% confidence. Once the desired threshold is entered, by clicking the “Update Network” button the resulting network can be viewed in Cytoscape. Note: It does not update previously existing network at a different threshold but adds a new network with the specified threshold. The result network window will have a title with the following format:<span class="widget1"><span class="widget2"> DateTimeStamp_”Search Algorithm”_boot_result_”ScoringScheme”_”#ofBootstraps”_”confidenceThreshold”.sif</span></span></p> 
+<div class="navigation-bar"><a  class="prev" href="gdm.html">Previous: GDM-Gene Distance Matrix</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="lm.html">Next: LM-Literature Mining Analysis</a></div>
+</body>
+</html>
+	
+	
+	
+	
+	
+	
+	

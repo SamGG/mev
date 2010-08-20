@@ -1,0 +1,105 @@
+<html>
+	<head>
+		<title> GSEA: Gene Set Enrichment Analysis  </title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="trn.html">Previous: TRN-Expression Terrain Maps </a> | <a  class="toc"href="TableofContents.html">Table of Contents</a>|<a class="next" href="attr.html">Next: ATTR-Attract Package    </a></div>
+	<h3> GSEA: Gene Set Enrichment Analysis </h3>
+		<p>(Zhen Jiang and Robert Gentleman, Bioinformatics, 2007)</p>
+<h5>What is GSEA?</h5>
+	<p><span class="widget1">Gene Set Enrichment Analysis </span>(GSEA) is a computational method that determines whether an a priori defined set of genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes). <a href="http://www.broad.mit.edu/gsea">Ref: (http://www.broad.mit.edu/gsea/) </a></p>
+<h5>Why GSEA?</h5>
+	<p>Traditional statistics use adjusted P-values with some arbitrary cutoff, treating genes with slightly different P-values as different entities.  Also, small differences in mRNA abundance are often not detected, nor are large changes in just a few genes.</p>
+	<p>GSEA remedies this by using all the genes in your expression data for the analysis.  GSEA also compiles per-gene statistics across genes within a gene set, allowing for the detection of small changes in many genes or large changes in few genes.</p>
+	<p>GSEA algorithm implemented in MeV v4.3 is based on Zhen Jiang and Robert Gentleman's 2007 <span class="widget2">Bioinformatics</span> paper <span class="widget1">(Jiang, Z., Gentleman, R., (2007). Bioinformatics. 2007 Feb 1; 23(3):306-13. Extensions to gene set enrichment analysis)</span></p>
+<h5>Brief description of the algorithm</h5>
+<p>GSEA algorithm can be roughly divided in to three steps:</p>
+	<div class="screenshots">
+		<a href="gsea2.jpg">
+					<img src="gsea2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 1</span>
+				</div>	
+		<dl><ol>
+<dt>1. Calculate the per gene statistic. This is done by fitting a linear model to all the genes, separately and simultaneously.</dt>
+<dt>2. Calculate the gene set statistic. </dt>
+<dt>3. Estimate significance by</dt>
+	<dd>-Permuting factor/phenotype/class labels</dd>
+	<dd>-Compute the per gene statistic for every permutation</dd>
+	<dd>-Compute the gene set statistic for every permutation</dd>
+	<dd>-Calculate and report Unadjusted p-values</dd>
+</ol></dl> 
+<h5>How to run GSEA?</h5>
+	<p>GSEA uses a set of parameter input dialogs that open sequentially to provide input options that correspond to each step of the process.  The first step in the processes is data selection which lets you assign phenotype/class labels to your samples. </p>
+	<div class="screenshots">
+		<a href="gsea3.jpg">
+					<img src="gsea3.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 2</span>
+				</div>
+	<p>The default assignment (Figure 1)is two groups (factors) with two levels per group. This can be changed to reflect the groups present in your data.<br/>For example, if cancer subtype is the phenotype (factors) that influences your data the most, enter 1 in the<span class="widget2"> “Enter number of groups in your sample” </span>textbox.</p>
+	<p>B-ALL and T-ALL are the two levels of this phenotype,  so enter 2 in the  <span class="widget2">“Number of levels of factor”</span> textbox.  If you have pre selected sample clusters and decide to use the <span class="widget2">“Cluster Selection”</span> tab just assign group numbers using the Group Assignment drop down as shown in Figure 2.  </p>
+		<div class="screenshots leftsidecorrection">
+		<a href="gsea4.jpg">
+					<img src="gsea4.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 3</span>
+				</div>
+	<p>You can also use the <span class="widget2">“Button Selection”</span> tab shown in Figure 3 to achieve the same. Group1 and Group2 symbolize B-ALL and T-ALL. You can save these grouping using the <span class="widget2">“Save settings”</span> button. To load saved groupings, use the <span class="widget2">“Load settings”</span> button. Reset button will clear all your choices. Once you are done, click the <span class="widget2">Next</span> button.</p> 
+	<p>This brings you to the “Parameter Selection” section shown in Figure 4. The GUI is pretty self explanatory, but here is some better clarification about the available methods for collapsing probes to genes, loading gene sets and loading annotations. </p>
+	<p>The <span class="widget2">‘Browse’</span> button corresponding to <span class="widget2">“Select the directory containing your gene sets”</span> lets you choose the directory containing gene set files. You can select the files you want to use from the <span class="widget2">“Available”</span> panel. <span class="widget2">“Selected”</span> panel indicates the gene set files that you chose to use for this analysis. In addition to this gene sets can also be downloaded from the <a href="http://www.broad.mit.edu/gsea/msigdb/downloads.jsp">MIT/Broad website.</a> </p>
+		<div class="screenshots leftsidecorrection">
+		<a href="gsea5.jpg">
+					<img src="gsea5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 4</span>
+				</div>
+	<p>If your gene set file is *.gmt or *.gmx format,  <span class="widget2">“Select the identifier used to annotate genes in your selected gene set”</span> drop down is automatically populated with “GENE_SYMBOL” as shown in figure above. In case of  a custom gene set file, you must manually choose the gene identifier from the drop down.</p>
+	<p>The <span class="widget2">“Load Annotation Data”</span> panel lets you upload annotations. Annotations are a MUST for running GSEA. Details on how to load annotations is described in <a href="Loading the Data.html#annotation-feature">Using the Annotation Feature.</a></p>
+		<div class="screenshots">
+		<a href="gsea1.jpg">
+					<img src="gsea1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Directory</span>
+				</div>
+	<p>The last step is to hit the Execute button.  GSEA outputs besides the standard MeV viewers three new viewers namely <span class="widget2">“Test Statistic Graph”, “Leading Edge Graph Viewer”</span> and <span class="widget2">“Geneset p-value graph”</span>. <span class="widget2"> “Significant Gene Sets”</span> under <span class="widget2">“Table Views”</span> lists gene sets sorted by their Over enriched (upper p values). Upper p values are the probability of 
+seeing a test statistic higher than the observed one. 
+		<div class="screenshots leftsidecorrection">
+		<a href="gsea5.jpg">
+					<img src="gsea5.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 5</span>
+				</div>
+Lower p values are the probability of seeing a test statistic lower than the observed one.</p>
+				<div class="screenshots">
+		<a href="gsea6.jpg">
+					<img src="gsea6.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 6</span>
+				</div>
+	<p>Right clicking on the rows in the table as shown in Figure 5 lets you navigate to different viewers. <span class="widget2">“Excluded Gene Sets”</span> table contains gene sets which do not meet the minimum genes per gene set criteria and hence not included in analysis. “Probe to Gene Mapping” table shows all the probes which map to a gene. </p>
+	<p><span class="widget2">“Test Statistic Graph”</span> shown in Figure 6 aims to show how genes within a gene set contribute to the overall gene-set-level metric. This metric is computed by summing the distance from the green line to the orange point and then normalizing this sum by the square root of the number of genes in the gene set. </p>
+				<div class="screenshots">
+		<a href="gsea7.jpg">
+					<img src="gsea7.jpg">
+				</a>
+				<br/>
+				<span class="caption">Figure 7</span>
+				</div>
+	<p><span class="widget2">“Leading Edge Graph”</span> in Figure 7 shows which subset of genes within the gene set is contributing to the significance of the gene set level metric. The leading edge subset is calculated by first ranking the genes based on largest to smallest test statistics. We then calculate the Jiang-Gentleman statistic for subsets of the gene set, starting with the first subset containing the gene with the largest t-statistic, and then incrementing the subset to include the next gene with the next largest t-statistic.
+	We iterate through until the final subset contains all the genes in the gene set. The subset which maximizes the Jiang-Gentleman statistic suggests that this group of genes contribute the most to the gene-set level metric</p>
+<div class="navigation-bar"><a class="prev" href="trn.html">Previous: TRN-Expression Terrain Maps </a> | <a  class="toc"href="TableofContents.html">Table of Contents</a>|<a class="next" href="attr.html">Next: ATTR-Attract Package    </a></div>
+</body>
+</html>	
+	
+	
+	

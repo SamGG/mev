@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<title>Utilities Menu</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+<div class="navigation-bar"><a class="prev" href="workingwithclusters.html">Previous: Working with Clusters</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="createout.html">Next: Creating Output</a></div>
+<h3> Utilities Menu</h3>
+	<div class="screenshots">
+		<a href="SID.jpg">
+					<img src="SID.jpg">
+				</a>
+				<br/>
+				<span class="caption">Search Initialization Dialog</span>
+				</div> 
+	<a name="Search"><h4>Search Utility</h4></a>
+		<p>The Search feature permits the user to search the data for genes or samples for a search term given search criteria.  Once the search is complete, the elements are returned in a table.  Navigation shortcuts provide a means to open cluster viewers that contain the elements found in the search.</p>
+		<p>Select <span class="widget2">Utility-->Search</span>. The search initialization dialog allows the option of finding genes or samples.  The search criteria include a search term, a selection to make the search case sensitive, and a selection to permit the search term to be an exact match or simply a contiguous portion of a larger annotation term. This is especially good to use when there is annotation and you want to find specific types of genes.</p>
+	<p>The search result is presented in a new window that is split into an upper section that contains the list of genes or samples identified as matching the search criteria and a lower section providing shortcut links to cluster viewers that contain the identified samples or genes.</p>
+	<div class="screenshots">
+		<a href="result.jpg">
+					<img src="result.jpg">
+				</a>
+				<br/>
+				<span class="caption">Search Result Window</span>
+				</div> 
+	<p>The upper panel displays the list of genes or samples retrieved by the search.  The list of genes or samples found could include some entries that not of interest.  Elements in the list can be deselected using the checkboxes. Clicking on the Update Shortcuts button will produce a new search result window with just the previously selected entries and the associated viewer shortcuts.  This allows one to prune unwanted elements out of the search result.  The Store Cluster button will store the selected items as a cluster and assign a user selected color.  Note that this is one method to help identify the elements found during the search within the cluster viewers.</p>
+<a name="IGSL"><h4>Import Gene or Sample List</h4></a>	
+	<p>The <span class="widget2">Import Gene/Sample List</span> allows one to create a cluster based on supplied identifiers.  To import genes or sample lists, please refer to the explanation previously given.</p>
+<div class="screenshots leftsidecorrection">
+		<a href="geneanno.jpg">
+					<img src="geneanno.jpg">
+				</a>
+				<br/>
+				<span class="caption">Gene Annotation Import Dialog</span>
+				</div> 
+<a name="ASA"><h4>Append Sample Annotation</h4></a>
+	<p>This feature allows the import of additional sample annotations.  Often these would be more descriptive sample names that distinguish the samples based on a study factor, condition, or some measured variable.  The sample annotation file should be a tab-delimited text file containing one header row for annotation labels (field names).The file may contain multiple columns of annotation with each column containing a header entry that indicates the nature of the annotation. The annotation for each sample is organized in rows corresponding to the order of the loaded samples.  If annotation is missing for a sample the entry in that sample row may be left blank. Please see the manual appendix on file formats for more information and a small example.</p>
+<a name="AGA"><h4>Append Gene Annotation</h4></a>
+	<p>The Append Gene Annotation feature is used to append additional gene annotation from an MeV style annotation (.ann, or .dat) file.  The annotation file format is described in detail in the File Format Appendix.  The main parameter selection dialog permits the selection of two key fields to be used to map the annotation from the input file to the proper gene already loaded in MeV.  One key should be specified for the currently loaded data.  This key should be a gene identifier of some sort and should correspond to the annotation field selected as the file’s primary key.  The values of these annotation keys is used to map or correlate gene annotation in the file to the loaded genes.  The lowest section of the parameter dialog specifies the annotation fields from the file to import.  Import status will be reported and an entry that logs the import will be added to the history node’s history log.</p>
+<a name="GagSub"><h4>The Gaggle Submenu</h4></a>	
+	<p>For a description of the contents of the Gaggle submenu, please see section 11.2.</p>
+<div class="navigation-bar"><a class="prev" href="workingwithclusters.html">Previous: Working with Clusters</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="createout.html">Next: Creating Output</a></div>
+</body>
+</html>	

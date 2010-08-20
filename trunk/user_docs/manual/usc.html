@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<title>USC: Uncorrelated Shrunken Centroids</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+<div class="navigation-bar"><a class="prev" href="svm.html">Previous: SVM-Support Vector Machines</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="knn.html">Next: KNNC-K-Nearest-Neighbor Classification </a></div>
+<h3>USC: Uncorrelated Shrunken Centroids</h3>
+<p>(Yeung et al 2003)</p>
+<p>Prediction of the diagnostic category of a tissue sample from its expression profile and selection of relevant genes for class prediction have important applications in cancer research. We developed the <span class="widget2">uncorrelated shrunken centroid (USC)</span> algorithm that is an integrated classification and feature selection algorithms applicable to microarray data with any number of classes.  	<div class="screenshots ">
+		<a href="usc1.jpg">
+					<img src="usc1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Overview of USC</span>
+				</div>The USC algorithm is motivated by the shrunken centroid (SC) algorithm (Tibshirani et al. 2002) with the following key modification: USC exploits the inter-dependence of genes by removing highly correlated genes.  We showed that the removal of highly correlated genes typically improves classification accuracy and results in a smaller set of genes.  </p>
+<p>As with most classification and feature selection algorithms, the USC algorithm proceeds in two phases: the <span class="widget1">training</span> and the <span class="widget1">test</span> phase.  A <span class="widget2">training set</span> is a microarray dataset consisting of samples for which the classes are known. A <span class="widget2">test set</span> is a microarray dataset consisting of samples for which the classes are assumed to be unknown to the algorithm, and the goal is to predict which classes these samples belong to. The first step in classification is to build a “classifier” using the given training set, and the second step is to use the classifier to predict the classes of the test set. </p>
+<p>In the training phase, the USC algorithm performs cross validation over a range of parameters (shrinkage threshold &#916; and correlation threshold &#961;).<span class="widget2">Cross validation</span> is a well-established technique used to optimize the parameters or features chosen in a classifier. <div class="screenshots ">
+		<a href="usc2.jpg">
+					<img src="usc2.jpg">
+				</a>
+				<br/>
+				<span class="caption">USC Initialization Dialog</span>
+				</div>In m-fold cross validation, the training set is randomly divided into m disjoint subsets with roughly equal size. Each of these m subsets of experiments is left out in turn for evaluation, and the other (m-1) subsets are used as inputs to the classification algorithm.  Since the USC algorithm is essentially run multiple times on different subsets of the training set, the cross validation step in the training phase is quite computationally intensive. The end result of the training phase is a table of the average number of classification errors in cross validation and the average number of genes selected corresponding to parameters Delta &#916; and Rho &#961;.  Depending on the dataset being analyzed, there might be a trade-off between the average number of errors and the number of genes selected.  The user will be asked to select one set of parameters (Delta &#916; and Rho &#961;) to be used in the test phase in which microarray data consisting of experimental samples with unknown classes will be classified.</p>
+
+<h5>Initial Dialog Box</h5>
+	<p>The initial dialog box allows you to choose from 2 modes of operation - <span class="widget2">‘Train & Classify’</span> or <span class="widget2">‘Classify from File’</span>.  The option ‘Train & Classify’ should be used for the training phase or if both the training and test sets are uploaded as one microarray data. The option ‘Classify from File’ corresponds to the test phase of the algorithm, and assumes that a classifier has been previously built.</p>
+	<p>When <span class="widget2">Training & Classifying</span>, the user is required to enter all the unique class labels of the known (training) experiments.  By default, there is space for 2 class labels.  If more are needed, use the ‘# of Classes’ spinner.  ‘Entering Class Labels’ is disabled if you are ‘Classifying from File’.</p>
+	<p>You are also allowed at this point to make any adjustments to the default parameters.  By default, the parameters are disabled.  Clicking on the ‘Advanced’ checkbox enables adjustment of the parameters.</p>
+	<div class="screenshots ">
+		<a href="usc3.jpg">
+					<img src="usc3.jpg">
+				</a>
+				<br/>
+				<span class="caption">USC Assign Label Dialog</span>
+				</div>
+<a name="para"><h4>Advanced Parameters</h4></a>
+		<p><span class="widget2"># Folds</span>: is the number of times to divide the training set in pseudo training and pseudo test sets during a cross validation run.  For example: if there are 10 total training experiments to be cross validated and <span class="widget2"># Folds</span> = 5, 2 experiments will be removed as pseudo test experiments during each Cross Validation Fold.  After 5 Folds, all 10 experiments will have been used once and only once in the pseudo test set.  A higher <span class="widget2"># Folds</span> is recommended for smaller class size.</p>
+		<p><span class="widget2"># CV runs </span>: is the number of times to repeat cross validation.  Reducing this parameter will reduce computation time in the training phase at the expense of less accurate average number of classification errors and genes selected from the cross validation step.</p>
+		<p><span class="widget2"># Bins </span>: is the number of different values to use for Delta.</p>
+		<div class="screenshots ">
+		<a href="usc4.jpg">
+					<img src="usc4.jpg">
+				</a>
+				<br/>
+				<span class="caption">USC Parameters Dialog</span>
+				</div>
+		<p><span class="widget2">Max Delta </span>: is the maximum Delta value to use. <span class="widget2">Deltas</span> will range from <span class="widget2">{ 0 – Max Delta }</span> incrementing by <span class="widget2">Max Delta/# Bins</span>.  The user may consider reducing this parameter to get a more precise estimate of the optimal shrinkage threshold &#916; if the optimal estimated &#916; is significantly smaller than this value. On the other hand, if the number of classification errors from cross validation is unsatisfactory, the user may consider trying a larger <span class="widget2">Max Delta</span>.</p>
+		<p><span class="widget2">Corr Low </span>: is the lowest Correlation Coefficient threshold to use.  The default is 0.5, which should be sufficient for most cases.</p>
+		<p><span class="widget2">Corr High</span>: is the highest Correlation Coefficient threshold to use.  The default is 1.0, which is the maximum possible correlation.</p>
+		<p><span class="widget2">Corr Step </span>:is the value to increment over going from <span class="widget2">Corr High</span> to <span class="widget2">Corr Low</span>.</p>
+		<div class="screenshots ">
+		<a href="usc5.jpg">
+					<img src="usc5.jpg">
+				</a>
+				<br/>
+				<span class="caption">USC Parameters Dialog</span>
+				</div>
+<p>If you are doing <span class="widget2">Training & Classifying</span>, the USC algorithm needs to know the classes of the experiments in the training set.  Using the pull down menus, assign labels to each of the experiments that were loaded.  Label any test experiments as ‘Unknown (Test)’.  Keep in mind that you are not required to test any experiments at this point.  You may just classify an entire training set, saving the classifier as a file for later use on any test experiments of choice.</p>
+<p>Click ‘OK’ and  wait a short eternity for Cross Validation to run.  When Cross Validation is finally finished you’ll see the ‘Choose Your Parameters’ dialog box.</p>
+<h5>Choose Your Parameters Dialog Box</h5>
+		<div class="screenshots ">
+		<a href="usc6.jpg">
+					<img src="usc6.jpg">
+				</a>
+				<br/>
+				<span class="caption">USC Heatmap</span>
+				</div>
+	<p>During Cross Validation, the USC algorithm has compiled a list of results.  During each fold of cross validation, each experiment in the pseudo test set has been tested back against the remaining experiments of the pseudo training set.  Here, you’ll be asked to choose between accuracy and the # of genes to use during testing.  When the ‘Save Training Results’ checkbox is checked (default), you’ll be prompted to save the training file.  If you have any Test experiments, they will be tested now using your chosen Delta &#916; and Rho &#961 values.</p>
+<h5>USC Summary Viewer</h5>
+	<p>The results of the USC algorithm are returned to the main Analysis Tree in the left pane of the Multiple Array Viewer window.  Clicking on ‘Summary’ will display the following view.  Any test experiments that were loaded are listed along with their class assignment and the Discriminant score of that assignment. Parameters are also displayed as well as the list of the genes that were used for this classification.  You can save that gene list if desired.</p>
+	<p>A number of heat map visualizations are also available.</p>
+	<p>Clicking on <span class="widget2">All Loaded Experiments – Genes Used</span> displays all the experiments that were loaded and the genes that were used during this classification.
+	<p>There is also a heat map visualization for each of the classes in the analysis, again, with the genes that were used during this classification.</p>
+<h5>Classify from File</h5>
+				<div class="screenshots ">
+		<a href="usc7.jpg">
+					<img src="usc7.jpg">
+				</a>
+				<br/>
+				<span class="caption">Training Result File</span>
+				</div>
+	<p>Having saved the results of a classification, you may want to test experiments without the time intensive Cross Validation step.  It is important that you use different sets of experimental samples in the training and test phases.  Keep in mind that you can only test experiments that are of the exact same chip type as the training experiments.</p>
+	<p>If you would like to experiment with different values for Delta and Rho, you can easily change them in the Training Result File.</p>
+<div class="navigation-bar"><a class="prev" href="svm.html">Previous: SVM-Support Vector Machines</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="knn.html">Next: KNNC-K-Nearest-Neighbor Classification </a></div>
+</body>
+</html>	
+	
