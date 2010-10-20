@@ -386,25 +386,29 @@ public class SURV extends AbstractAlgorithm{
 				RHook.evalR("alldata <- as.data.frame(alldata)");
 				
 				RHook.evalR(
+						"capture.output(" +
 						"pen <- penalized(Surv(alldata$eventtime, alldata$censoredflag), " + 
 										"penalized = data.matrix(alldata[,c(3:dim(alldata)[[2]])])," + 
 										"data = alldata, " + 
 										"lambda1 = " + lambda1 + ", " + 
 										"model='cox'" + 
+						")" +
 						")"
 					);
 				int nonzero = RHook.evalR("length(coefficients(pen, 'nonzero'))").asInt();
-				System.out.println("Console users: Do not trust the above printed number (# nonzero coefficients: XX)\n" +
-						"This number may not be correctly reported to the console by R. \n" +
-						"The actual number of nonzero coefficients calculated by R is " + nonzero);
+				//System.out.println("Console users: Do not trust the above printed number (# nonzero coefficients: XX)\n" +
+				//		"This number may not be correctly reported to the console by R. \n" +
+				//		"The actual number of nonzero coefficients calculated by R is " + nonzero);
 				//TODO add fold parameter. Error-check for valid values: btw 2 and number of results
 //				int fold=100;
 				RHook.evalR(
+						"capture.output(" +
 						"cvl <- cvl(Surv(alldata$eventtime, alldata$censoredflag), " + 
 										"penalized = data.matrix(alldata[,c(3:dim(alldata)[[2]])])," + 
 										"data = alldata, " + 
 										"lambda1 = " + lambda1 + ", " + 
 										"model='cox'" +
+						")" +
 						")"
 					);
 				crossValidationLikelihood = RHook.evalR("cvl$cvl").asDouble();
