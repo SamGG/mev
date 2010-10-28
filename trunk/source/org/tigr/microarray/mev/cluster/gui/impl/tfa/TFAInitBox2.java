@@ -1020,7 +1020,9 @@ public class TFAInitBox2 extends AlgorithmDialog {
                 } else {
                     for (int i = 0; i < cellSizes.length; i++) {
                         if (cellSizes[i] < 2) {
-                            JOptionPane.showMessageDialog(null, "All factor combinations must contain more than one sample, or else they must all contain exactly one sample each", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "All factor combinations must contain more than one sample, or else they must all contain exactly one sample each" +
+                            		"\n\n\tFactor A: Group "+ (i/bothFactorAssignments[0].length+1) +" - Factor B: Group "+(i%bothFactorAssignments[0].length+1) + 
+                            		" is missing samples.", "Error", JOptionPane.ERROR_MESSAGE);
                             okPressed = false;
                             return;                            
                         }
