@@ -83,7 +83,7 @@ public class GetInteractionsModule {
 			if(props == null){
 				throw new NullArgumentException("The given properties were null");
 			}
-			debug=false;
+			debug = false;
 			//path=path+sep; //Raktim - Use tmp Dir
 			String fileLoc=path+BNConstants.SEP+BNConstants.TMP_DIR+BNConstants.SEP;
 			String resFileLoc = path+BNConstants.SEP;
@@ -99,34 +99,41 @@ public class GetInteractionsModule {
 
 			int articleRemovalThreshold = Integer.parseInt(props.getProperty(BNConstants.ART_REM_THRESH));
 			HashMap gbSymbols = GetInteractionsUtil.getOfficialGeneSymbols(resFileName, gbAccessionsFileName);
+			//System.out.println("Here 1");
 			//System.exit(0);
 			if(debug){
 				Useful.writeHashMapToFile(gbSymbols, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbSymbols_test.txt");
 			}
 			HashMap gbGOs = GetInteractionsUtil.getGOs(resFileName, gbAccessionsFileName);
+			//System.out.println("Here 2");
 			if(debug){
 				Useful.writeHashMapToFile(gbGOs, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbGOs_test.txt");
 			}
 			HashMap gbArticlesFromRes = GetInteractionsUtil.getResourcererArticles(resFileName, gbAccessionsFileName);
+			//System.out.println("Here 3");
 			if(debug){
 				Useful.writeHashMapToFile(gbArticlesFromRes, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromRes_test.txt");
 			}
 			HashSet uniqueSymbols = GetInteractionsUtil.getUniqueSymbols(gbSymbols);
 			HashMap allSymbolsArticlesFromPubmed = Useful.readHashMapFromFile(symbolsArticlesFromPubmedFileName);
-			HashMap symbolsArticlesFromPubmed = GetInteractionsUtil.getSubsetSymbolsArticlesFromSymbolsArticles(uniqueSymbols, allSymbolsArticlesFromPubmed);      
+			HashMap symbolsArticlesFromPubmed = GetInteractionsUtil.getSubsetSymbolsArticlesFromSymbolsArticles(uniqueSymbols, allSymbolsArticlesFromPubmed);
+			//System.out.println("Here 4");
 			if(debug){
 				Useful.writeHashMapToFile(symbolsArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromPubmed_test.txt");
 			}
 			HashMap allSymbolsArticlesFromGeneDb = Useful.readHashMapFromFile(symbolsArticlesFromGeneDbFileName);
 			HashMap symbolsArticlesFromGeneDb = GetInteractionsUtil.getSubsetSymbolsArticlesFromSymbolsArticles(uniqueSymbols, allSymbolsArticlesFromGeneDb);
+			//System.out.println("Here 5");
 			if(debug){
 				Useful.writeHashMapToFile(symbolsArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"symbolsArticlesFromGeneDb_test.txt");
 			}
 			HashMap gbArticlesFromPubmed = GetInteractionsUtil.replaceSymbolsWithGbsInSymbolsArticles(gbSymbols, symbolsArticlesFromPubmed);
+			//System.out.println("Here 6");
 			if(debug){
 				Useful.writeHashMapToFile(gbArticlesFromPubmed, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromPubmed_test.txt");
 			}
 			HashMap gbArticlesFromGeneDb = GetInteractionsUtil.replaceSymbolsWithGbsInSymbolsArticles(gbSymbols, symbolsArticlesFromGeneDb);
+			//System.out.println("Here 7");
 			if(debug){
 				Useful.writeHashMapToFile(gbArticlesFromGeneDb, gbAccessionsFileName.substring(0, gbAccessionsFileName.length()-4)+"gbArticlesFromGeneDb_test.txt");
 			}
@@ -136,6 +143,7 @@ public class GetInteractionsModule {
 			HashMap articlesGbs = gI.backwards(gbArticlesFromGeneDb);
 			gbArticlesFromGeneDb = gI.filter(articlesGbs, gbArticlesFromGeneDb, articleRemovalThreshold);
 			ArrayList interGeneDb = (ArrayList) gI.createInteractions(gbArticlesFromGeneDb);
+			//System.out.println("Here 8");
 			if(articlesGbs != null && gbArticlesFromGeneDb != null && interGeneDb != null){
 				//if(articlesGbs.size() == 0)
 				//System.out.println("articlesGbs size is 0");
@@ -155,8 +163,11 @@ public class GetInteractionsModule {
 
 			articlesGbs = null;
 			articlesGbs = gI.backwards(gbArticlesFromPubmed);
-			gbArticlesFromPubmed = gI.filter(articlesGbs, gbArticlesFromPubmed, articleRemovalThreshold);	
+			//System.out.println("Here 8.1");
+			gbArticlesFromPubmed = gI.filter(articlesGbs, gbArticlesFromPubmed, articleRemovalThreshold);
+			//System.out.println("Here 8.2");
 			ArrayList interPubmed = (ArrayList) gI.createInteractions(gbArticlesFromPubmed);
+			//System.out.println("Here 9");
 			if(articlesGbs != null && gbArticlesFromPubmed != null && interPubmed != null){
 				//if(articlesGbs.size() == 0)
 				//System.out.println("articlesGbs size is 0");
@@ -178,6 +189,7 @@ public class GetInteractionsModule {
 			articlesGbs = gI.backwards(gbArticlesFromRes);
 			gbArticlesFromRes = gI.filter(articlesGbs, gbArticlesFromRes, articleRemovalThreshold);		
 			ArrayList interRes = (ArrayList) gI.createInteractions(gbArticlesFromRes);	
+			//System.out.println("Here 10");
 			if(articlesGbs != null && gbArticlesFromRes != null && interRes != null){
 				//if(articlesGbs.size() == 0)
 				//System.out.println("articlesGbs size is 0");
@@ -910,6 +922,8 @@ public class GetInteractionsModule {
 						"No interactions found, aborting ....",
 						"Info", JOptionPane.INFORMATION_MESSAGE);
 				return null;
+			} else {
+				System.out.println(interactions.size() + " Interactions Found for type " + propertiesFileName);
 			}
 			String outInteractionsFileName = props.getProperty(
 					BNConstants.OUT_INTER_FILE_NAME, 
