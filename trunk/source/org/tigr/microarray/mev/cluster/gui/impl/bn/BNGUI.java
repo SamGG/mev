@@ -79,11 +79,12 @@ import weka.classifiers.bayes.BayesNet;
 
 public class BNGUI implements IClusterGUI, ActionListener {
 
-	HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
-	HistoryViewer wekaOutputViewer;
-	LMBNViewer fileViewer, badNetSeedViewer;
-	IData data;
-	IFramework framework;
+	protected HashMap<String, String> probeIndexAssocHash = new HashMap<String, String>();
+	protected HistoryViewer wekaOutputViewer;
+	protected LMBNViewer fileViewer, badNetSeedViewer;
+	protected IData data;
+	protected IFramework framework;
+	
 	private JDialog resultFrame;
 	private JFrame mainFrame;
 	private JCheckBox finalThreshBox;
@@ -102,9 +103,10 @@ public class BNGUI implements IClusterGUI, ActionListener {
 	private ArrayList<SimpleGeneEdge> networkSeedEdgeList;
 	private ArrayList<String> unMappedNetworkSeedEdgeList = null;
 
-	private static ProgressMonitor pbar;
-	private static int counter = 0;
-	private static String pBarMsg = "Bn Module Initializing";
+	private ProgressMonitor pbar;
+	private Timer pBarTimer = null;
+	private int counter = 0;
+	private String pBarMsg = "Bn Module Initializing";
 
 	//Start new structures
 	private File labelFile;
@@ -527,6 +529,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 				dialog.isPpiAndKegg(), dialog.isAll(),
 				dialog.getBaseFileLocation(), this.data
 		);
+		System.out.println("literatureMining() returned");
 		if(interactions != null) {
 			//Display warning if too many interactions are found.
 			if(interactions.size() > 50) {
@@ -1878,7 +1881,6 @@ public class BNGUI implements IClusterGUI, ActionListener {
 		int numGene;
 		String algorithm;
 		int kFolds;
-
 	}
 
 	/**
@@ -1951,6 +1953,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 	 * @param note
 	 */
 	void pBarInit(String msg, String note) {
+		pbar = null;
 		pbar = new ProgressMonitor(
 				framework.getFrame(), 
 				msg, 
@@ -1962,8 +1965,9 @@ public class BNGUI implements IClusterGUI, ActionListener {
 		pbar.setProgress(0);
 
 		// Fire a timer every once in a while to update the progress.
-		Timer timer = new Timer(500, this);
-		timer.start();
+		if (pBarTimer == null)
+			pBarTimer = new Timer(500, this);
+		pBarTimer.start();
 	}
 
 	/**
@@ -1985,7 +1989,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 	 */
 	void updatePBarMsg(String msg) throws InterruptedException {
 		pBarMsg = msg;
-		Thread.sleep(1000);
+		Thread.sleep(500);
 	}
 
 	/**
@@ -1999,7 +2003,11 @@ public class BNGUI implements IClusterGUI, ActionListener {
 	void disposePBar(){
 		if (pbar == null)
 			return;
-		pbar.setProgress(pbar.getMaximum());
+		pbar.setProgress(pbar.getMaximum()+1);
+		updatePBarCounter(0);
+		pBarMsg = "Bn Module Initializing";
+		pBarTimer.stop();
+		pBarTimer = null;
 		pbar.close();
 		pbar = null;
 	}
@@ -2022,6 +2030,7 @@ public class BNGUI implements IClusterGUI, ActionListener {
 		public void run() {
 			if (pbar == null) return;
 			if (pbar.isCanceled()) {
+				System.out.println("Bn Cancelled");
 				disposePBar();
 				//System.exit(1);
 				cancel = true;
