@@ -240,7 +240,7 @@ public class GeneInteractions {
 			while(itrem.hasNext()){
 				// get the article
 				art = (String) itrem.next();
-				System.out.println("Article to remove " + art);
+				//System.out.println("Article to remove " + art);
 				if(art != null && articles != null){
 					// remove it
 					articles.remove(art);
