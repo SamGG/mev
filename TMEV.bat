@@ -15,8 +15,20 @@ All rights reserved.
  $Author: eleanorahowe $
  $State: Exp $
 ***********************************************************************
-
+Set JAVA_HOME **Only 32 Bit JVM is not default.
+Assumes you have already installed 32 Bit JRE following instructions at 
+MeV SourceForge forum.
+This not required on a 32 Bit Windows machine and only required if your
+64 Bit Windows machine does not have a default 32 bit JVM.
+NOTE: This does not alter any of your system settings. All changes are 
+local to this file/environemnt
+***********************************************************************
 :CMD
+if not exist "C:\Program Files (x86)\Java\jre6" echo "32 bit Win"
+if exist "C:\Program Files (x86)\Java\jre6" echo "64 bit Win"
+if exist "C:\Program Files (x86)\Java\jre6" set JAVA_HOME="C:\Program Files (x86)\Java\jre6"
+if exist "C:\Program Files (x86)\Java\jre6" set PATH=%JAVA_HOME%;%JAVA_HOME%\bin;%PATH%
+
 set CurrDIR=%cd%
 echo %CurrDIR%
 
