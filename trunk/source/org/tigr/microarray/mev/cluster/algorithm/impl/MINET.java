@@ -246,7 +246,9 @@ public class MINET extends AbstractAlgorithm{
 			try {
 				RHook.endRSession();
 				e.printStackTrace();
-				throw new AlgorithmException(e);
+				JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
+				//throw new AlgorithmException(e);
+				throw new AbortException();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
