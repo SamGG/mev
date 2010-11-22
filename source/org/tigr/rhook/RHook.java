@@ -9,7 +9,7 @@
  * RHook.java
  *
  * Created on Jul 11, 2009, 1:53:47 PM
- * 
+ *
  * @author raktim
  */
 
@@ -20,13 +20,17 @@ import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,13 +46,13 @@ import org.tigr.microarray.mev.TMEV;
 import org.tigr.util.ConfMap;
 import org.tigr.util.FloatMatrix;
 
-class TextConsole implements RMainLoopCallbacks 
+class TextConsole implements RMainLoopCallbacks
 {
 	public void rWriteConsole(Rengine re, String text, int oType)  {
 		System.err.println(text);
 		if(RHook.logger == null) {
 			RHook.logger.start();
-		} 
+		}
 		if (oType == 1) { //Error/Warning
 			if(text.toLowerCase().contains("error"))
 				RHook.log("Error -> ");
@@ -92,9 +96,11 @@ class TextConsole implements RMainLoopCallbacks
 	}
 
 	public void   rFlushConsole (Rengine re) {
+
 	}
 
 	public void   rLoadHistory  (Rengine re, String filename) {
+
 	}
 
 	public void   rSaveHistory  (Rengine re, String filename) {
@@ -130,7 +136,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -176,7 +182,7 @@ public class RHook  {
 			String[] args = {"--no-save"};
 
 
-			// in Mac check for if user has changed R version. If so try get 
+			// in Mac check for if user has changed R version. If so try get
 			// compatible dynamic R lib for new version.
 			checkMacR();
 			// 1) we pass the arguments from the command line
@@ -189,6 +195,8 @@ public class RHook  {
 			System.out.println("Error loading R");
 			logger.writeln("Error loading R");
 			logger.writeln(e);
+			logger.stop();
+			e.printStackTrace();
 			throw e;
 		}
 		System.out.println("Rengine created, waiting for R");
@@ -196,7 +204,7 @@ public class RHook  {
 		if (!re.waitForR()) {
 			System.out.println("Cannot load R");
 			logger.writeln("Cannot load R");
-			//return null;
+			logger.stop();
 			throw new Exception("waitForR() error: Cannot load R");
 		}
 		return re;
@@ -207,52 +215,88 @@ public class RHook  {
 	 * If not loaded uses tries to load cached properties file.
 	 * If cached properties does not exist uses rhook.default.properties file
 	 * from application bundle
-	 * 
+	 * @throws IOException 
+	 *
 	 * @throws Exception
 	 */
-	private static void loadRHookProperties() throws Exception {
-		// TODO 
+	private static void loadRHookProperties() throws IOException {
+		File mevUserDir = new File(System.getProperty("user.home"), ".mev");
+		File rhookPropFile = new File(mevUserDir, "rhook.properties");
 		try {
-			File mevUserDir = new File(System.getProperty("user.home"), ".mev");
-			File rhookPropFile = new File(mevUserDir, "rhook.properties");
-			if (getPropInfoRhook() == null) {
-				// check if rhook.properties exist
-				if(rhookPropFile.exists()) {
-					// load rhook.properties
-					InputStream in = new FileInputStream(rhookPropFile);
+			getPropInfoRhook();
+		}
+		catch (ConnectException cex) {
+			logger.writeln(cex.getMessage());
+			logger.writeln(cex);
+			System.out.println("loadRHookProperties() Exception");
+			cex.printStackTrace();
+			rHookProps = new ConfMap();
+			// check if rhook.properties exist
+			if(rhookPropFile.exists()) {
+				System.out.println("rhookPropFile exist");
+				// load last downloaded rhook.properties
+				InputStream in = null;
+				try {
+					in = new FileInputStream(rhookPropFile);
 					rHookProps.load(in);
 					in.close();
-					System.out.println("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
-					logger.writeln("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
-				} else {
-					// load default.rhook.properties
-					InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/rhook/rhook.default.properties");
-					if (in != null) {
-						rHookProps.load(in);
-					}
-					in.close();
-					System.out.println("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
-					logger.writeln("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
+					System.out.println("rhookPropFile loaded");
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.writeln(e.getMessage());
+					logger.writeln(e);
+					throw e;
 				}
+				System.out.println("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
+				logger.writeln("rhook properties loaded from " + rhookPropFile.getAbsolutePath());
 			} else {
-				// overwrite/create rhook.properties in user home directory
-				if (!rhookPropFile.exists())
-					rhookPropFile.createNewFile();
-
-				FileOutputStream out = new FileOutputStream(rhookPropFile);
-				rHookProps.store(out, "----- Last Saved @ " + getDateTime() + " -----");
-				out.close();
+				System.out.println("rhookPropFile does not exist");
+				// load default.rhook.properties
+				InputStream in = TMEV.class.getClassLoader().getResourceAsStream("org/tigr/rhook/rhook.default.properties");
+				try {
+					if (in != null)
+						rHookProps.load(in);
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					logger.writeln(e.getMessage());
+					logger.writeln(e);
+					throw e;
+				}
+				System.out.println("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
+				logger.writeln("rhook properties loaded from " + "org/tigr/rhook/rhook.default.properties");
 			}
+			return;
+			//logger.stop();
+			//throw e;
 		}
-		catch (Exception e) {
-			logger.writeln(e.getMessage());
-			logger.writeln(e);
-			throw e;
+		catch (UnknownHostException une) {
+			une.printStackTrace();
+			logger.writeln(une.getMessage());
+			logger.writeln(une);
+			logger.stop();
+			throw new IOException("UnknownHostException: " + une.getMessage());
 		}
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+			logger.writeln(ioe.getMessage());
+			logger.writeln(ioe);
+			logger.stop();
+			throw ioe;
+		}
+
+		// overwrite/create rhook.properties in user home directory
+		if (!rhookPropFile.exists())
+			rhookPropFile.createNewFile();
+
+		FileOutputStream out = new FileOutputStream(rhookPropFile);
+		rHookProps.store(out, "----- Last Saved @ " + getDateTime() + " -----");
+		out.close();
+
 	}
 
 	/**
-	 * 
+	 *
 	 * @param cmd
 	 * @return
 	 * @throws Exception
@@ -323,6 +367,10 @@ public class RHook  {
 				r_ver+"_"+
 				getARCHbyName()
 		);
+
+		if (pkg == null){
+			throw new Exception("Properties not found for Module: " + moduleName);
+		}
 		// array of pkg names
 		String pkgs[] = pkg.split(":");
 
@@ -379,9 +427,9 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static String getCurrentRversion() throws Exception {
 		if (getOS() == RConstants.MAC_OS){
@@ -391,13 +439,13 @@ public class RHook  {
 		}
 
 		// for all other OS
-		// TODO return 
+		// TODO return
 		return rHookProps.getProperty(RConstants.PROP_NAME_CUR_R_VER).trim();
 		//return TMEV.getSettingForOption(RConstants.PROP_NAME_CUR_R_VER).trim();
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -414,7 +462,7 @@ public class RHook  {
 			File mevUserDir = new File(System.getProperty("user.home"), ".mev");
 			File rhookVersionFile = new File(mevUserDir, "rhook.version.properties");
 
-			// If ver prop file does not exist create it and store def ver 
+			// If ver prop file does not exist create it and store def ver
 			if (!rhookVersionFile.exists()) {
 				rhookVersionFile.createNewFile();
 
@@ -459,7 +507,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private static String getPkgPath() {
@@ -470,7 +518,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pkgs
 	 * @return
 	 */
@@ -496,7 +544,7 @@ public class RHook  {
 	}
 
 	/**
-	 * Variables 
+	 * Variables
 	 */
 	static Rengine re;	// singleton Rengine
 	protected static RLogger logger;
@@ -578,7 +626,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 * @param fm
 	 * @param rowNames
@@ -595,7 +643,7 @@ public class RHook  {
 			for(int jCol = 0; jCol < col; jCol++) {
 				if(iRow == row-1 & jCol == col-1)
 					srtVector += fm.get(iRow, jCol);
-				else 
+				else
 					srtVector += fm.get(iRow, jCol) + ",";
 			}
 		}
@@ -625,7 +673,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private static void cleanUp() throws Exception {
@@ -633,17 +681,16 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public static void endRSession() throws Exception {
 		cleanUp();
-		// TODO unload packages
 		logger.stop();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param rObj
 	 * @param filePath
 	 * @param rowNames
@@ -671,7 +718,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param e
 	 */
 	public static void log(Exception e) {
@@ -679,7 +726,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param str
 	 */
 	public static void log(String str) {
@@ -687,7 +734,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static int getOS() {
@@ -707,7 +754,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getOSbyName() {
@@ -727,14 +774,14 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private static int getARCH() {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		//String ver = System.getProperty("os.version");
-		if (arch.toLowerCase().contains("386") || 
+		if (arch.toLowerCase().contains("386") ||
 				arch.toLowerCase().contains("x86") ||
 				arch.toLowerCase().contains("32")) {
 			return RConstants.OS_ARCH_32;
@@ -747,14 +794,14 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	private static String getARCHbyName() {
 		//String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		//String ver = System.getProperty("os.version");
-		if (arch.toLowerCase().contains("386") || 
+		if (arch.toLowerCase().contains("386") ||
 				arch.toLowerCase().contains("x86") ||
 				arch.toLowerCase().contains("32")) {
 			return "32";
@@ -767,9 +814,9 @@ public class RHook  {
 
 	/**
 	 * Function to check if R in Mac has been upgraded to newer version since last used
-	 * 
+	 *
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static boolean Mac_R_ver_Changed() throws Exception {
 		// Check if R is installed
@@ -787,21 +834,21 @@ public class RHook  {
 		// Get current version of R
 		String ver = getMacRversionFromRFramework(RConstants.MAC_R_PATH).trim();
 		System.out.println("Mac OS X current R version: " + ver);
-		// Check if R version has changed since last use by 
+		// Check if R version has changed since last use by
 		// comparing the version in MeV props.
 		// TODO get getMacLastRVersion()
 		//String last_used_ver = TMEV.getSettingForOption(RConstants.PROP_NAME_CUR_MAC_R_VER).trim();
 		String last_used_ver = getCurrentRversion().trim();
 		System.out.println("Mac OS X last R version: " + last_used_ver);
 
-		// if version changed, check if lib and package for module is 
-		if (ver.equals(last_used_ver)) 
+		// if version changed, check if lib and package for module is
+		if (ver.equals(last_used_ver))
 			return false;
 		return true;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -809,7 +856,7 @@ public class RHook  {
 		// Get current version of R
 		String ver = getMacRversionFromRFramework(RConstants.MAC_R_PATH).trim();
 		//System.out.println("Mac OS X current R version: " + ver);
-		// Check if R version has changed since last use by 
+		// Check if R version has changed since last use by
 		// comparing the version in MeV props.
 		//String last_used_ver = getCurrentRversion(); // TMEV.getSettingForOption("cur_mac_r_ver").trim();
 		//System.out.println("Mac OS X last R version: " + last_used_ver);
@@ -843,11 +890,11 @@ public class RHook  {
 		}
 
 		// check if lib and pkg available for new version
-		String lib_url = RConstants.RHOOK_BASE_URL + 
-						 "R" + 
-						 ver + 
-						 "/" + os + 
-						 "/" + getLibraryName();
+		String lib_url = RConstants.RHOOK_BASE_URL +
+		"R" +
+		ver +
+		"/" + os +
+		"/" + getLibraryName();
 
 		// update lib and all packages associated with R ver
 		// updateLibAndPackages(lib_url, pkg_url_list);
@@ -864,9 +911,9 @@ public class RHook  {
 
 	/**
 	 * Downloaad updated lib for Mac R version
-	 * 
+	 *
 	 * @param libUrl
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static void updateRLib(String libUrl) throws Exception {
 		String lib_dest = System.getProperty("user.dir")+"/"+RConstants.MAC_MEV_RES_LOC;
@@ -879,12 +926,12 @@ public class RHook  {
 
 	/**
 	 * Runs through a list of packages and downloads them from a remote location.
-	 * 
+	 *
 	 * @param libUrl
 	 * @param pkgUrlList
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	private static void updatePackages(ArrayList<String> pkgUrlList, String pkg_dest) 
+	private static void updatePackages(ArrayList<String> pkgUrlList, String pkg_dest)
 	throws Exception {
 		String fileName;
 
@@ -898,7 +945,7 @@ public class RHook  {
 
 	/**
 	 * Utility function
-	 * 
+	 *
 	 * @param libUrl
 	 * @return
 	 */
@@ -909,18 +956,30 @@ public class RHook  {
 
 	/**
 	 * Retrieves a remote file
-	 * 
+	 *
 	 * @param libUrl
 	 * @param libDest
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static void getRemoteFile(String libUrl, String libDest) throws Exception {
 
 		String newFName = libDest;//+getFileNameFromURL(libUrl);
 		System.out.println("To Download: " + newFName);
+		InputStream uis;
+		try {
+			URL url = new URL(libUrl);
+			uis = url.openConnection().getInputStream();
+		} catch (Exception e) {
+			logger.writeln(libUrl + " could not be retreived");
+			logger.writeln(e.getMessage());
+			logger.writeln(e);
+			//logger.stop();
+			throw new Exception(libUrl + " could not be retreived");
+		}
+
 		File old = new File(newFName);
 		if (old.exists()) {
-			// TODO 
+			// TODO
 			// replace cur_r_ver
 			// if file already exists re-name it
 			//String reNameTo = newFName + "_" + TMEV.getSettingForOption(RConstants.PROP_NAME_CUR_R_VER) + "_" + getDateTime();
@@ -930,8 +989,6 @@ public class RHook  {
 			System.out.println("getRemoteFile: Renamed to " + reNameTo);
 		}
 
-		URL url = new URL(libUrl);
-		InputStream uis = url.openConnection().getInputStream();
 		OutputStream fos = new FileOutputStream(newFName);
 		int bytesRead;
 		byte[] buf = new byte[1024];
@@ -945,7 +1002,7 @@ public class RHook  {
 
 	/**
 	 * Creates fully qualified URLs
-	 * 
+	 *
 	 * @param baseUrl
 	 * @param rModuleList
 	 * @return
@@ -966,7 +1023,7 @@ public class RHook  {
 
 	/**
 	 * Utility function to find a value for akey in a MAp
-	 * 
+	 *
 	 * @param repHash
 	 * @param key
 	 * @return
@@ -978,7 +1035,7 @@ public class RHook  {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -990,43 +1047,44 @@ public class RHook  {
 
 	/**
 	 * COnnects to a URL and opens a connection to file
-	 * 
+	 *
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws Exception
 	 */
-	public static Properties getPropInfoRhook() {
+	public static Properties getPropInfoRhook() 
+	throws  ConnectException, MalformedURLException, IOException{
 		if (rHookProps != null)
-			return rHookProps; 
+			return rHookProps;
 
-		//repHash = new Hashtable<String, String>();
 		rHookProps = new ConfMap();
 
 		try {
-			URLConnection conn = new URL(RConstants.RHOOK_PROP_URL).openConnection();    		    		
-
-			//add repository property hashes to the vector
-			//repHash = parseProp(conn.getInputStream());			
+			URLConnection conn = new URL(RConstants.RHOOK_PROP_URL).openConnection();
 			rHookProps.load(conn.getInputStream());
 
-		} catch (Exception e) {
-			//repHash = null;
+		} catch (UnknownHostException une) {
 			rHookProps = null;
-			System.err.println("Could not retreive Web Repository Info.");
+			System.out.println("Could not retreive RHook Web Property file.");
+			une.printStackTrace();
+			throw une;
+		} catch (ConnectException e) {
+			rHookProps = null;
+			System.out.println("Could not retreive RHook Web Property file.");
 			e.printStackTrace();
-			//JOptionPane.showMessageDialog(new Frame(), "An error occurred when retrieving Web Repository Info.\n  Update request cannot be fulfilled.", "Cytoscape Launch Error", JOptionPane.ERROR_MESSAGE);
-			//return null;
-			return null;
+			throw e;
 		}
 
 		//return the vector of repository hashes
-		return rHookProps; 
+		return rHookProps;
 	}
 
 	/**
 	 * For Mac OS X only --
 	 * Check for R ver and dyn lib compatibility
 	 * If mismatched try upgrading to correct version
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	static void checkMacR() throws Exception {
@@ -1036,7 +1094,7 @@ public class RHook  {
 			if (Mac_R_ver_Changed()) {
 				if (!updateRDynLib()) {
 					//JOptionPane.showMessageDialog(null, "Error updating R library", "REngine", JOptionPane.ERROR_MESSAGE);
-					throw new Exception("Error updating R library"); 
+					throw new Exception("Error updating R library");
 				}
 			}
 		} catch (Exception e) {
@@ -1048,7 +1106,7 @@ public class RHook  {
 
 	/**
 	 * Splits key value pairs from a stream
-	 * 
+	 *
 	 * @param is
 	 * @return
 	 * @throws IOException
@@ -1060,7 +1118,7 @@ public class RHook  {
 
 		Hashtable<String, String> currHash = new Hashtable<String, String>();
 		String line;
-		//loop through the file to parse into 
+		//loop through the file to parse into
 		while((line = br.readLine())!= null) {
 			//comment line, if any
 			if(line.startsWith("#"))
@@ -1077,7 +1135,7 @@ public class RHook  {
 
 	/**
 	 * Determines if a file/dir is symbolic link
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 * @throws IOException
@@ -1098,10 +1156,10 @@ public class RHook  {
 	/**
 	 * Decoded MAC symbolic links to figure out the current R version from the
 	 * folder name.
-	 * 
+	 *
 	 * @param curRpath
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static String getMacRversionFromRFramework (String curRpath) throws IOException {
 		// Detecting a link
@@ -1137,9 +1195,9 @@ public class RHook  {
 
 	/**
 	 * Sets R library path to R_HOME/library
-	 * Vista permission issues forces R to use tmp filder as library path 
+	 * Vista permission issues forces R to use tmp filder as library path
 	 * resulting to multiple install pf packages.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private void setLibPath() throws Exception {
@@ -1157,17 +1215,17 @@ public class RHook  {
 
 	/**
 	 * Checks if OS specific dynamic lib file exists
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	private static void ifExistRlib() throws Exception {
 		String lib;
 		// Mac OS
 		if (getOS() == RConstants.MAC_OS){
-			lib = System.getProperty("user.dir") + "/" + 
-			RConstants.MAC_MEV_RES_LOC+"/" + 
+			lib = System.getProperty("user.dir") + "/" +
+			RConstants.MAC_MEV_RES_LOC+"/" +
 			getLibraryName();
-		} 
+		}
 		// all other os
 		else {
 			lib = System.getProperty("user.dir") + "/lib/" + getLibraryName();
@@ -1175,7 +1233,7 @@ public class RHook  {
 
 		if(!(new File(lib).exists())) {
 			System.err.println("R_HOME dir: " + lib + " does not exist.");
-			logger.writeln("R JRI lib: " + lib + "does not exist.");		
+			logger.writeln("R JRI lib: " + lib + "does not exist.");
 			logger.stop();
 			throw new Exception("R JRI lib: " + lib + "does not exist.");
 		}
@@ -1183,7 +1241,7 @@ public class RHook  {
 
 	/**
 	 * Checks if R_HOME points to a existing location
-	 * 
+	 *
 	 * @param r_home
 	 * @throws Exception
 	 */
@@ -1201,7 +1259,7 @@ public class RHook  {
 
 	/**
 	 * Checks to see if Global env var R_HOME is set
-	 * 
+	 *
 	 * @param r_home
 	 * @throws Exception
 	 */
@@ -1218,7 +1276,7 @@ public class RHook  {
 	}
 	/**
 	 * Return OS speciifc dynamic lib name
-	 * 
+	 *
 	 * @return
 	 */
 	private static String getLibraryName() {
@@ -1237,7 +1295,7 @@ public class RHook  {
 
 	/**
 	 * Return a unique time stamp
-	 * 
+	 *
 	 * @return
 	 */
 	private static String getDateTime() {

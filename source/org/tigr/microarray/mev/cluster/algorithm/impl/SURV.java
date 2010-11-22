@@ -447,6 +447,9 @@ public class SURV extends AbstractAlgorithm{
 			RHook.log(e);
 			try {
 				RHook.endRSession();
+				JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
+				//throw new AlgorithmException(e);
+				throw new AbortException();
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
