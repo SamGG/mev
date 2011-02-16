@@ -43,6 +43,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
+import org.tigr.util.DoubleArray;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.BoundariesDialog;
@@ -103,8 +104,51 @@ public class PValueGraphViewer extends JPanel implements IViewer {
     private Insets insets = new Insets(0, 10, 0, 0);
     private int contentWidth = 0;
     
-    
-    public PValueGraphViewer( String title, String xLabel, String yLabel,LinkedHashMap pvalues) {
+    /** 
+     * State-saving constructor.
+     * @param title
+     * @param xLabel
+     * @param yLabel
+     * @param da
+     * @param labels
+     */
+    public PValueGraphViewer(String title, String xLabel, String yLabel, DoubleArray da, String[] labels) {
+       	this.xLabel=xLabel;
+    	//Y axis label
+    	this.yLabel=yLabel;
+    	//Title of the graph
+    	this.title=title;
+
+    	this.pValueMapping=null;
+    	//Copy all gene set names into an Object array
+    	geneSetNames=labels;
+
+    	//Copy all p values into an Object array
+    	pValueArray=da.toObjectArray();
+
+    	//The x axis will always start from zero
+    	this.graphstartx = 0;
+    	//The length of x axis will be equal to the number of gene sets
+    	
+    	this.graphstopx = geneSetNames.length;
+    	//The defualt Y axis will span from 0-1 (Possible range of p values)
+    	this.graphstarty = 0;
+    	this.graphstopy = 1;
+
+
+    	eventListener = new EventListener();
+    	this.addMouseMotionListener(eventListener);
+    	this.addMouseListener(eventListener);
+
+    	//If p value is 0.000008, will show 0.000
+    	coordinateFormat = new DecimalFormat();
+    	coordinateFormat.setMaximumFractionDigits(3);
+
+
+    	initComponents();
+    	initializePopupMenu();
+    }
+    public PValueGraphViewer( String title, String xLabel, String yLabel, LinkedHashMap pvalues) {
     	//X axis label
     	this.xLabel=xLabel;
     	//Y axis label
@@ -343,7 +387,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
         Graphics2D g = (Graphics2D)getGraphics();
         
        // int width = elementSize.width*this.pVals.length + 1 + insets.left;
-        int width = this.pValueMapping.size()*10 + 1 + insets.left;
+        int width = this.geneSetNames.length*10 + 1 + insets.left;
         this.contentWidth = width;
         
         //Height would be more importtant here, since the gene set labels are shown vertically
@@ -755,8 +799,12 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 
 	
 	 public Expression getExpression(){
+		 double[] temp = new double[pValueArray.length];
+		 for(int i=0; i<pValueArray.length; i++) {
+			 temp[i] = new Double((Float)pValueArray[i]).doubleValue();
+		 }
 	    	return new Expression(this, this.getClass(), "new", 
-	    			new Object[]{title, xLabel, yLabel, pValueMapping});
+	    			new Object[]{title, xLabel, yLabel, new DoubleArray(temp), this.geneSetNames,});
 	    }
 	 
 
