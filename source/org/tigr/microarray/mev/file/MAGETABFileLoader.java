@@ -1586,6 +1586,7 @@ for(int k=0;k<dataTypes.length;k++) {
         				setLoadEnabled(false);
         			} else {
         				selectedDataMatrix.setForeground(Color.BLACK);
+        				processAffyGCOSFile(dataFile);
         			}
 				} else {
     				//process here; should work in all circumstances
