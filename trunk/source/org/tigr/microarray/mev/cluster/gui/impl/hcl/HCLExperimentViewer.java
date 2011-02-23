@@ -28,7 +28,7 @@ public class HCLExperimentViewer extends ExperimentViewer {
     /**
      * XMLEncoder/Decoder constructor
      * @param experiment
-     * @param clusters
+     * @param geneLists
      */
     public HCLExperimentViewer(){
     	super();

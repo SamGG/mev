@@ -248,8 +248,22 @@ public class HCLViewer extends JPanel implements IViewer {
             this.numberOfSamples = experiment.getNumberOfSamples();
         this.genesOrder = createGenesOrder(experiment, createDefaultFeatures(experiment), genes_result);
         this.sampleClusters = sampleClusters;
-        this.genes_result = genes_result;
-        this.samples_result = samples_result;
+
+        if (genes_result != null && genes_result.node_order != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1) {
+            this.genesTree = new HCLTree(genes_result, HCLTree.HORIZONTAL);
+            this.genesTree.addMouseListener(listener);
+            this.genesTree.setListener(listener);
+            this.genes_result = genes_result;
+        }
+        if (samples_result != null && samples_result.node_order != null && experiment.getNumberOfSamples() > 1 && samples_result.node_order.length > 1) {
+            this.sampleTree = new HCLTree(samples_result, HCLTree.VERTICAL);
+            this.samplesOrder = createSamplesOrder(samples_result);
+            if(genes_result == null)
+                this.sampleTree.setHorizontalOffset(10);
+            this.sampleTree.addMouseListener(listener);
+            this.sampleTree.setListener(listener);  //added for selection of experiment hcl nodes
+            this.samples_result = samples_result;
+        }
         if(this.isExperimentCluster){
             if(genes_result != null && experiment.getNumberOfGenes() > 1 && genes_result.node_order.length > 1){
                 offset = 0;

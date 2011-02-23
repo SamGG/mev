@@ -33,7 +33,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
 import org.tigr.util.FloatMatrix;
@@ -47,10 +46,10 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 	private JComponent content;
 	IFramework framework;
     FloatMatrix data;
-    String[] labels;
+    String[] labels = {"no labels"};
     boolean w;
     boolean cophen;
-    int[] samplesOrder;
+    int[] samplesOrder = new int[0];
 	private int r;
 	private float minValue;
 	private double maxValue;
@@ -73,9 +72,9 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
     	this.r = r;
     	this.cophen = cophen;
     	this.data = data;
-    	content = new JPanel();
-    	
+    	content = new JPanel();    	
     }
+    
     /**
      * @inheritDoc
      */
@@ -103,7 +102,6 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
     	this.minValue = minValue;
     	this.maxValue = maxValue;
     	if (cophen){
-
         	String[] ccLabels = new String[data.A[0].length];
         	for (int i=0; i<ccLabels.length; i++){
         		ccLabels[i] = "Rank = "+(r+i);
@@ -153,7 +151,7 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 		private static final long serialVersionUID = 1L;
 		protected JPopupMenu popup;
 	    double maxValue = 1.0;
-	    double minValue = 0.7;
+	    double minValue = 0.6;
 	    Color[] colors;
 		private static final int left = 80;
 		private static final int top  = 40;
@@ -359,12 +357,10 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
 		    }
 		    // Raktim - Added to make Java 1.5 happy
 			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 			// Raktim - Added to make Java 1.5 happy
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
 				
 			}
 	    }
@@ -376,10 +372,10 @@ public class NMFPlotViewer extends ViewerAdapter implements java.io.Serializable
     			fm[i][j] = 0;
     		}
     	}
-		fm[0][0] = 2000;
-		fm[1][1] = 2000;
-		fm[0][1] = 4000;
-		fm[1][0] = 4000;
+		fm[0][0] = 116;
+		fm[1][1] = -33;
+		fm[0][1] = 700;
+		fm[1][0] = 101;
 		for (int i=0; i<fm.length; i++){
 			fm[i][i] = i;
 		}

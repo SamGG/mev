@@ -35,7 +35,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 public class NMFDialog extends AlgorithmDialog {
@@ -305,7 +304,7 @@ public class NMFDialog extends AlgorithmDialog {
 
         randomSeedCB = new JCheckBox("Use random number generator seed:");
         randomSeedCB.setBackground(Color.white);
-        randomSeedCB.setSelected(false);
+        randomSeedCB.setSelected(true);
         randomSeedCB.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent ae){
         		randomSeedField.setEnabled(randomSeedCB.isSelected());
@@ -317,7 +316,7 @@ public class NMFDialog extends AlgorithmDialog {
          
         
         randomSeedField = new JTextField("12345", 7);
-        randomSeedField.setEnabled(false);
+        randomSeedField.setEnabled(true);
         buildConstraints(constraints, 1, 0, 1, 1, 50, 100);
         grid.setConstraints(randomSeedField, constraints);
         randomSeedPanel.add(randomSeedField);    
@@ -343,16 +342,13 @@ public class NMFDialog extends AlgorithmDialog {
         buildConstraints(constraints, 0, 7, 1, 1, 50, 100);
         gridbag.setConstraints(clusterPanel, constraints);
         pane.add(clusterPanel);  
-        
-        
+                
         setActionListeners(new EventListener());
         addContent(pane);
         pack();
     }
     
-    void buildConstraints(GridBagConstraints gbc, int gx, int gy,
-    int gw, int gh, int wx, int wy) {
-        
+    private void buildConstraints(GridBagConstraints gbc, int gx, int gy,int gw, int gh, int wx, int wy) {        
         gbc.gridx = gx;
         gbc.gridy = gy;
         gbc.gridwidth = gw;
@@ -368,10 +364,6 @@ public class NMFDialog extends AlgorithmDialog {
         return result;
     }
     
-    public void resetControls(){
-
-    }
-    
     public int getNumRuns() {
         return Integer.parseInt(numRunsField.getText());
     }    
@@ -379,8 +371,7 @@ public class NMFDialog extends AlgorithmDialog {
 	public int getMaxIterations() {
 		return Integer.parseInt(this.numItersField.getText());
 	}
-    
-    
+        
     public boolean getDivergence() {
         return !divergenceButton1.isSelected();
     }   
@@ -468,7 +459,6 @@ public class NMFDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();
             } else if (command.equals("reset-command")){
-                resetControls();
             } else if (command.equals("info-command")){
                 HelpWindow helpWindow = new HelpWindow(NMFDialog.this, "NMF Initialization Dialog");
                 if(helpWindow.getWindowContent()){
