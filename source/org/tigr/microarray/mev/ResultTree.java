@@ -464,6 +464,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** Expression Graph Icon
          */
         private Icon expressionGraphIcon = GUIFactory.getIcon("ExpressionGraphResult.gif");
+        /** PWF plot icon
+         */
+        private Icon pwfIcon = GUIFactory.getIcon("PWF_plot.gif");
         /** HCL tree icon
          */
         private Icon hclIcon = GUIFactory.getIcon("HCLResult.gif");
@@ -693,6 +696,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     this.setText("");
                     this.setBorder(new EmptyBorder(3,2,3,0));
                     setIcon(mevIcon);
+                } else if(text.equals("Probability Weighting Function")){
+                    setIcon(pwfIcon);
                 } else if(text.equals("Hierarchical Trees")||text.startsWith("Consensus")||parentText.startsWith("Consensus")){
                     setIcon(hclIcon);
                 } else if(text.equals("SOM Visualization")){
@@ -807,6 +812,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     } else if(parentText.indexOf("Hierarchical") != -1 || text.indexOf("Dendogram") != -1
                     || text.indexOf("HCL Tree") != -1 || text.indexOf("Support Tree") != -1||text.startsWith("Consensus")||parentText.startsWith("Consensus")){
                         setIcon(hclIcon);
+                    } else if(text.equals("Probability Weighting Function")){
+                        setIcon(pwfIcon);
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
                     } else if(text.equals("Expression Graph")){

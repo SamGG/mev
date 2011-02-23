@@ -13,7 +13,6 @@
  */
 package org.tigr.microarray.mev.cluster.gui.impl.nmf;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 
@@ -65,15 +64,10 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 	FloatMatrix[][] W;
 	FloatMatrix[][] H;
 	float[][] costs;
-    protected int[][][] clusters;
+    protected int[][][] clusters = new int[0][][];
     protected FloatMatrix[] means;
     protected FloatMatrix[] variances;
-	private float cophen[];
-    
-    
-    protected String[] auxTitles;
-    protected Object[][] auxData;
-    
+	private float cophen[] = new float[0];
     
     
     protected IData data;
@@ -160,14 +154,11 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
             data.addParam("randomSeed", String.valueOf(randomSeed));
             long start = System.currentTimeMillis();
             data.addParam("startTime", String.valueOf(start));
-            
-            
 
             Cluster[] result_cluster = new Cluster[1+maxrvalue-rvalue];
             for (int factorIndex=0; factorIndex<=(maxrvalue-rvalue); factorIndex++){
                 data.addParam("r-value", String.valueOf(rvalue+factorIndex));
 	            AlgorithmData result = algorithm.execute(data);
-	            
 	            
 	            // getting the results
 	            result_cluster[factorIndex] = result.getCluster("cluster");
@@ -254,71 +245,9 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
     
     public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
         
-        Listener listener = new Listener();
         this.experiment = experiment;
         this.data = framework.getData();    
         return null;
-//        try {
-//            algData.addMatrix("experiment", experiment.getMatrix());
-//            algorithm = framework.getAlgorithmFactory().getAlgorithm("NMF");
-//            algorithm.addAlgorithmListener(listener);
-//
-//            this.progressBar = new Progress(framework.getFrame(), "Running NMF Analysis", listener);
-//            this.progressBar.show();
-//            
-//            long start = System.currentTimeMillis();
-//            AlgorithmData result = algorithm.execute(algData);
-//            long time = System.currentTimeMillis() - start;
-//            
-//            // getting the results
-//            Cluster result_cluster = result.getCluster("cluster");
-//            NodeList nodeList = result_cluster.getNodeList();
-//            //AlgorithmParameters resultMap = result.getParams();
-//            int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
-//                       
-//            this.clusters = new int[k][];
-//            for (int i=0; i<k; i++) {
-//                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
-//            }
-//            this.means = result.getMatrix("clusters_means");
-//            this.variances = result.getMatrix("clusters_variances");
-//            
-//            
-//            AlgorithmParameters params = algData.getParams();
-//            
-//            GeneralInfo info = new GeneralInfo();
-//            info.time = time;
-//            //ADD MORE INFO PARAMETERS HERE
-//            info.alpha = params.getFloat("alpha");
-////            info.correctionMethod = getSigMethod(params.getInt("correction-method"));
-//            info.usePerms = params.getBoolean("usePerms");
-//            info.numPerms = params.getInt("numPerms");
-//            info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
-//            info.hcl = params.getBoolean("hierarchical-tree");
-//            info.hcl_genes = params.getBoolean("calculate-genes");
-//            info.hcl_samples = params.getBoolean("calculate-experiments");
-//            if(info.hcl)
-//                info.hcl_method = params.getInt("method-linkage") ;
-//            
-//            Vector<String> titlesVector = new Vector<String>();
-//            
-//            auxTitles = new String[titlesVector.size()];
-//            for (int i = 0; i < auxTitles.length; i++) {
-//                auxTitles[i] = (String)(titlesVector.get(i));
-//            }
-//            
-//            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
-//            
-//            return createResultTree(result_cluster, info);
-//            
-//        } finally {
-//            if (algorithm != null) {
-//                algorithm.removeAlgorithmListener(listener);
-//            }
-//            if (progressBar != null) {
-//                progressBar.dispose();
-//            }
-//        }
     }
     
     /**
@@ -517,17 +446,9 @@ public class NMFGUI implements IClusterGUI, IScriptGUI {
 	            expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Cluster "+ (i+1), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
 	        }
         }
-//        root.add(centroidNode);
+
         root.add(expressionNode);
-        
-//        NMFCentroidsViewer centroidsViewer = new NMFCentroidsViewer(this.experiment, clusters, geneTimeMeans, geneTimeSDs, rawPValues, adjPValues, fValues, ssGroups, ssError, dfNumValues, dfDenomValues);
-//
-//        centroidsViewer.setMeans(this.means.A);
-//        centroidsViewer.setVariances(this.variances.A);
-//        
-//        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
-//        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
-    }
+     }
     
     
     /**
