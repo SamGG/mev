@@ -278,15 +278,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public void helpWindow(String st) {
-		HelpWindow hw = new HelpWindow(mainFrame, st);
-		if (hw.getWindowContent()) {
-			hw.setSize(750, 650);
-			hw.setLocation();
-			hw.setVisible(true);
-		} else {
-			hw.setVisible(false);
-			hw.dispose();
-		}
+		HelpWindow.launchBrowser(mainFrame, st);
 	}
 
 	public void menuItem(JMenu jItem, final String st) {
@@ -743,15 +735,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public void onInfo() {
-		HelpWindow hw = new HelpWindow(SuperExpressionFileLoader.this.getFrame(), "File Loader");
-		if (hw.getWindowContent()) {
-			hw.setSize(450, 650);
-			hw.setLocation();
-			hw.setVisible(true);
-		} else {
-			hw.setVisible(false);
-			hw.dispose();
-		}
+		HelpWindow.launchBrowser(SuperExpressionFileLoader.this.getFrame(), "File Loader");
 	}
 
 	public void onCancel() {

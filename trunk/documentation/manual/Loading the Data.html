@@ -1,0 +1,75 @@
+<html>
+	<head>
+	
+		<title> Loading the Data and Adjusting the Expression Data</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+		<div class="navigation-bar">
+			<a class="prev" href="StartingMEV.html">Previous: Starting MultiExperiment Viewer</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-mev-data.html">Loading MEV and other TIGR data</a>
+		</div>
+			<a name="LoadingExpress"><h3>Loading Expression Data</h3></a>
+			<p>MeV can interpret files of several types, including the MultiExperiment Viewer format (.mev), the TIGR ArrayViewer format (.tav), the TDMS file format (Tab Delimited, Multiple Sample format), the Affymetrix file format, and GenePix file format (.gpr).  See section 4 for details regarding the different file formats.</p>
+			<p>In addition to being formatted correctly, the input data should already be normalized.  Using normalized data as input will result in more statistically valid output. <a href="http://www.jcvi.org/cms/research/software/">MIDAS</a>, a member of the <a href="http://www.tigr.org/software/tm4/">TM4 software suite</a>, is one program that can do this normalization.</p>    
+			
+			
+			<a href="Loading-mev-data.html">MeV and other TIGR Files</a> <br/>
+			<a href="Loading-affy-data.html">Affymetrix Files</a> <br/>
+			<a href="Loading-geo-data.html">Gene Expression Omnibus (GEO) Files</a> <br/>
+			<a href="Loading-magetab-data.html">MAGE-TAB Files</a> <br/>
+			<a href="Loading-genepix-data.html">Genepix Files</a> <br/>
+			<a href="Loading-agilent-data.html">Agilent Files</a> <br/>
+			
+		<a name="TAB"><h4>Loading Tab Delimited, Multiple Sample(.txt) Files (TDMS Format)</h4></a>
+			<!-- Screenshots should be placed just above the text they should appear next to. 
+				So this screenshot for section 4.3.1 is one line above the paragraph for section 4.3. -->
+			<div class="screenshots leftsidecorrection">
+				<a href="4.3.1.jpg">
+					<img src="4.3.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Loading Tab Delimited, Multiple Sample Files (TDMS Format)</span>
+			</div>
+			<p>The Expression File Loader should be the screen that automatically comes up once you select <span class="widget2">Load Data</span> from the <span class="widget2">File</span> menu. If not, click <span class="widget2">Select File Loader-->Tab Delimited, Multiple Sample Files (TDMS) (*.*)</span> option from the drop-down menu to load TDMS format files.  Use the browse button in the <span class="widget2">File</span> panel to select the desired file.  The file will be displayed in a tabular format in the file loader preview table. Select either the <span class="widget2">Two-color Array OR Other</span> or the <span class="widget2">Single-color Array</span> radio button to indicate the data type of the expression data. Please read <a href="#annotation-feature">Using the Annotation Feature</a>, for information on the same. Click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file. That is, click the upper-leftmost cell that contains measuered data of the genes. MeV will color-code the cells of the display table to indicate which cells it will load as expression data (white and gray stripes), gene/row annotation (purple), sample annotation (blue) or sample annotation labels (yellow). Gene annotation labels will be displayed in the column headers. Data in cells with white backgrounds will not be loaded. MeV allows you to have as many columns as you want of labels and annotation, but you must tell it where the labels end and the expression data begins. Check that the correct fields are listed before clicking <span class="widget2">Load</span>.</p>   
+		<h4><a name="annotation-feature">Using the Annotation Feature</a></h4>
+		<div class="screenshots">
+				<a href="Step 1.jpg">
+					<img src="Step 1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Step 1</span>
+				</div>
+			<p>One of the features of MeV release 4.1 is enhanced support for gene annotations. MeV provides users an alternative to fetch additional gene annotation,  from the web based resource providing annotation based on The Gene Indices (TGI) for commonly available microarray resources, including widely used clone sets and Affymetrix GeneChip Arrays namely; RESOURCERER. Please refer to the developer’s manual for further information on the Annotation model.  This feature is currently provided only for Affymetrix data.</p>
+			<p>Steps for using this feature</p><br>1. Load the data file/files of your choice. If you are using the Tab delimited file loader (TDMS), check the <span class="widget2">“Affymetrix Array”</span> radio button. The TDMS loader considers the array platform to be <span class="widget2">“Spotted DNA/cDNA Array OR other”</span> by default.</br></p>
+			<p>Select the organism your expression data comes from using the Choose Organism drop-down menu. The list of arrays in the Choose Array drop-down menu will be updated with the available array types. Choose the one that your data was collected from. The button to the right of the Choose Array drop-down menu will update, and will ready “Download” if the file has not already been downloaded. Click this button and MeV will attempt to download the file from the internet. If the file has been previously downloaded, this button will read “Select” instead of Download, indicating that internet access is not required to use this annotation. Click “Select” to choose this annotation type.</p>
+			<p>If internet access is not available and you have an annotation file of the appropriate format, you can still select an annotation file from your filesystem. Click the “Browse” button, located beneath the “Download” button, and select the file. Annotation file formats that are accepted include the Resourcerer file format and the Affymetrix .csv file format.</p>
+			<p>Follow any further instructions present in the file loader panel before clicking the <span class="widget2">Load</span> button. In the example shown here, you will click on the upper leftmost <span class="widget1">expression value</span> in the <span class="widget2">Expression Table</span> panel before clicking the <span class="widget2">Load</span> button.</p>
+		<h4><a name="IVLD">Initial View of the Loaded Data, Main Expression Image</a></h4>
+			<div class="screenshots">
+				<a href="4.16.1.jpg">
+					<img src="4.16.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Main View in MeV.  (Borders drawn on image.)</span>
+				</div>
+			<p>For each set of <span class="widget1">expression value</span> loaded, a column is added to the main display (4.16.1).  This display is an <em>Expression Image viewer</em>, in which each column represents a single sample and each row represents a gene. The names of the samples are displayed vertically above each column, and any annotation field of interest from the input files can be displayed to the right of each row.   MeV expects that each sample loaded will have the same number of elements, in the same order, and that each gene (spot) is aligned with that element in every other sample loaded. For example, using that rule, all input files will have data for gene x in row y.  Clicking on a spot displays a dialog with detailed information about that spot.  For more detail regarding the <em>Expression Images</em> viewer, see section 7.2.</p>
+		<a name="RNT"><h4>Result Navigation Tree</h4></a>
+			<p>The left side of the main interface is a navigation tree. 		<div class="screenshots">
+				<a href="4.18.1.jpg">
+					<img src="4.18.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">The History Log</span>
+				</div>At any time, clicking on the <em>Main View</em> node will return to the main display. Output from any MeV module will be added as a new subtree under the <em>Analysis</em> node.  In general, clicking on a node in the tree will navigate to the associated result or data view and that view will be displayed in the right panel.  The initial tree will also include a Cluster Manager node to manage clusters stored from analysis results.  The Script Manager manages activities related to analysis script creation, loading, modification, and execution.  The Cluster Manager and the Script Manager will be covered in detail in is sections 7.2 and 10 respectively.</p>
+		<a name="HNL"><h4>The History Node and Log</h4></a>
+			<p>The History Node contains a log of most activities.  For each log entry a date and time is recorded.  Major events such as file loading, analysis loading, script loading, algorithm execution, and cluster storage events are logged to the History Log.  If the analysis is stored to a file, then the History is retained and restored so that new events can be logged.  The history log can be stored to a text file by right clicking in the viewer and selecting the Save <em>History</em> to <span class="widget2">File</span> menu option.</p>
+	<div class="navigation-bar">
+		<a href="StartingMEV.html">Previous: Starting MultiExperiment Viewer</a>| 
+		<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a class="next" href="Loading-mev-data.html">Loading MEV and other TIGR data</a>
+	</div>
+	</body>
+	</html>

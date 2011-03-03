@@ -165,18 +165,7 @@ private class Listener extends DialogListener implements ItemListener {
 			result = JOptionPane.CANCEL_OPTION;
 			return;
 		} else if (command.equals("info-command")) {
-			HelpWindow hw = new HelpWindow(USCConfirmDelta.this, "USC Confirm Dialog");
-			result = JOptionPane.CANCEL_OPTION;
-			if(hw.getWindowContent()){
-				hw.setSize(450,600);
-				hw.setLocation();
-				hw.show();
-				return;
-			} else {
-				hw.setVisible(false);
-				hw.dispose();
-				return;
-			}
+			HelpWindow.launchBrowser(USCConfirmDelta.this, "USC Confirm Dialog");
 		}
 		//dispose();
 	}//end actionPerformed()

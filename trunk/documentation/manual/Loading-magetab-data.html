@@ -1,0 +1,66 @@
+<html>
+	<head>
+	
+		<title> Loading the Data and Adjusting the Expression Data</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading-affy-data.html">Prev: Loading Affymetrix Data</a> |
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-genepix-data.html">Next: Loading Genepix Data</a>
+		</div>
+		<a name="MAGE"><h4>Loading MAGE-TAB formatted data files</h4></a>
+			<p>The MeV MAGE-TAB file loader allows a user to select and load expression data from MAGE-TAB (version 1.0) formatted files.  The MAGE-TAB specification can be found at:
+			<p>The MeV MAGE-TAB file loader can be accessed by selecting <span class="widget2">‘File > Load Data’</span> from the file menu, and then <span class="widget2">‘Select Loader’</span> from the loader menu.  The panel itself is different from other MeV file loaders in that it must load at least 3 files (defined in the MAGE-TAB spec.).  
+			There are 4 regions on the panel: 1) the files section, 2) the annotation section, 3) the channel data section, and 4) the data section.</p>
+			<p>In the files section, the individual data entry fields are initially blank.  Once the user browses to and identifies the location of one of the required files (IDF, SDRF or data matrix files), MeV will check for the existence of the others and report back with a file name or a message indicating that one of the file types was not found.  The user can then browse to find each file individually.  At this point MeV will only search for the file currently being selected.</p>
+			<div class="screenshots">
+					<a href="The MeV MAGE-TAB file loader.jpg">
+						<img src="The MeV MAGE-TAB file loader.jpg">
+				</a>
+				<span class="caption">MeV MAGE-TAB file loader</span>
+				<br/>
+				</div>
+			<p>The annotation section allows the user to either select gene annotation from a list of arrays that exist on the current system, or can be downloaded from the internet.  (Network access is required for the latter.)</p>
+			<p>The channels section will be populated once a user selects a data matrix file.  In fact the user should not set any values until selecting a data matrix because they will be changed once the file is selected.  After the file is selected and the panel is updated, the user can select appropriate values if they have not already been selected.</p>
+			<p>The 1 channel / 2 channel radio buttons indicate whether the data is derived from 1- or 2- channel hybridizations.  Depending upon which radio button is selected, MeV will display either Signal, Detection and p-Value combo boxes, or Intensity1, Intensity2 and Log Ratio/Ratio combo boxes.  The Log Ratio/Ratio combobox may be used for either Log(ratio) or ratio data.  Each drop-down list includes all of the data type items from the second row of the MAGE-TAB data matrix file plus one additional entry, “none”, to allow the user to select no value for the combobox.  
+			The user must know and understand the data well enough to make appropriate selections for these lists.  The data section merely displays the data from the selected data matrix file.  No interaction with this section is necessary.  The ‘Load’ button is inactive until the user provides a data matrix file.  The Load button will then be activated.</p>
+			<p>Once a data matrix file has been selected and displayed, the user can select ‘Load’ to load and parse the data matrix file.  MeV will display the data matrix as a heat map with row labels derived from the first column of the data matrix file.  Once the data have been presented as a heat map, all other MeV functionalities will be available for use.</p>
+			<p>The MAGE-TAB format defines categorical items that MeV can use to group data.  This data is found in the ExpermentalFactor tags of the MAGE-TAB IDF and the FactorValue columns in the SDRF.  MeV loads this data into a ClusterAnnotation viewer which will allow the user to view and edit this information.  
+			The user can there specify which fields should be used to group the data.  This is useful for analyses such as t-test, ANOVA, etc.</p>
+			<div class="screenshots">
+					<a href="expressionimage.jpg">
+						<img src="expressionimage.jpg">
+				</a>
+				<span class="caption">Expression Image</span>
+				<br/>
+				</div>	
+			<p>Where can you view all the data in the SDRF file?</p>
+			<p>The Cluster Manager ->Sample Clusters is where you will be able to view the data that you loaded from the SDRF file.</p>
+			<p>The contents of the SDRF file (Characteristics and FactorsValues) are displayed in a tabular view in Cluster Manager.</p>
+			<p>Where can I view and edit the contents of IDF file?</p>
+			<p>The IDF Editor lets you view and edit your IDF files. The first column (IDF fields) is not editable. If you want to add any missing fields to your data, click on the “Add Missing IDF Fields” option. This will automatically insert the missing rows.  Changes to the IDF or SDRF data are retained in memory until you exit MeV.  None of this data is saved in the current version of MeV.</p>
+			<div class="screenshots">
+					<a href="clustermanger.jpg">
+						<img src="clustermanger.jpg">
+				</a>
+				<span class="caption">Cluster Manager</span>
+				<br/>
+				</div>
+			<p>The current version of MeV will not save data in MAGE-TAB format; however, this feature is planned for a future release of MeV.</p>
+			<p>Example files can be found in the following links:<br> 
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">MAGE-TAB files supplied along with MeV</a>,<br> 
+			e.g.<br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">E-ATMX-12.idf.txt</a><br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12.sdrf.txt">E-ATMX-12.sdrf.txt</a><br>
+			<a href="http://mev-tm4.svn.sourceforge.net/viewvc/mev-tm4/trunk/data/magetab/E-ATMX-12-processed-data-1343527784.txt">E-ATMX-12-processed-data-1343527784.txt</a></br></p>
+			<p>NOTE: Although we have tested a variety of MAGE-TAB files with MeV, there are some MAGE-TAB files that may not load into MeV.  This may be due to flexibility in the MAGE-TAB v.1.0 specification.  Also note that not all the files available on the ArrayExpress web site that are in MAGE-TAB format can be loaded into MeV because the parser we currently use supports the MAGE-TAB v.1.0 specification.  The ArrayExpress web site includes files that conform to the as yet unpublished MAGE-TAB v.1.1 format.</p>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading-affy-data.html">Prev: Loading Affymetrix Data</a> |
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-genepix-data.html">Next: Loading Genepix Data</a>
+		</div>
+	</body>
+</html>

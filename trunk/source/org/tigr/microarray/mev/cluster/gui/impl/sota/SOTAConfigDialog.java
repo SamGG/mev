@@ -168,15 +168,7 @@ public class SOTAConfigDialog extends AlgorithmDialog {
                 minTextField.setText(String.valueOf(minPixDist));
                 maxTextField.setText(String.valueOf(maxPixDist));                
             } else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(SOTAConfigDialog.this, "SOTA Tree Properties");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 500);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(SOTAConfigDialog.this, "SOTA Tree Properties");
             }
             
         }

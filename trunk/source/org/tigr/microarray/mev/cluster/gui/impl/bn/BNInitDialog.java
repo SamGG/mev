@@ -2443,17 +2443,7 @@ public class BNInitDialog extends AlgorithmDialog {
 				result = JOptionPane.CANCEL_OPTION;
 				return;
 			} else if (command.equals("info-command")){
-				HelpWindow hw = new HelpWindow(BNInitDialog.this, "BN Initialization Dialog");
-				//result = JOptionPane.CANCEL_OPTION;
-				if(hw.getWindowContent()){
-					hw.setSize(600,600);
-					hw.setLocation();
-					hw.show();
-				}
-				else {
-					hw.setVisible(false);
-					hw.dispose();
-				}
+				HelpWindow.launchBrowser(BNInitDialog.this, "BN Initialization Dialog");
 				// RM related handlers
 			} else if (command.equals("organism-selected-command")) {
 				configPanel.selectSpecies();

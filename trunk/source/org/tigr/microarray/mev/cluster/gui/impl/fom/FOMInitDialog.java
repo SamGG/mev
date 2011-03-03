@@ -546,15 +546,7 @@ public class FOMInitDialog extends AlgorithmDialog {
             } else if (command.equals("reset-command")){
                 resetControls();
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(FOMInitDialog.this, "FOM Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(FOMInitDialog.this, "FOM Initialization Dialog");
             }
         }
         public void windowClosing(java.awt.event.WindowEvent we){

@@ -754,17 +754,8 @@ public class EASEAdvancedFeatures extends AlgorithmDialog {
 				result = JOptionPane.CANCEL_OPTION;
 				return;
 			} else if (command.equals("info-command")) {
-				HelpWindow hw = new HelpWindow(EASEAdvancedFeatures.this,
+				HelpWindow.launchBrowser(EASEAdvancedFeatures.this,
 						"EASE AdvancedParams Dialog");
-				result = JOptionPane.CANCEL_OPTION;
-				if (hw.getWindowContent()) {
-					hw.setSize(600, 600);
-					hw.setLocation();
-					hw.show();
-				} else {
-					hw.setVisible(false);
-					hw.dispose();
-				}
 			}
 		}
 

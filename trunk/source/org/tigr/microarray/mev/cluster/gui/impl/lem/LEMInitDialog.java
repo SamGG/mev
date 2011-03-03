@@ -280,17 +280,7 @@ public class LEMInitDialog extends AlgorithmDialog {
             } else if (command.equals("multiple-chr-command")) {
             	fireMultipleChrState();
             } else if (command.equals("info-command")) {                        
-                HelpWindow hw = new HelpWindow(LEMInitDialog.this, "LEM Initialization Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(600,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(LEMInitDialog.this, "LEM Initialization Dialog");
             }
         }
         

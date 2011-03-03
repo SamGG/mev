@@ -524,17 +524,7 @@ public class LEMColorRangeSelector extends AlgorithmDialog {
 			} else if (command.equals("preview-command")) {
 				applySettings();
 			} else if (command.equals("info-command")) {
-                HelpWindow hw = new HelpWindow(LEMColorRangeSelector.this, "LEM Bin Color and Limits Selection Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,500);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }				
+				HelpWindow.launchBrowser(LEMColorRangeSelector.this, "LEM Bin Color and Limits Selection Dialog");
 			}
 		}
 

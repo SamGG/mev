@@ -105,16 +105,7 @@ public class NonparModePanel extends JPanel implements IWizardParameterPanel {
 
         infoButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent ae) {
-        		   HelpWindow hw = new HelpWindow(parent, "NonpaR Mode Selection");
-                   if(hw.getWindowContent()){
-                       hw.setSize(600,600);
-                       hw.setLocation();
-                       hw.setVisible(true);
-                   }
-                   else {
-                       hw.setVisible(false);
-                       hw.dispose();
-                   }
+        		HelpWindow.launchBrowser(parent, "NonpaR Mode Selection");
         	}
         });
         

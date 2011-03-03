@@ -163,19 +163,7 @@ public class NewickFileOutputDialog extends AlgorithmDialog {
                 return;
             }            
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(NewickFileOutputDialog.this, "Newick File Output Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(NewickFileOutputDialog.this, "Newick File Output Dialog");
             }
             else if (command.equals("browse-command")) {
                 JFileChooser chooser = new JFileChooser(TMEV.getFile("data"));

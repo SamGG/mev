@@ -672,15 +672,7 @@ public class EventListener extends WindowAdapter implements ActionListener, KeyL
         } else if (command.equals("reset-command")) {
             resetControls();
         } else if (command.equals("info-command")) {
-            HelpWindow hw = new HelpWindow(SetRatioScaleDialog.this, "Color Scale Dialog");
-            if(hw.getWindowContent()){
-                hw.setSize(575,550);
-                hw.setLocation();
-                hw.show();
-            } else {
-                hw.setVisible(false);
-                hw.dispose();
-            }
+        	HelpWindow.launchBrowser(SetRatioScaleDialog.this, "Color Scale Dialog");
         } else if (command.equals("update-command")) {
         	updateLimits();        
         } else if (command.equals("change-gradient-command")) {

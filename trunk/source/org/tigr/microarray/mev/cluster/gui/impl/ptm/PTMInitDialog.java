@@ -1481,16 +1481,7 @@ public class PTMInitDialog extends AlgorithmDialog {
                 dispose();                
             }            
             else if (command.equals("info-command")){                
-                HelpWindow hw = new HelpWindow(PTMInitDialog.this, "PTM Initialization Dialog");                
-                if(hw.getWindowContent()){                    
-                    hw.setSize(450,650);                    
-                    hw.setLocation();                    
-                    hw.show();                    
-                }                
-                else {                    
-                    hw.setVisible(false);                    
-                    hw.dispose();                    
-                }                
+            	HelpWindow.launchBrowser(PTMInitDialog.this, "PTM Initialization Dialog");              
             }            
             else if (command.equals("save-template-command")){                
                                 

@@ -2053,6 +2053,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<fileset dir="${home.dir}/user_docs/">
 				<include name="*.pdf"/>
 			</fileset>
+			<fileset dir="${home.dir}/documentation/">
+				<include name="manual"/>
+				<include name="manual/*"/>
+			</fileset>
 		</copy>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/lib">
@@ -2295,6 +2299,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 				<fileset dir="${home.dir}/user_docs/">
 					<include name="*.pdf"/>
 				</fileset>
+				<fileset dir="${home.dir}/documentation/">
+					<include name="manual"/>
+					<include name="manual/*"/>
+				</fileset>
 			</copy>
 			<!-- Copy lib/*.jar files to MeV.app/Contents/Respurces/Java -->
 			<copy todir="${package.dir}/${mev_version.dir}/MeV.app/Contents/Resources/Java/">
@@ -2405,6 +2413,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
 				<include name="*.pdf"/>
+			</fileset>
+			<fileset dir="${home.dir}/documentation/">
+				<include name="manual"/>
+				<include name="manual/*"/>
 			</fileset>
 		</copy>
 		
@@ -2562,6 +2574,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<fileset dir="${home.dir}/user_docs/">
 				<include name="*.pdf"/>
 			</fileset>
+			<fileset dir="${home.dir}/documentation/">
+				<include name="manual"/>
+				<include name="manual/*"/>
+			</fileset>
 		</copy>
 
 		<copy todir="${package.dir}/${mev_version.dir}/lib">
@@ -2680,6 +2696,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
 				<include name="*.pdf"/>
+			</fileset>
+			<fileset dir="${home.dir}/documentation/">
+				<include name="manual"/>
+				<include name="manual/*"/>
 			</fileset>
 		</copy>
 		

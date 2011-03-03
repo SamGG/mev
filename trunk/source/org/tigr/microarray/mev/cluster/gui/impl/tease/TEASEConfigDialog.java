@@ -275,15 +275,7 @@ public class TEASEConfigDialog extends AlgorithmDialog {
                 viewer.revalidateViewer();
                 viewer.repaint();
             } else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(TEASEConfigDialog.this, "HCL Tree Properties");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 500);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(TEASEConfigDialog.this, "HCL Tree Properties");
             }
             
         }

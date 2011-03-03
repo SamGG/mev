@@ -118,17 +118,8 @@ public class ListOrderDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 return;
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(ListOrderDialog.this, "List Sorter Dialog");
+            	HelpWindow.launchBrowser(ListOrderDialog.this, "List Sorter Dialog");
                 result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
             } else if (command.equals("shift-up-command")) {
                 int index = list.getSelectedIndex();
                 if(index == 0)

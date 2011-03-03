@@ -262,16 +262,7 @@ public class RelNetInitDialog extends AlgorithmDialog {
             }else if (command.equals("reset-command")){
                 resetControls();
             }else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(RelNetInitDialog.this, "RN Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450,500);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
-                
+            	HelpWindow.launchBrowser(RelNetInitDialog.this, "RN Initialization Dialog");
             }
         }
         

@@ -955,15 +955,7 @@ public class COASelectionAreaDialog extends AlgorithmDialog {
                 textField6.setText(String.valueOf(sizeZ));
                  */
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(COASelectionAreaDialog.this, "COA Selection Area Configuration");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(COASelectionAreaDialog.this, "COA Selection Area Configuration");
             }
         }
         

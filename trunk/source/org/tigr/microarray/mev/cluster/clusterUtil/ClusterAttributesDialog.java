@@ -243,19 +243,7 @@ public class ClusterAttributesDialog extends AlgorithmDialog {
 				clusterLabelField.setCaretPosition(0);
 
 			} else if(command == "info-command"){
-				HelpWindow hw = new HelpWindow(ClusterAttributesDialog.this, "Cluster Save Dialog");
-				result = JOptionPane.CANCEL_OPTION;
-				if(hw.getWindowContent()){
-					hw.setSize(450,600);
-					hw.setLocation();
-					hw.show();
-					return;
-				}
-				else {
-					hw.setVisible(false);
-					hw.dispose();
-					return;
-				}
+				HelpWindow.launchBrowser(ClusterAttributesDialog.this, "Cluster Save Dialog");
 			}
 
 		}

@@ -305,15 +305,7 @@ public class HCLConfigDialog extends AlgorithmDialog {
                 viewer.revalidateViewer();
                 viewer.repaint();
             } else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(HCLConfigDialog.this, "HCL Tree Properties");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 500);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(HCLConfigDialog.this, "HCL Tree Properties");
             }
             
         }

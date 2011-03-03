@@ -400,18 +400,7 @@ public class KMCSupportDialog extends AlgorithmDialog {
                 return;
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(KMCSupportDialog.this, "KMS Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(KMCSupportDialog.this, "KMS Initialization Dialog");
             }
             dispose();
         }

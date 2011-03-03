@@ -94,17 +94,7 @@ public class GDMClusterBrowserDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 return;
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GDMClusterBrowserDialog.this, "GDM Cluster Browser Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(GDMClusterBrowserDialog.this, "GDM Cluster Browser Dialog");
             }
         }
         

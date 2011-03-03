@@ -189,15 +189,7 @@ public class GenomeAnnoDialog extends AlgorithmDialog {
             } else if (command.equals("cancel-command")) {
                 dispose();
             }else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(GenomeAnnoDialog.this, "Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450,500);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(GenomeAnnoDialog.this, "Genome Annotation Dialog");
             }
         }
         

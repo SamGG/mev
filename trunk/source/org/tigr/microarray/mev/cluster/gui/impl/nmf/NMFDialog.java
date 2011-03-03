@@ -460,15 +460,7 @@ public class NMFDialog extends AlgorithmDialog {
                 dispose();
             } else if (command.equals("reset-command")){
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(NMFDialog.this, "NMF Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 350);
-                    helpWindow.setLocation();
-                    helpWindow.setVisible(true);
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(NMFDialog.this, "NMF Initialization Dialog");
             }
         }
         public void itemStateChanged(ItemEvent e) {

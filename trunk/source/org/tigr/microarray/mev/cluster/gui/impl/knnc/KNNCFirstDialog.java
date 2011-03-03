@@ -483,20 +483,7 @@ public class KNNCFirstDialog extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(KNNCFirstDialog.this, "KNNC Parameter Selections");
-                okPressed = false;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
-                
+            	HelpWindow.launchBrowser(KNNCFirstDialog.this, "KNNC Parameter Selections");
             }
             
         }

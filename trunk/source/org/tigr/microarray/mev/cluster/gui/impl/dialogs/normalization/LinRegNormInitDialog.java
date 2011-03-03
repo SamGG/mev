@@ -139,16 +139,7 @@ public class LinRegNormInitDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();
             } else if(command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(LinRegNormInitDialog.this, "Linear Regression Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,550);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(LinRegNormInitDialog.this, "Linear Regression Initialization Dialog");
             }
             
         }

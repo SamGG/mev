@@ -1348,19 +1348,7 @@ public class LIMMAInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(LIMMAInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
-                okPressed = false;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.setVisible(true);
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(LIMMAInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
             }
         }
     }

@@ -129,19 +129,7 @@ public class SetLowerCutoffsDialog extends AlgorithmDialog {
                 cy3TextField.setCaretPosition(0);
                 cy3TextField.selectAll();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(SetLowerCutoffsDialog.this, "Set Lower Cutoffs");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SetLowerCutoffsDialog.this, "Set Lower Cutoffs");
             } else if (command.equals("enable-check-box-command")) {
                 boolean enable = enableCheckBox.isSelected();
                 cy3Label.setEnabled(enable);
