@@ -1561,16 +1561,7 @@ public class LiteratureMiningDialog extends AlgorithmDialog {
 				result = JOptionPane.CANCEL_OPTION;
 				return;
 			} else if (command.equals("info-command")){
-				HelpWindow hw = new HelpWindow(LiteratureMiningDialog.this, "LM Initialization Dialog");
-				if(hw.getWindowContent()){
-					hw.setSize(600,600);
-					hw.setLocation();
-					hw.show();
-				}
-				else {
-					hw.setVisible(false);
-					hw.dispose();
-				}
+				HelpWindow.launchBrowser(LiteratureMiningDialog.this, "LM Initialization Dialog");
 			//RM related handlers
 			} else if (command.equals("organism-selected-command")) {
 				configPanel.selectSpecies();

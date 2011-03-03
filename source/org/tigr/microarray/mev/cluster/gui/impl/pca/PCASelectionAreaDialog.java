@@ -949,15 +949,7 @@ public class PCASelectionAreaDialog extends AlgorithmDialog {
                 textField6.setText(String.valueOf(sizeZ));
                  */
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(PCASelectionAreaDialog.this, "PCA Selection Area Configuration");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(PCASelectionAreaDialog.this, "PCA Selection Area Configuration");
             }
         }
         

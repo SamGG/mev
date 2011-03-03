@@ -98,16 +98,7 @@ public class RatioStatsNormInitDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();
             } else if(command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(RatioStatsNormInitDialog.this, "Ratio Statistics Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,420);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(RatioStatsNormInitDialog.this, "Ratio Statistics Initialization Dialog");
             } 
         }        
     }

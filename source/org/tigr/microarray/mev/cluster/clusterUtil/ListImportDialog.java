@@ -407,23 +407,11 @@ public class ListImportDialog extends AlgorithmDialog {
                 return;
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(ListImportDialog.this, "List Import Dialog");
+            	HelpWindow.launchBrowser(ListImportDialog.this, "List Import Dialog");
                 if (importType==1)
-                	hw = new HelpWindow(ListImportDialog.this, "Auto Import Dialog");
+                	HelpWindow.launchBrowser(ListImportDialog.this, "Auto Import Dialog");
                 if (importType==2)
-                	hw = new HelpWindow(ListImportDialog.this, "Binned Import Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }            
+                	HelpWindow.launchBrowser(ListImportDialog.this, "Binned Import Dialog");
             }
             else if (command.equals("select-command")){  
             	if (theList.getSelectedIndexes()==null){

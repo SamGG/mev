@@ -1,0 +1,94 @@
+<html>
+	<head>
+		<title>Scripting</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+		<div class="navigation-bar">
+			<a  class="prev" href="script-diversity-filter.html">Previous:  Script Variance Filter</a> | 
+			<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a  class="next" href="compare.html">Next: Comparative Genomic Hybridization Viewer</a>
+		</div>
+
+
+	<h3>Scripting: Centroid Entropy/Variance Ranking Cluster Selection</h3>
+			<a href="script.html">Back to Scripting instructions</a> <br/>
+
+		<p>The other option for cluster selection is <span class="widget2">Centroid Entropy/Variance Ranking Cluster Selection</span>.  This method places either a variance or an entropy value on the cluster’s <span class="widget1">centroid</span> (mean expression pattern).  While the previous method selects tightly constructed clusters, this method focuses on finding clusters having variable centroids.  The selected clusters are clusters that have a lot of variability on average over the expression measurements.  The clusters are ranked on decreasing centroid entropy or variance, and clusters are selected with the highest centroid variability.  The selected clusters must also pass a minimum cluster population.  A Cluster Selection Information Viewer is created to describe the selection process.  This viewer is similar to the viewer pictured for the Diversity Ranking Cluster Selection algorithm.  Two options are available to describe centroid behavior, variance and entropy:</p>
+							<div class="screenshots leftsidecorrection">
+					<a href="scr7.jpg">
+					<img src="scr7.jpg">
+				</a>
+				<br/>
+				<span class="caption">Centroid Entropy/Variance Ranking Cluster Selection Dialog</span>
+				</div>
+					<p>(1)<span class="widget1"> Centroid Variance</span></p>
+						<p><img src="scr19.jpg">is centroid variance where  is the centroid mean, is the ith centroid value of m values.
+					<p>(2)<span class="widget1"> Centroid Entropy</span></p>
+						<p>Entropy in this case describes the dispersion of expression values within the expression limits of the centroid.  Centroid values are binned within 10 bins evenly dividing the expression value range for the centroid.  P(x) is the fraction of centroid points falling in bin x.</p>
+						<p><img src="scr20.jpg"></p>
+						
+		
+		<p>The other option for cluster selection is <span class="widget2">Centroid Entropy/Variance Ranking Cluster Selection</span>.  This method places either a variance or an entropy value on the cluster’s <span class="widget1">centroid</span> (mean expression pattern).  While the previous method selects tightly constructed clusters, this method focuses on finding clusters having variable centroids.  The selected clusters are clusters that have a lot of variability on average over the expression measurements.  The clusters are ranked on decreasing centroid entropy or variance, and clusters are selected with the highest centroid variability.  The selected clusters must also pass a minimum cluster population.  A Cluster Selection Information Viewer is created to describe the selection process.  This viewer is similar to the viewer pictured for the Diversity Ranking Cluster Selection algorithm.  Two options are available to describe centroid behavior, variance and entropy:</p>
+							<div class="screenshots leftsidecorrection">
+					<a href="scr7.jpg">
+					<img src="scr7.jpg">
+				</a>
+				<br/>
+				
+				
+				<span class="caption">Centroid Entropy/Variance Ranking Cluster Selection Dialog</span>
+				</div>
+					<p>(1)<span class="widget1"> Centroid Variance</span></p>
+						<p><img src="scr19.jpg">is centroid variance where  is the centroid mean, is the ith centroid value of m values.
+					<p>(2)<span class="widget1"> Centroid Entropy</span></p>
+						<p>Entropy in this case describes the dispersion of expression values within the expression limits of the centroid.  Centroid values are binned within 10 bins evenly dividing the expression value range for the centroid.  P(x) is the fraction of centroid points falling in bin x.</p>
+						<p><img src="scr20.jpg"></p>
+						
+			<div class="instructions">
+				
+				<a name="centroidvariance"><h4>Using Centroid Variance or Entropy Cluster Selection</h4></a>
+				<p>
+				</p>
+				The cluster centroid is the mean expression vector of a cluster. Often the centroid is used to characterize changes in gene expression for a set of elements in a cluster. Centroid Entropy or Variance Ranking cluster selection is an algorithm used to rank a set of clusters based on Centroid variability and then select candidate clusters meeting supplied criteria. This process will tend to find clusters that meet a minimum size and have relatively higher centroid variability over the expression measurements. The selected clusters will tend to have centroids that vary greatly over the measurements. Be certain to understand how using Centroid Variance versus using Centroid Entropy will affect the outcome.
+				<p>
+				</p>
+				<em>Parameters</em>
+				<p>
+				</p>
+				<em>Desired Number of Clusters</em>
+				<p>
+				</p>
+				This parameter indicates the number of clusters that should be selected from the input set. If during execution it turns out that the number of input clusters is smaller than the number of clusters desired, then all input clusters are returned as the result.
+				<p>
+				</p>
+				<em>Minimum Cluster Population (# of elements)</em>
+				<p>
+				</p>
+				The minimum cluster size describes the minimum number of genes or experiments that should be in the cluster. In some cases clusters may have low variability but are only composed of a couple of elements.
+				<p>
+				</p>
+				<em>Rank Clusters on Centroid Variance</em>
+				<p>
+				</p>
+				This measure takes the sum of squared errors for the centroid vector where the elements are the centroid values and each is compared to the centroid's mean value.
+				<p>
+				</p>
+				<em>Rank Clusters on Centroid Entropy</em>
+				<p>
+				</p>
+				Centroid entropy is a measure of the dispersion of centroid values over the observed range of centroid values. In this case, the high entropy centroids would have values that are widely dispersed between the extremes of the centroid. Note that the range of centroid values could be rather narrow for a centroid of high entropy where the values are evenly dispersed. This measure therefore may select centroids that don't have large expression variability in terms of range of values and hence appear rather flat across measurements.
+				<p>
+			</div>				
+
+		<div class="navigation-bar">
+			<a  class="prev" href="script-diversity-filter.html">Previous:  Script Variance Filter</a> | 
+			<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a  class="next" href="compare.html">Next: Comparative Genomic Hybridization Viewer</a>
+		</div>
+
+</body>
+</html>		
+			
+			

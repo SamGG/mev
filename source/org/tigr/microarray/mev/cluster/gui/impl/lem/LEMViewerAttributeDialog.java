@@ -540,16 +540,7 @@ public class LEMViewerAttributeDialog extends AlgorithmDialog {
 				previewSettings();
 				dispose();
 			} else if(command.equals("info-command")) {
-                HelpWindow hw = new HelpWindow(LEMViewerAttributeDialog.this, "LEM Customization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+				HelpWindow.launchBrowser(LEMViewerAttributeDialog.this, "LEM Customization Dialog");
 			}
 		}
 		

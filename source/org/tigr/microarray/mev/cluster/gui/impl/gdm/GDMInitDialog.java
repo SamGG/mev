@@ -220,16 +220,7 @@ public class GDMInitDialog extends AlgorithmDialog {
                     GDMInitDialog.this.genRadio.setSelected(true);                    
                 GDMInitDialog.this.textField.setText("1");
             } else if (command.equals("info-command")) {
-                HelpWindow hw = new HelpWindow(GDMInitDialog.this, "GDM Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }   
+            	HelpWindow.launchBrowser(GDMInitDialog.this, "GDM Initialization Dialog");
             }
         }
 

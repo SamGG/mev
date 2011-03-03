@@ -357,19 +357,7 @@ public class SearchDialog extends AlgorithmDialog {
                 return;
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(SearchDialog.this, "Search Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SearchDialog.this, "Search Dialog");
             } else if (command.equals("search-mode-change")) {
                 setFieldsPanel();
                 return;

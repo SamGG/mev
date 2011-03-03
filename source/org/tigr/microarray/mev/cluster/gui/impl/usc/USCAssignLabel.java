@@ -212,18 +212,7 @@ public class USCAssignLabel extends AlgorithmDialog {
 				result = JOptionPane.CANCEL_OPTION;
 				return;
 			} else if (command.equals("info-command")) {
-				HelpWindow hw = new HelpWindow(USCAssignLabel.this, "USC Assign Label Dialog");
-				result = JOptionPane.CANCEL_OPTION;
-				if(hw.getWindowContent()){
-					hw.setSize(450,600);
-					hw.setLocation();
-					hw.show();
-					return;
-				} else {
-					hw.setVisible(false);
-					hw.dispose();
-					return;
-				}
+				HelpWindow.launchBrowser(USCAssignLabel.this, "USC Assign Label Dialog");
 			}
 			//dispose();
 		}//end actionPerformed()

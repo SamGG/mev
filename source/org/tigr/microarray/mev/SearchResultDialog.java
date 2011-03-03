@@ -117,19 +117,7 @@ public class SearchResultDialog extends AlgorithmDialog {
         
         infoButton.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                HelpWindow hw = new HelpWindow(SearchResultDialog.this, "Search Result Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SearchResultDialog.this, "Search Result Dialog");
             }
         });
         resetButton.setVisible(false);
@@ -164,19 +152,7 @@ public class SearchResultDialog extends AlgorithmDialog {
         
         infoButton.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                HelpWindow hw = new HelpWindow(SearchResultDialog.this, "Search Result Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SearchResultDialog.this, "Search Result Dialog");
             }
         });
         
@@ -230,20 +206,7 @@ public class SearchResultDialog extends AlgorithmDialog {
         
         infoButton.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                HelpWindow hw = new HelpWindow(SearchResultDialog.this, "Import Result Dialog");
-                hw.setTitle("Identifier List Import Result");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SearchResultDialog.this, "Import Result Dialog");
             }
         });
         

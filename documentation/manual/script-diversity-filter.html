@@ -1,0 +1,102 @@
+<html>
+	<head>
+		<title>Scripting</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+	<div class="navigation-bar">
+		<a  class="prev" href="script.html">Previous:  Scripting</a> | 
+		<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a  class="next" href="script-centroid-variance-filter.html">Next: Script Centroid Variance Filter</a>
+	</div>
+	
+	<h3>Scripting: Diversity Filter </h3>
+			<a href="script.html">Back to Scripting instructions</a> <br/>
+			<p>The cluster selection algorithms are specific to scripting in MeV.  Automatic Cluster Selection allows the user to provide criteria for evaluating cluster results where clusters have no intrinsic identity such as “significant genes”.  One scenario is the result from K-Means Clustering (KMC) where K=10.  In this case, 10 clusters will be produced and the cluster selection algorithms could be used to extract clusters based supplied criteria.</p>
+			In Diversity Ranking Cluster Selection two possibilities exist for determination of cluster diversity:</p>
+
+			<p>(1)<span class="widget1"> Centroid Based Diversity </span>(mean gene to centroid distance)</p>
+				<p><img src="scr17.jpg">/n;c is the cluster centroid, g<sub>i</sub> is the ith expression vector of n vectors. </p>
+			<p>(2)<span class="widget1"> Intra-gene Based Diversity  </span>(mean gene to centroid distance)</p>
+				<p><img src="scr18.jpg"></p>
+		<p>The output is a list ranking the clusters by diversity with cluster population listed.  Clusters that pass the size criteria and are least diverse are selected and are indicated in the list by bold type. 			<div class="screenshots">
+		<a href="scr6.jpg">
+					<img src="scr6.jpg">
+				</a>
+				<br/>
+				<span class="caption">Cluster Selection Information Viewer</span>
+				</div> 
+		
+		<div class="screenshots leftsidecorrection">
+		<a href="scr5.jpg">
+			<img src="scr5.jpg">
+		</a>
+		<br/>
+		<span class="caption">Diversity Ranking Cluster Selection Dialog</span>
+</div>
+					
+					<h4>Using Diversity Ranking Cluster Selection</h4>
+						<p>
+						Diversity Ranking cluster selection is an algorithm used to rank a set of clusters
+						based on diversity and then select candidate clusters meeting supplied criteria.
+						This process will tend to find clusters that meet a minimum size and have relatively
+						lower variability between the expression vectors contained in the cluster.  This process 
+						will find the least variable clusters but there is no means to know if the clusters 
+						found will have interesting expression changes over the set of observations.
+						</p>
+						<p>
+						Note: See Centroid Variability or Entropy Ranking cluster selection for methods that try
+						to select clusters that have maximal centroid variance over the observations.  In some cases
+						it might be advisable to try several selection methods on an input set of clusters.
+						</p>
+						<p>
+						<em>Parameters</em>
+						</p>
+						<p>
+						<em>Desired Number of Clusters</em>
+						</p>
+						<p>
+						This parameter indicates the number of clusters that should be selected from the input set.  
+						If during execution it turns out that the number of input clusters is smaller than the 
+						number of clusters desired, then all input clusters are returned as the result.
+						</p>
+						<p>
+						
+						<em>Minimum Cluster Population (# of elements)</em>
+						</p>
+						<p>
+						The minimum cluster size describes the minimum number of genes or experiments that should
+						be in the cluster.  In some cases clusters may have low variability but are only composed of
+						a couple of elements.
+						</p>
+						<p>
+						
+						<em>Rank Clusters on Centroid Based Diversity</em>
+						</p>
+						<p>
+						Centroid based diversity is the mean distance between a each element in the cluster and the 
+						cluster's centroid (mean expression pattern for the cluster).   (Distance metric is determined
+						by the current global metric defined in the 'Distance' menu. Euclidean is the default metric.)
+						</p>
+						<p>
+						
+						<em>Rank Clusters on Intra-gene Based Diversity</em>
+						</p>
+						<p>
+						Intra-gene based diversity is the mean distance between each element in the cluster to
+						every other gene in the cluster.  (Distance metric is determined
+						by the current global metric defined in the 'Distance' menu. Euclidean is the default metric.)
+						</p>
+
+				</a>
+			
+	<div class="navigation-bar">
+		<a  class="prev" href="script.html">Previous:  Scripting</a> | 
+		<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a  class="next" href="script-centroid-variance-filter.html">Next: Script Centroid Variance Filter</a>
+	</div>
+</body>
+</html>		
+			
+			

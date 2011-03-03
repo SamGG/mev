@@ -53,16 +53,7 @@ public class LOLAPasswordDialog extends PasswordDialog {
                 resetControls();
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(LOLAPasswordDialog.this, "LOLA Login Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(LOLAPasswordDialog.this, "LOLA Login Dialog");
             }
         }
         

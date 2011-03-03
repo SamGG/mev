@@ -521,17 +521,8 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 				}	
 			} else if(command.equals("back-command")) {
 				prevStep();
-			}else if(command.endsWith("info-command")){
-				HelpWindow hw = new HelpWindow(GSEAWizard.this, "GSEA Help Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(600,600);
-                    hw.setLocation();
-                    hw.setVisible(true);
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+			} else if(command.endsWith("info-command")){
+				HelpWindow.launchBrowser(GSEAWizard.this, "GSEA Help Dialog");
 			}
 		}
 		

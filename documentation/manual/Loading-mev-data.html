@@ -1,0 +1,37 @@
+<html>
+	<head>
+	
+		<title> Loading the Data and Adjusting the Expression Data</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading the Data.html">Previous: Loading Expression Data (overview)</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-affy-data.html">Next: Loading Affymetrix Data</a>
+		</div>
+		<a name="LoadingMEV"><h4>Loading MeV (.mev) Format File</h4></a>
+			<p>Select <span class="widget2">Load Data</span> from the <span class="widget2">File</span> menu to launch the file loading dialog.  At the top of this dialog, use the drop-down menu to select the type of expression files to load by choosing <span class="widget2">Select File Loader --> TIGR Files --> MeV Files</span>  Use this browse button in the <span class="widget2">File</span> panel to locate the files to be loaded.</p>  
+			<p>The default file type to load is the .mev file.  This file type is an update of the older .tav file format.  Details about this file format can be found in the appendix (4.4).  In the section of the loader labeled “MeV Expression Files (*.mev),” the contents of the folder selected in the file selection dialog box will be displayed in the box labeled “available”. Select the .mev files to load and click the “add” button to add them to the list of files to be loaded.  Similarly, select the file(s) containing the appropriate annotation information in the section labeled “MeV Annotation Files (*.ann, *.dat).”</p>
+			<div class="screenshots">
+				<a href="MEVFORMAT.jpg">
+					<img src="MEVFORMAT.jpg">
+				</a>
+				<br/>
+				<span class="caption">Loading MeV (.mev) Format File</span>
+			</div>
+			<p>The <span class="widget2">Load Integrated Intensities/Load Median Intensities</span> options specify that MeV should load either integrated intensities (default) or Median intensities.  Note that care should be taken to select the intensity measurements, integrated or median, that has been previously normalized in MIDAS so that the loaded data will have been normalized and possibly trimmed.
+			<p>The <span class="widget2">Load Auxiliary Spot Information</span>option will load spot background, spot pixel count and other spot specific items.  Loading this information will not impact the analysis results but will allow you to view this data when clicking on an expression element. The <span class="widget1">default is not to load</span> this spot information since it consumes significant system memory and can severely limit the number of mev files that can be loaded due to memory constraints.</p>
+			<p>The <span class="widget2">Use Annotation Contained in MeV File</span>option overrides the use of an annotation file by loading annotation that is contained within the MeV file.  This is a specialized case and for ease of annotation updates it is suggested that you adhere to using a separate annotation file even if the mev file contains annotation.This option is off by default.</p>
+			<p>The <span class="widget2">Remove Annotation Quotes</span> option removes quotations from annotation fields where the annotation entries start and end with quotation marks.  This option is provided to counteract the behavior of some popular ‘spread sheet’ programs where cells containing text with a delimiter such as a comma are automatically enclosed by quotation marks.  If MeV stalls on loading an annotation file, try loading it with this option selected.</p>
+		<a name="TIGR"><h4>Loading TIGR Array Viewer(.tav) Files</h4></a>
+			<p> To load .tav-formatted files, use the drop-down menu to select the <span class="widget2">TIGR Array Viewer (*.tav)</span> option.  This loader is very similar to the .mev loader.  Use the browse button in the <span class="widget2">File</span>panel to select the .tav files to load.  Instead of selecting annotation files to load alongside the data files, however, you must select a preferences file.  This preferences file contains information that MeV uses to determine what type of .tav file is being loaded.  See the Appendix (section 4.11) for more details on preferences files (4.11). </p>
+			<p> Insert screenshot </p>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading the Data.html">Previous: Loading Expression Data (overview)</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-affy-data.html">Next: Loading Affymetrix Data</a>
+		</div>
+	</body>
+</html>

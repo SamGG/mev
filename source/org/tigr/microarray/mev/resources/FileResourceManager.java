@@ -33,6 +33,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -46,6 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
 import org.tigr.microarray.mev.file.FileType;
+
 
 /**
  * Handles the retrieving and storing of files defined by ISupportFileDefinition
@@ -125,6 +127,7 @@ public class FileResourceManager implements IResourceManager {
 		File f = getSupportFiles(v, getOnline).get(def);
 		if(f == null)
 			try {
+
 				throw new SupportFileAccessError("Unable to download support file." + def.getURL());
 			} catch (MalformedURLException mue) {
 				throw new SupportFileAccessError("Unable to download support file: \n" + def.getUniqueName() + ": " + mue.getStackTrace().toString());
@@ -280,10 +283,10 @@ public class FileResourceManager implements IResourceManager {
 						cachedDateForThisDef = null;
 					} else {
 						try {
-						cachedDateForThisDef = getDateFromFilename(cachedFile, thisDef);
+							cachedDateForThisDef = getDateFromFilename(cachedFile, thisDef);
 						} catch (ParseException pe) {
 							cachedDateForThisDef = new Date(0);
-					}
+						}
 					}
 					
 					try {
@@ -321,8 +324,51 @@ public class FileResourceManager implements IResourceManager {
 					}
 				}
 			} else {
-				SupportFileAccessError sfae = new SupportFileAccessError("Couldn't connect to server " + fd.hostURL);			
-				throw sfae;
+				//Could not connect.
+				Vector<ISupportFileDefinition> filesForThisHost = hostsHash.get(thishost);
+				for(int i=0; i<filesForThisHost.size(); i++) {
+					Date cachedDateForThisDef;
+					URL thisDefURL = null;
+					ISupportFileDefinition thisDef = filesForThisHost.get(i);
+					File cachedFile = defToCachedFileMap.get(thisDef);
+					if(cachedFile == null || !cachedFile.exists()) {
+						
+						//TODO add error window, allow user to select local file from file chooser
+						//if they choose to do so, 
+							//show window with url.
+						JFileChooser chooser = new JFileChooser("");
+						try {
+							if (chooser.showOpenDialog(new JFrame()) == JFileChooser.APPROVE_OPTION) {
+								File selectedFile = chooser.getSelectedFile();
+								thisDefURL = new URL("file://" + selectedFile.getAbsolutePath());
+								FileDownloader fed = FileDownloader.getInstance(thisDefURL);
+								Date lastModifiedDate = fed.getLastModifiedDate(selectedFile.getAbsolutePath());
+								File f = fed.getTempFile(selectedFile.getCanonicalPath());
+	
+								if(f != null && f.exists()) {
+									File finalFile = validateAndCopyToRepository(f, thisDef, lastModifiedDate);
+									if (finalFile != null) {
+										tempMap.put(thisDef, finalFile);
+										filesCheckedThisSession.add(thisDef);
+									}
+								} else {
+									SupportFileAccessError sfae = new SupportFileAccessError("File was not downloaded.");
+									ShowThrowableDialog.show(null, "File not found", sfae);
+								}
+	
+							} else {
+								SupportFileAccessError sfae = new SupportFileAccessError("File not selected ");			
+								throw sfae;
+							}
+						} catch (IOException ioe) {
+							SupportFileAccessError sfae = new SupportFileAccessError(ioe);			
+							throw sfae;
+						}
+					} else {
+						SupportFileAccessError sfae = new SupportFileAccessError("Couldn't connect to server " + fd.hostURL);			
+						throw sfae;
+					}
+				}
 			}
 		}
 		return tempMap;

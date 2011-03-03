@@ -186,15 +186,7 @@ public class PCAResultConfigDialog extends AlgorithmDialog {
                 textField4.setText(String.valueOf(pointSize));
                 textField5.setText(String.valueOf(selectedPointSize));
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(PCAResultConfigDialog.this, "PCA Result Configuration");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(PCAResultConfigDialog.this, "PCA Result Configuration");
             }
             
         }

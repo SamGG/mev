@@ -594,16 +594,7 @@ public class ScriptAlgorithmInitDialog extends AlgorithmDialog {
                 onReset();
             }
             else if (source == infoButton){
-                HelpWindow hw = new HelpWindow(ScriptAlgorithmInitDialog.this, "Script Algorithm Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(ScriptAlgorithmInitDialog.this, "Script Algorithm Initialization Dialog");
             }
         }
         

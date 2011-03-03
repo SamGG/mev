@@ -224,16 +224,7 @@ public class GSHInitDialog extends AlgorithmDialog {
             } else if (command.equals("reset-command")) {
                 resetControls();
             } else if (command.equals("info-command")) {
-                HelpWindow hw = new HelpWindow(GSHInitDialog.this, "GSH Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,500);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(GSHInitDialog.this, "GSH Initialization Dialog");
             }
             
         }

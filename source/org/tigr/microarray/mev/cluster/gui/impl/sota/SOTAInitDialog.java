@@ -622,17 +622,7 @@ public class SOTAInitDialog extends AlgorithmDialog {
                 return;
             } else if (command.equals("info-command")){
                 result = JOptionPane.CANCEL_OPTION;
-                HelpWindow help = new HelpWindow(SOTAInitDialog.this, "SOTA Initialization Dialog");
-                if(help.getWindowContent()){
-                    help.setSize(500,650);
-                    help.setLocation();
-                    help.show();
-                    return;
-                }
-                else{
-                    help.dispose();
-                    return;
-                }
+                HelpWindow.launchBrowser(SOTAInitDialog.this, "SOTA Initialization Dialog");
             } else if (e.getSource() == metricPanel) {
                 updateMaxTreeDiversity();
                 return;

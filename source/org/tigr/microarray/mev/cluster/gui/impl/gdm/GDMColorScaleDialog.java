@@ -499,16 +499,7 @@ public class GDMColorScaleDialog extends AlgorithmDialog {
                     listener.scaleChanged(lowerF.floatValue(), upperF.floatValue());
                 }
             } else if(command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GDMColorScaleDialog.this, "GDM Color Range Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }                 
+            	HelpWindow.launchBrowser(GDMColorScaleDialog.this, "GDM Color Range Dialog");
             }
         }
         

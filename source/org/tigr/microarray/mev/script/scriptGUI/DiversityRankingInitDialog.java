@@ -203,16 +203,7 @@ public class DiversityRankingInitDialog extends AlgorithmDialog {
                 resetControls();
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(DiversityRankingInitDialog.this, "Diversity Ranking Cluster Selection");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(DiversityRankingInitDialog.this, "Diversity Ranking Cluster Selection");
             }
         }
         

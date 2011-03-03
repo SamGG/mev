@@ -1,0 +1,46 @@
+<html>
+	<head>
+	
+		<title> Loading the Data and Adjusting the Expression Data</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</style>
+	</head>
+	<body>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading-affy-data.html">Previous: Loading Affymetrix Data</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-magetab-data.html">Next: Loading MAGE-TAB Data</a>
+		</div>
+		<a name="GEOSOFT"><h4>Loading GEO Simple Omnibus Format in Text (SOFT) Affymetrix format File </h4></a>
+			<p> After Expression File Loader dialog is launched, SOFT Affymetrix format file can be loaded by selecting the GEO SOFT Affymetrix file loader option from the list of available file formats to load. </p>
+			<p> Use the <span class="widget2">Browse</span> button in the <span class="widget2">File</span> panel to locate the file to be loaded. The selected file will be displayed in a tabular format in the file loader preview table. We currently allow loading GPL and GSM format files using this loader.  The platform information contained in the GPL files is automatically loaded. There is no provision to load the platform information separately. Click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file, then click the Load button to load the file.</p>
+		<a name="GEOSOFT2"><h4>Loading GEO Simple Omnibus Format in Text (SOFT) two channel format File</h4></a>
+			<p>SOFT two channel format file can be loaded by selecting the GEO SOFT two channel file loader option from the list of available file formats to load.</p>
+			<a name="matrix"><h4>Loading GEO Series Matrix Files</h4></a>
+			<div class="screenshots">
+				<a href="4.10.1.jpg">
+					<img src="4.10.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">GEO Series Matrix File Loader</span>
+				</div>
+			<p>Use the <span class="widget2">Browse</span> button in the <span class="widget2">File</span> panel to locate the file to be loaded. We currently allow loading GPL and GSM format files using this loader.  The platform information contained in the GPL files is automatically loaded. There is no provision to load the platform information separately. The selected file will be displayed in a tabular format in the file loader preview table. Then click the cell in the table which contains the upper-leftmost <span class="widget1">expression value</span> in the file, then click the Load button to load file.</p>
+			<p>GEO Series Matrix files can be loaded using the <span class="widget2">Browse</span> button in the File panel. Select <span class="widget2">“Spotted DNA/cDNA Array” or “Affymetrix Array”</span> to indicate the data-type of the loaded expression data.</p>
+			<p>Series_matrix files are summary text files that include a tab-delimited value- matrix table generated from the 'VALUE' column of each Sample record, headed by Sample and Series metadata. These files include SOFT attribute labels. Data generated from multiple Platforms are contained in separate files. It is recommended to view Series_matrix files in a spreadsheet application like Excel. CAUTION: value data are extracted directly from the original records with no consideration as to whether the values are directly comparable.</p>	
+		<a name="GEOGDS"><h4>Loading GEO GDS Format Files</h4></a>
+			<strong style="float left"><div class="screenshots">
+				<a href="4.11.1.jpg">
+					<img src="4.11.1.jpg">
+				</a>
+				<br/>
+				<span class="caption">GEO GDS Format File Loader</span>
+				</div></strong>
+			<p>GEO GDS format file can be loaded using the <span class="widget2">Browse</span> button in the File panel. Select <span class="widget2">“Spotted DNA/cDNA Array” or “Affymetrix Array”</span> to indicate the data-type of the loaded expression data.</p>
+			<p>GEO Datasets (GDS) are curated sets of comparable GEO Sample (GSM) data. GDS data tables contain VALUE measurements extracted from original Sample records.</p>
+		<div class="navigation-bar">
+			<a class="prev" href="Loading-affy-data.html">Previous: Loading Affymetrix Data</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Loading-magetab-data.html">Next: Loading MAGE-TAB Data</a>
+		</div>
+	</body>
+	</html>

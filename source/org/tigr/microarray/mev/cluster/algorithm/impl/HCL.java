@@ -108,16 +108,7 @@ public class HCL extends AbstractAlgorithm {
 		stop = true;
 	if (memoryAssess == 2){
 		stop = true;
-		HelpWindow hw = new HelpWindow(new JFrame(), "Java Out of Memory Error");
-    	if(hw.getWindowContent()){
-    		hw.setSize(550,600);
-        	hw.setLocation();
-        	hw.show();
-    	}
-    	else {
-    		hw.setVisible(false);
-        	hw.dispose();
-    	}
+		HelpWindow.launchBrowser(new JFrame(), "Java Out of Memory Error");
 	}
 	float[][] SimilarityMatrix = new float[n][];
 	if (optimizeOrdering&&!stop)

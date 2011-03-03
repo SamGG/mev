@@ -125,25 +125,13 @@ public class SetPresentCallDialog extends AlgorithmDialog {
                 textField.setText(String.valueOf(originalValue));
                 textField.selectAll();
                 textField.grabFocus();
-            } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(SetPresentCallDialog.this, "Set Percentage Cutoff");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
-            } else if (command.equals("enable-check-box-command")) {
-                boolean enabled = enableCheckBox.isSelected();
-                percentageLabel.setEnabled(enabled);
-                textField.setEnabled(enabled);
-            }
+        } else if (command.equals("info-command")){
+        	HelpWindow.launchBrowser(SetPresentCallDialog.this, "Set Percentage Cutoff");
+        } else if (command.equals("enable-check-box-command")) {
+            boolean enabled = enableCheckBox.isSelected();
+            percentageLabel.setEnabled(enabled);
+            textField.setEnabled(enabled);
+        }
 	}
 	
 	public void windowClosing(WindowEvent e) {

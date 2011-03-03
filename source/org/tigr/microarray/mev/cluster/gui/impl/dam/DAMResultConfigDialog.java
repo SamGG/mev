@@ -182,15 +182,7 @@ public class DAMResultConfigDialog extends AlgorithmDialog {
                 textField4.setText(String.valueOf(pointSize));
                 textField5.setText(String.valueOf(selectedPointSize));
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(DAMResultConfigDialog.this, "DAM Result Configuration");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(DAMResultConfigDialog.this, "DAM Result Configuration");
             }
             
         }

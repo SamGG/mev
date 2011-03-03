@@ -126,19 +126,7 @@ public class SetPercentageCutoffsDialog extends AlgorithmDialog {
                 textField.selectAll();
                 textField.grabFocus();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(SetPercentageCutoffsDialog.this, "Set Percentage Cutoff");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SetPercentageCutoffsDialog.this, "Set Percentage Cutoff");
             } else if (command.equals("enable-check-box-command")) {
                 boolean enabled = enableCheckBox.isSelected();
                 percentageLabel.setEnabled(enabled);

@@ -734,17 +734,7 @@ public class ExperimentLabelEditor extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();                                
             } else if(command.equals("info-command")) {
-                HelpWindow hw = new HelpWindow(ExperimentLabelEditor.this, "Experiment Label Editor");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(550,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
+            	HelpWindow.launchBrowser(ExperimentLabelEditor.this, "Experiment Label Editor");
             }
             
         }

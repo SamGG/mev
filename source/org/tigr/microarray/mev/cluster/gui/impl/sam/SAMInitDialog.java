@@ -3613,13 +3613,7 @@ public class SAMInitDialog extends AlgorithmDialog {
                 dispose();
             }
             else if(command.equals("info-command")){
-                HelpWindow help = new HelpWindow(SAMInitDialog.this, "SAM Initialization Dialog");
-                if(help.getWindowContent()){
-                    help.setSize(500,650);
-                    help.setLocation();
-                    help.setVisible(true);
-                    return;
-                }
+            	HelpWindow.launchBrowser(SAMInitDialog.this, "SAM Initialization Dialog");
             }
         }
         

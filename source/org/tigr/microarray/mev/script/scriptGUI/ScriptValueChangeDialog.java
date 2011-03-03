@@ -458,12 +458,7 @@ public class ScriptValueChangeDialog extends AlgorithmDialog {
                 } else if(cmd.equals("reset-cmd")) {
 
                 } else if(cmd.equals("info-cmd")) {
-                    HelpWindow hw = new HelpWindow(ScriptValueChangeDialog.this, "Script Value Input Dialog");
-                    if(hw.getWindowContent()){
-                        hw.setSize(450,650);
-                        hw.setLocation();
-                        hw.show();
-                    }
+                	HelpWindow.launchBrowser(ScriptValueChangeDialog.this, "Script Value Input Dialog");
                 }
             }
             

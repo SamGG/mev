@@ -121,22 +121,7 @@ public class KNNClassifyOrValidateDialog extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-               
-                HelpWindow hw = new HelpWindow(KNNClassifyOrValidateDialog.this, "KNNC Mode Selection");
-                okPressed = false;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                 
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
-                
+            	HelpWindow.launchBrowser(KNNClassifyOrValidateDialog.this, "KNNC Mode Selection");
 		}
         }
         

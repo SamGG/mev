@@ -100,16 +100,7 @@ public class IterativeLogMCNormInitDialog extends AlgorithmDialog {
                 result = JOptionPane.CANCEL_OPTION;
                 dispose();
             } else if(command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(IterativeLogMCNormInitDialog.this, "Iterative Log Mean Centering Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(480,555);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }  
+            	HelpWindow.launchBrowser(IterativeLogMCNormInitDialog.this, "Iterative Log Mean Centering Initialization Dialog");
             }
         }
     }

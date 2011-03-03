@@ -148,19 +148,7 @@ public class GeneAnnotationImportDialog extends AlgorithmDialog {
                 return;
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GeneAnnotationImportDialog.this, "Gene Annotation Import");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(600,650);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(GeneAnnotationImportDialog.this, "Gene Annotation Import");
             }
             dispose();
         }

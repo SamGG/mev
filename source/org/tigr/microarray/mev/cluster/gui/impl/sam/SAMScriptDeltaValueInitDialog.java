@@ -155,19 +155,7 @@ public class SAMScriptDeltaValueInitDialog extends AlgorithmDialog {
                 return;
             }
             else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(SAMScriptDeltaValueInitDialog.this, "SAM Script Delta Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(SAMScriptDeltaValueInitDialog.this, "SAM Script Delta Dialog");
             }
         }
         

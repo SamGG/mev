@@ -195,15 +195,7 @@ public class DAMSelectionAreaDialog extends AlgorithmDialog {
                 textField5.setText(String.valueOf(sizeY));
                 textField6.setText(String.valueOf(sizeZ));
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(DAMSelectionAreaDialog.this, "DAM Selection Area Configuration");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(DAMSelectionAreaDialog.this, "DAM Selection Area Configuration");
             }
         }
         

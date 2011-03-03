@@ -388,15 +388,7 @@ public class SOMInitDialog extends AlgorithmDialog {
             }else if (command.equals("reset-command")){
                 resetControls();
             }else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(SOMInitDialog.this, "SOM Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(SOMInitDialog.this, "SOM Initialization Dialog");
             }
         }
         

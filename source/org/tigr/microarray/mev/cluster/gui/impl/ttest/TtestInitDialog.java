@@ -2853,14 +2853,7 @@ public class TtestInitDialog extends AlgorithmDialog {
                 setVisible(false);
                 dispose();
             } else if(command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(TtestInitDialog.this, "TTEST Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 600);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                } else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(TtestInitDialog.this, "TTEST Initialization Dialog");
             }
         }
     }

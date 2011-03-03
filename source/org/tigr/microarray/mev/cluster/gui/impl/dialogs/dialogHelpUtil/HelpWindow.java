@@ -22,8 +22,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -39,6 +41,8 @@ import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 public class HelpWindow extends JDialog {
     
@@ -236,238 +240,258 @@ public class HelpWindow extends JDialog {
         pane.setMargin(new Insets(10,15,10,15));
     }
     
-    public boolean getWindowContent(){
-        String fileName = getFileName(dialogName);
-        if(fileName == null){
-            JOptionPane.showMessageDialog(this, dialogName+" help page cannot be located.");
-            return false;
-        }
-        try{
-            URL url = getClass().getResource("/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages/"+fileName);
-            pane.setPage(url);
-            return true;
-        } catch (IOException e){
-            JOptionPane.showMessageDialog(this, dialogName+" help page cannot be found.");
-            //e.printStackTrace();
-            //  dispose();
-            return false;
-        }
-    }
+
     
     public void setLocation(){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
     }
     
+    public static boolean launchBrowser(Window w, String dialogName) {
+        String fileName = getFileName(dialogName);
+        if(fileName == null){
+             JOptionPane.showMessageDialog(w, dialogName+" help page cannot be located.");
+            return false;
+        }
+        try{
+         	File doclocation = new File("./documentation/manual/" + fileName);
+            BrowserLauncher.openURL(doclocation.toString());
+         } catch (Throwable t) {
+         	t.printStackTrace();
+         }
+            return true;
     
-    private String getFileName(String key){
-    	if(key.equals("TDMS"))
-            return "TDMS.html";
+    }
+    private static String getFileName(String key){
+
+        if(key.equals("File Loader"))						//
+            return "Loading the Data.html";
+    	if(key.equals("TDMS"))								//
+            return "Loading the Data.html";
+    	if(key.equals("GenericFileDialog"))					//
+            return "Loading-mev-data.html";
     	if(key.equals("Mev"))
-            return "Mev.html";
+            return "Loading-mev-data.html";		//
     	if(key.equals("Tav"))
-            return "Tav.html";
+            return "Loading-mev-data.html";			//
     	if(key.equals("GW"))
-            return "GW.html";
+            return "Loading-affy-data.html";			//
     	if(key.equals("GCOS"))
-            return "GCOS.html";
+            return "Loading-affy-data.html";			//
     	if(key.equals("MAGE"))
-            return "magetab.html";
-       	if(key.equals("bioconductor"))
-            return "bioconductor.html";
-    	if(key.equals("softAffy"))
-            return "softAffy.html";
-    	if(key.equals("softTwoChannel"))
-            return "softTwoChannel.html";
-    	if(key.equals("Agilent"))
-            return "Agilent.html";
-    	if(key.equals("CGH"))
-            return "CGH.html";
-    	if(key.equals("dChip"))
-            return "dChip.html";
-    	if(key.equals("GenePix"))
-            return "GenePix.html";
-        if(key.equals("KMC Initialization Dialog"))
-            return "kmc_parameters.html";
-        if(key.equals("HCL Initialization Dialog"))
-            return "hcl_parameters.html";
-        if(key.equals("SOTA Initialization Dialog"))
-            return "sota_parameters.html";
-        if(key.equals("CAST Initialization Dialog"))
-            return "cast_parameters.html";
-        if(key.equals("PCA Initialization Dialog"))
-            return "pca_parameters.html";
-        if(key.equals("RN Initialization Dialog"))
-            return "rn_parameters.html";
-        if(key.equals("SOM Initialization Dialog"))
-            return "som_parameters.html";
-        if(key.equals("GSH Initialization Dialog"))
-            return "gsh_parameters.html";
-        if(key.equals("QTC Initialization Dialog"))
-            return "qtc_parameters.html";
-        if(key.equals("FOM Initialization Dialog"))
-            return "fom_parameters.html";
-        if(key.equals("KMS Initialization Dialog"))
-            return "kms_parameters.html";
-        if(key.equals("PTM Initialization Dialog"))
-            return "ptm_parameters.html";
-        if(key.equals("TTEST Initialization Dialog"))
-            return "ttest_parameters.html";
-        if(key.equals("SVM Process Initialization Dialog"))
-            return "svm1_parameters.html";
-        if(key.equals("SVM Training Initialization Dialog"))
-            return "svm2_parameters.html";
-        if(key.equals("ST Initialization Dialog"))
-            return "st_parameters.html";
-        if(key.equals("SAM Initialization Dialog"))
-            return "sam_parameters.html";
-        if(key.equals("Iterative Log Mean Centering Initialization Dialog"))
-            return "iterativelog_parameters.html";
-        if(key.equals("Linear Regression Initialization Dialog"))
-            return "linreg_parameters.html";
-        if(key.equals("Ratio Statistics Initialization Dialog"))
-            return "ratiostats_parameters.html";     
-        if(key.equals("HCL Tree Properties"))
-            return "hcl_tree_config_parameters.html";
-        if(key.equals("PCA Result Configuration"))
-            return "pca_result_config.html";  
-        if(key.equals("PCA Selection Area Configuration"))
-            return "pca_selection_area.html";  
-        if(key.equals("One Way ANOVA Initialization Dialog"))
-            return "one_way_anova_parameters.html";
-        if(key.equals("Bayesian Estimation of Temporal Regulation- Initialization Dialog"))
-            return "betr_parameters.html";
-        if(key.equals("Non-negative Matrix Factorization- Initialization Dialog"))
-            return "nmf_parameters.html";
-        if(key.equals("Rank Products- Initialization Dialog"))
-            return "rp_parameters.html";
-        if(key.equals("NMF Initialization Dialog"))
-            return "nmf_parameters.html";
-        if(key.equals("Linear Models for Microarray Data- Initialization Dialog"))
-            return "limma_parameters.html";
-        if(key.equals("Global Ancova- Initialization Dialog"))
-            return "global_ancova_parameters.html";
-        if(key.equals("Survival Analysis Initialization Dialog"))
-            return "surv_parameters.html";
-        if(key.equals("Cluster Save Dialog"))
-            return "cluster_save_parameters.html";
-        if(key.equals("Terrain Map Initialization Dialog"))
-            return "terrain_parameters.html";
-        if(key.equals("File Loader"))
-            return "file_loader.html";
-        if(key.equals("SOTA Tree Properties"))
-            return "sota_tree_config_parameters.html";
-        if(key.equals("DAM Initialization Dialog"))
-            return "dam_parameters.html";        
-        if(key.equals("GDM Initialization Dialog"))
-            return "gdm_parameters.html";  
-        if(key.equals("GDM Color Range Dialog"))
-            return "gdm_color_range.html";
-        if(key.equals("EASE Initialization Dialog"))
-            return "ease_parameters.html";
-        if(key.equals("EASE StatisticalParams Dialog"))
-        	return "ease_stat_parameter.html";
-        if(key.equals("EASE AdvancedParams Dialog"))
-        	return "ease_advanced_parameters.html";
-        if(key.equals("GDM Result Selection Dialog"))
-            return "result_selection_parameters.html";
-        if(key.equals("Set Lower Cutoffs"))
-            return "lower_cutoff_parameters.html";
-        if(key.equals("Set Percentage Cutoff"))
-            return "percent_cutoff_parameters.html";
-        if(key.equals("Data Download"))
-            return "jws_download_message.html";
-        if(key.equals("Welcome to MeV!"))
-            return "jws_welcome_message.html";
-        if(key.equals("Experiment Label Editor"))
-            return "experiment_label_editor.html";       
-        if(key.equals("KNNC Mode Selection"))
-            return "knnc_parameters1.html";
-        if(key.equals("KNNC Parameter Selections"))
-            return "knnc_parameters2.html";
-        if(key.equals("KNNC Validataion Parameter Selections"))
-            return "knnc_parameters3.html";
-        if(key.equals("SAM Script Delta Dialog"))
-            return "sam_script_delta_dialog.html";
-        if(key.equals("List Import Dialog"))
-            return "cluster_list_import_parameters.html";
-        if(key.equals("Binned Import Dialog"))
-            return "binned_cluster_list_import_parameters.html";
-        if(key.equals("Auto Import Dialog"))
-            return "auto_cluster_list_import_parameters.html";
-        if(key.equals("Script Attribute Dialog"))
-            return "script_attribute_parameters.html";        
-        if(key.equals("Script Algorithm Initialization Dialog"))
-            return "script_algorithm_selection.html";
-        if(key.equals("Script Value Editor Dialog"))
-            return "script_value_editor_dialog.html"; 
-        if(key.equals("Script Error Log"))
-            return "script_error_log.html";          
-        if(key.equals("Diversity Ranking Cluster Selection"))
-            return "diversity_ranking_cluster_sel_dialog.html";
-        if(key.equals("Centroid Variance/Entropy Ranking Cluster Selection"))
+            return "Loading-magetab-data.html";			//
+       	if(key.equals("bioconductor"))						//
+            return "Loading-affy-data.html";
+    	if(key.equals("softAffy"))							//
+            return "Loading-affy-data.html";
+    	if(key.equals("softTwoChannel"))					//
+            return "Loading-affy-data.html";
+    	if(key.equals("Agilent"))							//
+            return "Loading-agilent-data.html";	
+    	if(key.equals("dChip"))								//
+            return "Loading-affy-data.html";
+    	if(key.equals("GenePix"))							//
+            return "Loading-genepix-data.html";
+    	if(key.equals("CGH"))								//
+            return "compare.html";
+    	//No documentation written
+    	if(key.equals("LOLA Login Dialog"))	
+            return "Table of Contents.html";
+    	
+        if(key.equals("KMC Initialization Dialog")) {   //
+        	return "KMC.html";
+        }
+        if(key.equals("COA Result Configuration")) {   //
+        	return "coa.html";
+        }
+        if(key.equals("COA Selection Area Configuration")) {   //
+        	return "coa.html";
+        }
+        if(key.equals("HCL Initialization Dialog"))		//
+            return "hcl.html";
+        if(key.equals("HCL Tree Properties"))			//
+            return "hcl.html";
+        if(key.equals("SOTA Initialization Dialog"))	//
+            return "SOTA.html";
+        if(key.equals("SOTA Tree Properties"))			//
+            return "SOTA.html";
+        if(key.equals("CAST Initialization Dialog"))	//
+            return "cast.html";
+        if(key.equals("RN Initialization Dialog"))		//
+            return "rn.html";
+        if(key.equals("SOM Initialization Dialog"))		//
+            return "som.html";
+        if(key.equals("GSH Initialization Dialog"))		//
+            return "gsh.html";
+        if(key.equals("QTC Initialization Dialog"))		//
+            return "QTC.html";
+        if(key.equals("FOM Initialization Dialog"))		//
+            return "FOM.html";
+        if(key.equals("KMS Initialization Dialog"))		//
+            return "kms.html";
+        if(key.equals("PTM Initialization Dialog"))		//
+            return "ptm.html";
+        if(key.equals("TTEST Initialization Dialog"))	//
+            return "test.html";
+        if(key.equals("SVM Process Initialization Dialog"))//
+            return "svm.html";
+        if(key.equals("SVM Training Initialization Dialog"))//
+            return "svm.html";
+        if(key.equals("ST Initialization Dialog"))		//
+            return "st.html";
+        if(key.equals("SAM Initialization Dialog"))		//
+            return "sam.html";
+        if(key.equals("SAM Script Delta Dialog"))		//
+            return "sam.html";
+        if(key.equals("PCA Initialization Dialog"))										//
+            return "pca.html";
+        if(key.equals("PCA Result Configuration"))										//
+            return "pca.html";  
+        if(key.equals("PCA Selection Area Configuration"))								//
+            return "pca.html";  
+        if(key.equals("One Way ANOVA Initialization Dialog"))							//
+            return "anova.html";
+        if(key.equals("Bayesian Estimation of Temporal Regulation- Initialization Dialog"))  //
+            return "betr.html";
+        if(key.equals("Non-negative Matrix Factorization- Initialization Dialog"))		//
+            return "nmf.html";
+        if(key.equals("Rank Products- Initialization Dialog"))							//
+            return "rp.html";
+        if(key.equals("NMF Initialization Dialog"))										//
+            return "nmf.html";
+        if(key.equals("Linear Models for Microarray Data- Initialization Dialog"))		//
+            return "limma.html";
+        if(key.equals("Global Ancova- Initialization Dialog"))		//
+            return "gcova.html";
+        if(key.equals("Survival Analysis Initialization Dialog"))	//
+            return "surv.html";
+        if(key.equals("Terrain Map Initialization Dialog"))	//
+            return "trn.html";
+        if(key.equals("DAM Initialization Dialog"))			//
+            return "dam.html";        
+        if(key.equals("DAM Result Configuration"))			//
+            return "dam.html";        
+        if(key.equals("DAM Selection Area Configuration"))	//
+            return "dam.html";        
+        if(key.equals("DAM Initialization Dialog"))			//
+            return "dam.html";        
+        if(key.equals("DAM Process Initialization Dialog"))	//
+            return "dam.html";        
+        if(key.equals("GDM Initialization Dialog"))			//
+            return "gdm.html";  
+        if(key.equals("GDM Cluster Browser Dialog"))		//
+            return "gdm.html";  
+        if(key.equals("GDM Color Range Dialog"))			//
+            return "gdm.html";
+        if(key.equals("GDM Result Selection Dialog"))		//
+            return "gdm.html";
+        if(key.equals("EASE Initialization Dialog"))		//
+            return "ease.html";
+        if(key.equals("EASE StatisticalParams Dialog"))		//
+        	return "ease.html";
+        if(key.equals("EASE AdvancedParams Dialog"))		//
+        	return "ease.html";
+        if(key.equals("EASE Threshold Dialog"))				//
+            return "ease.html";
+//        if(key.equals("EASE File Update Dialog"))
+//            return "ease_file_update_parameters.html";
+        if(key.equals("Set Lower Cutoffs"))						//
+            return "AdjustingtheData.html";
+        if(key.equals("Set Percentage Cutoff"))					//
+            return "AdjustingtheData.html";
+        if(key.equals("Variance Filter Dialog"))				//
+            return "AdjustingtheData.html";      
+        if(key.equals("Experiment Label Editor"))				//
+            return "displayoptions.html";       
+        if(key.equals("KNNC Mode Selection"))					//
+            return "knn.html";
+        if(key.equals("KNNC Parameter Selections"))				//
+            return "knn.html";
+        if(key.equals("KNNC Validation Parameter Selections"))	//
+            return "knn.html";
+        if(key.equals("Cluster Save Dialog"))					//
+            return "WorkingwithClusters.html";
+        if(key.equals("List Import Dialog"))					//
+            return "workingwithclusters.html";
+        if(key.equals("Binned Import Dialog"))					//
+            return "workingwithclusters.html";
+        if(key.equals("Auto Import Dialog"))					//
+            return "workingwithclusters.html";
+        if(key.equals("Script Attribute Dialog"))				//
+            return "script.html";        
+        if(key.equals("Script Algorithm Initialization Dialog"))//
+            return "script.html";
+        if(key.equals("Script Value Input Dialog"))				//
+            return "script.html"; 
+        if(key.equals("Script Error Log"))						//
+            return "script.html";          
+        if(key.equals("Diversity Ranking Cluster Selection"))	//
+            return "script-diversity-filter.html";
+        if(key.equals("Centroid Variance/Entropy Ranking Cluster Selection"))	//
+            return "script-centroid-variance-filter.html";
+        //TODO find a file to link this to
+        if(key.equals("Cluster Archive Submission"))			//
             return "centroid_entropy_variance_sel_dialog.html";
-        if(key.equals("Search Dialog"))
-            return "search_init_parameters.html";
-        if(key.equals("Search Result Dialog"))
-            return "search_result_dialog.html";
-        if(key.equals("Import Result Dialog"))
-            return "import_result_dialog.html";
-        if(key.equals("EASE Threshold Dialog"))
-            return "ease_threshold_parameters.html";
-        if(key.equals("Newick File Output Dialog"))
+        if(key.equals("Search Dialog"))						//
+            return "UM.html#search";
+        if(key.equals("Search Result Dialog"))				//
+            return "UM.html#results";
+        if(key.equals("Import Result Dialog"))				//
+            return "UM.html#importresults";
+        if(key.equals("Gene Annotation Import"))			//
+            return "UM.html#AGA";			
+        if(key.equals("Newick File Output Dialog"))			//
             return "hcl_newick_output_parameters.html";
-        if(key.equals("Nexus File Output Dialog"))
-            return "hcl_nexus_output_parameters.html";
-        if(key.equals("EASE File Update Dialog"))
-            return "ease_file_update_parameters.html";
-        if(key.equals("Variance Filter Dialog"))
-            return "variance_filter_parameters.html";            
-        if(key.equals("Gene Annotation Import"))
-            return "gene_annotation_import_parameters.html";
-        if(key.equals("Color Scale Dialog"))
-            return "set_ratio_scale_parameters.html";
-		if (key.equals("USC Initialization Dialog")) {
-			return "usc_parameters1.html";
+        if(key.equals("Nexus File Output Dialog"))			//
+            return "hcl_nexus_output_parameters.html";      
+        //There are no help documents for this
+        if(key.equals("Genome Annotation Dialog"))			//
+            return "Table of Contents.html";						
+        if(key.equals("Color Scale Dialog"))				//
+            return "displayoptions.html";
+		if (key.equals("USC Initialization Dialog")) {		//
+			return "usc.html";
 		}
-		if (key.equals("USC Assign Label Dialog")) {
-			return "usc_parameters2.html";
+		if (key.equals("USC Assign Label Dialog")) {		//
+			return "usc.html";
 		}
-		if (key.equals("USC Delta Dialog")) {
-			return "usc_parameters3.html";
+		if (key.equals("USC Delta Dialog")) {				//
+			return "usc.html";
 		} 
-		if (key.equals("USC Load Result Dialog")) {
-			return "usc_parameters4.html";
-		} 
-		if(key.equals("BN Initialization Dialog")) {
-			return "bn_parameters.html";
+		if (key.equals("USC Load Result Dialog")) {			//
+			return "usc.html";
 		}
-		if(key.equals("LM Initialization Dialog")) {
-			return "lm_parameters.html";
+		if(key.equals("BN Initialization Dialog")) {		//
+			return "bn.html";
 		}
-		if(key.equals("MINET Initialization Dialog")) {
+		if(key.equals("BN File Update Dialog")) {			//
+			return "bn.html";
+		}
+		if(key.equals("LM Initialization Dialog")) {		//
+			return "lm.html";
+		}
+		if(key.equals("MINET Initialization Dialog")) {		//
 			return "minet.html";
 		}
-        	if(key.equals("LEM Initialization Dialog"))
-        		return "lem_parameters.html";
-        	if(key.equals("LEM Bin Color and Limits Selection Dialog"))
-        		return "lem_color_limits_parameters.html";
-        	if(key.equals("LEM Customization Dialog"))
-        		return "lem_customization_parameters.html";
-        	if(key.equals("LEM Selection Range Dialog"))
-        		return "lem_selection_range_paramters.html";
-        	if(key.equals("NonpaR Mode Selection"))
-        		return "nonpar_mode_parameters.html";
-        	if(key.equals("NonpaR Significance Parameters"))
-        		return "nonpar_significance_parameters.html";
-        	if(key.equals("NonpaR Fisher Exact Parameters"))
-        		return "nonpar_fisher_exact_parameters.html";
-        	
-        	if(key.equals("Java Out of Memory Error"))
-        		return "hcl_out_of_memory_help.html";
-        	if(key.equals("GSEA Help Dialog")){
-        		return "GSEA_Help.html";
-        	}
+    	if(key.equals("LEM Initialization Dialog"))			//
+    		return "lem.html";
+    	if(key.equals("LEM Bin Color and Limits Selection Dialog")) //
+    		return "lem.html";
+    	if(key.equals("LEM Customization Dialog"))			//
+    		return "lem.html";
+    	if(key.equals("LEM Selection Range Dialog"))		//
+    		return "lem.html";
+    	if(key.equals("NonpaR Mode Selection"))				//
+    		return "nonpar.html";
+    	if(key.equals("NonpaR Significance Parameters"))	//
+    		return "nonpar.html";
+    	if(key.equals("NonpaR Fisher Exact Parameters"))	//
+    		return "nonpar.html";
+    	if(key.equals("Java Out of Memory Error"))			//
+    		return "oome.html";
+    	if(key.equals("GSEA Help Dialog")){					//
+    		return "gsea.html";
+    	}
 		else {
 			return null;
 		}

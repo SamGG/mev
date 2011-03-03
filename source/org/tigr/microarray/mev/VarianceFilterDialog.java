@@ -210,19 +210,7 @@ public class VarianceFilterDialog extends AlgorithmDialog {
             } else if (command.equals("enable-box-command")) {
                 enableControls(enableFilterBox.isSelected());
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(VarianceFilterDialog.this, "Variance Filter Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(550,600);
-                    hw.setLocation();
-                    hw.show();
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(VarianceFilterDialog.this, "Variance Filter Dialog");
             }
 	}
 	

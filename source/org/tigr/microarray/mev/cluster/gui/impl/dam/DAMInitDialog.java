@@ -542,16 +542,7 @@ public class DAMInitDialog extends AlgorithmDialog {
                 A1button.setEnabled(validationCheckBox.isSelected());
                 A2button.setEnabled(validationCheckBox.isSelected());
             } else if (command.equals("info-command")){
-               HelpWindow hw = new HelpWindow(DAMInitDialog.this, "DAM Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }   
+            	HelpWindow.launchBrowser(DAMInitDialog.this, "DAM Initialization Dialog");   
             }
             
         }

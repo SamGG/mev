@@ -229,16 +229,7 @@ public class KMCInitDialog extends AlgorithmDialog {
                 onReset();
             }
             else if (source == infoButton){
-                HelpWindow hw = new HelpWindow(KMCInitDialog.this, "KMC Initialization Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }                    
+            	HelpWindow.launchBrowser(KMCInitDialog.this, "KMC Initialization Dialog");
             }
         }
         

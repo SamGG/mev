@@ -1255,19 +1255,7 @@ public class GLOBANCInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GLOBANCInitBox.this, "Global Ancova- Initialization Dialog");
-                okPressed = false;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.setVisible(true);
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
+            	HelpWindow.launchBrowser(GLOBANCInitBox.this, "Global Ancova- Initialization Dialog");
             }
         }
     }

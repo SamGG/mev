@@ -70,15 +70,7 @@ public class DAMSelectionDialog extends AlgorithmDialog {
             } else if (command.equals("reset-command")){
                 resetControls();
             } else if (command.equals("info-command")){
-                HelpWindow helpWindow = new HelpWindow(DAMSelectionDialog.this, "DAM Initialization Dialog");
-                if(helpWindow.getWindowContent()){
-                    helpWindow.setSize(450, 350);
-                    helpWindow.setLocation();
-                    helpWindow.show();
-                }
-                else{
-                    helpWindow.dispose();
-                }
+            	HelpWindow.launchBrowser(DAMSelectionDialog.this, "DAM Initialization Dialog");
             }
         }
     }

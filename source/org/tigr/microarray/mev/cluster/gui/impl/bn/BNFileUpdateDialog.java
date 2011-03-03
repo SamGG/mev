@@ -272,16 +272,7 @@ public class BNFileUpdateDialog extends AlgorithmDialog {
             } else if (source == resetButton) {
                 resetControls();
             } else if (source == infoButton){
-                HelpWindow hw = new HelpWindow(BNFileUpdateDialog.this, "BN File Update Dialog");
-                if(hw.getWindowContent()){
-                    hw.setSize(450,650);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }                    
+            	HelpWindow.launchBrowser(BNFileUpdateDialog.this, "BN File Update Dialog");
             }            
         }
         
