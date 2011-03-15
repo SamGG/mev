@@ -50,7 +50,6 @@
 			 <string>$JAVAROOT/boss.jar</string> 	 
 			 <string>$JAVAROOT/colt.jar</string>
 			 <string>$JAVAROOT/comcgh.jar</string> 
-			 <string>$JAVAROOT/dialogHelp.jar</string>
 			 <string>$JAVAROOT/educgh.jar</string>
 			 <string>$JAVAROOT/examples.jar</string>
 			 <string>$JAVAROOT/ftpbean.jar</string>
