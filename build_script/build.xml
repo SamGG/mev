@@ -480,27 +480,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 
 
 
-    <!-- TARGET ============================================
-         	Target Name: jar-dialog-help
-		Depends: None
-         	Target Description: creates dialogHelp.jar from the html pages
-		within .../gui/impl/dialogs/dialogHelpUtil/dialogHelpPages
-    -->
-    <target name="jar-dialog-help">
-        
-        <!-- make the images directory within the destination area -->
-        <mkdir dir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages"/>       
-        
-        <!-- copy images (gifs) to images directory for inclusion in the jar -->        
-        <copy todir="${dest.dir}/org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages">
-            <fileset dir="${gui.impl.dir}/dialogs/dialogHelpUtil/dialogHelpPages" excludes=".svn .cvs"/>
-        </copy>
-
-        <jar destfile="${lib.dir}/dialogHelp.jar"
-             basedir="${dest.dir}"
-	     includes="org/tigr/microarray/mev/cluster/gui/impl/dialogs/dialogHelpUtil/dialogHelpPages/*"
-        />
-    </target>
 
 
 
@@ -512,7 +491,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			mev-util.jar, mev-algorithm-support.jar,
 			mev-gui-support.jar, mev-base.jar
     -->
-    <target name="build-base" depends="jar-gui-support, jar-images, jar-dialog-help">
+    <target name="build-base" depends="jar-gui-support, jar-images">
         <jar destfile="${lib.dir}/mev-base.jar"
              basedir="${dest.dir}"
 	       includes= 
@@ -2864,7 +2843,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<delete file="${lib.dir}/mev-algorithm-support.jar"/>
 		<delete file="${lib.dir}/mev-util.jar"/>
 		<delete file="${lib.dir}/images.jar"/>
-		<delete file="${lib.dir}/dialogHelp.jar"/>
 	</target>
 
 	<macrodef name="unsignjar">

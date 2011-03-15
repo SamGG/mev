@@ -32,7 +32,6 @@
 	<jar href="mev_test/lib/base64.jar"/>
 	<jar href="mev_test/lib/colt.jar"/>
 	<jar href="mev_test/lib/comcgh.jar"/>
-	<jar href="mev_test/lib/dialogHelp.jar"/>
 	<jar href="mev_test/lib/educgh.jar"/>
 	<jar href="mev_test/lib/ftpbean.jar"/>
 	<jar href="mev_test/lib/goose.jar"/>

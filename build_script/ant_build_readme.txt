@@ -50,7 +50,6 @@ jar files:
 6.) mev-algorithm-impl.jar
 
 7.) images.jar     //updates jar of org.tigr.images
-8.) dialogHelp.jar //updates jar of mev html help pages
 
 
 >ant build-base
