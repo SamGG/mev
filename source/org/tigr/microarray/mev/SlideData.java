@@ -438,7 +438,7 @@ public class SlideData implements ISlideData, ISlideMetaData {
     public final float getRatio(float numerator, float denominator, int logState) {
     	
     	
-        if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+        if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
             return numerator;
 
         float ratio;

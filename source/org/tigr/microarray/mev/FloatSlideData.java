@@ -483,11 +483,11 @@ public class FloatSlideData implements ISlideData {
      */
     public final float getRatio(int index, int logState) {
         if(normalizedState == ISlideData.NO_NORMALIZATION) {
-            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
                 return trueCY5[index];
             return getRatio(trueCY5[index], trueCY3[index], logState);
         } else {
-            if(dataType == IData.DATA_TYPE_RATIO_ONLY)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
                 return currentCY5[index];
             return getRatio(currentCY5[index], currentCY3[index], logState);
         }
