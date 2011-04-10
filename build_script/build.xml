@@ -71,6 +71,7 @@
 	<property name="ATTRACT" value="y"/>
     <property name="BETR" value="y"/>
 	<property name="LIMMA" value="y"/>
+	<property name="GOSEQ" value="y"/>
 	<property name="SURV" value="y"/>
 	<property name="GLOBANC" value="y"/>
     <property name="RP" value="y"/>
@@ -88,6 +89,9 @@
 	<property name="BN" value="y" />
 	<property name="LM" value="y" />
 	<property name="MINET" value="y"/>
+	<property name="EDGER" value="y"/>
+	<property name="DESEQ" value="y"/>
+	<property name="DEGSEQ" value="y"/>
 	
 	<!-- Module category names -->
 	<property name="CLUSTERING" value="Clustering"/>
@@ -121,7 +125,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -143,7 +147,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -1196,42 +1200,40 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	        </propertyfile>
 	    </target>
 
-	
+	<!--
 	<target name="ATTRACT" depends="ATTRACT-GUI" if="ATTRACT">
-		        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
-		            <include name="ATTRACT.java"/>
-		            <classpath>
-		                <pathelement location="${lib.dir}/JSciCore.jar"/>
-
-		                <!-- jars to support module compilation -->
-		                <pathelement location="${lib.dir}/mev-util.jar"/>
-		                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
-		                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
-		                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
-		                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
-		                <pathelement location="${lib.dir}/mev-base.jar"/>            
-		            </classpath>
-			  </javac>
-			  <propertyfile file="${alg.properties.file}">
-		            <entry key="ATTRACT" value="org.tigr.microarray.mev.cluster.algorithm.impl.attract.ATTRACT"/>
-		        </propertyfile>
-		    </target>
-
-		    <target name="ATTRACT-GUI">
-		        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/attract" destdir="${dest.dir}">
-		            <classpath refid="module.build.class.path"/>
-			  </javac>
-			  <propertyfile file="${gui.properties.file}">
-				<entry key="gui.names" value="ATTRACT:" operation="+"/>
-		            <entry key="ATTRACT.name" value="ATTRACT"/>
-		            <entry key="ATTRACT.class" value="org.tigr.microarray.mev.cluster.gui.impl.attract.ATTRACTGUI"/>
-			  	<entry key="ATTRACT.category" value="${META_ANALYSIS}"/> 
-			  	<entry key="ATTRACT.smallIcon" value="analysis16.gif"/>
-		            <entry key="ATTRACT.largeIcon" value="attract_button.gif"/>
-		            <entry key="ATTRACT.tooltip" value="Attract"/>
-		        </propertyfile>
-		    </target>
+        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="ATTRACT.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>            
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="ATTRACT" value="org.tigr.microarray.mev.cluster.algorithm.impl.attract.ATTRACT"/>
+        </propertyfile>
+    </target>
 	
+    <target name="ATTRACT-GUI">
+        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/attract" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	  </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="ATTRACT:" operation="+"/>
+            <entry key="ATTRACT.name" value="ATTRACT"/>
+            <entry key="ATTRACT.class" value="org.tigr.microarray.mev.cluster.gui.impl.attract.ATTRACTGUI"/>
+	  	<entry key="ATTRACT.category" value="${META_ANALYSIS}"/> 
+	  	<entry key="ATTRACT.smallIcon" value="analysis16.gif"/>
+            <entry key="ATTRACT.largeIcon" value="attract_button.gif"/>
+            <entry key="ATTRACT.tooltip" value="Attract"/>
+        </propertyfile>
+    </target>
+	-->
 	
     <target name="BETR" depends="BETR-GUI" if="BETR">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
@@ -1301,6 +1303,42 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	  	<entry key="LIMMA.smallIcon" value="analysis16.gif"/>
             <entry key="LIMMA.largeIcon" value="LIMMA1.gif"/>
             <entry key="LIMMA.tooltip" value="Linear Models for Microarray Data"/>
+      </propertyfile>
+	</target>
+
+	<target name="GOSEQ" depends="GOSEQ-GUI" if="GOSEQ">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="GOSEQ.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>   
+            	<pathelement location="${lib.dir}/JRI.jar"/>
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="GOSEQ" value="org.tigr.microarray.mev.cluster.algorithm.impl.GOSEQ"/>
+      </propertyfile>
+	</target>
+	
+	<target name="GOSEQ-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/goseq" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	    </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="GOSEQ:" operation="+"/>
+            <entry key="GOSEQ.name" value="GOSEQ"/>
+            <entry key="GOSEQ.class" value="org.tigr.microarray.mev.cluster.gui.impl.goseq.GOSEQGUI"/>
+	  	<entry key="GOSEQ.category" value="${STATISTICS}"/> 
+	  	<entry key="GOSEQ.smallIcon" value="analysis16.gif"/>
+            <entry key="GOSEQ.largeIcon" value="GOSEQ_button.gif"/>
+            <entry key="GOSEQ.tooltip" value="Gene Ontology Analysis for RNA-seq"/>
       </propertyfile>
 	</target>
 	
@@ -1466,9 +1504,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			  <propertyfile file="${alg.properties.file}">
 		            <entry key="MINET" value="org.tigr.microarray.mev.cluster.algorithm.impl.MINET"/>
 		        </propertyfile>
-		    </target>
+	</target>
 
-		    <target name="MINET-GUI">
+	<target name="MINET-GUI">
 		        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
 		            <classpath refid="module.build.class.path"/>
 			  </javac>
@@ -1481,6 +1519,114 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		            <entry key="MINET.largeIcon" value="minet_button.gif"/>
 		            <entry key="MINET.tooltip" value="Mutual Information Network"/>
 		        </propertyfile>
+	</target>
+	
+	<target name="EDGER" depends="EDGER-GUI" if="EDGER">
+			        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+			            <include name="EDGER.java"/>
+			            <classpath>
+			                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+			                <!-- jars to support module compilation -->
+			                <pathelement location="${lib.dir}/mev-util.jar"/>
+			                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+			                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+			                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+			                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+			                <pathelement location="${lib.dir}/mev-base.jar"/>
+			            	<pathelement location="${lib.dir}/JRI.jar"/>
+			            </classpath>
+				  </javac>
+				  <propertyfile file="${alg.properties.file}">
+			            <entry key="EDGER" value="org.tigr.microarray.mev.cluster.algorithm.impl.EDGER"/>
+			        </propertyfile>
+	</target>
+    	
+	<target name="EDGER-GUI">
+		<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/edger" destdir="${dest.dir}">
+			<classpath refid="module.build.class.path"/>
+		</javac>
+		<propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="EDGER:" operation="+"/>
+			<entry key="EDGER.name" value="EDGER"/>
+			<entry key="EDGER.class" value="org.tigr.microarray.mev.cluster.gui.impl.edger.EDGERGUI"/>
+			<entry key="EDGER.category" value="${STATISTICS}"/> 
+			<entry key="EDGER.smallIcon" value="analysis16.gif"/>
+			<entry key="EDGER.largeIcon" value="edger.gif"/>
+			<entry key="EDGER.tooltip" value="edgeR Empirical analysis of RNASeq data in R"/>
+		</propertyfile>
+	</target>
+	
+	<target name="DESEQ" depends="DESEQ-GUI" if="DESEQ">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="DESEQ.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>
+            	<pathelement location="${lib.dir}/JRI.jar"/>
+            </classpath>
+	  </javac>
+		  <propertyfile file="${alg.properties.file}">
+				<entry key="DESEQ" value="org.tigr.microarray.mev.cluster.algorithm.impl.DESEQ"/>
+		  </propertyfile>
+	</target>
+	    	
+	<target name="DESEQ-GUI">
+		<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/deseq" destdir="${dest.dir}">
+			<classpath refid="module.build.class.path"/>
+		</javac>
+		<propertyfile file="${gui.properties.file}">
+			<entry key="gui.names" value="DESEQ:" operation="+"/>
+			<entry key="DESEQ.name" value="DESEQ"/>
+			<entry key="DESEQ.class" value="org.tigr.microarray.mev.cluster.gui.impl.deseq.DESEQGUI"/>
+			<entry key="DESEQ.category" value="${STATISTICS}"/> 
+			<entry key="DESEQ.smallIcon" value="analysis16.gif"/>
+			<entry key="DESEQ.largeIcon" value="deseq.gif"/>
+			<entry key="DESEQ.tooltip" value="DESeq analysis of RNASeq data based on -ve binomial distribution"/>
+		</propertyfile>
+	</target>
+	
+	<target name="DEGSEQ" depends="DEGSEQ-GUI" if="DEGSEQ">
+	        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+	            <include name="DEGSEQ.java"/>
+	            <classpath>
+	                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+	                <!-- jars to support module compilation -->
+	                <pathelement location="${lib.dir}/mev-util.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+	                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+	                <pathelement location="${lib.dir}/mev-base.jar"/>
+	            	<pathelement location="${lib.dir}/JRI.jar"/>
+	            </classpath>
+		  </javac>
+			  <propertyfile file="${alg.properties.file}">
+					<entry key="DEGSEQ" value="org.tigr.microarray.mev.cluster.algorithm.impl.DEGSEQ"/>
+			  </propertyfile>
+		</target>
+		    	
+		<target name="DEGSEQ-GUI">
+			<javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/degseq" destdir="${dest.dir}">
+				<classpath refid="module.build.class.path"/>
+			</javac>
+			<propertyfile file="${gui.properties.file}">
+				<entry key="gui.names" value="DEGSEQ:" operation="+"/>
+				<entry key="DEGSEQ.name" value="DEGSEQ"/>
+				<entry key="DEGSEQ.class" value="org.tigr.microarray.mev.cluster.gui.impl.degseq.DEGseqGUI"/>
+				<entry key="DEGSEQ.category" value="${STATISTICS}"/> 
+				<entry key="DEGSEQ.smallIcon" value="analysis16.gif"/>
+				<entry key="DEGSEQ.largeIcon" value="degseq.gif"/>
+				<entry key="DEGSEQ.tooltip" value="DEGSeq analysis of RNASeq data based on MA plot"/>
+			</propertyfile>
 		</target>
 	
     <target name="SVM" depends="SVM-GUI" if="SVM">
@@ -1559,8 +1705,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<classpath>
 
                 <pathelement location="${lib.dir}/ftpbean.jar"/>
-
-
 
                 <!-- jars to support module compilation -->
                 <pathelement location="${lib.dir}/mev-util.jar"/>
@@ -2121,14 +2265,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	<target name="check-r-binaries">
 		<mkdir dir="${home.dir}/${r.binaries}"/>
 		<condition property="has-linux32-rbinary">
-		      <available file="${home.dir}/${r.binaries}/R-2.9.1_linux32/"/>
+		      <available file="${home.dir}/${r.binaries}/R-2.11.1_linux32/"/>
 		</condition>
 		<echo message="has linux32-r-binaries: ${has-linux32-rbinary}"/>
 		<condition property="has-linux64-rbinary">
-		      <available file="${home.dir}/${r.binaries}/R-2.9.1_linux64/"/>
+		      <available file="${home.dir}/${r.binaries}/R-2.11.1_linux64/"/>
 		</condition>
 		<condition property="has-win32-rbinary">
-		      <available file="${home.dir}/${r.binaries}/R-2.9.1_win32/"/>
+		      <available file="${home.dir}/${r.binaries}/R-2.11.1_win32/"/>
 		</condition>
 	</target>
 
@@ -2138,14 +2282,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<echo message="Downloading R binary for linux32 platform to ${home.dir}/${r.binaries}."/>
 		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
 			<fileset dir="${home.dir}/${r.binaries}/">
-				<include name="R-2.9.1_linux32.zip"/>
+				<include name="R-2.11.1_linux32.zip"/>
 			</fileset>
 			
 		</ftp>
 		
-		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_linux32.zip"></unzip>
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.11.1_linux32.zip"></unzip>
 
-		<delete file="${home.dir}/${r.binaries}/R-2.9.1_linux32.zip"/>
+		<delete file="${home.dir}/${r.binaries}/R-2.11.1_linux32.zip"/>
 
 	</target>
 
@@ -2156,14 +2300,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 
 		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
 			<fileset dir="${home.dir}/${r.binaries}/">
-				<include name="R-2.9.1_linux64.zip"/>
+				<include name="R-2.11.1_linux64.zip"/>
 			</fileset>
 			
 		</ftp>
 		
-		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_linux64.zip"></unzip>
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.11.1_linux64.zip"></unzip>
 
-		<delete file="${home.dir}/${r.binaries}/R-2.9.1_linux64.zip"/>
+		<delete file="${home.dir}/${r.binaries}/R-2.11.1_linux64.zip"/>
 
 	</target>
 
@@ -2174,14 +2318,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 
 		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
 			<fileset dir="${home.dir}/${r.binaries}/">
-				<include name="R-2.9.1_win.zip"/>
+				<include name="R-2.11.1_win.zip"/>
 			</fileset>
 			
 		</ftp>
 		
-		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.9.1_win.zip"></unzip>
+		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.11.1_win.zip"></unzip>
 
-		<delete file="${home.dir}/${r.binaries}/R-2.9.1_win.zip"/>
+		<delete file="${home.dir}/${r.binaries}/R-2.11.1_win.zip"/>
 
 	</target>
 
@@ -2193,16 +2337,16 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		 Compiles source only once.
 		 
 		 Requires R windows binaries at this locations:
-		 	${home.dir}/${r.binaries}/R-2.9.1_win
-		 	${home.dir}/${r.binaries}/R-2.9.1_linux32
-		 	${home.dir}/${r.binaries}/R-2.9.1_linux64
+		 	${home.dir}/${r.binaries}/R-2.11.1_win
+		 	${home.dir}/${r.binaries}/R-2.11.1_linux32
+		 	${home.dir}/${r.binaries}/R-2.11.1_linux64
 		 (ftp to): ${home.dir}/${r.binaries}/  
 		 	then unzip each
 		 
 		 External R Binary Source Locations (ftp from):
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_win.zip
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux32.zip
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_win.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux32.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux64.zip
 	-->
 
 	<target name="build-package-all-os-arch" depends="clean, build-all">
@@ -2297,7 +2441,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			</delete>
 			<delete dir="${package.dir}/${mev_version.dir}/lib" quiet="true"/>
 			<delete dir="${package.dir}/${mev_version.dir}/plugins" quiet="true"/>
-			<delete dir="${package.dir}/${mev_version.dir}/R-2.9.1" quiet="true"/>
+			<delete dir="${package.dir}/${mev_version.dir}/R-2.11.1" quiet="true"/>
 			<delete file="${package.dir}/${mev_version.dir}/tmev.sh" quiet="true"/>
 			<delete file="${package.dir}/${mev_version.dir}/TMEV.bat" quiet="true"/>
 			
@@ -2344,12 +2488,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		 Cleans and compiles from scratch
 		 
 		 Requires R windows binary at this location:
-		 	${home.dir}/${r.binaries}/R-2.9.1_win
+		 	${home.dir}/${r.binaries}/R-2.11.1_win
 		 (ftp to): ${home.dir}/${r.binaries}/  
 		 	then unzip
 		 
 		 External R Binary Source Location:
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_win.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_win.zip
 	-->
 	<target name="build-package-win-alone" depends="clean, build-all">
 	  <antcall target="build-package-win"/>
@@ -2387,7 +2531,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- Make dir for RPackages -->
 		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
 		<!-- Make dir for R Binaries -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
@@ -2406,7 +2550,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- OS/Arch dependent files, if they exist, before next packaging -->
 		<delete includeemptydirs="true">
 			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
-			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.11.1" includes="**/*" defaultexcludes="false" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
@@ -2427,9 +2571,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			</fileset>
 		</copy>
 		
-		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_win -->
-		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
-			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_win/" />
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_win -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.11.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.11.1_win/" />
 		</copy>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
@@ -2452,7 +2596,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/> 
 			<include name="${mev_version.dir}/RPackages/**"/>
-			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/R-2.11.1/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
 			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/TMEV.bat"/> 
@@ -2503,12 +2647,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		 Cleans and compiles from scratch
 		 
 		 Requires R Linux 32 binary at this location:
-		 	${home.dir}/${r.binaries}/R-2.9.1_linux32
+		 	${home.dir}/${r.binaries}/R-2.11.1_linux32
 		 (ftp to): ${home.dir}/${r.binaries}/  
 		 	then unzip
 		 
 		 External R Binary Source Location:
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux32.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux32.zip
 	-->
 	<target name="build-package-linux32-alone" depends="clean, build-all">
 		<antcall target="build-package-linux32"/>
@@ -2547,7 +2691,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- Make dir for RPackages -->
 		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
 		<!-- Make dir for R Binaries -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/>
 					
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
@@ -2566,7 +2710,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- OS/Arch dependent files, if they exist, before next packaging -->
 		<delete includeemptydirs="true">
 			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
-			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.11.1" includes="**/*" defaultexcludes="false" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
@@ -2587,9 +2731,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		</fileset>
 		</copy>
 		
-		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_linux32 -->
-		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
-			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_linux32/" />
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_linux32 -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.11.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.11.1_linux32/" />
 		</copy>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
@@ -2614,7 +2758,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/>
 			<include name="${mev_version.dir}/RPackages/**"/>
-			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/R-2.11.1/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
 			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/tmev.sh"/>
@@ -2627,12 +2771,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		 Cleans and compiles from scratch
 		 
 		 Requires R Linux 64 binary at this location:
-		 	${home.dir}/${r.binaries}/R-2.9.1_linux62
+		 	${home.dir}/${r.binaries}/R-2.11.1_linux62
 		 (ftp to): ${home.dir}/${r.binaries}/  
 		 	then unzip
 		 
 		 External R Binary Source Location (ftp from):
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.9.1_linux64.zip
+		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux64.zip
 	-->
 	<target name="build-package-linux64-alone" depends="clean, build-all">
 		<antcall target="build-package-linux64"/>
@@ -2670,7 +2814,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- Make dir for RPackages -->
 		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
 		<!-- Make dir for R Binaries -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.9.1"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
@@ -2689,7 +2833,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<!-- OS/Arch dependent files, if they exist, before next packaging -->
 		<delete includeemptydirs="true">
 			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
-			<fileset dir="${package.dir}/${mev_version.dir}/R-2.9.1" includes="**/*" defaultexcludes="false" />
+			<fileset dir="${package.dir}/${mev_version.dir}/R-2.11.1" includes="**/*" defaultexcludes="false" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
@@ -2710,9 +2854,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			</fileset>
 		</copy>
 		
-		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.9.1_linux64 -->
-		<copy todir="${package.dir}/${mev_version.dir}/R-2.9.1">
-			<fileset dir="${home.dir}/${r.binaries}/R-2.9.1_linux64/" />
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_linux64 -->
+		<copy todir="${package.dir}/${mev_version.dir}/R-2.11.1">
+			<fileset dir="${home.dir}/${r.binaries}/R-2.11.1_linux64/" />
 		</copy>
 		
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
@@ -2737,7 +2881,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/>
 			<include name="${mev_version.dir}/RPackages/**"/>
-			<include name="${mev_version.dir}/R-2.9.1/**"/>
+			<include name="${mev_version.dir}/R-2.11.1/**"/>
 			<include name="${mev_version.dir}/plugins/**"/>
 			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/tmev.sh"/>

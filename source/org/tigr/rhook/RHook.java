@@ -910,7 +910,7 @@ public class RHook  {
 	}
 
 	/**
-	 * Downloaad updated lib for Mac R version
+	 * Download updated lib for Mac R version
 	 *
 	 * @param libUrl
 	 * @throws Exception
@@ -1306,5 +1306,13 @@ public class RHook  {
 		dateString = formatDt.format(now);
 		//System.out.println(" 2. " + dateString);
 		return dateString;
+	}
+	
+	/**
+	 * Return log File path for RHook
+	 * @return
+	 */
+	public static String getLogFileName(){
+		return RLogger.getLogFileName();
 	}
 }
