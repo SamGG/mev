@@ -251,7 +251,7 @@ public class SuperExpressionFileLoader {
 	protected void initializeFileLoaders() {
 		int defaultSelection = 0;
 
-		fileLoaders = new ExpressionFileLoader[16];
+		fileLoaders = new ExpressionFileLoader[17];
 		fileLoaders[0] = new StanfordFileLoader(this);
 
 		fileLoaders[1] = null;
@@ -269,6 +269,7 @@ public class SuperExpressionFileLoader {
 		fileLoaders[13] = null;
 		fileLoaders[14] = null;
 		fileLoaders[15] = null;
+		fileLoaders[16] = null;
 		
 		selectedFileLoader = fileLoaders[defaultSelection];
 
@@ -282,7 +283,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public void menuItem(JMenu jItem, final String st) {
-		menuItem = new JMenuItem[7];
+		menuItem = new JMenuItem[8];
 		menuItem[0] = new JMenuItem("Tab Delimited, Multiple Sample Files");
 
 		menuItem[0].addActionListener(new ActionListener() {
@@ -470,7 +471,25 @@ public class SuperExpressionFileLoader {
 		jItem.add(menuItem[5]);
 		
 //jaw end-----------------------------------------------
-		menuItem[6] = new JMenu("Other Format Files");
+		
+		// Raktim
+		menuItem[6] = new JMenuItem("RNASeq DGE/RPKM Files");
+
+		menuItem[6].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (st == "File Format Hint") {
+					//HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("RNASEQ"));
+					helpWindow("RNASeq Loader");
+				} else {
+					changeSelectedFileFilterAndLoader(16);
+
+				}
+			}
+		});
+		jItem.add(menuItem[6]);
+		// End Raktim
+		
+		menuItem[7] = new JMenu("Other Format Files");
 
 		subMenuItem = new JMenuItem[2];
 		subMenuItem[0] = new JMenuItem("GenePix Format Files");
@@ -483,7 +502,7 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[6].add(subMenuItem[0]);
+		menuItem[7].add(subMenuItem[0]);
 
 		subMenuItem[1] = new JMenuItem("Agilent Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
@@ -495,9 +514,9 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[6].add(subMenuItem[1]);
+		menuItem[7].add(subMenuItem[1]);
 
-		jItem.add(menuItem[6]);
+		jItem.add(menuItem[7]);
 
 	}
 
@@ -673,6 +692,11 @@ public class SuperExpressionFileLoader {
 		case MAGETAB:
 			loader = new MAGETABFileLoader(this);
 			break;
+		// Raktim
+		case RNASEQ:
+			loader = new RNASeqFileLoader(this);
+			break;
+		// End Raktim
 		default:
 			loader = new StanfordFileLoader(this);
 			break;
@@ -837,6 +861,8 @@ public class SuperExpressionFileLoader {
 				updateDataPath(selectedFileLoader.getFilePath());//, selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);
+				} else {
+					System.out.println("data null");
 				}
 			} catch (Exception ioe) {
 				ioe.printStackTrace();
