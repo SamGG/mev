@@ -24,7 +24,6 @@ public class RConstants {
 	public final static String RHOOK_BASE_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/";
 	public final static String RHOOK_PROP_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/rhook.txt";
 	
-	
 	public final static int WINDOWS_OS = 1;
 	public final static int LINUX_OS = 2;
 	public final static int MAC_OS = 3;
@@ -44,4 +43,5 @@ public class RConstants {
 	// property names
 	protected final static String PROP_NAME_CUR_R_VER = "cur_r_ver";
 	protected final static String PROP_NAME_CUR_MAC_R_VER = "cur_mac_r_ver";
+
 }

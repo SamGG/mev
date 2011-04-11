@@ -832,7 +832,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
 		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
 			message += "You need to have 32Bit JVM as default for LIMMA\n";
 			message += "Please contact MeV Support if you need help.\n";
-			message += "You also need to have R 2.9.x installed for LIMMA\n";
+			message += "You also need to have R 2.11.x installed for LIMMA\n";
 			message += "Cancel if either is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
@@ -843,7 +843,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
 		if (os.toLowerCase().contains("mac")) {
-			message += "You need to have R 2.9.x installed for LIMMA\n";
+			message += "You need to have R 2.11.x installed for LIMMA\n";
 			message += "Cancel if R is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}

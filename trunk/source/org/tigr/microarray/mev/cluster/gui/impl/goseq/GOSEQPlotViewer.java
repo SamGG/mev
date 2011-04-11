@@ -331,13 +331,13 @@ public class GOSEQPlotViewer extends ViewerAdapter implements java.io.Serializab
 		    	}
 		    }
 		    // Raktim - Added to make Java 1.5 happy
-			@Override
+			//@Override
 			public void mouseDragged(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 			// Raktim - Added to make Java 1.5 happy
-			@Override
+			//@Override
 			public void mouseMoved(MouseEvent e) {
 				// TODO Auto-generated method stub
 				

@@ -108,7 +108,7 @@ public class GOSEQGUI implements IClusterGUI, IScriptGUI {
     @SuppressWarnings("unchecked")
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
 		//Before anything check for Mac OS and throw appropriate msg
-		if(sysMsg() != JOptionPane.OK_OPTION)
+		if(sysMsg("R 2.11.x", "GOSeq") != JOptionPane.OK_OPTION)
 			return null;
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
@@ -561,7 +561,7 @@ public class GOSEQGUI implements IClusterGUI, IScriptGUI {
         }
     }
     
-	private int sysMsg() {
+    private int sysMsg(String rVer, String module) {
 		String os = System.getProperty("os.name");
 		String arch = System.getProperty("os.arch");
 		String ver = System.getProperty("os.version");
@@ -570,20 +570,20 @@ public class GOSEQGUI implements IClusterGUI, IScriptGUI {
 		message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
 		message += "Please note:\n";
 		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
-			message += "You need to have 32Bit JVM as default for GOSEQ\n";
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
 			message += "Please contact MeV Support if you need help.\n";
-			message += "You also need to have R 2.9.x installed for GOSEQ\n";
+			message += "You also need to have" + rVer + " installed for " + module + "\n";
 			message += "Cancel if either is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
 		if(arch.toLowerCase().contains("64")) {
-			message += "You need to have 32Bit JVM as default for GOSEQ\n";
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
 			message += "Please contact MeV Support if you need help.\n";
 			message += "Cancel if 32 Bit JVM is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
 		if (os.toLowerCase().contains("mac")) {
-			message += "You need to have R 2.9.x installed for GOSEQ\n";
+			message += "You need to have" + rVer + " installed for " + module + "\n";
 			message += "Cancel if R is not installed. Ok to continue.";
 			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
