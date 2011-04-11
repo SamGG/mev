@@ -261,7 +261,7 @@ public class TestStatisticViewer extends JPanel implements IViewer{
 
 		// Draw x axis label
 		g.setStroke(new BasicStroke(2));
-		String xlabel = "Gene Indices";
+		String xlabel = "Genes";
 		String ylabel = "Test Statistic";
 		Font font = new Font("Dialog", Font.PLAIN, 12);
 
@@ -310,7 +310,7 @@ public class TestStatisticViewer extends JPanel implements IViewer{
 		
 		final int max_name_width = getNamesWidth(metrics);
 		for (int i = 1; i < numberOfGenes + 1; i++) {
-			g.drawString(Integer.toString(i), -height - top - 10
+			g.drawString((String)genes[i-1], -height - top - 10
 					- max_name_width, left + (int) Math.round(i * stepX) + 3);
 
 		}
@@ -491,7 +491,7 @@ public class TestStatisticViewer extends JPanel implements IViewer{
     protected int getNamesWidth(FontMetrics metrics) {
         int maxWidth = 0;
         for (int i=1; i<=getMaxXValue(); i++) {
-            maxWidth = Math.max(maxWidth, metrics.stringWidth(Integer.toString(i)));
+            maxWidth = Math.max(maxWidth, metrics.stringWidth((String)genes[i-1]));
         }
         return maxWidth;
     }

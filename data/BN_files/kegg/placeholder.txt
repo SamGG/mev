@@ -1,0 +1,1 @@
+This file has no function other than ensuring that the data/BN_files/kegg folder always has content. Some Windows zip utilities will fail to properly unzip empty folders. If the data/BN_files/kegg folder is not in place, the BN module is unable to work properly. 

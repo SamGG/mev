@@ -71,7 +71,6 @@ public class ProbetoGene {
 	public IGeneData[] convertProbeToGene(String geneIdentifier,
 			String conversionCriteria, String SDcutoff) {
 		
-		int count = 0;
 		// Number of rows in the loaded expression data
 		int arrayRows = data.getFeaturesSize();
 
@@ -86,6 +85,7 @@ public class ProbetoGene {
 		 * 
 		 */
 
+		int count = 0;
 		for (int index = 0; index < arrayRows; index++) {
 			ISlideDataElement isde = data.getFeature(0).getSlideDataElement(
 					index);
@@ -93,7 +93,7 @@ public class ProbetoGene {
 			MevAnnotation ann = (MevAnnotation) isde.getElementAnnotation();
 			String[] temp = (ann.getAttribute(geneIdentifier));
 			String currentID = temp[0];
-			currentID = currentID.toUpperCase();
+//			currentID = currentID.toUpperCase();
 			//System.out.println("current id:"+currentID);
 			if (!unique_genes_in_data.contains(currentID)
 					&& !currentID.equalsIgnoreCase("NA")) {

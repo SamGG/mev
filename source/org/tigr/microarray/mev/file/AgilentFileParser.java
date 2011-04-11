@@ -29,13 +29,14 @@ public class AgilentFileParser {
 	public static final String ROW ="Row"; 
 	public static final String COLUMN = "Col";
 	public static final String FEATURENUMBER="FeatureNum";
-	
 	public static final String RMEDIANSIGNAL ="rMedianSignal";
 	public static final String GMEDIANSIGNAL ="gMedianSignal";
 	public static final String SYSTEMATICNAME ="SystematicName"; 
 	public static final String GENENAME = "GeneName"; 
 	
 	private boolean isAgilentFileValid=false;
+	private boolean isOneColor;
+
 
 	private ArrayList<String>requiredHeaders=new ArrayList<String>();
 	private String[][]dataMatrix=new String[1][1];
@@ -43,7 +44,8 @@ public class AgilentFileParser {
 	
 
 	
-	public AgilentFileParser() {
+	public AgilentFileParser(boolean isOneColor) {
+		this.isOneColor = isOneColor;
 		initializeHeaders();
 	}
 	
@@ -64,7 +66,7 @@ public class AgilentFileParser {
 */
 	
 	
-	public static int validate(String headerLine) {
+	public static int validate(String headerLine, boolean isOneColor) {
 
 		ArrayList<String> columnHeaders = new ArrayList<String>();
 		StringSplitter split = new StringSplitter('\t');
@@ -106,9 +108,9 @@ public class AgilentFileParser {
 		//A file must at the bare minimum satisfy all these five conditions
 		if (valid1 && valid2 && valid3 &&valid4 && valid5) {
 			return AgilentFileParser.VALID_AGILENT_FILE;
-		}
-
-		else {
+		} else if (isOneColor && valid1 && valid2 &&valid4 && valid5) {//doesn't need r for onecolor
+			return AgilentFileParser.VALID_AGILENT_FILE;			
+		} else {
 			return AgilentFileParser.INVALID_AGILENT_FILE;
 		}
 
@@ -135,11 +137,14 @@ public class AgilentFileParser {
 		this.requiredHeaders.add(AgilentFileParser.ROW);
 		this.requiredHeaders.add(AgilentFileParser.COLUMN);
 		this.requiredHeaders.add(AgilentFileParser.PROBENAME );
+		if (!isOneColor)
 		this.requiredHeaders.add(AgilentFileParser.GENENAME);
 		this.requiredHeaders.add(AgilentFileParser.SYSTEMATICNAME);
 		this.requiredHeaders.add(AgilentFileParser.GPROCESSEDSIGNAL);
+		if (!isOneColor)
 		this.requiredHeaders.add(AgilentFileParser.RPROCESSEDSIGNAL);
 		this.requiredHeaders.add(AgilentFileParser.GMEDIANSIGNAL);
+		if (!isOneColor)
 		this.requiredHeaders.add(AgilentFileParser.RMEDIANSIGNAL);
 	}
 	
@@ -196,7 +201,7 @@ public class AgilentFileParser {
 					
 					
 					//Once header row is found, check if file has all required columns in it. If not, no point in reading further
-					if(AgilentFileParser.validate(currentLine)==AgilentFileParser.VALID_AGILENT_FILE) {
+					if(AgilentFileParser.validate(currentLine, isOneColor)==AgilentFileParser.VALID_AGILENT_FILE) {
 						this.isAgilentFileValid=true;
 					}else {
 						this.isAgilentFileValid=false;
@@ -235,11 +240,11 @@ public class AgilentFileParser {
 				
 				if (getRequiredHeaders().contains(
 						AgilentFileParser.FEATURENUMBER)) {
-					this.dataMatrix[rowIndex][0] = tokens[columnHeaders.indexOf(AgilentFileParser.FEATURENUMBER)];
+					this.dataMatrix[rowIndex][0] = 
+						tokens[columnHeaders.indexOf(AgilentFileParser.FEATURENUMBER)];
 					++columnIndex;
 				}
 
-				
 				if (getRequiredHeaders().contains(
 						AgilentFileParser.ROW)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.ROW)];
@@ -254,10 +259,12 @@ public class AgilentFileParser {
 						AgilentFileParser.PROBENAME)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.PROBENAME)];
 				}
+				
 				if (getRequiredHeaders().contains(
 						AgilentFileParser.GENENAME)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.GENENAME)];
 				}
+				
 				if (getRequiredHeaders().contains(
 						AgilentFileParser.SYSTEMATICNAME)) {
 					this.dataMatrix[rowIndex][columnIndex++] = tokens[columnHeaders.indexOf(AgilentFileParser.SYSTEMATICNAME)];

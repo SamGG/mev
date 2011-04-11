@@ -126,6 +126,36 @@ public class FloatSlideData implements ISlideData {
     	this.dataType = dataType.intValue();
     	this.slideMetaData = ismd;
     }    
+    /**
+     * Create a copy of FloatSlideData from an existing fsd. 
+     * @param fsd
+     */
+    public FloatSlideData(FloatSlideData fsd) {
+		this.sampleLabelKeys = fsd.getSlideDataKeys();//sampleLabelKeys;
+		this.sampleLabels = fsd.getSlideDataLabels();//sampleLabels;
+		this.filename = fsd.getFullSlideFileName();
+		this.name = fsd.getSlideDataName();
+		this.setNonZero(fsd.getIsNonZero());
+		this.normalizedState = fsd.getNormalizedState();
+		this.sortState = fsd.getSortState();
+		this.spotInfoData = fsd.getSpotInformationData();
+		this.dataType = fsd.getDataType();
+		this.slideMetaData = fsd.getSlideMetaData();
+    
+    	setCurrentCY3(fsd.getCurrentCY3());
+    	setCurrentCY5(fsd.getCurrentCY5());
+    	setTrueCY3(fsd.getTrueCY3());
+    	setTrueCY5(fsd.getTrueCY5());
+    	setDetection(fsd.getDetection());
+    	setPvalues(fsd.getPvalue());
+    	setGenePixFlags(fsd.getGenePixFlags());
+    	
+    	if(fsd.getSampleAnnotation()!=null){
+    		setSampleAnnotation(fsd.getSampleAnnotation());
+    	  	
+    	}
+    	
+	}
     
     /**
      * @author sarita
@@ -483,11 +513,13 @@ public class FloatSlideData implements ISlideData {
      */
     public final float getRatio(int index, int logState) {
         if(normalizedState == ISlideData.NO_NORMALIZATION) {
-            if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY || 
+            		dataType == IData.DATA_TYPE_RNASEQ)
                 return trueCY5[index];
             return getRatio(trueCY5[index], trueCY3[index], logState);
         } else {
-            if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
+            if(dataType == IData.DATA_TYPE_RATIO_ONLY || 
+            		dataType == IData.DATA_TYPE_RNASEQ)
                 return currentCY5[index];
             return getRatio(currentCY5[index], currentCY3[index], logState);
         }

@@ -178,13 +178,12 @@ public class GSEAGUI implements IClusterGUI {
 		    
 		    AlgorithmData result = gsea.execute(algData);	
 			
-			logger.append("Algorithm excecution ends...\n");
+			logger.append("Algorithm execution ends...\n");
 		
 			if(stop)
 				return null;
 			
 			logger.append("Generating Viewers...\n");
-			 System.out.println("viewer start:"+System.currentTimeMillis());
 				
 			//Populate the test statistic in to gene sets
 			GSEAUtils utils=new GSEAUtils();
@@ -211,7 +210,6 @@ public class GSEAGUI implements IClusterGUI {
 	            resultNode = createEmptyResultNode(result);
 			else
 			resultNode = createResultNode(result, idata, null);
-			 System.out.println("viewer end:"+System.currentTimeMillis());
 			logger.append("Generating Viewers ends...\n");
 			logger.dispose();
 			return resultNode;	
@@ -279,11 +277,11 @@ public class GSEAGUI implements IClusterGUI {
    private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
 		DefaultMutableTreeNode node = null;
 		
-			node = new DefaultMutableTreeNode("GSEA-Significant Gene sets");
+			node = new DefaultMutableTreeNode("GSEA");
 			addPValueGraphImage(node, result);
 			addGenesetMembershipPlot(node, result);
 			addTableViews(node, result, experiment, idata);
-			addExpressionImages(node, result, this.experiment);
+			addResultImages(node, result, this.experiment);
 			
 			
 			
@@ -328,11 +326,10 @@ public class GSEAGUI implements IClusterGUI {
     * @param experiment
     */
 
-   private void addExpressionImages(DefaultMutableTreeNode root,  AlgorithmData result, Experiment experiment) {
+   private void addResultImages(DefaultMutableTreeNode root,  AlgorithmData result, Experiment experiment) {
 
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Gene Set Results");
 					
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-		
     	String[]header1= {"Gene set", "Incremental J-G score"};
     	String[]header2= {"Gene set", "Test Statistic"};
 		DefaultMutableTreeNode clusterNode;
@@ -350,7 +347,7 @@ public class GSEAGUI implements IClusterGUI {
 				GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, clusters);
 				centroidViewer.setMeans(clusterMeans.A);
 				centroidViewer.setVariances(clusterVars.A);
-	            clusterNode = new DefaultMutableTreeNode((String)gene_set_names[i]);
+	            clusterNode = new DefaultMutableTreeNode("Set "+(i+1)+": " + (String)gene_set_names[i]);
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", new GSEAExperimentViewer(experiment, clusters))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph",centroidViewer , new CentroidUserObject(new Integer(0),CentroidUserObject.VARIANCES_MODE))));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(new Integer(0), CentroidUserObject.VALUES_MODE))));
@@ -358,7 +355,6 @@ public class GSEAGUI implements IClusterGUI {
 	            TestStatisticTableViewer testStatTabView=new TestStatisticTableViewer(header2, getOrderedTestStatasStringArray(getOrderedTestStats().get((String)gene_set_names[i])));
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Test statistics table view", testStatTabView)));
 	            
-	            // System.out.println("Gene set name:"+gene_set_names.get(i)); 
 	            clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Leading Edge Graph", new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])))));
 	            String[][] temp=new LeadingEdgeSubsetViewer(getDescendingSortedTStats().get((String)gene_set_names[i])).getLeadingEdgeGenes();
 	            LeadingEdgeTableViewer tabViewer=new LeadingEdgeTableViewer(header1,temp );
@@ -518,7 +514,7 @@ public class GSEAGUI implements IClusterGUI {
    
    
    private void addTableViews(DefaultMutableTreeNode root, AlgorithmData result, GSEAExperiment experiment, IData data) {
-   	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
+   	DefaultMutableTreeNode node = new DefaultMutableTreeNode("Results");
    	GSEATableViewer tabViewer;
    	
    	LinkedHashMap overenriched=result.getMappings("over-enriched");
@@ -543,7 +539,7 @@ public class GSEAGUI implements IClusterGUI {
    	
    //Display Significant Gene Sets
    	tabViewer = new GSEATableViewer(headernames,pVals, root,experiment);
-   	node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Gene Sets", tabViewer, new Integer(0))));
+   	node.add(new DefaultMutableTreeNode(new LeafInfo("Included Gene Sets", tabViewer, new Integer(0))));
    
    //Display Excluded Gene sets
    	Vector temp=result.getVector("excluded-gene-sets");
@@ -572,6 +568,12 @@ public class GSEAGUI implements IClusterGUI {
    	
    	
     //tabViewer=new GSEATableViewer(header2,geneToProbeMapping, root, experiment);
+   	for (int i=0; i<geneToProbeMapping.length; i++){
+   		for (int j=0; j<geneToProbeMapping[i].length; j++){
+   			if (geneToProbeMapping[i][j]==null||geneToProbeMapping[i][j].equals("null"))
+   					geneToProbeMapping[i][j]="";
+   		}
+   	}
    	tabViewer=new GSEATableViewer(header2,geneToProbeMapping);
     node.add(new DefaultMutableTreeNode(new LeafInfo("Probe to Gene Mapping", tabViewer, new Integer(0))));
    	

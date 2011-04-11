@@ -123,6 +123,12 @@ public class ClusterTableViewer implements IViewer {
         if (experiment == null) {
             throw new IllegalArgumentException("experiment == null");
         }
+        if (clusters==null){
+        	clusters = new int[1][experiment.getNumberOfGenes()];
+        	for (int i=0; i<experiment.getNumberOfGenes(); i++){
+        		clusters[0][i]=i;
+        	}
+        }
         this.data = data;
         this.experiment = experiment;
         this.exptID = experiment.getId();

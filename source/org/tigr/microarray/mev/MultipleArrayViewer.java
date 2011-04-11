@@ -415,6 +415,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         mainframe.pack();
         splitPane.setDividerLocation(150);
 
+        //TODO Decide if the normalization menu should be enabled for RNASeq Data. 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
         }        
@@ -502,6 +503,8 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         mainframe.pack();
         splitPane.setDividerLocation(150);
 
+
+        //TODO Decide if the normalization menu should be enabled for RNASeq Data. 
         if (data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
             this.menubar.enableNormalizationMenu(false);
         }
@@ -3943,6 +3946,11 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
 	         	//affy data. 
 	         	data.setDataType(IData.DATA_TYPE_AFFY_ABS);
 	         }
+	       if(data.getDataType() == IData.DATA_TYPE_RNASEQ){
+	         	this.menubar.setMinRatioScale(0f);
+	         	this.menubar.setMidRatioValue(getMedian());
+	         	this.menubar.setMaxRatioScale(getMaxScale());  
+	       }
         } catch (OutOfMemoryError oome) {
         	//
         	       if(data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
@@ -4004,6 +4012,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         
         if(features.length > 0)
             addHistory(features[0].getSize()+" genes loaded.");
+        toolbar.enableRNASeq(data.getDataType()==IData.DATA_TYPE_RNASEQ);
         initMainViewAndClusterManager();
     }
     

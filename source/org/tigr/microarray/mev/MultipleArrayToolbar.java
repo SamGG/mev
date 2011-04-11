@@ -56,7 +56,7 @@ public class MultipleArrayToolbar extends JToolBar {
     SteppedComboBox[] steppedComboArray;
     SteppedComboBox cghSteppedComboBox;
     ImageIcon comboIcon;
-    String [] category = {"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
+    String[] category = {/*"RNASeq",*/"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
 
 	ImageIcon[] categoryIcon = new ImageIcon[category.length];
 	ImageIcon[] disabledCategoryIcon = new ImageIcon[category.length];
@@ -67,7 +67,9 @@ public class MultipleArrayToolbar extends JToolBar {
     	totalModules = 0;
     	Action action;
     	steppedComboArray = new SteppedComboBox[category.length];
-    	
+    	int index = 0;
+//    	categoryIcon[index]=manager.getIcon("RNAseq.gif");
+//        disabledCategoryIcon[index++]=manager.getIcon("RNAseq_gry.gif");
     	categoryIcon[0]=manager.getIcon("Clustering_1.gif");
         disabledCategoryIcon[0]=manager.getIcon("Clustering_1gry.gif");
         categoryIcon[1]=manager.getIcon("Statistics_1.gif");
@@ -86,10 +88,10 @@ public class MultipleArrayToolbar extends JToolBar {
     		steppedComboArray[i] = new SteppedComboBox();
     		ComboListener comboListener = new ComboListener();
     		steppedComboArray[i].addActionListener(comboListener);
-    		steppedComboArray[i].setMaximumRowCount(13);	
+    		steppedComboArray[i].setMaximumRowCount(20);	
     		steppedComboArray[i].addItem(disabledCategoryIcon[i]);
     	}
-    	int index = 0;
+    	index = 0;
     	for(int i=0;i<category.length;i++) {
    			 while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
    				if((action.getValue(ActionManager.CATEGORY)).equals(category[i])) {
@@ -239,11 +241,28 @@ public class MultipleArrayToolbar extends JToolBar {
 		break;
 	}
     }
+
+	/**
+	 * Disables modules not applicable to microarray data.
+	 * 
+	 */
+	public void enableRNASeq(boolean isRNASeq) {
+		if (isRNASeq){
+			steppedComboArray[6].removeItemAt(3); //BN
+			steppedComboArray[6].removeItemAt(2); //LM
+			steppedComboArray[4].removeItemAt(2); //EASE
+			return;
+		}
+		steppedComboArray[1].removeItemAt(16); //DEGSEQ
+		steppedComboArray[1].removeItemAt(15); //DESEQ
+		steppedComboArray[1].removeItemAt(14); //EDGER
+		//steppedComboArray[1].removeItemAt(9);  //GOSEQ
+	}
+	
     private class ComboListener implements ActionListener{
     	public void actionPerformed(ActionEvent e){      		
     		JComboBox cb = (JComboBox)e.getSource();
     		if (cb == cghSteppedComboBox){
-    			
         		if (cb.getSelectedIndex()==0)
         			return;
         		int index = 0;
@@ -252,7 +271,6 @@ public class MultipleArrayToolbar extends JToolBar {
         		actiontester = manager.getAction(ActionManager.CGH_ANALYSIS_ACTION+String.valueOf(index));
         		manager.forwardAction(new ActionEvent(actiontester, e.getID(), (String)actiontester.getValue(Action.ACTION_COMMAND_KEY)));
         		cb.setSelectedIndex(0);
-    			
     			return;
     		}
     		if (cb.getSelectedIndex()<0 ||tempDeletion){

@@ -49,7 +49,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.IWizardParameterPanel;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 
-import com.sun.corba.se.spi.activation.Repository;
 /**
  * DataPanel class creates the data selection component or the first panel of GSEA Wizard dialog
  * @author sarita
@@ -87,20 +86,33 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	private static int ycoord=0;
 	
 	private int maxFactors=4;
+	private GSEAInitWizard gseaInitWizard;
 	//Panel for group assignments/cluster selection
 	
 	
-
 	/**
 	 * Constructs a DataPanel object
+	 * @param gseaInitWizard 
 	 * 
 	 * 
 	 */
 	
 	public DataPanel(IData idata, AlgorithmData algData, JFrame parent,
 			ClusterRepository clusterRepository, IFramework framework) {
+		this(idata, algData, parent, clusterRepository, framework, null);
+	}
 
+	/**
+	 * Constructs a DataPanel object
+	 * @param gseaInitWizard 
+	 * 
+	 * 
+	 */
 		
+	public DataPanel(IData idata, AlgorithmData algData, JFrame parent,
+			ClusterRepository clusterRepository, IFramework framework, GSEAInitWizard gseaInitWizard) {
+
+		this.gseaInitWizard = gseaInitWizard;
 		this.idata = idata;
 		this.algData = algData;
 		this.clusterRepository = clusterRepository;
@@ -109,6 +121,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		initComponents();
 	}
 	
+	GridBagLayout gridbag=new GridBagLayout();
 	/**
 	 * Initializes the components of data panel and sets their default values.
 	 * The default data panel GUI comprises of one factor and two levels per factor 
@@ -120,7 +133,6 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	
 	private void initComponents(){
 		this.setPreferredSize(new Dimension(1000, 850));
-		GridBagLayout gridbag=new GridBagLayout();
 		setLayout(gridbag);
 		GridBagConstraints constraints = new GridBagConstraints();
 	 
@@ -130,16 +142,17 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		numberOfFactorPanel.setBackground(Color.white);
 	    numberOfFactorPanel.setBorder((new EtchedBorder()));
 	
-		factorLabel=new javax.swing.JLabel("Enter the number of groups in your samples:");
+		factorLabel=new javax.swing.JLabel("Enter the number of factors in your samples:");
 		
-		factorTextField=new javax.swing.JTextField(50);
+		factorTextField=new javax.swing.JTextField(5);
 		factorTextField.setText("1");
-		factorTextField.setMinimumSize(new Dimension(100, 30));
+		factorTextField.setMinimumSize(new Dimension(20, 30));
 		factorTextField.addKeyListener(new Listener());
 		
 		
 		//panel for factor level text boxes
 		factorLevelPanel=new javax.swing.JPanel();
+		factorLevelPanel.setLayout(gridbag);
 		factorLevelPanel.setBackground(Color.WHITE);
 		factorLevelPanel.setBorder((new EtchedBorder()));
 		factorLevelPanel.setVisible(true);
@@ -159,8 +172,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	   
 
 	    //Add factortextfield to numberOfFactorPanel
-	    constraints=buildConstraints(constraints, 4, 0, 1, 1, 30, 100);
-		constraints.fill=GridBagConstraints.BOTH;
+	    constraints=buildConstraints(constraints, 1, 0, 1, 1, 100, 100);
+		constraints.fill=GridBagConstraints.NONE;
 	    gridbag.setConstraints(factorTextField, constraints);
 	    numberOfFactorPanel.add(factorTextField);
 	    
@@ -225,11 +238,10 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 	public void makeFactorLevel(String name){
 		
 		GridBagConstraints c=new GridBagConstraints();
-		GridBagLayout grid=new GridBagLayout();
 		
 		javax.swing.JLabel factorNameLabel=new javax.swing.JLabel("Factor "+name+" name:");
-		factorNameTextField=new javax.swing.JTextField(name,30);
-		factorNameTextField.setPreferredSize(new Dimension(100, 30));
+		factorNameTextField=new javax.swing.JTextField(name,5);
+		factorNameTextField.setPreferredSize(new Dimension(20, 30));
 		factorNameTextField.setEditable(true);
 		factorNameTextField.setName(name);
 		factorNameTextField.setText("Factor "+name);
@@ -244,8 +256,8 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		
 		
 		factorLevelLabel=new JLabel("Number of levels of factor "+name+" :");
-		factorLevelTextField=new javax.swing.JTextField(30);
-		factorLevelTextField.setPreferredSize(new Dimension(100, 30));
+		factorLevelTextField=new javax.swing.JTextField(5);
+		factorLevelTextField.setPreferredSize(new Dimension(20, 30));
 		factorLevelTextField.setEditable(true);
 		factorLevelTextField.setName(name);
 		factorLevelTextField.setText("2");
@@ -268,28 +280,29 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		});
 		
 		
-		c=buildConstraints(c, xcoord, ycoord, 1, 1, 100, 100);
-	    grid.setConstraints(factorNameLabel, c);
+		c.fill = GridBagConstraints.NONE;
+		c.anchor = GridBagConstraints.WEST;
+		c=buildConstraints(c, 0, Integer.parseInt(name)-1, 1, 1, 100, 100);
+		gridbag.setConstraints(factorNameLabel, c);
 	    factorLevelPanel.add(factorNameLabel);
 	    
-	    c=buildConstraints(c, xcoord+5, ycoord, 1, 1, 100, 100);
-	    grid.setConstraints(factorNameTextField, c);
+	    c=buildConstraints(c, 1, Integer.parseInt(name)-1, 1, 1, 100, 100);
+	    gridbag.setConstraints(factorNameTextField, c);
 	    factorLevelPanel.add(factorNameTextField);
 		
-	    c=buildConstraints(c, xcoord+10, ycoord, 1, 1, 100, 100);
-		grid.setConstraints(factorLevelLabel, c);
+	    c=buildConstraints(c, 2, Integer.parseInt(name)-1, 1, 1, 100, 100);
+	    gridbag.setConstraints(factorLevelLabel, c);
 	    factorLevelPanel.add(factorLevelLabel);
 	    
-	    c=buildConstraints(c, xcoord+15, ycoord, 1, 1, 100, 100);
-	    grid.setConstraints(factorLevelTextField, c);
+	    c=buildConstraints(c, 3, Integer.parseInt(name)-1, 1, 1, 100, 100);
+	    gridbag.setConstraints(factorLevelTextField, c);
 	    factorLevelPanel.add(factorLevelTextField);
-		
 		
 		
 		revalidate();
 		//Increment coordinates to add more if needed..
 		
-		ycoord=ycoord+1;
+		ycoord++;
 
 
 	}
@@ -308,21 +321,11 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		}
 		
 		if(num_factor>=getMaxFactors()){
-			JOptionPane.showMessageDialog(this, "You cannot have more than"+getMaxFactors() + " factors!", "Factor Number Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "You cannot have more than "+ (getMaxFactors()-1) + " factors!", "Factor Number Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 	    return true;
-	}
-	
-	
-	
-	public void incrementXcoord(){
-		xcoord=xcoord+1;
-	}
-	
-	public void incrementYCoord(){
-		ycoord=ycoord+1;
 	}
 	
 	public void resetPanel(JPanel panel){
@@ -373,7 +376,7 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
 		gPanel.setLayout(grid);
 
 		for (int i=0; i<getNumberOfFactors(); i++){
-			MultiGroupExperimentsPanel mulg=new MultiGroupExperimentsPanel((String)getAllFactorNames().get(i), ((Integer)getAllFactorLevels().get(i)).intValue());
+			MultiGroupExperimentsPanel mulg=new MultiGroupExperimentsPanel("Factor "+(i+1), ((Integer)getAllFactorLevels().get(i)).intValue());
 			
 			
 			if(i==0)
@@ -713,6 +716,16 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
                 for (int j = 0; j < numGroups; j++) {
                     exptGroupRadioButtons[j][i] = new JRadioButton("Group " + (j + 1) + "     ", j == 0? true: false);
                     chooseGroup[i].add(exptGroupRadioButtons[j][i]);
+                    exptGroupRadioButtons[j][i].addActionListener(new ActionListener(){
+
+						public void actionPerformed(ActionEvent e) {
+							
+							gseaInitWizard.setParamSufficient(validateSampleSelection());
+							
+							
+                }
+                
+            		});
                 }
                 
                 notInGroupRadioButtons[i] = new JRadioButton("Not in groups", false);
@@ -815,18 +828,34 @@ public class DataPanel extends JPanel implements IWizardParameterPanel{
        
         public int[] getFactorAssignments(int factorNumber ) {
         	if (!isButtonSelectionMethod()){
-        		
         		int[]temp=getFactorClusterAssignments(factorNumber);
         		return getFactorClusterAssignments(factorNumber);
         	}
             return ((MultiGroupExperimentsPanel)gPanel.getComponent(factorNumber)).getGroupAssignments();
         }
-
-      
-    
  }
 
-	
+	private boolean validateSampleSelection() {
+		boolean valid = true;
+		for (int i=0; i<this.num_factors; i++){
+			int[] groupAssign = ((MultiGroupExperimentsPanel)gPanel.getComponent(i)).getGroupAssignments();
+			boolean[] groups = new boolean[((MultiGroupExperimentsPanel)gPanel.getComponent(i)).numGroups];
+			for (int j=0; j<groups.length; j++){
+				groups[j] = false;
+			}
+			for (int j=0; j<groupAssign.length; j++){
+				groups[groupAssign[j]-1] = true;
+			}
+			for (int j=0; j<groups.length; j++){
+				if (!groups[j]){//if empty group
+					return false;
+				}
+			}
+		}
+		return true;
+      
+ }
+
 	  public int[] getFactorClusterAssignments(int factor){
       	boolean doubleAssigned;
       	int[]groupAssignments = new int[getSampleNames().size()];

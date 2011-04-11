@@ -332,7 +332,6 @@ public class SURV extends AbstractAlgorithm{
 			filename = filename.replace("\\", "/");
 			RHook.evalR("sampleAnns <- read.delim(\'" + filename + "\', header=TRUE, check.names=FALSE, sep='\\t', fill=FALSE, na.strings=c(\"N/A\", \"null\"))");
 			
-//			RHook.evalR("print(dim(sampleAnns))");
 			if(comparison) {
 				//Run comparison of the survival between the two groups. Get the data out.
 				RHook.evalR("survdata <- survdiff(Surv(eventtime, censoredflag) ~ group, data=sampleAnns)");
@@ -396,11 +395,7 @@ public class SURV extends AbstractAlgorithm{
 						")"
 					);
 				int nonzero = RHook.evalR("length(coefficients(pen, 'nonzero'))").asInt();
-				//System.out.println("Console users: Do not trust the above printed number (# nonzero coefficients: XX)\n" +
-				//		"This number may not be correctly reported to the console by R. \n" +
-				//		"The actual number of nonzero coefficients calculated by R is " + nonzero);
-				//TODO add fold parameter. Error-check for valid values: btw 2 and number of results
-//				int fold=100;
+				
 				RHook.evalR(
 						"capture.output(" +
 						"cvl <- cvl(Surv(alldata$eventtime, alldata$censoredflag), " + 

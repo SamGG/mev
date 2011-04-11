@@ -36,6 +36,7 @@ import javax.swing.border.BevelBorder;
 
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInitDialog;
 import org.tigr.microarray.util.awt.AccessibleColorPalette;
 
 

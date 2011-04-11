@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
@@ -675,4 +676,16 @@ public class TMEV {
         return os;
     }
 
+    // Rakitm 
+    // Debug Util Function
+    public static void pause() {
+    	System.out.println("Press any key to continue...........");
+    	BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+    	try {
+			stdin.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+}
+    }
 }

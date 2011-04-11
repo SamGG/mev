@@ -17,8 +17,6 @@ package org.tigr.rhook;
 
 public class RConstants {
 	
-	//public final static String RHOOK_BASE_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support/";
-	//public final static String RHOOK_PROP_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support/rhook.txt";
 	// TODO
 	// Revert to release URLs
 	public final static String RHOOK_BASE_URL = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/";

@@ -81,3 +81,16 @@ TDMS_format_sample.txt
 CGH_sample_genelist.txt
 CGH_sample_data.txt
 brain-heart-kidney-liver_annotation.ann
+
+# RNASeq sample data files
+rnaseq/GeneExpExample5000_Cnt_Ens.txt
+rnaseq/isoforms.fpkm_cnt_Ref.txt
+rnaseq/TagSeqExample.txt
+rnaseq/hg/hg18/ensembl/ens_gene_hg18.txt
+rnaseq/hg/hg18/refseq/ref_gene_hg18.txt
+rnaseq/hg/hg19/ensembl/ens_gene_hg19.txt
+rnaseq/hg/hg19/refseq/ref_gene_hg19.txt
+rnaseq/mm/mm8/ensembl/ens_gene_mm8.txt
+rnaseq/mm/mm8/refseq/ref_gene_mm8.txt
+rnaseq/mm/mm9/ensembl/ens_gene_mm9.txt
+rnaseq/mm/mm9/refseq/ref_gene_mm9.txt

@@ -1,5 +1,7 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,16 +19,17 @@ public class GSEAInitWizard extends GSEAWizard {
 	 * Module specific IWizardParmeterPanels 
 	 */
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private DataPanel dataPanel;
 	private IWizardParameterPanel parameterPanel;
 
 	
 	private IWizardParameterPanel currentPanel;
-	private IData idata;
 	
 	
-	
-
 	/**
 	 * @param parent parent JFrame
 	 * @param title main dialog title
@@ -42,12 +45,11 @@ public class GSEAInitWizard extends GSEAWizard {
 			ClusterRepository clusterRepository, IFramework framework) {
 		super(parent, title, modal, algData, stepTitles, stepCount, initPanel);
 
-		this.idata = idata;
 		dataPanel = new DataPanel(idata, algData, parent,
-				clusterRepository, framework);
+				clusterRepository, framework, this);
 		currentPanel = dataPanel;
 		super.setInitialPanel(dataPanel);
-		parameterPanel = new ParameterPanel(algData, parent, framework);
+		parameterPanel = new ParameterPanel(algData, parent, framework, this);
 
 	}
 	
@@ -76,6 +78,7 @@ public class GSEAInitWizard extends GSEAWizard {
 			if(currAlgData.getIntMatrix("factor-assignments")!=null){
 			nextPanel = parameterPanel;
 			currentPanel = nextPanel;
+			this.setPreferredSize(new Dimension(650, 700));
 			}else{
 				String eMsg=new String();
 				eMsg="<html>You have to specify factor levels and sample group assignments before you " +
@@ -111,6 +114,7 @@ public class GSEAInitWizard extends GSEAWizard {
 		//current panel should capture
 		currentPanel.clearValuesFromAlgorithmData();
 
+		this.setPreferredSize(new Dimension(800, 850));
 		if (currentStepIndex == 1) {
 			prevPanel = dataPanel;
 			currentPanel = prevPanel;

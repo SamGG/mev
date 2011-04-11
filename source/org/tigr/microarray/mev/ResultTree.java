@@ -667,6 +667,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 //check for special Icons
                 if(text.indexOf("Expression Image") != -1){
                     setIcon(expressionImageIcon);
+                } else if(text.indexOf("Set ") != -1){
+                    //default
+                } else if(text.indexOf("Included Gene Sets") != -1||text.indexOf("Excluded Gene Sets") != -1||text.indexOf("Probe to Gene Mapping") != -1){
+                	setIcon(tableIcon);
                 } else if(text.indexOf("Centroid") != -1){
                     setIcon(centroidGraphIcon);
                 } else if(text.indexOf("Expression Graph") != -1){
@@ -688,7 +692,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 } else if(text.indexOf('(') != -1 && ((DefaultMutableTreeNode)value).getParent() == root.getChildAt(2)){
                     setIcon(primaryResultIcon);
                 } else if(text.indexOf("F-Ratio") != -1 ||
-                text.indexOf("Statistic") != -1 || text.indexOf("Table") != -1){
+                text.indexOf("Statistic") != -1 || text.indexOf("Table") != -1|| text.indexOf("table") != -1){
                     setIcon(tableIcon);
                 } else if(text.equals("Cluster Information")){
                     setIcon(clusterInfoIcon);
@@ -893,6 +897,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(tableIcon);
                     } else if(text.indexOf("Amplifications") != -1 | text.indexOf("Deletions") != -1) {
                         setIcon(ampDelIcon);
+                    } else if(text.indexOf("Included Gene Sets") != -1||text.indexOf("Excluded Gene Sets") != -1||text.indexOf("Probe to Gene Mapping") != -1){
+                    	setIcon(tableIcon);
                     } /* CGH Icons */
                     //add new icons here for leaf icons
                     
@@ -900,6 +906,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     else if(grandParentText != null){
                         if(grandParentText.indexOf("Expression Image") != -1){
                             setIcon(expressionImageIcon);
+                        } else if(grandParentText.indexOf("Table Views") != -1){
+                            setIcon(tableIcon);
                         } else if(grandParentText.indexOf("Centroid") != -1){
                             setIcon(centroidGraphIcon);
                         } else if(grandParentText.indexOf("Expression Graph") != -1){

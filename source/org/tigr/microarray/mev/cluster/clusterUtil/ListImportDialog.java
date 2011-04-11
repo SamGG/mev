@@ -13,14 +13,19 @@
 package org.tigr.microarray.mev.cluster.clusterUtil;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JTextField;
 
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
@@ -106,17 +113,57 @@ public class ListImportDialog extends AlgorithmDialog {
         JScrollPane scroll = new JScrollPane(pane);
         scroll.getViewport().setViewSize(new Dimension(125, 200));
         scroll.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+//        
+//        JLabel browseLabel = new JLabel("Browse");
+        JButton browseButton = new JButton("Browse");
+        browseButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				loadGeneListFile();
+			}
+
+        });
 
         paramPanel.add(listLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.EAST, GridBagConstraints.VERTICAL, new Insets(10,0,0,20), 0,0));
         paramPanel.add(listBox, new GridBagConstraints(1,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10,0,0,0), 0,0));
         paramPanel.add(textLabel, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(20,0,0,20), 0,0));
         paramPanel.add(scroll, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,10,0), 0,0));
+//        paramPanel.add(browseLabel, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,10,0), 0,0));
+        paramPanel.add(browseButton, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(20,0,10,0), 0,0));
         
         addContent(paramPanel);
         setActionListeners(new Listener());
         pack();
     }    
 
+	private void loadGeneListFile() {
+		File file;		
+		JFileChooser fileChooser = new JFileChooser(TMEV.getDataPath());
+		
+		if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+		
+			file = fileChooser.getSelectedFile();
+			
+    		try {						
+    			//first grab the data and close the file
+    			BufferedReader br = new BufferedReader(new FileReader(file));
+    			Vector<String> data = new Vector<String>();
+    			String line;
+    			String geneList = "";
+    			while( (line = br.readLine()) != null){
+    				data.add(line.trim());
+    				geneList = geneList + line.trim()+"\n";
+    			}
+    			pane.setText(geneList.trim());
+    			
+    			br.close();
+    		}catch (Exception ex) {
+    			ex.printStackTrace();
+    		}
+		}
+	
+		
+	}
     ParameterPanel binParamPanel;
     JButton addOne;
     ArrayList<Integer> removedClusters = new ArrayList<Integer>();
@@ -446,7 +493,7 @@ public class ListImportDialog extends AlgorithmDialog {
     }
     public static void main(String[] args){
     	String[] qwe ={"qwe","werhjkhjkhjk", "sdfsdf", "qqqq", "eevsf"};
-    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, false, false);
+    	ListImportDialog lid = new ListImportDialog(new java.awt.Frame(), qwe, true, null);
     	if(lid.showModal() == JOptionPane.OK_OPTION) {
     		for (int i=0; i< lid.getUpperLimit().length;i++){
     			

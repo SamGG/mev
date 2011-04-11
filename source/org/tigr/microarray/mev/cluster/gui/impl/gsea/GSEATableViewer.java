@@ -2,6 +2,7 @@ package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Expression;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -17,23 +19,26 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.TMEV;
-import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
-import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
-import org.tigr.microarray.mev.cluster.gui.helpers.AnnotationURLLinkDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.GSEAURLLinkDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer.DefaultViewerTableModel;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
+import org.tigr.util.QSort;
 
 public class GSEATableViewer extends TableViewer implements Serializable {
 
-	private static final String SAVE_GSEA_TABLE_COMMAND = "save-gsea-table-command";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String SAVE_PVALUES_TABLE_COMMAND ="save_pvalues_table_command";
 	private static final String STORE_CLUSTER_COMMAND="store_cluster_command";
 	private static final String LINK_TO_URL_COMMAND = "link-to-url-command";
@@ -55,21 +60,34 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     protected boolean haveAccessionNumbers;
     private JMenuItem urlMenuItem;
     int xColumn;
+	private int[] sortedIndices;
+	private int[] indices;
+    private boolean[] sortedAscending; 
     
     
     public GSEATableViewer(String[] headerNames, Object[][] data, DefaultMutableTreeNode analysisNode, GSEAExperiment experiment) {
         super(headerNames, data);
    
+        indices = new int[data.length];
+        this.sortedIndices = new int[data.length];
+        for (int i=0; i<data.length; i++){
+        	indices[i]=i;
+        	sortedIndices[i]=i;
+        }
         xColumn=-1;
         setNumerical(0, true);
         gseaRoot = analysisNode;
         menu = createPopupMenu();
         this.experiment = experiment;
-        this.clusters = clusters;
         
         table.setRowSelectionAllowed(true);
               
+        this.sortedAscending = new boolean[table.getModel().getColumnCount()];
+        for (int j = 0; j < sortedAscending.length; j++) {
+            sortedAscending[j] = false;
+        }
         table.addMouseListener(new Listener());
+        addMouseListenerToHeaderInTable(table);
         if(table.getRowCount() > 0)
             table.getSelectionModel().setSelectionInterval(0,0);
     }
@@ -174,12 +192,12 @@ public class GSEATableViewer extends TableViewer implements Serializable {
             return; 
 
         //This is the node marked "Expression Viewers"
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)gseaRoot.getChildAt(2);
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode)gseaRoot.getChildAt(3);
 
     
         
        index = new Integer((String)this.table.getValueAt(index, 0)) -1;
-        
+        System.out.println("1 "+index);
         if(node.getChildCount() < index) {
             return;
         }
@@ -187,6 +205,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
        node = (DefaultMutableTreeNode)(node.getChildAt(index));
        
+       System.out.println("2 "+index);
         if(viewerType.equals("expression image")){
             node = (DefaultMutableTreeNode)(node.getChildAt(0));
         } else if(viewerType.equals("centroid graph")){
@@ -347,6 +366,155 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
     
     /** 
+     * Returns indices of current cluster.
+     */
+    public int[] getCluster() {
+        return indices;
+    }
+    public int[] getSortedCluster() {
+        return sortedIndices;
+    }
+    public void sortInOrigOrder() {
+        for (int i = 0; i < getSortedCluster().length; i++) {
+            sortedIndices[i] = getCluster()[i];
+        }
+        
+        table.repaint();  
+        table.clearSelection();
+        for (int i = 0; i < table.getModel().getColumnCount(); i++)
+            sortedAscending[i] = false;        
+    }
+    public void addMouseListenerToHeaderInTable(JTable table1) {
+        final JTable tableView = table1;
+        tableView.setColumnSelectionAllowed(true);
+        MouseAdapter listMouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                TableColumnModel columnModel = tableView.getColumnModel();
+                int viewColumn = columnModel.getColumnIndexAtX(e.getX());
+                int column = tableView.convertColumnIndexToModel(viewColumn);
+                if (e.getClickCount() == 1 && column != -1) {
+                    int controlPressed = e.getModifiers()&InputEvent.CTRL_MASK;
+                    boolean originalOrder = (controlPressed != 0);
+                    sortByColumn(column, !(sortedAscending[column]), originalOrder);
+                    sortedAscending[column] = !(sortedAscending[column]);
+                    if (originalOrder) {
+                        for (int i = 0; i < table.getModel().getColumnCount(); i++)
+                        sortedAscending[i] = false;
+                    }               
+                }
+            }
+        };
+        JTableHeader th = tableView.getTableHeader();
+        th.addMouseListener(listMouseListener);
+    }    
+    
+    public void sortByColumn(int column, boolean ascending, boolean originalOrder) {
+        if (originalOrder) {
+            for (int i = 0; i < getSortedCluster().length; i++) {
+                sortedIndices[i] = getCluster()[i];
+            }
+            
+            table.repaint();
+            table.clearSelection();
+            return;            
+        }
+        
+        int[] sortedArray = new int[getCluster().length];
+        int obType = getObjectType(data[0][column]);
+        if ((obType == ExperimentUtil.DOUBLE_TYPE) || (obType == ExperimentUtil.FLOAT_TYPE) || (obType == ExperimentUtil.INTEGER_TYPE)) {
+            double[] origArray = new double[getCluster().length];
+            for (int i = 0; i < origArray.length; i++) {
+                if (obType == ExperimentUtil.DOUBLE_TYPE) {
+                    origArray[i] = ((Double)(data[getCluster()[i]][column])).doubleValue();
+                } else if (obType == ExperimentUtil.FLOAT_TYPE) {
+                    origArray[i] = ((Float)(data[getCluster()[i]][column ])).doubleValue();
+                } else if (obType == ExperimentUtil.INTEGER_TYPE) {
+                    origArray[i] = ((Integer)(data[getCluster()[i]][column])).doubleValue();
+                }
+            }
+            QSort sortArray = new QSort(origArray);
+            int[] sortedPrimaryIndices = sortArray.getOrigIndx();
+            for (int i = 0; i < sortedPrimaryIndices.length; i++) {
+                sortedArray[i] = getCluster()[sortedPrimaryIndices[i]];
+            }
+        } else if (obType == ExperimentUtil.STRING_TYPE) {
+            SortableField[] sortFields = new SortableField[getCluster().length];
+            for (int i = 0; i < sortFields.length; i++) {
+                int currIndex = getCluster()[i];
+                String currField = (String)(data[getCluster()[i]][column]);
+                sortFields[i] = new SortableField(currIndex, currField);
+            }
+            
+            Arrays.sort(sortFields);
+            for (int i = 0; i < sortFields.length; i++) {
+                sortedArray[i] = sortFields[i].getIndex();
+            }                 
+        }
+        
+        
+        if (!ascending) {
+            sortedArray = reverse(sortedArray);
+        }
+        
+        for (int i = 0; i < getSortedCluster().length; i++) {
+            sortedIndices[i] = sortedArray[i];
+        }
+        table.repaint();
+        table.removeRowSelectionInterval(0, table.getRowCount() - 1);
+    }
+    
+    private int[] reverse(int[] arr) {
+        int[] revArr = new int[arr.length];
+        int  revCount = 0;
+        int count = arr.length - 1;
+        for (int i=0; i < arr.length; i++) {
+            revArr[revCount] = arr[count];
+            revCount++;
+            count--;
+        }
+        return revArr;
+    }    
+    private class SortableField implements Comparable {
+        private String field;
+        private int index;
+        
+        SortableField(int index, String field) {
+            this.index = index;
+            this.field = field;
+        }
+        
+        public int compareTo(Object other) {
+            SortableField otherField = (SortableField)other;
+            return this.field.compareTo(otherField.getField());
+        }
+        
+        public int getIndex() {
+            return this.index;
+        }
+        public String getField() {
+            return this.field;
+        }
+    }    
+    
+    
+    private static int getObjectType(Object obj) {
+        int obType = -1;
+        if (obj instanceof Boolean) {
+            return ExperimentUtil.BOOLEAN_TYPE;
+        } else if (obj instanceof Double) {
+            return ExperimentUtil.DOUBLE_TYPE;
+        } else if (obj instanceof Float) {
+            return ExperimentUtil.FLOAT_TYPE;
+        } else if (obj instanceof Integer) {
+            return ExperimentUtil.INTEGER_TYPE;
+        } else if (obj instanceof String) {
+            return ExperimentUtil.STRING_TYPE;
+        } else {
+            return obType;
+        }
+    }  
+    
+    /** 
      * Handles events
      */
     protected class Listener extends MouseAdapter implements ActionListener{
@@ -376,14 +544,6 @@ public class GSEATableViewer extends TableViewer implements Serializable {
             }else if(command.equals(LAUNCH_TEST_STATISTIC_GRAPH_COMMAND)){
                 onOpenViewer("Test statistics graph");
             }
-            
-            
-            
-            
-            
-            
-            
-            
         }
         
         public void mousePressed(MouseEvent me){

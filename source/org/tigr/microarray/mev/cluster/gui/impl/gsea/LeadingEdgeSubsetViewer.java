@@ -99,7 +99,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 		
 		for(int j=0; j<sorted.size(); j++) {
 			String key=(String)keys.next();
-			float value=Float.parseFloat(coordinateFormat.format(((Float)sorted.get(key)).floatValue()));
+			float value=Float.parseFloat(coordinateFormat.format(((Float)sorted.get(key)).floatValue()).replace(",", ""));
 		
 			
 			tempArray.add(value);
@@ -111,7 +111,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
 				
 			}
 		
-			incrementalSum[j]=Float.parseFloat(coordinateFormat.format(tempSum/Math.sqrt(j+1)));
+			incrementalSum[j]=Float.parseFloat(coordinateFormat.format(tempSum/Math.sqrt(j+1)).replace(",", ""));
 			if(incrementalSum[j]==Math.max(temp, incrementalSum[j])) {
 				temp=incrementalSum[j];
 				setPeakGeneIndex(j);
@@ -381,7 +381,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
     	
     	if(numberOfGenes<=80) {
         	for (int i = 1; i < numberOfGenes + 1; i++) {
-    		g.drawString(Integer.toString(i), -height - top - 10
+    		g.drawString((String)genes[i-1], -height - top - 10
     				- max_name_width, left + (int) Math.round(i * stepX) + 3);
 
         	}
@@ -390,7 +390,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
     		int temp=(numberOfGenes/5);
     		int gap=numberOfGenes/temp;
     		for (int i = 1; i < numberOfGenes+1; i=i+gap) {
-        		g.drawString(Integer.toString(i), -height - top - 10
+        		g.drawString((String)genes[i-1], -height - top - 10
         				- max_name_width, left + (int) Math.round(i * stepX) + 3);
 
         	}
@@ -536,7 +536,7 @@ public class LeadingEdgeSubsetViewer extends JPanel implements IViewer{
     protected int getNamesWidth(FontMetrics metrics) {
         int maxWidth = 0;
         for (int i=1; i<=getMaxXValue(); i++) {
-            maxWidth = Math.max(maxWidth, metrics.stringWidth(Integer.toString(i)));
+            maxWidth = Math.max(maxWidth, metrics.stringWidth((String)genes[i-1]));
         }
         return maxWidth;
     }

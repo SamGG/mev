@@ -473,6 +473,22 @@ public class HelpWindow extends JDialog {
 		if(key.equals("MINET Initialization Dialog")) {		//
 			return "minet.html";
 		}
+		if(key.equals("edgeR Initialization Dialog")) {
+			return "edger.html";
+		}
+		if(key.equals("DESeq Initialization Dialog")) {
+			return "deseq.html";
+		}
+		if(key.equals("DEGseq Initialization Dialog")) {
+			return "degseq.html";
+		}
+		if(key.equals("RNASeq Loader")) {
+			return "Loading-rnaseq-data.html";
+		}
+		if(key.equals("EASE Threshold Dialog")) {
+			return "ease_threshold.html";
+		}
+
     	if(key.equals("LEM Initialization Dialog"))			//
     		return "lem.html";
     	if(key.equals("LEM Bin Color and Limits Selection Dialog")) //

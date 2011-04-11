@@ -14,6 +14,7 @@
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -33,6 +34,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import org.tigr.microarray.mev.cluster.ClusterWrapper;
 import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
@@ -55,6 +58,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected JMenuItem setOverallMaxMenuItem;
     protected JMenuItem setClusterMaxMenuItem;
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
+    protected static final String COLLAPSE_EXPAND = "collapse-expand-cmd";
     protected static final String SET_DEF_COLOR_CMD = "set-def-color-cmd";
     protected static final String SAVE_CLUSTER_CMD = "save-cluster-cmd";
     protected static final String SAVE_ALL_CLUSTERS_CMD = "save-all-clusters-cmd";
@@ -85,6 +89,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected boolean drawCodes = true;
     public static Color missingColor = new Color(128, 128, 128);
     private boolean drawMarks = false;
+	private boolean collapseExpand = true;
     protected boolean gradientColors;
     protected boolean isAntiAliasing = false;
     protected float[][] means;
@@ -130,11 +135,12 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.maxExperimentValue = experiment.getMaxAbsValue();
         this.yRangeOption = ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX;
 
+        this.resetSize();
         PopupListener listener = new PopupListener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
-        
     }
+        
     /**
      * Constructs a <code>CentroidViewer</code> for insertion into ClusterTable
      *
@@ -146,6 +152,11 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.variances = getVariances(clusters, getMeans(clusters)).A;
         this.setMode(mode);
         this.onSelected(framework);
+        this.resetSize();
+        PopupListener listener = new PopupListener();
+        this.popup = createJPopupMenu(listener);
+        getContentComponent().addMouseListener(listener);   
+        
     }
     private static int[][] defSampsOrder(int size) {
         int[][] order = new int[1][size];
@@ -242,6 +253,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         this.means = getMeans(clusters).A;
         this.variances = getVariances(clusters, getMeans(clusters)).A;
         
+        this.resetSize();
         PopupListener listener = new PopupListener();
         this.popup = createJPopupMenu(listener);
         getContentComponent().addMouseListener(listener);
@@ -469,7 +481,23 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         framework.storeCluster(getCluster(), experiment, ClusterRepository.EXPERIMENT_CLUSTER);       
         onDataChanged(this.data);
     }
+    private void collapseExpand() {
+    	collapseExpand = !collapseExpand;
+    	this.resetSize();
     
+	}
+    
+    private void resetSize() {
+    	int width;
+    	if (collapseExpand)
+    		width = this.numberOfGenes*10+100;
+    	else
+    		width = this.numberOfGenes+100;
+        this.setPreferredSize(new Dimension(width, getSize().height));
+        repaint();
+        this.updateUI();
+		
+	}
     /**
      * Launches a new <code>MultipleExperimentViewer</code> containing the current cluster
      */
@@ -477,18 +505,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         framework.launchNewMAV(getCluster(), this.experiment, "Multiple Experiment Viewer - Cluster Viewer", Cluster.EXPERIMENT_CLUSTER);
     }
     
-    private int [] getArrayMappedToData(){
-        int [] clusterIndices = getCluster();
-        if( clusterIndices == null || clusterIndices.length < 1)
-            return clusterIndices;
         
-        int [] dataIndices = new int [clusterIndices.length];
-        for(int i = 0; i < clusterIndices.length; i++){
-            dataIndices[i] = this.experiment.getGeneIndexMappedToData(clusterIndices[i]);
-        }
-        return dataIndices;
-    }
-    
     
     /**
      * Sets Y range scaling option
@@ -519,6 +536,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
      * Returns component to be displayed in the framework scroll pane.
      */
     public JComponent getContentComponent() {
+//    	JScrollPane jsp = new JScrollPane(this);
+//        return jsp;
         return this;
     }
     
@@ -527,7 +546,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
      */
     public void paint(Graphics g) {
         FontMetrics metrics = g.getFontMetrics();
-        Rectangle rect = new Rectangle(40, 20, getWidth()-80, getHeight() - 40 - getNamesWidth(metrics));
+        Rectangle rect = new Rectangle(40, 20, this.getWidth()-80, getHeight() - 40 - getNamesWidth(metrics));
         paint((Graphics2D)g, rect, true);
     }
     
@@ -535,11 +554,23 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         super.paint(g);
     }
     
+//    public Dimension getSize(){
+//    	Dimension dim = new Dimension();
+//    	dim.height = this.getHeight();
+//    	dim.width = 20000;
+//    	return dim;
+//    }
     /**
      * Paints chart into specified graphics and with specified bounds.
      */
     public void paint(Graphics2D g, Rectangle rect, boolean drawMarks) {
         super.paint(g);
+//        System.out.println("this.getSize().width ="+this.getSize().width);
+//        System.out.println("this.getPreferredSize().width ="+this.getPreferredSize().width);
+//        System.out.println("getMaximumSize().width ="+this.getMaximumSize().width);
+//        System.out.println("getMinimumSize().width ="+this.getMinimumSize().width);
+        
+
         
         if (isAntiAliasing) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -556,7 +587,6 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         }
         
         final int zeroValue = top + (int)Math.round(height/2f);
-        final int numberOfSamples  = this.getCluster().length;
         
         //do this outside paint once menu is set up
         if(this.yRangeOption == ExperimentClusterCentroidViewer.USE_EXPERIMENT_MAX)
@@ -567,15 +597,47 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         if (maxYValue == 0.0f) {
             maxYValue = 1.0f;
         }
-  //      this.setGradient(this.checkGradient());
         final float factor = height/(2f*maxYValue);
         final float stepX  = width/(float)(numberOfGenes-1);
         final int   stepsY = (int)maxYValue+1;
+        float fontHeight = g.getFontMetrics().getHeight()*2;  
         
+        Rectangle bounds = g.getClipBounds();
+//        System.out.println("bounds.height "+bounds.height);
+//        System.out.println("bounds.width "+bounds.width);
+//        System.out.println("bounds.y "+bounds.y);
+//        System.out.println("bounds.x "+bounds.x);
+        int geneBegin = (int)Math.max((bounds.x-100f)/stepX, 0f);
+        int geneEnd = (int)Math.min(this.numberOfGenes, geneBegin + (bounds.width)/stepX+100);
+//        System.out.println("geneBegin "+geneBegin);
+//        System.out.println("geneEnd "+geneEnd);
+        
+        if (drawMarks) {
+            FontMetrics metrics = g.getFontMetrics();
+            String str;
+            int strWidth;
+            //draw Y digits
+            for (int i=1; i<stepsY; i++) {
+                str = String.valueOf(i);
+                strWidth = metrics.stringWidth(str);
+                g.drawString(str, left-10-strWidth, zeroValue+5-(int)Math.round(i*factor));
+                str = String.valueOf(-i);
+                strWidth = metrics.stringWidth(str);
+                g.drawString(str, left-10-strWidth, zeroValue+5+(int)Math.round(i*factor));
+            }
+            // draw X gene names
+            g.rotate(-Math.PI/2.0);
+            final int max_name_width = getNamesWidth(metrics);
+            for (int i=geneBegin; i<geneEnd; i++) {
+            	if (this.collapseExpand)
+            		g.drawString(data.getGeneName(i), -height-top-10-max_name_width, left+(int)Math.round(i*stepX)+3);
+            }
+            g.rotate(Math.PI/2.0);
+        }
         if (this.drawVariances) {
             // draw variances
             g.setColor(bColor);
-            for (int i=0; i<numberOfGenes; i++) {
+            for (int i=geneBegin; i<geneEnd; i++) {
                 if(Float.isNaN(this.means[this.clusterIndex][i]) || Float.isNaN(this.variances[this.clusterIndex][i]) || (this.variances[this.clusterIndex][i] < 0.0f)) {
                     continue;
                 }
@@ -589,14 +651,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         }
         if (this.drawValues) {
             // draw values
-            boolean coloredClusters = false;
             float fValue, sValue, yInterval, lineHeight;
             Color color = null;
             float maxLineHeight = (maxExperimentValue*factor) / 20;	//maxExperimentValue is an expression value - not a coordinate length
-            int R=0, G=0, B = 0, intervalNumber;
+            int intervalNumber;
             
             for (int sample=0; sample<getCluster().length; sample++) {
-                for (int probe=0; probe<numberOfGenes-1; probe++) {
+                for (int probe=geneBegin; probe<geneEnd-1; probe++) {
                     fValue = this.experiment.get(probe, getCluster()[sample]);
                     sValue = this.experiment.get(probe+1, getCluster()[sample]);
                     if (Float.isNaN(fValue) || Float.isNaN(sValue)) {
@@ -625,29 +686,9 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
                 }
             }
         }
- /*       if (this.drawValues) {
-            // draw values
-            float fValue, sValue;
-            Color color;
-            for (int sample=0; sample<getCluster().length; sample++) {
-                for (int probe=0; probe<numberOfGenes-1; probe++) {
-                    fValue = this.experiment.get(probe, getCluster()[sample]);
-                    sValue = this.experiment.get(probe+1, getCluster()[sample]);
-                    if (Float.isNaN(fValue) || Float.isNaN(sValue)) {
-                        continue;
-                    }
-                    color = this.data.getExperimentColor(getCluster()[sample]);
-                    color = color == null ? DEF_CLUSTER_COLOR : color;
-                    g.setColor(color);
-                    g.drawLine(left+(int)Math.round(probe*stepX)    , zeroValue - (int)Math.round(fValue*factor),
-                    left+(int)Math.round((probe+1)*stepX), zeroValue - (int)Math.round(sValue*factor));
-                }
-            }
-        }
-  */
         if (this.drawCodes && this.codes != null && clusters[clusterIndex].length > 0) {
             g.setColor(Color.gray);
-            for (int i=0; i<numberOfGenes-1; i++) {
+            for (int i=geneBegin; i<geneEnd-1; i++) {
                 g.drawLine(left+(int)Math.round(i*stepX), zeroValue-(int)Math.round(this.codes[this.clusterIndex][i]*factor), left+(int)Math.round((i+1)*stepX), zeroValue-(int)Math.round(this.codes[this.clusterIndex][i+1]*factor));
             }
         }
@@ -658,7 +699,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         // draw magenta line
         if (getCluster() != null && getCluster().length > 0) {
             g.setColor(Color.magenta);
-            for (int i=0; i<numberOfGenes-1; i++) {
+            for (int i=geneBegin; i<geneEnd-1; i++) {
                 if (Float.isNaN(this.means[this.clusterIndex][i]) || Float.isNaN(this.means[this.clusterIndex][i+1])) {
                     continue;
                 }
@@ -669,7 +710,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         g.setColor(Color.black);
         g.drawRect(left, top, width, height);
         // draw X items
-        for (int i=1; i<numberOfGenes-1; i++) {
+        for (int i=geneBegin+1; i<geneEnd-1; i++) {
             g.drawLine(left+(int)Math.round(i*stepX), top+height-5, left+(int)Math.round(i*stepX), top+height);
         }
         //draw Y items
@@ -679,32 +720,12 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         }
         // draw genes info
         g.setColor(bColor);
-       if (drawMarks) {
-            FontMetrics metrics = g.getFontMetrics();
-            String str;
-            int strWidth;
-            //draw Y digits
-            for (int i=1; i<stepsY; i++) {
-                str = String.valueOf(i);
-                strWidth = metrics.stringWidth(str);
-                g.drawString(str, left-10-strWidth, zeroValue+5-(int)Math.round(i*factor));
-                str = String.valueOf(-i);
-                strWidth = metrics.stringWidth(str);
-                g.drawString(str, left-10-strWidth, zeroValue+5+(int)Math.round(i*factor));
-            }
-            // draw X samples names
-            g.rotate(-Math.PI/2.0);
-            final int max_name_width = getNamesWidth(metrics);
-            for (int i=0; i<numberOfSamples; i++) {
-                g.drawString(data.getSampleName(experiment.getSampleIndex(getCluster()[i])), -height-top-10-max_name_width, left+(int)Math.round(i*stepX)+3);
-            }
-            g.rotate(Math.PI/2.0);
-        }
+  
   
         if (getCluster() != null && getCluster().length > 0 && this.drawVariances) {
             // draw points
             g.setColor(bColor);
-            for (int i=0; i<numberOfGenes; i++) {
+            for (int i=geneBegin; i<geneEnd; i++) {
                 if (Float.isNaN(this.means[this.clusterIndex][i])) {
                     continue;
                 }
@@ -795,6 +816,13 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         JMenuItem menuItem;
         menuItem = new JMenuItem("Store cluster", GUIFactory.getIcon("new16.gif"));
         menuItem.setActionCommand(STORE_CLUSTER_CMD);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        menuItem = new JMenuItem("Collapse/Expand Labels", GUIFactory.getIcon("new16.gif"));
+        menuItem.setActionCommand(COLLAPSE_EXPAND);
         menuItem.addActionListener(listener);
         menu.add(menuItem);
         
@@ -965,6 +993,7 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
     protected class PopupListener extends MouseAdapter implements ActionListener {
         public PopupListener() {
         	super();
+//        	System.out.println("popup created");
         }
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
@@ -974,6 +1003,8 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
                 onSaveClusters();
             } else if (command.equals(STORE_CLUSTER_CMD)) {
                 storeCluster();
+            } else if (command.equals(COLLAPSE_EXPAND)) {
+                collapseExpand();
             } else if (command.equals(SET_DEF_COLOR_CMD)) {
                 onSetDefaultColor();
             } else if(command.equals(SET_Y_TO_EXPERIMENT_MAX_CMD)){
@@ -1003,10 +1034,12 @@ public class ExperimentClusterCentroidViewer extends JPanel implements IViewer {
         }
         
         public void mousePressed(MouseEvent event) {
+//        	System.out.println("pressed");
             maybeShowPopup(event);
         }
         
         private void maybeShowPopup(MouseEvent e) {
+//        	System.out.println("popup? ");
             if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {
                 return;
             }

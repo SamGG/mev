@@ -1,0 +1,55 @@
+<html>
+	<body bgcolor = "#FFFFCC">
+	<div class="navigation-bar">
+		<a class="prev" href="edger.html">Previous: EdgeR: Empirical Analysis of RNASeq Data in R</a> | 
+		<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a class="next" href="degseq.html">Next: DEGSEQ: Analysis of RNASeq Data based on MA Plot</a>
+	</div>
+	
+		<basefont face = "Arial">
+			<h1>DESeq: Digital gene expresion analysis based on the negative binomial distribution</h1> 
+			
+			<hr size = 10>
+				<h2>Description</h2>
+				<p>
+					The BioC package DESeq provides a powerful tool to estimate the variance in count data and 
+					test for differential expression. It can estimate variance-mean dependence in count data 
+					from high-throughput sequencing assays and test for differential expression based 
+					on a model using the negative binomial distribution.
+					<b>Variance estimation</b>
+					The core assumption of this method is that the mean is a good predictor of the variance, i.e., 
+					that genes with a similar expression level also have similar variance across replicates. 
+					Hence, we need to estimate for each condition a function that allows to predict the variance 
+					from the mean. This estimation is done by calculating, for each gene, the sample mean and 
+					variance within replicates and then tting a curve to this data.
+				</p>
+				<p>
+					<h2>Parameters</h2>
+					<ol>
+						<li><b>Dataset</b>: 2 sample groups.</li>
+						<li><b>P-value/Fdr</b>Significance Cutt-off method and value.</li>
+						<li><b>Output</b>: DESeq creates a standard MeV viewer nodeo nthe left tree which conists of heatmaps and tables of
+							both significant, non-significant and a combined list of genes.
+						</li>
+					</ol>
+				</p>
+				
+				<p>
+					<h2>How to Run DESeq</h2>
+					<ol>
+						<li>Load DESeq type data</li>
+						<li>Launch DESeq from ToolBar -> Statistics -> DESeq</li>
+						<li>Assign samples to 2 groups or leave them out</li>
+						<li>Choose significance coutt-off method (p-value or fdr) and specify a value</li>
+						<li>Hit OK</li>
+					</ol>
+				</p>
+				
+		</basefont>
+		<div class="navigation-bar">
+			<a class="prev" href="edger.html">Previous: EdgeR: Empirical Analysis of RNASeq Data in R</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="degseq.html">Next: DEGSEQ: Analysis of RNASeq Data based on MA Plot</a>
+		</div>
+	</body>
+</html>

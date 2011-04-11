@@ -37,6 +37,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.HCLSelectionPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.SampleSelectionPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInitDialog;
 import org.tigr.util.awt.GBA;
 
 public class CASTInitDialog extends AlgorithmDialog{

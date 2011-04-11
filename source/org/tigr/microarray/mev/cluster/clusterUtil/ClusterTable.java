@@ -69,6 +69,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.cluster.gui.helpers.BoxChartViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterCentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterHeader;
@@ -104,6 +105,7 @@ public class ClusterTable extends JPanel implements IViewer {
     /** Creates new ClusterTablePanel */
     public ClusterTable(ClusterRepository rep, IFramework framework) {
         super(new GridBagLayout());
+        System.out.println("Cluster Manager created "+rep.getNumberOfElements());
         this.framework = framework;
         this.repository = rep;
         this.geneClusterTable = rep.isGeneClusterRepository();
@@ -169,7 +171,24 @@ public class ClusterTable extends JPanel implements IViewer {
 		egv = new CentroidViewer(framework, 1);
 		cv = new CentroidViewer(framework, 0);
         
-        String[] viewerStrings = {"Table", "Expression Image", "Expression Graph", "Centroid Graph", "Venn Diagram"};
+        String[] viewerStrings;
+        if (geneClusterTable){
+        	viewerStrings = new String[5];
+        	viewerStrings[0] = "Table";
+        	viewerStrings[1] = "Expression Image";
+        	viewerStrings[2] = "Expression Graph";
+        	viewerStrings[3] = "Centroid Graph";
+        	viewerStrings[4] = "Venn Diagram";
+        } else {
+        	viewerStrings = new String[6];
+        	viewerStrings[0] = "Table";
+        	viewerStrings[1] = "Expression Image";
+        	viewerStrings[2] = "Expression Graph";
+        	viewerStrings[3] = "Centroid Graph";
+        	viewerStrings[4] = "Venn Diagram";
+        	viewerStrings[5] = "Gene Chart";
+        	
+        }
         viewerCB = new JComboBox(viewerStrings);
         viewerCB.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent ae){
@@ -230,6 +249,11 @@ public class ClusterTable extends JPanel implements IViewer {
 	    	            bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((VennDiagramViewer)iViewer).getHeaderComponent());
 	    	            break;	            	
+	            	case 5:
+	            		iViewer = new BoxChartViewer(framework, false, getSelectedClusters());
+	    	            bottomTablePane.setViewportView(((BoxChartViewer)iViewer).getContentComponent());
+	    	            bottomTablePane.setColumnHeaderView(((BoxChartViewer)iViewer).getHeaderComponent());
+	    	            break;       	
 	            	}
         		}
         		if (viewerCB.getSelectedIndex()==0){
@@ -680,6 +704,11 @@ public class ClusterTable extends JPanel implements IViewer {
         	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
         	((VennDiagramViewer)iViewer).repaint();
             break;
+    	case 5:
+        	((BoxChartViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((BoxChartViewer)iViewer).getContentComponent());
+        	((BoxChartViewer)iViewer).repaint();
+            break;
     	}
     }
     
@@ -806,6 +835,11 @@ public class ClusterTable extends JPanel implements IViewer {
         	((VennDiagramViewer)iViewer).setClusters(this.getSelectedClusters());
         	this.bottomTablePane.setViewportView(((VennDiagramViewer)iViewer).getContentComponent());
         	((VennDiagramViewer)iViewer).repaint();
+            break;
+    	case 5:
+        	((BoxChartViewer)iViewer).setClusters(this.getSelectedClusters());
+        	this.bottomTablePane.setViewportView(((BoxChartViewer)iViewer).getContentComponent());
+        	((BoxChartViewer)iViewer).repaint();
             break;
     	}
     }
