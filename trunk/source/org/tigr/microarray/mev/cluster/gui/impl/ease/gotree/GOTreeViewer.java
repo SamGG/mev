@@ -145,6 +145,14 @@ public class GOTreeViewer extends JPanel implements IViewer {
     public GOTreeViewer(String goCategory, String [] headerFields, EaseAlgorithmData data, DefaultMutableTreeNode viewerNode) {
         super(new GridBagLayout());
         
+//        String[][] strmat = data.getResultMatrix();
+//        for (int i=0; i<strmat.length; i++){
+//        	for (int j=0; j<strmat[i].length; j++){
+//        		System.out.print(strmat[i][j]+"\t");
+//        	}
+//        	System.out.println();
+//        }
+        
     	this.data = data;
         this.viewerNode = viewerNode;
         category = goCategory;

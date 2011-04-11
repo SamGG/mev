@@ -11,11 +11,16 @@ import java.beans.*;
 import java.util.ArrayList;
 
 import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.annotation.IChipAnnotation;
+import org.tigr.microarray.mev.annotation.MevChipAnnotation;
+import org.tigr.microarray.mev.cluster.gui.Experiment;
+import org.tigr.util.FloatMatrix;
 
 
 public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 	public Expression instantiate(Object oldInstance, Encoder encoder) {
 		MultipleArrayData mad = (MultipleArrayData) oldInstance;
+
 		Expression e = new Expression((MultipleArrayData)oldInstance, oldInstance.getClass(), "new",
 				new Object[]{ 
 						mad.getExperiment(), 
@@ -53,7 +58,6 @@ public class MultipleArrayDataPersistenceDelegate extends PersistenceDelegate {
 						mad.getMultipleArrayDataState(),
 						mad.getChipAnnotation()
 						});
-//		System.out.println("MultipleArrayDataPersistenceDelegate Expression: " + e.toString());
 		return e;
 	}
 

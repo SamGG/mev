@@ -61,6 +61,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	private ArrayList<String> columnHeaders;
 	private boolean loadMedianIntensities=false;
 	private String[] uidArray;
+	private boolean oneColorData;
 
 	public AgilentFileLoader(SuperExpressionFileLoader superLoader) {
 		super(superLoader);
@@ -78,6 +79,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	public Vector<ISlideData> loadExpressionFiles() throws IOException {
 		// TODO Auto-generated method stub
 		this.loadMedianIntensities = aflp.loadMedButton.isSelected();
+		this.oneColorData = aflp.oneColorButton.isSelected();
 		
 		Object[] dataFiles = aflp.getSelectedListModel().toArray();
 		
@@ -165,7 +167,9 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		return targetData;
 	}
 	
-	
+	public boolean isOneColorData(){
+		return oneColorData;
+	}
 	
 	public SlideData loadAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
 		
@@ -228,7 +232,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		
 		
 		SlideData slideData = null;
-		AgilentFileParser afp=new AgilentFileParser();
+		AgilentFileParser afp=new AgilentFileParser(this.oneColorData);
 		afp.loadFile(targetFile);
 		int numAnnotationColumns=-1;
 		String[][]data=new String[1][1];
@@ -255,12 +259,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			
 			
 			
-			if(probeName!=-1 && genename!=-1)
+			if(probeName!=-1 && (genename!=-1 || oneColorData))
 				numAnnotationColumns=5;
 			
 			
 			// Intensities exist??
-			if (loadMedianIntensities && (rMedianSignal==-1 || gMedianSignal==-1)) {
+			if (loadMedianIntensities && (rProcessedSignal==-1&& !oneColorData) || gProcessedSignal==-1 ) {
 				
 				JOptionPane.showMessageDialog(aflp,
 									"Error loading "
@@ -270,7 +274,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 											+ "the header names rMedianSignal and gMedianSignal",
 									"Load Error", JOptionPane.ERROR_MESSAGE);
 				return null;
-			}else if((rProcessedSignal==-1 || gProcessedSignal==-1)){
+			}else if(((rProcessedSignal==-1&& !oneColorData) || gProcessedSignal==-1 )){
 				
 				JOptionPane.showMessageDialog(aflp,
 									"Error loading "
@@ -319,10 +323,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 				try {
 					if(loadMedianIntensities) {
+						if (!oneColorData)
 						intensities[0] = Float.parseFloat(data[i][rMedianSignal]);
 						intensities[1] = Float.parseFloat(data[i][gMedianSignal]);
 						
 					}else {
+						if (!oneColorData)
 						intensities[0] = Float.parseFloat(data[i][rProcessedSignal]);
 						intensities[1] = Float.parseFloat(data[i][gProcessedSignal]);
 					}
@@ -377,7 +383,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	
 	public ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
 
-		AgilentFileParser afp=new AgilentFileParser();
+		AgilentFileParser afp=new AgilentFileParser(this.oneColorData);
 		afp.loadFile(currentFile);
 		FloatSlideData floatSlideData = null;
 		int intensity1=0;
@@ -400,7 +406,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 						AgilentFileParser.GPROCESSEDSIGNAL);
 			}
 
-			if ((intensity1 == -1 || intensity2 == -1)) {
+			if (((intensity1 == -1 && !oneColorData) || intensity2 == -1)) {
 				if(loadMedianIntensities) {
 				JOptionPane
 						.showMessageDialog(
@@ -430,7 +436,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			setLinesCount(data.length);
 
 			for (int i = 0; i < data.length; i++) {
-				floatSlideData.setIntensities(i, Float
+				floatSlideData.setIntensities(i, oneColorData ? null : Float
 						.parseFloat(data[i][intensity1]), Float
 						.parseFloat(data[i][intensity2]));
 				setFileProgress(i);
@@ -541,6 +547,12 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				browseButton1, annBrowseButton;
 		private JTextField pathTextField, annPathTextField;
 		private AnnotationDownloadHandler adh=null;
+
+		private JPanel colorPanel;
+
+		private JRadioButton oneColorButton;
+
+		private JRadioButton twoColorButton;
 		private static final String LOAD_AGILENT_ANNOTATION = "load_agilent_annotation_file";
 		private static final String LOAD_RESOURCERER_ANNOTATION = "load_resourcerer_annotation";
 
@@ -569,6 +581,25 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			gba.add(choicePanel, loadMedButton, 1, 0, 1, 1, 1, 0, GBA.H,
 					GBA.C, new Insets(0, 2, 0, 2), 0, 0);
 		
+			// color Panel
+			colorPanel = new javax.swing.JPanel();
+			colorPanel.setBorder(new TitledBorder(new EtchedBorder(),
+					"Experimental Design Panel"));
+			colorPanel.setLayout(new GridBagLayout());
+
+			oneColorButton = new JRadioButton("One-Color");
+			oneColorButton.setFocusPainted(false);
+			twoColorButton = new JRadioButton("Two-Color", true);
+			twoColorButton.setFocusPainted(false);
+			ButtonGroup bg1 = new ButtonGroup();
+			bg1.add(oneColorButton);
+			bg1.add(twoColorButton);
+
+			gba.add(colorPanel, oneColorButton, 0, 0, 1, 1, 1, 0, GBA.H, GBA.C,
+					new Insets(0, 2, 0, 2), 0, 0);
+			gba.add(colorPanel, twoColorButton, 1, 0, 1, 1, 1, 0, GBA.H,
+					GBA.C, new Insets(0, 2, 0, 2), 0, 0);
+			
 			// Annotation panel
 			annotationPanel = new javax.swing.JPanel();
 			annotationPanel.setLayout(new GridBagLayout());
@@ -704,6 +735,8 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 			gba.add(this, choicePanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C,
 					new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(this, colorPanel, 0, 1, 1, 1, 1, 1, GBA.B, GBA.C,
+					new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(this, annotationPanel, 0, 2, 1, 1, 100, 100, GBA.B, GBA.C,
 					new Insets(2, 2, 2, 2), 0, 0);
 			gba.add(this, dataPanel, 0, 4, 1, 1, 1, 1, GBA.B, GBA.C,
@@ -770,6 +803,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 					PipelinedAnnotationsFileDefinition aafd = new PipelinedAnnotationsFileDefinition();
 					speciestoarrays = aafd.parseAnnotationListFile(taxonfile);
 				} catch (SupportFileAccessError sfae) {
+					sfae.printStackTrace();
 					// fail("Couldn't get species/array mappings from repository.");
 				} catch (IOException ioe) {
 					ioe.printStackTrace();

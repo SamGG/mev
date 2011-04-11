@@ -31,9 +31,12 @@ import org.tigr.microarray.mev.AffySlideDataElement;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.MultipleArrayViewer;
+import org.tigr.microarray.mev.RNASeqFloatSlideData;
+import org.tigr.microarray.mev.RNASeqSlideData;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.annotation.AnnotationStateSavingParser;
 import org.tigr.microarray.mev.annotation.IAnnotation;
+import org.tigr.microarray.mev.cluster.ClusterWrapper;
 
 /**
  * @author eleanora
@@ -50,7 +53,12 @@ public class ISlideDataPersistenceDelegate extends
 	protected Expression instantiate(Object oldInstance, Encoder encoder) {
 		Expression e;
 		try {
-			if(oldInstance instanceof FloatSlideData){
+	        if(oldInstance instanceof RNASeqFloatSlideData) {
+	        	RNASeqFloatSlideData rsfsd = (RNASeqFloatSlideData)oldInstance;
+	        	FloatSlideData temp = new FloatSlideData(rsfsd);
+				e = new Expression((RNASeqFloatSlideData) oldInstance, ((RNASeqFloatSlideData) oldInstance).getClass(), "new",
+						new Object[]{temp, ClusterWrapper.wrapClusters(new int[][] {rsfsd.getCounts()}), rsfsd.getLibrarySize()});
+	        } else if(oldInstance instanceof FloatSlideData){
 				FloatSlideData fsd = (FloatSlideData) oldInstance;
 				
 				File outputFile = File.createTempFile("floatslidedata", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
@@ -65,7 +73,13 @@ public class ISlideDataPersistenceDelegate extends
 							outputFile.getName(), fsd.getSampleAnnotation()});
 			} else {
 				SlideData sd = (SlideData) oldInstance;
+				if(oldInstance instanceof RNASeqSlideData) {
+					RNASeqSlideData rssd = (RNASeqSlideData) oldInstance;
+					SlideData temp = new SlideData(rssd);
+					e = new Expression((RNASeqSlideData) oldInstance, ((RNASeqSlideData) oldInstance).getClass(), "new",
+							new Object[]{temp, rssd.getLibrarySize()});
 				
+				} else {
 				File annotationFile = File.createTempFile("slidedataannotation", ".bin", new File(MultipleArrayViewer.CURRENT_TEMP_DIR));
 				annotationFile.deleteOnExit();
 				DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(annotationFile)));
@@ -91,7 +105,7 @@ public class ISlideDataPersistenceDelegate extends
 							sd.getSlideDataLabels(), sd.getSlideFileName(), new Boolean(sd.isNonZero()), new Integer(sd.getRows()), new Integer(sd.getColumns()),
 							new Integer(sd.getNormalizedState()), new Integer(sd.getSortState()), sd.getSpotInformationData(), sd.getOldModelFieldNames(), new Integer(sd.getDataType()),
 							annotationFile.getName(), outputFile.getName(), iAnnotationFile.getName(), sd.getSampleAnnotation()/*, progBar*/});
-//				System.out.println("annotation file name: " + iAnnotationFile.getName() + "\nExpression: " + e.toString());
+			}
 			}
 		} catch (Exception ioe){
 			ioe.printStackTrace();

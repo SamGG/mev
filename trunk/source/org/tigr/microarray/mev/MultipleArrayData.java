@@ -1982,7 +1982,21 @@ public class MultipleArrayData implements IData {
         int[] probes = null;
 
         // pcahan affy detection filter or fold filter
-        if ((isLowerCutoffs()||isGenePixFilter() || isPercentageCutoff()) ||isPvaluePercentageCutoff()|| isPresentCallCutoff()||isGCOSPercentCutoff()||isVarianceFilter() || ( (getDataType() == TMEV.DATA_TYPE_AFFY) && (isDetectionFilter() || isFoldFilter())) ) {
+        if (getDataType() == IData.DATA_TYPE_RNASEQ || 
+    		(
+   				(isLowerCutoffs()||
+					isGenePixFilter() || 
+					isPercentageCutoff()
+				) ||
+				isPvaluePercentageCutoff()|| 
+				isPresentCallCutoff()||
+				isGCOSPercentCutoff()||
+				isVarianceFilter() || 
+				((getDataType() == TMEV.DATA_TYPE_AFFY) && 
+					(isDetectionFilter() || isFoldFilter())
+				) 
+    		)
+        	) {
             probes = createCutoffGeneList(featuresSize, probesSize);
             experiment = createExperiment(featuresSize, probes);
         } else {
@@ -2421,19 +2435,9 @@ public class MultipleArrayData implements IData {
         float[][] matrix = fm.A;
         for (int i = 0; i < columns.length; i++) {
             sd = (ISlideData)featuresList.get(columns[i]);
-
-            //pcahan --  don't log2 transform affy data
-            /*
-            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY){
                 for (int row = rows; --row >= 0; ) {
-                    fm.A[row][columns[i]] = sd.getRatio(row, LINEAR);
-                }
-            } else {
-}*/
-   for (int row = rows; --row >= 0;) {
                     fm.A[row][columns[i]] = sd.getRatio(row, this.logState);
                 }
-   //         }
         }
         return new Experiment(fm, columns);
     }
@@ -2450,20 +2454,9 @@ public class MultipleArrayData implements IData {
         for (int i = 0; i < columns; i++) {
             columnArray[i] = i;
             sd = (ISlideData)featuresList.get(i);
-
-            //pcahan --  don't log2 transform affy data
-            /*
-            if (TMEV.getDataType() == TMEV.DATA_TYPE_AFFY) {
-
-                for (int j = 0; j < rows.length; j++) {
-                    fm.A[j][i] = sd.getRatio(rows[j], LINEAR);
-                }
-            } else {*/
-
                 for (int j = 0; j < rows.length; j++) {
                     fm.A[j][i] = sd.getRatio(rows[j], this.logState);
                 }
-            //}
         }
         return new Experiment(fm, columnArray, rows);
     }
@@ -2823,7 +2816,9 @@ public class MultipleArrayData implements IData {
             slideData = this.getFeature(i);
             slideData.setDataType(type);
         }
-        if(this.dataType == IData.DATA_TYPE_RATIO_ONLY || this.dataType == IData.DATA_TYPE_AFFY_ABS ){
+        if(this.dataType == IData.DATA_TYPE_RATIO_ONLY || 
+        		this.dataType == IData.DATA_TYPE_AFFY_ABS ||
+        		this.dataType == IData.DATA_TYPE_RNASEQ){
             this.logState = LINEAR;
         } else {
             this.logState = LOG;
@@ -3452,15 +3447,10 @@ public class MultipleArrayData implements IData {
      * @return
      */
     public float getValue(int experiment, int clone){
-    	//System.out.println("Current Clone Value: getValue()." + cloneValueType);
-    	//System.out.println("Current Clone Value: getValue()." + this.logState);
     	
         if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_DISCRETE_DETERMINATION){
             return getCopyNumberDetermination(experiment, clone);
         }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_AVERAGE_INVERTED){
-            //return getLogAverageInvertedValue(experiment, clone);
-            //return dataValues[clone][experiment];
-        	//System.out.println("expr, clone: " + experiment + ":" + clone);
             return getRatio(experiment, clone, this.logState);
         }else if(cloneValueType == ICGHCloneValueMenu.CLONE_VALUE_LOG_CLONE_DISTRIBUTION){
             return getCopyNumberDeterminationByLogCloneDistribution(experiment, clone);

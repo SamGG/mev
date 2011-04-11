@@ -161,16 +161,6 @@ public class EaseThresholdDialog extends AlgorithmDialog {
                 return;
             } else if (command.equals("info-command")){
                 HelpWindow hw = new HelpWindow(EaseThresholdDialog.this, "EASE Threshold Dialog");
-                result = JOptionPane.CANCEL_OPTION;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.show();
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                }
             }
         }
         

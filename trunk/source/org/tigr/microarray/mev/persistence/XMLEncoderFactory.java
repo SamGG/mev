@@ -22,6 +22,8 @@ import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.HistoryViewer;
 import org.tigr.microarray.mev.MultipleArrayData;
+import org.tigr.microarray.mev.RNASeqFloatSlideData;
+import org.tigr.microarray.mev.RNASeqSlideData;
 import org.tigr.microarray.mev.ResultTree;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.cgh.CGHDataModel.CharmDataModel.ResultContainer;
@@ -149,7 +151,15 @@ public abstract class XMLEncoderFactory {
 				new ISlideDataPersistenceDelegate()
 		);
 		oos.setPersistenceDelegate(
+				RNASeqFloatSlideData.class, 
+				new ISlideDataPersistenceDelegate()
+		);
+		oos.setPersistenceDelegate(
 				FloatSlideData.class, 
+				new ISlideDataPersistenceDelegate()
+		);
+		oos.setPersistenceDelegate(
+				RNASeqSlideData.class, 
 				new ISlideDataPersistenceDelegate()
 		);
 		oos.setPersistenceDelegate(

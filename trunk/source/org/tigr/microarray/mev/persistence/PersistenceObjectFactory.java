@@ -32,6 +32,7 @@ import org.tigr.microarray.mev.FloatSlideData;
 import org.tigr.microarray.mev.ISlideDataElement;
 import org.tigr.microarray.mev.ISlideMetaData;
 import org.tigr.microarray.mev.MultipleArrayViewer;
+import org.tigr.microarray.mev.RNASeqElement;
 import org.tigr.microarray.mev.SlideData;
 import org.tigr.microarray.mev.SlideDataElement;
 import org.tigr.microarray.mev.SpotInformationData;
@@ -368,13 +369,11 @@ public class PersistenceObjectFactory {
   
 
 
-    
     public static SlideData makeSlideData(String slideDataName, Vector sampleLabelKeys, String sampleLabelKey,
     		Hashtable sampleLabels, String slideFileName, Boolean isNonZero, Integer rows, Integer columns,
 			Integer normalizedState, Integer sortState, SpotInformationData spotInfoData, 
 			String[] fieldNames, Integer dataType,
 			String annotationFileName, String dataFile, String iAnnotationFileName, SampleAnnotation sampAnn) throws IOException {
-
     	SlideData aSlideData;
     	aSlideData = new SlideData(slideDataName, sampleLabelKeys, sampleLabelKey,
         		sampleLabels, slideFileName, isNonZero, rows, columns,
@@ -410,6 +409,15 @@ public class PersistenceObjectFactory {
     		sde.setTrueIntensity(1, dis.readFloat());
     		if(dataType.intValue() != IData.DATA_TYPE_TWO_INTENSITY && dataType.intValue() != IData.DATA_TYPE_RATIO_ONLY){
         		sde.setDetection(new Character(dis.readChar()).toString());
+	    		} else if (dataType.intValue() == IData.DATA_TYPE_RNASEQ) {
+	    			int temp = dis.readInt();
+	    			System.out.println("int size: " + temp);
+	    			char[] codechars = new char[temp];
+	    			for(int j=0;j<codechars.length; j++)
+	    				codechars[j] = dis.readChar();
+	    			int transcriptLength = dis.readInt();
+	    			int count = dis.readInt();
+	    			sde = new RNASeqElement((SlideDataElement)sde, new String(codechars), transcriptLength, count);
     		} 	
     	
     		if(allIAnnotations != null && allIAnnotations.size()>0)
@@ -425,6 +433,7 @@ public class PersistenceObjectFactory {
 		}
 
     	return aSlideData;
+
     }
     
     private static Vector loadSlideDataAnnotation(DataInputStream dis, int dataType) throws IOException {
@@ -539,6 +548,8 @@ public class PersistenceObjectFactory {
     		int dataType = sd.getDataType();
 			if(dataType == IData.DATA_TYPE_TWO_INTENSITY || dataType == IData.DATA_TYPE_RATIO_ONLY){
 				
+			} else if (dataType == IData.DATA_TYPE_RNASEQ) {
+				//RNASeq-specific stuff? 
 			} else {		//IData has affy data
 				dos.writeChar(((AffySlideDataElement)sde).getDetection().charAt(0));
 				dos.writeFloat(((AffySlideDataElement)sde).getPvalue());
@@ -564,10 +575,21 @@ public class PersistenceObjectFactory {
 	    		dos.writeFloat(sde.getIntensity(1));
 	    		dos.writeFloat(sde.getTrueIntensity(0));
 	    		dos.writeFloat(sde.getTrueIntensity(1));	
-	    		if(sd.getDataType() != IData.DATA_TYPE_TWO_INTENSITY && sd.getDataType() != IData.DATA_TYPE_RATIO_ONLY){
+	    		if(sd.getDataType() != IData.DATA_TYPE_TWO_INTENSITY && 
+	    				sd.getDataType() != IData.DATA_TYPE_RATIO_ONLY &&
+	    				sd.getDataType() != IData.DATA_TYPE_RNASEQ){
 	    			dos.writeChar(sde.getDetection().toCharArray()[0]);
+	    		} else if (sd.getDataType() == IData.DATA_TYPE_RNASEQ) {
+	    			RNASeqElement rse = (RNASeqElement) sde;
+	    			int classCodeLength = rse.getClasscode().length();
+	    			dos.writeInt(classCodeLength);
+	    			for(int j=0; j<classCodeLength; j++) {
+	    				dos.writeChar(rse.getClasscode().charAt(j));
 	    		} 
+	    			dos.writeInt(rse.getTranscriptLength());
+	    			dos.writeInt(rse.getCount());
 	    	}
+    }
     }
 
 	/**

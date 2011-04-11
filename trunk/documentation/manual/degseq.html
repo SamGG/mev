@@ -1,0 +1,60 @@
+<html>
+	<body bgcolor = "#FFFFCC">
+		<div class="navigation-bar">
+			<a class="prev" href="deseq.html">Previous: DeSEQ: Analysis of RNASeq Data based on Negative Binomial Distribution</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="svm.html">Next: SVM: Support Vector Machines</a>
+		</div>
+		<basefont face = "Arial">
+			<h1>DEGseq: An R package to identify differentially expressed genes from RNA-Seq data.</h1> 
+			
+			<hr size = 10>
+				<h2>Description</h2>
+				<p>Identify Differentially Expressed Genes from RNA-seq data.</p>
+				<p>
+					<h2>Parameters</h2>
+					<ol>
+						<li><b>Dataset</b>: 2 sample groups.</li>
+						<li><b>Method</b>: The inference algorithm: 
+							<ol>
+								<li><b>LRT: </b>
+									Likelihood Ratio Test (Marioni et al. 2008).
+								</li>
+								<li><b>FET: </b>
+									Fisher's Exact Test (Joshua et al. 2009).
+								</li>
+								<li><b>MARS: </b>
+									MA-plot-based method with Random Sampling model (Wang et al. 2009).
+								</li>
+								<li><b>MATR: </b>
+									MA-plot-based method with Technical Replicates (Wang et al. 2009).
+								</li>
+							</ol>
+						</li>
+						<li><b>P-value/Fdr</b>Significance Cutt-off method and value.</li>
+						<li><b>Output</b>: DESeq creates a standard MeV viewer nodeo nthe left tree which conists of heatmaps and tables of
+							both significant, non-significant and a combined list of genes.
+						</li>
+					</ol>
+				</p>
+				
+				<p>
+					<h2>How to Run DEGseq</h2>
+					<ol>
+						<li>Load RNAseq type data</li>
+						<li>Launch DEGseq from ToolBar -> Statistics -> DEGseq</li>
+						<li>Assign samples to 2 groups or leave them out</li>
+						<li>Choose inferecne method</li>
+						<li>Choose significance coutt-off method (p-value or fdr) and specify a value</li>
+						<li>Hit OK</li>
+					</ol>
+				</p>
+				
+		</basefont>
+		<div class="navigation-bar">
+			<a class="prev" href="deseq.html">Previous: DeSEQ: Analysis of RNASeq Data based on Negative Binomial Distribution</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="svm.html">Next: SVM: Support Vector Machines</a>
+		</div>
+	</body>
+</html>

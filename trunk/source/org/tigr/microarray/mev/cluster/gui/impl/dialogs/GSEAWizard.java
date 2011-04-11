@@ -19,8 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.text.BadLocationException;
@@ -30,16 +28,15 @@ import javax.swing.text.Highlighter;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.ProcessDisplayPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
-
-
-import org.tigr.microarray.mev.file.GBA;
 
 
 public abstract class GSEAWizard extends AlgorithmDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Current step in the process
 	 */
@@ -76,14 +73,12 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 	
 	
 	
-	
-	
 	public GSEAWizard(JFrame parent, String title, boolean modal, AlgorithmData params, String[] stepTitles,
 			 int stepCount, JPanel initialPanel) {
 		super(parent, title, modal);
-		 setBounds(0,0, 1000, 850);
+		 setBounds(0,0, 800, 850);
 		mainPanel = new JPanel(new GridBagLayout());
-		mainPanel.setPreferredSize(new Dimension(1000, 850));
+		mainPanel.setPreferredSize(new Dimension(800, 850));
 		//stepTitles = steps;		
 		algData = params;		
 		//create the ProcessDisplayPanel
@@ -102,6 +97,10 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 		
 	}
 	
+	
+	public void setParamSufficient(boolean suff){
+		wButtonPanel.setEnableNextButton(suff);
+	}
 	
 	
 	/**
@@ -240,6 +239,7 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 		setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
 		
 	
+	    setParamSufficient(false);
 		return true;
 	}
 	
@@ -293,14 +293,9 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 	private class ProcessDisplayPanel extends JPanel {
 
 		/**
-		 * @param args
-		 * 
 		 * 
 		 */
-		
-		
-		private GBA gba=new GBA();
-		private boolean isTextDisplay;
+		private static final long serialVersionUID = 1L;
 		private String [] stepTitles;
 		private JTextPane processPane;
 		
@@ -308,7 +303,6 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 		public ProcessDisplayPanel(boolean isTextDisplay, String[] stepTitles) {
 			super();
 			setBackground(Color.white);
-			this.isTextDisplay = isTextDisplay;
 			this.stepTitles = stepTitles;
 			constructPanel();
 		}
@@ -393,21 +387,8 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 	        super(color);
 	    }
 	}
-
-		
-
-		
-		
-		
 	}
 
-	
-	
-	
-	
-	
-	
-	
 	
 	 /**
      * Simple button panel class to coordinate next and back events
@@ -417,6 +398,10 @@ public abstract class GSEAWizard extends AlgorithmDialog {
      */
 	private class WizardButtonBar extends JPanel {
 	
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private JButton nextButton, backButton;
 		
 		public WizardButtonBar() {
@@ -455,6 +440,7 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 			nextButton = new JButton("Next >");
 			nextButton.setActionCommand("next-command");
 			nextButton.addActionListener(listener);
+			nextButton.setEnabled(false);
 			nextButton.setFocusPainted(false);
 			nextButton.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 			//nextButton.setBackground(new Color(211,211,211));
@@ -475,6 +461,9 @@ public abstract class GSEAWizard extends AlgorithmDialog {
 			backButton.setEnabled(enable);
 		}
 		
+		public void setEnableNextButton(boolean enable) {
+			nextButton.setEnabled(enable);
+		}
 		public void paint(Graphics g) {
 			super.paint(g);
 		}				

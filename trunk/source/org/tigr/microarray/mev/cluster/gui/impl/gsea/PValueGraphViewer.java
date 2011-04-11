@@ -254,25 +254,8 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		gl = new GraphLine(0, 0, 0, graphstopy, Color.BLACK);
 		graphElements.add(gl);
 		
-		for (double i = 1; i <= graphstopx; i = i + 1) {
-			// GraphLine is used here to construct the yellow colored grid
-			// (vertical bars)
-			gl = new GraphLine(i, graphstarty, i, graphstopy, Color.yellow);
+		gl = new GraphLine(graphstartx, .05, graphstopx, .05, Color.black);
 			graphElements.add(gl);
-		}
-
-		for (double i = 0; i < graphstopy; i = i + 0.01) {
-			// if (i != 0) {
-			// GraphLine is used here to construct the yellow colored grid
-			// (horizontal bars)
-			if (i == 0.05)
-				gl = new GraphLine(graphstartx, i, graphstopx, i, Color.black);
-			else
-				gl = new GraphLine(graphstartx, i, graphstopx, i, Color.yellow);
-			graphElements.add(gl);
-			// }
-		}
-
 		for (int i = 0; i < graphstopx; i++) {
 			// GraphPoint is used to draw the actual data points in the graph
 			// (blue colored dots)

@@ -207,6 +207,10 @@ public class InfoDisplay extends ActionInfoDialog  {
             message += "<tr><td><i>Spot Median Intensity</i></td><td><b>" + cy3 + "</b></td></tr>";
             message += "<tr><td><i>Ratio (Sample/Median)</i></td><td>" + ratio + "</td></tr>"+
             "<tr><td><i>log2(Ratio)</i></td><td><b>" + logRatio + "</b></td></tr>";
+        } else if(dataType == IData.DATA_TYPE_RNASEQ){ //RNASeq Data
+            message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";
+            message += "<tr><td><i>RPKM/FPKM<i></td><td><b>" + cy5 + "</b></td></tr>";
+            message += "<tr><td><i>Count<i></td><td><b>" + ((IRNASeqSlide)this.slideData).getCount(this.probe) + "</b></td></tr>";
         } else { //ratio only, like stanford
             logRatio = cy5;
             message += "<tr><td><i>File Index</i></td><td>" + trueRow + "</td></tr>";

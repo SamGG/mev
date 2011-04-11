@@ -95,7 +95,6 @@ public class SlideData implements ISlideData, ISlideMetaData {
         this.rows = rows;
         this.columns = columns;
         this.sampAnnotation=sampAnn;
-
     }
 
     
@@ -122,6 +121,8 @@ public class SlideData implements ISlideData, ISlideMetaData {
         sampleLabels = original.getSlideDataLabels();
     	if(this.fieldNames == null)
     		this.fieldNames = new String[0];   
+    	else 
+    		this.fieldNames = ((SlideData)original).getOldModelFieldNames();
     	updateFilledAnnFields();
     }
 
@@ -437,14 +438,15 @@ public class SlideData implements ISlideData, ISlideMetaData {
      */
     public final float getRatio(float numerator, float denominator, int logState) {
     	
-    	
-        if(dataType == IData.DATA_TYPE_RATIO_ONLY || dataType == IData.DATA_TYPE_AFFY_ABS)
+        if(dataType == IData.DATA_TYPE_RATIO_ONLY ||
+        		dataType == IData.DATA_TYPE_RNASEQ)
             return numerator;
 
         float ratio;
         if(denominator < 0 || numerator < 0)
             return numerator;
         if (isNonZero) {
+
             if (denominator == 0 && numerator == 0) {
                 return Float.NaN;
             } else if (numerator == 0) {
@@ -544,14 +546,18 @@ public class SlideData implements ISlideData, ISlideMetaData {
 		for (int i = 0; i < allFields.length; i++) {
 			if (allFields[i].equals(attr)) {
 				//if (!element.getFieldAt(i).equals("")) {
-				//System.out.println("key:"+attr);
-				if (element!=null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0 && element.getFieldAt(i)!=null) {
+				try {
+					if (element != null && element.getFieldAt(i) != null && element.getFieldAt(i).trim().length()!=0 && element.getFieldAt(i).length()!=0) {
 					values = new String[] { element.getFieldAt(i) };
 					//System.out.println("values:"+values);
 				} else
 					values = new String[] { "NA" };
-				
+				} catch(ArrayIndexOutOfBoundsException aioobe) {
+					//This is a hack to catch instances where the number of field names (IE, the number of types of annotation that has been loaded)
+					//is larger than the number of actual loaded data values. The real problem is likely found when the data is loaded. 
+					values = new String[] {"NA"};
 			}
+		}
 		}
 		return new AnnoAttributeObj(attr, values);
 		

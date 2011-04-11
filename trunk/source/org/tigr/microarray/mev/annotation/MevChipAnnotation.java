@@ -16,7 +16,7 @@ import org.tigr.microarray.mev.cluster.gui.IData;
  */
 public class MevChipAnnotation implements IChipAnnotation {
 
-	private Hashtable<String, String> annotations;
+	protected Hashtable<String, String> annotations;
 	
 	public MevChipAnnotation() {
 		annotations = new Hashtable<String, String>();

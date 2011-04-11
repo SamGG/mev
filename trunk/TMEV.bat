@@ -40,3 +40,4 @@ set PATH=%PATH%;%CurrDIR%\R-2.11.1\bin;%CurrDIR%\R-2.11.1\lib
 
 set ClassPath=lib/*;
 java -Djava.library.path=lib -Xss1M -Xmx768m -cp %ClassPath% org.tigr.microarray.mev.TMEV
+

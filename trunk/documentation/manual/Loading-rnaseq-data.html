@@ -1,0 +1,422 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>MeV File Loader - RNASeq File Format</title>
+    </head>
+    <body>
+   		<div class="navigation-bar">
+			<a href="Loading-agilent-data.html">Previous: Loading Agilent Data</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Adjustingthedata.html">Next: Adjusting the Data</a>
+		</div>
+        <h3>RNASeq File Loader - Overview </h3>
+        <p>
+            Count and RPKM  File Format is a <b>tab-delimited</b> file format for loading HTS(High Throughput Sequencing Data)
+            into MeV for analysis. We are currently providing RNASeq analysis algorithms only for these data sets.
+        </p>
+        <p>
+            MeV being a desktop software cannot provide functionalities like base calling and sequence alignment etc, which are computationaly intensive
+            processes and should be be done on hign end server clusters.  
+        </p>
+        <p>
+            The entry point for HTS data into MeV should be in a <b>summarized</b> form. Which means, the raw sequence data has been base-called
+            and aligned and tag counts have been assembled, summarized and mapped to a reference genome at the transcript/gene level.
+        </p>
+        <p>
+            This loader supports both Counts and RPKM/FPKM and a combinations of both as described in the Data Type section below. Currently
+            we have support for Human and Mouse data only and it is provided as annotaiton from RefSeq or ENSMBL.
+        </p>
+        <p>
+            Both Count &amp; Expression (RPKM/FPKM) are maintained for this kind of loader. The user has the option of loading either or both
+            kinds of info for there data set. If either Count or RPKM is left out, it is calculated based on the publication descibed in the
+            section <b>Count to RPKM and vice versa</b>.
+        </p>
+        
+        <h3>Dialog Selections</h3>
+        <ul>
+            <li>
+                <b>Data Type</b>: 
+                <p>
+                    We allow the following type of data formats and combinations to be loaded. Each type specifies a file format and
+                    what kind of data the program is loading. All 4 formats starts with the same 5 annotaton columns. 
+                    The file formats differ only in the data column(s) and data types; integer or float.
+                </p>
+                <p> 
+                    The <b>5 annotaton columns</b> are described here. They columns should appear in file in the <b>same order</b> as described here:
+                    <table border='1'>
+                        <thead>
+                            <tr>
+                                <td bgcolor='cream'><b>##</b></td>
+                                <td bgcolor='#FFA500'><b>Field Name</b></td>
+                                <td bgcolor='#ADD8E6'><b>Description</b></td>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td><b>1</b></td>
+                            <td><b>tracking_id</b></td>
+                            <td><b>Required.</b> A unique ID the identifies each row in the data file.</td>
+                        </tr>
+                        <tr>
+                            <td><b>2</b></td>
+                            <td><b>locus</b></td>
+                            <td><b>Required</b> for each gene/row in the data file. The format should be: <b>chr1:7838183-7838231</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>3</b></td>
+                            <td><b>nearest_ref_id</b></td>
+                            <td><b>Required.</b> When not avaialable for a row a '-' can be used. This field is used as a key accessioin to
+                            link into ReSeq or ENSMBL Dbs for known genomic regions.</td>
+                        </tr>
+                        <tr>
+                            <td><b>4</b></td>
+                            <td><b>class_code</b></td>
+                            <td><b>Optional.</b> , but an empty column is required. This column can be used for any kind of notes/status about the gene.</td>
+                        </tr>
+                        <tr>
+                            <td><b>5</b></td>
+                            <td><b>transcript_length</b></td>
+                            <td><b>Optional</b>, but an empty column is required. When not provided, the diff between the start and end BP in
+                            the <b>locus</b> is used as the length.</td>
+                        </tr>
+                    </table>
+                </p>
+                <ol>
+                    <li>
+                        <b>RPKM</b>
+                        <p>
+                            Normalized Expression data in Reads per Kilobase per million unit (RPKM). 
+                            The corresponding Count info is calculated by the progema. However, the
+                            user is required to <b>provide a 'Library Size file'</b> which should
+                            list the size of each sample library. An example:
+                        </p>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <td bgcolor='#C0C0C0'><b>tracking_id</b></td>
+                                    <td bgcolor='#C0C0C0'><b>locus</b></td>
+                                    <td bgcolor='#C0C0C0'><b>nearest_ref_id</b></td>
+                                    <td bgcolor='#EE82EE'><b>class_code</b></td>
+                                    <td bgcolor='#EE82EE'><b>transcript_length</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='green'><b>Sample_2</b></td>
+                                    <td bgcolor='green'><b>Sample_n</b></td>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Gene_00002</td>
+                                <td>chr1:1431363-1431403</td>
+                                <td>NM_031921</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>161.726</td>
+                                <td>20.44</td>
+                                <td>81.2435</td>                              
+                            </tr>
+                            <tr>
+                                <td>Gene_00003</td>
+                                <td>chr1:2495127-2495222</td>
+                                <td>NM_003820</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>1786.3</td>
+                                <td>285.454</td>
+                                <td>482.786</td>
+                            </tr>
+                            <tr>
+                                <td>Gene_00004</td>
+                                <td>chr1:5446956-5447187</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>&nbsp;</td>
+                                <td>141.803</td>
+                                <td>47.344</td>
+                                <td>107.779</td>
+                            </tr>
+                        </table>
+                        <p/>
+                    </li>
+                    <li>
+                        <b>Count</b>
+                        <p>
+                            Discrete counts of sequence Reads aligned in a genomic region. The program
+                            calculates the corrsponding RPKM values for each observation, each sample.
+                            A <b>'Library Size file' is optional</b>. If one is not provided, the sum of 
+                            Counts in each sample is used as the lbrary size. An example:
+                        </p>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <td bgcolor='#C0C0C0'><b>tracking_id</b></td>
+                                    <td bgcolor='#C0C0C0'><b>locus</b></td>
+                                    <td bgcolor='#C0C0C0'><b>nearest_ref_id</b></td>
+                                    <td bgcolor='#EE82EE'><b>class_code</b></td>
+                                    <td bgcolor='#EE82EE'><b>transcript_length</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='green'><b>Sample_2</b></td>
+                                    <td bgcolor='green'><b>Sample_n</b></td>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Gene_00002</td>
+                                <td>chr1:1431363-1431403</td>
+                                <td>NM_031921</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>20</td>
+                                <td>81</td>
+                                <td>9</td>                              
+                            </tr>
+                            <tr>
+                                <td>Gene_00003</td>
+                                <td>chr1:2495127-2495222</td>
+                                <td>NM_003820</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>285</td>
+                                <td>482</td>
+                                <td>69</td>
+                            </tr>
+                            <tr>
+                                <td>Gene_00004</td>
+                                <td>chr1:5446956-5447187</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>&nbsp;</td>
+                                <td>47</td>
+                                <td>107</td>
+                                <td>32</td>
+                            </tr>
+                        </table>
+                        <p/>
+                    </li>
+                    <li>
+                        <b>RPKM &amp; Count</b>
+                        <p>
+                            Both RPKM and Discrete counts of sequence Reads are provided by the user. This format is useful when
+                            the user does nto want to provide those values using custom methods without relying on the system. 
+                            There are 2 strict <b>requirements</b>:
+                        </p>
+                        <ol>
+                            <li>The sample names of the 2 columns should be the <b>same</b>.</li>
+                            <li>The <b>first</b> coulums is treated as RPKM and the <b>second</b> one as Count.</li>
+                        </ol>
+                        
+                        <p>
+                            A <b>'Library Size file' is optional</b>.
+                            An example:
+                        </p>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <td bgcolor='#C0C0C0'><b>tracking_id</b></td>
+                                    <td bgcolor='#C0C0C0'><b>locus</b></td>
+                                    <td bgcolor='#C0C0C0'><b>nearest_ref_id</b></td>
+                                    <td bgcolor='#EE82EE'><b>class_code</b></td>
+                                    <td bgcolor='#EE82EE'><b>transcript_length</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='#00FFFF'><b>Sample_2</b></td>
+                                    <td bgcolor='#00FFFF'><b>Sample_2</b></td>
+                                    <td bgcolor='#FFA500'><b>Sample_n</b></td>
+                                    <td bgcolor='#FFA500'><b>Sample_n</b></td>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Gene_00002</td>
+                                <td>chr1:1431363-1431403</td>
+                                <td>NM_031921</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>2323.12</td>
+                                <td>20</td>
+                                <td>323.12</td>
+                                <td>81</td>
+                                <td>223.12</td>
+                                <td>9</td>                              
+                            </tr>
+                            <tr>
+                                <td>Gene_00003</td>
+                                <td>chr1:2495127-2495222</td>
+                                <td>NM_003820</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>453.12</td>
+                                <td>285</td>
+                                <td>879.12</td>
+                                <td>482</td>
+                                <td>223.12</td>
+                                <td>69</td>
+                            </tr>
+                            <tr>
+                                <td>Gene_00004</td>
+                                <td>chr1:5446956-5447187</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>&nbsp;</td>
+                                <td>443.12</td>
+                                <td>47</td>
+                                <td>2323.12</td>
+                                <td>107</td>
+                                <td>623.12</td>
+                                <td>32</td>
+                            </tr>
+                        </table>
+                        <p/>
+                    </li>
+                    <li>
+                        <b>FPKM &amp; Count </b>
+                        <p>
+                            This uses another commonly used unit of HTS expression data called FPKM (Fragments per kilobase per million).
+                            Our program currently does not support an auto conversion from FPKM to Counts. As a result if the user
+                            wants to load this kind of data, one has to provide the corresponfing Count value as well.
+                            There are 2 strict <b>requirements</b>:
+                        </p>
+                        <ol>
+                            <li>The sample names of the 2 columns should be the <b>same</b>.</li>
+                            <li>The <b>first</b> coulums is treated as RPKM and the <b>second</b> one as Count.</li>
+                        </ol>
+                        
+                        <p>
+                            A <b>'Library Size file' is optional</b>.
+                            An example:
+                        </p>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <td bgcolor='#C0C0C0'><b>tracking_id</b></td>
+                                    <td bgcolor='#C0C0C0'><b>locus</b></td>
+                                    <td bgcolor='#C0C0C0'><b>nearest_ref_id</b></td>
+                                    <td bgcolor='#EE82EE'><b>class_code</b></td>
+                                    <td bgcolor='#EE82EE'><b>transcript_length</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='green'><b>Sample_1</b></td>
+                                    <td bgcolor='#00FFFF'><b>Sample_2</b></td>
+                                    <td bgcolor='#00FFFF'><b>Sample_2</b></td>
+                                    <td bgcolor='#FFA500'><b>Sample_n</b></td>
+                                    <td bgcolor='#FFA500'><b>Sample_n</b></td>
+                                </tr>
+                            </thead>
+                            <tr>
+                                <td>Gene_00002</td>
+                                <td>chr1:1431363-1431403</td>
+                                <td>NM_031921</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>2323.12</td>
+                                <td>20</td>
+                                <td>323.12</td>
+                                <td>81</td>
+                                <td>223.12</td>
+                                <td>9</td>                              
+                            </tr>
+                            <tr>
+                                <td>Gene_00003</td>
+                                <td>chr1:2495127-2495222</td>
+                                <td>NM_003820</td>
+                                <td>c</td>
+                                <td>&nbsp;</td>
+                                <td>453.12</td>
+                                <td>285</td>
+                                <td>879.12</td>
+                                <td>482</td>
+                                <td>223.12</td>
+                                <td>69</td>
+                            </tr>
+                            <tr>
+                                <td>Gene_00004</td>
+                                <td>chr1:5446956-5447187</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>&nbsp;</td>
+                                <td>443.12</td>
+                                <td>47</td>
+                                <td>2323.12</td>
+                                <td>107</td>
+                                <td>623.12</td>
+                                <td>32</td>
+                            </tr>
+                        </table>
+                        <p/>
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <b>Species</b>: Currently we porvide annotation support for Human ans Mouse data only. 
+                Other requirments of Ref Genome type and build versions apply.
+                <ol>
+                    <li>Human</li>
+                    <li>Mouse</li>
+                </ol>
+            </li>
+            <li>
+                <b>Reference Genome</b>:
+                Whis refrence genome was used to map align the reads. The same ref genome would be used for other annotaiton.
+                We currently support RefSeq and ENSMBL models. This is <b>important as the 'nearest_ref_id' field is used to
+                    link to the annotaiton DB and an incorrect selection would lead to undesirable results</b>.
+                <ol>
+                    <li>RefSeq</li>
+                    <li>ENSMBL</li>
+                </ol>
+            </li>
+            <li>
+                <b>UCSC Build</b> This field specifies the Reference Genome <b>version</b> used to map/aligh the reads. It is <b></b>important to
+                specifiy this correctly</b> as the mapping information changes enough between versions to lead to mapping mistakes.
+                <ol>
+                    <li>Human: hg19 &amp; hg18</li>
+                    <li>Mouse: mm9 &amp; mm8</li>
+                </ol>
+            </li>
+            <li>
+                <b>Read Length</b>
+                Optional Filed to specify the length of sequence reads in the experiments. For future use.
+            </li>
+        </ul>
+        
+        <h3>Library Size File</h3>
+        <p>
+            This should be a <b>tab-delimited</b> file <b>wihtout</b> header. Each row should have <b>2</b> columns: <b>Sample name</b> and <b>Library Size</b>.
+            Comment lines are OK and should start with <em><b>"#"</b></em>. An example:
+        </p>
+        <table border='1'>
+            <tr>
+                <td colspan="2"><b># This is a  comment</b></td>
+            </tr>
+            <tr>
+                <td><b>Sample_1</b></td>
+                <td>5454545</td>                              
+            </tr>
+            <tr>
+                <td><b>Sample_2</b></td>
+                <td>694545</td>
+            </tr>
+            <tr>
+                <td><b>Sample_n</b></td>
+                <td>3245443</td>
+            </tr>
+            <tr>
+                <td colspan="2"><b># This is the End</b></td>
+            </tr>
+        </table>
+        <h3>Count to RPKM and vice versa <a name='convert'></a></h3>
+        <p>
+            When either RPKM or Count information is provided MeV calculates the other based on the publication by
+            <b>Mortazavi et al. <i>Nature Methods - 5, 621 - 628 (2008).</i></b> The supplemntary section describes the
+            approach in detail. Here is the basic formula used:
+            
+            <b>RPKM = Count/Library Size/TranscriptLength*1e+9</b>
+        </p>
+        <b>Rules and requirements</b>
+        <ul>
+            <li>When RPKM is provided, A library Size file is requred. When Count is provided the file is optional and
+                MeV takes the sum of the counts of each sample as the library size.</li>
+            <li>When <b>transcript_length</b> annotation column is left empty in the data file MeV calculates the
+                same from the <b>locus</b> as the diff between start and end BP.</li>
+        </ul>
+        <div class="navigation-bar">
+			<a href="Loading-agilent-data.html">Previous: Loading Agilent Data</a> | 
+			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+			<a class="next" href="Adjustingthedata.html">Next: Adjusting the Data</a>
+		</div>
+        
+    </body>
+</html>

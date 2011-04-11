@@ -38,6 +38,13 @@ public interface IData {
     public final static int DATA_TYPE_AFFY_MEAN = 4;
     public final static int DATA_TYPE_AFFY_MEDIAN = 5;
     
+    /**
+     * Raktim
+     * RNASeq type
+     * Make it single-color like
+     */
+    public final static int DATA_TYPE_RNASEQ = 6;
+    
     public final static String DEFAULT_SAMPLE_ANNOTATION_KEY = "Default Slide Name";
 
 	/**

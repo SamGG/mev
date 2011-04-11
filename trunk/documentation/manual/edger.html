@@ -1,0 +1,70 @@
+<html>
+	<body bgcolor = "#FFFFCC">
+<div class="navigation-bar">
+	<a class="prev" href="minet.html">Previous: MINET: Mutual Information Network</a> | 
+	<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+	<a class="next" href="deseq.html">Next: DeSEQ: Analysis of RNASeq Data based on Negative Binomial Distribution</a>
+</div>
+	
+		<basefont face = "Arial">
+			<h1>edgeR: a Bioconductor package for differential expression analysis of digital gene expression data</h1> 
+			
+			<hr size = 10>
+				<h2>Description</h2>
+				<p>
+					edgeR is a Bioconductor software package for examining
+					differential expression of replicated count data. An over-dispersed
+					Poisson model is used to account for both biological and technical
+					variability. Empirical Bayes methods are used to moderate the degree
+					of over-dispersion across transcripts, improving the reliability of
+					inference. The methodology can be used even with the most minimal
+					levels of replication, provided at least one phenotype or experimental
+					condition is replicated.
+				</p>
+				<p>
+					<h2>Parameters</h2>
+					<ol>
+						<li><b>Dataset</b>: 2 sample groups.</li>
+						<li><b>Method</b>: The inference algorithm: 
+							<ol>
+								<li><b>Common Dispersion: </b>
+									Common dispersion for <b>all</b> the tags is estimated using the quantile-adjusted 
+									conditional maximum likelihood (qCML) method.
+								</li>
+								<li><b>Moderated Tagwise Dispersion: </b>
+									Separate estimate of dispersions for <b>individual</b> tags using qCML. As individual tags 
+									typically don't provide enough data to estimate the dispersion reliably, edgeR 
+									implements an empirical Bayes strategy for squeezing the tagwise dispersions
+									towards the common dispersion. The amount of shrinkage is determined by the 
+									prior weight given to the common dispersion and the precision of the tagwise 
+									estimates.
+								</li>
+							</ol>
+						</li>
+						<li><b>Output</b>: edgeR creates a standard MeV viewer nodeo nthe left tree which conists of heatmaps and tables of
+							both significant, non-significant and a combined list of genes.
+						</li>
+					</ol>
+				</p>
+				
+				<p>
+					<h2>How to Run edgeR</h2>
+					<ol>
+						<li>Load RNAseq type data</li>
+						<li>Launch edgeR from ToolBar -> Statistics -> edgeR</li>
+						<li>Assign samples to 2 groups or leave them out</li>
+						<li>Choose inferecne method</li>
+						<li>Choose significance coutt-off method (p-value or fdr) and specify a value</li>
+						<li>Hit OK</li>
+					</ol>
+				</p>
+				
+		</basefont>
+	<div class="navigation-bar">
+		<a class="prev" href="minet.html">Previous: MINET: Mutual Information Network</a> | 
+		<a class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a class="next" href="deseq.html">Next: DeSEQ: Analysis of RNASeq Data based on Negative Binomial Distribution</a>
+	</div>
+		
+	</body>
+</html>

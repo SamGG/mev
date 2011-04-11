@@ -56,6 +56,7 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.BroadGeneSetList;
 import org.tigr.microarray.mev.cluster.gui.impl.gsea.GeneSigDbGeneSets;
+import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInitDialog;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.file.SuperExpressionFileLoader;
 import org.tigr.microarray.mev.resources.FileResourceManager;
@@ -646,19 +647,8 @@ public class GOSEQInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-                HelpWindow hw = new HelpWindow(GOSEQInitBox.this, "GO Analysis for RNA-seq- Initialization Dialog");
+            	HelpWindow.launchBrowser(GOSEQInitBox.this, "GO Analysis for RNA-seq- Initialization Dialog");
                 okPressed = false;
-                if(hw.getWindowContent()){
-                    hw.setSize(450,600);
-                    hw.setLocation();
-                    hw.setVisible(true);
-                    return;
-                }
-                else {
-                    hw.setVisible(false);
-                    hw.dispose();
-                    return;
-                }
             }
         }
     }

@@ -190,7 +190,9 @@ public class MultipleArrayCanvas extends JPanel implements IViewer, Scrollable {
         this.framework = framework;
         this.data = framework.getData();
 
-        if (data != null && data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || data.getDataType() == IData.DATA_TYPE_AFFY_ABS){
+        if (data != null && data.getDataType() == IData.DATA_TYPE_RATIO_ONLY || 
+        		data.getDataType() == IData.DATA_TYPE_AFFY_ABS ||
+        		data.getDataType() == IData.DATA_TYPE_RNASEQ){
             expressionBarItem.setEnabled(false);
             overlayItem.setEnabled(false);
         }
