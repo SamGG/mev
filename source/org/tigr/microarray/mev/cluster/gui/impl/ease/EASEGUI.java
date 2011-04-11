@@ -339,7 +339,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             algorithm.removeAlgorithmListener(listener);
         }
         if (logger != null) logger.dispose();
-        
         return node;
     }
     
@@ -638,7 +637,6 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
     }
     
     protected void addGOTree(DefaultMutableTreeNode root, EaseAlgorithmData data, String[] headerNames) {
-        
         String categories = new String("");
         
         for(int i = 0; i < categoryNames.length; i++)
@@ -873,5 +871,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
                 }
             }
         }
+    }
+    
+    public EaseAlgorithmData getAlgData(){
+    	return this.algorithmData;
     }
 }

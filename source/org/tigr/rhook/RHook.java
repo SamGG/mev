@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
- * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI),
  * J. Craig Venter Institute (JCVI) and the University of Washington.
  * All rights reserved.
  *******************************************************************************/
@@ -20,7 +20,6 @@ import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

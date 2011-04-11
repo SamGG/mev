@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.IRNASeqSlide;
@@ -98,12 +99,8 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 	 * @see IFramework
 	 */
 	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-		// Temp bail out
-		//if (true) {
-		//JOptionPane.showMessageDialog(framework.getFrame(),"Coming Soon ...");
-		//return null;
-		//}
-		// End 
+		if(sysMsg("R 2.11.x", "edgeR") != JOptionPane.OK_OPTION)
+			return null; 
 		this.data = framework.getData();
 		exptNamesVector = new Vector<String>();
 		for (int i = 0; i < this.data.getFeaturesCount(); i++) {
@@ -114,30 +111,20 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 				(JFrame)framework.getFrame(), 
 				true, 
 				exptNamesVector
-				//framework.getClusterRepository(
-						//org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER), 
-				//framework.getClusterRepository(
-				//org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER)
 		);
 		EDGERDialog.setVisible(true);
 
 		if (!EDGERDialog.isOkPressed()) return null;
 
 		methodName = EDGERDialog.methodsPanel.getMethodName();
-		//estimatorName = EDGERDialog.estimatorPanel.getEstimatorName();
-		//discretizationName = EDGERDialog.discretizationPanel.getDiscretizationMethodName();
 		sigMethod = EDGERDialog.getCutOffField();
 		sigCutOff = EDGERDialog.getPValue();
 		dataDesign=EDGERDialog.getTestDesign();
-		//if (EDGERDialog.getTestDesign()==EDGERInitBox.ONE_CLASS){
-		//if (EDGERDialog.getSelectionDesign()==EDGERInitBox.CLUSTER_SELECTION){
-		//groupAssignments=EDGERDialog.getClusterOneClassAssignments();
-		//}
+	
 		if (EDGERDialog.getTestDesign()==EDGERInitBox.TWO_CLASS){
 			groupAssignments=EDGERDialog.getTwoClassAssignments();
 		}
-		//}
-
+		
 		// count # of samples used in analysis
 		int samplesUsed = 0;
 		for(int i = 0; i < groupAssignments.length; i++) {
@@ -157,12 +144,8 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 			if(groupAssignments[i] != 0)
 				twoClassGrps[ii++] = groupAssignments[i];
 		}
-		//System.out.println("groupAssignments: " + Arrays.toString(groupAssignments));
-		//System.out.println(samplesUsed + " out of " + groupAssignments.length + " used. Sample indices: " + Arrays.toString(sampleIndices));
-
-		this.experiment = framework.getData().getExperiment();        
-		//int number_of_samples = this.data.getFeaturesCount();//experiment.getNumberOfSamples();
-		//int [] columnIndices = experiment.getColumnIndicesCopy(); 
+		
+		this.experiment = framework.getData().getExperiment();
 
 		sampleLabels = new ArrayList<String>();
 		geneLabels = new ArrayList<String>();
@@ -607,6 +590,35 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 		}
 	}
 
+	private int sysMsg(String rVer, String module) {
+		String os = System.getProperty("os.name");
+		String arch = System.getProperty("os.arch");
+		String ver = System.getProperty("os.version");
+
+		String message = "System Config:\n";
+		message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
+		message += "Please note:\n";
+		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "You also need to have" + rVer + " installed for " + module + "\n";
+			message += "Cancel if either is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if(arch.toLowerCase().contains("64")) {
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "Cancel if 32 Bit JVM is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if (os.toLowerCase().contains("mac")) {
+			message += "You need to have" + rVer + " installed for " + module + "\n";
+			message += "Cancel if R is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		return JOptionPane.OK_OPTION;
+	}
+	
 	protected class GeneralInfo {
 
 		public int clusters;

@@ -109,6 +109,8 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
      * @see IFramework
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+    	if(sysMsg("R 2.11.x", "MINET") != JOptionPane.OK_OPTION)
+			return null;
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
@@ -160,7 +162,7 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
         // count # of samples used in analysis
         int samplesUsed = 0;
         for(int i = 0; i < groupAssignments.length; i++) {
-        	if(groupAssignments[i] == 1)
+        	if(groupAssignments[i] != 0)
         		samplesUsed++;
         }
         // get samples indices used
@@ -227,8 +229,7 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
         	ArrayList<String> edgesList = getGeneEdges(netAdjMatrix, geneIndices);
         	
         	// 2. Create XGMML File
-        	String netFileDir = System.getProperty("user.dir")+
-        							"/data/results"; 
+        	String netFileDir = System.getProperty("user.dir")+"/data/results"; 
         	// create dir if not there
         	File file = new File(netFileDir);
         	boolean exists = file.exists();
@@ -587,6 +588,35 @@ public class MINETGUI implements IClusterGUI, IScriptGUI {
             //monitor.dispose();
         }
     }
+    
+    private int sysMsg(String rVer, String module) {
+		String os = System.getProperty("os.name");
+		String arch = System.getProperty("os.arch");
+		String ver = System.getProperty("os.version");
+
+		String message = "System Config:\n";
+		message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
+		message += "Please note:\n";
+		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "You also need to have" + rVer + " installed for " + module + "\n";
+			message += "Cancel if either is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if(arch.toLowerCase().contains("64")) {
+			message += "You need to have 32Bit JVM as default for " + module + "\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "Cancel if 32 Bit JVM is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if (os.toLowerCase().contains("mac")) {
+			message += "You need to have" + rVer + " installed for " + module + "\n";
+			message += "Cancel if R is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		return JOptionPane.OK_OPTION;
+	}
     
     protected class GeneralInfo {
 
