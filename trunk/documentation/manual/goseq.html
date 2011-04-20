@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>GOSEQ: Gene ontology analysis for RNA-seq</title>
+		<link rel="stylesheet" href="mev manual.css">
+		</head>
+		</style>
+		<body>
+    <div class="navigation-bar"><a class="prev" href="limma.html">Previous: LIMMA- Linear Models for Microarrays </a> | <a  class="toc"href="TableofContents.html">Table of Contents</a>|<a class="next" href="surv.html">Next: SURV-Survival Analysis    </a></div>
+
+	<h3>GOSEQ: Gene ontology analysis for RNA-seq</h3><h3>Parameter Information</h3>
+Young <i>et al.</i>, Gene ontology analysis for RNA-seq: accounting for selection bias <i>Genome Biology</i> 2010, <b>11</b>:R14<br>
+<br>
+<div class="screenshots ">
+		<a href="goseq1.gif">
+					<img src="goseq1.gif">
+				</a>
+				<br/>
+				<span class="caption">GOSEQ GO term tree</span>
+				</div>
+				
+GOSEQ, a new module to MeV 4.7, is a technique for identifying differentially expressed sets of genes, such as GO terms while accounting for the
+biases inherent to sequencing data.
+<h3>Running GOSEQ:</h3>
+After opening the GOSEQ initialization dialog, select the tab indicating the type of analysis you intend to run on your data.  Your options are:<br>
+1.)  GO Analysis: MeV will use GO term annotation to perform a GO analysis.<br>
+2.)  Cluster Analysis: MeV will run GOSEQ on a cluster of differentially expressed genes.  Create a cluster of genes and use the Cluster Browser to select the set.<br>
+3.)  Differential Expression Analysis: Use one of MeV's RNA-seq specific modules to find a set of differentially expressed genes on which to run GOSEQ.  <br>
+<br>
+
+<h3>Parameters:</h3>
+<div class="screenshots ">
+		<a href="goseq2.gif">
+					<img src="goseq2.gif">
+				</a>
+				<br/>
+				<span class="caption">Probability of differential expression graph</span>
+				</div>
+Assign a significance level.  Gene sets with a p-value less than alpha will be deemed significant.
+<br>
+Number of permutations: Choose the number of iterations used in significance evaluation.  Default is 1000.
+<br>
+Number of genes per transcript length bin:  Adjust the size of the bin appropriate for your dataset.
+<br>
+Account for differential expression bias in:  Use the drop-down menu to select the type of bias to account for.  By default, RNA-seq transcript length is used as the bias.
+<br></br><br></br>
+       </basefont>
+           <div class="navigation-bar"><a class="prev" href="limma.html">Previous: LIMMA- Linear Models for Microarrays </a> | <a  class="toc"href="TableofContents.html">Table of Contents</a>|<a class="next" href="surv.html">Next: SURV-Survival Analysis    </a></div>
+       
+    </body>
+</html>
