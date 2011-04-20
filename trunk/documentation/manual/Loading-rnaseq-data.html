@@ -1,15 +1,15 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>MeV File Loader - RNASeq File Format</title>
-    </head>
-    <body>
+	<head>
+		<title>MeV File Loader - RNASeq File Format</title>
+		<link rel="stylesheet" href="mev manual.css">
+	</head>
+	<body>
    		<div class="navigation-bar">
 			<a href="Loading-agilent-data.html">Previous: Loading Agilent Data</a> | 
 			<a class="toc" href="TableofContents.html">Table of Contents</a> | 
 			<a class="next" href="Adjustingthedata.html">Next: Adjusting the Data</a>
 		</div>
-        <h3>RNASeq File Loader - Overview </h3>
+        <h3>RNASeq File Loader - Overview</h3>
         <p>
             Count and RPKM  File Format is a <b>tab-delimited</b> file format for loading HTS(High Throughput Sequencing Data)
             into MeV for analysis. We are currently providing RNASeq analysis algorithms only for these data sets.
@@ -32,7 +32,7 @@
             section <b>Count to RPKM and vice versa</b>.
         </p>
         
-        <h3>Dialog Selections</h3>
+        <h4>Dialog Selections</h4>
         <ul>
             <li>
                 <b>Data Type</b>: 
@@ -372,7 +372,7 @@
             </li>
         </ul>
         
-        <h3>Library Size File</h3>
+        <h4>Library Size File</h4>
         <p>
             This should be a <b>tab-delimited</b> file <b>wihtout</b> header. Each row should have <b>2</b> columns: <b>Sample name</b> and <b>Library Size</b>.
             Comment lines are OK and should start with <em><b>"#"</b></em>. An example:
@@ -397,7 +397,7 @@
                 <td colspan="2"><b># This is the End</b></td>
             </tr>
         </table>
-        <h3>Count to RPKM and vice versa <a name='convert'></a></h3>
+        <h4>Count to RPKM and vice versa <a name='convert'></a></h4>
         <p>
             When either RPKM or Count information is provided MeV calculates the other based on the publication by
             <b>Mortazavi et al. <i>Nature Methods - 5, 621 - 628 (2008).</i></b> The supplemntary section describes the
