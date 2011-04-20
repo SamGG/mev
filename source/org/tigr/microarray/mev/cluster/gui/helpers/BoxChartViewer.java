@@ -58,7 +58,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private Experiment experiment;
     private IFramework framework;
 	private int exptID = 0;
-	private int clusterCount=3;
+	private int clusterCount;
     Color unselected = new Color(200,200,255);
     Color selectedRegion = new Color(170,170,255);
     
@@ -77,6 +77,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private JComboBox geneAnnotationCB;
 	private JComboBox geneClusterCB;
 	private JComboBox chartTypeCB;
+	private JComboBox geneOrClusterCB;
 	private float[] expressionAverages;
 	private float[] expressionSDs;
 	private float[] expressionMedian;
@@ -87,12 +88,14 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private float[] expressionUpperWhisker;
 	private float[][] upperOutliers;
 	private float[][] lowerOutliers;
+	private boolean isSingleGene;
 	private boolean isBoxPlot;
 	private JMenuItem menuItemAuto;
 	private JMenuItem menuItemFixScale;
 	private JLabel annotLabel;
 	private JLabel geneIDlabel;
 	private JMenuItem aggGenClusterMenuItem;
+	private JButton aggregateButton;
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String ZOOM_IN = "zoom-in";
     protected static final String ZOOM_OUT = "zoom-out";
@@ -106,28 +109,40 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private static final String AGG_GENE_CLUSTER_CMD = "aggregate-gene-cluster";
 	
 	/**
-	 * Constructs a <code>Venn Diagram Viewer</code> for insertion into ClusterTable
+	 * Constructs a <code>Box/Bar Chart Viewer</code> for insertion into ClusterTable
 	 *
 	 * @param experiment the data of an experiment.
 	 */
-	public BoxChartViewer(IFramework fm, boolean sampleVD, Cluster[] clusterArray) {
+	public BoxChartViewer(IFramework fm, Cluster[] clusterArray) {
 	    framework= fm;
         this.experiment = framework.getData().getExperiment();
 		setClusters(clusterArray);
-        populateGeneList();
-        addChartTypeBox();
-//        this.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
+        populateGeneListComboBoxes();
+        generateSettingsComponents();
+        createComponentLayout();         
+    	init();
+    }
+	
+	private void init(){
+        Listener listener = new Listener();
+        this.popup = createJPopupMenu(listener);
+		this.setBackground(Color.white);
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
+	}
+	
+	private void createComponentLayout() {
+		GridBagConstraints gbc = new GridBagConstraints();	       
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.fill = GridBagConstraints.NONE;
-
-        geneIDlabel = new JLabel("  Gene ID: ");
-        annotLabel = new JLabel("  Annotation Field: ");
-
+        gbc.fill = GridBagConstraints.NONE;        
         gbc.gridx=0;
         this.add(new JLabel("  Chart Type: "),gbc);
         gbc.gridx++;
         this.add(chartTypeCB,gbc);
+        gbc.gridx++;
+        this.add(new JLabel("  Gene Range: "),gbc);
+        gbc.gridx++;
+        this.add(geneOrClusterCB,gbc);
         gbc.gridx++;
         this.add(annotLabel,gbc);
         gbc.gridx++;
@@ -138,100 +153,84 @@ public class BoxChartViewer extends JPanel implements IViewer {
         this.add(geneIDlabel,gbc);
         gbc.gridx++;
     	this.add(geneCB,gbc);
-        gbc.gridx = 0;
-    	init();
-    }
-	private void addChartTypeBox() {
-		String[] chartTypes = {"Single Gene Box Plot","Single Gene Bar Graph","Gene Cluster Box Plot","Gene Cluster Bar Graph"};
+        gbc.gridx++;
+    	this.add(aggregateButton,gbc);
+        gbc.gridx = 0;		
+	}
+	
+	private void generateSettingsComponents() {
+		String[] chartTypes = {"Box Plot","Bar Graph"};
 		chartTypeCB = new JComboBox(chartTypes);
-		chartTypeCB.addActionListener(new ActionListener(){
+		chartTypeCB.addActionListener(new ActionListener(){		
+
 			public void actionPerformed(ActionEvent e) {
-				if (chartTypeCB.getSelectedIndex()==0||chartTypeCB.getSelectedIndex()==1){
+				isBoxPlot = chartTypeCB.getSelectedIndex()==0;
+				repaint();	
+			}
+		});
+
+		String[] geneOrCluster = {"Single Gene","Gene Cluster"};
+		geneOrClusterCB = new JComboBox(geneOrCluster);
+		geneOrClusterCB.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (geneOrClusterCB.getSelectedIndex()==0){
 					annotLabel.setText("  Annotation Field: ");
 					aggGenClusterMenuItem.setEnabled(false);
 					geneClusterCB.setVisible(false);
+			        aggregateButton.setVisible(false);
 					geneAnnotationCB.setVisible(true);
 					geneIDlabel.setVisible(true);
 					geneCB.setVisible(true);
+					isSingleGene = true;
 				} else {
 					if (framework.getClusterRepository(0)==null || framework.getClusterRepository(0).isEmpty()){
 			            JOptionPane.showMessageDialog(null, "The Gene Cluster Repository is empty\nPlease create a Gene Cluster to continue...", "Error", JOptionPane.WARNING_MESSAGE);
-			            chartTypeCB.setSelectedIndex(0);
+			            geneOrClusterCB.setSelectedIndex(0);
+						isSingleGene = true;
 			            return;
 					}
 					annotLabel.setText("  Select Cluster: ");
 					aggGenClusterMenuItem.setEnabled(true);
 					geneClusterCB.setVisible(true);
+			        aggregateButton.setVisible(true);
 					geneAnnotationCB.setVisible(false);
 					geneIDlabel.setVisible(false);
-					geneCB.setVisible(false);					
+					geneCB.setVisible(false);	
+					isSingleGene = false;				
 				}
 				repaint();				
 			}        	
         });
-	}
-	/**
-	 * Constructs a Venn Diagram Viewer
-	 *
-	 *
-	 */
-	public BoxChartViewer(int[][] clusterArray){
-		this(clusterArray, null, null);
-	}
-	/**
-	 * Constructs a Venn Diagram Viewer
-	 *
-	 *
-	 */
-	public BoxChartViewer(int[][] clusterArray, String[] clusterNames){
-		this(clusterArray, clusterNames, null);
-	}
-	/**
-	 * Constructs a <code>Venn Diagram Viewer</code> for testing
-	 *
-	 *
-	 */
-	public BoxChartViewer(int[][] clusterArray, String[] clusterNames, Color[] clusterColors) {
-		this(clusterArray, clusterNames, clusterColors, 25);
-    }
+        aggregateButton = new JButton("Aggregate Gene Cluster");
+        aggregateButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+    			aggregateGeneCluster = !aggregateGeneCluster;
+	        	if (aggregateGeneCluster){
+	        		aggGenClusterMenuItem.setText("Un-aggregate Gene Cluster");
+	        		aggregateButton.setText("Un-aggregate Gene Cluster");
+	        	} else {
+	        		aggGenClusterMenuItem.setText("Aggregate Gene Cluster");
+	        		aggregateButton.setText("Aggregate Gene Cluster");
+	        	}        		
+	        	repaint();				
+			}        	
+        });
+        aggregateButton.setVisible(false);
 
-	/**
-	 * The Master Constructor <code>Venn Diagram Viewer</code>
-	 *
-	 *
-	 */
-	public BoxChartViewer(int[][] clusterArray, String[] clusterNames, Color[] clusterColors, int totalEls) {
-		try{
-			setClusters(clusterArray, clusterNames, clusterColors);
-	        geneCB = new JComboBox(new String[]{"qasdasd","dhjdbjfdbj"});
-	        geneCB.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent e) {
-					repaint();				
-				}        	
-	        });
-	        this.add(geneCB);
-	        init();
-		}catch (Exception e){
-			System.out.println("construction error");
-			e.printStackTrace();
-		}
-    }
-	
-	private void init(){
-        Listener listener = new Listener();
-        this.popup = createJPopupMenu(listener);
-		this.setBackground(Color.white);
-        addMouseListener(listener);
-        addMouseMotionListener(listener);
-        refreshData();
+        geneIDlabel = new JLabel("  Gene ID: ");
+        annotLabel = new JLabel("  Annotation Field: ");
+        isBoxPlot = chartTypeCB.getSelectedIndex()==0;
+        isSingleGene = geneOrClusterCB.getSelectedIndex()==0;
 	}
-	private void populateGeneList() {
+	
+	private void populateGeneListComboBoxes() {
 		geneClusterCB = new JComboBox();
 		geneClusterCB.removeAllItems();
 		for (int i=0; i<framework.getClusterRepository(0).size(); i++){
 			if (framework.getClusterRepository(0).getCluster(i+1)==null)
 				break;
-			geneClusterCB.addItem(framework.getClusterRepository(0).getCluster(i+1).getClusterLabel());
+			Cluster cluster = framework.getClusterRepository(0).getCluster(i+1);
+			geneClusterCB.addItem("Cluster #: "+cluster.getSerialNumber()+", "+cluster.getClusterLabel());
 		}
 		geneClusterCB.setVisible(false);
 		geneClusterCB.addActionListener(new ActionListener(){
@@ -259,9 +258,11 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		
 	}
 	public void setClusters(Cluster[] clusterArray){
-		if (clusterArray==null){
-    		return;
+		if (clusterArray==null||clusterArray.length==0){
+			System.out.println("was null or length=0");
+			clusterArray = new Cluster[1];
     	}
+		System.out.println("test print "+clusterArray.length);
 		clusterCount = clusterArray.length;
 		clusterNames = new String[clusterCount];
 		clusterColors = new Color[clusterCount];
@@ -283,41 +284,29 @@ public class BoxChartViewer extends JPanel implements IViewer {
 					clusterNames[i] = "(Cluster "+(i+1)+")";
 			}
 		}
-		refreshData();
 	}
-    public void setClusters(int[][] clusterArray, String[] names, Color[] colors){
-    	if (clusterArray==null){
-    		clusterCount=1;
-    		return;
-    	}
-		clusterCount = Math.min(Math.max(1, clusterArray.length),4);//sets clusterCount to 1,2,3,or 4
-		if (clusterCount==1||clusterCount==4)
-			return;
-		for (int i=0; i<clusterCount; i++){
-			clusters[i] = clusterArray[i];
-			clusterColors[i] = colors==null? Color.black:colors[i];
-			clusterNames[i] = names==null? "Cluster "+(i+1):names[i];
-		}
-		refreshData();
-    }
     
-	private void refreshData(){
-	}
 
 	
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (clusterCount==0)
 			return;
-		isBoxPlot = (chartTypeCB.getSelectedIndex()==0||chartTypeCB.getSelectedIndex()==2);
-		boolean ismultigene = (chartTypeCB.getSelectedIndex()==2||chartTypeCB.getSelectedIndex()==3);
+		boolean ismultigene = !isSingleGene;
 		Graphics2D g2 = (Graphics2D)g;
 		int multigeneCount = 1;
 		Cluster cluster = null;
 		if (ismultigene){
 			try{
-				cluster = framework.getClusterRepository(0).getCluster(this.geneClusterCB.getSelectedIndex()+1);
+				int begin = this.geneClusterCB.getSelectedItem().toString().indexOf(":");
+				System.out.println(begin);
+				int end = this.geneClusterCB.getSelectedItem().toString().indexOf(",");
+				System.out.println(end);				
+				String sn = this.geneClusterCB.getSelectedItem().toString().substring(begin+2,end);
+				System.out.println(sn);
+				cluster = framework.getClusterRepository(0).getCluster(Integer.parseInt(sn));
 			} catch (Exception e){
+				e.printStackTrace();
 				System.out.println("Gene Cluster Problem");
 				return;
 			}
@@ -417,7 +406,6 @@ public class BoxChartViewer extends JPanel implements IViewer {
 			g2.setFont(font);
 			
 			
-			
 			g2.rotate(Math.PI/2);
 			g2.drawString("Expression", (chartTop+3)+chartHeight/3, -(chartleft-80)); //y-axis Label
 			g2.rotate(-Math.PI/2);
@@ -481,12 +469,21 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		this.setSize(new Dimension(this.getWidth(), viewerHeight));
 		this.setPreferredSize(new Dimension(this.getWidth(),viewerHeight));
 	}
-
+	
+	/**
+	 * Gathers data for a single gene, uses getChartData(int[] geneIndices)
+	 * @param geneIndex
+	 */	
 	private void getChartData(int geneIndex) {
 		int[] indices = new int[1];
 		indices[0] = geneIndex;
 		getChartData(indices);
 	}
+	
+	/**
+	 * Gathers data for a set of genes
+	 * @param geneIndices
+	 */
 	private void getChartData(int[] geneIndices) {
     	try{
     		lowerOutliers = new float[clusterCount][];
@@ -875,13 +872,11 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	        if (command.equals(ZOOM_IN)){
 	        	chartHeight = (chartHeight*3)/2;
 	        	chartIncrement = (chartIncrement*3)/2;
-//	        	chartleft = chartIncrement/2;
 	        	repaint();
 	        }
 	        if (command.equals(ZOOM_OUT)){
 	        	chartHeight = (chartHeight*2)/3;
 	        	chartIncrement = (chartIncrement*2)/3;
-//	        	chartleft = chartIncrement/2;
 	        	repaint();
         	}
 	        if (command.equals(SAVE_DATA_CMD)){
@@ -904,10 +899,12 @@ public class BoxChartViewer extends JPanel implements IViewer {
     			aggregateGeneCluster = !aggregateGeneCluster;
 	        	if (aggregateGeneCluster){
 	        		aggGenClusterMenuItem.setText("Un-aggregate Gene Cluster");
+	        		aggregateButton.setText("Un-aggregate Gene Cluster");
 	        	} else {
 	        		aggGenClusterMenuItem.setText("Aggregate Gene Cluster");
+	        		aggregateButton.setText("Aggregate Gene Cluster");
 	        	}        		
-	        	repaint();
+	        	repaint();				
 	        }
 
 	        if (command.equals(AUTOSCALE_CMD)){

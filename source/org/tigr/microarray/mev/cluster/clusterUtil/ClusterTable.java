@@ -250,7 +250,7 @@ public class ClusterTable extends JPanel implements IViewer {
 	    	            bottomTablePane.setColumnHeaderView(((VennDiagramViewer)iViewer).getHeaderComponent());
 	    	            break;	            	
 	            	case 5:
-	            		iViewer = new BoxChartViewer(framework, false, getSelectedClusters());
+	            		iViewer = new BoxChartViewer(framework, getSelectedClusters());
 	    	            bottomTablePane.setViewportView(((BoxChartViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((BoxChartViewer)iViewer).getHeaderComponent());
 	    	            break;       	
@@ -856,12 +856,13 @@ public class ClusterTable extends JPanel implements IViewer {
      * 
      */
     private void setRadioButtons(){
-    	if (viewerCB.getSelectedIndex()==4){
+    	if (viewerCB.getSelectedIndex()==4||viewerCB.getSelectedIndex()==5){
     		rb1.setEnabled(false);
     		rb2.setEnabled(false);
     		rb3.setEnabled(false);
     		rb4.setEnabled(false);
     		rb5.setEnabled(false);
+    		rb2.setSelected(true);
     	}else{
     		rb1.setEnabled(true);
 	    	if (repository.getTotalClusters()==0){
