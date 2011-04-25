@@ -118,6 +118,7 @@ public class GSEAInitWizard extends GSEAWizard {
 		if (currentStepIndex == 1) {
 			prevPanel = dataPanel;
 			currentPanel = prevPanel;
+			dataPanel.gseaInitWizard.setParamSufficient(dataPanel.validateSampleSelection());
 		}
 		
 		

@@ -63,7 +63,6 @@ public class ProcessGroupAssignments {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -134,26 +133,22 @@ public class ProcessGroupAssignments {
 			// intercept, hence level starts with 2
 			int factorlevel = 2;
 			int[] rowVector = factorAssignments[i];
-			// System.out.println("rowVector size:"+rowVector.length);
-			// System.out.println("number of samples:"+factor_matrix.getRowDimension());
+			System.out.println("rowVector.length = "+rowVector.length);
 			int current_factor_level = factorLevels[i];
 			FloatMatrix tempMatrix = new FloatMatrix(factor_matrix
 					.getRowDimension(), current_factor_level - 1);
 
 			while (factorlevel <= current_factor_level) {
 				int samples = 0;
-				// System.out.println("factorlevel"+factorlevel);
 				while (samples < nSamples - 1) {
-					// System.out.println("factor-Assignment"+rowVector[samples]);
-					 //System.out.println("level"+factorlevel);
 					if (this.excludedColumns.contains(samples)) {
-						// System.out.println("excluded column:"+samples);
-						if (samples < nSamples - 1)
-							samples = samples + 1;
-
+						samples = samples + 1;
+						continue;
 					}
-					// System.out.println("rowvector"+samples+":"+rowVector[samples]);
+					System.out.println("rowVector[samples] = "+rowVector[samples]);
 					if (rowVector[samples] == factorlevel) {
+						System.out.println("tempcolStart = "+tempcolStart);
+						System.out.println("tempRowStart = "+tempRowStart);
 						tempMatrix.set(tempRowStart, tempcolStart, 1);
 						tempRowStart = tempRowStart + 1;
 					} else {
