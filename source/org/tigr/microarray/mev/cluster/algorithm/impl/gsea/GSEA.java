@@ -48,7 +48,7 @@ public class GSEA extends AbstractAlgorithm {
 	public AlgorithmData execute(AlgorithmData data)throws AlgorithmException{
 
 		try{
-			
+
 			//Get the number of permutations and call gsealmPerm
 			int num_perms=Integer.parseInt(data.getParams().getString("permutations"));
 			if(stop)
@@ -82,8 +82,8 @@ public class GSEA extends AbstractAlgorithm {
 	 * Function returns a hashtable with coefficients and coefvars
 	 * 
 	 */
-	public Hashtable<String, FloatMatrix> lmPerGene(AlgorithmData aData, FloatMatrix factor_matrix, boolean removeNA) {
-		
+	private Hashtable<String, FloatMatrix> lmPerGene(AlgorithmData aData, FloatMatrix factor_matrix, boolean removeNA) {
+
 		FloatMatrix gene_expression=aData.getGeneMatrix("gene-data-matrix"); 
 		FloatMatrix x;
 		FloatMatrix eSet;
@@ -97,12 +97,12 @@ public class GSEA extends AbstractAlgorithm {
 		int nSamp;
 		Hashtable<String, FloatMatrix>returnHash=new Hashtable<String, FloatMatrix>();
 
-		
+
 		if(removeNA)
 			eSet=removeUnassignedSamples(aData.getVector("unassigned-samples"),gene_expression);
 		else
 			eSet=gene_expression;
-		
+
 		x=factor_matrix;
 		nSamp=eSet.getColumnDimension();
 
@@ -110,6 +110,7 @@ public class GSEA extends AbstractAlgorithm {
 
 		xx=xTranspose.times(x);
 
+		System.out.println("xx "+xx.m+","+xx.n);
 		//In the R function, they use solve(a) and since the second argument is not provided, solve returns teh inverse of a.
 		//so, in R, if you say solve(a); the second argument b is considered to be an identity matrix. Trying to replicate that
 		//FloatMatrix xxInv=xx.inverse();
@@ -118,41 +119,63 @@ public class GSEA extends AbstractAlgorithm {
 
 		identity=FloatMatrix.identity(identity.getRowDimension(), identity.getColumnDimension());
 		try{
-		//Change this to avoid errors if matrix is not singular	(use something other than solve)
-		xxInv=xx.solve(identity);
-		
-		FloatMatrix hMat=x.times(xxInv).times(xTranspose);
-		FloatMatrix diagonalMatrix=createDiagonalMatrix(nSamp, nSamp, 1);
-		FloatMatrix dMat=diagonalMatrix.minus(hMat);
+			//Change this to avoid errors if matrix is not singular	(use something other than solve)
+			try{
+				xxInv=xx.solve(identity);
+			} catch (Exception e){
+				System.out.println("Singular Matrix, retrying...");
+				return null;
+			}
 
-
-		int col=x.getColumnDimension();
-
-		//Will possibly have lesser columns than the original expression set 
-
-		xy=eSet.times(x);
-		res=eSet.times(dMat);
-		beta=xx.solve(xy.transpose());
-
-
-		//result matrix is calculated using arrayTimes function of Jama. The dimensions of eSet and res are the same.
-		//this is the equivalent of "eSet*res"  in R
-		FloatMatrix result=eSet.arrayTimes(res);
-		float[]varr=getRowSumandSome(result, (nSamp-col));
-		Vector diagonal=returnDiagonal(xxInv);
-
-		FloatMatrix varbeta=createMatrix(diagonal,  eSet.getRowDimension(), col);
-
-		int[]margin={2};
-		FloatMatrix temp=apply(varbeta, margin, varr, org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.APPLY_DEFAULT );
-
-		FloatMatrix coefvar=temp.transpose();
-		
-		//Add to AlgorithmData
-		returnHash.put("lmPerGene-coefficients", beta);
-		returnHash.put("lmPerGene-coefvar", coefvar);
-		}catch(Exception e){
+			System.out.println("xxInv "+xxInv.m+","+xxInv.n);
+			System.out.println("x "+x.m+","+x.n);
+			System.out.println("xTranspose "+xTranspose.m+","+xTranspose.n);
 			
+			FloatMatrix hMat=x.times(xxInv).times(xTranspose);
+			System.out.println("hMat "+hMat.m+","+hMat.n);
+			FloatMatrix diagonalMatrix=createDiagonalMatrix(nSamp, nSamp, 1);
+			
+			System.out.println(hMat.getColumnDimension()+" : "+hMat.getRowDimension());
+			System.out.println(diagonalMatrix.getColumnDimension()+" : "+diagonalMatrix.getRowDimension());
+			System.out.println(hMat.m+" hm "+hMat.n);
+			System.out.println(diagonalMatrix.m+" dm "+diagonalMatrix.n);
+			
+			FloatMatrix dMat=diagonalMatrix.minus(hMat);
+
+
+			int col=x.getColumnDimension();
+
+			//Will possibly have lesser columns than the original expression set 
+
+			xy=eSet.times(x);
+			res=eSet.times(dMat);
+			beta=xx.solve(xy.transpose());
+
+			if (beta==null)
+				System.out.println("beta is null");
+			else
+				System.out.println("beta is not null");
+
+
+
+			//result matrix is calculated using arrayTimes function of Jama. The dimensions of eSet and res are the same.
+			//this is the equivalent of "eSet*res"  in R
+			FloatMatrix result=eSet.arrayTimes(res);
+			float[]varr=getRowSumandSome(result, (nSamp-col));
+			Vector diagonal=returnDiagonal(xxInv);
+
+			FloatMatrix varbeta=createMatrix(diagonal,  eSet.getRowDimension(), col);
+
+			int[]margin={2};
+			FloatMatrix temp=apply(varbeta, margin, varr, org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants.APPLY_DEFAULT );
+
+			FloatMatrix coefvar=temp.transpose();
+
+			//Add to AlgorithmData
+			returnHash.put("lmPerGene-coefficients", beta);
+			returnHash.put("lmPerGene-coefvar", coefvar);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		return returnHash;
 	}
@@ -410,7 +433,7 @@ public class GSEA extends AbstractAlgorithm {
 			prodMargin=margin[0];
 
 
-		
+
 
 		//This loop applies "sweep" across the rows. Seperate loops would be needed to extend the sweep
 		//function across columns and rows&columns. 
@@ -496,7 +519,7 @@ public class GSEA extends AbstractAlgorithm {
 			//normBy=rowSums;
 			normBy=sqrtVector;
 			int[]margin={1};
-			
+
 
 
 
@@ -526,8 +549,8 @@ public class GSEA extends AbstractAlgorithm {
 
 	}
 
-	
-	public void gsealmPerm(int num_perms, AlgorithmData adata, boolean removeNA )throws Exception{
+
+	private void gsealmPerm(int num_perms, AlgorithmData adata, boolean removeNA )throws Exception{
 
 		FloatMatrix observedStats;
 		FloatMatrix perms = null;
@@ -542,8 +565,8 @@ public class GSEA extends AbstractAlgorithm {
 		int[][]factorAssignments=adata.getIntMatrix("factor-assignments");
 		//Number of samples
 		int nSamp=adata.getGeneMatrix("gene-data-matrix").getColumnDimension();
-		
-		
+
+
 		/**
 		 *Second step is to 
 		 *1. Process the group assignments supplied by user and generate a factor matrix.
@@ -551,132 +574,152 @@ public class GSEA extends AbstractAlgorithm {
 		 *  
 		 * 
 		 */
-		ProcessGroupAssignments pg= new  ProcessGroupAssignments(factorNames, factorlevels, factorAssignments, true, nSamp);
+		ProcessGroupAssignments pg = new  ProcessGroupAssignments(factorNames, factorlevels, factorAssignments, true, nSamp);
 		pg.findUnassignedSamples(factorNames, factorlevels, factorAssignments);
 		adata.addVector("unassigned-samples", pg.getUnassignedColumns());
 		FloatMatrix factor_matrix=pg.generateFactorMatrix(factorNames, factorlevels, factorAssignments);
-		try{
-		Hashtable<String, FloatMatrix>tempHash=lmPerGene(adata, factor_matrix, true);
+		System.out.println("factor_matrix.getColumnDimension() = "+ factor_matrix.getColumnDimension()+", factor_matrix.getRowDimension() = "+factor_matrix.getRowDimension());
 
-
-		//Extract the result of lmPerGene, returned as Hashtable 
-		FloatMatrix coefficients=tempHash.get("lmPerGene-coefficients");	
-		FloatMatrix coefVar=tempHash.get("lmPerGene-coefvar");
-		FloatMatrix amat=adata.getGeneMatrix("association-matrix");
-		//Used to populate test statistic in gene set. Used for plotting in GUI
-		adata.addGeneMatrix("lmPerGene-coefficients", tempHash.get("lmPerGene-coefficients"));
-		adata.addGeneMatrix("lmPerGene-coefvar", tempHash.get("lmPerGene-coefvar"));
-
-		/**
-		 * Third step is to calculate per gene set statistic before permuting.
-		 * Zero factors are no longer allowed, so no need to check for it or provide the 
-		 * alternate execution steps
-		 * 
-		 * 
-		 */
-
-
-
-		//Extract the portion that contains the main factor coefficients. The zeroth coefficient is the intercept.
-		//The second coefficient will be that of the main factor.
-		FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
-
-
-		//Extract the portion that contains the main factor coefVars
-		FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
-
-
-		//Calculate the sqrt of each element of the coefVar_intermediate matrix
-		FloatMatrix sqrtCoefVar=new FloatMatrix(coefVar_intermediate.getRowDimension(), coefVar_intermediate.getColumnDimension());
-
-		for(int col=0;col<coefVar_intermediate.getColumnDimension();col++){
-			sqrtCoefVar.set(0,col, (float)Math.sqrt(coefVar_intermediate.get(0, col)));
+		System.out.println("factor_matrix");
+		for (int i=0; i<factor_matrix.m; i++){
+			for (int j=0; j<factor_matrix.n; j++){
+				System.out.print(factor_matrix.A[i][j]+"\t");
+			}
+			System.out.println();
 		}
-		//Divide the coef_intermediate matrix with sqrtCoefVar matrix
-		FloatMatrix result1=coef_intermediate.arrayRightDivide(sqrtCoefVar);
-
-
-		//I have passed the transpose of the result matrix here. The reason being that in the result matrix, the genes are in the
-		//columns, and each row corresponds to (intercept, mainfactor, otherfactors if present)
-		observedStats=GSNormalize(result1.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
-				GSEAConstants.SQRT, false, null);
-
-		/**
-		 * Fourth Step is to generate a permutation matrix and loop through the number of permutations 
-		 * suggested by user.
-		 * 
-		 * 
-		 */
-
-
-
-
-		//permutation matrix with rows equal to the number of genes and colmuns equal to number of permutations
-		FloatMatrix permMat=new FloatMatrix(adata.getGeneMatrix("gene-data-matrix").getRowDimension(), num_perms); 
-
-		//In the R code, it says index=1L; check of this is the same as zeroth index in JAVA
 		
-		for(int index=0; index<num_perms; index++){
+		try{
+			Hashtable<String, FloatMatrix>tempHash=lmPerGene(adata, factor_matrix, true);
+
+			if (tempHash==null)
+				System.out.println("tempHash is null");
+			else
+				System.out.println("tempHash is not null");
+			//Extract the result of lmPerGene, returned as Hashtable 
+			FloatMatrix coefficients=tempHash.get("lmPerGene-coefficients");	
+			FloatMatrix coefVar=tempHash.get("lmPerGene-coefvar");
+			FloatMatrix amat=adata.getGeneMatrix("association-matrix");
+			//Used to populate test statistic in gene set. Used for plotting in GUI
+			adata.addGeneMatrix("lmPerGene-coefficients", coefficients);
+			adata.addGeneMatrix("lmPerGene-coefvar", coefVar);
+
+			/**
+			 * Third step is to calculate per gene set statistic before permuting.
+			 * Zero factors are no longer allowed, so no need to check for it or provide the 
+			 * alternate execution steps
+			 * 
+			 * 
+			 */
 
 
-			Hashtable resultHash=findOriginalClassOrder(factorNames,factorlevels, factorAssignments, nSamp );
-			Hashtable permutedFactorHash=generatePermutedFactorHash((Hashtable)resultHash.get("original-order"), (int[])resultHash.get("permuted-order"), factorNames, factorlevels, factorAssignments, nSamp);
 
-			//pga is created just so that we can access the function generateFactorMatrix from the ProcessGroupAssignments class
-			int[][]permutedFactorAssignments=(int[][])permutedFactorHash.get("permuted-factor-assignments");
+			//Extract the portion that contains the main factor coefficients. The zeroth coefficient is the intercept.
+			//The second coefficient will be that of the main factor.
+			FloatMatrix coef_intermediate=coefficients.getMatrix(1,1,0,coefficients.getColumnDimension()-1);
 
 
-			ProcessGroupAssignments pga=new ProcessGroupAssignments(factorNames,factorlevels,permutedFactorAssignments,true, nSamp);
-						
-			FloatMatrix factor_matrix_new=pga.generateFactorMatrix(factorNames,factorlevels, permutedFactorAssignments);
-
-			Hashtable<String, FloatMatrix>lmPerGeneresultHash=lmPerGene(adata,factor_matrix_new , true);
-			FloatMatrix pCoefficients=lmPerGeneresultHash.get("lmPerGene-coefficients");	
-			FloatMatrix pCoefVar=lmPerGeneresultHash.get("lmPerGene-coefvar");
-
-			FloatMatrix pcoef_intermediate=pCoefficients.getMatrix(1,1,0,pCoefficients.getColumnDimension()-1);
 			//Extract the portion that contains the main factor coefVars
-			FloatMatrix pcoefVar_intermediate=pCoefVar.getMatrix(1, 1, 0, pCoefVar.getColumnDimension()-1);
+			FloatMatrix coefVar_intermediate=coefVar.getMatrix(1, 1, 0, coefVar.getColumnDimension()-1);
+
 
 			//Calculate the sqrt of each element of the coefVar_intermediate matrix
-			FloatMatrix psqrtCoefVar=new FloatMatrix(pcoefVar_intermediate.getRowDimension(), pcoefVar_intermediate.getColumnDimension());
+			FloatMatrix sqrtCoefVar=new FloatMatrix(coefVar_intermediate.getRowDimension(), coefVar_intermediate.getColumnDimension());
 
-			for(int col=0;col<pcoefVar_intermediate.getColumnDimension();col++){
-				psqrtCoefVar.set(0,col, (float)Math.sqrt(pcoefVar_intermediate.get(0, col)));
+			for(int col=0;col<coefVar_intermediate.getColumnDimension();col++){
+				sqrtCoefVar.set(0,col, (float)Math.sqrt(coefVar_intermediate.get(0, col)));
 			}
 			//Divide the coef_intermediate matrix with sqrtCoefVar matrix
-			
-			FloatMatrix result2=pcoef_intermediate.arrayRightDivide(psqrtCoefVar);
-
-			permMat.setMatrix(0, permMat.getRowDimension()-1, index, index, result2.transpose());
+			FloatMatrix result1=coef_intermediate.arrayRightDivide(sqrtCoefVar);
 
 
-		}
-		
-		//Assigning to a function global variable to enable passing on as parameters
-		//Dimensions of this matrix would be equal to (row=number of gene sets, column=number of samples)
+			//I have passed the transpose of the result matrix here. The reason being that in the result matrix, the genes are in the
+			//columns, and each row corresponds to (intercept, mainfactor, otherfactors if present)
+			observedStats=GSNormalize(result1.transpose(), amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
+					GSEAConstants.SQRT, false, null);
 
-		perms=GSNormalize(permMat, amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
-				GSEAConstants.SQRT, false, null);
-	
-		/**
-		 * Fifth step is to calculate p values based on the observed and the permuted values
-		 * 
-		 */
+			/**
+			 * Fourth Step is to generate a permutation matrix and loop through the number of permutations 
+			 * suggested by user.
+			 * 
+			 * 
+			 */
 
-		Vector<String> geneSetNames=(Vector<String>)adata.getVector("gene-set-names");
 
-		pValFromPermMat(observedStats, perms, geneSetNames, adata);
+
+
+			//permutation matrix with rows equal to the number of genes and colmuns equal to number of permutations
+			FloatMatrix permMat=new FloatMatrix(adata.getGeneMatrix("gene-data-matrix").getRowDimension(), num_perms); 
+
+			//In the R code, it says index=1L; check of this is the same as zeroth index in JAVA
+
+			for(int index=0; index<num_perms; index++){
+
+
+				Hashtable resultHash=findOriginalClassOrder(factorNames,factorlevels, factorAssignments, nSamp );
+				Hashtable permutedFactorHash=generatePermutedFactorHash((Hashtable)resultHash.get("original-order"), (int[])resultHash.get("permuted-order"), factorNames, factorlevels, factorAssignments, nSamp);
+
+				//pga is created just so that we can access the function generateFactorMatrix from the ProcessGroupAssignments class
+				int[][]permutedFactorAssignments=(int[][])permutedFactorHash.get("permuted-factor-assignments");
+
+
+				ProcessGroupAssignments pga=new ProcessGroupAssignments(factorNames,factorlevels,permutedFactorAssignments,true, nSamp);
+
+				pga.findUnassignedSamples(factorNames, factorlevels, factorAssignments);
+				FloatMatrix factor_matrix_new=pga.generateFactorMatrix(factorNames,factorlevels, permutedFactorAssignments);
+
+				System.out.println("2: factor_matrix.getColumnDimension() = "+ factor_matrix.getColumnDimension()+", factor_matrix.getRowDimension() = "+factor_matrix.getRowDimension());
+				Hashtable<String, FloatMatrix>lmPerGeneresultHash=lmPerGene(adata,factor_matrix_new , true);
+				
+				if (lmPerGeneresultHash==null){
+					System.out.println("lmPerGeneresultHash is null");
+					index--;
+					continue;
+				}
+					
+				FloatMatrix pCoefficients=lmPerGeneresultHash.get("lmPerGene-coefficients");	
+				FloatMatrix pCoefVar=lmPerGeneresultHash.get("lmPerGene-coefvar");
+
+				FloatMatrix pcoef_intermediate=pCoefficients.getMatrix(1,1,0,pCoefficients.getColumnDimension()-1);
+				//Extract the portion that contains the main factor coefVars
+				FloatMatrix pcoefVar_intermediate=pCoefVar.getMatrix(1, 1, 0, pCoefVar.getColumnDimension()-1);
+
+				//Calculate the sqrt of each element of the coefVar_intermediate matrix
+				FloatMatrix psqrtCoefVar=new FloatMatrix(pcoefVar_intermediate.getRowDimension(), pcoefVar_intermediate.getColumnDimension());
+
+				for(int col=0;col<pcoefVar_intermediate.getColumnDimension();col++){
+					psqrtCoefVar.set(0,col, (float)Math.sqrt(pcoefVar_intermediate.get(0, col)));
+				}
+				//Divide the coef_intermediate matrix with sqrtCoefVar matrix
+
+				FloatMatrix result2=pcoef_intermediate.arrayRightDivide(psqrtCoefVar);
+
+				permMat.setMatrix(0, permMat.getRowDimension()-1, index, index, result2.transpose());
+
+
+			}
+
+			//Assigning to a function global variable to enable passing on as parameters
+			//Dimensions of this matrix would be equal to (row=number of gene sets, column=number of samples)
+
+			perms=GSNormalize(permMat, amat, GSEAConstants.CROSS_PROD, GSEAConstants.DIVIDE_FUNCTION, 
+					GSEAConstants.SQRT, false, null);
+
+			/**
+			 * Fifth step is to calculate p values based on the observed and the permuted values
+			 * 
+			 */
+
+			Vector<String> geneSetNames=(Vector<String>)adata.getVector("gene-set-names");
+
+			pValFromPermMat(observedStats, perms, geneSetNames, adata);
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
-
-		
 	}
-	
-	
 
-	
+
+
+
 
 	/**
 	 * pValFromPermMat should return a String array, containing three columns namely;
@@ -697,13 +740,13 @@ public class GSEA extends AbstractAlgorithm {
 		float[]upper_rowSums=new float[permMat.getRowDimension()];
 
 
-		
+
 		HashMap tempHash=new HashMap();
 
 		int nCols=permMat.getColumnDimension();
 		//pVals is a FloatMatrix with rows equal to that of permMat and cols =2. This matrix will be 
 		//copied into the String array resultMatrix.
-	//	FloatMatrix pVals=new FloatMatrix(permMat.getRowDimension(),2, Float.valueOf("NaN"));
+		//	FloatMatrix pVals=new FloatMatrix(permMat.getRowDimension(),2, Float.valueOf("NaN"));
 
 
 		//tempObs has dimensions equal to permMat
@@ -751,66 +794,66 @@ public class GSEA extends AbstractAlgorithm {
 			upper_rowSums[row]=(num_upper_pVals);
 		}
 
-	
+
 		//Add the over enriched p values to the HashMap. This was done to be able to
 		//sort the pvalues, to be displayed in the pValue Graph
-	
+
 		for(int row=0; row<permMat.getRowDimension(); row++){
 			tempHash.put(geneSetNames.get(row), (upper_rowSums[row]/nCols));
 		}
-		
+
 		//Sort the p Values in ascending order
 		this.overEnrichedPVals=this.sortHashMapByValues(tempHash);
 		tempHash.clear();
 		tempHash=new HashMap();
-		
+
 		//Add the under enriched p values to the HashMap 
-		
+
 		for(int row=0; row<permMat.getRowDimension(); row++){
 			tempHash.put(geneSetNames.get(row), (lower_rowSums[row]/nCols));
 		}
-		
+
 		//Sort the p Values in ascending order
 		this.underEnrichedPVals=this.sortHashMapByValues(tempHash);
 		tempHash.clear();
-	
+
 		data.addMappings("over-enriched", overEnrichedPVals);
 		data.addMappings("under-enriched", underEnrichedPVals);
-		
-		
-		
+
+
+
 	}
 
 	public LinkedHashMap sortHashMapByValues(HashMap passedMap){
-	    List mapKeys = new ArrayList(passedMap.keySet());
-	    List mapValues = new ArrayList(passedMap.values());
-	    Collections.sort(mapValues);
-	    Collections.sort(mapKeys);
-	        
-	    LinkedHashMap sortedMap = 
-	        new LinkedHashMap();
-	    
-	    Iterator valueIt = mapValues.iterator();
-	    while (valueIt.hasNext()) {
-	        Object val = valueIt.next();
-	        Iterator keyIt = mapKeys.iterator();
-	        
-	        while (keyIt.hasNext()) {
-	            Object key = keyIt.next();
-	            String comp1 = passedMap.get(key).toString();
-	            String comp2 = val.toString();
-	            
-	            if (comp1.equals(comp2)){
-	                passedMap.remove(key);
-	                mapKeys.remove(key);
-	                sortedMap.put((String)key, (Float)val);
-	                break;
-	            }
+		List mapKeys = new ArrayList(passedMap.keySet());
+		List mapValues = new ArrayList(passedMap.values());
+		Collections.sort(mapValues);
+		Collections.sort(mapKeys);
 
-	        }
+		LinkedHashMap sortedMap = 
+			new LinkedHashMap();
 
-	    }
-	    return sortedMap;
+		Iterator valueIt = mapValues.iterator();
+		while (valueIt.hasNext()) {
+			Object val = valueIt.next();
+			Iterator keyIt = mapKeys.iterator();
+
+			while (keyIt.hasNext()) {
+				Object key = keyIt.next();
+				String comp1 = passedMap.get(key).toString();
+				String comp2 = val.toString();
+
+				if (comp1.equals(comp2)){
+					passedMap.remove(key);
+					mapKeys.remove(key);
+					sortedMap.put((String)key, (Float)val);
+					break;
+				}
+
+			}
+
+		}
+		return sortedMap;
 	}
 
 
