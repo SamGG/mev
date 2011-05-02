@@ -105,7 +105,6 @@ public class ClusterTable extends JPanel implements IViewer {
     /** Creates new ClusterTablePanel */
     public ClusterTable(ClusterRepository rep, IFramework framework) {
         super(new GridBagLayout());
-        System.out.println("Cluster Manager created "+rep.getNumberOfElements());
         this.framework = framework;
         this.repository = rep;
         this.geneClusterTable = rep.isGeneClusterRepository();
@@ -186,8 +185,7 @@ public class ClusterTable extends JPanel implements IViewer {
         	viewerStrings[2] = "Expression Graph";
         	viewerStrings[3] = "Centroid Graph";
         	viewerStrings[4] = "Venn Diagram";
-        	viewerStrings[5] = "Gene Chart";
-        	
+        	viewerStrings[5] = "Expression Chart";        	
         }
         viewerCB = new JComboBox(viewerStrings);
         viewerCB.addActionListener(new ActionListener(){
@@ -253,6 +251,7 @@ public class ClusterTable extends JPanel implements IViewer {
 	            		iViewer = new BoxChartViewer(framework, getSelectedClusters());
 	    	            bottomTablePane.setViewportView(((BoxChartViewer)iViewer).getContentComponent());
 	    	            bottomTablePane.setColumnHeaderView(((BoxChartViewer)iViewer).getHeaderComponent());
+	    	            ((BoxChartViewer)iViewer).setScrollBar(bottomTablePane.getVerticalScrollBar());
 	    	            break;       	
 	            	}
         		}
@@ -1702,8 +1701,10 @@ public class ClusterTable extends JPanel implements IViewer {
      * Invoked by the framework when this viewer is selected.
      */
     public void onSelected(IFramework framework) {
-        this.tableOfClusters.getSelectionModel().setSelectionInterval(0,0);
+//        this.tableOfClusters.getSelectionModel().setSelectionInterval(0,0);
         iViewer.onSelected(framework);
+        if (iViewer instanceof BoxChartViewer)
+        	((BoxChartViewer)iViewer).setClusters(this.getSelectedClusters());
         repaint();
     }
     
@@ -1737,12 +1738,10 @@ public class ClusterTable extends JPanel implements IViewer {
         this.tableOfClusters.updateUI();
         tableOfClusters.repaint();
         repaint();
-//        onSelected(framework);
         this.tableOfClusters.revalidate();
         this.updateUI();
         pane.updateUI();
         updateClusterTable();
-//        updateBottomViewer();
     }
     
     private void imposeHideMenu(){
@@ -1761,26 +1760,6 @@ public class ClusterTable extends JPanel implements IViewer {
             }
         }
     }
-    
-//    private void resetSortMenu(){
-//        Component component;
-//        JMenu sortMenu = (JMenu)(menu.getComponent(6));
-//        
-//        JMenuItem item;
-//        for(int i = 0; i < sortMenu.getMenuComponentCount(); i++){
-//            component = (Component)(sortMenu.getMenuComponent(i));
-//            
-//            if(component instanceof JMenuItem){
-//                item = (JMenuItem)component;
-//                if(i == 0){
-//                    model.sortBy(item.getText());
-//                }
-//                else{
-//                    item.setSelected(false);
-//                }
-//            }
-//        }
-//    }
     
     private void enableAllMenuItems(){
         int n = this.menu.getComponentCount();
