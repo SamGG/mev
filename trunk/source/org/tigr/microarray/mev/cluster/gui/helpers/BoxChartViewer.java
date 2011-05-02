@@ -26,6 +26,7 @@ import java.util.Date;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -35,7 +36,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 
 import org.tigr.microarray.mev.TMEV;
@@ -66,7 +67,8 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private int chartTopHeight = 75;
 	private int chartIncrement = 100;
 	private int chartleft = 100;
-	private boolean showGridlines = true;
+	private int chartGap = 120;
+	private boolean showGridlines = false;
 	private boolean autoScale = true;
 	private boolean aggregateGeneCluster = false;
 	private float fixedTop = 12;
@@ -78,30 +80,35 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private JComboBox geneClusterCB;
 	private JComboBox chartTypeCB;
 	private JComboBox geneOrClusterCB;
-	private float[] expressionAverages;
-	private float[] expressionSDs;
-	private float[] expressionMedian;
-	private float[] expressionQ1;
-	private float[] expressionQ3;
-	private float[] expressionIQR;
-	private float[] expressionLowerWhisker;
-	private float[] expressionUpperWhisker;
-	private float[][] upperOutliers;
-	private float[][] lowerOutliers;
+	private float[][] expressionAverages;
+	private float[][] expressionSDs;
+	private float[][] expressionMedian;
+	private float[][] expressionQ1;
+	private float[][] expressionQ3;
+	private float[][] expressionIQR;
+	private float[][] expressionLowerWhisker;
+	private float[][] expressionUpperWhisker;
+	private float[][][] upperOutliers;
+	private float[][][] lowerOutliers;
 	private boolean isSingleGene;
 	private boolean isBoxPlot;
 	private JMenuItem menuItemAuto;
+	private JMenuItem menuItemSetScale;
 	private JMenuItem menuItemFixScale;
 	private JLabel annotLabel;
 	private JLabel geneIDlabel;
 	private JMenuItem aggGenClusterMenuItem;
-	private JButton aggregateButton;
+	private JCheckBox aggregateCheckBox;
+	private JScrollBar jScrollBar = new JScrollBar();
+	private int multigeneCount;
+	private String[] chartTitles;
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String ZOOM_IN = "zoom-in";
     protected static final String ZOOM_OUT = "zoom-out";
     protected static final String SAVE_DATA_CMD = "save-cluster-cmd";
     protected static final String TOGGLE_GRIDLINES_CMD = "toggle-gridlines-cmd";
     protected static final String AUTOSCALE_CMD = "auto-scale-cmd";
+    protected static final String SET_SCALE_CMD = "set-scale-cmd";
     protected static final String FIX_SCALE_CMD = "fix-scale-cmd";
     protected static final String LAUNCH_NEW_SESSION_CMD = "launch-new-session-cmd";
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
@@ -154,7 +161,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
         gbc.gridx++;
     	this.add(geneCB,gbc);
         gbc.gridx++;
-    	this.add(aggregateButton,gbc);
+    	this.add(aggregateCheckBox,gbc);
         gbc.gridx = 0;		
 	}
 	
@@ -177,7 +184,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 					annotLabel.setText("  Annotation Field: ");
 					aggGenClusterMenuItem.setEnabled(false);
 					geneClusterCB.setVisible(false);
-			        aggregateButton.setVisible(false);
+			        aggregateCheckBox.setVisible(false);
 					geneAnnotationCB.setVisible(true);
 					geneIDlabel.setVisible(true);
 					geneCB.setVisible(true);
@@ -192,7 +199,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 					annotLabel.setText("  Select Cluster: ");
 					aggGenClusterMenuItem.setEnabled(true);
 					geneClusterCB.setVisible(true);
-			        aggregateButton.setVisible(true);
+			        aggregateCheckBox.setVisible(true);
 					geneAnnotationCB.setVisible(false);
 					geneIDlabel.setVisible(false);
 					geneCB.setVisible(false);	
@@ -201,21 +208,21 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				repaint();				
 			}        	
         });
-        aggregateButton = new JButton("Aggregate Gene Cluster");
-        aggregateButton.addActionListener(new ActionListener(){
+        aggregateCheckBox = new JCheckBox("Aggregate Gene Cluster");
+        aggregateCheckBox.setSelected(false);
+        aggregateCheckBox.setBackground(Color.white);
+        aggregateCheckBox.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
     			aggregateGeneCluster = !aggregateGeneCluster;
 	        	if (aggregateGeneCluster){
 	        		aggGenClusterMenuItem.setText("Un-aggregate Gene Cluster");
-	        		aggregateButton.setText("Un-aggregate Gene Cluster");
 	        	} else {
 	        		aggGenClusterMenuItem.setText("Aggregate Gene Cluster");
-	        		aggregateButton.setText("Aggregate Gene Cluster");
 	        	}        		
 	        	repaint();				
 			}        	
         });
-        aggregateButton.setVisible(false);
+        aggregateCheckBox.setVisible(false);
 
         geneIDlabel = new JLabel("  Gene ID: ");
         annotLabel = new JLabel("  Annotation Field: ");
@@ -258,11 +265,8 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		
 	}
 	public void setClusters(Cluster[] clusterArray){
-		if (clusterArray==null||clusterArray.length==0){
-			System.out.println("was null or length=0");
+		if (clusterArray==null||clusterArray.length==0)
 			clusterArray = new Cluster[1];
-    	}
-		System.out.println("test print "+clusterArray.length);
 		clusterCount = clusterArray.length;
 		clusterNames = new String[clusterCount];
 		clusterColors = new Color[clusterCount];
@@ -294,16 +298,13 @@ public class BoxChartViewer extends JPanel implements IViewer {
 			return;
 		boolean ismultigene = !isSingleGene;
 		Graphics2D g2 = (Graphics2D)g;
-		int multigeneCount = 1;
+		multigeneCount = 1;
 		Cluster cluster = null;
 		if (ismultigene){
 			try{
 				int begin = this.geneClusterCB.getSelectedItem().toString().indexOf(":");
-				System.out.println(begin);
 				int end = this.geneClusterCB.getSelectedItem().toString().indexOf(",");
-				System.out.println(end);				
 				String sn = this.geneClusterCB.getSelectedItem().toString().substring(begin+2,end);
-				System.out.println(sn);
 				cluster = framework.getClusterRepository(0).getCluster(Integer.parseInt(sn));
 			} catch (Exception e){
 				e.printStackTrace();
@@ -319,40 +320,60 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				multigeneCount = cluster.getSize();
 		}
 		int chartTop = chartTopHeight;
-		for (int multigeneIndex = 0; multigeneIndex < multigeneCount; multigeneIndex++){
-			String geneName;
+
+		lowerOutliers = new float[multigeneCount][][];
+		upperOutliers = new float[multigeneCount][][];
+		expressionSDs = new float[multigeneCount][];
+		expressionAverages = new float[multigeneCount][];
+		expressionMedian = new float[multigeneCount][];
+		expressionQ1 = new float[multigeneCount][];
+		expressionQ3 = new float[multigeneCount][];
+		expressionIQR = new float[multigeneCount][];
+		expressionLowerWhisker = new float[multigeneCount][];
+		expressionUpperWhisker = new float[multigeneCount][];
+		chartTitles = new String[multigeneCount];
+		int maxString = 0;
+		for (int i=0; i<clusterNames.length; i++){
+			maxString = Math.max(maxString, g.getFontMetrics().stringWidth(clusterNames[i]));
+		}
+		chartGap = maxString+50;
+		for (int multigeneIndex=0; multigeneIndex < multigeneCount; multigeneIndex++){
 			if (ismultigene){
 				if (aggregateGeneCluster){					
-					getChartData(cluster.getIndices());
-					geneName = cluster.getClusterLabel();
+					getChartData(cluster.getIndices(), multigeneIndex);
+					chartTitles[multigeneIndex] = cluster.getClusterLabel();
 				} else {
-					getChartData(cluster.getIndices()[multigeneIndex]);
-					geneName = framework.getData().getElementAnnotation(cluster.getIndices()[multigeneIndex], framework.getData().getFieldNames()[0])[0];
+					getChartData(cluster.getIndices()[multigeneIndex], multigeneIndex);
+					chartTitles[multigeneIndex] = framework.getData().getElementAnnotation(cluster.getIndices()[multigeneIndex], framework.getData().getFieldNames()[0])[0];
 				}
 			} else {
-				getChartData(geneCB.getSelectedIndex());
-				geneName = (String)geneCB.getSelectedItem();
+				getChartData(geneCB.getSelectedIndex(), multigeneIndex);
+				chartTitles[multigeneIndex] = (String)geneCB.getSelectedItem();
 			}
 			float maxHeight = 0;
 			float minHeight = Float.POSITIVE_INFINITY;
 			for (int i=0; i<clusterCount; i++){
 				if (this.isBoxPlot){
-					for (int j=0; j<this.upperOutliers[i].length; j++){
-						maxHeight = Math.max(upperOutliers[i][j], maxHeight);					
+					for (int j=0; j<
+					this.upperOutliers
+					[multigeneIndex]
+					 [i]
+					  .length; j++){
+						maxHeight = Math.max(upperOutliers[multigeneIndex][i][j], maxHeight);					
 					}
-					maxHeight = Math.max(expressionUpperWhisker[i], maxHeight);
+					maxHeight = Math.max(expressionUpperWhisker[multigeneIndex][i], maxHeight);
 				}
 				else{
-					maxHeight = Math.max(expressionAverages[i]+this.expressionSDs[i], maxHeight);
+					maxHeight = Math.max(expressionAverages[multigeneIndex][i]+this.expressionSDs[multigeneIndex][i], maxHeight);
 				}
 			}
 	
 			for (int i=0; i<clusterCount; i++){
 				if (this.isBoxPlot){
-					for (int j=0; j<this.lowerOutliers[i].length; j++){
-						minHeight = Math.min(lowerOutliers[i][j], minHeight);					
+					for (int j=0; j<this.lowerOutliers[multigeneIndex][i].length; j++){
+						minHeight = Math.min(lowerOutliers[multigeneIndex][i][j], minHeight);					
 					}
-					minHeight = Math.min(expressionLowerWhisker[i], minHeight);
+					minHeight = Math.min(expressionLowerWhisker[multigeneIndex][i], minHeight);
 				}
 				else
 					minHeight = 0f;//Math.min(expressionAverages[i], minHeight);
@@ -402,27 +423,27 @@ public class BoxChartViewer extends JPanel implements IViewer {
 			
 			Font font = g2.getFont();
 			g2.setFont(new Font("Helvetica", Font.BOLD,  16));
-			g2.drawString(geneName, chartleft + chartIncrement/2, chartTop-15);//Gene/group Name label
+			g2.drawString(chartTitles[multigeneIndex], chartleft + chartIncrement/2, chartTop-15);//Gene/group Name label
 			g2.setFont(font);
 			
 			
-			g2.rotate(Math.PI/2);
-			g2.drawString("Expression", (chartTop+3)+chartHeight/3, -(chartleft-80)); //y-axis Label
 			g2.rotate(-Math.PI/2);
+			g2.drawString("Expression", -((chartTop+3)+2*chartHeight/3), (chartleft-60)); //y-axis Label
+			g2.rotate(Math.PI/2);
 	
 			for (int i=0; i<this.clusterCount; i++){	
 				int xorigin = (int)((.25f+(float)i)*chartIncrement)+chartleft;
 				int yorigin = chartHeight+chartTop;
 				int barWidth = chartIncrement/2;
 				
-				int barHeight = (int)((expressionAverages[i])*((float)chartHeight)/gridrange);
-				int errorBarHeight = (int)(expressionSDs[i]*((float)chartHeight)/gridrange);
+				int barHeight = (int)((expressionAverages[multigeneIndex][i])*((float)chartHeight)/gridrange);
+				int errorBarHeight = (int)(expressionSDs[multigeneIndex][i]*((float)chartHeight)/gridrange);
 				
-				int boxBottom = (int)((-bottomgridline+expressionQ1[i])*((float)chartHeight)/gridrange);
-				int boxTop = (int)((-bottomgridline+expressionQ3[i])*((float)chartHeight)/gridrange);
-				int boxMedian = (int)((-bottomgridline+expressionMedian[i])*((float)chartHeight)/gridrange);
-				int boxLowerWhisker = (int)((-bottomgridline+expressionLowerWhisker[i])*((float)chartHeight)/gridrange);
-				int boxUpperWhisker = (int)((-bottomgridline+expressionUpperWhisker[i])*((float)chartHeight)/gridrange);
+				int boxBottom = (int)((-bottomgridline+expressionQ1[multigeneIndex][i])*((float)chartHeight)/gridrange);
+				int boxTop = (int)((-bottomgridline+expressionQ3[multigeneIndex][i])*((float)chartHeight)/gridrange);
+				int boxMedian = (int)((-bottomgridline+expressionMedian[multigeneIndex][i])*((float)chartHeight)/gridrange);
+				int boxLowerWhisker = (int)((-bottomgridline+expressionLowerWhisker[multigeneIndex][i])*((float)chartHeight)/gridrange);
+				int boxUpperWhisker = (int)((-bottomgridline+expressionUpperWhisker[multigeneIndex][i])*((float)chartHeight)/gridrange);
 	
 				g2.setColor(Color.gray);
 				g2.drawLine(xorigin + 3*barWidth/2, yorigin, xorigin + 3*barWidth/2, yorigin + 5);	//vertical tickmark
@@ -452,19 +473,21 @@ public class BoxChartViewer extends JPanel implements IViewer {
 					
 					//draw outliers
 					int circleWidth = 6;
-					for (int j=0; j<upperOutliers[i].length; j++){
-						g2.drawOval(xorigin + barWidth/2 - circleWidth/2, yorigin-(int)((float)((-bottomgridline+upperOutliers[i][j]))*((float)chartHeight)/gridrange)-circleWidth/2, circleWidth, circleWidth);
+					for (int j=0; j<upperOutliers[multigeneIndex][i].length; j++){
+						g2.drawOval(xorigin + barWidth/2 - circleWidth/2, yorigin-(int)((float)((-bottomgridline+upperOutliers[multigeneIndex][i][j]))*((float)chartHeight)/gridrange)-circleWidth/2, circleWidth, circleWidth);
 					}
-					for (int j=0; j<lowerOutliers[i].length; j++){
-						g2.drawOval(xorigin + barWidth/2 - circleWidth/2, yorigin-(int)((float)((-bottomgridline+lowerOutliers[i][j]))*((float)chartHeight)/gridrange)-circleWidth/2, circleWidth, circleWidth);
+					for (int j=0; j<lowerOutliers[multigeneIndex][i].length; j++){
+						g2.drawOval(xorigin + barWidth/2 - circleWidth/2, yorigin-(int)((float)((-bottomgridline+lowerOutliers[multigeneIndex][i][j]))*((float)chartHeight)/gridrange)-circleWidth/2, circleWidth, circleWidth);
 					}
 					
 				} else {
 					System.out.println("unknown chart type");
 				}	
 			}	
-			chartTop = chartTop + (chartHeight+120); //moves top down for next graph
+			
+			chartTop = chartTop + (chartHeight+chartGap); //moves top down for next graph
 		}
+		jScrollBar.setUnitIncrement(chartHeight+chartGap);
 		int viewerHeight = chartTop;//chartTop is now the bottom of graph
 		this.setSize(new Dimension(this.getWidth(), viewerHeight));
 		this.setPreferredSize(new Dimension(this.getWidth(),viewerHeight));
@@ -474,28 +497,28 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	 * Gathers data for a single gene, uses getChartData(int[] geneIndices)
 	 * @param geneIndex
 	 */	
-	private void getChartData(int geneIndex) {
+	private void getChartData(int geneIndex, int multigeneIndex) {
 		int[] indices = new int[1];
 		indices[0] = geneIndex;
-		getChartData(indices);
+		getChartData(indices, multigeneIndex);
 	}
 	
 	/**
 	 * Gathers data for a set of genes
 	 * @param geneIndices
 	 */
-	private void getChartData(int[] geneIndices) {
+	private void getChartData(int[] geneIndices, int multigeneIndex) {
     	try{
-    		lowerOutliers = new float[clusterCount][];
-    		upperOutliers = new float[clusterCount][];
-			expressionSDs = new float[clusterCount];
-			expressionAverages = new float[clusterCount];
-			expressionMedian = new float[clusterCount];
-			expressionQ1 = new float[clusterCount];
-			expressionQ3 = new float[clusterCount];
-			expressionIQR = new float[clusterCount];
-			expressionLowerWhisker = new float[clusterCount];
-			expressionUpperWhisker = new float[clusterCount];
+    		lowerOutliers[multigeneIndex] = new float[clusterCount][];
+    		upperOutliers[multigeneIndex] = new float[clusterCount][];
+			expressionSDs[multigeneIndex] = new float[clusterCount];
+			expressionAverages[multigeneIndex] = new float[clusterCount];
+			expressionMedian[multigeneIndex] = new float[clusterCount];
+			expressionQ1[multigeneIndex] = new float[clusterCount];
+			expressionQ3[multigeneIndex] = new float[clusterCount];
+			expressionIQR[multigeneIndex] = new float[clusterCount];
+			expressionLowerWhisker[multigeneIndex] = new float[clusterCount];
+			expressionUpperWhisker[multigeneIndex] = new float[clusterCount];
 		  for (int i=0; i<clusterCount; i++){
 			  float average=0;
 			  float sum = 0;
@@ -507,14 +530,14 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				  }
 			  }
 			  average = average/(float)membership;
-			  expressionAverages[i] = average;
+			  expressionAverages[multigeneIndex][i] = average;
 			  for (int j=0; j<clusters[i].length; j++){
 				  for (int k=0; k<geneIndices.length; k++){
 					  sum = sum + (float)Math.pow(experiment.get(geneIndices[k], clusters[i][j]) - average, 2);  	
 				  }
 			  }
 			  sum = sum/(float)membership;
-			  expressionSDs[i] = (float)Math.sqrt(sum);
+			  expressionSDs[multigeneIndex][i] = (float)Math.sqrt(sum);
 			  
 			  //get box plot stuff
 			  float[] expression = new float[clusters[i].length*geneIndices.length];
@@ -525,7 +548,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				  }
 			  }
 			  Arrays.sort(expression);
-			  expressionMedian[i] = getMedian(expression);
+			  expressionMedian[multigeneIndex][i] = getMedian(expression);
 			  
 			  float[] lower = new float[expression.length/2];
 			  float[] upper = new float[expression.length/2];
@@ -533,35 +556,35 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				  lower[j] = expression[j];
 				  upper[upper.length-1-j] = expression[expression.length-1-j];
 			  }
-			  expressionQ1[i] = getMedian(lower);
-			  expressionQ3[i] = getMedian(upper);
-			  expressionIQR[i] = expressionQ3[i] - expressionQ1[i];
-			  expressionLowerWhisker[i] = expressionQ1[i] - 1.5f*expressionIQR[i];
-			  expressionUpperWhisker[i] = expressionQ3[i] + 1.5f*expressionIQR[i];
+			  expressionQ1[multigeneIndex][i] = getMedian(lower);
+			  expressionQ3[multigeneIndex][i] = getMedian(upper);
+			  expressionIQR[multigeneIndex][i] = expressionQ3[multigeneIndex][i] - expressionQ1[multigeneIndex][i];
+			  expressionLowerWhisker[multigeneIndex][i] = expressionQ1[multigeneIndex][i] - 1.5f*expressionIQR[multigeneIndex][i];
+			  expressionUpperWhisker[multigeneIndex][i] = expressionQ3[multigeneIndex][i] + 1.5f*expressionIQR[multigeneIndex][i];
 
 			  int upperCount = 0;
 			  int lowerCount = 0;
 			  for (int index=0; index < expression.length; index++){
-				  if(expression[index]<expressionLowerWhisker[i])
+				  if(expression[index]<expressionLowerWhisker[multigeneIndex][i])
 					  lowerCount++;
-				  if(expression[index]>expressionUpperWhisker[i])
+				  if(expression[index]>expressionUpperWhisker[multigeneIndex][i])
 					  upperCount++;
 			  }
-			  lowerOutliers[i] = new float[lowerCount];
-			  upperOutliers[i] = new float[upperCount];
-			  for (int j=0; j<lowerOutliers[i].length; j++){
-				  lowerOutliers[i][j] = expression[j];
+			  lowerOutliers[multigeneIndex][i] = new float[lowerCount];
+			  upperOutliers[multigeneIndex][i] = new float[upperCount];
+			  for (int j=0; j<lowerOutliers[multigeneIndex][i].length; j++){
+				  lowerOutliers[multigeneIndex][i][j] = expression[j];
 			  }
-			  for (int j=0; j<upperOutliers[i].length; j++){
-				  upperOutliers[i][j] = expression[expression.length-1-j];
+			  for (int j=0; j<upperOutliers[multigeneIndex][i].length; j++){
+				  upperOutliers[multigeneIndex][i][j] = expression[expression.length-1-j];
 			  }
 		  }
-    	}catch (Exception e){
+    	} catch (Exception e){
     			System.out.println("data problem");
     			e.printStackTrace();
     		  for (int i=0; i<clusterCount; i++){
-    			  expressionAverages[i] = (float)Math.random();
-    			  expressionSDs[i] = (float)Math.random()/10f;
+    			  expressionAverages[multigeneIndex][i] = (float)Math.random();
+    			  expressionSDs[multigeneIndex][i] = (float)Math.random()/10f;
     		  }
     	}
 	}
@@ -572,8 +595,6 @@ public class BoxChartViewer extends JPanel implements IViewer {
 
     
     public JComponent getContentComponent(){
-    	JScrollPane jsp = new JScrollPane();
-    	jsp.add(this);
     	return this;
     }
     
@@ -603,6 +624,13 @@ public class BoxChartViewer extends JPanel implements IViewer {
      * Invoked by the framework when this viewer is selected.
      */
     public void onSelected(IFramework framework){
+		geneClusterCB.removeAllItems();
+		for (int i=0; i<framework.getClusterRepository(0).size(); i++){
+			if (framework.getClusterRepository(0).getCluster(i+1)==null)
+				break;
+			Cluster cluster = framework.getClusterRepository(0).getCluster(i+1);
+			geneClusterCB.addItem("Cluster #: "+cluster.getSerialNumber()+", "+cluster.getClusterLabel());
+		}
     }
     
     /**
@@ -713,71 +741,82 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				pw.println("# MeV");
 				pw.println("# User: "+userName+" Save Date: "+dateString);
 				pw.println("#");
-				
-				pw.println("Gene ID: "+geneAnnotationCB.getSelectedItem());
-				pw.println("Gene: "+geneCB.getSelectedItem());
 
 				pw.println("# "+clusterCount+" Clusters");
+				pw.println("# Annotation Field: "+geneAnnotationCB.getSelectedItem());
 
-				pw.print("\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.clusterNames[i]+"\t");
+				for (int j=0; j<this.multigeneCount; j++){
+					if (isSingleGene)
+						pw.println("Gene: "+geneCB.getSelectedItem());
+					else {
+						if (aggregateGeneCluster){					
+							pw.println("Gene Cluster: "+chartTitles[j]);
+						} else {
+							pw.println("Gene: "+chartTitles[j]);
+						}
+					}
+						
+					pw.print("\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.clusterNames[i]+"\t");
+					}
+					pw.println();
+					
+					pw.print("Genes Present\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.clusters[i].length+"\t");
+					}
+					pw.println();
+	
+					pw.print("Expression Mean\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionAverages[j][i]+"\t");
+					}
+					pw.println();
+	
+					pw.print("Expression Median\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionMedian[j][i]+"\t");
+					}
+					pw.println();
+	
+					pw.print("Expression Standard Deviation\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionSDs[j][i]+"\t");
+					}
+					pw.println();
+	
+					pw.print("Expression Q1\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionQ1[j][i]+"\t");
+					}
+					pw.println();
+					
+					pw.print("Expression Q3\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionQ3[j][i]+"\t");
+					}
+					pw.println();
+	
+					pw.print("Expression IQR\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionIQR[j][i]+"\t");
+					}
+					pw.println();
+					
+					pw.print("Upper Whisker\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionUpperWhisker[j][i]+"\t");
+					}
+					pw.println();
+	
+					pw.print("Lower Whisker\t");
+					for (int i=0; i<clusterCount; i++){
+						pw.print(this.expressionLowerWhisker[j][i]+"\t");
+					}
+					pw.println();
+					pw.println();
 				}
-				pw.println();
-				
-				pw.print("Genes Present\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.clusters[i].length+"\t");
-				}
-				pw.println();
-
-				pw.print("Expression Mean\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionAverages[i]+"\t");
-				}
-				pw.println();
-
-				pw.print("Expression Median\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionMedian[i]+"\t");
-				}
-				pw.println();
-
-				pw.print("Expression Standard Deviation\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionSDs[i]+"\t");
-				}
-				pw.println();
-
-				pw.print("Expression Q1\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionQ1[i]+"\t");
-				}
-				pw.println();
-				
-				pw.print("Expression Q3\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionQ3[i]+"\t");
-				}
-				pw.println();
-
-				pw.print("Expression IQR\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionIQR[i]+"\t");
-				}
-				pw.println();
-				
-				pw.print("Upper Whisker\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionUpperWhisker[i]+"\t");
-				}
-				pw.println();
-
-				pw.print("Lower Whisker\t");
-				for (int i=0; i<clusterCount; i++){
-					pw.print(this.expressionLowerWhisker[i]+"\t");
-				}
-				pw.println();
 				
 				pw.flush();
 				pw.close();	
@@ -872,11 +911,13 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	        if (command.equals(ZOOM_IN)){
 	        	chartHeight = (chartHeight*3)/2;
 	        	chartIncrement = (chartIncrement*3)/2;
+//	    		jScrollBar.setUnitIncrement(chartHeight+chartGap);
 	        	repaint();
 	        }
 	        if (command.equals(ZOOM_OUT)){
 	        	chartHeight = (chartHeight*2)/3;
 	        	chartIncrement = (chartIncrement*2)/3;
+//	    		jScrollBar.setUnitIncrement(chartHeight+chartGap);
 	        	repaint();
         	}
 	        if (command.equals(SAVE_DATA_CMD)){
@@ -887,7 +928,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	        	repaint();
 	        }
 
-	        if (command.equals(FIX_SCALE_CMD)){
+	        if (command.equals(SET_SCALE_CMD)){
 	        	setScale();
         		if (scaleChanged){
         	        menuItemAuto.setEnabled(true);
@@ -895,14 +936,32 @@ public class BoxChartViewer extends JPanel implements IViewer {
         		}   	
 	        	repaint();
 	        }
+	        if (command.equals(FIX_SCALE_CMD)){
+	        	float min = Float.MAX_VALUE;
+	        	float max = Float.MIN_VALUE;
+	        	for (int i=0; i<experiment.getNumberOfGenes(); i++){
+	        		for (int j=0; j<experiment.getNumberOfSamples(); j++){
+	        			if (min>experiment.get(i, j))
+	        				min = experiment.get(i, j);
+	        			if (max<experiment.get(i, j))
+	        				max = experiment.get(i, j);
+	        		}
+	        	}
+
+				fixedTop = (int)max+1;
+				fixedBottom = (int)min;
+    	        menuItemAuto.setEnabled(true);
+    			autoScale = false;
+	        	repaint();
+	        }
 	        if (command.equals(AGG_GENE_CLUSTER_CMD)){
     			aggregateGeneCluster = !aggregateGeneCluster;
 	        	if (aggregateGeneCluster){
 	        		aggGenClusterMenuItem.setText("Un-aggregate Gene Cluster");
-	        		aggregateButton.setText("Un-aggregate Gene Cluster");
+	        		aggregateCheckBox.setSelected(true);
 	        	} else {
 	        		aggGenClusterMenuItem.setText("Aggregate Gene Cluster");
-	        		aggregateButton.setText("Aggregate Gene Cluster");
+	        		aggregateCheckBox.setSelected(false);
 	        	}        		
 	        	repaint();				
 	        }
@@ -985,7 +1044,12 @@ public class BoxChartViewer extends JPanel implements IViewer {
         menuItemAuto.setEnabled(false);
         menu.add(menuItemAuto);
 
-        menuItemFixScale = new JMenuItem("Set Y-Axis", GUIFactory.getIcon("Y_range_expand.gif"));
+        menuItemSetScale = new JMenuItem("Set Y-Axis", GUIFactory.getIcon("Y_range_expand.gif"));
+        menuItemSetScale.setActionCommand(SET_SCALE_CMD);
+        menuItemSetScale.addActionListener(listener);
+        menu.add(menuItemSetScale);
+
+        menuItemFixScale = new JMenuItem("Fix Y-Axis to Global Range", GUIFactory.getIcon("Y_range_expand.gif"));
         menuItemFixScale.setActionCommand(FIX_SCALE_CMD);
         menuItemFixScale.addActionListener(listener);
         menu.add(menuItemFixScale);
@@ -994,10 +1058,13 @@ public class BoxChartViewer extends JPanel implements IViewer {
         aggGenClusterMenuItem.setActionCommand(AGG_GENE_CLUSTER_CMD);
         aggGenClusterMenuItem.setEnabled(false);
         aggGenClusterMenuItem.addActionListener(listener);
-        menu.add(aggGenClusterMenuItem);
-                
+        menu.add(aggGenClusterMenuItem);                
     }
 
+	public void setScrollBar(JScrollBar jsb) {
+		this.jScrollBar = jsb;
+		jScrollBar.setUnitIncrement(chartHeight+chartGap);
+	}
 	
     public static void main(String[] args){
 //    	JDialog jp3 = new JDialog();
@@ -1024,5 +1091,4 @@ public class BoxChartViewer extends JPanel implements IViewer {
     	System.exit(0);
     	
     }
-
 }
