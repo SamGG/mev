@@ -37,7 +37,7 @@ public class RnaseqAnnotationParser {
 	private RnaseqAnnotationParser() {}
 
 	private void loadAnnotation(File annotationFile)throws IOException {
-		System.out.println("Parsing annotaiton File: " + annotationFile.getAbsolutePath());
+		//System.out.println("Parsing annotaiton File: " + annotationFile.getAbsolutePath());
 		String[] currentLine;
 		String probeID;
 		ArrayList<MevAnnotation> annotationObjList; 
@@ -153,7 +153,7 @@ public class RnaseqAnnotationParser {
 			if(probeID!=null) {
 				// Check if key exist by the name
 				if (probeID.equals("NM_031921"))
-					System.out.println("NM_031921 found and loaded");
+					//System.out.println("NM_031921 found and loaded");
 				if(annoHash.containsKey(probeID)) {
 					annoHash.get(probeID).add(annotationObj);
 				} else {
@@ -178,7 +178,7 @@ public class RnaseqAnnotationParser {
 			String t = (String)en.nextElement();
 			annoCount += ((ArrayList<MevAnnotation>)annoHash.get(t)).size();
 		}
-		System.out.println("Annotaiton DB HashSize, size: " + annoHash.size() + " #of keys with List " + annoCount);
+		//System.out.println("Annotaiton DB HashSize, size: " + annoHash.size() + " #of keys with List " + annoCount);
 		// End Debug
 	}
 
@@ -308,6 +308,7 @@ public class RnaseqAnnotationParser {
 			obj.setProbeTxEndBP(txEnd);
 		} catch (Exception e) {
 			System.out.println("Contains Illegal Char: " + txSt + ", " + txEnd);
+			e.printStackTrace();
 		}
 	}
 
