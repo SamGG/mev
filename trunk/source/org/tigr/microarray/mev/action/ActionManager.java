@@ -539,8 +539,6 @@ public class ActionManager implements java.io.Serializable {
     public static final String AUTO_IMPORT_SAMPLE_LIST_NAME = "By Sample Annotation";
     public static final String AUTO_IMPORT_SAMPLE_LIST_ICON = "import_list.gif";
     
-    public static final String SET_DATA_SOURCE_COMMAND = "set-data-source-command";
-    
     public static final String APPEND_SAMPLE_ANNOTATION_COMMAND = "append-sample-annotation-command";
     public static final String APPEND_SAMPLE_ANNOTATION_ACTION = "append-sample-annotation-action";
     public static final String APPEND_SAMPLE_ANNOTATION_NAME = "Append Sample Annotation";
