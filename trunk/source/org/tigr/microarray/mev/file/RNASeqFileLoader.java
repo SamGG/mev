@@ -833,7 +833,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			System.out.println("Size Lib File does not exist.");
+			//System.out.println("Size Lib File does not exist.");
 			
 			return null;
 		} catch (IOException e) {
