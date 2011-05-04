@@ -5531,12 +5531,6 @@ private void appendResourcererGeneAnnotation() {
                 onDeleteNode();
             } else if (command.equals(ActionManager.RENAME_NODE_CMD)) {
                 onRenameNode();
-            } else if (command.equals(ActionManager.SET_DATA_SOURCE_COMMAND)) {
-                Object source = event.getSource();
-                if(source instanceof JCheckBoxMenuItem)
-                    onSetData(((JCheckBoxMenuItem)event.getSource()).isSelected());
-                else
-                    onSetData(true);  //reset Original Data view
             } else if (command.equals(ActionManager.USE_PERCENTAGE_CUTOFFS_CMD)) {
                 applyPercentageCutoffs();
                 //add mas5 present call noise filter
@@ -5856,10 +5850,8 @@ private void appendResourcererGeneAnnotation() {
         					
         					popup.add(createDeleteMenuItem());
         				} else if(viewerObj instanceof IViewer && ((IViewer)viewerObj).getClusters() != null && ((IViewer)viewerObj).getExperiment() != null && ((IViewer)viewerObj).getViewerType() != -1) {
-        					//Data viewer node
+//        					//Data viewer node
         					popup.add(createDeleteMenuItem());
-        					popup.addSeparator();
-        					popup.add(createSetDataMenuItem(((LeafInfo)userObject).isSelectedDataSource()));
         				}
         			} else {
         				popup.add(createDeleteMenuItem());
@@ -5873,12 +5865,6 @@ private void appendResourcererGeneAnnotation() {
         				popup.add(createDeleteMenuItem());
         			}
         		}
-        	} else if( ((LeafInfo)userObject).toString().equals("Original Data") && data.getFeaturesCount() != 0 ) {
-        		popup = new JPopupMenu();
-        		JMenuItem item = new JMenuItem(" Set as Data Source ");
-        		item.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
-        		item.addActionListener(this);
-        		popup.add(item);
         	}
         	if (popup != null) {
         		popup.show(e.getComponent(), e.getX(), e.getY());
@@ -5911,12 +5897,12 @@ private void appendResourcererGeneAnnotation() {
         /**
          * Creates a data source CheckBox menu item.
          */
-        private JCheckBoxMenuItem createSetDataMenuItem(boolean selected) {
-            JCheckBoxMenuItem box = new JCheckBoxMenuItem("Set as Data Source", selected);
-            box.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
-            box.addActionListener(this);
-            return box;
-        }
+//        private JCheckBoxMenuItem createSetDataMenuItem(boolean selected) {
+//            JCheckBoxMenuItem box = new JCheckBoxMenuItem("Set as Data Source", selected);
+//            box.setActionCommand(ActionManager.SET_DATA_SOURCE_COMMAND);
+//            box.addActionListener(this);
+//            return box;
+//        }
         
         
         /**
