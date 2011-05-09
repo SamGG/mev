@@ -17,7 +17,6 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -58,7 +57,6 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 
 	private boolean loadEnabled = true;
 	private String annotationFilePath="NA";
-	private ArrayList<String> columnHeaders;
 	private boolean loadMedianIntensities=false;
 	private String[] uidArray;
 	private boolean oneColorData;
@@ -117,16 +115,14 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			data.set(0, loadResourcererAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
 		}else if(!getAnnotationFilePath().equalsIgnoreCase("NA")) {
 			data.set(0, loadAnnotationFile((SlideData) data.elementAt(0),new File(getAnnotationFilePath())));
-			
-		}
-		
+		}		
 		
 		return data;
 	}
 	
 	
 	
-	public SlideData loadResourcererAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
+	private SlideData loadResourcererAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
 		
 		this.mav.getData().setAnnotationLoaded(true);
 		File annoFile=new File(getAnnotationFilePath());
@@ -167,11 +163,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		return targetData;
 	}
 	
-	public boolean isOneColorData(){
-		return oneColorData;
-	}
-	
-	public SlideData loadAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
+	private SlideData loadAnnotationFile(SlideData targetData, File sourceFile) throws IOException {
 		
 	
 		AgilentAnnotationFileParser parser=new AgilentAnnotationFileParser();
@@ -195,8 +187,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 			
 				hash.put(annMatrix[i][0], value);
 				
-			}
-			
+			}			
 			
 			String[] extraFields;
 			for (int i = 0; i < dataLength; i++) {
@@ -205,22 +196,11 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				((SlideDataElement) targetData.getSlideDataElement(i))
 						.setExtraFields(extraFields);
 				
-			}
-			
-			
+			}			
 		}
 		
-		return targetData;
-
-		
+		return targetData;		
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * populates slidedata from the given file
@@ -228,7 +208,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	 * @return
 	 * @throws IOException
 	 */
-	public ISlideData loadSlideData(File targetFile) throws IOException {
+	private ISlideData loadSlideData(File targetFile) throws IOException {
 		
 		
 		SlideData slideData = null;
@@ -286,8 +266,6 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 				return null;
 			}
 
-			
-		
 
 			int maxRow = 0;
 			int maxCol = 0;
@@ -378,18 +356,13 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 	}
 	
 	
-	
-	
-	
-	public ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
+	private ISlideData loadFloatSlideData(File currentFile, ISlideMetaData metaData) throws IOException {
 
 		AgilentFileParser afp=new AgilentFileParser(this.oneColorData);
 		afp.loadFile(currentFile);
-		FloatSlideData floatSlideData = null;
+		FloatSlideData floatSlideData = new FloatSlideData(metaData);
 		int intensity1=0;
 		int intensity2=0;
-		
-		
 		
 		
 		if (afp.isAgilentFileValid()) {
@@ -448,9 +421,6 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		return floatSlideData;
 		
 	}
-	
-	
-	
 	
 	
 	public boolean checkLoadEnable() {
@@ -527,7 +497,7 @@ public class AgilentFileLoader extends ExpressionFileLoader {
 		}
 	}
 	
-	public MultipleArrayViewer getMav() {
+	private MultipleArrayViewer getMav() {
 		return mav;
 	}
 
