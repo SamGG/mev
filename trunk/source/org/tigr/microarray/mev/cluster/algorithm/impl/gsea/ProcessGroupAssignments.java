@@ -26,13 +26,10 @@ public class ProcessGroupAssignments {
 	protected boolean removeNA;
 
 	// GUI based grouping
-	private String[] factornames = null;
 	private int[][] fAssignments = null;
-	private int[] factorLevels = null;
 
 	public ProcessGroupAssignments(String[] factorNames, int[] factorLevels,
 			int[][] factorAssignments, boolean removeNA, int num_samples) {
-		this.factornames = factorNames;
 		this.fAssignments = factorAssignments;
 		this.removeNA = removeNA;
 		this.nSamples = num_samples;
@@ -133,7 +130,6 @@ public class ProcessGroupAssignments {
 			// intercept, hence level starts with 2
 			int factorlevel = 2;
 			int[] rowVector = factorAssignments[i];
-			System.out.println("rowVector.length = "+rowVector.length);
 			int current_factor_level = factorLevels[i];
 			FloatMatrix tempMatrix = new FloatMatrix(factor_matrix
 					.getRowDimension(), current_factor_level - 1);
@@ -145,10 +141,7 @@ public class ProcessGroupAssignments {
 						samples = samples + 1;
 						continue;
 					}
-					System.out.println("rowVector[samples] = "+rowVector[samples]);
 					if (rowVector[samples] == factorlevel) {
-						System.out.println("tempcolStart = "+tempcolStart);
-						System.out.println("tempRowStart = "+tempRowStart);
 						tempMatrix.set(tempRowStart, tempcolStart, 1);
 						tempRowStart = tempRowStart + 1;
 					} else {
@@ -167,8 +160,6 @@ public class ProcessGroupAssignments {
 				factorlevel = factorlevel + 1;
 			}// End of factor level for loop
 			matColEnd = matColStart + (current_factor_level - 1) - 1;
-			// System.out.println("FloatMatrix col start:"+matColStart);
-			 //System.out.println("FloatMatrix col end:"+matColEnd);
 
 			factor_matrix.setMatrix(0, factor_matrix.getRowDimension() - 1,
 					matColStart, matColEnd, tempMatrix);
@@ -179,32 +170,4 @@ public class ProcessGroupAssignments {
 
 		return factor_matrix;
 	}
-
-	/*public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		Hashtable fHash = new Hashtable();
-		String[] factorNames = { "FactorA", "FactorB" };
-		int[] factorLevels = { 3, 2 };
-		int[][] factorAssignments = { { 3, 1, 2, 1, 2, 3 },
-				{ 1, 2, 1, 2, 2, 0 } };
-		
-		ProcessGroupAssignments pg = new ProcessGroupAssignments(new String[] {
-				"FactorA", "FactorB" }, new int[] { 3, 3 }, factorAssignments,
-				true, 6);
-		pg.findUnassignedSamples(factorNames, factorLevels, factorAssignments);
-		FloatMatrix factor_matrix = pg.generateFactorMatrix(factorNames,
-				factorLevels, factorAssignments);
-
-		for (int i = 0; i < factor_matrix.getRowDimension(); i++) {
-			for (int j = 0; j < factor_matrix.getColumnDimension(); j++) {
-				System.out.print(factor_matrix.get(i, j));
-				System.out.print('\t');
-			}
-			System.out.println();
-		}
-
-		
-	}*/
-
 }

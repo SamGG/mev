@@ -110,7 +110,6 @@ public class GSEA extends AbstractAlgorithm {
 
 		xx=xTranspose.times(x);
 
-		System.out.println("xx "+xx.m+","+xx.n);
 		//In the R function, they use solve(a) and since the second argument is not provided, solve returns teh inverse of a.
 		//so, in R, if you say solve(a); the second argument b is considered to be an identity matrix. Trying to replicate that
 		//FloatMatrix xxInv=xx.inverse();
@@ -123,23 +122,12 @@ public class GSEA extends AbstractAlgorithm {
 			try{
 				xxInv=xx.solve(identity);
 			} catch (Exception e){
-				System.out.println("Singular Matrix, retrying...");
 				return null;
 			}
-
-			System.out.println("xxInv "+xxInv.m+","+xxInv.n);
-			System.out.println("x "+x.m+","+x.n);
-			System.out.println("xTranspose "+xTranspose.m+","+xTranspose.n);
 			
 			FloatMatrix hMat=x.times(xxInv).times(xTranspose);
-			System.out.println("hMat "+hMat.m+","+hMat.n);
 			FloatMatrix diagonalMatrix=createDiagonalMatrix(nSamp, nSamp, 1);
-			
-			System.out.println(hMat.getColumnDimension()+" : "+hMat.getRowDimension());
-			System.out.println(diagonalMatrix.getColumnDimension()+" : "+diagonalMatrix.getRowDimension());
-			System.out.println(hMat.m+" hm "+hMat.n);
-			System.out.println(diagonalMatrix.m+" dm "+diagonalMatrix.n);
-			
+						
 			FloatMatrix dMat=diagonalMatrix.minus(hMat);
 
 
@@ -150,13 +138,6 @@ public class GSEA extends AbstractAlgorithm {
 			xy=eSet.times(x);
 			res=eSet.times(dMat);
 			beta=xx.solve(xy.transpose());
-
-			if (beta==null)
-				System.out.println("beta is null");
-			else
-				System.out.println("beta is not null");
-
-
 
 			//result matrix is calculated using arrayTimes function of Jama. The dimensions of eSet and res are the same.
 			//this is the equivalent of "eSet*res"  in R
@@ -578,23 +559,10 @@ public class GSEA extends AbstractAlgorithm {
 		pg.findUnassignedSamples(factorNames, factorlevels, factorAssignments);
 		adata.addVector("unassigned-samples", pg.getUnassignedColumns());
 		FloatMatrix factor_matrix=pg.generateFactorMatrix(factorNames, factorlevels, factorAssignments);
-		System.out.println("factor_matrix.getColumnDimension() = "+ factor_matrix.getColumnDimension()+", factor_matrix.getRowDimension() = "+factor_matrix.getRowDimension());
-
-		System.out.println("factor_matrix");
-		for (int i=0; i<factor_matrix.m; i++){
-			for (int j=0; j<factor_matrix.n; j++){
-				System.out.print(factor_matrix.A[i][j]+"\t");
-			}
-			System.out.println();
-		}
 		
 		try{
 			Hashtable<String, FloatMatrix>tempHash=lmPerGene(adata, factor_matrix, true);
 
-			if (tempHash==null)
-				System.out.println("tempHash is null");
-			else
-				System.out.println("tempHash is not null");
 			//Extract the result of lmPerGene, returned as Hashtable 
 			FloatMatrix coefficients=tempHash.get("lmPerGene-coefficients");	
 			FloatMatrix coefVar=tempHash.get("lmPerGene-coefvar");
@@ -667,11 +635,9 @@ public class GSEA extends AbstractAlgorithm {
 				pga.findUnassignedSamples(factorNames, factorlevels, factorAssignments);
 				FloatMatrix factor_matrix_new=pga.generateFactorMatrix(factorNames,factorlevels, permutedFactorAssignments);
 
-				System.out.println("2: factor_matrix.getColumnDimension() = "+ factor_matrix.getColumnDimension()+", factor_matrix.getRowDimension() = "+factor_matrix.getRowDimension());
 				Hashtable<String, FloatMatrix>lmPerGeneresultHash=lmPerGene(adata,factor_matrix_new , true);
 				
 				if (lmPerGeneresultHash==null){
-					System.out.println("lmPerGeneresultHash is null");
 					index--;
 					continue;
 				}
@@ -947,8 +913,6 @@ public class GSEA extends AbstractAlgorithm {
 
 		}
 
-
-		//System.out.println("number of keys in permOrder:"+permOrder.size());
 		Enumeration keys=permOrder.keys();
 
 		int[]permutedSampleAssignment=new int[num_Samples];
