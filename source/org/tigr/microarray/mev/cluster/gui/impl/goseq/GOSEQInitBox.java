@@ -385,7 +385,8 @@ public class GOSEQInitBox extends AlgorithmDialog {
 							return;
 						BROADDownloads(broademail);
 						if (msigOK){
-							geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);						
+							geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);	
+							geneIdentifierBox.setEnabled(false);					
         					browseDownloadButton.setEnabled(false);
         					geneSetSelectionBox.setEnabled(false);
         					chooseFileLabel.setForeground(Color.red);
@@ -402,6 +403,8 @@ public class GOSEQInitBox extends AlgorithmDialog {
 		                }
     				}else if(e.getActionCommand().equalsIgnoreCase("genesigdb_download")) {
     					GeneSigDBDownloads();
+						geneIdentifierBox.setSelectedItem(AnnotationFieldConstants.GENE_SYMBOL);
+						geneIdentifierBox.setEnabled(false);
     					browseDownloadButton.setEnabled(!geneSigValid);
     					geneSetSelectionBox.setEnabled(!geneSigValid);
     					chooseFileLabel.setForeground((geneSigValid ? Color.red: Color.black));
