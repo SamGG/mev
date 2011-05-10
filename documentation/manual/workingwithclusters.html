@@ -14,7 +14,7 @@
 				</a>
 				<br/>
 				<span class="caption">Cluster Attributes Dialog</span>
-				</div> 
+				</div>
 	<a name="SCUCM"><h4>Storing Clusters and Using the Cluster Manager</h4></a>
 		<p>Clusters of interest can be stored to a repository from the basic cluster viewers. Highlight the cluster of interest by clicking it, then in the right click menu select  <span class="widget2">Store Cluster</span>. Once a cluster is stored, the <span class="widget2">Cluster Manager</span> node on the result navigation tree will contain a list of stored clusters. Gene clusters and sample clusters are maintained in separate spreadsheets which are viewable from the Cluster Manager node. When storing a cluster to the repository an input dialog is presented which allows for three user defined fields to be associated with the cluster. Two optional text fields are used to capture a cluster name and a description of the algorithm or interesting features of the cluster. The third user input is a color used to identify genes or experiments which are members of the clusters. These colors can be tracked while performing analyses so that clustering consensus can be established.  No two clusters may use the same identifying color.</p>
 	<p>The cluster tables contain the following columns:</p>
@@ -27,7 +27,7 @@
 					</a>
 					<br/>
 					<span class="caption">Gene Cluster Manager </span>
-					</div> 
+					</div>
 	<p>-The <span class="widget2">Cluster Node</span> field identifies the specific cluster node under the Algorithm Node from which the cluster was stored.<br/>
 	<p>-The <span class="widget2">Cluster Label</span> is an optional user defined name for the cluster.<br/>
 	<p>-The <span class="widget2">Remarks</span> field can be used to contain details about the process used to create the cluster or specific features of interest in the cluster.<br />
@@ -35,13 +35,15 @@
 	<p>-The <span class="widget2">Color</span> displays the user defined color for the cluster. If you click the color box a screen will show that allows you to change the color if you wish.<br />
 	<p>-The <span class="widget2">Show Color</span> check box allows you to show or repress the displayed color.  This option can be useful when visualizing cluster intersections in viewers.
 		Selecting only one cluster color to view can simplify interpretation.<br /></p>
-<p>Users have 4 options for display types and 5 options for the data to display.<br/>
+<p>Users have 6 options for display types and 5 options for the data to display.<br/>
 Four MeV viewers are accessible from the Cluster Manager:
 	<ol>
 		<li><span class="widget1">Table</span>: This option displays a table in the Cluster Manager showing every available annotation for each gene or sample included.</li>
 		<li><span class="widget1">Expression Image</span>: This option displays a heatmap in the Cluster Manager showing expression values for each gene and sample included. </li>
 		<li><span class="widget1">Expression Graph</span>: This option displays a graph in the Cluster Manager showing expression values for each gene and sample included.</li>
 		<li><span class="widget1">Centroid Graph</span>: This option displays a graph similar to the Expression Graph, but individual lines are omitted.  Instead, a single mean expression line is displayed and bars representing standard deviation at a particular sample/gene are shown.</li>
+		<li><span class="widget1">Venn Diagram</span>: This option displays a venn diagram in the Cluster Manager showing the overlap between 2 or 3 clusters.  A p-value is represented given a null hypothesis of zero membership correlation between clusters. </li>
+		<li><span class="widget1">Expression Charts</span>: This option displays charts in the Sample Cluster Manager showing expression values for each gene or gene cluster expressed over the set of selected sample clusters. </li>
 	</ol>
 <p>Five data options are available based on the clusters selected.</p>
 	<ol>
@@ -75,7 +77,7 @@ Double-clicking on a cluster will open the <span class="widget2">Modify Attribut
 							</div>
 
 <p>One additional option is the option to delete all gene clusters or sample clusters.  These global operations which effect all colored clusters is selected from the <span class="widget2">Utilities</span> menu in the multiple array viewer by selecting <span class="widget2">Delete All Gene Clusters</span> or <span class="widget2">Delete All Sample Clusters</span> or can be done from the cluster tables.</p>
-<p>The <span class="widget2">Import Gene/Experiment List</span> allows one to create a cluster based on supplied identifiers. For example, if you wish to make a cluster out of specific genes that you know are important, you can paste those genes into the dialog box and the cluster will be created out of those specific genes you pick. Identifiers belonging to the cluster are pasted into the text area.  The drop down list indicates the type of annotation being loaded. After searching for matches, the List Import Result dialog will be displayed. An intermediate dialog <span class="widget2">(Import Result Dialog)</span> will appear to display the results of the import and to allow you to select a subset of the identified elements before saving the elements as a cluster.  
+<p>The <span class="widget2">Import Gene/Experiment List</span> allows one to create a cluster based on supplied identifiers. For example, if you wish to make a cluster out of specific genes that you know are important, you can paste those genes into the dialog box and the cluster will be created out of those specific genes you pick. Identifiers belonging to the cluster are pasted into the text area.  The drop down list indicates the type of annotation being loaded. After searching for matches, the List Import Result dialog will be displayed. An intermediate dialog <span class="widget2">(Import Result Dialog)</span> will appear to display the results of the import and to allow you to select a subset of the identified elements before saving the elements as a cluster.
 After review of identified elements a <span class="widget2">cluster attributes dialog</span> will be presented so that a cluster name, description, and color can be defined for the new cluster. This dialog also displays a table that contains matching elements.  The rows in the table can be selected to remove unwanted entries before hitting the <span class="widget2">Store Cluster</span> button to store the items to a cluster.  The bottom section of the dialog also reports which indices were found and which were not found in the loaded data set.</p>
 
 <p> The List Import Dialog is used to import gene or experiment identifiers for the
@@ -83,7 +85,7 @@ purpose of imposing or creating clusters within the loaded data set.  This enabl
 user to mark genes or experiments of interest for tracking during analysis.</p>
 
 <a name="listimportdialog">
-	<h4>Importing a list of genes or samples into a cluster</h4>
+	<h4>Clustering by Gene List Import</h4>
 </a>
 
 <p>
@@ -109,7 +111,7 @@ cluster attributes including the desired cluster color.
 
 
 <a name="autolistimport">
-<h4>Automatic Identifier List Import Dialog</h4>
+<h4>Automatic Identifier Clustering Dialog</h4>
 </a>
 <p> The Import Dialog is used to import gene or experiment identifiers for the
 purpose of imposing or creating clusters within the loaded data set.  This enables the
@@ -119,18 +121,18 @@ user to mark genes or experiments of interest for tracking during analysis.</p>
 <em>Import Parameters</em>
 </p>
 <p>
-Select one or more annotation type from the left list and click the '>>>' button to move it to the 
+Select one or more annotation type from the left list and click the '>>>' button to move it to the
 list of annotations to be used.
 </p>
 <p>
-The annotations types that you have selected will be used to create clusters.  Each unique annotation 
-in each annotation type will be used to create a distinct cluster.  Only samples (or genes) that have 
+The annotations types that you have selected will be used to create clusters.  Each unique annotation
+in each annotation type will be used to create a distinct cluster.  Only samples (or genes) that have
 identical annotations for the specified type will be placed in the same cluster.
 </p>
 
 
 <a name="idlistimport">
-	<h4>Identifier List Import Dialog</h4>
+	<h4>Binned Clustering Dialog</h4>
 </a>
 
 <p> The Import Dialog is used to import gene or experiment identifiers for the
@@ -139,23 +141,23 @@ user to mark genes or experiments of interest for tracking during analysis.
 </p>
 <p>
 <em>Import Parameters</em>
-Using the combobox, select the annotation type that contains the numerical values that you wish to 
-cluster.  
+Using the combobox, select the annotation type that contains the numerical values that you wish to
+cluster.
 </p>
 <p>
 Fill in values for the upper and lower limits that are to contain the desired cluster.
 </p>
 <p>
-The upper and lower limits that you have input will be used to create a cluster.  All samples (or genes) 
-with a numerical value for the selected annotation type within the specified limits will be placed in a 
+The upper and lower limits that you have input will be used to create a cluster.  All samples (or genes)
+with a numerical value for the selected annotation type within the specified limits will be placed in a
 single cluster.
 </p>
 
 <div class="navigation-bar"><a class="prev" href="ViewerDescriptions.html">Previous: Viewer Descriptions</a>| <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="UM.html">Next: Utilities Menu</a>
 </body>
 </html>
-	
-	
+
+
 
 
 

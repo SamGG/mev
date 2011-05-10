@@ -16,33 +16,33 @@
 				</a>
 				<br/>
 				<span class="caption">Expression Images Viewer</span>
-				</div> 
+				</div>
 <a name="ExpressI"><h4>Expression Images</h4></a>
-	<p>This viewer is used in the main window of the Multiple Experiment Viewer as well as in most of the modules.  It consists of colored rectangles, representing genes, in a matrix.  Each column represents all the genes from a single experiment, and each row represents the expression of a gene across all experiments.  The default color scheme used to represent expression level is red/green (red for overexpression, green for underexpression) and can be adjusted by selecting  <span class="widget2">Display-->Color Scheme.</span></p> 
+	<p>This viewer is used in the main window of the Multiple Experiment Viewer as well as in most of the modules.  It consists of colored rectangles, representing genes, in a matrix.  Each column represents all the genes from a single experiment, and each row represents the expression of a gene across all experiments.  The default color scheme used to represent expression level is red/green (red for overexpression, green for underexpression) and can be adjusted by selecting  <span class="widget2">Display-->Color Scheme.</span></p>
 	<div class="screenshots leftsidecorrection">
 		<a href="spotinfo.jpg">
 					<img src="spotinfo.jpg">
 				</a>
 				<br/>
 				<span class="caption">Spot Information Window</span>
-				</div> 
-	<p>Clicking on any of the rectangles in this view will open a window reporting information for that spot.  This window contains a great deal of information, including expression values and row/column coordinates. 
+				</div>
+	<p>Clicking on any of the rectangles in this view will open a window reporting information for that spot.  This window contains a great deal of information, including expression values and row/column coordinates.
 	<div class="screenshots">
 		<a href="SLR.jpg">
 					<img src="SLR.jpg">
 				</a>
 				<br/>
 				<span class="caption">Gene Graph Window</span>
-				</div>  
-		Clicking the <span class="widget2">Gene Graph</span> button will open a window containing a graph of this gene’s expression level across all samples.  To view a Single Array Viewer displaying the entire experiment of which this spot is a part, click the <span class="widget2">Sample Detail</span> button in the <span class="widget2">Spot Information</span> window.  The <span class="widget2">Set Gene Color</span> button has not been enabled in this version of MeV.  
-<a name="ExpressI"><h4>Expression Graphs</h4></a>
+				</div>
+		Clicking the <span class="widget2">Gene Graph</span> button will open a window containing a graph of this gene’s expression level across all samples.  To view a Single Array Viewer displaying the entire experiment of which this spot is a part, click the <span class="widget2">Sample Detail</span> button in the <span class="widget2">Spot Information</span> window.  The <span class="widget2">Set Gene Color</span> button has not been enabled in this version of MeV.
+<a name="ExpressGraph"><h4>Expression Graphs</h4></a>
 	<p>This viewer displays graphs of the expression levels of each gene across the experimental conditions. By default, the line color is gray or colored according to the cluster membership. <div class="screenshots">
 		<a href="ex1cl.jpg">
 					<img src="ex1cl.jpg">
 				</a>
 				<br/>
 				<span class="caption">Expression Graph of one cluster (with gradient color selected)</span>
-				</div>  
+				</div>
 	The lines can be set to display a gradient coloring option in which the lines are colored according to expression level. This option is found by selecting <span class="widget2">Display-->Color Scheme-->Use Color Gradient on Graphs.</span> This will toggle the feature on and off.  </p>
 	<p>The mean expression levels of genes in the cluster are shown as a centroid graph overlaid on top of the individual expression graphs. Each line represents the graph of an individual gene, and combined they created the whole centroid graph. The red line represents the graph of the mean of all the genes across the samples. If you previously saved and color coded your clusters, those colors will appear on the graph if you <span class="widget2">haven’t</span> turned on the <span class="widget2">Use Color Gradient on Graphs</span> feature. This allows you to see the patterns, if any, of the behavior of the genes across the samples.</p>
 	<div class="screenshots">
@@ -51,7 +51,7 @@
 				</a>
 				<br/>
 				<span class="caption">Expression Graphs of all clusters</span>
-				</div> 
+				</div>
 	<p>By default, the range of the Y-axis for an expression graph is the same for each viewer produced from an analysis, regardless of which subset of expression graphs is displayed.  The X-axis (y = 0) is centered  on the Y-axis, and the Y range is set to the distance of the element in the entire data set which is furthest from zero.  Use the <span class="widget2">Change Y Axis</span> option in the right-click menu to change the Y range to the maximum distance from zero only for elements within the current expression graph.  This option allows the expression graph to expand to increase the resolution of expression changes within a particular cluster.</p>
 <a name="CG"><h4>Centroid Graphs</h4></a>
 	<div class="screenshots">
@@ -60,7 +60,7 @@
 				</a>
 				<br/>
 				<span class="caption">Centroid Graph</span>
-				</div> 
+				</div>
 	<p>This viewer is very similar to the Expression Graph Viewer, except that line graphs for individual genes are omitted, leaving only the centroid graph.  Error bars represent the standard deviation of expression within the cluster. That is, the mean for all the genes of a sample is represented by a dot, and the standard deviation for the genes in that sample are shown above and below it. In fact, the red line connecting the centroids is the same red line as in the expression graphs.</p>
 <a name="TV"><h4>Table Views</h4></a>
 	<p>These views show element annotation and, where appropriate, auxiliary information such as element-specific statistical information for the elements in a cluster. </p>
@@ -70,7 +70,7 @@
 				</a>
 				<br/>
 				<span class="caption">Gene cluster table view</span>
-				</div> 
+				</div>
 	<p>Columns can be dragged horizontally across the table to change their relative ordering. Successive clicks on the header for any column will sort the rows in ascending or descending order of the entries in that column. Sorting of the “Stored Color” column will bring together elements that have been stored with the same cluster color. CTRL-clicking on any column header will sort the table in the original order of elements in that cluster, an option that is also available from the right-click menu (below).</p>
 	<p>Left-clicking on any of the blue-underlined cells in the table will launch a web browser and display the contents of that cell in a web page appropriate to the type of annotation contained within it. The mappings that determine which web site MeV will attempt to access for each annotation type can be changed my modifying the appropriate configuration file. A template for this file can be found on the TM4.org website, at <a href="http://www.tm4.org/mev/annotation_URLs.txt">http://www.tm4.org/mev/annotation_URLs.txt</a>.Simply download the file and modify it to contain annotation name / URL mappings you wish to use. These mappings will <span class="widget1">override</span> the default mappings MeV uses. Load the file using the <span class="widget2">Preferences-->Select Annotation Linkout File</span> option from the main MeV toolbar. The name and location of this file will be saved in MeV’s user preferences file, and re-loaded in subsequent sessions. </p>
 	<div class="screenshots">
@@ -94,7 +94,46 @@
 	<p>Within the <span class="widget2">config</span> directory there is a file (<span class="widget1">annotation_URLs.txt</span>) that contains entries to support this feature in MeV.  This file can be modified with new external resources as needed, and the existing fields can also be modified, with the exception of the UniGene field (see below).  The file is arranged such that each row represents a different annotation label:resource pair with the following tab delimited fields (\t indicates a tab).</p>
 	<p>Annotation Label  \t URL \t Resource Name</p>
 	<p>The Annotation Label indicates the name of the annotation field that is loaded into mev. This is in the header of the annotation file or TDMS file.  For example, if in some files you call GenBank GB# and in other files it is referred to as GenBank then two entries in this annotation/url file can be made, one for each key.  If an input annotation file had the GenBank numbers identified as gb# then the Annotation/URL Association dialog would launch to allow you to manually indicate the desired external resource.</p>
-	<p>The URL entry is the URL for the resource.  Look in the file for examples.  It is important to note that the URL has a section labeled ‘FIELD1’.  This is a placeholder to indicate where the gene identifier should go when constructing the URL. The UniGene URL is the only exception, requiring two variable fields called FIELD1 and FIELD2, which are parsed out of the UniGene identifier. The UniGene Annotation Label is required in the <span class="widget1">annotation_URLs.txt</span> file to correctly parse UniGene Ids; therefore, please do not modify this line. 
+	<p>The URL entry is the URL for the resource.  Look in the file for examples.  It is important to note that the URL has a section labeled ‘FIELD1’.  This is a placeholder to indicate where the gene identifier should go when constructing the URL. The UniGene URL is the only exception, requiring two variable fields called FIELD1 and FIELD2, which are parsed out of the UniGene identifier. The UniGene Annotation Label is required in the <span class="widget1">annotation_URLs.txt</span> file to correctly parse UniGene Ids; therefore, please do not modify this line.
+
+<a name="VD"><h4>Venn Diagram</h4></a>
+	<div class="screenshots leftsidecorrection">
+		<a href="vd3.jpg">
+					<img src="vd2.jpg">
+				</a>
+				<br/>
+				<span class="caption">2 Cluster Venn Diagram</span>
+	</div>
+	<p>This viewer is used in the Cluster Manager only.  The viewer allows for the comparison of two or three clusters to determine the degree of overlapping cluster membership.  Each two cluster viewer calculates a p-value associated with the relationship.  The p-value represents the likelihood of an equal or greater overlap given the null hypothesis that the clusters have no relationship to one another.</p>
+	<div class="screenshots">
+		<a href="vd3.jpg">
+					<img src="vd3.jpg">
+				</a>
+				<br/>
+				<span class="caption">3 Cluster Venn Diagram</span>
+	</div>
+
+	<p>Clicking on any of the circles in this view will highlight that.  Right clicking allows for all the elements within that region to be stored as a distinct cluster.  Outlines surrounding the circles are color coded according to the relative weight of each circle on the selected area of interest.  Blue implies an excluded rule and red implies inclusion.<br>
+<a name="expressChart"><h4>Expression Charts</h4></a>
+	<p>This viewer is used only in the Sample Cluster Manager.  The purpose of this viewer is to visually display a consolidated graph of expression data over a defined subset of the data.  This data is expressed in either box plot form or bar graph form, as defined in the drop-down box labeled "Chart Type".  For each chart, the data range is defined over a single gene or a set of genes held by a Gene Cluster.  This range is user-specified in the "Gene Range" drop-down menu.  Sample clusters are included in the view by highlighting and are displayed along the x-axis as distinct subsets for easy visual evaluation.  </p>
+	<div class="screenshots leftsidecorrection">
+		<a href="ec1.jpg">
+					<img src="ec1.jpg">
+				</a>
+				<br/>
+				<span class="caption">Box Chart across single gene</span>
+				</div>
+	<p>When using the Gene Cluster option for the range, users have the ability to viewer the cluster consolidated into a single chart or displayed as individual gene charts built vertically.  The "Aggregate Gene Cluster" checkbox facilitates this option.  When in the expanded mode, scrolling down shows the relative changes across sample clusters or genes within the selected cluster.
+	<div class="screenshots">
+		<a href="ec2.jpg">
+					<img src="ec2.jpg">
+				</a>
+				<br/>
+				<span class="caption">Bar Chart across Gene Cluster</span>
+				</div>
+		By default, with no sample clusters selected the Expression Chart displays a consolidated chart across all samples.  <br>
+		The y-axis is set to the dataset's global range by default, but can be adjusted or autoscaled to the specific graph using the right-click menu. <br>
+		The "Save Data" option in the right-click menu creates a human-readable tab-delimited text file of the available charts that can used in other programs for further analysis.
 <a name="CVA"><h4>Common Viewer Activities</h4></a>
 		<p>A right click within most result viewers will launch a menu that is specific to the currently displayed viewer.  Some of the viewer specific options, such as searching in Table Viewers have been discussed however there are several common viewer options that are shared among the common viewer types.</p>
 	<h5>Store Cluster</h5>
