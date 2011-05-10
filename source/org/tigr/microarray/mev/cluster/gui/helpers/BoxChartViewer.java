@@ -448,9 +448,9 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				g2.setColor(Color.gray);
 				g2.drawLine(xorigin + 3*barWidth/2, yorigin, xorigin + 3*barWidth/2, yorigin + 5);	//vertical tickmark
 				g2.setColor(Color.black);
-				g2.rotate(Math.PI/2);
-				g2.drawString(clusterNames[i], (yorigin+5), -(xorigin + barWidth/2)); //cluster names
-				g2.rotate(-Math.PI/2);		
+				g2.rotate(-Math.PI/2);
+				g2.drawString(clusterNames[i], -(yorigin+5)-g.getFontMetrics().stringWidth(clusterNames[i]), (xorigin + barWidth/2)); //cluster names
+				g2.rotate(Math.PI/2);		
 				
 				if (!isBoxPlot){	//bar graph
 					g2.setColor(clusterColors[i]);
