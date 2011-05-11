@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.MouseInfo;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -102,6 +103,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private JScrollBar jScrollBar = new JScrollBar();
 	private int multigeneCount;
 	private String[] chartTitles;
+	private JPanel header;
     protected static final String STORE_CLUSTER_CMD = "store-cluster-cmd";
     protected static final String ZOOM_IN = "zoom-in";
     protected static final String ZOOM_OUT = "zoom-out";
@@ -139,29 +141,31 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	}
 	
 	private void createComponentLayout() {
+		header = new JPanel();
+		header.setBackground(Color.white);
 		GridBagConstraints gbc = new GridBagConstraints();	       
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.NONE;        
         gbc.gridx=0;
-        this.add(new JLabel("  Chart Type: "),gbc);
+        header.add(new JLabel("  Chart Type: "),gbc);
         gbc.gridx++;
-        this.add(chartTypeCB,gbc);
+        header.add(chartTypeCB,gbc);
         gbc.gridx++;
-        this.add(new JLabel("  Gene Range: "),gbc);
+        header.add(new JLabel("  Gene Range: "),gbc);
         gbc.gridx++;
-        this.add(geneOrClusterCB,gbc);
+        header.add(geneOrClusterCB,gbc);
         gbc.gridx++;
-        this.add(annotLabel,gbc);
+        header.add(annotLabel,gbc);
         gbc.gridx++;
-    	this.add(geneAnnotationCB,gbc);
+        header.add(geneAnnotationCB,gbc);
         gbc.gridx++;
-    	this.add(geneClusterCB,gbc);
+        header.add(geneClusterCB,gbc);
         gbc.gridx++;
-        this.add(geneIDlabel,gbc);
+        header.add(geneIDlabel,gbc);
         gbc.gridx++;
-    	this.add(geneCB,gbc);
+        header.add(geneCB,gbc);
         gbc.gridx++;
-    	this.add(aggregateCheckBox,gbc);
+        header.add(aggregateCheckBox,gbc);
         gbc.gridx = 0;		
 	}
 	
@@ -252,11 +256,18 @@ public class BoxChartViewer extends JPanel implements IViewer {
 					return;
 				geneCB.removeAllItems();
 				int selected = Math.max(geneAnnotationCB.getSelectedIndex(), 0);
-				DefaultComboBoxModel cbm = new DefaultComboBoxModel(framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[selected]));
+				int numGenes = framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[selected]).length;
+				StringExt[] stringext = new StringExt[numGenes];
+				String[] geneNames = framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[selected]);
+				for (int i=0; i<numGenes; i++)
+					stringext[i] = new StringExt(geneNames[i]);
+				
+				DefaultComboBoxModel cbm = new DefaultComboBoxModel(stringext);
 				geneCB.setModel(cbm); 
 			}        	
         });
 		geneCB = new JComboBox(framework.getData().getAnnotationList(framework.getData().getAllFilledAnnotationFields()[0]));
+		geneCB.setMaximumSize(new Dimension(150, geneCB.getHeight()));
 		geneCB.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				repaint();				
@@ -264,6 +275,17 @@ public class BoxChartViewer extends JPanel implements IViewer {
         });
 		
 	}
+	
+	private class StringExt{
+		String string;
+		public StringExt(String string){
+			this.string = string;
+		}		
+		public String toString(){
+			return string;
+		}
+	}
+	
 	public void setClusters(Cluster[] clusterArray){
 		if (clusterArray==null||clusterArray.length==0)
 			clusterArray = new Cluster[1];
@@ -337,7 +359,13 @@ public class BoxChartViewer extends JPanel implements IViewer {
 			maxString = Math.max(maxString, g.getFontMetrics().stringWidth(clusterNames[i]));
 		}
 		chartGap = maxString+50;
-		for (int multigeneIndex=0; multigeneIndex < multigeneCount; multigeneIndex++){
+		
+		//for only drawing the visible area- dramatic speed improvements
+        Rectangle bounds = g.getClipBounds();
+        int indexBegin = (int)Math.max(-3+bounds.y/(chartHeight+chartGap), 0f);
+        int indexEnd = (int)Math.min(multigeneCount, 3+(bounds.y+bounds.height)/(chartHeight+chartGap));
+		
+		for (int multigeneIndex=indexBegin; multigeneIndex < indexEnd; multigeneIndex++){
 			if (ismultigene){
 				if (aggregateGeneCluster){					
 					getChartData(cluster.getIndices(), multigeneIndex);
@@ -348,7 +376,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				}
 			} else {
 				getChartData(geneCB.getSelectedIndex(), multigeneIndex);
-				chartTitles[multigeneIndex] = (String)geneCB.getSelectedItem();
+				chartTitles[multigeneIndex] = geneCB.getSelectedItem().toString();
 			}
 			float maxHeight = 0;
 			float minHeight = Float.POSITIVE_INFINITY;
@@ -485,10 +513,10 @@ public class BoxChartViewer extends JPanel implements IViewer {
 				}	
 			}	
 			
-			chartTop = chartTop + (chartHeight+chartGap); //moves top down for next graph
+			chartTop = chartTopHeight + (multigeneIndex+1)*(chartHeight+chartGap); //moves top down for next graph
 		}
 		jScrollBar.setUnitIncrement(chartHeight+chartGap);
-		int viewerHeight = chartTop;//chartTop is now the bottom of graph
+		int viewerHeight = chartTopHeight + (multigeneCount)*(chartHeight+chartGap);
 		this.setSize(new Dimension(this.getWidth(), viewerHeight));
 		this.setPreferredSize(new Dimension(this.getWidth(),viewerHeight));
 	}
@@ -602,7 +630,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
      * Returns a component to be inserted into scroll pane header.
      */
     public JComponent getHeaderComponent(){
-    	return null;
+    	return header;
     }
     
     /**
