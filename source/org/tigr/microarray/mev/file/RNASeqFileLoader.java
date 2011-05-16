@@ -241,26 +241,37 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 
 		int notFoundCtr = 0;
 		// Load library size file, if present
-		Hashtable<String, Integer> libSizeTable = loadLibSize(sflp.getLibrarySizeFile());
-
-		// if null or not present setup libsize table in another way.
-		if (libSizeTable == null) {
-			//System.out.println("libSizeTable is NULL: ");
-			switch(dataFormat) {
-			case RPKM:
+		Hashtable<String, Integer> libSizeTable = null;
+		if (sflp.libSizeIsNeeded()) {
+			libSizeTable = loadLibSize(sflp.getLibrarySizeFile());
+			if (libSizeTable == null) {
 				JOptionPane.showMessageDialog(superLoader.getFrame(),  
 						"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
 				return null;
-			case COUNT:
-			case RPKM_AND_COUNT:
-			case FPKM_AND_COUNT:
-				libSizeTable = calculateLibSize(dataFormat, f, preExperimentColumns, preSpotRows);
-				break;
 			}
-		} else {
-			//System.out.println("libSizeTable not NULL: ");
 		}
-		//System.out.println("libSizeTable: " + libSizeTable.entrySet());
+		else {
+
+			// if null or not present setup libsize table in another way.
+			//if (libSizeTable == null) {
+				//System.out.println("libSizeTable is NULL: ");
+				//switch(dataFormat) {
+				//case RPKM:
+					//JOptionPane.showMessageDialog(superLoader.getFrame(),  
+							//"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
+					//return null;
+				//case COUNT:
+				//case RPKM_AND_COUNT:
+				//case FPKM_AND_COUNT:
+					libSizeTable = calculateLibSize(dataFormat, f, preExperimentColumns, preSpotRows);
+					//break;
+				//}
+			//} else {
+				System.out.println("libSizeTable not NULL: ");
+				System.out.println("libSizeTable: " + libSizeTable.entrySet());
+			//}
+		}
+
 		//TMEV.pause();
 		// TODO
 		// TBC
@@ -269,7 +280,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		RnaseqAnnotationParser rnaseqAnnoParser = RnaseqAnnotationParser.createAnnotationFileParser(
 				new File(getPathFromSpeciesAndGenome()));
 		_tempAnno = rnaseqAnnoParser.getAnnotation();
-
+		System.out.println("_tempAnno Size: "+ _tempAnno.size());
+		//System.out.println(_tempAnno.entrySet());
+		//TMEV.pause();
+		
 		chipAnno.setChipName(sflp.getGenome() + "_" + sflp.getSpecies());
 		chipAnno.setChipType(sflp.getGenome() + "_" + sflp.getSpecies());
 		// TODO correctly
@@ -427,7 +441,15 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 					((RNASeqElement)sde).setClasscode(moreFields[this.STATUS]);
 
 					//transcript length
-					int len = mevAnno.getProbeTxLengthInBP();
+					int len = 0;
+					try {
+					len = mevAnno.getProbeTxLengthInBP();
+					} catch (Exception c) {
+						if (mevAnno == null)
+						System.out.println("mevAnno is NULL");
+						return null;
+						//TMEV.pause();
+					}
 					//System.out.println("Trns Len: " + moreFields[this.TRANSCRIPT_LEN] + "," + len);
 					if(moreFields[this.TRANSCRIPT_LEN].trim().length() == 0){
 						//System.out.println("Len not avaialble, using: " + len);
@@ -832,15 +854,16 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			return table;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			//System.out.println("Size Lib File does not exist.");
-			
+			e.printStackTrace();
+			System.out.println(librarySizeFile + " Size Lib File does not exist.");
+			JOptionPane.showMessageDialog(superLoader.getFrame(),  
+					"Library File Error.",  librarySizeFile + " File Not Found", JOptionPane.ERROR_MESSAGE);
 			return null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			//JOptionPane.showMessageDialog(superLoader.getFrame(),  
-					//"Library File IO Error.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(superLoader.getFrame(),  
+					"Library File Error.",  librarySizeFile + " File Error Reading", JOptionPane.ERROR);
 			return null;
 		}
 	}
@@ -871,6 +894,8 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		"_gene_" +
 		sflp.getBuild().toLowerCase() +
 		".txt";
+		System.out.println("Anni File: " + path + filename);
+		//TMEV.pause();
 		return path + filename;
 	}
 
@@ -931,8 +956,8 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return sflp;
 	}
 
-	public void processLibSizeFile (File targetFile) {
-		//TODO
+	public void processLibSizeFile (String fileName) {
+		sflp.setLibSizeFileName(fileName);
 	}
 	public void processStanfordFile(File targetFile) {
 
@@ -1244,8 +1269,8 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			int retVal = fileChooser.showOpenDialog(RnaSeqFileLoaderPanel.this);
 
 			if (retVal == JFileChooser.APPROVE_OPTION) {
-				File selectedFile = fileChooser.getSelectedFile();
-				processLibSizeFile(selectedFile);
+				//File selectedFile = fileChooser.getSelectedFile();
+				processLibSizeFile(fileChooser.getSelectedFile().getAbsolutePath());
 				return true;
 			}
 			return false;
@@ -1269,6 +1294,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			// TBR Need to change the libFile Name
 			// Not needed here
 			//libSizeFileTextField.setText(fileName);
+		}
+
+		public void setLibSizeFileName(String fileName) {
+			libSizeFileTextField.setText(fileName);
 		}
 
 		public void setTableModel(TableModel model) {
@@ -1345,10 +1374,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 					if (((String)selected[0]).equals(dataTypes[RPKM])) {
 						needSampleLibSize = true;
 						needCountAndExp = false;
-						String fileTypeChoices = "<html> Select library Size file <br/>(Required) </html>";
+						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.RED);
 						fileSelectionLabel.setText(fileTypeChoices);
-						//System.out.println("Data Type: RPKM");
+						System.out.println("Data Type: RPKM");
 						// "FPKM & DGE"
 					} else if (((String)selected[0]).equals(dataTypes[FPKM_AND_COUNT])) {
 						needSampleLibSize = false;
@@ -1357,7 +1386,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
 						fileSelectionLabel.setText(fileTypeChoices);
-						//System.out.println("Data Type: FPKM & DGE");
+						System.out.println("Data Type: FPKM & DGE");
 						// "DGE Count", "RPKM & DGE"
 					} else { 
 						needSampleLibSize = false;
@@ -1365,7 +1394,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
 						fileSelectionLabel.setText(fileTypeChoices);
-						//System.out.println("Data Type: " + "DGE Count, RPKM & DGE");
+						System.out.println("Data Type: " + "Count, RPKM & DGE");
 					}
 				} else if (source == speciesCombo) {
 					ItemSelectable is = (ItemSelectable)source;

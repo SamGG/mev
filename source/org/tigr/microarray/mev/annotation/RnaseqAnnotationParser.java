@@ -152,7 +152,7 @@ public class RnaseqAnnotationParser {
 			
 			if(probeID!=null) {
 				// Check if key exist by the name
-				if (probeID.equals("NM_031921"))
+				//if (probeID.equals("NM_031921"))
 					//System.out.println("NM_031921 found and loaded");
 				if(annoHash.containsKey(probeID)) {
 					annoHash.get(probeID).add(annotationObj);
@@ -171,15 +171,15 @@ public class RnaseqAnnotationParser {
 		}
 		
 		// TODO Denug only
-		// TBR
+		/* TBR
 		int annoCount = 0;
 		Enumeration<String> en = annoHash.keys();
 		while(en.hasMoreElements()) {
 			String t = (String)en.nextElement();
 			annoCount += ((ArrayList<MevAnnotation>)annoHash.get(t)).size();
 		}
-		//System.out.println("Annotaiton DB HashSize, size: " + annoHash.size() + " #of keys with List " + annoCount);
-		// End Debug
+		System.out.println("Annotaiton DB HashSize, size: " + annoHash.size() + " #of keys with List " + annoCount);
+		*/ //End Debug
 	}
 
 	private String parseChr(String temp) {
