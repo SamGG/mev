@@ -47,7 +47,6 @@ import org.tigr.util.DoubleArray;
 import org.tigr.util.awt.ActionInfoEvent;
 import org.tigr.util.awt.ActionInfoListener;
 import org.tigr.util.awt.BoundariesDialog;
-import org.tigr.util.awt.GBA;
 import org.tigr.util.awt.PValueCutoff;
 
 public class PValueGraphViewer extends JPanel implements IViewer {
@@ -59,7 +58,6 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	private String yLabel;
 	private String subTitle;
 	private EventListener eventListener;
-	private GBA gba;
 	private Vector graphElements;
 	private double graphstartx;
 	private double graphstopx;
@@ -228,14 +226,14 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	        
 	    }
 	   
-
+	 static int test = 0;
 	public void paint(Graphics g) {
 	
 		super.paint(g);
 		Graphics2D g2 =  (Graphics2D)g;
 		GraphElement e;
 		FontMetrics metrics = g2.getFontMetrics();
-		
+
 		
 		//Try setting these values here. You have pretty much all required info now.
 		this.preXSpacing=getLeftMargin(g2);
@@ -243,10 +241,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		this.postXSpacing=20;
 		//Space where the Title of the graph is displayed
 		this.preYSpacing=50;
-		
-		
-		updateSize();
-	
+//		updateSize();  //removed by Dan 5/16/11.  Caused recursive loop, had no recognizable purpose.
 		
 		gl = new GraphLine(0, 0, graphstopx, 0, Color.BLACK);
 		graphElements.add(gl);
@@ -259,7 +254,6 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		for (int i = 0; i < graphstopx; i++) {
 			// GraphPoint is used to draw the actual data points in the graph
 			// (blue colored dots)
-		//	System.out.println("GraphPoint:"+pVals[i][1]);
 			gp = new GraphPoint(i + 1, ((Float)this.pValueArray[i]).doubleValue(),
 					Color.blue, 3);
 			graphElements.add(gp);
@@ -273,14 +267,12 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 			NumberFormat nf = NumberFormat.getInstance();
 			nf.setMaximumFractionDigits(2);
 
-			// System.out.println(nf.format(i));
 			gt = new GraphTick(i, 8, Color.black, GC.VERTICAL, GC.C, nf
 					.format(i), Color.black);
 			graphElements.add(gt);
 		}
 
 		for (int i = 0; i < graphstopx; i++) {
-		//	System.out.println("Graphtick:"+pVals[i][0]);
 			gt = new GraphTick(i + 1, 8, Color.black, GC.HORIZONTAL, GC.C,
 					(String)geneSetNames[i], Color.black);
 			graphElements.add(gt);
@@ -304,12 +296,10 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 				drawLine(g2, (GraphLine) e);
 		}
 
-	 
+
 	 if (referenceLinesOn) { // Grid tracing is active
 			int x = getXOldEvent();
 			int y = getYOldEvent();
-			//System.out.println("value of x is:"+x);
-			//System.out.println("value of y is:"+y);
 			int coordinateWidth;
 			double xVal = 0;
 			double yVal = 0;
@@ -357,7 +347,6 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 		drawYLabel(g2, yLabel, Color.black);
 		drawTitle(g2, title, Color.black);
 		
-
 		
 	}
 	
@@ -365,22 +354,24 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	 /**
      * Updates size of this viewer.
      */
-    private void updateSize() {
-        setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
-        Graphics2D g = (Graphics2D)getGraphics();
-        
-       // int width = elementSize.width*this.pVals.length + 1 + insets.left;
-        int width = this.geneSetNames.length*10 + 1 + insets.left;
-        this.contentWidth = width;
-        
-        //Height would be more importtant here, since the gene set labels are shown vertically
-        //int height = elementSize.height*this.pVals.length+1;
-        int height = getBottomMargin(g)+100*5+1+20;
-        setSize(width, height);
-     
-       	setPreferredSize(new Dimension(width, height));
-       	
-    }
+//	commented out by Dan 5/16/11.  Caused recursive loop, had no recognizable purpose.
+	
+//    private void updateSize() {
+//        setFont(new Font("monospaced", Font.PLAIN, elementSize.height));
+//        Graphics2D g = (Graphics2D)getGraphics();
+//        
+//       // int width = elementSize.width*this.pVals.length + 1 + insets.left;
+//        int width = this.geneSetNames.length*10 + 1 + insets.left;
+//        this.contentWidth = width;
+//        
+//        //Height would be more importtant here, since the gene set labels are shown vertically
+//        //int height = elementSize.height*this.pVals.length+1;
+//        int height = getBottomMargin(g)+100*5+1+20;
+//        setSize(width, height);
+//     
+//       	setPreferredSize(new Dimension(width, height));
+//       	
+//    }
     
     
     
@@ -431,16 +422,6 @@ public class PValueGraphViewer extends JPanel implements IViewer {
     	return (fm.stringWidth(getYLabel()));
     	
     }
-    
-    
-    /**
-     * Returns content width
-     */
-    public int getContentWidth(){
-    	updateSize();
-        return contentWidth;
-    }
-
     
     
 
@@ -874,7 +855,7 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	                        
 	                        setXAxisValue(graphstarty);
 	                        setYAxisValue(graphstartx);
-	                        
+
 	                        repaint();
 	                    }
 	                });
@@ -906,7 +887,6 @@ public class PValueGraphViewer extends JPanel implements IViewer {
 	            			}else{
 	            				graphstopx=(double)(index+1);
 	            			}
-	            			
 	            			repaint();
 	            		}
 	            		
