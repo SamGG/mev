@@ -109,6 +109,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 	private int dataType = IData.DATA_TYPE_RNASEQ;
 	//private int dataType = IData.DATA_TYPE_AFFY_ABS;
 
+	private boolean loadEnabled = false;
 	private boolean stop = false;
 	private RnaSeqFileLoaderPanel sflp;
 	ExpressionFileTableCellRenderer myCellRenderer;
@@ -237,6 +238,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			//e1.printStackTrace();
 			return null;
 		}
+		
 		//System.out.println("Selected Data Format: " + dataTypes[dataFormat]);
 
 		int notFoundCtr = 0;
@@ -254,21 +256,21 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 
 			// if null or not present setup libsize table in another way.
 			//if (libSizeTable == null) {
-				//System.out.println("libSizeTable is NULL: ");
-				//switch(dataFormat) {
-				//case RPKM:
-					//JOptionPane.showMessageDialog(superLoader.getFrame(),  
-							//"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
-					//return null;
-				//case COUNT:
-				//case RPKM_AND_COUNT:
-				//case FPKM_AND_COUNT:
-					libSizeTable = calculateLibSize(dataFormat, f, preExperimentColumns, preSpotRows);
-					//break;
-				//}
+			//System.out.println("libSizeTable is NULL: ");
+			//switch(dataFormat) {
+			//case RPKM:
+			//JOptionPane.showMessageDialog(superLoader.getFrame(),  
+			//"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
+			//return null;
+			//case COUNT:
+			//case RPKM_AND_COUNT:
+			//case FPKM_AND_COUNT:
+			libSizeTable = calculateLibSize(dataFormat, f, preExperimentColumns, preSpotRows);
+			//break;
+			//}
 			//} else {
-				System.out.println("libSizeTable not NULL: ");
-				System.out.println("libSizeTable: " + libSizeTable.entrySet());
+			System.out.println("libSizeTable not NULL: ");
+			System.out.println("libSizeTable: " + libSizeTable.entrySet());
 			//}
 		}
 
@@ -283,7 +285,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		System.out.println("_tempAnno Size: "+ _tempAnno.size());
 		//System.out.println(_tempAnno.entrySet());
 		//TMEV.pause();
-		
+
 		chipAnno.setChipName(sflp.getGenome() + "_" + sflp.getSpecies());
 		chipAnno.setChipType(sflp.getGenome() + "_" + sflp.getSpecies());
 		// TODO correctly
@@ -443,10 +445,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 					//transcript length
 					int len = 0;
 					try {
-					len = mevAnno.getProbeTxLengthInBP();
+						len = mevAnno.getProbeTxLengthInBP();
 					} catch (Exception c) {
 						if (mevAnno == null)
-						System.out.println("mevAnno is NULL");
+							System.out.println("mevAnno is NULL");
 						return null;
 						//TMEV.pause();
 					}
@@ -669,6 +671,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 					try {
 						switch(dataFormat) {
 						case UNDEF:
+							throw new Exception("Select valid format");
 						case RPKM:
 							break;
 						case COUNT:
@@ -917,10 +920,15 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return mevFileFilter;
 	}
 
+    public void markLoadEnabled(boolean state) {
+        loadEnabled = state;
+        checkLoadEnable();
+    }
+    
 	public boolean checkLoadEnable() {
 
 		// Currently, the only requirement is that a cell has been highlighted
-
+		System.out.println("RNASeq Loader checkLoadEnable()");
 		int tableRow = sflp.getXRow() + 1; // Adjusted by 1 to account for the table header
 		int tableColumn = sflp.getXColumn();
 
@@ -932,12 +940,6 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			//  System.out.print(model.getColumnName(i) + (i + 1 == tableColumn ? "\n" : ", "));
 			fieldSummary += model.getColumnName(i) + (i + 1 == tableColumn ? "" : ", ");
 		}
-
-		//TODO Remove
-		//if (!sflp.twoColorArray.isSelected() & !sflp.singleColorArray.isSelected()) {
-		//String eMsg = "<html>Please select an array type..<br>";
-		//JOptionPane.showMessageDialog(null, eMsg, "Warning", JOptionPane.INFORMATION_MESSAGE);
-		//}
 
 		if (tableRow >= 1 && tableColumn >= 0) {
 			setLoadEnabled(true);
@@ -960,14 +962,16 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		sflp.setLibSizeFileName(fileName);
 	}
 	public void processStanfordFile(File targetFile) {
-
+		if (! validateFile(targetFile)) return;
+		//TODO
+		
 		Vector<String> columnHeaders = new Vector<String>();
 		Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
 		Vector<String> rowVector = null;
 		BufferedReader reader = null;
 		String currentLine = null;
 
-		if (! validateFile(targetFile)) return;
+		
 
 		sflp.setFileName(targetFile.getAbsolutePath());
 
@@ -1053,6 +1057,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return false;
 	}
 
+	
 	private class RnaSeqFileLoaderPanel extends JPanel {
 		String species [] = {"Select", "Human", "Mouse"};
 		String refGenome [] = {"Select", "RefSeq", "ENSEMBL"};
@@ -1364,6 +1369,13 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			public void actionPerformed(ActionEvent event) {
 				Object source = event.getSource();
 				if (source == browseButton1) {
+					if (sflp.getSelectedDataFormat()== UNDEF || sflp.getSpecies().equalsIgnoreCase("Select") || 
+							sflp.getGenome().equalsIgnoreCase("Select")) {
+						String eMsg = "<html>Required Fields(RED) may be not have been selected<br></html";
+						JOptionPane.showMessageDialog(null,
+								eMsg, "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					} 
 					onBrowse();
 				} else if (source == browseButton2) {
 					onBrowse2();
@@ -1399,14 +1411,14 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 				} else if (source == speciesCombo) {
 					ItemSelectable is = (ItemSelectable)source;
 					Object selected[] = is.getSelectedObjects();
-					//"HUman"
+					//"Human"
 					if (((String)selected[0]).equals(species[1])) {
 						bldCombo.removeAllItems();
 						for(int i = 0; i < hgGenomeBlds.length; i++) {
 							bldCombo.addItem(hgGenomeBlds[i]);
 						}
 					} 
-					// MOuse
+					// Mouse
 					else if (((String)selected[0]).equals(species[2])) {
 						bldCombo.removeAllItems();
 						for(int i = 0; i < mmGenomeBlds.length; i++) {
