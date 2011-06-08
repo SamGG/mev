@@ -47,6 +47,7 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.impl.edger.EDGERInitBox;
 import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.rp.RPExperimentViewer;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
@@ -109,11 +110,8 @@ public class DESEQGUI implements IClusterGUI, IScriptGUI {
         DESEQInitBox DESEQDialog = new DESEQInitBox(
         		(JFrame)framework.getFrame(), 
         		true, 
-        		exptNamesVector
-        		//framework.getClusterRepository(
-        				//org.tigr.microarray.mev.cluster.clusterUtil.Cluster.EXPERIMENT_CLUSTER), 
-        		//framework.getClusterRepository(
-        				//org.tigr.microarray.mev.cluster.clusterUtil.Cluster.GENE_CLUSTER)
+        		exptNamesVector,
+        		framework.getClusterRepository(1)
         		);
         DESEQDialog.setVisible(true);
         
@@ -122,14 +120,17 @@ public class DESEQGUI implements IClusterGUI, IScriptGUI {
         sigMethod = DESEQDialog.getCutOffField();
 		sigCutOff = DESEQDialog.getPValue();
         dataDesign=DESEQDialog.getTestDesign();
-        //if (DESEQDialog.getTestDesign()==DESEQInitBox.ONE_CLASS){
-	        //if (DESEQDialog.getSelectionDesign()==DESEQInitBox.CLUSTER_SELECTION){
-	        	//groupAssignments=DESEQDialog.getClusterOneClassAssignments();
-	        //}
+        
 	        if (DESEQDialog.getTestDesign()==DESEQInitBox.TWO_CLASS){
 	        	groupAssignments=DESEQDialog.getTwoClassAssignments();
+	        	if (DESEQDialog.getSelectionDesign()==DESEQInitBox.CLUSTER_SELECTION){
+		        	groupAssignments=DESEQDialog.getClusterTwoClassAssignments();
+		        }
+		        if (DESEQDialog.getSelectionDesign()==DESEQInitBox.BUTTON_SELECTION){
+		        	groupAssignments=DESEQDialog.getTwoClassAssignments();
+		        }
 	        }
-        //}
+      
         
         // count # of samples used in analysis
         int samplesUsed = 0;
@@ -373,8 +374,8 @@ public class DESEQGUI implements IClusterGUI, IScriptGUI {
         DESEQInitBox DESEQDialog = new DESEQInitBox(
         		(JFrame)framework.getFrame(), 
         		true, 
-        		exptNamesVector//,
-        		//framework.getClusterRepository(1),
+        		exptNamesVector,
+        		framework.getClusterRepository(1)
         		//framework.getClusterRepository(0)
         		);
         DESEQDialog.setVisible(true);

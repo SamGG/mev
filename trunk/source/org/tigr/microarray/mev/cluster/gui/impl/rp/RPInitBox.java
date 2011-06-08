@@ -211,9 +211,7 @@ public class RPInitBox extends AlgorithmDialog {
                 try {
                     oneClassPanel = new ExperimentsPanel(exptNames, 1);
                     twoClassPanel = new ExperimentsPanel(exptNames, 2);
-                    
-                    
-                    
+                                       
                     oneClassClusterSelector= new ClusterSelector(repository,1, "Samples");
                     if (repository!=null){
                     	oneClassClusterSelector.setClusterType("Experiment");

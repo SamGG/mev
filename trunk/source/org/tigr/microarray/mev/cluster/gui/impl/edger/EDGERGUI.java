@@ -17,7 +17,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Vector;
 
@@ -48,7 +47,6 @@ import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.util.FloatMatrix;
 
-//import cern.colt.Arrays;
 
 /**
  *
@@ -110,7 +108,8 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 		EDGERInitBox EDGERDialog = new EDGERInitBox(
 				(JFrame)framework.getFrame(), 
 				true, 
-				exptNamesVector
+				exptNamesVector,
+				framework.getClusterRepository(1)
 		);
 		EDGERDialog.setVisible(true);
 
@@ -122,7 +121,12 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 		dataDesign=EDGERDialog.getTestDesign();
 	
 		if (EDGERDialog.getTestDesign()==EDGERInitBox.TWO_CLASS){
-			groupAssignments=EDGERDialog.getTwoClassAssignments();
+			if (EDGERDialog.getSelectionDesign()==EDGERInitBox.CLUSTER_SELECTION){
+	        	groupAssignments=EDGERDialog.getClusterTwoClassAssignments();
+	        }
+	        if (EDGERDialog.getSelectionDesign()==EDGERInitBox.BUTTON_SELECTION){
+	        	groupAssignments=EDGERDialog.getTwoClassAssignments();
+	        }
 		}
 		
 		// count # of samples used in analysis
@@ -360,8 +364,8 @@ public class EDGERGUI implements IClusterGUI, IScriptGUI {
 		EDGERInitBox EDGERDialog = new EDGERInitBox(
 				(JFrame)framework.getFrame(), 
 				true, 
-				exptNamesVector//,
-				//framework.getClusterRepository(1),
+				exptNamesVector,
+				framework.getClusterRepository(1)
 				//framework.getClusterRepository(0)
 		);
 		EDGERDialog.setVisible(true);

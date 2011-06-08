@@ -342,6 +342,27 @@ public class RHook  {
 	}
 
 	/**
+	 * Alternative to testPackage().
+	 * This saves the overhead of maintaining the pkgs locally and depends entirely
+	 * on BioC to install pkg and all its dependencies.
+	 * 
+	 * @param modName
+	 * @throws Exception
+	 */
+	public static void installModule(String modName) throws Exception {
+		REXP x = evalR("which(as.character(installed.packages()[,1])=='"+modName.trim()+"')");
+		if(x.asInt() != 0 ) {
+			System.out.println(modName + " Package Installed");
+			logger.writeln(modName + " Package ALready Installed");
+		}
+		else {
+			evalR("source(\"http://www.bioconductor.org/biocLite.R\")");
+			evalR("biocLite(\"" +modName.trim()+"\")");
+			logger.writeln(modName + " Package Installed from BioC");
+		}
+	}
+
+	/**
 	 * Test if R packages for a module are available and installed
 	 * @param pkgName
 	 * @throws Exception
@@ -1306,7 +1327,7 @@ public class RHook  {
 		//System.out.println(" 2. " + dateString);
 		return dateString;
 	}
-	
+
 	/**
 	 * Return log File path for RHook
 	 * @return

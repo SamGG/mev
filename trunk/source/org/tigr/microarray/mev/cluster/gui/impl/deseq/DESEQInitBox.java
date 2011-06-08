@@ -31,6 +31,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
@@ -53,9 +54,13 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
+import org.tigr.microarray.mev.cluster.gui.impl.edger.EDGERInitBox;
 import org.tigr.microarray.mev.cluster.gui.impl.kmc.KMCInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.rp.RPInitBox;
 
 /**
  *
@@ -89,7 +94,7 @@ public class DESEQInitBox extends AlgorithmDialog {
     //EstimatorPanel estimatorPanel;
     //DiscretizationPanel discretizationPanel;
     //HCLSigOnlyPanel hclOpsPanel;
-    //ClusterRepository experimentClusterRepository;
+    ClusterRepository repository;
     //ClusterRepository geneClusterRepository;
     //ClusterBrowser browser;
     
@@ -97,13 +102,13 @@ public class DESEQInitBox extends AlgorithmDialog {
     public DESEQInitBox(
     		JFrame parentFrame, 
     		boolean modality, 
-    		Vector<String> exptNames
-    		//ClusterRepository experimentClusterRepository, 
+    		Vector<String> exptNames,
+    		ClusterRepository experimentClusterRepository
     		//ClusterRepository geneClusterRepository
     		) {
         super(parentFrame, "DESeq Initialization", modality);
         this.exptNames = exptNames;  
-        //this.experimentClusterRepository = experimentClusterRepository;
+        this.repository = experimentClusterRepository;
         //this.geneClusterRepository = geneClusterRepository;
         setBounds(0, 0, 600, 700);
         setBackground(Color.white);
@@ -123,16 +128,6 @@ public class DESEQInitBox extends AlgorithmDialog {
         pPanel = new PValuePanel();
         paramsPane.add(pPanel);
         
-        //methodsPanel = new MethodsPanel();
-        //paramsPane.add( methodsPanel);
-        
-        //estimatorPanel = new EstimatorPanel();
-        //paramsPane.add(estimatorPanel);
-        
-        //discretizationPanel = new DiscretizationPanel();
-        //paramsPane.add(discretizationPanel);
-        
-		
 		JTabbedPane consolidatedPane = new JTabbedPane(); 
 		consolidatedPane.add("Parameters", paramsPane);
 		 
@@ -199,9 +194,9 @@ public class DESEQInitBox extends AlgorithmDialog {
         //TwoClassPairedMainPanel pairedPanel;
         //JTabbedPane chooseDesignPane;
         //JTabbedPane oneClassmulg;
-        //JTabbedPane twoClassmulg;
+        JTabbedPane twoClassmulg;
         //ClusterSelector oneClassClusterSelector;
-        //ClusterSelector twoClassClusterSelector;
+        ClusterSelector twoClassClusterSelector;
         float alpha;
         
         public MainPanel() {
@@ -216,8 +211,13 @@ public class DESEQInitBox extends AlgorithmDialog {
                    
                     twoClassPanel = new ExperimentsPanel(exptNames, 2);
                     
-                    JPanel oneClassClusterSelectorPanel = new JPanel();
-                    oneClassClusterSelectorPanel.setLayout(new GridBagLayout());
+                    twoClassClusterSelector= new ClusterSelector(repository, 2, "Samples");
+                    if (repository!=null){
+                    	twoClassClusterSelector.setClusterType("Experiment");
+            		}
+
+                    JPanel twoClassClusterSelectorPanel = new JPanel();
+                    twoClassClusterSelectorPanel.setLayout(new GridBagLayout());
                     
                     GridBagConstraints c = new GridBagConstraints();
                     c.fill = GridBagConstraints.BOTH;
@@ -227,12 +227,20 @@ public class DESEQInitBox extends AlgorithmDialog {
                     c.gridy = 1;
                     c.gridwidth = 1;
                     c.anchor = GridBagConstraints.PAGE_END;
+                    twoClassClusterSelectorPanel.add(twoClassClusterSelector, c);
+                    
+                    twoClassmulg = new JTabbedPane();
+                    twoClassmulg.add("Button Selection", twoClassPanel);
+                    twoClassmulg.add("Cluster Selection", twoClassClusterSelectorPanel);
+                    twoClassmulg.setSelectedIndex(1);//set to be cluster selection
+                    if (repository==null||repository.isEmpty())
+                    	twoClassmulg.setSelectedIndex(0);
                                         
                     buildConstraints(constraints, 1, 0, 1, 3, 100, 100);
                     constraints.fill = GridBagConstraints.BOTH;
                     
-                    gridbag.setConstraints(twoClassPanel, constraints);
-                    MainPanel.this.add(twoClassPanel);
+                    gridbag.setConstraints(twoClassmulg, constraints);
+                    MainPanel.this.add(twoClassmulg);
                     MainPanel.this.validate();
                 
             
@@ -784,7 +792,11 @@ public class DESEQInitBox extends AlgorithmDialog {
                     if (getTestDesign()==DESEQInitBox.ONE_CLASS){
 	                   
                     } else if(getTestDesign()==DESEQInitBox.TWO_CLASS){
-	                    inGroupAssignments=getTwoClassAssignments();
+                    	if (getSelectionDesign()==DESEQInitBox.CLUSTER_SELECTION){
+	                    	inGroupAssignments=getClusterTwoClassAssignments();
+	                    }else{
+	                    	inGroupAssignments=getTwoClassAssignments();
+	                    }
 	                    int grpA=0;
 	                    int grpB=0;
 	                    for (int i=0; i<inGroupAssignments.length; i++){
@@ -819,6 +831,36 @@ public class DESEQInitBox extends AlgorithmDialog {
         }
     }
     
+    public int[] getClusterTwoClassAssignments(){
+    	boolean doubleAssigned;
+    	int[]groupAssignments = new int[exptNames.size()];
+    	ArrayList[] arraylistArray = new ArrayList[2];
+    	for (int i=0; i<2; i++){
+    		int j = i+1;
+    		arraylistArray[i] = mPanel.twoClassClusterSelector.getGroupSamples("Samples "+j);
+    		
+    	}
+    	for (int i = 0; i < exptNames.size(); i++) {
+    		doubleAssigned = false;
+    		groupAssignments[i] = 0;
+    		for (int j = 0;j<2;j++){
+	    		if (arraylistArray[j].contains(i)){
+	    			if (doubleAssigned){
+	    		        Object[] optionst = { "OK" };
+	    				JOptionPane.showOptionDialog(null, 
+	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
+	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+	    						optionst, optionst[0]);
+	    				return null;
+	    			}
+	    			groupAssignments[i] = j+1;
+	    			doubleAssigned = true;
+	    		}
+    		}
+        }
+    	return groupAssignments;
+    }
+    
     public int[] getTwoClassAssignments() {
         int[] groupAssignments = new int[exptNames.size()];
         
@@ -846,6 +888,20 @@ public class DESEQInitBox extends AlgorithmDialog {
         return design;
     }
     
+    public int getSelectionDesign() {
+        int design = -1;
+        if (getTestDesign()==RPInitBox.ONE_CLASS){
+	        
+        }else if(getTestDesign()==RPInitBox.TWO_CLASS){
+        	if (mPanel.twoClassmulg.getSelectedIndex() == 0) {
+	        	design = RPInitBox.BUTTON_SELECTION;
+	        } else {
+	        	design = RPInitBox.CLUSTER_SELECTION;
+	        }
+        }
+        return design;
+    }
+    
     public float getPValue() {
         return Float.parseFloat(pPanel.pValueInputField.getText());
     }
@@ -865,7 +921,7 @@ public class DESEQInitBox extends AlgorithmDialog {
         }
         dummyVect.add("Exptsdfsdfsgwegsgsgsd");
         
-        DESEQInitBox oBox = new DESEQInitBox(dummyFrame, true, dummyVect);
+        DESEQInitBox oBox = new DESEQInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
         System.out.println("end");
         System.exit(0);

@@ -253,36 +253,18 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			}
 		}
 		else {
-
-			// if null or not present setup libsize table in another way.
-			//if (libSizeTable == null) {
-			//System.out.println("libSizeTable is NULL: ");
-			//switch(dataFormat) {
-			//case RPKM:
-			//JOptionPane.showMessageDialog(superLoader.getFrame(),  
-			//"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
-			//return null;
-			//case COUNT:
-			//case RPKM_AND_COUNT:
-			//case FPKM_AND_COUNT:
 			libSizeTable = calculateLibSize(dataFormat, f, preExperimentColumns, preSpotRows);
-			//break;
-			//}
-			//} else {
-			System.out.println("libSizeTable not NULL: ");
-			System.out.println("libSizeTable: " + libSizeTable.entrySet());
-			//}
+			//System.out.println("libSizeTable not NULL: ");
+			//System.out.println("libSizeTable: " + libSizeTable.entrySet());
 		}
 
 		//TMEV.pause();
-		// TODO
-		// TBC
 		// This is the place to load Flat File Based RefSeq Or ENSMBEL 
 		// annotation into _tempAnno and chipAnno
 		RnaseqAnnotationParser rnaseqAnnoParser = RnaseqAnnotationParser.createAnnotationFileParser(
 				new File(getPathFromSpeciesAndGenome()));
 		_tempAnno = rnaseqAnnoParser.getAnnotation();
-		System.out.println("_tempAnno Size: "+ _tempAnno.size());
+		//System.out.println("_tempAnno Size: "+ _tempAnno.size());
 		//System.out.println(_tempAnno.entrySet());
 		//TMEV.pause();
 
@@ -897,7 +879,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		"_gene_" +
 		sflp.getBuild().toLowerCase() +
 		".txt";
-		System.out.println("Anni File: " + path + filename);
+		//System.out.println("Anni File: " + path + filename);
 		//TMEV.pause();
 		return path + filename;
 	}
@@ -928,7 +910,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 	public boolean checkLoadEnable() {
 
 		// Currently, the only requirement is that a cell has been highlighted
-		System.out.println("RNASeq Loader checkLoadEnable()");
+		//System.out.println("RNASeq Loader checkLoadEnable()");
 		int tableRow = sflp.getXRow() + 1; // Adjusted by 1 to account for the table header
 		int tableColumn = sflp.getXColumn();
 
@@ -1389,7 +1371,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.RED);
 						fileSelectionLabel.setText(fileTypeChoices);
-						System.out.println("Data Type: RPKM");
+						//System.out.println("Data Type: RPKM");
 						// "FPKM & DGE"
 					} else if (((String)selected[0]).equals(dataTypes[FPKM_AND_COUNT])) {
 						needSampleLibSize = false;
@@ -1398,7 +1380,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
 						fileSelectionLabel.setText(fileTypeChoices);
-						System.out.println("Data Type: FPKM & DGE");
+						//System.out.println("Data Type: FPKM & DGE");
 						// "DGE Count", "RPKM & DGE"
 					} else { 
 						needSampleLibSize = false;
@@ -1406,7 +1388,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
 						fileSelectionLabel.setText(fileTypeChoices);
-						System.out.println("Data Type: " + "Count, RPKM & DGE");
+						//System.out.println("Data Type: " + "Count, RPKM & DGE");
 					}
 				} else if (source == speciesCombo) {
 					ItemSelectable is = (ItemSelectable)source;
