@@ -17,6 +17,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 
 import org.rosuda.JRI.REXP;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.minet.MINETInitBox;
@@ -184,7 +185,11 @@ public class MINET extends AbstractAlgorithm{
 		
 		try {
 			//System.out.println("Testing MINET install");
-			RHook.testPackage("minet");
+			if (RHook.getOS()==RConstants.MAC_OS){
+				RHook.testPackage("minet");
+			} else {
+				RHook.installModule("minet");
+			}
 			//System.out.println("Loading Lib LIMMA");
 			//RHook.log("dataDesign = " + dataDesign);
 			RHook.log("Starting R Algorithim");
