@@ -11,8 +11,8 @@
   <stayAlive>false</stayAlive>
   <manifest></manifest>
   <icon>icon.ico</icon>
-  <var>R_HOME=%EXEDIR%\\R-2.9.1</var>
-  <var>PATH=PATH;%EXEDIR%\\R-2.9.1\\bin;%EXEDIR%\\R-2.9.1\\lib</var>
+  <var>R_HOME=%EXEDIR%\\R-2.11.1</var>
+  <var>PATH=PATH;%EXEDIR%\\R-2.11.1\\bin;%EXEDIR%\\R-2.11.1\\lib</var>
   <var>launch4j=debug</var>
   <jre>
     <path></path>
