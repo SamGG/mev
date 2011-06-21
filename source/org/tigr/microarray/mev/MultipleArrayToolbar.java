@@ -250,12 +250,13 @@ public class MultipleArrayToolbar extends JToolBar {
 		if (isRNASeq){
 			steppedComboArray[6].removeItemAt(3); //BN
 			steppedComboArray[6].removeItemAt(2); //LM
-			steppedComboArray[4].removeItemAt(2); //EASE
+			steppedComboArray[4].removeItemAt(3); //EASE
 			return;
 		}
-		steppedComboArray[1].removeItemAt(16); //DEGSEQ
-		steppedComboArray[1].removeItemAt(15); //DESEQ
-		steppedComboArray[1].removeItemAt(14); //EDGER
+		steppedComboArray[4].removeItemAt(2);  //GOSEQ
+		steppedComboArray[1].removeItemAt(13); //EDGER
+		steppedComboArray[1].removeItemAt(13); //DESEQ
+		steppedComboArray[1].removeItemAt(13); //DEGSEQ
 		//steppedComboArray[1].removeItemAt(9);  //GOSEQ
 	}
 	

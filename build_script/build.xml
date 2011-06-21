@@ -1335,7 +1335,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<entry key="gui.names" value="GOSEQ:" operation="+"/>
             <entry key="GOSEQ.name" value="GOSEQ"/>
             <entry key="GOSEQ.class" value="org.tigr.microarray.mev.cluster.gui.impl.goseq.GOSEQGUI"/>
-	  	<entry key="GOSEQ.category" value="${STATISTICS}"/> 
+	  	<entry key="GOSEQ.category" value="${META_ANALYSIS}"/> 
 	  	<entry key="GOSEQ.smallIcon" value="analysis16.gif"/>
             <entry key="GOSEQ.largeIcon" value="GOSEQ_button.gif"/>
             <entry key="GOSEQ.tooltip" value="Gene Ontology Analysis for RNA-seq"/>
