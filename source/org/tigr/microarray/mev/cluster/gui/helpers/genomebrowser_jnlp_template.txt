@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp
-  codebase="http://gaggle.systemsbiology.net/2007-04/jars/genomebrowser/"
+  codebase="http://gaggle.systemsbiology.net/2007-04/genomebrowser/"
   href="genomebrowser.jnlp">
   <information>
     <title> Genome Browser </title>
@@ -15,11 +15,11 @@
   <resources>
     <j2se version="1.5+" max-heap-size="512M"/>
     <jar href="/2007-04/jars/genomebrowser/0.9/genomebrowser.jar"/>
-    <jar href="/2007-04/jars/genomebrowser/0.9/colorpicker.jar"/>
-    <jar href="/2007-04/jars/genomebrowser/0.9/gaggle.jar"/>
-    <jar href="/2007-04/jars/genomebrowser/0.9/glazedlists-1.8.0_java15.jar"/>
     <jar href="/2007-04/jars/genomebrowser/0.9/log4j-1.2.14.jar"/>
-    <jar href="/2007-04/jars/genomebrowser/0.9/sqlitejdbc-v052.jar"/>
+    <jar href="/2007-04/jars/genomebrowser/0.9/gaggle.jar"/>
+    <jar href="/2007-04/jars/genomebrowser/0.9/sqlitejdbc-v056.jar"/>
+    <jar href="/2007-04/jars/genomebrowser/0.9/colorpicker.jar"/>
+    <jar href="/2007-04/jars/genomebrowser/0.9/glazedlists-1.8.0_java15.jar"/>
   </resources>
   <application-desc>    
   @args@
