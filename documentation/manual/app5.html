@@ -8,18 +8,60 @@
 		<body>
 <div class="navigation-bar"><a  class="prev" href="app4.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app6.html">Next: Appendix-Bayesian Network & Literature Mining </a></div>
 	<h3>Appendix:  MeV R Integration</h3>
-		<p>MeV has integrated a R (CRAN) hook where by R functions and libraries can be called within the Java instance using shared libraries. Mev developed a library around the JRI (rForge) API which uses JNI, to make this happen. The user in *most cases would not have to set up or configure anything to run R dependent modules and it should be completely transparent. Please also note that MeV does not produce a command line interface to run R commands. This integration was done to leverage the R environment where many algorithms are readily available and does not need to be re-implemented in Java. MeV would use R internally as appropriate and the user should not expect to see any change in behavior of MeV.</p>
+	<p>MeV has integrated a R (CRAN) hook where by R functions and libraries can be called within the Java instance using shared libraries. Mev developed a library around the JRI (rForge) API which uses JNI, to make this happen. The user in *most cases would not have to set up or configure anything to run R dependent modules and it should be completely transparent. Please also note that MeV does not produce a command line interface to run R commands. This integration was done to leverage the R environment where many algorithms are readily available and does not need to be re-implemented in Java. MeV would use R internally as appropriate and the user should not expect to see any change in behavior of MeV.</p>
+
+	
 	<p>**Notes**</p>
-		<ol>
+	<ol>
   <li>On Windows and Mac OS X (10.6) where the default JVM is 64 Bit, the user will be thrown a warning to change to 32 bit JVM. This is required because the API is not ready for 64 Bit environment yet and we are working on a solution. However once the default JVM is set to 32 Bit, the R dependent modules would run. To help the users setup the 32 bit JVM we will be providing help and assistance to do the following:
     <ol type="a">
     <li>On Windows: To install 32 Bit Java if not already installed and to modify the launch script TMEV.sh to point to it.</li>
     <li>On Mac OS X we would provide instructions on how to set up 32bit JVM as default. The default in OS X 10.6 (Snow leopard is 64 bit).</li>
     </ol>
   </li>
-  <li>On Mac we expect the user to have R 2.9.x universal binary installed in the Application Framework. We do not expect such for Windows and Linux systems.</li>
+  <li>On Mac we expect the user to have R 2.11.1 universal binary installed in the Application Framework. We do not expect such for Windows and Linux systems.</li>
   <li>Please use MeV <a href="http://sourceforge.net/projects/mev-tm4/forums">SourceForge</a> page for submitting queries, questions and issues. We have set up a page for this particular JVM issue named <a href="http://sourceforge.net/projects/mev-tm4/forums/forum/378852/topic/3451531">R MeV Integration, JVM issues</a>.</p>
   </ol>
-<div class="navigation-bar"><a  class="prev" href="app4.html">Previous:Appendix-Distance Metrics</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app6.html">Next: Appendix-Bayesian Network & Literature Mining </a></div>
+  
+	<h4>Multiple R Versions on a Mac</h4>
+  	<p>MeV for Mac OS requires that R2.11 be pre-installed. For users who already have another version of R installed, this requirement sometimes presents a difficulty as Macs generally do not allow two versions of the same program to be installed alongside one another. We recommend using the <a href="http://r.research.att.com/#other">RSwitch</a> utility to overcome this problem.</p>
+	<p>Windows users do not have this restriction; an appropriate version of R comes bundled with MeV for Windows. This R instance will not interfere with other installed copies of R. </p>
+	
+	<pre>  
+** RSwitch: 
+      Util from http://r.research.att.com/#other 
+      to switch between different version of R installed on MAC OS X
+      
+      After evry install remember to use appropriate method described
+      below to setup next version of install as a separate install
+      instead of an upgrade of the previous install.
+
+** OS X 10.4 Tiger & OS X 10.5 Leopard
+      Remove /Library/Receipts/R-Framework.pkg for fresh install and 
+      to avoid an upgrade.
+      rm -rf /Library/Receipts/R-Framework.pkg
+
+** OS X 10.5 and higher you have to use 
+   ** For 32/64 Bit Binary pkg
+      pkgutil --forget org.r-project.R.Leopard.fw.pkg
+
+   ** For the 32 bit Tiger binary dmg:
+      pkgutil --forget org.r-project.R.framework
+      pkgutil --forget org.r-project.R
+
+** Etc:
+   ** Check for pkgs:
+      pkgutil --pkgs | grep r-project
+      
+** UNinstall R
+   rm -rf /Library/Frameworks/R.framework
+   rm -rf /Applications/R.app
+   
+  </pre>
+	<div class="navigation-bar">
+		<a  class="prev" href="app4.html">Previous:Appendix-Distance Metrics</a> | 
+		<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a  class="next" href="app6.html">Next: Appendix-Bayesian Network & Literature Mining </a>
+	</div>
 </body>
 </html>
