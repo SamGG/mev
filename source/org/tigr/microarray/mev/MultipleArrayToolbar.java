@@ -56,7 +56,7 @@ public class MultipleArrayToolbar extends JToolBar {
     SteppedComboBox[] steppedComboArray;
     SteppedComboBox cghSteppedComboBox;
     ImageIcon comboIcon;
-    String[] category = {/*"RNASeq",*/"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
+    String[] category = {"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
 
 	ImageIcon[] categoryIcon = new ImageIcon[category.length];
 	ImageIcon[] disabledCategoryIcon = new ImageIcon[category.length];
@@ -247,17 +247,29 @@ public class MultipleArrayToolbar extends JToolBar {
 	 * 
 	 */
 	public void enableRNASeq(boolean isRNASeq) {
+		int index = 0;
+		ArrayList<String> removedModules = new ArrayList<String>();
 		if (isRNASeq){
-			steppedComboArray[6].removeItemAt(3); //BN
-			steppedComboArray[6].removeItemAt(2); //LM
-			steppedComboArray[4].removeItemAt(3); //EASE
-			return;
+			removedModules.add("BN"); //Bayesiean Networks
+			removedModules.add("LM"); //Literature Mining
+			removedModules.add("EASE"); //Literature Mining
+		} else {
+			//RNASeq modules...
+			removedModules.add("EDGER"); 
+			removedModules.add("DESEQ"); 
+			removedModules.add("DEGSEQ"); 
 		}
-		steppedComboArray[4].removeItemAt(2);  //GOSEQ
-		steppedComboArray[1].removeItemAt(13); //EDGER
-		steppedComboArray[1].removeItemAt(13); //DESEQ
-		steppedComboArray[1].removeItemAt(13); //DEGSEQ
-		//steppedComboArray[1].removeItemAt(9);  //GOSEQ
+		while (index<totalModules){
+			Action action  = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index));
+			if (removedModules.contains(action.getValue(Action.NAME))){
+				for (int i=0; i<category.length; i++){
+					if (action.getValue(ActionManager.CATEGORY).equals(category[i])){
+						steppedComboArray[i].removeItem((ImageIcon)action.getValue(ActionManager.LARGE_ICON));
+					}
+				}
+			}				
+			index++;
+		}
 	}
 	
     private class ComboListener implements ActionListener{
@@ -282,7 +294,6 @@ public class MultipleArrayToolbar extends JToolBar {
     		while (manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)).getValue(ActionManager.LARGE_ICON)!= cb.getItemAt(cb.getSelectedIndex())){
     			index++;
     			if (index>=totalModules){
-//    	    		cb.putClientProperty("categoryIconExists", false);
     				return;
     			}
     		}
