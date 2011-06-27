@@ -119,7 +119,7 @@ public class Manager {//A class to keep track of viewers
         	frame.setIconImage(imgIcon.getImage());
         }
 
-        frame.setResizable(false);
+        frame.setResizable(true);
         //frame.pack() was required for WindowsXP 
         frame.pack();
         frame.setVisible(true);
@@ -235,8 +235,9 @@ public class Manager {//A class to keep track of viewers
         menuBar.add( helpMenu );
         
         frame.setJMenuBar(menuBar);
+//        menuBar.r
+        menuBar.setPreferredSize(new Dimension(Math.min(Toolkit.getDefaultToolkit().getScreenSize().width-2,1550), menuBar.getFontMetrics(menuBar.getFont()).getHeight()+5));
         
-        menuBar.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width-2, menuBar.getFontMetrics(menuBar.getFont()).getHeight()+5));
     }
     
     public boolean selectPreferencesFile() {
