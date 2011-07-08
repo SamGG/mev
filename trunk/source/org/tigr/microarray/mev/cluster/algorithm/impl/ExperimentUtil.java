@@ -168,66 +168,73 @@ public class ExperimentUtil {
     //=================
     
     public static float genePearson(FloatMatrix matrix, FloatMatrix M, int g1, int g2, float factor) {
-	if (M == null) {
-	    M = matrix;
-	}
-	
-	float[] arrX = matrix.A[g1];
-	float[] arrY = M.A[g2];
-	int nArrSize = matrix.getColumnDimension();
-	
-	double dblXY = 0f;
-	double dblX  = 0f;
-	double dblXX = 0f;
-	double dblY  = 0f;
-	double dblYY = 0f;
-	
-	double v_1, v_2;
-	int iValidValCount = 0;
-	for (int i=0; i<nArrSize; i++) {
-	    v_1 = arrX[i];
-	    v_2 = arrY[i];
-	    if (Double.isNaN(v_1) || Double.isNaN(v_2)) {
-		continue;
-	    }
-	    iValidValCount++;
-	    dblXY += v_1*v_2;
-	    dblXX += v_1*v_1;
-	    dblYY += v_2*v_2;
-	    dblX  += v_1;
-	    dblY  += v_2;
-	}
-	if (iValidValCount == 0)
-	    return 0f;
-	
-	//Allows for a comparison of two 'flat' genes (genes with no variability in their
-	// expression values), ie. 0, 0, 0, 0, 0
-	boolean nonFlat = false;
-	NON_FLAT_CHECK: for (int j = 1; j < nArrSize; j++) {
-	    if ((!Float.isNaN(arrX[j])) && (!Float.isNaN(arrY[j]))) {
-		if (arrX[j] != arrX[j-1]) {
-		    nonFlat = true;
-		    break NON_FLAT_CHECK;
+		if (M == null) {
+		    M = matrix;
 		}
-		if (arrY[j] != arrY[j-1]) {
-		    nonFlat = true;
-		    break NON_FLAT_CHECK;
+		
+		float[] arrX = matrix.A[g1];
+		float[] arrY = M.A[g2];
+		int nArrSize = matrix.getColumnDimension();
+		
+		double dblXY = 0f;
+		double dblX  = 0f;
+		double dblXX = 0f;
+		double dblY  = 0f;
+		double dblYY = 0f;
+		
+		double v_1, v_2;
+		int iValidValCount = 0;
+		for (int i=0; i<nArrSize; i++) {
+		    v_1 = arrX[i];
+		    v_2 = arrY[i];
+		    if (Double.isNaN(v_1) || Double.isNaN(v_2))
+		    	continue;
+		    
+		    iValidValCount++;
+		    dblXY += v_1*v_2;
+		    dblXX += v_1*v_1;
+		    dblYY += v_2*v_2;
+		    dblX  += v_1;
+		    dblY  += v_2;
 		}
-	    }
-	}
-	
-	if (nonFlat == false) {
-	    return 1.0f;
-	}
-	
-	
-	double dblAvgX = dblX/iValidValCount;
-	double dblAvgY = dblY/iValidValCount;
-	double dblUpper = dblXY-dblX*dblAvgY-dblAvgX*dblY+dblAvgX*dblAvgY*((double)iValidValCount);
-	double p1 = (dblXX-dblAvgX*dblX*2d+dblAvgX*dblAvgX*((double)iValidValCount));
-	double p2 = (dblYY-dblAvgY*dblY*2d+dblAvgY*dblAvgY*((double)iValidValCount));
-	double dblLower = p1*p2;
-	return(float)(dblUpper/(Math.sqrt(dblLower)+Double.MIN_VALUE)*(double)factor);
+		if (iValidValCount == 0)
+		    return 0f;
+		
+		//Allows for a comparison of two 'flat' genes (genes with no variability in their
+		// expression values), ie. 0, 0, 0, 0, 0
+		boolean flat1 = true;
+		boolean flat2 = true;
+		for (int j = 1; j < nArrSize; j++) {
+		    if ((!Float.isNaN(arrX[j])&&!Float.isNaN(arrX[j-1]))) {
+				if (arrX[j] != arrX[j-1]) {
+					flat1 = false;
+				    break;
+				}
+		    }
+		}
+
+		for (int j = 1; j < nArrSize; j++) {
+		    if (!Float.isNaN(arrY[j])&&!Float.isNaN(arrY[j-1])) {				
+				if (arrY[j] != arrY[j-1]) {
+					flat2 = false;
+				    break;
+				}
+		    }
+		}
+		
+		if (flat1&&flat2) 
+		    return 1.0f;
+		if (flat1||flat2)
+			return 0.0f;
+		
+		
+		double dblAvgX = dblX/iValidValCount;
+		double dblAvgY = dblY/iValidValCount;
+		double dblUpper = dblXY-dblX*dblAvgY-dblAvgX*dblY+dblAvgX*dblAvgY*((double)iValidValCount);
+		double p1 = (dblXX-dblAvgX*dblX*2d+dblAvgX*dblAvgX*((double)iValidValCount));
+		double p2 = (dblYY-dblAvgY*dblY*2d+dblAvgY*dblAvgY*((double)iValidValCount));
+		double dblLower = p1*p2;
+		return(float)(dblUpper/(Math.sqrt(dblLower)+Double.MIN_VALUE)*(double)factor);
     }
     
     public static float geneCosine(FloatMatrix matrix, FloatMatrix M, int g1, int g2, float factor) {
@@ -493,35 +500,35 @@ public class ExperimentUtil {
     
     
     public static float pearson(FloatMatrix matrix, int e1, int e2, float factor) {
-	float TINY = Float.MIN_VALUE;
-	int n, j, k;
-	double xt,yt;
-	double sxx=0.0;
-	double syy=0.0;
-	double sxy=0.0;
-	double ax =0.0;
-	double ay =0.0;
-	k=matrix.getRowDimension();
-	n=0;
-	for (j=0; j<k; j++) {
-	    if ((!Float.isNaN(matrix.get(j,e1))) && (!Float.isNaN(matrix.get(j,e2)))) {
-		ax += matrix.get(j,e1);
-		ay += matrix.get(j,e2);
-		n++;
-	    }
-	}
-	ax /= n;
-	ay /= n;
-	for (j=0; j<k; j++) {
-	    if ((!Float.isNaN(matrix.get(j,e1))) && (!Float.isNaN(matrix.get(j,e2)))) {
-		xt=matrix.get(j,e1)-ax;
-		yt=matrix.get(j,e2)-ay;
-		sxx+=xt*xt;
-		syy+=yt*yt;
-		sxy+=xt*yt;
-	    }
-	}
-	return(float)(sxy/(Math.sqrt(sxx*syy)+TINY)*factor);
+		float TINY = Float.MIN_VALUE;
+		int n, j, k;
+		double xt,yt;
+		double sxx=0.0;
+		double syy=0.0;
+		double sxy=0.0;
+		double ax =0.0;
+		double ay =0.0;
+		k=matrix.getRowDimension();
+		n=0;
+		for (j=0; j<k; j++) {
+		    if ((!Float.isNaN(matrix.get(j,e1))) && (!Float.isNaN(matrix.get(j,e2)))) {
+			ax += matrix.get(j,e1);
+			ay += matrix.get(j,e2);
+			n++;
+		    }
+		}
+		ax /= n;
+		ay /= n;
+		for (j=0; j<k; j++) {
+		    if ((!Float.isNaN(matrix.get(j,e1))) && (!Float.isNaN(matrix.get(j,e2)))) {
+			xt=matrix.get(j,e1)-ax;
+			yt=matrix.get(j,e2)-ay;
+			sxx+=xt*xt;
+			syy+=yt*yt;
+			sxy+=xt*yt;
+		    }
+		}
+		return(float)(sxy/(Math.sqrt(sxx*syy)+TINY)*factor);
     }
     
     public static float cosine(FloatMatrix matrix, int e1, int e2, float factor) {
