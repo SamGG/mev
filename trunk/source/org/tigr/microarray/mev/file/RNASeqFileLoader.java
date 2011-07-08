@@ -1148,7 +1148,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			bldLabel = new JLabel("UCSC Build");
 			bldLabel.setForeground(java.awt.Color.BLACK);
 
-			annoCheck = new JCheckBox("Upload User Annotation", false);
+			annoCheck = new JCheckBox("Upload Annotation", false);
 			annoCheck.addActionListener(eventListener);
 
 			dataAttributesPanel = new JPanel();
