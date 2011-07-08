@@ -1507,7 +1507,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	</target>
 
 	<target name="MINET-GUI">
-		        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/rp" destdir="${dest.dir}">
+		        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/minet" destdir="${dest.dir}">
 		            <classpath refid="module.build.class.path"/>
 			  </javac>
 			  <propertyfile file="${gui.properties.file}">
