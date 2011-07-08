@@ -86,6 +86,7 @@ brain-heart-kidney-liver_annotation.ann
 rnaseq/GeneExpExample5000_Cnt_Ens.txt
 rnaseq/isoforms.fpkm_cnt_Ref.txt
 rnaseq/TagSeqExample.txt
+rnaseq/ref_gene_h19_sample_anno.txt
 rnaseq/hg/hg18/ensembl/ens_gene_hg18.txt
 rnaseq/hg/hg18/refseq/ref_gene_hg18.txt
 rnaseq/hg/hg19/ensembl/ens_gene_hg19.txt
