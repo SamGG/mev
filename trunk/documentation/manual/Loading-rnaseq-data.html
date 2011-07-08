@@ -35,11 +35,192 @@
         
         <h4>Dialog Selections</h4>
         <ul>
+			<li>
+                <b>Upload User Annotation []</b>: 
+				<p>Currently we porvide annotation support for Human ans Mouse data only and would add support
+				   for more organisms in the future. However the user can provide annotaiton for any organism they want as they follow the
+				   annotation file format specifications. By selecting this option the user agrees to upload a annotation file which matches
+				   the example file provided in the <b>data/rnaseq/ref_gene_h19_sample_anno.txt</b>. The matching data file is also in the same
+				   location, <b>data/rnaseq/TagSeqExample.txt</b>. The table below describes the header information for an annotation file:
+                </p>
+				<p> 
+                    The <b>15 annotaton columns</b> are described here. They columns should appear in file in the <b>same order</b> as described here:
+                    <table border='1'>
+                        <thead>
+                            <tr>
+                                <td bgcolor='cream'><b>##</b></td>
+                                <td bgcolor='#FFA500'><b>Field Name</b></td>
+                                <td bgcolor='#ADD8E6'><b>Description</b></td>
+                            </tr>
+                        </thead>
+                        <tr>
+                            <td><b>1</b></td>
+                            <td><b>PROBE_ID</b></td>
+                            <td><b>Required.</b> A unique ID the identifies each row in the data file.It is treated like the probe_id of microarray data.
+								To be associated with a the data being loaded the <b>nearest_ref_id</b> filed in the data file should correspond to this
+								field in the annotation file. This is generally expected to be a RefSeq or Ensemble ID but user can use anything as long
+								they correspond in the data and the annotation file.
+							</td>
+                        </tr>
+                        <tr>
+                            <td><b>2</b></td>
+                            <td><b>CHR</b></td>
+                            <td><b>Required</b> but an empty value is ok. Stands for chromosome and when provide the format should be: <b>chr1</b></td>
+                        </tr>
+                        <tr>
+                            <td><b>3</b></td>
+                            <td><b>STRAND</b></td>
+                            <td><b>Required.</b> When not avaialable for a row a '-' or '' can be used.</td>
+                        </tr>
+                        <tr>
+                            <td><b>4</b></td>
+                            <td><b>TX_START</b></td>
+                            <td><b>Required.</b> but an empty value is ok. When provided should indicate the BP position. </td>
+                        </tr>
+                        <tr>
+                            <td><b>5</b></td>
+                            <td><b>TX_END</b></td>
+                            <td><b>Required</b>, but an empty value is ok. When provided should indicate the BP position.</td>
+                        </tr>
+						<tr>
+                            <td><b>6</b></td>
+                            <td><b>CDS_START</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for coding sequence start position and when provided should 
+								indicate the BP position.
+							</td>
+                        </tr>
+						<tr>
+                            <td><b>7</b></td>
+                            <td><b>CDS_END</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for coding sequence end position and When provided should 
+								indicate the BP position.
+							</td>
+                        </tr>
+						<tr>
+                            <td><b>8</b></td>
+                            <td><b>exonCount</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for count of exons in the coding sequence region, 
+								and when provided should be an integer value. <b>Currently unused.</b>
+							</td>
+                        </tr>
+						<tr>
+                            <td><b>9</b></td>
+                            <td><b>exonStarts</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for start BP postion of each exon, and when provided should be 
+								integer value(s) separated by commas and number of entries should match the exonCount. The format should be 
+								<b>29284557,29293459,</b>. <b>Currently unused.</b>
+							</td>
+                        </tr>
+						<tr>
+                            <td><b>10</b></td>
+                            <td><b>exonEnds</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for end BP postion of each exon, and when provided should be 
+								integer value(s) separated by commas and number of entries should match the exonCount. The format should be 
+								<b>29284557,29293459,</b>.<b>Currently unused.</b></td>
+                        </tr>
+						<tr>
+                            <td><b>11</b></td>
+                            <td><b>GENE_SYMBOL</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for gene Symbol.</td>
+                        </tr>
+						<tr>
+                            <td><b>12</b></td>
+                            <td><b>GENE_TITLE</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for gene tile/description.</td>
+                        </tr>
+						<tr>
+                            <td><b>13</b></td>
+                            <td><b>REFSEQ_ACC</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for accession number like RefSeq Id or Ensembl Id.</td>
+                        </tr>
+						<tr>
+                            <td><b>14</b></td>
+                            <td><b>PROTEIN_ACC</b></td>
+                            <td><b>Required</b>,but an empty value is ok. Stands for protein accession number based on RefSeq Id or Ensembl Id.</td>
+                        </tr>
+						<tr>
+                            <td><b>15</b></td>
+                            <td><b>ENTREZ_ID</b></td>
+                            <td><b>Required</b>, but an empty value is ok. Stands for Gene Id.</td>
+                        </tr>
+                    </table>
+                </p>
+				<p>
+					<b>Anootation File Required Characteristics</b>
+				</p>
+                <ol>
+                    <li><b>Tab</b> Delimited</li>
+                    <li><b>PRODE_ID</b> in annotation file is expected to match <b>nearest_ref_id</b> in data file.</li>
+					<li>All columns are required in the order they are specified but blank/empty values are accepted in most</li>
+					<li>Some columns are unused at this time. Empty columns are ok for those. The table above lists unused columns.</li>
+					<li>Data rows with unmatched annoation row will still be loaded</li>
+					<li>If multiple annotaion rows matches one data row, the first one is used.</li>
+                </ol>
+				<p>
+				<b> Annotation File E.g.:</b>
+				<table border='1'>
+                        <thead>
+                            <tr>
+                                <td bgcolor='cream'><b>PROBE_ID</b></td>
+                                <td bgcolor='#ADD8E6'><b>CHR</b></td>
+                                <td bgcolor='#ADD8E6'><b>STRAND</b></td>
+								<td bgcolor='#ADD8E6'><b>TX_START</b></td>
+                                <td bgcolor='#ADD8E6'><b>TX_END</b></td>
+                                <td bgcolor='#ADD8E6'><b>CDS_START</b></td>
+								<td bgcolor='#ADD8E6'><b>CDS_END</b></td>
+                                <td bgcolor='#FFA500'><b>exonCount</b></td>
+                                <td bgcolor='#FFA500'><b>exonStarts</b></td>
+								<td bgcolor='FFA500'><b>exonEnds</b></td>
+                                <td bgcolor='#ADD8E6'><b>GENE_SYMBOL</b></td>
+                                <td bgcolor='#ADD8E6'><b>GENE_TITLE</b></td>
+								<td bgcolor='#ADD8E6'><b>REFSEQ_ACC</b></td>
+                                <td bgcolor='#ADD8E6'><b>PROTEIN_ACC</b></td>
+                                <td bgcolor='#ADD8E6'><b>ENTREZ_ID</b></td>
+                            </tr>
+                        </thead>
+						<tr>		
+							<td>NR_024227</td>
+							<td>chr19</td>
+							<td>-</td>
+							<td>50595745</td>
+							<td>50595866</td>
+							<td> </td>
+							<td> </td>
+							<td> </td>
+							<td> </td>
+							<td> </td>
+							<td>NAR-A6S</td>
+							<td>Some gene</td>
+							<td>NR_024227</td>
+							<td></td>
+							<td>100169957</td>
+							
+						</tr>
+						<tr>
+							<td>NM_024328</td>
+							<td>chr14</td>
+							<td>+</td>
+							<td>24025197</td>
+							<td>24028786</td>
+							<td>24025966</td>
+							<td>24028049</td>
+							<td>2</td>
+							<td>24025197,24027903,</td>
+							<td>24026513,24028786,</td>
+							<td>THTPA</td>
+							<td>thiamine-triphosphatase</td>
+							<td>NM_024328</td>
+							<td>NP_077304</td>
+							<td>79178</td>
+						</tr>
+				</table>
+				</p>
+            </li>
             <li>
                 <b>Data Type</b>: 
                 <p>
                     We allow the following type of data formats and combinations to be loaded. Each type specifies a file format and
-                    what kind of data the program is loading. All 4 formats starts with the same 5 annotaton columns. 
+                    what kind of data the program is loading. All <b>4 formats</b> starts with the <b>same 5</b> annotaton columns. 
                     The file formats differ only in the data column(s) and data types; integer or float.
                 </p>
                 <p> 
@@ -71,12 +252,12 @@
                         <tr>
                             <td><b>4</b></td>
                             <td><b>class_code</b></td>
-                            <td><b>Optional.</b> , but an empty column is required. This column can be used for any kind of notes/status about the gene.</td>
+                            <td><b>Required.</b> , but an empty value is ok. This column can be used for any kind of notes/status about the gene.</td>
                         </tr>
                         <tr>
                             <td><b>5</b></td>
                             <td><b>transcript_length</b></td>
-                            <td><b>Optional</b>, but an empty column is required. When not provided, the diff between the start and end BP in
+                            <td><b>Required</b>, but an empty value is ok. When not provided, the diff between the start and end BP in
                             the <b>locus</b> is used as the length.</td>
                         </tr>
                     </table>

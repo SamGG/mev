@@ -213,7 +213,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		int spotCount = numLines - preSpotRows;
 
 		if (spotCount <= 0) {
-			JOptionPane.showMessageDialog(superLoader.getFrame(),  "There is no spot data available.",  "TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(
+					this,  
+					"There is no spot data available.",  
+					"TDMS Load Error", JOptionPane.INFORMATION_MESSAGE);
 			return null;
 		}
 
@@ -232,13 +235,15 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		try {
 			validateDataFormat(f, dataFormat, preExperimentColumns, preSpotRows);
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(superLoader.getFrame(),  
-					e1.getMessage(),
-					"Invalid File format for data type " + dataFormat,  JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(
+					this,  
+					e1.getMessage() +
+					"\nInvalid File format for data type " + dataFormat,  
+					"Bad Format Error", JOptionPane.INFORMATION_MESSAGE);
 			//e1.printStackTrace();
 			return null;
 		}
-		
+
 		//System.out.println("Selected Data Format: " + dataTypes[dataFormat]);
 
 		int notFoundCtr = 0;
@@ -247,8 +252,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		if (sflp.libSizeIsNeeded()) {
 			libSizeTable = loadLibSize(sflp.getLibrarySizeFile());
 			if (libSizeTable == null) {
-				JOptionPane.showMessageDialog(superLoader.getFrame(),  
-						"Library File not selected or does not exist.",  "Library File Error", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(
+						null,  
+						"Library File not selected or does not exist.",  
+						"Library File Error", JOptionPane.INFORMATION_MESSAGE);
 				return null;
 			}
 		}
@@ -261,19 +268,37 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		//TMEV.pause();
 		// This is the place to load Flat File Based RefSeq Or ENSMBEL 
 		// annotation into _tempAnno and chipAnno
-		RnaseqAnnotationParser rnaseqAnnoParser = RnaseqAnnotationParser.createAnnotationFileParser(
-				new File(getPathFromSpeciesAndGenome()));
+		RnaseqAnnotationParser rnaseqAnnoParser ;
+		// User annotation
+		if(sflp.annoCheck.isSelected()) {
+			rnaseqAnnoParser = RnaseqAnnotationParser.createAnnotationFileParser(
+					new File(getAnnotationFile()));
+		} 
+		// MeV Annotation
+		else {
+			rnaseqAnnoParser = RnaseqAnnotationParser.createAnnotationFileParser(
+					new File(getPathFromSpeciesAndGenome()));
+		}
 		_tempAnno = rnaseqAnnoParser.getAnnotation();
 		//System.out.println("_tempAnno Size: "+ _tempAnno.size());
 		//System.out.println(_tempAnno.entrySet());
 		//TMEV.pause();
 
-		chipAnno.setChipName(sflp.getGenome() + "_" + sflp.getSpecies());
-		chipAnno.setChipType(sflp.getGenome() + "_" + sflp.getSpecies());
-		// TODO correctly
-		chipAnno.setDataType("RNASeq");
-		chipAnno.setGenomeBuild(sflp.getBuild());
-		chipAnno.setSpeciesName(sflp.getSpecies());
+		if(sflp.annoCheck.isSelected()) {
+			chipAnno.setChipName("-" );
+			chipAnno.setChipType("-");
+			// TODO correctly
+			chipAnno.setDataType("RNASeq");
+			chipAnno.setGenomeBuild("-");
+			chipAnno.setSpeciesName("-");
+		} else {
+			chipAnno.setChipName(sflp.getGenome() + "_" + sflp.getSpecies());
+			chipAnno.setChipType(sflp.getGenome() + "_" + sflp.getSpecies());
+			// TODO correctly
+			chipAnno.setDataType("RNASeq");
+			chipAnno.setGenomeBuild(sflp.getBuild());
+			chipAnno.setSpeciesName(sflp.getSpecies());
+		}
 
 		// Unused at this time
 		((RNASeqChipAnnotation)chipAnno).setReadLength(100);
@@ -586,7 +611,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 	}
 
 	/**
-	 * Function to validate if seleted format type matches wit h data file used.
+	 * Function to validate if selected format type matches wit h data file used.
 	 * 
 	 * @param f
 	 * @param dataFormat
@@ -841,14 +866,17 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println(librarySizeFile + " Size Lib File does not exist.");
-			JOptionPane.showMessageDialog(superLoader.getFrame(),  
-					"Library File Error.",  librarySizeFile + " File Not Found", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this,  
+					librarySizeFile + " File Not Found", 
+					"Library File Error.",  JOptionPane.ERROR_MESSAGE);
 			return null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(superLoader.getFrame(),  
-					"Library File Error.",  librarySizeFile + " File Error Reading", JOptionPane.ERROR);
+			JOptionPane.showMessageDialog(
+					this,  
+					librarySizeFile + " File Error Reading", 
+					"Library File Error.", JOptionPane.ERROR);
 			return null;
 		}
 	}
@@ -884,6 +912,10 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return path + filename;
 	}
 
+	private String getAnnotationFile () {
+		return sflp.annoTextField.getText();
+	}
+
 	public FileFilter getFileFilter() {
 
 		FileFilter mevFileFilter = new FileFilter() {
@@ -902,11 +934,11 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return mevFileFilter;
 	}
 
-    public void markLoadEnabled(boolean state) {
-        loadEnabled = state;
-        checkLoadEnable();
-    }
-    
+	public void markLoadEnabled(boolean state) {
+		loadEnabled = state;
+		checkLoadEnable();
+	}
+
 	public boolean checkLoadEnable() {
 
 		// Currently, the only requirement is that a cell has been highlighted
@@ -946,14 +978,14 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 	public void processStanfordFile(File targetFile) {
 		if (! validateFile(targetFile)) return;
 		//TODO
-		
+
 		Vector<String> columnHeaders = new Vector<String>();
 		Vector<Vector<String>> dataVector = new Vector<Vector<String>>();
 		Vector<String> rowVector = null;
 		BufferedReader reader = null;
 		String currentLine = null;
 
-		
+
 
 		sflp.setFileName(targetFile.getAbsolutePath());
 
@@ -1039,7 +1071,8 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		return false;
 	}
 
-	
+
+	@SuppressWarnings("serial")
 	private class RnaSeqFileLoaderPanel extends JPanel {
 		String species [] = {"Select", "Human", "Mouse"};
 		String refGenome [] = {"Select", "RefSeq", "ENSEMBL"};
@@ -1060,14 +1093,13 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 
 		JTextField fileNameTextField;
 
-		JTextField libSizeFileTextField;
+		JTextField libSizeFileTextField, fieldsTextField, annoTextField;
 		JTable expressionTable;
 		JLabel instructionsLabel;
 		JScrollPane tableScrollPane;
 		JPanel tablePanel;
 		JPanel fileLoaderPanel;
-		JTextField fieldsTextField;
-		JPanel fieldsPanel;
+		//JPanel fieldsPanel;
 		JSplitPane splitPane;
 
 		JList availableList;
@@ -1077,13 +1109,13 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		private int xColumn = -1;
 
 		JPanel fileSelectionPanel;
-		JLabel fileSelectionLabel, dataSelection;
-		JButton browseButton1, browseButton2;
+		JLabel fileSelectionLabel, dataSelectionLabel, annoSelectionLabel;
+		JButton browseButton1, browseButton2, browseButton3;
 		//JPanel buttonPanel;
-		JRadioButton twoColorArray;
-		JRadioButton singleColorArray;
+		//JRadioButton twoColorArray;
+		//JRadioButton singleColorArray;
 
-		//AnnotationDownloadHandler adh;
+		JCheckBox annoCheck;
 
 		protected EventListener eventListener;
 
@@ -1116,22 +1148,28 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			bldLabel = new JLabel("UCSC Build");
 			bldLabel.setForeground(java.awt.Color.BLACK);
 
+			annoCheck = new JCheckBox("Upload User Annotation", false);
+			annoCheck.addActionListener(eventListener);
+
 			dataAttributesPanel = new JPanel();
 			dataAttributesPanel.setLayout(new GridBagLayout());
 			dataAttributesPanel.setBorder(new TitledBorder(new EtchedBorder(), "RNASeq Data Info"));
 
-			gba.add(dataAttributesPanel, dataTypeLabel, 	0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, speciesLabel,  	1, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, genomeLabel, 		2, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, bldLabel, 			3, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, readLen, 			4, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(dataAttributesPanel, annoCheck, 		0, 0, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(0, 0, 0, 0), 0, 0);
 
-			gba.add(dataAttributesPanel, dataTypeCombo, 	0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, speciesCombo,  	1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, genomeCombo, 		2, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, bldCombo, 			3, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(dataAttributesPanel, readLenBox, 		4, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(dataAttributesPanel, dataTypeLabel, 	0, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, speciesLabel,  	1, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, genomeLabel, 		2, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, bldLabel, 			3, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, readLen, 			4, 1, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(5, 0, 1, 0), 0, 0);
 
+			gba.add(dataAttributesPanel, dataTypeCombo, 	0, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(1, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, speciesCombo,  	1, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(1, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, genomeCombo, 		2, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(1, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, bldCombo, 			3, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(1, 0, 1, 10), 0, 0);
+			gba.add(dataAttributesPanel, readLenBox, 		4, 2, 1, 1, 0, 0, GBA.H, GBA.C, new Insets(1, 0, 1, 0), 0, 0);
+			dataAttributesPanel.validate();
+			
 			fileNameTextField = new JTextField();
 			fileNameTextField.setEditable(false);
 			fileNameTextField.setForeground(Color.black);
@@ -1142,15 +1180,22 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			libSizeFileTextField.setForeground(Color.black);
 			libSizeFileTextField.setFont(new Font("monospaced", Font.BOLD, 12));
 
+			annoTextField = new JTextField();
+			annoTextField.setEditable(false);
+			annoTextField.setForeground(Color.black);
+			annoTextField.setFont(new Font("monospaced", Font.BOLD, 12));
+
 			fileSelectionLabel = new JLabel();
 			fileSelectionLabel.setForeground(java.awt.Color.BLACK);
-			String fileTypeChoices = "<html> Select library Size file </html>";
-			fileSelectionLabel.setText(fileTypeChoices);
+			fileSelectionLabel.setText("Library size file");
 
-			dataSelection = new JLabel();
-			dataSelection.setForeground(java.awt.Color.RED);
-			String chooseFile = "<html>Select data file</html>";
-			dataSelection.setText(chooseFile);
+			dataSelectionLabel = new JLabel();
+			dataSelectionLabel.setForeground(java.awt.Color.RED);
+			dataSelectionLabel.setText("RNASeq data file");
+
+			annoSelectionLabel = new JLabel();
+			annoSelectionLabel.setForeground(java.awt.Color.BLACK);
+			annoSelectionLabel.setText("Annotation data file");
 
 			fileSelectionPanel = new JPanel();
 			fileSelectionPanel.setLayout(new GridBagLayout());
@@ -1166,16 +1211,36 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			browseButton2.setSize(100, 30);
 			browseButton2.setPreferredSize(new Dimension(100, 30));
 
-			gba.add(fileSelectionPanel, dataSelection, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			browseButton3 = new JButton("Browse");
+			browseButton3.addActionListener(eventListener);
+			browseButton3.setSize(100, 30);
+			browseButton3.setPreferredSize(new Dimension(100, 30));
+			browseButton3.setEnabled(false);
+			/*
+			gba.add(fileSelectionPanel, annoSelectionLabel, 0, 4, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, annoTextField, 		1, 4, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton3, 		2, 4, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
+			gba.add(fileSelectionPanel, dataSelectionLabel, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, fileNameTextField, 	1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton1, 		2, 0, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-			gba.add(fileSelectionPanel, fileNameTextField, 1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(fileSelectionPanel, browseButton1, 2, 0, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, fileSelectionLabel, 	0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, libSizeFileTextField, 	1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton2, 			2, 2, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
-			gba.add(fileSelectionPanel, fileSelectionLabel, 0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(fileSelectionPanel, libSizeFileTextField, 1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(fileSelectionPanel, browseButton2, 2, 2, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			//gba.add(fileSelectionPanel, buttonPanel, 0, 3, 0, 0, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			*/
+			gba.add(fileSelectionPanel, dataSelectionLabel, 0, 4, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, fileNameTextField, 		1, 4, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton1, 		2, 4, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			
+			gba.add(fileSelectionPanel, annoSelectionLabel, 0, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, annoTextField, 	1, 0, 1, 1, 1, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton3, 		2, 0, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+
+			gba.add(fileSelectionPanel, fileSelectionLabel, 	0, 2, 2, 1, 0, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, libSizeFileTextField, 	1, 2, 1, 1, 2, 0, GBA.H, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, browseButton2, 			2, 2, GBA.RELATIVE, 1, 0, 0, GBA.NONE, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
 			expressionTable = new JTable();
 			myCellRenderer = new ExpressionFileTableCellRenderer();
@@ -1220,6 +1285,7 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			gba.add(fileLoaderPanel, tablePanel, 0, 3, 1, 6, 3, 6, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 
 			gba.add(this, fileLoaderPanel, 0, 0, 1, 1, 1, 1, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			fileLoaderPanel.validate();
 
 			setDataType(IData.DATA_TYPE_RNASEQ);
 			//setDataType(IData.DATA_TYPE_AFFY_ABS);
@@ -1259,6 +1325,31 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 				//File selectedFile = fileChooser.getSelectedFile();
 				processLibSizeFile(fileChooser.getSelectedFile().getAbsolutePath());
 				return true;
+			}
+			return false;
+		}
+
+		//For loading user annotation
+		private boolean onBrowse3() {
+			JFileChooser fileChooser = new JFileChooser(SuperExpressionFileLoader.DATA_PATH);
+			int retVal = fileChooser.showOpenDialog(RnaSeqFileLoaderPanel.this);
+
+			if (retVal == JFileChooser.APPROVE_OPTION) {
+				try {
+					if(validateAnnoFile(fileChooser.getSelectedFile().getAbsolutePath())) {
+						sflp.annoTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+						return true;
+					}
+				} catch (HeadlessException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(
+							this,  
+							"Error " + e.getMessage() + " \n occured while reading " +
+							fileChooser.getSelectedFile().getAbsolutePath(), 
+							"Annotation File Error.",  JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}		
 			}
 			return false;
 		}
@@ -1351,43 +1442,76 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 			public void actionPerformed(ActionEvent event) {
 				Object source = event.getSource();
 				if (source == browseButton1) {
-					if (sflp.getSelectedDataFormat()== UNDEF || sflp.getSpecies().equalsIgnoreCase("Select") || 
-							sflp.getGenome().equalsIgnoreCase("Select")) {
-						String eMsg = "<html>Required Fields(RED) may be not have been selected<br></html";
+					if((sflp.getSelectedDataFormat()== UNDEF) || 
+							(!sflp.annoCheck.isSelected() && 
+									(sflp.getSpecies().equalsIgnoreCase("Select") || 
+											sflp.getGenome().equalsIgnoreCase("Select"))))
+					{
+						String eMsg = "Required Fields(RED) may be not have been selected";
 						JOptionPane.showMessageDialog(null,
 								eMsg, "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					} 
+					
+					if(sflp.annoCheck.isSelected() && sflp.annoTextField.getText().length() < 2) {
+						String eMsg = "Annotation File may not have been selected";
+						JOptionPane.showMessageDialog(null,
+								eMsg, "File not selected Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					if (sflp.libSizeIsNeeded() && sflp.libSizeFileTextField.getText().length() < 2) {
+						String eMsg = "The Data type you selected requires a Library Size File \n which may not have been selected";
+						JOptionPane.showMessageDialog(null,
+								eMsg, "File not selected Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 					onBrowse();
 				} else if (source == browseButton2) {
 					onBrowse2();
+				} else if (source == browseButton3) {
+					onBrowse3();
+				} else if (source == annoCheck) {
+					if(annoCheck.isSelected()) {
+						annoSelectionLabel.setForeground(java.awt.Color.RED);
+						speciesLabel.setForeground(java.awt.Color.BLACK);
+						speciesCombo.setEnabled(false);
+						bldLabel.setForeground(java.awt.Color.BLACK);
+						bldCombo.setEnabled(false);
+						genomeLabel.setForeground(java.awt.Color.BLACK);
+						genomeCombo.setEnabled(false);
+						browseButton3.setEnabled(true);
+					} else {
+						annoSelectionLabel.setForeground(java.awt.Color.BLACK);
+						speciesLabel.setForeground(java.awt.Color.RED);
+						speciesCombo.setEnabled(true);
+						bldLabel.setForeground(java.awt.Color.RED);
+						bldCombo.setEnabled(true);
+						genomeLabel.setForeground(java.awt.Color.RED);
+						genomeCombo.setEnabled(true);
+						browseButton3.setEnabled(false);
+					}
 				} else if (source == dataTypeCombo) {
 					ItemSelectable is = (ItemSelectable)source;
 					Object selected[] = is.getSelectedObjects();
+					
+					fileSelectionLabel.setForeground(java.awt.Color.BLACK);
+					fileSelectionLabel.setText("Library size file");
 					//"RPKM"
 					if (((String)selected[0]).equals(dataTypes[RPKM])) {
 						needSampleLibSize = true;
 						needCountAndExp = false;
-						String fileTypeChoices = "<html> Select library Size file </html>";
 						fileSelectionLabel.setForeground(java.awt.Color.RED);
-						fileSelectionLabel.setText(fileTypeChoices);
 						//System.out.println("Data Type: RPKM");
 						// "FPKM & DGE"
 					} else if (((String)selected[0]).equals(dataTypes[FPKM_AND_COUNT])) {
 						needSampleLibSize = false;
 						needCountAndExp = true;
-						// Make the libSize label Obvious
-						String fileTypeChoices = "<html> Select library Size file </html>";
-						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
-						fileSelectionLabel.setText(fileTypeChoices);
 						//System.out.println("Data Type: FPKM & DGE");
 						// "DGE Count", "RPKM & DGE"
 					} else { 
 						needSampleLibSize = false;
 						needCountAndExp = false;
-						String fileTypeChoices = "<html> Select library Size file </html>";
-						fileSelectionLabel.setForeground(java.awt.Color.BLACK);
-						fileSelectionLabel.setText(fileTypeChoices);
 						//System.out.println("Data Type: " + "Count, RPKM & DGE");
 					}
 				} else if (source == speciesCombo) {
@@ -1414,13 +1538,94 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 				}
 			}
 		}
-
 	}
 
 	@Override
 	public void setAnnotationFilePath(String filePath) {
 		//sflp.adh.setAnnFilePath(filePath);
 		//sflp.adh.annotationSelected = true;
+	}
+
+	/**
+	 * Annotation File format validation function
+	 * Hard coded Field names & order for the short term. 
+	 * Needs to validate against a template file not against hard coded values.
+	 *  
+	 * @param file
+	 * @return
+	 * @throws HeadlessException
+	 * @throws IOException
+	 */
+	public boolean validateAnnoFile(String file) throws HeadlessException, IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		StringSplitter ss = new StringSplitter((char) 0x09);
+		String currentLine;
+		int counter = 0, i = 0;
+		String _tmp = "", expected_col_name = "OK";
+		// This is hard coded..should come from a template file instead.
+		String COL_NAMES[] = {	"PROBE_ID", "CHR", "STRAND", 
+								"TX_START", "TX_END", "CDS_START", 
+								"CDS_END",	"exonCount", "exonStarts", 
+								"exonEnds", "GENE_SYMBOL", "GENE_TITLE", 
+								"REFSEQ_ACC", "PROTEIN_ACC", "ENTREZ_ID"
+							 };
+
+		while ((currentLine = reader.readLine()) != null) {
+			while (currentLine.endsWith("\t")) {
+				currentLine = currentLine.substring(0, currentLine.length() - 1);
+			}
+			//System.out.println("currentlIne: " + currentLine);
+			ss.init(currentLine);
+			// check the 1st line, the column header line
+			if (counter == 0) { 
+				//check if file has expected number of cols
+				if (ss.countTokens()+1 != COL_NAMES.length){
+					while(ss.hasMoreTokens()) {
+						_tmp += ss.nextToken() + ", ";
+					}
+					String exp_cols = "";
+					for (i = 0; i < COL_NAMES.length; i++) {
+						exp_cols += COL_NAMES[i] + ", ";
+					}
+					JOptionPane.showMessageDialog(
+							null,  
+							"Provided columns (" + String.valueOf(ss.countTokens())+ "): " + _tmp +
+							"\n Expected columns ("+ String.valueOf(COL_NAMES.length) +") : " + exp_cols, 
+							"Annotation File Format Error.",  
+							JOptionPane.ERROR_MESSAGE);
+					reader.close();
+					return false;
+				}
+				
+				//check if col names & order match
+				while(ss.hasMoreTokens()) {
+					_tmp = ss.nextToken();
+
+					if (!_tmp.equals(COL_NAMES[i])) { 
+						expected_col_name = COL_NAMES[i]; 
+						break; 
+					}
+					i++;
+				}
+			}
+			if(!expected_col_name.equals("OK")) {
+				JOptionPane.showMessageDialog(
+						null,  
+						"Invalid Column at position " + String.valueOf(i+1) + " : " + _tmp + "," +
+						"\n Expected column : " + expected_col_name, 
+						"Annotation File Format Error.",  
+						JOptionPane.ERROR_MESSAGE);
+				break;
+			}
+			// Silly... Just to make sure there are somthings other than the col headers
+			if(counter > 20)
+				break;
+
+			counter++;
+		}
+		reader.close();
+		if(expected_col_name.equals("OK")) return true;
+		return false;
 	}
 
 }

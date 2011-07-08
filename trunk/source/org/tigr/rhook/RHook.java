@@ -346,7 +346,7 @@ public class RHook  {
 	 * This saves the overhead of maintaining the pkgs locally and depends entirely
 	 * on BioC to install pkg and all its dependencies.
 	 * 
-	 * @param modName
+	 * @param modName This variable value has to be the exact package/module name that BioC expects
 	 * @throws Exception
 	 */
 	public static void installModule(String modName) throws Exception {
