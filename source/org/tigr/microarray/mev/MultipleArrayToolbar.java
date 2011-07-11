@@ -252,7 +252,7 @@ public class MultipleArrayToolbar extends JToolBar {
 		if (isRNASeq){
 			removedModules.add("BN"); //Bayesiean Networks
 			removedModules.add("LM"); //Literature Mining
-			removedModules.add("EASE"); //Literature Mining
+//			removedModules.add("EASE"); //EASE
 		} else {
 			//RNASeq modules...
 			removedModules.add("EDGER"); 
