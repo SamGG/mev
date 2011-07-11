@@ -963,8 +963,6 @@ public class EASEInitDialog extends AlgorithmDialog {
 				String array = arrayListBox.getSelectedItem().toString();
 				esdf = new EASEEntrezSupportDataFile(species, array);
 				f = resourceManager.getSupportFile(esdf, true);
-				//TODO
-				System.out.println("EASE support file: " + f.getAbsolutePath());
 				/*
 				 * SupportFileLocation changes when the user picks any new
 				 * organism/array combination
@@ -1028,16 +1026,12 @@ public class EASEInitDialog extends AlgorithmDialog {
 				try {
 					ResourcererAnnotationFileDefinition def = new ResourcererAnnotationFileDefinition(
 							speciesName, arrayName);
-					//TODO
-					System.out.println("getting file for species " + speciesName + ", array " + arrayName  + ", supportfiledef: " + def.toString());
 					if(speciesName==null || arrayName==null){
 						
 					}else{
-					annotationFile = resourceManager.getSupportFile(def, false);
+						annotationFile = resourceManager.getSupportFile(def, false);
 					}
-					//TODO
-					System.out.println("annotation file: " + annotationFile.getAbsolutePath());
-				} catch (SupportFileAccessError sfae) {
+					} catch (SupportFileAccessError sfae) {
 					sfae.printStackTrace();
 					useLoadedAnnotationFile = false;
 				}
