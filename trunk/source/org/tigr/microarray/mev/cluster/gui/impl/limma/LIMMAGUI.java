@@ -135,7 +135,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
         	geneLabels.add(String.valueOf(i));
         }
         
-        LIMMAInitBox LIMMADialog = new LIMMAInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1));
+        LIMMAInitBox LIMMADialog = new LIMMAInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1), data.getDataType()!=IData.DATA_TYPE_RNASEQ);
         LIMMADialog.setVisible(true);
         
         if (!LIMMADialog.isOkPressed()) return null;
@@ -348,7 +348,7 @@ public class LIMMAGUI implements IClusterGUI, IScriptGUI {
             exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
         }
         
-        LIMMAInitBox LIMMADialog = new LIMMAInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1));
+        LIMMAInitBox LIMMADialog = new LIMMAInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1), data.getDataType()!=IData.DATA_TYPE_RNASEQ);
         LIMMADialog.setVisible(true);
         
         if (!LIMMADialog.isOkPressed()) return null;

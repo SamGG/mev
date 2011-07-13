@@ -193,7 +193,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
                 
             } else {
                 usePreviousGraph = false;
-                sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
+                sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1), data.getDataType()!=IData.DATA_TYPE_RNASEQ);
                 sDialog.setVisible(true);
                 
                 if (!sDialog.isOkPressed()) {
@@ -268,7 +268,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
             
         } else { //if (SAMState.firstRun)
             usePreviousGraph = false;
-            sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
+            sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1), data.getDataType()!=IData.DATA_TYPE_RNASEQ);
             sDialog.setVisible(true);
             
             if (!sDialog.isOkPressed()) {
@@ -1144,7 +1144,7 @@ public class SAMGUI implements IClusterGUI, IScriptGUI {
         //Always launch as first run
         
         usePreviousGraph = false;
-        sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1));
+        sDialog = new SAMInitDialog((JFrame) framework.getFrame(), true, exptNamesVector, number_of_genes, framework.getClusterRepository(1), framework.getData().getDataType()!=IData.DATA_TYPE_RNASEQ);
         sDialog.setVisible(true);
         
         if (!sDialog.isOkPressed()) {
