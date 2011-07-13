@@ -192,7 +192,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         		species, 
         		chipType, 
         		speciestoarrays,
-        		framework.getData().isAnnotationLoaded());
+        		framework.getData().isAnnotationLoaded(), framework.getData().getDataType()!=IData.DATA_TYPE_RNASEQ);
         
         if(dialog.showModal() != JOptionPane.OK_OPTION)
             return null;
