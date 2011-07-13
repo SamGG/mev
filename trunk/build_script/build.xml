@@ -2264,51 +2264,9 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	-->
 	<target name="check-r-binaries">
 		<mkdir dir="${home.dir}/${r.binaries}"/>
-		<condition property="has-linux32-rbinary">
-		      <available file="${home.dir}/${r.binaries}/R-2.11.1_linux32/"/>
-		</condition>
-		<echo message="has linux32-r-binaries: ${has-linux32-rbinary}"/>
-		<condition property="has-linux64-rbinary">
-		      <available file="${home.dir}/${r.binaries}/R-2.11.1_linux64/"/>
-		</condition>
 		<condition property="has-win32-rbinary">
 		      <available file="${home.dir}/${r.binaries}/R-2.11.1_win32/"/>
 		</condition>
-	</target>
-
-	<!-- If the the flag "has-linux32-rbinary" is not set, download and
-		unzip the linux R binary package from occams -->
-	<target name="download-linux-rbinaries" unless="has-linux32-rbinary">
-		<echo message="Downloading R binary for linux32 platform to ${home.dir}/${r.binaries}."/>
-		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
-			<fileset dir="${home.dir}/${r.binaries}/">
-				<include name="R-2.11.1_linux32.zip"/>
-			</fileset>
-			
-		</ftp>
-		
-		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.11.1_linux32.zip"></unzip>
-
-		<delete file="${home.dir}/${r.binaries}/R-2.11.1_linux32.zip"/>
-
-	</target>
-
-	<!-- If the the flag "has-linux64-rbinary" is not set, download and
-		unzip the linux R binary package from occams -->
-	<target name="download-linux64-rbinaries" unless="has-linux64-rbinary">
-		<echo message="Downloading R binary for linux64 platform to ${home.dir}/${r.binaries}."/>
-
-		<ftp action="get" remotedir="/pub/bio/MeV_Etc/RBinaries/"  server="occams.dfci.harvard.edu" userid="anonymous" password="mev-build@tm4.org">
-			<fileset dir="${home.dir}/${r.binaries}/">
-				<include name="R-2.11.1_linux64.zip"/>
-			</fileset>
-			
-		</ftp>
-		
-		<unzip dest="${home.dir}/${r.binaries}/" src="${home.dir}/${r.binaries}/R-2.11.1_linux64.zip"></unzip>
-
-		<delete file="${home.dir}/${r.binaries}/R-2.11.1_linux64.zip"/>
-
 	</target>
 
 	<!-- If the the flag "has-win32-rbinary" is not set, download and
@@ -2338,20 +2296,14 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		 
 		 Requires R windows binaries at this locations:
 		 	${home.dir}/${r.binaries}/R-2.11.1_win
-		 	${home.dir}/${r.binaries}/R-2.11.1_linux32
-		 	${home.dir}/${r.binaries}/R-2.11.1_linux64
 		 (ftp to): ${home.dir}/${r.binaries}/  
 		 	then unzip each
 		 
 		 External R Binary Source Locations (ftp from):
 		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_win.zip
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux32.zip
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux64.zip
 	-->
 
 	<target name="build-package-all-os-arch" depends="clean, build-all">
-		<antcall target="build-package-linux32"/>
-		<antcall target="build-package-linux64"/>
 		<antcall target="build-package-win"/>
 		<!-- Mac target has to be the last one, or else it will get over written -->
 		<antcall target="build-package-mac"/>
@@ -2643,34 +2595,26 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	</target>
 	
 	<!--
-		 Target to build Linux 32 release bundle only.
+		 Target to build Linux release bundle only.
 		 Cleans and compiles from scratch
-		 
-		 Requires R Linux 32 binary at this location:
-		 	${home.dir}/${r.binaries}/R-2.11.1_linux32
-		 (ftp to): ${home.dir}/${r.binaries}/  
-		 	then unzip
-		 
-		 External R Binary Source Location:
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux32.zip
 	-->
-	<target name="build-package-linux32-alone" depends="clean, build-all">
-		<antcall target="build-package-linux32"/>
+	<target name="build-package-linux-alone" depends="clean, build-all">
+		<antcall target="build-package-linux"/>
 	</target>
 	
 
 	<!-- 
-		 Builds distributable zipfiles for linux 32, plus a source zipfile.
+		 Builds distributable zipfiles for linux, plus a source zipfile.
 		 Requires that all user docs be converted to .pdf already, 
 		 and in the user_docs directory.
 		 
 		 NOT stand-alone. Support target for:
 		 	build-package-all-os-arch
-		 	build-package-linux32
+		 	build-package-linux
 	-->
-	<target name="build-package-linux32" depends="check-r-binaries, download-linux-rbinaries">
+	<target name="build-package-linux">
 
-		<echo message="Building Linux32 Package"/>
+		<echo message="Building Linux Package"/>
 		
 		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 
@@ -2689,9 +2633,10 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		<mkdir dir="${package.dir}/${mev_version.dir}"/>
 
 		<!-- Make dir for RPackages -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
-		<!-- Make dir for R Binaries -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/>
+		<mkdir dir="${package.dir}/${mev_version.dir}/jri"/>
+		<!-- Make dir for R Binaries 
+		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/> 
+		 --> 
 					
 		<copy todir="${package.dir}/${mev_version.dir}/documentation">
 			<fileset dir="${home.dir}/user_docs/">
@@ -2708,7 +2653,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		</copy>
 		
 		<!-- OS/Arch dependent files, if they exist, before next packaging -->
-		<delete includeemptydirs="true">
+		<delete includeemptydirs="true" quiet="true">
 			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
 			<fileset dir="${package.dir}/${mev_version.dir}/R-2.11.1" includes="**/*" defaultexcludes="false" />
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
@@ -2717,154 +2662,36 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<fileset file="${package.dir}/${mev_version.dir}/lib/*.dll/" />
 		</delete>
 		
-		<!-- Copy RHook files from win_distribution_support/lib -->
+		<!-- Copy RHook files from win_distribution_support/lib 
 		<copy todir="${package.dir}/${mev_version.dir}/lib">
 			<fileset dir="${home.dir}/linux32_distribution_support/lib/" >
 				<exclude name=".svn"/> 
 			</fileset>
 		</copy>
+		-->
 		
 		<!-- Copy RHook files from win_distribution_support/RPackages -->
-		<copy todir="${package.dir}/${mev_version.dir}/RPackages">
-			<fileset dir="${home.dir}/linux32_distribution_support/RPackages/" >
+		<copy todir="${package.dir}/${mev_version.dir}/jri">
+			<fileset dir="${home.dir}/linux_distribution_support/jri/" >
 				<exclude name=".svn"/> 
 		</fileset>
 		</copy>
 		
-		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_linux32 -->
+		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_linux32 
 		<copy todir="${package.dir}/${mev_version.dir}/R-2.11.1">
 			<fileset dir="${home.dir}/${r.binaries}/R-2.11.1_linux32/" />
 		</copy>
-		
-		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
-			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
-		</copy>
-		
-		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
-		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
-		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
-		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
-			
-		<mkdir dir="${package.dir}/${mev_version.dir}/data" />
-		<copy todir="${package.dir}/${mev_version.dir}/data">
-			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
-		</copy>
-		
-    	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="755"/>
-		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux32.zip"
-			basedir="${package.dir}"
-			>
-			<include name="${mev_version.dir}/data/**"/>
-			<include name="${mev_version.dir}/documentation/**"/>
-			<include name="${mev_version.dir}/lib/**"/>
-			<include name="${mev_version.dir}/RPackages/**"/>
-			<include name="${mev_version.dir}/R-2.11.1/**"/>
-			<include name="${mev_version.dir}/plugins/**"/>
-			<include name="${mev_version.dir}/artistic_license.txt"/>
-			<include name="${mev_version.dir}/tmev.sh"/>
-			<exclude name=".svn"/>
-		</zip>
-	</target>
-	
-	<!--
-		 Target to build Linux 64 release bundle only.
-		 Cleans and compiles from scratch
-		 
-		 Requires R Linux 64 binary at this location:
-		 	${home.dir}/${r.binaries}/R-2.11.1_linux62
-		 (ftp to): ${home.dir}/${r.binaries}/  
-		 	then unzip
-		 
-		 External R Binary Source Location (ftp from):
-		 	ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/RBinaries/R-2.11.1_linux64.zip
-	-->
-	<target name="build-package-linux64-alone" depends="clean, build-all">
-		<antcall target="build-package-linux64"/>
-	</target>
-	
-	<!-- 
-		 Builds distributable zipfiles for linux 64, plus a source zipfile.
-		 Requires that all user docs be converted to .pdf already, 
-		 and in the user_docs directory.
-	
-		 NOT stand-alone. Support target for:
-		 	build-package-all-os-arch
-		 	build-package-linux32 
-	-->
-	<target name="build-package-linux64" depends="download-linux64-rbinaries">
-
-		<echo message="Building Linux64 Package"/>
-		
-		<loadproperties srcFile="${source.dir}/org/tigr/microarray/mev/build.properties"/>
-
-		<!-- Not deleting file temp soln -->
-		<!-- 
-		<delete file="${source.dir}/org/tigr/microarray/mev/build.properties"/>
 		-->
 		
-		<echo message="Please be sure that all user documentation to be included in the package
-		has been converted to pdf and placed in the user_docs directory. "/>
-		
-		<mkdir dir="${package.dir}"/>
-		
-		<property name="version" value="${PACKAGE-MAJOR-VERSION}_${PACKAGE-MINOR-VERSION}_${PACKAGE-MICRO-VERSION}"/>
-		<property name="mev_version.dir" value="MeV_${version}"/>
-		<mkdir dir="${package.dir}/${mev_version.dir}"/>
-
-		<!-- Make dir for RPackages -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/RPackages"/>
-		<!-- Make dir for R Binaries -->
-		<mkdir dir="${package.dir}/${mev_version.dir}/R-2.11.1"/>
-		
-		<copy todir="${package.dir}/${mev_version.dir}/documentation">
-			<fileset dir="${home.dir}/user_docs/">
-				<include name="*.pdf"/>
-			</fileset>
-			<fileset dir="${home.dir}/documentation/">
-				<include name="manual"/>
-				<include name="manual/*"/>
-			</fileset>
-		</copy>
-		
-		<copy todir="${package.dir}/${mev_version.dir}/lib">
-			<fileset dir="${home.dir}/lib/" includes="*.jar"/>
-		</copy>
-
-		<!-- OS/Arch dependent files, if they exist, before next packaging -->
-		<delete includeemptydirs="true">
-			<fileset dir="${package.dir}/${mev_version.dir}/RPackages" includes="**/*" defaultexcludes="false" />
-			<fileset dir="${package.dir}/${mev_version.dir}/R-2.11.1" includes="**/*" defaultexcludes="false" />
-			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o.?" />
-			<fileset file="${package.dir}/${mev_version.dir}/lib/*.o/" />
-			<fileset file="${package.dir}/${mev_version.dir}/lib/*.so/" />
-			<fileset file="${package.dir}/${mev_version.dir}/lib/*.dll/" />
-		</delete>
-		
-		<!-- Copy RHook files from win_distribution_support/lib -->
-		<copy todir="${package.dir}/${mev_version.dir}/lib">
-			<fileset dir="${home.dir}/linux64_distribution_support/lib/" >
-				<exclude name=".svn"/> 
-			</fileset>
-		</copy>
-		
-		<!-- Copy RHook files from win_distribution_support/RPackages -->
-		<copy todir="${package.dir}/${mev_version.dir}/RPackages">
-			<fileset dir="${home.dir}/linux64_distribution_support/RPackages/" >
-				<exclude name=".svn"/> 
-			</fileset>
-		</copy>
-		
-		<!-- Copy RBinary files from ${home.dir}/${r.binaries}/R-2.11.1_linux64 -->
-		<copy todir="${package.dir}/${mev_version.dir}/R-2.11.1">
-			<fileset dir="${home.dir}/${r.binaries}/R-2.11.1_linux64/" />
-		</copy>
-		
 		<copy todir="${package.dir}/${mev_version.dir}/plugins" >
 			<fileset dir="${home.dir}/plugins/" includes="*.jar, *.props"/>
 		</copy>
 		
+		<copy file="${home.dir}/linux_distribution_support/makejrilib.sh" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/artistic_license.txt" todir="${package.dir}/${mev_version.dir}" />
+		<!--
 		<copy file="${home.dir}/TMEV.bat" todir="${package.dir}/${mev_version.dir}" />
+		-->
 		<copy file="${home.dir}/tmev.sh" todir="${package.dir}/${mev_version.dir}" />
 		<copy file="${home.dir}/www.tm4.org.url" todir="${package.dir}/${mev_version.dir}" />
 			
@@ -2874,17 +2701,16 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 		</copy>
 		
     	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="755"/>
-		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux64.zip"
+		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux.zip"
 			basedir="${package.dir}"
 			>
 			<include name="${mev_version.dir}/data/**"/>
 			<include name="${mev_version.dir}/documentation/**"/>
 			<include name="${mev_version.dir}/lib/**"/>
-			<include name="${mev_version.dir}/RPackages/**"/>
-			<include name="${mev_version.dir}/R-2.11.1/**"/>
-			<include name="${mev_version.dir}/plugins/**"/>
+			<include name="${mev_version.dir}/jri/**"/>
 			<include name="${mev_version.dir}/artistic_license.txt"/>
 			<include name="${mev_version.dir}/tmev.sh"/>
+			<include name="${mev_version.dir}/makejrilib.sh"/>
 			<exclude name=".svn"/>
 		</zip>
 	</target>
