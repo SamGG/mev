@@ -1,6 +1,5 @@
 package org.tigr.microarray.mev.cluster.gui.impl.gsea;
 
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
@@ -36,11 +34,8 @@ import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
-import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.attract.SynExpressionViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.util.FloatMatrix;
 
 public class GSEAGUI implements IClusterGUI {
@@ -48,7 +43,6 @@ public class GSEAGUI implements IClusterGUI {
 		private Algorithm gsea;
 		
 	    private Experiment experiment;
-	    private GSEAExperiment gseaExperiment;
 	    private IData idata;
 	    private Logger logger;
 	    private Listener listener;
@@ -120,7 +114,7 @@ public class GSEAGUI implements IClusterGUI {
 			gData=ptg.convertProbeToGene(algData.getParams().getString("gene-identifier"), collapsemode, cutoff);
 			
 			
-			gseaExperiment=ptg.returnGSEAExperiment();
+			ptg.returnGSEAExperiment();
 			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
 
 			

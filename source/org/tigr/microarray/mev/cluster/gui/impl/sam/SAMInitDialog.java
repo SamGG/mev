@@ -113,10 +113,15 @@ public class SAMInitDialog extends AlgorithmDialog {
     protected ClusterSelector multiClassSelector;
     protected ClusterRepository repository;
     
+
     /** Creates new SAMInitDialog */
     public SAMInitDialog(JFrame parentFrame, boolean modality, Vector<String> exptNames, int numGenes, ClusterRepository repository) {
+    	this(parentFrame, modality, exptNames,numGenes,repository,true);
+    }
+    /** Creates new SAMInitDialog */
+    public SAMInitDialog(JFrame parentFrame, boolean modality, Vector<String> exptNames, int numGenes, ClusterRepository repository, boolean isDataAppropriate) {
         
-        super(parentFrame, "SAM Initialization", modality);
+        super(parentFrame, "SAM Initialization", modality, isDataAppropriate);
         //this.parentFrame = parentFrame;
         this.exptNames = exptNames;
         this.numGenes = numGenes;

@@ -91,9 +91,14 @@ public class LIMMAInitBox extends AlgorithmDialog {
     HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
-    
+
     /** Creates new LIMMAInitBox */
     public LIMMAInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
+    	this (parentFrame, modality, exptNames, repository, true);
+    }
+    
+    /** Creates new LIMMAInitBox */
+    public LIMMAInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository, boolean isDataAppropriate) {
         super(parentFrame, "LIMMA Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;

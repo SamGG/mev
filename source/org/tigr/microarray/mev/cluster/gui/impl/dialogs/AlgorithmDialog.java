@@ -51,14 +51,21 @@ public class AlgorithmDialog extends JDialog {
     public static final String OK_COMMAND = "ok-command";
     public static final String CANCEL_COMMAND = "cancel-command";
     
+    public boolean isDataAppropriate = true;
+    
     GradientPaint gp;
     Color backgroundColor = new Color(25,25,169);
     Color fadeColor = new Color(140,220,240);
-    
+
     /** Creates new AlgorithmDialog */
     public AlgorithmDialog(Frame parent, String title, boolean modal) {
+        this(parent, title, modal, true);
+    }
+    /** Creates new AlgorithmDialog */
+    public AlgorithmDialog(Frame parent, String title, boolean modal, boolean isDataAppropriate) {
         super(parent, title, modal);
-        
+
+        this.isDataAppropriate = isDataAppropriate;
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
@@ -93,12 +100,19 @@ public class AlgorithmDialog extends JDialog {
         
         //layout button panel
         buttonPanel.setLayout(new GridBagLayout());
-        buttonPanel.add(infoButton, new GridBagConstraints(0,0,1,1,0.0,1.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+        buttonPanel.setLayout(new GridBagLayout());
+        if (!isDataAppropriate){
+            JLabel wrongDataLabel = new JLabel("WARNING: This analysis was not intended to be performed on your current data type.");
+            wrongDataLabel.setForeground(Color.red);
+            wrongDataLabel.setOpaque(false);
+        	buttonPanel.add(wrongDataLabel, new GridBagConstraints(0,0,4,1,1.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0));
+        }
+        buttonPanel.add(infoButton, new GridBagConstraints(0,1,1,1,0.0,1.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
         JLabel label = new JLabel(GUIFactory.getIcon("dialog_button_bar.gif"));
-        buttonPanel.add(label, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,5,0,5), 0,0));
-        buttonPanel.add(resetButton, new GridBagConstraints(2,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0));
-        buttonPanel.add(cancelButton, new GridBagConstraints(3,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
-        buttonPanel.add(okButton, new GridBagConstraints(4,0,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
+        buttonPanel.add(label, new GridBagConstraints(1,1,1,1,1.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(resetButton, new GridBagConstraints(2,1,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(cancelButton, new GridBagConstraints(3,1,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+        buttonPanel.add(okButton, new GridBagConstraints(4,1,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
         
         mainPanel.add(new HeaderImagePanel(), new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         mainPanel.add(contentPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
@@ -107,10 +121,15 @@ public class AlgorithmDialog extends JDialog {
         this.getContentPane().add(mainPanel);
         pack();
     }
-        /** Creates new AlgorithmDialog */
+
     public AlgorithmDialog(JFrame parent, String title, boolean modal) {
+        this(parent, title, modal, true);
+    }
+        /** Creates new AlgorithmDialog */
+    public AlgorithmDialog(JFrame parent, String title, boolean modal, boolean isDataAppropriate) {
         super(parent, title, modal);
         
+        this.isDataAppropriate = isDataAppropriate;
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(0,5,5,5));
@@ -145,12 +164,19 @@ public class AlgorithmDialog extends JDialog {
         
         //layout button panel
         buttonPanel.setLayout(new GridBagLayout());
-        buttonPanel.add(infoButton, new GridBagConstraints(0,0,1,1,0.0,1.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+        if (!isDataAppropriate){
+            JLabel wrongDataLabel = new JLabel("WARNING: This analysis was not intended to be performed on your current data type.");
+            wrongDataLabel.setForeground(Color.red);
+            wrongDataLabel.setOpaque(false);
+        	buttonPanel.add(wrongDataLabel, new GridBagConstraints(0,0,4,1,1.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5,5,5,5), 0,0));
+        }
+        buttonPanel.add(infoButton, new GridBagConstraints(0,1,1,1,0.0,1.0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
         JLabel label = new JLabel(GUIFactory.getIcon("dialog_button_bar.gif"));
-        buttonPanel.add(label, new GridBagConstraints(1,0,1,1,1.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,5,0,5), 0,0));
-        buttonPanel.add(resetButton, new GridBagConstraints(2,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0));
-        buttonPanel.add(cancelButton, new GridBagConstraints(3,0,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
-        buttonPanel.add(okButton, new GridBagConstraints(4,0,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
+        buttonPanel.add(label, new GridBagConstraints(1,1,1,1,1.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(resetButton, new GridBagConstraints(2,1,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,5,0,5), 0,0));
+        buttonPanel.add(cancelButton, new GridBagConstraints(3,1,1,1,0.0,0.0,GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0,0,0,5), 0,0));
+
+        buttonPanel.add(okButton, new GridBagConstraints(4,1,1,1,0.0,0.0,GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0,30,0,0), 0,0));
         
         mainPanel.add(new HeaderImagePanel(), new GridBagConstraints(0,0,1,1,1.0,0.0,GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         mainPanel.add(contentPanel, new GridBagConstraints(0,1,1,1,1.0,1.0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
