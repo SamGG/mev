@@ -169,6 +169,7 @@ public class EASEInitDialog extends AlgorithmDialog {
 	 */
 	ClusterRepository repository;
 
+
 	/**
 	 * Creates a new instance of EaseInitDialog
 	 * 
@@ -184,7 +185,25 @@ public class EASEInitDialog extends AlgorithmDialog {
 			IResourceManager rm, String speciesName, String arrayName,
 			Hashtable<String, Vector<String>> speciestoarrays,
 			boolean isAnnotationLoaded) {
-		super(parent, "EASE: EASE Annotation Analysis", true);
+		this(parent, repository, annotationLabels, defaultFileL, rm, speciesName, arrayName, speciestoarrays, isAnnotationLoaded, true);
+	}
+	
+	/**
+	 * Creates a new instance of EaseInitDialog
+	 * 
+	 * @param parent
+	 *            Parent Frame
+	 * @param repository
+	 *            Cluster repository to construct <CODE>ClusterBrowser</CODE>
+	 * @param annotationLabels
+	 *            Annotation types
+	 */
+	public EASEInitDialog(Frame parent, ClusterRepository repository,
+			String[] annotationLabels, String defaultFileL,
+			IResourceManager rm, String speciesName, String arrayName,
+			Hashtable<String, Vector<String>> speciestoarrays,
+			boolean isAnnotationLoaded, boolean isDataAppropriate) {
+		super(parent, "EASE: EASE Annotation Analysis", true, isDataAppropriate);
 		this.parent = parent;
 		this.speciesName = speciesName;
 		this.arrayName = arrayName;
