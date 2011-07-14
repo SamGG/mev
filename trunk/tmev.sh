@@ -44,6 +44,11 @@ if [ -a ${CurrDIR}/lib/libjri.so ]
    else 
      echo "Attempting to build jri Library"
 	 ./makejrilib.sh
+         if [ $? -ne 0 ]
+         then
+           echo "ERROR generating jri library...Aborting"
+           exit 1;;
+         fi
 fi
 
 # Set RHOME etc 
