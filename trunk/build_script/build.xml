@@ -2700,7 +2700,12 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<fileset dir="${home.dir}/data"	includesfile="samplefiles.txt"/>
 		</copy>
 		
+		
     	<chmod file="${package.dir}/${mev_version.dir}/tmev.sh" perm="755"/>
+		<chmod file="${package.dir}/${mev_version.dir}/makejrilib.sh" perm="755"/>
+		<chmod dir="${package.dir}/${mev_version.dir}/jri" perm="755" includes="**/**"/>
+		<!-- zip by hand for permision issues -->
+		<!--
 		<zip destfile="${package.dir}/MeV_${version}_r${BUILD-REVISION}_linux.zip"
 			basedir="${package.dir}"
 			>
@@ -2713,6 +2718,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 			<include name="${mev_version.dir}/makejrilib.sh"/>
 			<exclude name=".svn"/>
 		</zip>
+		-->
 	</target>
 	
 	<target name="webstart-package">	
