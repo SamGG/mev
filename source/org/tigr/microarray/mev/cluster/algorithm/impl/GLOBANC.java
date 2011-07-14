@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
@@ -47,7 +48,7 @@ public class GLOBANC extends AbstractAlgorithm{
 	ArrayList<String> geneNameAL;
 
 	private static int MSigDBFile = 1;
-//	private static int GeneSigDBFile = 2;
+	//	private static int GeneSigDBFile = 2;
 
 	private AlgorithmEvent event;
 	/**
@@ -277,79 +278,85 @@ public class GLOBANC extends AbstractAlgorithm{
 		}
 
 		try {
-		RHook.testPackage("globalanc");
-		RHook.log("dataDesign = " + dataDesign);
-		RHook.log("Starting R Algorithim");
-		
-		String rCmd = "library(GlobalAncova)";
-		RHook.evalR(rCmd);
-
-//		int numProbes = expMatrix.getRowDimension();
-		int numSamples = expMatrix.getColumnDimension();
-
-		String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
-		//if(fileLoc.contains("\\"));
-		fileLoc = fileLoc.replace("\\", "/");
-		collapseProbesAndRemoveNaNs();
-		String filePath = writeMatrixToFile(fileLoc, collapsedExpMatrix, collapsedGeneNames);
-		//Create data matrix in R from a file
-		//logger.writeln("RHook.createRDataMatrixFromFile(\"y\","+ filePath+", true,"+ sampleNames+")");
-		RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
-		//Create data matrix in R, in memory - Inefficient
-		//RHook.createRDataMatrix("yy", expMatrix, geneNames, sampleNames);
-
-	
-		String phenoData = "phenodata <-data.frame(cbind(Sample=1:" +numSamples+"), cbind(full=c(";
-		for (int i=0; i<numSamples; i++){
-			phenoData = phenoData + ((this.groupAssignments[i]-1)/numBGroups+1)+",";//+this.nameB+((groupAssignments[i]-1)%numBGroups+1)+"\",";
-		}
-		phenoData = phenoData.substring(0, phenoData.length()-1);
-		
-		phenoData = phenoData+")), cbind(grade = rep(1,"+numSamples+")),cbind(reduced=c(";
-					
-		for (int i=0; i<numSamples; i++){
-			phenoData = phenoData + ((groupAssignments[i]-1)%numBGroups+1)+",";
-		}
-		phenoData = phenoData.substring(0, phenoData.length()-1);
-		phenoData = phenoData+")))";
-		RHook.evalR(phenoData);
-
-		
-		String[] geneset = getPathwaysCMD_fast();
-		if (geneset==null){
-			stop = true;
-			JOptionPane.showMessageDialog(null, "The gene annotation you have selected does not match the annotation in the gene sets.", "No Matching Annotation", JOptionPane.ERROR_MESSAGE);
-			throw new AbortException();
-		}
-		
-		// Source the R File genesfile.R
-		RHook.evalR("source('" + geneset[0] + "')");
-		// Source the R File namesfile.R
-		RHook.evalR("source('" + geneset[1] + "')");		
-
-//		String[] geneset = getPathwaysCMD();// 
-//		// Source the R File genesfile.R
-//		RHook.evalR(geneset[0]);
-//		// Source the R File namesfile.R
-//		RHook.evalR(geneset[1]);
-		
-		// List objects created in R
-		REXP e = RHook.evalR("ls()");
-		String objs[] = e.asStringArray();
-		String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = " + numPerms + ")";
-		RHook.evalR(runGA);
-		
-		REXP x = RHook.evalR("GA.obj");
-		double[][] matrix = x.asMatrix();
-		resultMatrix = new float[matrix.length][matrix[0].length];
-		for (int i=0; i<matrix.length; i++){
-			for (int j=0; j<matrix[i].length; j++){
-				resultMatrix[i][j] = (float)matrix[i][j];
+			//RHook.testPackage("globalanc");
+			if (RHook.getOS()==RConstants.MAC_OS ||
+					RHook.getOS()==RConstants.WINDOWS_OS){
+				RHook.testPackage("globalanc");
+			} else {
+				RHook.installModule("GlobalAncova");
 			}
-		}
-		
-		RHook.endRSession();
-//		removeTmps(filePath);
+			RHook.log("dataDesign = " + dataDesign);
+			RHook.log("Starting R Algorithim");
+
+			String rCmd = "library(GlobalAncova)";
+			RHook.evalR(rCmd);
+
+			//		int numProbes = expMatrix.getRowDimension();
+			int numSamples = expMatrix.getColumnDimension();
+
+			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
+			//if(fileLoc.contains("\\"));
+			fileLoc = fileLoc.replace("\\", "/");
+			collapseProbesAndRemoveNaNs();
+			String filePath = writeMatrixToFile(fileLoc, collapsedExpMatrix, collapsedGeneNames);
+			//Create data matrix in R from a file
+			//logger.writeln("RHook.createRDataMatrixFromFile(\"y\","+ filePath+", true,"+ sampleNames+")");
+			RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
+			//Create data matrix in R, in memory - Inefficient
+			//RHook.createRDataMatrix("yy", expMatrix, geneNames, sampleNames);
+
+
+			String phenoData = "phenodata <-data.frame(cbind(Sample=1:" +numSamples+"), cbind(full=c(";
+			for (int i=0; i<numSamples; i++){
+				phenoData = phenoData + ((this.groupAssignments[i]-1)/numBGroups+1)+",";//+this.nameB+((groupAssignments[i]-1)%numBGroups+1)+"\",";
+			}
+			phenoData = phenoData.substring(0, phenoData.length()-1);
+
+			phenoData = phenoData+")), cbind(grade = rep(1,"+numSamples+")),cbind(reduced=c(";
+
+			for (int i=0; i<numSamples; i++){
+				phenoData = phenoData + ((groupAssignments[i]-1)%numBGroups+1)+",";
+			}
+			phenoData = phenoData.substring(0, phenoData.length()-1);
+			phenoData = phenoData+")))";
+			RHook.evalR(phenoData);
+
+
+			String[] geneset = getPathwaysCMD_fast();
+			if (geneset==null){
+				stop = true;
+				JOptionPane.showMessageDialog(null, "The gene annotation you have selected does not match the annotation in the gene sets.", "No Matching Annotation", JOptionPane.ERROR_MESSAGE);
+				throw new AbortException();
+			}
+
+			// Source the R File genesfile.R
+			RHook.evalR("source('" + geneset[0] + "')");
+			// Source the R File namesfile.R
+			RHook.evalR("source('" + geneset[1] + "')");		
+
+			//		String[] geneset = getPathwaysCMD();// 
+			//		// Source the R File genesfile.R
+			//		RHook.evalR(geneset[0]);
+			//		// Source the R File namesfile.R
+			//		RHook.evalR(geneset[1]);
+
+			// List objects created in R
+			REXP e = RHook.evalR("ls()");
+			String objs[] = e.asStringArray();
+			String runGA = "GA.obj <-GlobalAncova(xx = y, formula.full = ~full + reduced, formula.red = ~reduced, model.dat = phenodata, test.genes=genesvector, method='both', perm = " + numPerms + ")";
+			RHook.evalR(runGA);
+
+			REXP x = RHook.evalR("GA.obj");
+			double[][] matrix = x.asMatrix();
+			resultMatrix = new float[matrix.length][matrix[0].length];
+			for (int i=0; i<matrix.length; i++){
+				for (int j=0; j<matrix[i].length; j++){
+					resultMatrix[i][j] = (float)matrix[i][j];
+				}
+			}
+
+			RHook.endRSession();
+			//		removeTmps(filePath);
 		} catch (Exception e) {
 			RHook.log(e);
 			try {
@@ -374,9 +381,9 @@ public class GLOBANC extends AbstractAlgorithm{
 		String[] cmd = new String[2];
 		String genesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"genesfile.R";
 		String namesFile = System.getProperty("user.dir")+System.getProperty("file.separator")+"namesfile.R";
-		
-		
-		
+
+
+
 		cmd[0] = genesFile.replace("\\", "/"); //"genesvector <- list(";
 		cmd[1] = namesFile.replace("\\", "/"); //"names(genesvector) <- c(";
 		try {
@@ -388,10 +395,10 @@ public class GLOBANC extends AbstractAlgorithm{
 			String line;
 			ArrayList<ArrayList> al = new ArrayList<ArrayList>();
 			ArrayList<String> namesal = new ArrayList<String>();
-			
+
 			for (int fileIndex=0; fileIndex<geneSetFilePath.length; fileIndex++){
 				BufferedReader br = new BufferedReader(new FileReader(geneSetFilePath[fileIndex]));
-				
+
 				line = br.readLine();
 				while( line != null){
 					line.trim();
@@ -400,10 +407,10 @@ public class GLOBANC extends AbstractAlgorithm{
 						continue;
 					//if enough genes...
 					al.add(new ArrayList<Integer>());
-	
+
 					String tmp =comma+"c(";					
 					boolean first = true;
-					
+
 					for (int i=2; i<genes.length; i++){
 						if (geneNameAL.contains(genes[i])){
 							al.get(al.size()-1).add(geneNameAL.indexOf(genes[i]));						
@@ -441,10 +448,10 @@ public class GLOBANC extends AbstractAlgorithm{
 			genesout.write(")");
 			//cmd[1] = cmd[1].substring(0, cmd[1].length()-1)+")";
 			namesout.write(")");
-			
+
 			this.geneLists = new int[al.size()][];
 			this.geneListsNames = new String[namesal.size()];
-			
+
 			for (int i=0; i<al.size(); i++){
 				geneLists[i]=new int[al.get(i).size()];
 				for (int j=0; j<al.get(i).size(); j++){
@@ -456,13 +463,13 @@ public class GLOBANC extends AbstractAlgorithm{
 			}			
 			genesout.flush(); genesout.close();
 			namesout.flush(); namesout.close();
-			
+
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 		return cmd;
 	}
-	
+
 	private String[] getPathwaysCMD() {
 		int titleIndex = (geneSetOrigin == MSigDBFile) ? 0:1;
 		String[] cmd = new String[2];
@@ -477,12 +484,12 @@ public class GLOBANC extends AbstractAlgorithm{
 				while( (line = br.readLine()) != null){
 					line.trim();
 					String[] genes = line.split("\t");
-					
+
 					if (genes.length<3)
 						continue;
 					//if enough genes...
 					al.add(new ArrayList<Integer>());
-	//				namesal.add(genes[1]);
+					//				namesal.add(genes[1]);
 					cmd[0] = cmd[0] + "c(";
 					boolean first = true;
 					for (int i=2; i<genes.length; i++){
@@ -505,10 +512,10 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 			cmd[0] = cmd[0].substring(0, cmd[0].length()-1)+")";
 			cmd[1] = cmd[1].substring(0, cmd[1].length()-1)+")";
-			
+
 			this.geneLists = new int[al.size()][];
 			this.geneListsNames = new String[namesal.size()];
-			
+
 			for (int i=0; i<al.size(); i++){
 				geneLists[i]=new int[al.get(i).size()];
 				for (int j=0; j<al.get(i).size(); j++){
@@ -518,13 +525,13 @@ public class GLOBANC extends AbstractAlgorithm{
 			for (int i=0; i<namesal.size(); i++){
 				geneListsNames[i]=namesal.get(i);
 			}
-			
+
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 		return cmd;
 	}
-	
+
 	private void collapseProbesAndRemoveNaNs() {
 		geneNameAL = new ArrayList<String>();
 		ArrayList<Integer> indicesMap = new ArrayList<Integer>();
@@ -539,7 +546,7 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 			if (hasNaNs)
 				continue;
-			
+
 			//add to data if not already added
 			if (!geneNameAL.contains(geneNames[i])){
 				geneNameAL.add(geneNames[i]);
@@ -555,7 +562,7 @@ public class GLOBANC extends AbstractAlgorithm{
 			}
 		}
 		collapsedExpMatrix = new FloatMatrix(tempCollapsed);
-		
+
 	}
 	private String writeMatrixToFile(String fileLoc, FloatMatrix fm, String[] rowNames) {
 		try {

@@ -17,6 +17,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 
 import org.rosuda.JRI.REXP;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.deseq.DESEQInitBox;
@@ -155,8 +156,13 @@ public class DEGSEQ extends AbstractAlgorithm {
 
 		try {
 			//System.out.println("Testing DEGSEQ install");
-			RHook.testPackage("degseq");
-
+			//RHook.testPackage("degseq");
+			if (RHook.getOS() == RConstants.MAC_OS ||
+					RHook.getOS() == RConstants.WINDOWS_OS) {
+				RHook.testPackage("degseq");
+			} else {
+				RHook.installModule("DEGseq");
+			}
 			RHook.log("Starting R Algorithim");
 
 			String rCmd = "library(DEGseq)";
