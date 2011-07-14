@@ -38,17 +38,16 @@ export CLASSPATH
 CurrDIR=`pwd`
 echo ${CurrDIR}
 
-# Set RHOME
-R_HOME=${CurrDIR}/R-2.9.1
-
-R_SHARE_DIR=${CurrDIR}/R-2.9.1/share
+# Set RHOME etc 
+R_HOME=/usr/lib/R
+R_SHARE_DIR=/usr/share/R
 export R_SHARE_DIR
-R_INCLUDE_DIR=${CurrDIR}/R-2.9.1/include
+R_INCLUDE_DIR=/usr/include/R
 export R_INCLUDE_DIR
 
 # For R shared libs
-PATH=${PATH}:${CurrDIR}/R-2.9.1/bin:${CurrDIR}/R-2.9.1/lib
-JRI_LD_PATH=${CurrDIR}/lib:${CurrDIR}/R-2.9.1/lib
+PATH=${PATH}:${R_HOME}/bin:${R_HOME}/lib
+JRI_LD_PATH=${CurrDIR}/lib:${R_HOME}/lib
 if test -z "$LD_LIBRARY_PATH"; then
   LD_LIBRARY_PATH=$JRI_LD_PATH
 else
