@@ -30,13 +30,21 @@ fi
 done 
 export CLASSPATH
 
-#************************************
-#
-# R specific variables
-#
-#************************************
+#**************************************
+# R specific variables & compilations #
+#**************************************
 CurrDIR=`pwd`
 echo ${CurrDIR}
+
+# Try to auto detect libjri.so file, if not found then try compiling. 
+# This ensures the same libs are not compiled every time MeV is run
+if [ -a ${CurrDIR}/lib/libjri.so ]
+   then
+     echo "${CurrDIR}/lib/libjri.so exists"
+   else 
+     echo "Attempting to build jri Library"
+	 ./makejrilib.sh
+fi
 
 # Set RHOME etc 
 R_HOME=/usr/lib/R
