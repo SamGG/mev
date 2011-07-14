@@ -153,7 +153,8 @@ public class DESEQ extends AbstractAlgorithm {
 
 		try {
 			//System.out.println("Testing DESEQ install");
-			if (RHook.getOS() == RConstants.MAC_OS) {
+			if (RHook.getOS() == RConstants.MAC_OS ||
+					RHook.getOS() == RConstants.WINDOWS_OS) {
 				RHook.testPackage("deseq");
 			} else {
 				RHook.installModule("DESeq");

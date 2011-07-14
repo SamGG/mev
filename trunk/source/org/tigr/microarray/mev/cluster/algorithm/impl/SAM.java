@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.microarray.mev.cluster.Node;
@@ -1199,7 +1200,13 @@ public class SAM extends AbstractAlgorithm {
 		}
 
 		try {
-			RHook.testPackage("sam");
+			//RHook.testPackage("sam");
+			if (RHook.getOS()==RConstants.MAC_OS ||
+					RHook.getOS()==RConstants.WINDOWS_OS){
+				RHook.testPackage("sam");
+			} else {
+				RHook.installModule("samr");
+			}
 			RHook.log("Starting R Algorithim");
 
 			System.out.println("start of load lib");

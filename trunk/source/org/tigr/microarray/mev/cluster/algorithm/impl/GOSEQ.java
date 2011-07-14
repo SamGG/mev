@@ -13,6 +13,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
@@ -459,7 +460,13 @@ public class GOSEQ extends AbstractAlgorithm{
 
 		try {
 //		System.out.println("Testing GOSEQ install");
-		RHook.testPackage("goseq");
+		//RHook.testPackage("goseq");
+		if (RHook.getOS() == RConstants.MAC_OS ||
+				RHook.getOS() == RConstants.WINDOWS_OS) {
+			RHook.testPackage("goseq");
+		} else {
+			RHook.installModule("mgcv");
+		}
 //		System.out.println("Loading Lib goseq");
 		RHook.log("Starting R Algorithim");
 		

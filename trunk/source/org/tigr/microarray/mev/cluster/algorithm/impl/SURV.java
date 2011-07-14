@@ -14,6 +14,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.Cluster;
@@ -313,7 +314,13 @@ public class SURV extends AbstractAlgorithm{
 
 		try {
 			System.out.println("Testing Survival install");
-			RHook.testPackage("survival");
+			//RHook.testPackage("survival");
+			if (RHook.getOS()==RConstants.MAC_OS ||
+					RHook.getOS()==RConstants.WINDOWS_OS){
+				RHook.testPackage("survival");
+			} else {
+				RHook.installModule("survival");
+			}
 			// Raktim - testPackage() tests for all pkgs associated with a module
 			// RHook.testPackage("penalized");
 			RHook.log("Starting R Algorithim");

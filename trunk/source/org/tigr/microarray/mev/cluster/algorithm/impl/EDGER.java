@@ -17,6 +17,7 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 
 
 import org.rosuda.JRI.REXP;
+import org.tigr.rhook.RConstants;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
 import org.tigr.microarray.mev.cluster.gui.impl.edger.EDGERInitBox;
@@ -149,7 +150,13 @@ public class EDGER extends AbstractAlgorithm {
 		
 		try {
 			//System.out.println("Testing EDGER install");
-			RHook.testPackage("edger");
+			//RHook.testPackage("edger");
+			if (RHook.getOS()==RConstants.MAC_OS ||
+					RHook.getOS()==RConstants.WINDOWS_OS){
+				RHook.testPackage("edger");
+			} else {
+				RHook.installModule("edgeR");
+			}
 			
 			RHook.log("Starting R Algorithim");
 
