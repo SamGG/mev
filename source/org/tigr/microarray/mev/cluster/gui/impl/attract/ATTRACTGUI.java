@@ -1,617 +1,864 @@
+/*******************************************************************************
+ * Copyright (c) 1999-2005 The Institute for Genomic Research (TIGR).
+ * Copyright (c) 2005-2008, the Dana-Farber Cancer Institute (DFCI), 
+ * J. Craig Venter Institute (JCVI) and the University of Washington.
+ * All rights reserved.
+ *******************************************************************************/
+/*
+ * $RCSfile: LIMMAGUI.java,v $
+ * $Revision: 1.10 $
+ * $Date: 2006-11-07 17:27:40 $
+ * $Author: eleanorahowe $
+ * $State: Exp $
+ */
 package org.tigr.microarray.mev.cluster.gui.impl.attract;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
+import org.tigr.microarray.mev.cluster.Cluster;
+import org.tigr.microarray.mev.cluster.Node;
+import org.tigr.microarray.mev.cluster.NodeList;
+import org.tigr.microarray.mev.cluster.NodeValueList;
+import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.impl.attract.AttractAlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GSEAUtils;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneData;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneDataElement;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.GeneSetElement;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.Geneset;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.IGeneData;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.IGeneSetElement;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ProbetoGene;
-import org.tigr.microarray.mev.cluster.algorithm.impl.gsea.ReadGeneSet;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
-import org.tigr.microarray.mev.cluster.gui.GSEAExperiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Logger;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEACentroidViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAConstants;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEAExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GSEATableViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.GenesetMembership;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.LeadingEdgeSubsetViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.LeadingEdgeTableViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.StepsPanel;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.TestStatisticTableViewer;
-import org.tigr.microarray.mev.cluster.gui.impl.gsea.TestStatisticViewer;
-
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLGUI;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLInitDialog;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLTreeData;
+import org.tigr.microarray.mev.cluster.gui.impl.hcl.HCLViewer;
+import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.util.FloatMatrix;
 
-
-public class ATTRACTGUI implements IClusterGUI{
-
-	private IData idata;
-    private  AlgorithmData algData = new AlgorithmData();
-	private Algorithm gsea;
-	private Algorithm attract;
-	private Experiment experiment;
-	private GSEAExperiment gseaExperiment;
-	private Logger logger;
-	private Listener listener;
-	private boolean stop=false;
-	private String[][]geneToProbeMapping;
-	//max_columns decides the number of columns to display in the
-	//table viewer
-	int max_columns;
-	
-    private HashMap<String, LinkedHashMap<String, Float>>orderedTestStats=new HashMap<String, LinkedHashMap<String, Float>>();
-    private HashMap<String, LinkedHashMap<String, Float>>descendingSortedTStats=new HashMap<String, LinkedHashMap<String, Float>>();
-    private Geneset[]geneset=null;
-	private IGeneData[]gData=null;
-	private AlgorithmParameters param;  
-	private ArrayList<String>sorted_gene_names=new ArrayList<String>();
-	private int topPathways;
-	private int[] factorLevels;
-	private int[][]grpAssignments;
-	
-	
-	
-	
-	public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
-		
-		// Temp code to disable launch in Mac & Linux
-		// to be reverted when Mac R issue is resolved
-		if (!System.getProperty("os.name").toLowerCase().contains("win")) {
-			System.out.println("ATTARCT module not supported on Mac or Linux OS yet.");
-			JOptionPane.showMessageDialog(framework.getFrame(), "ATTARCT module not supported on Mac or Linux OS yet.", "OS not supported", JOptionPane.INFORMATION_MESSAGE);
+/**
+ * @author  dschlauch
+ * @version
+ */
+public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
+    
+    protected Algorithm algorithm;
+    protected Progress progress;
+    protected Experiment experiment;
+    protected int[][] clusters;
+    protected int[][] errorGenesArray = new int[1][];
+    protected FloatMatrix means;
+    protected FloatMatrix variances;
+    
+    protected int[][] sigGenesArrays;    
+    
+    protected String[] auxTitles;
+    protected Object[][] auxData;
+    
+    protected float[][] geneGroupMeans, geneGroupSDs;
+    protected boolean drawSigTreesOnly;
+    
+    Vector<String> exptNamesVector;
+    protected int[] groupAssignments;
+    protected double falseProp;
+    protected IData data;
+    protected int numGroups, dataDesign, numFactorAGroups, numFactorBGroups;
+    protected float alpha;
+    protected String factorAName, factorBName;
+    protected boolean errorGenes;
+    protected boolean isHierarchicalTree;
+    protected int iterations;
+    
+    //ATTRACT gene & sample names
+    protected ArrayList<String> geneLabels;
+    protected ArrayList<String> sampleLabels;
+	private Object[][] resultMatrix;
+    
+    /** Creates new ATTRACTGUI */
+    public ATTRACTGUI() {
+    }
+    
+    /**
+     * This method should return a tree with calculation results or
+     * null, if analysis start was canceled.
+     *
+     * @param framework the reference to <code>IFramework</code> implementation,
+     *       which is used to obtain an initial analysis data and parameters.
+     * @throws AlgorithmException if calculation was failed.
+     * @throws AbortException if calculation was canceled.
+     * @see IFramework
+     */
+    public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
+		//Before anything check for Mac OS and throw appropriate msg
+		if(sysMsg() != JOptionPane.OK_OPTION)
 			return null;
-		}
-		 DefaultMutableTreeNode resultNode = null;
-		 JFrame mainFrame = (JFrame)(framework.getFrame());
-		 
-		//Need the "." after the step names, to keep track of the highlighting
-		String [] steps = {"Data Selection.", "Parameter Selection.", "Execute."};		
-		this.idata = framework.getData();
-		this.experiment = framework.getData().getExperiment();
-		FloatMatrix matrix = experiment.getMatrix();
-		algData.addMatrix("matrix",matrix);
-	
 		
-		ArrayList<String>sampleLabels = new ArrayList<String>();
-		int number_of_samples=experiment.getNumberOfSamples();
-		
+        this.experiment = framework.getData().getExperiment();        
+        this.data = framework.getData();
+        exptNamesVector = new Vector<String>();
+        int number_of_samples = experiment.getNumberOfSamples();
+        
+        int [] columnIndices = experiment.getColumnIndicesCopy(); 
+        
+        sampleLabels = new ArrayList<String>();
+        geneLabels = new ArrayList<String>();
         for (int i = 0; i < number_of_samples; i++) {
-             sampleLabels.add(framework.getData().getFullSampleName(i)); 
+            exptNamesVector.add(framework.getData().getFullSampleName(columnIndices[i]));
+            sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
         }
-		algData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
-		
-		Geneset[]gset=null;
-		
-		
-		AttractInitWizard wiz=new AttractInitWizard(idata, mainFrame, "Attract Initialization", true, algData, steps,  1, new StepsPanel(), framework.getClusterRepository(1), framework);
-		wiz.setVisible(true);
-		logger = new Logger(framework.getFrame(), "Attract Package", listener);
-		
-		
-		if(wiz.showModal() == JOptionPane.OK_OPTION) {
-			logger.show();
-					
-			//Multiple files can be uploaded ONLY if they are in the same directory.
-			String genesetFilePath=algData.getParams().getString("gene-set-directory");
-			
-			//Assuming there are multiple file uploads, need to check the extensions of each uploaded file
-			//and make sure they have same gene identifiers
-			String extension=checkFileNameExtension(genesetFilePath);
-			
-			//Get the collapse mode; MAX_PROBE OR MEDIAN_PROBE
-			String collapsemode=algData.getParams().getString("probe_value");
-			//Get the minimum number of genes per gene set
-			int min_genes=Integer.parseInt(algData.getParams().getString("gene-number"));
-			
-			//Get the SD cutoff
-			
-			String cutoff=algData.getParams().getString("standard-deviation-cutoff");
-			
-			//First step is to convert the expression data into GeneData object. Depending on the type of 
-			//gene set file loaded, the gene identifier to use will vary.
-			
-			ProbetoGene ptg=new ProbetoGene(algData, idata);
-			logger.append("Collapsing probes to genes \n");
-			
-			if(stop){
-				logger.dispose();
-				return null;
-			}
-			
-			grpAssignments=algData.getIntMatrix("factor-assignments");
-			factorLevels=algData.getIntArray("factor-levels");
-			topPathways=Integer.parseInt(algData.getParams().getString("pathway-cutoff"));
-			
-			//Get the gene identifier from AlgorithmData and use it to collapse the probes
-			gData=ptg.convertProbeToGene(algData.getParams().getString("gene-identifier"), collapsemode, cutoff);
-			
-			
-			gseaExperiment=ptg.returnGSEAExperiment();
-			Vector genesInExpressionData=algData.getVector("Unique-Genes-in-Expressionset");
+        
+        //Raktim Use probe index as the gene labels in R
+        for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
+        	//geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.PROBE_ID)[0]); //Raktim
+        	geneLabels.add(String.valueOf(i));
+        }
+        
+        ATTRACTInitBox ATTRACTDialog = new ATTRACTInitBox((JFrame)framework.getFrame(), true, exptNamesVector, framework.getClusterRepository(1));
+        ATTRACTDialog.setVisible(true);
+        
+        if (!ATTRACTDialog.isOkPressed()) return null;
+        
+        alpha = ATTRACTDialog.getAlpha();
+        dataDesign = ATTRACTDialog.getExperimentalDesign();
+    	//System.out.println("dataDesigngui " +dataDesign);
+        numGroups = ATTRACTDialog.getNumGroups();
+        numFactorAGroups = ATTRACTDialog.getNumFactorAGroups();
+        numFactorBGroups = ATTRACTDialog.getNumFactorBGroups();
+        factorAName = ATTRACTDialog.getFactorAName();
+        factorBName = ATTRACTDialog.getFactorBName();
+        groupAssignments=ATTRACTDialog.getGroupAssignments();
+        if (groupAssignments == null)
+        	return null;
+        
+        isHierarchicalTree = ATTRACTDialog.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = ATTRACTDialog.drawSigTreesOnly();
+        }      
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.PEARSON;
+        }
+        
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
+        boolean hcl_samples_ordered=false;
+        boolean hcl_genes_ordered=false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperiments();
+            hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+            hcl_genes_ordered = hcl_dialog.isGeneOrdering();
+            hcl_samples_ordered = hcl_dialog.isSampleOrdering();
+        }
+        
+        Listener listener = new Listener();
+        
+        try {
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("ATTRACT");
+            algorithm.addAlgorithmListener(listener);
+            
+            this.progress = new Progress(framework.getFrame(), "Running ATTRACT", listener);
+            this.progress.setIndeterminate(true);
+            this.progress.setIndeterminantString("Finding Significant Genes");
+            this.progress.show();
+            
+            AlgorithmData data = new AlgorithmData();
+            
+            data.addMatrix("experiment", experiment.getMatrix());
+            data.addIntArray("group_assignments", groupAssignments);
+            data.addParam("dataDesign", String.valueOf(dataDesign));
+            data.addParam("numGroups", String.valueOf(numGroups));
+            data.addParam("alpha", String.valueOf(alpha));
+            data.addParam("numAGroups",String.valueOf(numFactorAGroups));
+            data.addParam("numBGroups",String.valueOf(numFactorBGroups));
+            data.addParam("nameA",String.valueOf(factorAName));
+            data.addParam("nameB",String.valueOf(factorBName));
+            if (dataDesign==5){
+                data.addParam("numAGroups",String.valueOf(2));
+                data.addParam("numBGroups",String.valueOf(numGroups));
+	            data.addParam("nameA",String.valueOf("Condition"));
+	            data.addParam("nameB",String.valueOf("Time"));
+            }
+            
+            data.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
+            data.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
+            data.addStringArray("probeIDs", framework.getData().getAnnotationList(AnnotationFieldConstants.PROBE_ID));
+            
+            // hcl parameters
+            if (isHierarchicalTree) {
+                data.addParam("hierarchical-tree", String.valueOf(true));
+                data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));                
+                data.addParam("method-linkage", String.valueOf(hcl_method));
+                data.addParam("calculate-genes", String.valueOf(hcl_genes));
+                data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+                data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+                data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
+                data.addParam("hcl-genes-ordered", String.valueOf(hcl_genes_ordered));
+                data.addParam("hcl-samples-ordered", String.valueOf(hcl_samples_ordered));
+            }
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(data);
+            long time = System.currentTimeMillis() - start;
+            
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            this.resultMatrix = result.getObjectMatrix("resultMatrix");
+            
+            this.clusters = result.getIntMatrix("sigGenesArrays");
+            FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
+            
+            FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
+//            FloatMatrix pValues = result.getMatrix("pValues");
+            //System.out.println("pval dim: " + pValues.getColumnDimension()+ " "+pValues.getRowDimension());
+//            FloatMatrix adjpValues = result.getMatrix("adjPValues");
+//            FloatMatrix lfc = result.getMatrix("lfc");
+//            FloatMatrix logOdds = result.getMatrix("logOdds");
+//            FloatMatrix tStat = result.getMatrix("tStat");
+//            FloatMatrix fValues = result.getMatrix("fValues");
+            
+            iterations = result.getParams().getInt("iterations");
+            
+            geneGroupMeans = new float[geneGroupMeansMatrix.getRowDimension()][geneGroupMeansMatrix.getColumnDimension()];
+            geneGroupSDs = new float[geneGroupSDsMatrix.getRowDimension()][geneGroupSDsMatrix.getColumnDimension()];
+            for (int i = 0; i < geneGroupMeans.length; i++) {
+                for (int j = 0; j < geneGroupMeans[i].length; j++) {
+                    geneGroupMeans[i][j] = geneGroupMeansMatrix.A[i][j];
+                    geneGroupSDs[i][j] = geneGroupSDsMatrix.A[i][j];
+                }
+            }
+            GeneralInfo info = new GeneralInfo();
+            info.time = time;
+            //ADD MORE INFO PARAMETERS HERE
+            info.alpha = alpha;
+            info.function = menu.getFunctionName(function);
+            info.hcl = isHierarchicalTree;
+            info.hcl_genes = hcl_genes;
+            info.hcl_samples = hcl_samples;
+            info.hcl_method = hcl_method;
+            
+            Vector<String> titlesVector = new Vector<String>();
+            for (int i = 0; i < geneGroupMeans[0].length; i++) {
+                titlesVector.add("Group " + (i+1) + " mean");
+                titlesVector.add("Group " + (i+1) + " std.dev");
+            }
 
-			//String array containing Gene to Probe mapping, which will be used in the table viewers	
-			geneToProbeMapping=((GeneData)gData[0]).getProbetoGeneMapping(gData);
-			
-			//Decides the number of columns in the table viewer. 
-			//The reason being one Gene may map to one probe and another to ten. 
-			max_columns=((GeneData)gData[0]).get_max_num_probes_mapping_to_gene();
-			
-			//Second step is to read the Gene Set file itself. Once this is done, the gene sets will have to be further
-			//processed to remove the genes, which are present in the gene set but NOT in GeneData (expressiondata). 
-			//Gene set object is also processed to remove the gene sets which do not have the minimum number of genes
-			//as specified by the user.
-			
-			logger.append("Reading gene set files \n");
-			
-			if(stop){
-				logger.dispose();
-				return null;
-			}
-			
-			ReadGeneSet rgset=new ReadGeneSet(extension, genesetFilePath);
-			try{
-				
-				gset=rgset.readMultipleFiles(algData.getStringArray("gene-set-files"), genesetFilePath);
-				//System.out.println("gene set size after raedMultipleFiles in GSEAGUI:"+gset.length);
-				Geneset[] gene_set=rgset.removeGenesNotinExpressionData(gset, genesInExpressionData);
-				 
-				
+            titlesVector.add("F-values");
+            int x=1; int y=2;
+            for (int i=0; i<getTotalInteractions(numGroups); i++) {
 
-			//Third step is to generate Association Matrix. The Association Matrix generated, does not include gene set
-			//which do not satisfy the minimum number of genes criteria
-			logger.append("Creating Association Matrix \n");
+                titlesVector.add("significance-values, "+x+"vs."+y);
+                titlesVector.add("adj-p-values, "+x+"vs."+y);
+                titlesVector.add("log fold change, "+x+"vs."+y);
+                titlesVector.add("t-statistic, "+x+"vs."+y);
+                titlesVector.add("log-odds, "+x+"vs."+y);
+            	
+                y++;
+                if (y>numGroups){
+                	x++;
+                	y=x+1;
+                }
+            }
+            
+            auxTitles = new String[titlesVector.size()];
+            for (int i = 0; i < auxTitles.length; i++) {
+                auxTitles[i] = (String)(titlesVector.get(i));
+            }
+            
+            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            for (int i = 0; i < auxData.length; i++) {
+                int counter = 0;
+                for (int j = 0; j < geneGroupMeans[i].length; j++) {
+                    auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
+                    auxData[i][counter++] = new Float(geneGroupSDs[i][j]);
+                }
+//                auxData[i][counter++] = fValues.get(i, 0);
+//                for (int j=0; j<getTotalInteractions(numGroups); j++) {
+//	                auxData[i][counter++] = pValues.get(i, j);
+//	                auxData[i][counter++] = adjpValues.get(i, j);
+//	                auxData[i][counter++] = lfc.get(i, j);
+//	                auxData[i][counter++] = tStat.get(i, j);
+//	                auxData[i][counter++] = logOdds.get(i, j);
+//                }
+            }
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+        }
+    }
+    
+    public AlgorithmData getScriptParameters(IFramework framework) {
+        
+        this.experiment = framework.getData().getExperiment();
+        exptNamesVector = new Vector<String>();
+        int number_of_samples = experiment.getNumberOfSamples();
+        
+        for (int i = 0; i < number_of_samples; i++) {
+            exptNamesVector.add(framework.getData().getFullSampleName(experiment.getSampleIndex(i)));
+        }
+        
+        ATTRACTInitBox ATTRACTDialog = new ATTRACTInitBox((JFrame)framework.getFrame(), true, exptNamesVector,framework.getClusterRepository(1));
+        ATTRACTDialog.setVisible(true);
+        
+        if (!ATTRACTDialog.isOkPressed()) return null;
+        
+        dataDesign = ATTRACTDialog.getExperimentalDesign();
+        numGroups = ATTRACTDialog.getNumGroups();
+
+    	groupAssignments=ATTRACTDialog.getGroupAssignments();
+    	
+        if (groupAssignments == null)
+        	return null;
+        
+        boolean isHierarchicalTree = ATTRACTDialog.drawTrees();
+        drawSigTreesOnly = true;
+        if (isHierarchicalTree) {
+            drawSigTreesOnly = ATTRACTDialog.drawSigTreesOnly();
+        }         
+        
+        IDistanceMenu menu = framework.getDistanceMenu();
+        int function = menu.getDistanceFunction();
+        if (function == Algorithm.DEFAULT) {
+            function = Algorithm.EUCLIDEAN;
+        }
+        
+        // hcl init
+        int hcl_method = 0;
+        boolean hcl_samples = false;
+        boolean hcl_genes = false;
+        int hcl_function = 4;
+        boolean hcl_absolute = false;
+        if (isHierarchicalTree) {
+            HCLInitDialog hcl_dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+            if (hcl_dialog.showModal() != JOptionPane.OK_OPTION) {
+                return null;
+            }
+            hcl_method = hcl_dialog.getMethod();
+            hcl_samples = hcl_dialog.isClusterExperiments();
+            hcl_genes = hcl_dialog.isClusterGenes();
+            hcl_function = hcl_dialog.getDistanceMetric();
+            hcl_absolute = hcl_dialog.getAbsoluteSelection();
+        }        
+        AlgorithmData data = new AlgorithmData();
+        
+        data.addParam("distance-factor", String.valueOf(1.0f));
+        data.addParam("distance-absolute", String.valueOf(menu.isAbsoluteDistance()));
+        
+        data.addParam("distance-function", String.valueOf(function));
+        data.addIntArray("group_assignments", groupAssignments);
+        data.addParam("alpha-value", String.valueOf(ATTRACTDialog.mPanel.alpha));
+        data.addParam("numGroups", String.valueOf(numGroups));
+        // hcl parameters
+        if (isHierarchicalTree) {
+            data.addParam("hierarchical-tree", String.valueOf(true));
+            data.addParam("draw-sig-trees-only", String.valueOf(drawSigTreesOnly));              
+            data.addParam("method-linkage", String.valueOf(hcl_method));
+            data.addParam("calculate-genes", String.valueOf(hcl_genes));
+            data.addParam("calculate-experiments", String.valueOf(hcl_samples));
+            data.addParam("hcl-distance-function", String.valueOf(hcl_function));
+            data.addParam("hcl-distance-absolute", String.valueOf(hcl_absolute));
+        }
+        
+        
+        // alg name
+        data.addParam("name", "ATTRACT");
+        
+        // alg type
+        data.addParam("alg-type", "cluster-genes");
+        
+        // output class
+        data.addParam("output-class", "partition-output");
+        
+        //output nodes
+        String [] outputNodes = new String[2];
+        outputNodes[0] = "Significant Genes";
+        outputNodes[1] = "Non-significant Genes";
+        
+        data.addStringArray("output-nodes", outputNodes);
+        
+        
+        return data;
+    }
+    
+    public DefaultMutableTreeNode executeScript(IFramework framework, AlgorithmData algData, Experiment experiment) throws AlgorithmException {
+        
+        Listener listener = new Listener();
+        this.experiment = experiment;
+        this.data = framework.getData();
+        this.groupAssignments = algData.getIntArray("group_assignments");
+        this.drawSigTreesOnly = algData.getParams().getBoolean("draw-sig-trees-only");        
+        
+        exptNamesVector = new Vector<String>();
+        int number_of_samples = experiment.getNumberOfSamples();
+
+        for (int i = 0; i < number_of_samples; i++) {
+            exptNamesVector.add(this.data.getFullSampleName(i));
+        }
+ 
+        try {
+            algData.addMatrix("experiment", experiment.getMatrix());
+            algorithm = framework.getAlgorithmFactory().getAlgorithm("ATTRACT");
+            algorithm.addAlgorithmListener(listener);
+            
+            this.progress = new Progress(framework.getFrame(), "Running ATTRACT", listener);
+            this.progress.setIndeterminate(true);
+            this.progress.setIndeterminantString("Finding Significant Genes");
+            this.progress.show();
+            
+            long start = System.currentTimeMillis();
+            AlgorithmData result = algorithm.execute(algData);
+            long time = System.currentTimeMillis() - start;
+            
+            // getting the results
+            Cluster result_cluster = result.getCluster("cluster");
+            NodeList nodeList = result_cluster.getNodeList();
+            //AlgorithmParameters resultMap = result.getParams();
+            int k = 2; //resultMap.getInt("number-of-clusters"); // NEED THIS TO GET THE VALUE OF NUMBER-OF-CLUSTERS
+                       
+            this.clusters = new int[k][];
+            for (int i=0; i<k; i++) {
+                clusters[i] = nodeList.getNode(i).getFeaturesIndexes();
+            }
+            this.means = result.getMatrix("clusters_means");
+            this.variances = result.getMatrix("clusters_variances");
+            
+            
+            AlgorithmParameters params = algData.getParams();
+            
+            GeneralInfo info = new GeneralInfo();
+            info.time = time;
+            //ADD MORE INFO PARAMETERS HERE
+            info.alpha = params.getFloat("alpha");
+            numGroups = params.getInt("numGroups");
+            info.usePerms = params.getBoolean("usePerms");
+            info.numPerms = params.getInt("numPerms");
+            info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
+            info.hcl = params.getBoolean("hierarchical-tree");
+            info.hcl_genes = params.getBoolean("calculate-genes");
+            info.hcl_samples = params.getBoolean("calculate-experiments");
+            if(info.hcl)
+                info.hcl_method = params.getInt("method-linkage") ;
+            
+            Vector<String> titlesVector = new Vector<String>();
+            for (int i = 0; i < geneGroupMeans[0].length; i++) {
+                titlesVector.add("Group" + (i+1) + " mean");
+                titlesVector.add("Group" + (i + 1) + " std.dev");
+            }
+            
+            auxTitles = new String[titlesVector.size()];
+            for (int i = 0; i < auxTitles.length; i++) {
+                auxTitles[i] = (String)(titlesVector.get(i));
+            }
+            
+            auxData = new Object[experiment.getNumberOfGenes()][auxTitles.length];
+            for (int i = 0; i < auxData.length; i++) {
+                int counter = 0;
+                for (int j = 0; j < geneGroupMeans[i].length; j++) {
+                    auxData[i][counter++] = new Float(geneGroupMeans[i][j]);
+                    auxData[i][counter++] = new Float(geneGroupSDs[i][j]);
+                }
+            }
+            
+            return createResultTree(result_cluster, info);
+            
+        } finally {
+            if (algorithm != null) {
+                algorithm.removeAlgorithmListener(listener);
+            }
+            if (progress != null) {
+                progress.dispose();
+            }
+        }
+    }
+    
+    private int getTotalInteractions(int groups){
+    	if (dataDesign==4||dataDesign==5)
+    		return 3;
+    	if (groups <= 1)
+    		return 0;
+    	else
+    		return (groups-1 + getTotalInteractions(groups-1));
+    }
+    
+    public static void main(String[] args){
+    	
+    }
+    protected String getNodeTitle(int ind,int x, int y){
+    	
+    	if (dataDesign==1){
+                return (String)resultMatrix[1][ind];
+    	}
+    	else if (dataDesign==3){
+        	String str = "";
+        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+        	if (ind<getTotalInteractions(numGroups)*2)
+        		str = str+x+" vs. "+y;
+        	else
+        		str = str+"(All Groups)";
+        	return str;
+        }
+    	else if (dataDesign==4){
+    		int index = ind/2;
+        	String str = "";
+        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+        	if (index == 0)
+        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
+        	if (index == 1)
+        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
+        	if (index == 2)
+        		str = str + "Difference";
+        	return str;
+        }
+    	else if (dataDesign==5){
+        	String str = "";
+        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
+        	
+        	if (ind<(numGroups-1)*2)
+        		str = str+"cond. = 1, ";
+        	else if (ind<(numGroups-1)*4)
+        		str = str+"cond. = 2, ";
+        	if (ind<(numGroups-1)*4)
+        		str = str+"t = "+(ind/2%(numGroups-1)+1);
+        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
+        		str = str+"cond. = 1 (All) ";
+        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
+        		str = str+"cond. = 2 (All) ";
+        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
+        		str = str+"(All) ";
+
+        	return str;
+        }else{
+            if (ind%2==0) {
+                return "Significant Genes "+x+" vs. "+y;
+            } else {
+                return "Non-significant Genes "+x+" vs. "+y;
+            }
+    	}
+    	
+    }
+    /**
+     * Creates a result tree to be inserted into the framework analysis node.
+     */
+    protected DefaultMutableTreeNode createResultTree(Cluster result_cluster, GeneralInfo info) {
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode("ATTRACT");
+        addResultNodes(root, result_cluster, info);
+        return root;
+    }
+    
+    /**
+     * Adds result nodes into the tree root.
+     */
+    protected void addResultNodes(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+    	addGeneSetInfo(root);
+        addExpressionImages(root);
+        addHierarchicalTrees(root, result_cluster, info);
+//        addCentroidViews(root);
+        addTableViews(root);
+        addClusterInfo(root);
+        addGeneralInfo(root, info);
+    }
+	private void addGeneSetInfo(DefaultMutableTreeNode root) {
+	      Object[][] results = new Object[this.resultMatrix[0].length][this.resultMatrix.length];
+	      for (int i=0; i<results.length; i++){
+	    	  for (int j=0; j<results[0].length; j++){
+	    		  results[i][j] = resultMatrix[j][i];
+	    	  }
+	      }
+	      String[] columns = {"KEGG ID","KEGG Name", "Adjusted p-value", "Number of detected genes"};
+	      
+	      IViewer tabViewer = new ATTRACTResultTable(results, columns);
+	  	root.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
 			
-			if(stop){
-				logger.dispose();
-				return null;
-			}
-			
-			FloatMatrix amat=rgset.createAssociationMatrix(gene_set, genesInExpressionData, min_genes);
-			algData.addGeneMatrix("association-matrix", amat);
-					
-			
-			//Create a gene set array to hold the gene sets after excluding ones which do not pass cutoff
-			geneset=new Geneset[gene_set.length-rgset.getExcludedGeneSets().size()];
-			
-			logger.append("Removing gene sets that do not pass the minimum genes criteria \n");
-			geneset=rgset.removeGenesetsWithoutMinimumGenes(rgset.getExcludedGeneSets(), gene_set);
-			System.out.println("ATTRACTGUI geneset.length after filters" + geneset.length);
-			if (geneset.length == 0) {
-				logger.dispose();
-				return null;
-			}
-			
-			//Add to excluded genes to Algorithm Data
-			algData.addVector("excluded-gene-sets", rgset.getExcludedGeneSets());
-			
-			//Add the Gene set names to AlgorithmData
-			algData.addVector("gene-set-names", new GSEAUtils().getGeneSetNames(geneset));
-			
-					
-						
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-			gsea = framework.getAlgorithmFactory().getAlgorithm("GSEA");
-			gsea.addAlgorithmListener(listener);
-			
-			//Run GSEA
-			AlgorithmData result = gsea.execute(algData);	
-			logger.append("GSEA step completed..\n");
-			
-			attract = framework.getAlgorithmFactory().getAlgorithm("ATTRACT");
-			attract.addAlgorithmListener(listener);
-			param=new AttractAlgorithmParameters(geneset);
-			logger.append("Bundling parameters for ATTRACT..\n");
-						
-		    algData.addAlgorithmParameters("attract", param);	
-		    
-		    logger.append("Algorithm execution begins... \n");
-			AlgorithmData attractResult=attract.execute(algData);
-			logger.append("Algorithm excecution ends...\n");
-			
-			//Get gene sets sorted by over enrichment pvalues and size
-			geneset=((AttractAlgorithmParameters)result.getAlgorithmParameters("attract")).getGenesets();
-			System.out.println("ATTRACTGUI geneset.length afterexecute()" + geneset.length);
-			if (geneset.length == 0) {
-				logger.dispose();
-				return null;
-			}
-			if(stop) {
-				logger.dispose();
-				return null;
-			}
-			logger.append("Generating Viewers...\n");
-			
-		try {
-			resultNode=createResultNode(attractResult, idata, gseaExperiment);
-			logger.append("Generating Viewers ends...\n");
-			logger.dispose();
-		}catch(Exception e) {
-			e.printStackTrace();
-			System.out.println(e.getMessage());
 		}
-		
+    protected void addTableViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
+        IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
+        int x=1; int y=2;
+        for (int i=0; i<this.clusters.length; i++) {
+        	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), tabViewer, new Integer(i))));
+        	if (i%2==1)
+        		y++;
+            if (y>numGroups){
+            	x++;
+            	y=x+1;
+            }
+        }
+        root.add(node);
+    }
+    
+    /**
+     * Adds nodes to display clusters data.
+     */
+    protected void addExpressionImages(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
+        IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
+        int x=1; int y=2;
+        for (int i=0; i<this.clusters.length; i++) {
+        	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), expViewer, new Integer(i))));
+        	if (i%2==1)
+        		y++;
+            if (y>numGroups){
+            	x++;
+            	y=x+1;
+            }
+        }
+        root.add(node);
+    }
+    
+    /**
+     * Adds nodes to display hierarchical trees.
+     */
+    protected void addHierarchicalTrees(DefaultMutableTreeNode root, Cluster result_cluster, GeneralInfo info) {
+        if (!info.hcl) {
+            return;
+        }
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Hierarchical Trees");
+        NodeList nodeList = result_cluster.getNodeList();
+        if (!drawSigTreesOnly) {        
+            for (int i=0; i<nodeList.getSize(); i++) {
+                if (i < nodeList.getSize() - 1 ) {
+                    node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                } else if (i == nodeList.getSize() - 1) {
+                    node.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", createHCLViewer(nodeList.getNode(i), info))));
+                }
+            }
+        } else {
+            node.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", createHCLViewer(nodeList.getNode(0), info))));            
+        }
+        root.add(node);
+    }
+    
+    /**
+     * Creates an <code>HCLViewer</code>.
+     */
+    protected IViewer createHCLViewer(Node clusterNode, GeneralInfo info) {
+        HCLTreeData genes_result = info.hcl_genes ? getResult(clusterNode, 0) : null;
+        HCLTreeData samples_result = info.hcl_samples ? getResult(clusterNode, info.hcl_genes ? 4 : 0) : null;
+        return new HCLViewer(this.experiment, clusterNode.getFeaturesIndexes(), genes_result, samples_result);
+    }
+    
+    /**
+     * Returns a hcl tree data from the specified cluster node.
+     */
+    protected HCLTreeData getResult(Node clusterNode, int pos) {
+        HCLTreeData data = new HCLTreeData();
+        NodeValueList valueList = clusterNode.getValues();
+        data.child_1_array = (int[])valueList.getNodeValue(pos).value;
+        data.child_2_array = (int[])valueList.getNodeValue(pos+1).value;
+        data.node_order = (int[])valueList.getNodeValue(pos+2).value;
+        data.height = (float[])valueList.getNodeValue(pos+3).value;
+        return data;
+    }
+    
+    /**
+     * Adds node with cluster information.
+     */
+    protected void addClusterInfo(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups))));
+        root.add(node);
+    }
+    
+    /**
+     * Adds nodes to display centroid charts.
+     */
+    protected void addCentroidViews(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode("Centroid Graphs");
+        DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode("Expression Graphs");
+        ATTRACTCentroidViewer centroidViewer = new ATTRACTCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
+        centroidViewer.setMeans(this.means.A);
+        centroidViewer.setVariances(this.variances.A);
+        for (int i=0; i<this.clusters.length; i++) {
+            if (i == 0) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            } else if (i == 1) {
+                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+            }
+        }
+        
+        ATTRACTCentroidsViewer centroidsViewer = new ATTRACTCentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, null, null, null, null, null, null, null);
+
+        centroidsViewer.setMeans(this.means.A);
+        centroidsViewer.setVariances(this.variances.A);
+        
+        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+        root.add(centroidNode);
+        root.add(expressionNode);
+    }
+    
+    
+    /**
+     * Adds node with general iformation.
+     */
+    protected void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
+        if (dataDesign!=5)
+        	node.add(getGroupAssignmentInfo());
+        if (this.isHierarchicalTree)
+        	node.add(new DefaultMutableTreeNode("HCL: "+info.getMethodName()));
+        node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
+        root.add(node);
+    }
+    
+    protected DefaultMutableTreeNode getGroupAssignmentInfo() {
+        DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
+        DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
+        DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
+        //System.out.println("ng "+numGroups);
+        for (int i = 0; i < numGroups; i++) {
+            groups[i] = new DefaultMutableTreeNode("Group " + (i+1));
+            
+        }
+        
+        for (int i = 0; i < groupAssignments.length; i++) {
+            int currentGroup = groupAssignments[i];
+            if (currentGroup == 0) {
+                notInGroups.add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+            } else {
+                groups[currentGroup - 1].add(new DefaultMutableTreeNode((String)(exptNamesVector.get(i))));
+            }
+        }
+        
+        for (int i = 0; i < groups.length; i++) {
+            groupAssignmentInfo.add(groups[i]);
+        }
+        if (notInGroups.getChildCount() > 0) {
+            groupAssignmentInfo.add(notInGroups);
+        }
+        return groupAssignmentInfo;
+    }
+    
+    
+    /**
+     * The class to listen to progress, monitor and algorithms events.
+     */
+    protected class Listener extends DialogListener implements AlgorithmListener {
+    	//EH added so AMP could extend this class
+        protected Listener(){super();}
+        public void valueChanged(AlgorithmEvent event) {
+            switch (event.getId()) {
+                case AlgorithmEvent.SET_UNITS:
+                    progress.setUnits(event.getIntValue());
+                    progress.setDescription(event.getDescription());
+                    break;
+                case AlgorithmEvent.PROGRESS_VALUE:
+                    progress.setValue(event.getIntValue());
+                    progress.setDescription(event.getDescription());
+                    break;
+                case AlgorithmEvent.MONITOR_VALUE:
+                    int value = event.getIntValue();
+                    if (value == -1) {
+                        //monitor.dispose();
+                    } else {
+                        //monitor.update(value);
+                    }
+                    break;
+            }
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals("cancel-command")) {
+                algorithm.abort();
+                progress.dispose();
+            }
+        }
+        
+        public void windowClosing(WindowEvent e) {
+            algorithm.abort();
+            progress.dispose();
+        }
+    }
+    
+	private int sysMsg() {
+		String os = System.getProperty("os.name");
+		String arch = System.getProperty("os.arch");
+		String ver = System.getProperty("os.version");
+
+		String message = "System Config:\n";
+		message += "OS: " + os + " | Architecture: " + arch + " | Version: " + ver + "\n";
+		message += "Please note:\n";
+		if(arch.toLowerCase().contains("64") && os.toLowerCase().contains("mac")) {
+			message += "You need to have 32Bit JVM as default for ATTRACT\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "You also need to have R 2.11.x installed for ATTRACT\n";
+			message += "Cancel if either is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 		}
-		
-		 return resultNode;
-		
+		if(arch.toLowerCase().contains("64")) {
+			message += "You need to have 32Bit JVM as default for ATTRACT\n";
+			message += "Please contact MeV Support if you need help.\n";
+			message += "Cancel if 32 Bit JVM is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		if (os.toLowerCase().contains("mac")) {
+			message += "You need to have R 2.11.x installed for ATTRACT\n";
+			message += "Cancel if R is not installed. Ok to continue.";
+			return JOptionPane.showConfirmDialog(null, message, "R Engine Warning", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		}
+		return JOptionPane.OK_OPTION;
 	}
-	
-	
-	
-	
-	 /** creates an empty result if the result is null.
-	    * @param result
-	    * @return  
-	    * 
-	    * */
-	   protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result){
-	   	return createEmptyResultNode(result, "Attract");
-	   }
-	   
-	   /** creates an empty result with label label if the result is null.
-	    * @param result
-	    * @param label the label to apply to the treenode
-	    * @return 
-	    */
-	   protected DefaultMutableTreeNode createEmptyResultNode(AlgorithmData result, String label){
-		   DefaultMutableTreeNode root = new DefaultMutableTreeNode(label);
-	       root.add(new DefaultMutableTreeNode("No results found"));
-	       addGeneralInfo(root, result);
-	       return root;
-	   }
-	   
-	   private DefaultMutableTreeNode createResultNode(AlgorithmData result, IData idata, GSEAExperiment experiment) {
-			DefaultMutableTreeNode node = null;
-			
-			node = new DefaultMutableTreeNode("Attract-Significant Gene sets");
-			addTableViews(node, result);
-			addSynExpressionImages(node, result, experiment);	
-	
-			return node;
-		}
-	   
-	   /**
-	    * Loops through the significant gene sets, creates synExpression graphs and regular MeV viewers
-	    * @param root
-	    * @param result
-	    * @param experiment
-	    */
-	   private void addSynExpressionImages(DefaultMutableTreeNode root,  AlgorithmData result, Experiment experiment) {
-		   DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
-		   DefaultMutableTreeNode clusterNode;
-		
-		   
-		 //Loop generates a folder for every gene set. Each folder/geneset has an synexpression viewer, experiment viewer, centroid viewer and table viewer
-			  for (int i=0; i<topPathways; i++) {
-				  clusterNode = new DefaultMutableTreeNode((String)geneset[i].getGeneSetName());
-			
-				  //Call addSynExpressionGraph here
-				   addSynExpressionGraph(geneset[i].getSynExpressionProfiles(),geneset[i].getSimilarGeneExpressionProfile(),geneset[i], clusterNode);
-			 
-				  //Call addExpressionViewers here
-				//  addExpressionImages(clusterNode, result, experiment, (String)geneset[i].getGeneSetName());
-				  
-				  node.add(clusterNode);
-			  }
-			  
-			
-			  root.add(node);	  
-		   
-	   }
-	   
-	   //Go through individual gene sets and plot all associated synexpression groups.
-	   //Add to clusterNode. will be called for each geneset
-	   
-	   private void addSynExpressionGraph(FloatMatrix profile, FloatMatrix corProfile,Geneset geneset ,DefaultMutableTreeNode clusterNode) {
-		   int numProfiles=profile.getRowDimension();
-		   
-		  		  
-		   for(int j=0; j<numProfiles; j++) {
-			  clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Syn Expression Group"+(j+1), new SynExpressionViewer(profile.getMatrix(j, j, 0, profile.getColumnDimension()-1),corProfile.getMatrix(j, j, 0, corProfile.getColumnDimension()-1),grpAssignments,factorLevels))));
-			  addSynExpressionTableViews(clusterNode, geneset.getSynExpressionGroup("Group"+(j+1)), "Syn Expression Group"+(j+1)+"Genes Table View");
-			  addSynExpressionTableViews(clusterNode,geneset.getSimilarGenes("Group"+(j+1)), "Correlated genes Group"+(j+1)+" Table View");
-		   }
-		   
-		   
-	   }
-	   
-	   
-	   /**
-	    * Adds a table viewer for each synexpression group. The viewer contains a list of genes 
-	    * present in the synexpression group.
-	    * @param root
-	    * @param result
-	    */
-	   private void addSynExpressionTableViews(DefaultMutableTreeNode clusterNode, String[]genes, String tableName) {
-		 
-		   String[] header1 = { tableName+""+"Genes" };
-		   String[][] dummyString=new String[genes.length][1];
-		   for(int k=0; k<dummyString.length; k++) {
-				dummyString[k][0]=genes[k];
-			 }
-		   
-		   clusterNode.add(new DefaultMutableTreeNode(new LeafInfo(tableName, new SynExpressionTableViewer(header1,dummyString ))));
-		  
-		   
-		   
-	   }
-	   
-	   
-	   /**
-	    * Creates and adds Expression images to the node
-	    * @param clusterNode
-	    * @param result
-	    * @param experiment
-	    * @param geneSetName
-	    */
-	   
-	   private void addExpressionImages(DefaultMutableTreeNode clusterNode,  AlgorithmData result, Experiment experiment, String geneSetName) {
-	 
-		   //For every gene set, create an experiment viewer, centroid viewer and table viewer
-		   int[][]clusters=new int[1][];
-		   clusters=GenesettoProbeMapping(gData, geneset, geneSetName);
-		   GSEAUtils utils=new GSEAUtils();
-		   FloatMatrix clusterMeans =utils.getMeans(experiment.getMatrix(), clusters);
-		   FloatMatrix clusterVars = utils.getVariances(experiment.getMatrix(), clusterMeans, clusters);
-		   GSEACentroidViewer centroidViewer=new GSEACentroidViewer(experiment, clusters);
-		   centroidViewer.setMeans(clusterMeans.A);
-		   centroidViewer.setVariances(clusterVars.A);
 
-		   clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", new GSEAExperimentViewer(experiment, clusters))));
-		   clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph",centroidViewer , new CentroidUserObject(new Integer(0),CentroidUserObject.VARIANCES_MODE))));
-		   clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", centroidViewer, new CentroidUserObject(new Integer(0), CentroidUserObject.VALUES_MODE))));
+    protected class GeneralInfo {
 
-					
-		}
-	   
-	 
-	   
-	   
-	   
-	   /**
-	    * Adds a table viewer to the result node
-	    * 
-	    * @param root
-	    * @param result
-	    * @param experiment
-	    * @param data
-	    */
-	   private void addTableViews(DefaultMutableTreeNode root, AlgorithmData result) {
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
-		GSEATableViewer tabViewer;
-		
-		//Display genes removed by LIMMA
-		String[][] dummyString=new String[result.getStringArray("excluded-genes").length][1];
-		String[] tempArray=result.getStringArray("excluded-genes");
-		
-		for(int k=0; k<dummyString.length; k++) {
-			dummyString[k][0]=tempArray[k];
-		}
-		
-		String[] header1 = { "Excluded Genes " };
-		tabViewer = new GSEATableViewer(header1, dummyString);
-
-		node.add(new DefaultMutableTreeNode(new LeafInfo("Excluded Genes",
-				tabViewer, new Integer(0))));
-
-
-		// Display Excluded Gene sets
-		Vector temp = result.getVector("excluded-gene-sets");
-	
-		String[][] _dummy = new String[temp.size()][1];
-
-		for (int i = 0; i < temp.size(); i++) {
-			_dummy[i][0] = (String) temp.get(i);
-
-		}
-		String[] header2 = { "Excluded Gene Sets" };
-		tabViewer = new GSEATableViewer(header2, _dummy);
-
-		node.add(new DefaultMutableTreeNode(new LeafInfo("Excluded Gene Sets",
-				tabViewer, new Integer(0))));
-
-		// Display Probe to Gene mapping
-		String[] header3 = new String[max_columns + 1];
-		header3[0] = "Gene";
-		for (int i = 0; i < max_columns; i++) {
-			header3[i + 1] = "Probes";
-		}
-
-		tabViewer = new GSEATableViewer(header3, geneToProbeMapping);
-		node.add(new DefaultMutableTreeNode(new LeafInfo(
-				"Probe to Gene Mapping", tabViewer, new Integer(0))));
-
-		root.add(node);
-		}
-
-	
-	   /** Adds general algorithm information.
-	    * @param root root node
-	    * @param result
-	    */
-	   protected void addGeneralInfo(DefaultMutableTreeNode root, AlgorithmData result){
-		   DefaultMutableTreeNode generalInfo = new DefaultMutableTreeNode("General Information");
-
-		   DefaultMutableTreeNode newNode;
-
-
-		   newNode = new DefaultMutableTreeNode("Analysis Options");
-		   DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode("Selected Annotation and Geneset Files");
-
-		   String annotationFileName = result.getParams().getString("annotation-file");
-		   fileNode.add(new DefaultMutableTreeNode("Annotation file selected: "+annotationFileName));
-		   DefaultMutableTreeNode genesetFileNode = new DefaultMutableTreeNode("Geneset Files");
-		   String [] genesetFiles = this.algData.getStringArray("gene-set-files");
-		   if(genesetFiles != null)
-			   for(int i = 0; i < genesetFiles.length; i++)
-				   genesetFileNode.add(new DefaultMutableTreeNode("File: "+genesetFiles[i]));
-		   fileNode.add(genesetFileNode);
-		   newNode.add(fileNode);
-		   AlgorithmParameters params = this.algData.getParams();
-
-		   DefaultMutableTreeNode statNode = new DefaultMutableTreeNode("Algorithm Parameters");
-
-		   statNode.add(new DefaultMutableTreeNode("Probe to Gene collapse mode:"+  params.getString("probe_value")));
-		   if(params.getString("probe_value").equals(GSEAConstants.SD))
-			   statNode.add(new DefaultMutableTreeNode("Standard Deviation Cutoff:"+ params.getString("standard-deviation-cutoff")));
-		   statNode.add(new DefaultMutableTreeNode("Minimum number of genes that must be presen in a geneset: " + params.getString("gene-number")));
-		   statNode.add(new DefaultMutableTreeNode("Number of permutations: "+params.getString("permutations")));
-		   statNode.add(new DefaultMutableTreeNode("Identifier used to annotate genes in the geneset: "+params.getString("gene-identifier")));
-		   
-		   String[]factorNames=this.algData.getStringArray("factor-names");
-		   for(int index=0; index<factorNames.length; index++){
-			statNode.add(new DefaultMutableTreeNode("Factorname:"+ factorNames[index]));   
-		   }
-		   
-		   int[]factorLevels=this.algData.getIntArray("factor-levels");
-		   for(int i=0; i<factorLevels.length; i++){
-			   statNode.add(new DefaultMutableTreeNode("FactorLevel:"+factorLevels[i]));
-		   }
-		   
-		   newNode.add(statNode);
-
-		   generalInfo.add(newNode);
-
-		   root.add(generalInfo);
-	   }
-	
-	   
-	  /**
-	   * Returns a 2 d array containing indices of genes present in a gene set.
-	   * These indices correspond to their positions in the experiment data matrix
-	   * 
-	   *@return 2 d int array
-	   */
-	   private int[][]GenesettoProbeMapping(IGeneData[] gData, Geneset[]gset, String name){
-		   
-		int genesetIndex = 0;
-
-		int geneDataElementIndex = 0;
-
-		// The size of geneset_clusters would be equal to the number of gene
-		// sets
-		int[][] geneset_clusters = new int[1][];
-
-		// Vector containing the indices of probes mapping to a gene
-		Vector probe_mappings;
-
-		// integer array of probe_mappings
-		int[] probe_mappings_array;
-
-		// Iterate over gene sets till you find the desired one
-		for (int index = 0; index < gset.length; index++) {
-			if (gset[index].getGeneSetName().equalsIgnoreCase(name)) {
-				genesetIndex = index;
-				break;
-			}
-		}
-
-		int genesetElementIndex = 0;
-		// Fetch the array list containing gene set elements
-		ArrayList<IGeneSetElement> gsElementList = gset[genesetIndex]
-				.getGenesetElements();
-		probe_mappings = new Vector();
-		// Iterate over the elements in the gene sets
-		while (genesetElementIndex < gsElementList.size()) {
-			// Retrieve the gene name from the gene set
-			GeneSetElement gselement = (GeneSetElement) gsElementList
-					.get(genesetElementIndex);
-			String Gene = (String) gselement.getGene();
-			// System.out.println("Gene:"+Gene);
-			// Retrieve the index of this gene from Gene Data Element
-			GeneDataElement gde = (GeneDataElement) ((GeneData) gData[0])
-					.getGeneDataElement(Gene);
-
-			// Populate the probe_mappings vector here
-			for (int index = 0; index < gde.getProbePosition().size(); index++) {
-				probe_mappings.add((Integer) gde.getProbePosition().get(index));
-				// System.out.print(gde.getProbePosition().get(index));
-				// System.out.print('\t');
-			}
-			// System.out.println();
-			genesetElementIndex = genesetElementIndex + 1;
-
-		} // Gene set elements while loop ends
-		// Populate the probe_mappings_array
-		probe_mappings_array = new int[probe_mappings.size()];
-		geneset_clusters = new int[1][probe_mappings.size()];
-		for (int index = 0; index < probe_mappings.size(); index++) {
-			geneset_clusters[0][index] = ((Integer) probe_mappings.get(index))
-					.intValue();
-		}
-
-		return geneset_clusters;
-	   }
-	   
-	
-	/*
-	 *  The class to listen to progress, monitor and algorithms events.
-    */
-   private class Listener extends DialogListener implements AlgorithmListener {
-       
-             
-       public void actionPerformed(ActionEvent e) {
-           String command = e.getActionCommand();
-           if (command.equals("cancel-command")) {
-        	   stop = true;
-        	   if(gsea!=null)
-        		   gsea.abort();
-               logger.dispose();
-           }
-       }
-       
-       public void valueChanged(AlgorithmEvent event) {
-           
-       }
-       
-       public void windowClosing(WindowEvent e) {
-           gsea.abort();
-           
-       }
-   }
-	
-   /**
-	 * checkFileNameExtension returns the extension of the file.
-	 * @param fileName
-	 * @return
-	 */
-	
-	public String checkFileNameExtension(String fileName){
-		String extension=fileName.substring(fileName.lastIndexOf('.')+1, fileName.length());
-		//System.out.println("Extension:"+extension);	
-		return extension;
-	}
-	
-	
+        public int clusters;
+        public String correctionMethod;
+        public float alpha;
+        public long time;
+        public String function;
+        
+        protected boolean hcl, usePerms;
+        protected int hcl_method, numPerms;
+        protected boolean hcl_genes;
+        protected boolean hcl_samples;
+    	//EH constructor added so AMP could extend
+        protected GeneralInfo(){
+    		super();
+    	}        
+        public String getMethodName() {
+            return hcl ? HCLGUI.GeneralInfo.getMethodName(hcl_method) : "no linkage";
+        }
+        
+    }
+    
 }

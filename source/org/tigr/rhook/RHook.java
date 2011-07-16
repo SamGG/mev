@@ -736,7 +736,30 @@ public class RHook  {
 		//re.eval(rObj + " <- as.matrix(" + rObj + ")");
 		evalR(rObj + " <- as.matrix(" + rObj + ")");
 	}
+	/**
+	 *
+	 * @param rObj
+	 * @param filePath
+	 * @param rowNames
+	 * @param colNames
+	 * @throws Exception
+	 */
+	public static void createRDataFrameFromFile(String rObj,String filePath, boolean rowNames, String[] colNames) throws Exception {
+		//Create col names vector
+		String cNames = "cols <- c(0,";
+		int iRow = 0;
+		for(; iRow < colNames.length-1; iRow++) {
+			cNames += "'" + (String) colNames[iRow] + "',";
+		}
+		cNames += "'" + (String) colNames[iRow] + "')";
 
+		//re.eval(cNames);
+		evalR(cNames);
+		//Create a data frame
+		String cmdR = rObj + " <- read.delim('" +filePath+ "', header=FALSE, sep='\t', row.names=1, col.names=cols)";
+		//re.eval(cmdR);
+		evalR(cmdR);
+	}
 	/**
 	 *
 	 * @param e
