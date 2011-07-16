@@ -125,7 +125,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -147,7 +147,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -1200,9 +1200,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
 	        </propertyfile>
 	    </target>
 
-	<!--
 	<target name="ATTRACT" depends="ATTRACT-GUI" if="ATTRACT">
-        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+        <javac target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}" debug="${debug}">
             <include name="ATTRACT.java"/>
             <classpath>
                 <pathelement location="${lib.dir}/JSciCore.jar"/>
@@ -1211,16 +1210,17 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
                 <pathelement location="${lib.dir}/mev-gui-support.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
                 <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
-                <pathelement location="${lib.dir}/mev-base.jar"/>            
+                <pathelement location="${lib.dir}/mev-base.jar"/>
+            	<pathelement location="${lib.dir}/JRI.jar"/>
             </classpath>
 	  </javac>
 	  <propertyfile file="${alg.properties.file}">
-            <entry key="ATTRACT" value="org.tigr.microarray.mev.cluster.algorithm.impl.attract.ATTRACT"/>
+            <entry key="ATTRACT" value="org.tigr.microarray.mev.cluster.algorithm.impl.ATTRACT"/>
         </propertyfile>
     </target>
 	
     <target name="ATTRACT-GUI">
-        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/attract" destdir="${dest.dir}">
+        <javac target="${java.target.version}" srcdir="${gui.impl.dir}/attract" destdir="${dest.dir}" debug="${debug}">
             <classpath refid="module.build.class.path"/>
 	  </javac>
 	  <propertyfile file="${gui.properties.file}">
@@ -1233,7 +1233,6 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
             <entry key="ATTRACT.tooltip" value="Attract"/>
         </propertyfile>
     </target>
-	-->
 	
     <target name="BETR" depends="BETR-GUI" if="BETR">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
