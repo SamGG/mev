@@ -59,7 +59,6 @@ public class ATTRACT extends AbstractAlgorithm{
 
 	private AlgorithmEvent event;
 
-	//Raktim
 	private String[] geneNames;
 	private String[] sampleNames;
 	private float[][] lfc;
@@ -70,6 +69,11 @@ public class ATTRACT extends AbstractAlgorithm{
 	private float[] fValues;
 	private String[] probeIDs;
 	private Object[][] resultMatrix;
+	
+
+	int validN;
+	private String chipName;
+
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -91,6 +95,7 @@ public class ATTRACT extends AbstractAlgorithm{
 		numGroups = map.getInt("numGroups");
 		nameA = map.getString("nameA");
 		nameB = map.getString("nameB");
+		chipName = map.getString("chipName", "hgu133plus2");
 		numAGroups = map.getInt("numAGroups");
 		numBGroups = map.getInt("numBGroups");
 		probeIDs = data.getStringArray("probeIDs");
@@ -165,18 +170,18 @@ public class ATTRACT extends AbstractAlgorithm{
 			}
 		}
 		//remap genes to expmatrix
-		int[][]sigReturn = new int[keggGenesArrays.length][];
+		int[][]keggArrays = new int[keggGenesArrays.length][];
 		//System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
 		for (int i=0; i<keggGenesArrays.length; i++){
 			//System.out.println("sga "+i);
-			sigReturn[i]=new int[keggGenesArrays[i].length];
+			keggArrays[i]=new int[keggGenesArrays[i].length];
 			for (int j=0; j<keggGenesArrays[i].length; j++){
-				sigReturn[i][j]=mapping2[mapping[keggGenesArrays[i][j]]];
+				keggArrays[i][j]=mapping2[mapping[keggGenesArrays[i][j]]];
 			}
 		}
 
 		// prepare the result
-		result.addIntMatrix("sigGenesArrays", sigReturn);
+		result.addIntMatrix("keggArrays", keggArrays);
 		result.addParam("iterations", String.valueOf(iteration-1));
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
@@ -298,7 +303,6 @@ public class ATTRACT extends AbstractAlgorithm{
 //		return variances;
 //	}
 
-	int validN;
 
 //	private float getSampleVariance(int[] cluster, int column, float mean) {
 //		return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
@@ -570,7 +574,12 @@ public class ATTRACT extends AbstractAlgorithm{
 			RHook.evalR(rCmd);
 			rCmd = "library(cluster)";
 			RHook.evalR(rCmd);
-			rCmd = "library(hgu133plus2.db)";
+
+			rCmd = "source('http://www.bioconductor.org/biocLite.R')";
+			RHook.evalR(rCmd);
+			rCmd = "biocLite('"+chipName+".db')";
+			RHook.evalR(rCmd);
+			rCmd = "library("+chipName+".db)";
 			RHook.evalR(rCmd);
 			
 			int numProbes = expMatrix.getRowDimension();
@@ -579,37 +588,44 @@ public class ATTRACT extends AbstractAlgorithm{
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			//if(fileLoc.contains("\\"));
 			fileLoc = fileLoc.replace("\\", "/");
-			String filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
+			String filePath = writeMatrixToFile(fileLoc, expMatrix, probeIDs);
 			//Create data matrix in R from a file
-			//logger.writeln("RHook.createRDataMatrixFromFile(\"y\","+ filePath+", true,"+ sampleNames+")");
 			RHook.createRDataFrameFromFile("y", filePath, true, sampleNames);
 			
 	//		# Reading in data matrix first col comes in as row Names
-//			rCmd = "exprs.dat <- as.data.frame(y)";
-//			RHook.evalR(rCmd);
-	
 	//		# Reading in sample grouping
 			System.out.println("filePath = "+filePath);
 			System.out.println("reading...");
-			rCmd = "sample.info<-read.delim('C:/Users/Dan/Desktop/Attract/sampleGroupingsR_Affy_R2.11.txt', sep='\t', header=TRUE)";
-			RHook.evalR(rCmd);
 
 			System.out.println("Done.");
 			
-	//		#exprs.dat<-data[,-1]
-	//		#rownames(exprs.dat)<-as.character(data[,1])
-	//		#exprs.dat<-as.matrix(exprs.dat)
-	
-	//		# Creating Expression Set
-			rCmd = "row.names(y) <- c(";
-			System.out.println("this.numGenes "+this.numGenes);
-			System.out.println("probeIDs.length "+this.probeIDs.length);
-			System.out.println("probeIDs[22] "+this.probeIDs[22]);
-			for (int i=0; i<this.probeIDs.length; i++){				
-				rCmd = rCmd + "'"+this.probeIDs[i] + "',";
+//			rCmd = "row.names(y) <- c(";
+//			System.out.println("probeIDs.length "+this.probeIDs.length);
+//			System.out.println("probeIDs[22] "+this.probeIDs[22]);
+//			for (int i=0; i<this.probeIDs.length; i++){				
+//				rCmd = rCmd + "'"+this.probeIDs[i] + "',";
+//			}
+//			rCmd = rCmd.substring(0, rCmd.length()-1)+")";
+//			RHook.evalR(rCmd);
+			
+
+			rCmd = "sampleAssignments <- c(";
+			for (int i=0; i<sampleNames.length; i++){
+				rCmd = rCmd + "'group"+this.groupAssignments[i] + "',";				
 			}
 			rCmd = rCmd.substring(0, rCmd.length()-1)+")";
 			RHook.evalR(rCmd);
+
+			rCmd = "chipname <- c(";
+			for (int i=0; i<sampleNames.length; i++){				
+				rCmd = rCmd + "'"+this.sampleNames[i] + "',";
+			}
+			rCmd = rCmd.substring(0, rCmd.length()-1)+")";
+			RHook.evalR(rCmd);
+			
+			rCmd = "sample.info = data.frame(chipname = chipname, grps = sampleAssignments)";
+			RHook.evalR(rCmd);
+			
 			
 			rCmd = "eset<-new('ExpressionSet')";
 			RHook.evalR(rCmd);
@@ -624,14 +640,11 @@ public class ATTRACT extends AbstractAlgorithm{
 
 	//		# Running attract *first* step
 	//		# TODO - Figure out correct chipname from bioconductor
-	//		# e.g. code to download affy db pkg below
-	//		# source("http://www.bioconductor.org/biocLite.R")
-	//		# biocLite("hgu133plus2.db")
-			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = 'hgu133plus2.db')";
+			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = '"+chipName+".db')";
 			RHook.evalR(rCmd);
 	
 	//		# remove flat genes (genes with flat expression profiles across the sample groups)
-			rCmd = "removeTheseGenes<-removeFlatGenes(eset, colnames(pData(eset))[2], contrasts=NULL, limma.cutoff=0.05)";
+			rCmd = "removeTheseGenes<-removeFlatGenes(eset, colnames(pData(eset))[2], contrasts=NULL, limma.cutoff="+alpha+")";
 			RHook.evalR(rCmd);
 			rCmd = "keepTheseGenes<-setdiff(featureNames(eset), removeTheseGenes)";
 			RHook.evalR(rCmd);

@@ -89,6 +89,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     protected ArrayList<String> geneLabels;
     protected ArrayList<String> sampleLabels;
 	private Object[][] resultMatrix;
+	private String chipName;
     
     /** Creates new ATTRACTGUI */
     public ATTRACTGUI() {
@@ -140,6 +141,8 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         numGroups = ATTRACTDialog.getNumGroups();
         numFactorAGroups = ATTRACTDialog.getNumFactorAGroups();
         numFactorBGroups = ATTRACTDialog.getNumFactorBGroups();
+        chipName = ATTRACTDialog.getChipName();
+        
         factorAName = ATTRACTDialog.getFactorAName();
         factorBName = ATTRACTDialog.getFactorBName();
         groupAssignments=ATTRACTDialog.getGroupAssignments();
@@ -202,6 +205,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             data.addParam("numBGroups",String.valueOf(numFactorBGroups));
             data.addParam("nameA",String.valueOf(factorAName));
             data.addParam("nameB",String.valueOf(factorBName));
+            data.addParam("chipName", chipName);
             if (dataDesign==5){
                 data.addParam("numAGroups",String.valueOf(2));
                 data.addParam("numBGroups",String.valueOf(numGroups));
@@ -236,7 +240,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             this.variances = result.getMatrix("clusters_variances");
             this.resultMatrix = result.getObjectMatrix("resultMatrix");
             
-            this.clusters = result.getIntMatrix("sigGenesArrays");
+            this.clusters = result.getIntMatrix("keggArrays");
             FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
             
             FloatMatrix geneGroupSDsMatrix = result.getMatrix("geneGroupSDsMatrix");
@@ -522,55 +526,54 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     }
     protected String getNodeTitle(int ind,int x, int y){
     	
-    	if (dataDesign==1){
                 return (String)resultMatrix[1][ind];
-    	}
-    	else if (dataDesign==3){
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-        	if (ind<getTotalInteractions(numGroups)*2)
-        		str = str+x+" vs. "+y;
-        	else
-        		str = str+"(All Groups)";
-        	return str;
-        }
-    	else if (dataDesign==4){
-    		int index = ind/2;
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-        	if (index == 0)
-        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
-        	if (index == 1)
-        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
-        	if (index == 2)
-        		str = str + "Difference";
-        	return str;
-        }
-    	else if (dataDesign==5){
-        	String str = "";
-        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
-        	
-        	if (ind<(numGroups-1)*2)
-        		str = str+"cond. = 1, ";
-        	else if (ind<(numGroups-1)*4)
-        		str = str+"cond. = 2, ";
-        	if (ind<(numGroups-1)*4)
-        		str = str+"t = "+(ind/2%(numGroups-1)+1);
-        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
-        		str = str+"cond. = 1 (All) ";
-        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
-        		str = str+"cond. = 2 (All) ";
-        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
-        		str = str+"(All) ";
-
-        	return str;
-        }else{
-            if (ind%2==0) {
-                return "Significant Genes "+x+" vs. "+y;
-            } else {
-                return "Non-significant Genes "+x+" vs. "+y;
-            }
-    	}
+//    	}
+//    	else if (dataDesign==3){
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+//        	if (ind<getTotalInteractions(numGroups)*2)
+//        		str = str+x+" vs. "+y;
+//        	else
+//        		str = str+"(All Groups)";
+//        	return str;
+//        }
+//    	else if (dataDesign==4){
+//    		int index = ind/2;
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
+//        	if (index == 0)
+//        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
+//        	if (index == 1)
+//        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
+//        	if (index == 2)
+//        		str = str + "Difference";
+//        	return str;
+//        }
+//    	else if (dataDesign==5){
+//        	String str = "";
+//        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
+//        	
+//        	if (ind<(numGroups-1)*2)
+//        		str = str+"cond. = 1, ";
+//        	else if (ind<(numGroups-1)*4)
+//        		str = str+"cond. = 2, ";
+//        	if (ind<(numGroups-1)*4)
+//        		str = str+"t = "+(ind/2%(numGroups-1)+1);
+//        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
+//        		str = str+"cond. = 1 (All) ";
+//        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
+//        		str = str+"cond. = 2 (All) ";
+//        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
+//        		str = str+"(All) ";
+//
+//        	return str;
+//        }else{
+//            if (ind%2==0) {
+//                return "Significant Genes "+x+" vs. "+y;
+//            } else {
+//                return "Non-significant Genes "+x+" vs. "+y;
+//            }
+//    	}
     	
     }
     /**
@@ -692,7 +695,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups))));
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, resultMatrix[1]))));
         root.add(node);
     }
     
