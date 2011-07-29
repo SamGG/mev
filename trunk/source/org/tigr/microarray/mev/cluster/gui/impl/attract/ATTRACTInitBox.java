@@ -680,7 +680,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(alphaLabel, constraints);
                 this.add(alphaLabel);
                 
-                alphaField = new JTextField(".05", 7);
+                alphaField = new JTextField(".2", 7);
                 alphaField.setMinimumSize(new Dimension(50,20));
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 6, 1, 1, 30, 0);

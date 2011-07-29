@@ -72,7 +72,7 @@ public class ATTRACT extends AbstractAlgorithm{
 	
 
 	int validN;
-	private String chipName;
+	private String chipTypeName;
 
 	/**
 	 * This method should interrupt the calculation.
@@ -95,7 +95,7 @@ public class ATTRACT extends AbstractAlgorithm{
 		numGroups = map.getInt("numGroups");
 		nameA = map.getString("nameA");
 		nameB = map.getString("nameB");
-		chipName = map.getString("chipName", "hgu133plus2");
+		chipTypeName = map.getString("chipName", "hgu133plus2");
 		numAGroups = map.getInt("numAGroups");
 		numBGroups = map.getInt("numBGroups");
 		probeIDs = data.getStringArray("probeIDs");
@@ -532,55 +532,54 @@ public class ATTRACT extends AbstractAlgorithm{
 		}
 
 		try {
-			//System.out.println("Testing ATTRACT install");
 			RHook.testPackage("attract");
-			//System.out.println("Loading Lib ATTRACT");
-			RHook.log("dataDesign = " + dataDesign);
 			RHook.log("Starting R Algorithim");
 			
 			String rCmd = "library(attract)";
-			RHook.evalR(rCmd);
-			rCmd = "library(Biobase)";
-			RHook.evalR(rCmd);
-			rCmd = "library(limma)";
-			RHook.evalR(rCmd);
-			rCmd = "library(DBI)";
-			RHook.evalR(rCmd);
-			rCmd = "library(RSQLite)";
-			RHook.evalR(rCmd);
-			rCmd = "library(AnnotationDbi)";
-			RHook.evalR(rCmd);
-			rCmd = "library(KEGG.db)";
-			RHook.evalR(rCmd);
-			rCmd = "library(XML)";
-			RHook.evalR(rCmd);
-			rCmd = "library(GSEABase)";
-			RHook.evalR(rCmd);
-			rCmd = "library(genefilter)";
-			RHook.evalR(rCmd);
-			rCmd = "library(xtable)";
-			RHook.evalR(rCmd);
-			rCmd = "library(Category)";
-			RHook.evalR(rCmd);
-			rCmd = "library(GO.db)";
-			RHook.evalR(rCmd);
-			rCmd = "library(RBGL)";
-			RHook.evalR(rCmd);
-			rCmd = "library(annotate)";
-			RHook.evalR(rCmd);
-			rCmd = "library(GOstats)";
-			RHook.evalR(rCmd);
-			rCmd = "library(graph)";
-			RHook.evalR(rCmd);
-			rCmd = "library(cluster)";
-			RHook.evalR(rCmd);
+			RHook.evalR(rCmd);			
 
 			rCmd = "source('http://www.bioconductor.org/biocLite.R')";
 			RHook.evalR(rCmd);
-			rCmd = "biocLite('"+chipName+".db')";
+			rCmd = "biocLite('"+chipTypeName+".db')";
 			RHook.evalR(rCmd);
-			rCmd = "library("+chipName+".db)";
+			rCmd = "library("+chipTypeName+".db)";
 			RHook.evalR(rCmd);
+			
+//			rCmd = "library(Biobase)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(limma)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(DBI)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(RSQLite)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(AnnotationDbi)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(KEGG.db)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(XML)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(GSEABase)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(genefilter)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(xtable)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(Category)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(GO.db)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(RBGL)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(annotate)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(GOstats)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(graph)";
+//			RHook.evalR(rCmd);
+//			rCmd = "library(cluster)";
+//			RHook.evalR(rCmd);
+
 			
 			int numProbes = expMatrix.getRowDimension();
 			int numSamples = expMatrix.getColumnDimension();
@@ -591,22 +590,6 @@ public class ATTRACT extends AbstractAlgorithm{
 			String filePath = writeMatrixToFile(fileLoc, expMatrix, probeIDs);
 			//Create data matrix in R from a file
 			RHook.createRDataFrameFromFile("y", filePath, true, sampleNames);
-			
-	//		# Reading in data matrix first col comes in as row Names
-	//		# Reading in sample grouping
-			System.out.println("filePath = "+filePath);
-			System.out.println("reading...");
-
-			System.out.println("Done.");
-			
-//			rCmd = "row.names(y) <- c(";
-//			System.out.println("probeIDs.length "+this.probeIDs.length);
-//			System.out.println("probeIDs[22] "+this.probeIDs[22]);
-//			for (int i=0; i<this.probeIDs.length; i++){				
-//				rCmd = rCmd + "'"+this.probeIDs[i] + "',";
-//			}
-//			rCmd = rCmd.substring(0, rCmd.length()-1)+")";
-//			RHook.evalR(rCmd);
 			
 
 			rCmd = "sampleAssignments <- c(";
@@ -638,12 +621,8 @@ public class ATTRACT extends AbstractAlgorithm{
 			rCmd = "eset@phenoData<-p.eset";
 			RHook.evalR(rCmd);
 
-	//		# Running attract *first* step
-	//		# TODO - Figure out correct chipname from bioconductor
-			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = '"+chipName+".db')";
+			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = '"+chipTypeName+".db')";
 			RHook.evalR(rCmd);
-	
-	//		# remove flat genes (genes with flat expression profiles across the sample groups)
 			rCmd = "removeTheseGenes<-removeFlatGenes(eset, colnames(pData(eset))[2], contrasts=NULL, limma.cutoff="+alpha+")";
 			RHook.evalR(rCmd);
 			rCmd = "keepTheseGenes<-setdiff(featureNames(eset), removeTheseGenes)";
@@ -679,8 +658,6 @@ public class ATTRACT extends AbstractAlgorithm{
 				resultMatrix[3][i] = keggNumGenes[i];				             
 			}
 			
-	//		# Finding synexpression groups for each of the sig pathways
-
 			keggGenesArrays = new int[keggGroupCount][]; 
 			for (int keggIndex=0; keggIndex<keggGroupCount; keggIndex++){
 				rCmd = "riboSyn"+keggIndex+"<-findSynexprs('"+keggIDs[keggIndex]+"', attract_out, removeTheseGenes)";
@@ -712,11 +689,6 @@ public class ATTRACT extends AbstractAlgorithm{
 					keggGenesArrays[keggIndex][i] = Arrays.binarySearch(probeIDs, passGenes[i]);
 				}
 			}
-
-			System.out.println(resultMatrix[0]);
-			System.out.println(resultMatrix[1]);
-			System.out.println(resultMatrix[2]);
-			System.out.println(resultMatrix[3]);
 			if(2!=4)
 				return;
 			
