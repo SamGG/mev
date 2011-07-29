@@ -592,7 +592,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     	addGeneSetInfo(root);
         addExpressionImages(root);
         addHierarchicalTrees(root, result_cluster, info);
-//        addCentroidViews(root);
+        addCentroidViews(root);
         addTableViews(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
@@ -607,15 +607,16 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 	      String[] columns = {"KEGG ID","KEGG Name", "Adjusted p-value", "Number of detected genes"};
 	      
 	      IViewer tabViewer = new ATTRACTResultTable(results, columns);
-	  	root.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
+	      root.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
 			
-		}
+	}
     protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
         int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
-        	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), tabViewer, new Integer(i))));
+        	if (clusters[i].length>0)
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), tabViewer, new Integer(i))));
         	if (i%2==1)
         		y++;
             if (y>numGroups){
@@ -634,7 +635,8 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
         int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
-        	node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), expViewer, new Integer(i))));
+        	if (clusters[i].length>0)
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), expViewer, new Integer(i))));
         	if (i%2==1)
         		y++;
             if (y>numGroups){
@@ -708,23 +710,21 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         ATTRACTCentroidViewer centroidViewer = new ATTRACTCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
+        int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
-            if (i == 0) {
-                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            } else if (i == 1) {
-                centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-                expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("Non-significant Genes ", centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
-            }
+        	if (clusters[i].length>0){
+        		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+        		expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+        	}
         }
         
-        ATTRACTCentroidsViewer centroidsViewer = new ATTRACTCentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, null, null, null, null, null, null, null);
-
-        centroidsViewer.setMeans(this.means.A);
-        centroidsViewer.setVariances(this.variances.A);
-        
-        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
-        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
+//        ATTRACTCentroidsViewer centroidsViewer = new ATTRACTCentroidsViewer(this.experiment, clusters, geneGroupMeans, geneGroupSDs, null, null, null, null, null, null, null);
+//
+//        centroidsViewer.setMeans(this.means.A);
+//        centroidsViewer.setVariances(this.variances.A);
+//        
+//        centroidNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VARIANCES_MODE))));
+//        expressionNode.add(new DefaultMutableTreeNode(new LeafInfo("All Genes", centroidsViewer, new Integer(CentroidUserObject.VALUES_MODE))));
         root.add(centroidNode);
         root.add(expressionNode);
     }

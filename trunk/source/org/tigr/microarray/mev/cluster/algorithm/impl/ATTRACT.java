@@ -48,7 +48,6 @@ public class ATTRACT extends AbstractAlgorithm{
 	private boolean stop = false;
 	private int[] groupAssignments;
 	private int[][] keggGenesArrays;
-	private int[] mapping, mapping2;
 	private String nameA, nameB;
 
 	private int numGenes, numExps, numGroups, iteration, numAGroups, numBGroups;
@@ -73,7 +72,7 @@ public class ATTRACT extends AbstractAlgorithm{
 	private float[] fValues;
 	private String[] probeIDs;
 	private Object[][] resultMatrix;
-	
+	float[] sortedMapping;
 
 	int validN;
 	private String chipTypeName;
@@ -103,7 +102,7 @@ public class ATTRACT extends AbstractAlgorithm{
 		numAGroups = map.getInt("numAGroups");
 		numBGroups = map.getInt("numBGroups");
 		probeIDs = data.getStringArray("probeIDs");
-
+		
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
 
@@ -119,14 +118,6 @@ public class ATTRACT extends AbstractAlgorithm{
 		boolean calculate_genes = map.getBoolean("calculate-genes", false);
 		boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
 
-		mapping = new int[expMatrix.getRowDimension()];
-		for (int i=0; i<mapping.length; i++){
-			mapping[i]=i;
-		}
-		mapping2 = new int[expMatrix.getRowDimension()];
-		for (int i=0; i<mapping2.length; i++){
-			mapping2[i]=i;
-		}
 
 		progress=0;
 		event = null;
@@ -173,25 +164,23 @@ public class ATTRACT extends AbstractAlgorithm{
 				}                
 			}
 		}
-		//remap genes to expmatrix
+//		remap genes to expmatrix
 		int[][]keggArrays = new int[keggGenesArrays.length][];
-		//System.out.println("sigGenesArrays.length "+sigGenesArrays.length);
 		for (int i=0; i<keggGenesArrays.length; i++){
-			//System.out.println("sga "+i);
 			keggArrays[i]=new int[keggGenesArrays[i].length];
 			for (int j=0; j<keggGenesArrays[i].length; j++){
-				keggArrays[i][j]=mapping2[mapping[keggGenesArrays[i][j]]];
+				keggArrays[i][j]=(int)sortedMapping[keggGenesArrays[i][j]];
 			}
 		}
 
 		// prepare the result
-		result.addIntMatrix("keggArrays", keggArrays);
+		result.addIntMatrix("keggArrays", keggGenesArrays);
 		result.addParam("iterations", String.valueOf(iteration-1));
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
 		result.addObjectMatrix("resultMatrix", resultMatrix);
-//		result.addMatrix("clusters_means", means);
-//		result.addMatrix("clusters_variances", variances); 
+		result.addMatrix("clusters_means", getMeans(keggGenesArrays));
+		result.addMatrix("clusters_variances", getVariances(keggGenesArrays, getMeans(keggGenesArrays))); 
 		result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
 		result.addMatrix("geneGroupSDsMatrix", getAllGeneGroupSDs());
 
@@ -265,68 +254,68 @@ public class ATTRACT extends AbstractAlgorithm{
 		target_list.addNodeValue(new NodeValue("height", source_result.getMatrix("height").getRowPackedCopy()));
 	}
 
-//	private FloatMatrix getMeans(int[][] clusters) {
-//		FloatMatrix means = new FloatMatrix(clusters.length, numExps);
-//		FloatMatrix mean;
-//		for (int i=0; i<clusters.length; i++) {
-//			mean = getMean(clusters[i]);
-//			means.A[i] = mean.A[0];
-//		}
-//		return means;
-//	}
-//	private FloatMatrix getMean(int[] cluster) {
-//		FloatMatrix mean = new FloatMatrix(1, numExps);
-//		float currentMean;
-//		int n = cluster.length;
-//		int denom = 0;
-//		float value;
-//		for (int i=0; i<numExps; i++) {
-//			currentMean = 0f;
-//			denom = 0;
-//			for (int j=0; j<n; j++) {
-//				value = expMatrix.get(((Integer) cluster[j]).intValue(), i);
-//				if (!Float.isNaN(value)) {
-//					currentMean += value;
-//					denom++;
-//				}
-//			}
-//			mean.set(0, i, currentMean/(float)denom);
-//		}
-//
-//		return mean;
-//	}
-//	private FloatMatrix getVariances(int[][] clusters, FloatMatrix means) {
-//		final int rows = means.getRowDimension();
-//		final int columns = means.getColumnDimension();
-//		FloatMatrix variances = new FloatMatrix(rows, columns);
-//		for (int row=0; row<rows; row++) {
-//			for (int column=0; column<columns; column++) {
-//				variances.set(row, column, getSampleVariance(clusters[row], column, means.get(row, column)));
-//			}
-//		}
-//		return variances;
-//	}
+	private FloatMatrix getMeans(int[][] clusters) {
+		FloatMatrix means = new FloatMatrix(clusters.length, numExps);
+		FloatMatrix mean;
+		for (int i=0; i<clusters.length; i++) {
+			mean = getMean(clusters[i]);
+			means.A[i] = mean.A[0];
+		}
+		return means;
+	}
+	private FloatMatrix getMean(int[] cluster) {
+		FloatMatrix mean = new FloatMatrix(1, numExps);
+		float currentMean;
+		int n = cluster.length;
+		int denom = 0;
+		float value;
+		for (int i=0; i<numExps; i++) {
+			currentMean = 0f;
+			denom = 0;
+			for (int j=0; j<n; j++) {
+				value = expMatrix.get(((Integer) cluster[j]).intValue(), i);
+				if (!Float.isNaN(value)) {
+					currentMean += value;
+					denom++;
+				}
+			}
+			mean.set(0, i, currentMean/(float)denom);
+		}
+
+		return mean;
+	}
+	private FloatMatrix getVariances(int[][] clusters, FloatMatrix means) {
+		final int rows = means.getRowDimension();
+		final int columns = means.getColumnDimension();
+		FloatMatrix variances = new FloatMatrix(rows, columns);
+		for (int row=0; row<rows; row++) {
+			for (int column=0; column<columns; column++) {
+				variances.set(row, column, getSampleVariance(clusters[row], column, means.get(row, column)));
+			}
+		}
+		return variances;
+	}
 
 
-//	private float getSampleVariance(int[] cluster, int column, float mean) {
-//		return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
-//
-//	}  
-//
-//	private float getSampleNormalizedSum(int[] cluster, int column, float mean) {
-//		final int size = cluster.length;
-//		float sum = 0f;
-//		float value;
-//		validN = 0;
-//		for (int i=0; i<size; i++) {
-//			value = expMatrix.get(((Integer) cluster[i]).intValue(), column);
-//			if (!Float.isNaN(value)) {
-//				sum += Math.pow(value-mean, 2);
-//				validN++;
-//			}
-//		}
-//		return sum;
-//	}
+	private float getSampleVariance(int[] cluster, int column, float mean) {
+		return(float)Math.sqrt(getSampleNormalizedSum(cluster, column, mean)/(float)(validN-1));
+
+	}  
+
+	private float getSampleNormalizedSum(int[] cluster, int column, float mean) {
+		final int size = cluster.length;
+		float sum = 0f;
+		float value;
+		validN = 0;
+		for (int i=0; i<size; i++) {
+			value = expMatrix.get(((Integer) cluster[i]).intValue(), column);
+			if (!Float.isNaN(value)) {
+				sum += Math.pow(value-mean, 2);
+				validN++;
+			}
+		}
+		return sum;
+	}
 
 	private float[] getGeneGroupMeans(int gene) {
 		float[] geneValues = new float[numExps];
@@ -400,68 +389,68 @@ public class ATTRACT extends AbstractAlgorithm{
 		return sds;        
 	}
 
-	private FloatMatrix getPValues(){
-		FloatMatrix pvals = new FloatMatrix(numGenes, pValues.length);
-		for (int i=0; i<pValues.length; i++){
-			for (int j=0; j<mapping.length; j++){
-				pvals.A[j][i] = pValues[i][j]; 
-			}
-		}
-		return pvals;
-	}
-
-	private FloatMatrix getFValues(){
-		FloatMatrix pvals = new FloatMatrix(numGenes, 1);
-		for (int j=0; j<mapping.length; j++){
-			pvals.A[j][0] = fValues[j]; 
-		}
-		
-		return pvals;
-	}
-	
-	private FloatMatrix getAdjPValues() {
-		FloatMatrix adjpvals = new FloatMatrix(numGenes, adjPvalues.length);
-		for (int i=0; i<adjPvalues.length; i++){
-			for (int j=0; j<mapping.length; j++){
-				adjpvals.A[j][i] = adjPvalues[i][j]; 
-			}
-		}
-		return adjpvals;
-	}
-
-	private FloatMatrix getLogFoldChanges() {
-		FloatMatrix lfcs = new FloatMatrix(numGenes, lfc.length);
-		
-		for (int i=0; i<lfc.length; i++){
-			for (int j=0; j<mapping.length; j++){
-				lfcs.A[j][i] = lfc[i][j]; 
-			}
-		}
-		return lfcs;
-	}
-
-	private FloatMatrix getLogOdds() {
-		FloatMatrix lodds = new FloatMatrix(numGenes, logOdds.length);
-		//System.out.println("numGenes " + numGenes);
-		//System.out.println("mapping.length " + mapping.length);
-
-		for (int i=0; i<logOdds.length; i++){
-			for (int j=0; j<mapping.length; j++){
-				lodds.A[j][i] = logOdds[i][j]; 
-			}
-		}
-		return lodds;
-	}
-
-	private FloatMatrix getTStatistic() {
-		FloatMatrix tstat = new FloatMatrix(numGenes, t.length);
-		for (int i=0; i<t.length; i++){
-			for (int j=0; j<mapping.length; j++){
-				tstat.A[j][i] = t[i][j]; 
-			}
-		}
-		return tstat;
-	}
+//	private FloatMatrix getPValues(){
+//		FloatMatrix pvals = new FloatMatrix(numGenes, pValues.length);
+//		for (int i=0; i<pValues.length; i++){
+//			for (int j=0; j<mapping.length; j++){
+//				pvals.A[j][i] = pValues[i][j]; 
+//			}
+//		}
+//		return pvals;
+//	}
+//
+//	private FloatMatrix getFValues(){
+//		FloatMatrix pvals = new FloatMatrix(numGenes, 1);
+//		for (int j=0; j<mapping.length; j++){
+//			pvals.A[j][0] = fValues[j]; 
+//		}
+//		
+//		return pvals;
+//	}
+//	
+//	private FloatMatrix getAdjPValues() {
+//		FloatMatrix adjpvals = new FloatMatrix(numGenes, adjPvalues.length);
+//		for (int i=0; i<adjPvalues.length; i++){
+//			for (int j=0; j<mapping.length; j++){
+//				adjpvals.A[j][i] = adjPvalues[i][j]; 
+//			}
+//		}
+//		return adjpvals;
+//	}
+//
+//	private FloatMatrix getLogFoldChanges() {
+//		FloatMatrix lfcs = new FloatMatrix(numGenes, lfc.length);
+//		
+//		for (int i=0; i<lfc.length; i++){
+//			for (int j=0; j<mapping.length; j++){
+//				lfcs.A[j][i] = lfc[i][j]; 
+//			}
+//		}
+//		return lfcs;
+//	}
+//
+//	private FloatMatrix getLogOdds() {
+//		FloatMatrix lodds = new FloatMatrix(numGenes, logOdds.length);
+//		//System.out.println("numGenes " + numGenes);
+//		//System.out.println("mapping.length " + mapping.length);
+//
+//		for (int i=0; i<logOdds.length; i++){
+//			for (int j=0; j<mapping.length; j++){
+//				lodds.A[j][i] = logOdds[i][j]; 
+//			}
+//		}
+//		return lodds;
+//	}
+//
+//	private FloatMatrix getTStatistic() {
+//		FloatMatrix tstat = new FloatMatrix(numGenes, t.length);
+//		for (int i=0; i<t.length; i++){
+//			for (int j=0; j<mapping.length; j++){
+//				tstat.A[j][i] = t[i][j]; 
+//			}
+//		}
+//		return tstat;
+//	}
 
 	private float getMean(float[] group) {
 		float sum = 0;
@@ -692,8 +681,26 @@ public class ATTRACT extends AbstractAlgorithm{
 				else
 					passGenes = new String[0];
 				keggGenesArrays[keggIndex] = new int[passGenes.length]; //member genes	
+				String[]probeIDclone = probeIDs.clone();
+				sortedMapping = new float[probeIDclone.length];
+				for (int i=0; i<sortedMapping.length; i++){
+					sortedMapping[i]=i;
+				}
+//				for (int i=0; i<sortedMapping.length; i++){
+//					System.out.println(sortedMapping[i]+"\t"+probeIDs[i]);
+//				}
+				ExperimentUtil.sort3(probeIDclone, sortedMapping);
+		//
+//				for (int i=0; i<sortedMapping.length; i++){
+//					System.out.println("after: "+sortedMapping[i]+"\t"+probeIDs[i]);
+//				}
 				for (int i=0; i<keggGenesArrays[keggIndex].length; i++){
-					keggGenesArrays[keggIndex][i] = Arrays.binarySearch(probeIDs, passGenes[i]);
+					try{
+						keggGenesArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passGenes[i])];
+					} catch (Exception e){
+						System.out.println("gene not found in Probes: "+passGenes[i]+", "+i);
+						e.printStackTrace();
+					}
 				}
 			}
 			if(2!=4)
