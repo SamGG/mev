@@ -32,7 +32,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
@@ -41,6 +44,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -360,7 +364,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             infoLabel2.setVisible(true);
             ngPanel.numGroupsField.setEnabled(true);
             ngPanel.alphaField.setEnabled(true);
-            ngPanel.oneClass.setEnabled(true);
+            ngPanel.chipNameBox.setEnabled(true);
+//            ngPanel.oneClass.setEnabled(true);
             ngPanel.twoClass.setEnabled(true);
             ngPanel.multiClass.setEnabled(true);
             ngPanel.factorialDesign.setEnabled(true);
@@ -385,7 +390,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             okReady = true;
             try {
             	alpha = Float.parseFloat(ngPanel.alphaField.getText());
-            	chipName = ngPanel.chipNameBox.getText();
+            	chipName = ngPanel.chipNameBox.getSelectedItem().toString();
             	numGroups = 0;
             	if (getExperimentalDesign()==1)
             		numGroups = 1;
@@ -522,7 +527,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             enableOK();
             ngPanel.numGroupsField.setEnabled(false);
             ngPanel.alphaField.setEnabled(false);
-            ngPanel.oneClass.setEnabled(false);
+            ngPanel.chipNameBox.setEnabled(false);
+//            ngPanel.oneClass.setEnabled(false);
             ngPanel.twoClass.setEnabled(false);
             ngPanel.multiClass.setEnabled(false);
             ngPanel.factorialDesign.setEnabled(false);
@@ -538,11 +544,12 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         }
         class DesignPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
-			JTextField factorAName, factorBName, factorALevel, factorBLevel, numGroupsField, alphaField, chipNameBox;
-            JLabel numGroupsLabel;
+			JTextField factorAName, factorBName, factorALevel, factorBLevel, numGroupsField, alphaField;
+			JComboBox chipNameBox;
+			JLabel numGroupsLabel;
             JPanel factorPanel;
             boolean okPressed = false;
-            JRadioButton oneClass, twoClass, multiClass, factorialDesign, timeCourse;
+            JRadioButton twoClass, multiClass, factorialDesign, timeCourse;
             public DesignPanel() {
                 setBackground(Color.white);
                 GridBagLayout gridbag = new GridBagLayout();
@@ -556,13 +563,13 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(dataTypeLabel, constraints);
                 this.add(dataTypeLabel);
                 
-                oneClass=new JRadioButton("One Class", true);
-                twoClass=new JRadioButton("Two Class", false);
+//                oneClass=new JRadioButton("One Class", true);
+                twoClass=new JRadioButton("Two Class", true);
                 multiClass=new JRadioButton("Multi-Class", false);
                 factorialDesign=new JRadioButton("Two-Factor", false);
                 timeCourse=new JRadioButton("Time Course", false);
-                oneClass.setBackground(Color.white);
-                oneClass.setBorder(null);
+//                oneClass.setBackground(Color.white);
+//                oneClass.setBorder(null);
                 twoClass.setBackground(Color.white);
                 twoClass.setBorder(null);
                 multiClass.setBackground(Color.white);
@@ -572,36 +579,36 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 timeCourse.setBackground(Color.white);
                 timeCourse.setBorder(null);
                 ButtonGroup dataType = new ButtonGroup();
-                dataType.add(oneClass);
+//                dataType.add(oneClass);
                 dataType.add(twoClass);
                 dataType.add(multiClass);
                 dataType.add(factorialDesign);
                 dataType.add(timeCourse);
-                oneClass.addActionListener(new RadioButtonListener());
+//                oneClass.addActionListener(new RadioButtonListener());
                 twoClass.addActionListener(new RadioButtonListener());
                 multiClass.addActionListener(new RadioButtonListener());
                 factorialDesign.addActionListener(new RadioButtonListener());
                 timeCourse.addActionListener(new RadioButtonListener());
+//                buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
+//                constraints.anchor = GridBagConstraints.WEST;
+//                gridbag.setConstraints(oneClass, constraints);
+//                this.add(oneClass);
                 buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(oneClass, constraints);
-                this.add(oneClass);
-                buildConstraints(constraints, 1, 1, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(twoClass, constraints);
                 this.add(twoClass);
-                buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
+                buildConstraints(constraints, 1, 1, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(multiClass, constraints);
                 this.add(multiClass);
-                buildConstraints(constraints, 1, 3, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(factorialDesign, constraints);
-                this.add(factorialDesign);
-                buildConstraints(constraints, 1, 4, 1, 1, 30, 100);
-                constraints.anchor = GridBagConstraints.WEST;
-                gridbag.setConstraints(timeCourse, constraints);
-                this.add(timeCourse);
+//                buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
+//                constraints.anchor = GridBagConstraints.WEST;
+//                gridbag.setConstraints(factorialDesign, constraints);
+//                this.add(factorialDesign);
+//                buildConstraints(constraints, 1, 3, 1, 1, 30, 100);
+//                constraints.anchor = GridBagConstraints.WEST;
+//                gridbag.setConstraints(timeCourse, constraints);
+//                this.add(timeCourse);
                 
                 numGroupsLabel = new JLabel("Number of groups: ");
                 numGroupsLabel.setVisible(false);
@@ -692,8 +699,34 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 constraints.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(chipNameLabel, constraints);
                 this.add(chipNameLabel);
+
+				ArrayList<String> bioCAnnotations = new ArrayList<String>();
+                try {
+    				String urlString = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/R2.11/win/attract/annotationSupported.txt";
+    				String fullURL = urlString;
+    				URL url = new URL(fullURL); // Interpret, connect to URL
+
+    				URLConnection url_conn = url.openConnection();
+    				url_conn.setDoInput(true);
+    				url_conn.setUseCaches(true);
+
+    				BufferedReader inp = new BufferedReader( // Setup buffered input stream
+    						new InputStreamReader(url_conn.getInputStream()));
+    				String s = inp.readLine();
+    				while (s != null) {						
+    					bioCAnnotations.add(s);
+    					s = inp.readLine();
+    				}
+    			} catch (Exception e){
+    				System.out.println("Error reading supported Bioconductor annotations");
+    			}
+    			String[] bioCAnnotationsArray = new String[bioCAnnotations.size()];
+    			for (int i=0; i<bioCAnnotationsArray.length; i++){
+    				bioCAnnotationsArray[i]=bioCAnnotations.get(i);
+    			}
                 
-                chipNameBox = new JTextField("hgu133plus2", 14);
+                chipNameBox = new JComboBox(bioCAnnotationsArray);
+                chipNameBox.setSelectedItem("hgu133plus2.db");
                 chipNameBox.setMinimumSize(new Dimension(50,20));
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 7, 1, 1, 30, 0);
@@ -703,8 +736,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             }
             
             public int getExperimentDesign(){
-            	if (oneClass.isSelected())
-            		return 1;
+//            	if (oneClass.isSelected())
+//            		return 1;
             	if (twoClass.isSelected())
             		return 2;
             	if (multiClass.isSelected())
@@ -910,7 +943,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                     gridbag.setConstraints(notInTimeGroupRadioButtons[i], constraints);
                     
                     
-                    panels[currPanel].add(notInTimeGroupRadioButtons[i]);                    
+//                    panels[currPanel].add(notInTimeGroupRadioButtons[i]);                    
                     
                     
                 }
@@ -1726,8 +1759,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
      */
     public int getExperimentalDesign() {
     	int design = -1;
-    	if (mPanel.ngPanel.oneClass.isSelected())
-    		design = 1;
+//    	if (mPanel.ngPanel.oneClass.isSelected())
+//    		design = 1;
     	if (mPanel.ngPanel.twoClass.isSelected())
     		design = 2;
     	if (mPanel.ngPanel.multiClass.isSelected())

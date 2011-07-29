@@ -28,10 +28,14 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -95,7 +99,7 @@ public class ATTRACT extends AbstractAlgorithm{
 		numGroups = map.getInt("numGroups");
 		nameA = map.getString("nameA");
 		nameB = map.getString("nameB");
-		chipTypeName = map.getString("chipName", "hgu133plus2");
+		chipTypeName = map.getString("chipName", "hgu133plus2.db");
 		numAGroups = map.getInt("numAGroups");
 		numBGroups = map.getInt("numBGroups");
 		probeIDs = data.getStringArray("probeIDs");
@@ -540,11 +544,14 @@ public class ATTRACT extends AbstractAlgorithm{
 
 			rCmd = "source('http://www.bioconductor.org/biocLite.R')";
 			RHook.evalR(rCmd);
-			rCmd = "biocLite('"+chipTypeName+".db')";
+			rCmd = "biocLite('"+chipTypeName+"')";
 			RHook.evalR(rCmd);
-			rCmd = "library("+chipTypeName+".db)";
+			rCmd = "library("+chipTypeName+")";
 			RHook.evalR(rCmd);
 			
+			
+			
+//			ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/R2.11/win/attract/annotationSupported.txt
 //			rCmd = "library(Biobase)";
 //			RHook.evalR(rCmd);
 //			rCmd = "library(limma)";
@@ -621,7 +628,7 @@ public class ATTRACT extends AbstractAlgorithm{
 			rCmd = "eset@phenoData<-p.eset";
 			RHook.evalR(rCmd);
 
-			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = '"+chipTypeName+".db')";
+			rCmd = "attract_out <- findAttractors(eset, colnames(pData(eset))[2], annotation = '"+chipTypeName+"')";
 			RHook.evalR(rCmd);
 			rCmd = "removeTheseGenes<-removeFlatGenes(eset, colnames(pData(eset))[2], contrasts=NULL, limma.cutoff="+alpha+")";
 			RHook.evalR(rCmd);
@@ -697,7 +704,6 @@ public class ATTRACT extends AbstractAlgorithm{
 			//Create data matrix in R, in memory - Inefficient
 			//RHook.createRDataMatrix("yy", expMatrix, geneNames, sampleNames);
 	
-			//TODO
 			//define design vector based on experiment. COMPLICATED
 	
 			//System.out.println("design <- cbind(Grp1=1,Grp2vs1=c(rep(0,dim(y)[2]/2),rep(1,dim(y)[2]/2)))");
@@ -1113,7 +1119,6 @@ public class ATTRACT extends AbstractAlgorithm{
 				//throw new AlgorithmException(e);
 				throw new AbortException();
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
