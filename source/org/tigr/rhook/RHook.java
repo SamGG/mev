@@ -744,7 +744,7 @@ public class RHook  {
 	 * @param colNames
 	 * @throws Exception
 	 */
-	public static void createRDataFrameFromFile(String rObj,String filePath, boolean rowNames, String[] colNames) throws Exception {
+	public static void createRDataFrameFromFile(String rObj, String filePath, boolean rowNames, String[] colNames) throws Exception {
 		//Create col names vector
 		String cNames = "cols <- c(0,";
 		int iRow = 0;
