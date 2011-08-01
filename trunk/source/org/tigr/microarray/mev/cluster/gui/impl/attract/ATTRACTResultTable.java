@@ -6,16 +6,26 @@ import java.awt.event.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.tigr.microarray.mev.TMEV;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
+import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer.DefaultViewerTableModel;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.QSort;
 
@@ -40,6 +50,14 @@ public class ATTRACTResultTable implements IViewer {
     protected static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     protected static final String BROADCAST_SELECTED_MATRIX_GAGGLE_CMD = "broadcast-selected-matrix-to-gaggle";
     protected static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
+	private static final String SAVE_TABLE_COMMAND ="save_pvalues_table_command";
+	private static final String STORE_CLUSTER_COMMAND="store_cluster_command";
+	private static final String CLEAR_ALL_COMMAND = "clear-all-cmd";
+	private static final String SELECT_ALL_COMMAND = "select-all-cmd";
+	private static final String LAUNCH_EXPRESSION_GRAPH_COMMAND = "launch-expression-graph-command";
+	private static final String TABLE_VIEW_COMMAND = "table-view-command";
+	private static final String LAUNCH_CENTROID_GRAPH_COMMAND = "launch-centroid-graph-command";
+	private static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
     public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
     
     public static final int INTEGER_TYPE = 10;
@@ -47,6 +65,7 @@ public class ATTRACTResultTable implements IViewer {
     public static final int DOUBLE_TYPE = 12;
     public static final int STRING_TYPE = 13;
     public static final int BOOLEAN_TYPE = 14;    
+    
     
     private JComponent header;
     private JPopupMenu popup;    
@@ -58,8 +77,12 @@ public class ATTRACTResultTable implements IViewer {
     private JTable clusterTable;
     private ClusterTableModel clusterModel;  
     private int exptID = 0;
-    
-    public ATTRACTResultTable(Object[][] data, String[] auxTitles) {
+	private DefaultMutableTreeNode rootNode;
+	IFramework framework;
+	
+    public ATTRACTResultTable(Object[][] data, DefaultMutableTreeNode analysisNode, IFramework framework, String[] auxTitles) {
+    	this.framework = framework;
+    	this.rootNode = analysisNode;
         this.data = data;
         indices = new int[data.length];
         this.sortedIndices = new int[data.length];
@@ -384,6 +407,8 @@ public class ATTRACTResultTable implements IViewer {
         if ((obType == ExperimentUtil.DOUBLE_TYPE) || (obType == ExperimentUtil.FLOAT_TYPE) || (obType == ExperimentUtil.INTEGER_TYPE)) {
             double[] origArray = new double[getCluster().length];
             for (int i = 0; i < origArray.length; i++) {
+            	if ((data[getCluster()[i]][column])==null)
+            		continue;
                 if (obType == ExperimentUtil.DOUBLE_TYPE) {
                     origArray[i] = ((Double)(data[getCluster()[i]][column])).doubleValue();
                 } else if (obType == ExperimentUtil.FLOAT_TYPE) {
@@ -558,15 +583,170 @@ public class ATTRACTResultTable implements IViewer {
 
         
         menu.addSeparator();
-//
-       
+
+
+        menuItem = new JMenuItem("Store Selection as Cluster");
+        menuItem.setActionCommand(STORE_CLUSTER_COMMAND);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+        
+        menu.addSeparator();
+        
+        JMenu launchMenu = new JMenu("Open Viewer");
+        
+        menuItem = new JMenuItem("Expression Image");
+        menuItem.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
+        menuItem.addActionListener(listener);
+        launchMenu.add(menuItem);
+        
+        menuItem = new JMenuItem("Centroid Graph");
+        menuItem.setActionCommand(LAUNCH_CENTROID_GRAPH_COMMAND);
+        menuItem.addActionListener(listener);
+        launchMenu.add(menuItem);
+        
+        menuItem = new JMenuItem("Expression Graph");
+        menuItem.setActionCommand(LAUNCH_EXPRESSION_GRAPH_COMMAND);
+        menuItem.addActionListener(listener);
+        launchMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Table Viewer");
+        menuItem.setActionCommand(TABLE_VIEW_COMMAND);
+        menuItem.addActionListener(listener);
+        launchMenu.add(menuItem);
+        menu.add(launchMenu);
+        
+        menu.addSeparator();
+                
+        menuItem = new JMenuItem("Save Table");
+        menuItem.setActionCommand(SAVE_TABLE_COMMAND);
+        menuItem.addActionListener(listener);
+        menu.add(menuItem);
+      
+        menu.addSeparator();
+              
+        
     }    
+    /** Handles opening cluster viewers.
+     */
+    protected void onOpenViewer(String viewerType){
+        int index = this.clusterTable.getSelectedRow();
+        if(index == -1 || rootNode==null)
+            return; 
+
+        String nodeTitle = (String)clusterTable.getModel().getValueAt(index, 1);
+        DefaultMutableTreeNode node = null;
+
+        if(viewerType.equals("expression image")){        	
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(2));
+        } else if(viewerType.equals("centroid graph")){
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(3));
+        } else if(viewerType.equals("expression graph")){
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(4));
+        } else if(viewerType.equals("table view")){
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(5));
+        }
+    	 if(framework != null){
+    		 for (int i=0; i<node.getChildCount(); i++){
+    			 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(i)).toString())){
+    				 framework.setTreeNode((DefaultMutableTreeNode)node.getChildAt(i));
+    				 break;
+    			 }
+    		 }
+    	 }
+        
+        
+    
+    }
+    
+    /** Saves the pvalues table to file
+     */
+    protected void onSaveTable(){
+        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
+        String fileName = "";
+        if(chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION){
+            File file = chooser.getSelectedFile();
+            fileName = file.getName();
+            try{
+                PrintWriter pw = new PrintWriter(new FileOutputStream(file));
+                int rows = clusterTable.getRowCount();
+                int cols = clusterTable.getColumnCount();
+                
+                for(int row = 0; row < rows; row++){
+                    for(int col = 0; col < cols; col++){
+                        pw.print(((String)(clusterTable.getValueAt(row, col))) + "\t");
+                    }
+                    pw.print("\n");
+                }
+                pw.flush();
+                pw.close();
+            } catch ( IOException ioe) {
+                ioe.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(null, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
+            }
+            
+        }
+    }
+    /**
+     *  Handles the storage of selected rows from the 
+     *  table.  
+     *  
+     */
+    protected void onStoreSelectedRows(){
+        int [] tableIndices = clusterTable.getSelectedRows();
+        if(tableIndices == null || tableIndices.length == 0||rootNode==null)
+            return;
+        for (int cluster=0; cluster<tableIndices.length; cluster++){
+	        String nodeTitle = (String)clusterTable.getModel().getValueAt(tableIndices[cluster], 1);
+	        DefaultMutableTreeNode node = null;
+	      	
+	        node = (DefaultMutableTreeNode)(rootNode.getChildAt(2));
+
+			 for (int i=0; i<node.getChildCount(); i++){
+				 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(i)).toString())){
+					 ExperimentViewer ev = (ExperimentViewer)((LeafInfo)((DefaultMutableTreeNode)node.getChildAt(i)).getUserObject()).getViewer();
+					 ev.storeCluster();
+					 break;
+				 }
+			 }
+        }
+        
+        //convert to possibly sorted table indices
+//        for(int i = 0; i < tableIndices.length; i++)
+//            tableIndices[i] = ((DefaultViewerTableModel) clusterTable.getModel()).getRow( tableIndices[i] );
+//        
+//        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
+//        String fileName = "";
+//        if(chooser.showSaveDialog(clusterTable) == JFileChooser.APPROVE_OPTION){
+//            File file = chooser.getSelectedFile();
+//            fileName = file.getName();
+//            try{
+//                PrintWriter pw = new PrintWriter(new FileOutputStream(file));
+//                int rows = tableIndices.length;
+//                int cols = clusterTable.getColumnCount();
+//                
+//                for(int row = 0; row < rows ; row++){
+//                    for(int col = 0; col < cols; col++){
+//                        pw.print(((String)(clusterTable.getValueAt(tableIndices[row], col))) + "\t");
+//                    }
+//                    pw.print("\n");
+//                }
+//                pw.flush();
+//                pw.close();
+//            } catch ( IOException ioe) {
+//                ioe.printStackTrace();
+//                javax.swing.JOptionPane.showMessageDialog(clusterTable, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
+//            }
+//            
+//        }
+    
+     }
 
     /**
      * The class to listen to mouse and action events.
      */
     private class Listener extends MouseAdapter implements ActionListener {
 	
+
 	public void actionPerformed(ActionEvent e) {
 	    String command = e.getActionCommand();
         if(command.equals(LAUNCH_NEW_SESSION_WITH_SEL_ROWS_CMD)){
@@ -589,7 +769,23 @@ public class ATTRACTResultTable implements IViewer {
 
 		} else if (command.equals(BROADCAST_MATRIX_GENOME_BROWSER_CMD)) {
 
-        }
+		} else if(command.equals(STORE_CLUSTER_COMMAND)){
+        	  onStoreSelectedRows();
+		} else if(command.equals(CLEAR_ALL_COMMAND)){
+			  clusterTable.clearSelection();
+		} else if(command.equals(SELECT_ALL_COMMAND)){
+			  clusterTable.selectAll();
+		} else if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
+		      onOpenViewer("expression image");
+		} else if(command.equals(LAUNCH_CENTROID_GRAPH_COMMAND)){
+		      onOpenViewer("centroid graph");
+		} else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
+		      onOpenViewer("expression graph");
+		} else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
+		      onOpenViewer("table viewer");
+		} else if(command.equals(SAVE_TABLE_COMMAND)){
+            onSaveTable();
+		}
 	}
 
 	public void mouseReleased(MouseEvent event) {
@@ -599,7 +795,20 @@ public class ATTRACTResultTable implements IViewer {
 	public void mousePressed(MouseEvent event) {
 	    maybeShowPopup(event);
 	}
-	
+	 
+//    /** Creates the context menu
+//     * @return  */
+//    protected JPopupMenu createPopupMenu(){
+//        Listener listener = new Listener();
+//        JPopupMenu menu = new JPopupMenu();
+//        JMenuItem menuItem;
+//        
+//        
+//        
+//                 
+//        return menu;
+//    }
+    
 	private void maybeShowPopup(MouseEvent e) {
 	    if (!e.isPopupTrigger() || getCluster() == null || getCluster().length == 0) {         
 		return;

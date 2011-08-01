@@ -88,8 +88,11 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     //ATTRACT gene & sample names
     protected ArrayList<String> geneLabels;
     protected ArrayList<String> sampleLabels;
-	private Object[][] resultMatrix;
+	private Object[][] synResultMatrix;
+	private Object[][] corResultMatrix;
 	private String chipName;
+	private IFramework framework;
+	private String[] resultColumns;
     
     /** Creates new ATTRACTGUI */
     public ATTRACTGUI() {
@@ -109,7 +112,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 		//Before anything check for Mac OS and throw appropriate msg
 		if(sysMsg() != JOptionPane.OK_OPTION)
 			return null;
-		
+		this.framework = framework;
         this.experiment = framework.getData().getExperiment();        
         this.data = framework.getData();
         exptNamesVector = new Vector<String>();
@@ -238,7 +241,9 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             Cluster result_cluster = result.getCluster("cluster");
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
-            this.resultMatrix = result.getObjectMatrix("resultMatrix");
+            this.synResultMatrix = result.getObjectMatrix("synResultMatrix");
+            this.corResultMatrix = result.getObjectMatrix("corResultMatrix");
+            this.resultColumns = result.getStringArray("resultColumns");
             
             this.clusters = result.getIntMatrix("keggArrays");
             FloatMatrix geneGroupMeansMatrix = result.getMatrix("geneGroupMeansMatrix");
@@ -524,57 +529,9 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     public static void main(String[] args){
     	
     }
-    protected String getNodeTitle(int ind,int x, int y){
+    protected String getNodeTitle(int ind){
     	
-                return (String)resultMatrix[1][ind];
-//    	}
-//    	else if (dataDesign==3){
-//        	String str = "";
-//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-//        	if (ind<getTotalInteractions(numGroups)*2)
-//        		str = str+x+" vs. "+y;
-//        	else
-//        		str = str+"(All Groups)";
-//        	return str;
-//        }
-//    	else if (dataDesign==4){
-//    		int index = ind/2;
-//        	String str = "";
-//        	str = (ind%2==0)? "Significant Genes ":"Non-Significant Genes ";
-//        	if (index == 0)
-//        		str = str + this.factorAName + "1, " +this.factorBName+ " 1 vs. 2";
-//        	if (index == 1)
-//        		str = str + this.factorAName + "2, " +this.factorBName+ " 1 vs. 2";
-//        	if (index == 2)
-//        		str = str + "Difference";
-//        	return str;
-//        }
-//    	else if (dataDesign==5){
-//        	String str = "";
-//        	str = (ind%2==0)? "Significant Genes, ":"Non-Significant Genes, ";
-//        	
-//        	if (ind<(numGroups-1)*2)
-//        		str = str+"cond. = 1, ";
-//        	else if (ind<(numGroups-1)*4)
-//        		str = str+"cond. = 2, ";
-//        	if (ind<(numGroups-1)*4)
-//        		str = str+"t = "+(ind/2%(numGroups-1)+1);
-//        	if (ind==(numGroups-1)*4||ind==(numGroups-1)*4+1)
-//        		str = str+"cond. = 1 (All) ";
-//        	if (ind==(numGroups-1)*4+2||ind==(numGroups-1)*4+3)
-//        		str = str+"cond. = 2 (All) ";
-//        	if (ind==(clusters.length-2)||ind==(clusters.length-1))
-//        		str = str+"(All) ";
-//
-//        	return str;
-//        }else{
-//            if (ind%2==0) {
-//                return "Significant Genes "+x+" vs. "+y;
-//            } else {
-//                return "Non-significant Genes "+x+" vs. "+y;
-//            }
-//    	}
-    	
+        return (String)synResultMatrix[1][ind];
     }
     /**
      * Creates a result tree to be inserted into the framework analysis node.
@@ -594,35 +551,48 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         addHierarchicalTrees(root, result_cluster, info);
         addCentroidViews(root);
         addTableViews(root);
+        addNotEnoughGenesFolder(root);
         addClusterInfo(root);
         addGeneralInfo(root, info);
     }
+	private void addNotEnoughGenesFolder(DefaultMutableTreeNode root) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode("Not Enough Significant Genes");
+        for (int i=0; i<this.clusters.length; i++) {
+        	if (clusters[i].length==0)
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), null, new Integer(i))));
+        }
+        root.add(node);
+		
+	}
+
 	private void addGeneSetInfo(DefaultMutableTreeNode root) {
-	      Object[][] results = new Object[this.resultMatrix[0].length][this.resultMatrix.length];
+	      Object[][] results = new Object[this.synResultMatrix[0].length][this.synResultMatrix.length];
 	      for (int i=0; i<results.length; i++){
 	    	  for (int j=0; j<results[0].length; j++){
-	    		  results[i][j] = resultMatrix[j][i];
+	    		  results[i][j] = synResultMatrix[j][i];
 	    	  }
 	      }
-	      String[] columns = {"KEGG ID","KEGG Name", "Adjusted p-value", "Number of detected genes"};
 	      
-	      IViewer tabViewer = new ATTRACTResultTable(results, columns);
-	      root.add(new DefaultMutableTreeNode(new LeafInfo("Results Table", tabViewer, new Integer(0))));
+	      IViewer tabViewer1 = new ATTRACTResultTable(results, root, framework, resultColumns);
+	      root.add(new DefaultMutableTreeNode(new LeafInfo("Syn Results Table", tabViewer1, new Integer(0))));
+	      
+	      Object[][] results2 = new Object[this.corResultMatrix[0].length][this.corResultMatrix.length];
+	      for (int i=0; i<results2.length; i++){
+	    	  for (int j=0; j<results2[0].length; j++){
+	    		  results2[i][j] = corResultMatrix[j][i];
+	    	  }
+	      }
+	      
+	      IViewer tabViewer2 = new ATTRACTResultTable(results2, root, framework, resultColumns);
+	      root.add(new DefaultMutableTreeNode(new LeafInfo("Corr Results Table", tabViewer2, new Integer(0))));
 			
 	}
     protected void addTableViews(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, this.clusters, this.data, this.auxTitles, this.auxData);
-        int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
         	if (clusters[i].length>0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), tabViewer, new Integer(i))));
-        	if (i%2==1)
-        		y++;
-            if (y>numGroups){
-            	x++;
-            	y=x+1;
-            }
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), tabViewer, new Integer(i))));
         }
         root.add(node);
     }
@@ -633,16 +603,9 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     protected void addExpressionImages(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Expression Images");
         IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
-        int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
         	if (clusters[i].length>0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), expViewer, new Integer(i))));
-        	if (i%2==1)
-        		y++;
-            if (y>numGroups){
-            	x++;
-            	y=x+1;
-            }
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), expViewer, new Integer(i))));
         }
         root.add(node);
     }
@@ -697,7 +660,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addClusterInfo(DefaultMutableTreeNode root) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, resultMatrix[1]))));
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(this.clusters, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, synResultMatrix[1]))));
         root.add(node);
     }
     
@@ -710,11 +673,10 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         ATTRACTCentroidViewer centroidViewer = new ATTRACTCentroidViewer(this.experiment, clusters, null, null, null, null, null, null, null, null, null);
         centroidViewer.setMeans(this.means.A);
         centroidViewer.setVariances(this.variances.A);
-        int x=1; int y=2;
         for (int i=0; i<this.clusters.length; i++) {
         	if (clusters[i].length>0){
-        		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-        		expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, x, y), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+        		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+        		expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
         	}
         }
         
