@@ -119,7 +119,7 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         
         menu.addSeparator();
         
-  JMenu launchMenu = new JMenu("Open Viewer");
+        JMenu launchMenu = new JMenu("Open Viewer");
         
         item = new JMenuItem("Expression Image");
         item.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
@@ -197,7 +197,6 @@ public class GSEATableViewer extends TableViewer implements Serializable {
     
         
        index = new Integer((String)this.table.getValueAt(index, 0)) -1;
-        System.out.println("1 "+index);
         if(node.getChildCount() < index) {
             return;
         }
@@ -205,7 +204,6 @@ public class GSEATableViewer extends TableViewer implements Serializable {
         //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
        node = (DefaultMutableTreeNode)(node.getChildAt(index));
        
-       System.out.println("2 "+index);
         if(viewerType.equals("expression image")){
             node = (DefaultMutableTreeNode)(node.getChildAt(0));
         } else if(viewerType.equals("centroid graph")){
