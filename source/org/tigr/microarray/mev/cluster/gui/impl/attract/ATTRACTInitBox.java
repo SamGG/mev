@@ -61,6 +61,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.annotation.ChipAnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterSelector;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
@@ -95,12 +96,14 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
+	private String initialChipType;
     
     /** Creates new ATTRACTInitBox */
-    public ATTRACTInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
+    public ATTRACTInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository, String initialChipType) {
         super(parentFrame, "ATTRACT Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;
+        this.initialChipType = initialChipType;
         
         setBounds(0, 0, 1000, 850);
         setBackground(Color.white);
@@ -563,13 +566,10 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 gridbag.setConstraints(dataTypeLabel, constraints);
                 this.add(dataTypeLabel);
                 
-//                oneClass=new JRadioButton("One Class", true);
                 twoClass=new JRadioButton("Two Class", true);
                 multiClass=new JRadioButton("Multi-Class", false);
                 factorialDesign=new JRadioButton("Two-Factor", false);
                 timeCourse=new JRadioButton("Time Course", false);
-//                oneClass.setBackground(Color.white);
-//                oneClass.setBorder(null);
                 twoClass.setBackground(Color.white);
                 twoClass.setBorder(null);
                 multiClass.setBackground(Color.white);
@@ -579,20 +579,14 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 timeCourse.setBackground(Color.white);
                 timeCourse.setBorder(null);
                 ButtonGroup dataType = new ButtonGroup();
-//                dataType.add(oneClass);
                 dataType.add(twoClass);
                 dataType.add(multiClass);
                 dataType.add(factorialDesign);
                 dataType.add(timeCourse);
-//                oneClass.addActionListener(new RadioButtonListener());
                 twoClass.addActionListener(new RadioButtonListener());
                 multiClass.addActionListener(new RadioButtonListener());
                 factorialDesign.addActionListener(new RadioButtonListener());
                 timeCourse.addActionListener(new RadioButtonListener());
-//                buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(oneClass, constraints);
-//                this.add(oneClass);
                 buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(twoClass, constraints);
@@ -601,14 +595,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(multiClass, constraints);
                 this.add(multiClass);
-//                buildConstraints(constraints, 1, 2, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(factorialDesign, constraints);
-//                this.add(factorialDesign);
-//                buildConstraints(constraints, 1, 3, 1, 1, 30, 100);
-//                constraints.anchor = GridBagConstraints.WEST;
-//                gridbag.setConstraints(timeCourse, constraints);
-//                this.add(timeCourse);
                 
                 numGroupsLabel = new JLabel("Number of groups: ");
                 numGroupsLabel.setVisible(false);
@@ -681,7 +667,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 this.add(factorPanel);
                 constraints.ipady = 0;
                 
-                JLabel alphaLabel = new JLabel("Significance Level: Alpha = ");
+                JLabel alphaLabel = new JLabel("Limma significance Level: Alpha = ");
                 buildConstraints(constraints, 0, 6, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(alphaLabel, constraints);
@@ -721,12 +707,19 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     				System.out.println("Error reading supported Bioconductor annotations");
     			}
     			String[] bioCAnnotationsArray = new String[bioCAnnotations.size()];
+    			int defaultIndex = -1;
     			for (int i=0; i<bioCAnnotationsArray.length; i++){
     				bioCAnnotationsArray[i]=bioCAnnotations.get(i);
+    				if(bioCAnnotationsArray[i].contains(initialChipType)){
+    					defaultIndex = i;
+    				}
     			}
                 
                 chipNameBox = new JComboBox(bioCAnnotationsArray);
-                chipNameBox.setSelectedItem("hgu133plus2.db");
+                if (defaultIndex==-1||initialChipType.equals(ChipAnnotationFieldConstants.NOT_AVAILABLE))
+                	chipNameBox.setSelectedItem("hgu133plus2.db");
+                else
+                	chipNameBox.setSelectedIndex(defaultIndex);
                 chipNameBox.setMinimumSize(new Dimension(50,20));
                 constraints.anchor = GridBagConstraints.WEST;
                 buildConstraints(constraints, 1, 7, 1, 1, 30, 0);
@@ -736,16 +729,10 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             }
             
             public int getExperimentDesign(){
-//            	if (oneClass.isSelected())
-//            		return 1;
             	if (twoClass.isSelected())
             		return 2;
             	if (multiClass.isSelected())
             		return 3;
-            	if (factorialDesign.isSelected())
-            		return 4;
-            	if (timeCourse.isSelected())
-            		return 5;
             	return 0;
             }
             
@@ -1813,9 +1800,9 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         for (int i = 0; i < 24; i++) {
             dummyVect.add("Expt " + i);
         }
-        
-        ATTRACTInitBox oBox = new ATTRACTInitBox(dummyFrame, true, dummyVect, null);
-        oBox.setVisible(true);
+        String annot = "hgu133a";
+//        ATTRACTInitBox oBox = new ATTRACTInitBox(dummyFrame, true, dummyVect, annot);
+//        oBox.setVisible(true);
         System.exit(0);
     }
 }

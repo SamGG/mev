@@ -36,14 +36,9 @@ public class ATTRACTInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
-    private int dataDesign;
-    private int numGroups;
 	private Object[] keggNames;
-    /** Creates new BETRInfoViewer */
     public ATTRACTInfoViewer(int[][] clusters, int genes, int dd, int numGroups, Object[] keggNames) {
-		this.numGroups = numGroups;
 		this.keggNames = keggNames;
-		this.dataDesign = dd;
 		header  = createHeader();
 		content = createContent(clusters, genes);
 		setMaxWidth(content, header);        
@@ -84,23 +79,17 @@ public class ATTRACTInfoViewer extends ViewerAdapter {
      * Creates the viewer content component.
      */
     private JTextArea createContent(int[][] clusters, int genes) {
-		JTextArea area = new JTextArea(clusters.length*3, 20);
+		JTextArea area = new JTextArea(clusters.length+5, 20);
 		area.setEditable(false);        
 	        area.setMargin(new Insets(0, 10, 0, 0));        
 		StringBuffer sb = new StringBuffer(clusters.length*3*10);
-		int x=1;
-		int y=2;
 		for (int counter = 0; counter < clusters.length; counter++) {
 		    
-	    	String str = "";
 			sb.append(keggNames[counter]);
 			sb.append("\t\t\t");
 	    	
 			sb.append("# of Significant Genes: " +clusters[counter].length);
-			sb.append("\n");
-//			sb.append("% of Genes: "+Math.round((float)clusters[counter].length/(float)genes*100f)+"%");
-//			sb.append("\n\n");
-		    
+			sb.append("\n");		    
 		}
 		area.setText(sb.toString());
 		area.setCaretPosition(0);

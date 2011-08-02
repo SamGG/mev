@@ -79,8 +79,10 @@ public class ATTRACTResultTable implements IViewer {
     private int exptID = 0;
 	private DefaultMutableTreeNode rootNode;
 	IFramework framework;
+	int nodeOffset = 0;
 	
-    public ATTRACTResultTable(Object[][] data, DefaultMutableTreeNode analysisNode, IFramework framework, String[] auxTitles) {
+    public ATTRACTResultTable(Object[][] data, DefaultMutableTreeNode analysisNode, IFramework framework, String[] auxTitles, String title) {
+    	
     	this.framework = framework;
     	this.rootNode = analysisNode;
         this.data = data;
@@ -90,6 +92,8 @@ public class ATTRACTResultTable implements IViewer {
         	indices[i]=i;
         	sortedIndices[i]=i;
         }
+        if (title.contains("Correlated"))
+        	nodeOffset = 6;
         this.columnTitles = auxTitles;
         this.clusterModel = new ClusterTableModel();
         this.clusterTable = new JTable(clusterModel);
@@ -637,25 +641,35 @@ public class ATTRACTResultTable implements IViewer {
         DefaultMutableTreeNode node = null;
 
         if(viewerType.equals("expression image")){        	
-            node = (DefaultMutableTreeNode)(rootNode.getChildAt(2));
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(1+nodeOffset));
         } else if(viewerType.equals("centroid graph")){
-            node = (DefaultMutableTreeNode)(rootNode.getChildAt(3));
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(2+nodeOffset));
         } else if(viewerType.equals("expression graph")){
-            node = (DefaultMutableTreeNode)(rootNode.getChildAt(4));
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(3+nodeOffset));
         } else if(viewerType.equals("table view")){
-            node = (DefaultMutableTreeNode)(rootNode.getChildAt(5));
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(4+nodeOffset));
         }
     	 if(framework != null){
     		 for (int i=0; i<node.getChildCount(); i++){
     			 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(i)).toString())){
     				 framework.setTreeNode((DefaultMutableTreeNode)node.getChildAt(i));
-    				 break;
+    				 return;
     			 }
     		 }
-    	 }
-        
-        
-    
+    		 
+    		 //check not enough genes node
+    		 for (int i=0; i<rootNode.getChildCount(); i++){
+    			 if ("Not Enough Significant Genes".equals(((DefaultMutableTreeNode)rootNode.getChildAt(i)).toString())){
+    				 node = (DefaultMutableTreeNode)rootNode.getChildAt(i);
+    	    		 for (int j=0; j<node.getChildCount(); j++){
+    	    			 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(j)).toString())){
+    	    				 framework.setTreeNode((DefaultMutableTreeNode)node.getChildAt(j));
+    	    				 return;
+    	    			 }
+    	    		 }
+    			 }
+    		 }
+    	 }      
     }
     
     /** Saves the pvalues table to file
@@ -699,7 +713,7 @@ public class ATTRACTResultTable implements IViewer {
 	        String nodeTitle = (String)clusterTable.getModel().getValueAt(tableIndices[cluster], 1);
 	        DefaultMutableTreeNode node = null;
 	      	
-	        node = (DefaultMutableTreeNode)(rootNode.getChildAt(2));
+	        node = (DefaultMutableTreeNode)(rootNode.getChildAt(1+nodeOffset));
 
 			 for (int i=0; i<node.getChildCount(); i++){
 				 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(i)).toString())){
@@ -708,37 +722,7 @@ public class ATTRACTResultTable implements IViewer {
 					 break;
 				 }
 			 }
-        }
-        
-        //convert to possibly sorted table indices
-//        for(int i = 0; i < tableIndices.length; i++)
-//            tableIndices[i] = ((DefaultViewerTableModel) clusterTable.getModel()).getRow( tableIndices[i] );
-//        
-//        JFileChooser chooser = new JFileChooser(TMEV.getFile("/Data"));
-//        String fileName = "";
-//        if(chooser.showSaveDialog(clusterTable) == JFileChooser.APPROVE_OPTION){
-//            File file = chooser.getSelectedFile();
-//            fileName = file.getName();
-//            try{
-//                PrintWriter pw = new PrintWriter(new FileOutputStream(file));
-//                int rows = tableIndices.length;
-//                int cols = clusterTable.getColumnCount();
-//                
-//                for(int row = 0; row < rows ; row++){
-//                    for(int col = 0; col < cols; col++){
-//                        pw.print(((String)(clusterTable.getValueAt(tableIndices[row], col))) + "\t");
-//                    }
-//                    pw.print("\n");
-//                }
-//                pw.flush();
-//                pw.close();
-//            } catch ( IOException ioe) {
-//                ioe.printStackTrace();
-//                javax.swing.JOptionPane.showMessageDialog(clusterTable, ("Error Saving Table to file: "+fileName), "Output Error", JOptionPane.WARNING_MESSAGE);
-//            }
-//            
-//        }
-    
+        }    
      }
 
     /**
