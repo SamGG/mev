@@ -162,8 +162,10 @@ public class HCL extends AbstractAlgorithm {
 				
 				if (genes) {
 				    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
+				    System.out.print(SimilarityMatrix[i][j]+"\t");
 				} else {
 				    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
+				    System.out.print(SimilarityMatrix[i][j]+"\t");
 				}
 					if (optimizeOrdering){
 						SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
@@ -234,14 +236,14 @@ public class HCL extends AbstractAlgorithm {
 	    int test_i = -2;
 	    int test_j = -2;
 	    int close_i = -2, close_j = -2;
-	    for (i=1; i<n; ++i) {  						//finds closest remaining elements
-		if (owner[i] != -1) {  						//overlooks elements already counted
-		    if (Min[i] < test_d) {
-			test_d = Min[i];
-			test_i = i;
-			test_j = MinIndex[i];
-		    }
-		}
+	    for (i=1; i<n; ++i) {  							//finds closest remaining elements
+			if (owner[i] != -1) {  						//overlooks elements already counted
+			    if (Min[i] < test_d) {
+					test_d = Min[i];
+					test_i = i;
+					test_j = MinIndex[i];
+			    }
+			}
 	    }
 	    i = close_i; // lexa: ???
 	    j = close_j; // lexa: ???

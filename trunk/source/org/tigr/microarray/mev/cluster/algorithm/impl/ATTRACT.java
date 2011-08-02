@@ -28,29 +28,23 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmEvent;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 import java.util.Vector;
 
 public class ATTRACT extends AbstractAlgorithm{
-	private int progress;
 	private FloatMatrix expMatrix;
 	private boolean stop = false;
 	private int[] groupAssignments;
-	private int[][] keggGenesArrays;
-	private String nameA, nameB;
+	private int[][] keggGenesSynArrays;
+	private int[][] keggGenesCorArrays;
 
-	private int numGenes, numExps, numGroups, iteration, numAGroups, numBGroups;
+	private int numGenes, numExps, numGroups, iteration;
 	private float alpha;
 	private boolean  drawSigTreesOnly;
 	private int hcl_function;
@@ -58,18 +52,10 @@ public class ATTRACT extends AbstractAlgorithm{
 	private boolean hcl_genes_ordered;  
 	private boolean hcl_samples_ordered; 
 
-	private int dataDesign;
 
 	private AlgorithmEvent event;
 
-	private String[] geneNames;
 	private String[] sampleNames;
-	private float[][] lfc;
-	private float[][] t;
-	private float[][] logOdds;
-	private float[][] pValues;
-	private float[][] adjPvalues;
-	private float[] fValues;
 	private String[] probeIDs;
 	private Object[][] synResultMatrix;
 	private Object[][] corResultMatrix;
@@ -95,17 +81,10 @@ public class ATTRACT extends AbstractAlgorithm{
 		AlgorithmParameters map = data.getParams();
 		expMatrix = data.getMatrix("experiment");
 		groupAssignments = data.getIntArray("group_assignments");
-		dataDesign = map.getInt("dataDesign");
 		alpha = map.getFloat("alpha"); 
 		numGroups = map.getInt("numGroups");
-		nameA = map.getString("nameA");
-		nameB = map.getString("nameB");
 		chipTypeName = map.getString("chipName", "hgu133plus2.db");
-		numAGroups = map.getInt("numAGroups");
-		numBGroups = map.getInt("numBGroups");
-		probeIDs = data.getStringArray("probeIDs");
-		
-		geneNames = data.getStringArray("geneLabels");
+		probeIDs = data.getStringArray("probeIDs");		
 		sampleNames = data.getStringArray("sampleLabels");
 
 		hcl_function = map.getInt("hcl-distance-function", EUCLIDEAN);
@@ -120,8 +99,6 @@ public class ATTRACT extends AbstractAlgorithm{
 		boolean calculate_genes = map.getBoolean("calculate-genes", false);
 		boolean calculate_experiments = map.getBoolean("calculate-experiments", false);
 
-
-		progress=0;
 		event = null;
 		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating...");
 		// set progress limit
@@ -145,11 +122,11 @@ public class ATTRACT extends AbstractAlgorithm{
 		Cluster result_cluster = new Cluster();
 		NodeList nodeList = result_cluster.getNodeList();
 		int[] features;        
-		for (int i=0; i<keggGenesArrays.length; i++) {
+		for (int i=0; i<keggGenesSynArrays.length; i++) {
 			if (stop) {
 				throw new AbortException();
 			}
-			features = keggGenesArrays[i];
+			features = keggGenesSynArrays[i];
 			Node node = new Node(features);
 			nodeList.addNode(node);
 			if (hierarchical_tree) {
@@ -166,34 +143,21 @@ public class ATTRACT extends AbstractAlgorithm{
 				}                
 			}
 		}
-//		remap genes to expmatrix
-		int[][]keggArrays = new int[keggGenesArrays.length][];
-		for (int i=0; i<keggGenesArrays.length; i++){
-			keggArrays[i]=new int[keggGenesArrays[i].length];
-			for (int j=0; j<keggGenesArrays[i].length; j++){
-				keggArrays[i][j]=(int)sortedMapping[keggGenesArrays[i][j]];
-			}
-		}
 
 		// prepare the result
-		result.addIntMatrix("keggArrays", keggGenesArrays);
+		result.addIntMatrix("keggSynArrays", keggGenesSynArrays);
+		result.addIntMatrix("keggCorArrays", keggGenesCorArrays);
 		result.addParam("iterations", String.valueOf(iteration-1));
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
 		result.addObjectMatrix("synResultMatrix", synResultMatrix);
 		result.addObjectMatrix("corResultMatrix", corResultMatrix);
 		result.addStringArray("resultColumns", resultColumns);
-		result.addMatrix("clusters_means", getMeans(keggGenesArrays));
-		result.addMatrix("clusters_variances", getVariances(keggGenesArrays, getMeans(keggGenesArrays))); 
+		result.addMatrix("clusters_means", getMeans(keggGenesSynArrays));
+		result.addMatrix("clusters_variances", getVariances(keggGenesSynArrays, getMeans(keggGenesSynArrays))); 
 		result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
 		result.addMatrix("geneGroupSDsMatrix", getAllGeneGroupSDs());
 
-//		result.addMatrix("pValues", getPValues());
-//		result.addMatrix("adjPValues", getAdjPValues());
-//		result.addMatrix("lfc", getLogFoldChanges());
-//		result.addMatrix("logOdds", getLogOdds());
-//		result.addMatrix("tStat", getTStatistic());
-//		result.addMatrix("fValues", getFValues());
 		return result;   
 	}
 
@@ -393,69 +357,6 @@ public class ATTRACT extends AbstractAlgorithm{
 		return sds;        
 	}
 
-//	private FloatMatrix getPValues(){
-//		FloatMatrix pvals = new FloatMatrix(numGenes, pValues.length);
-//		for (int i=0; i<pValues.length; i++){
-//			for (int j=0; j<mapping.length; j++){
-//				pvals.A[j][i] = pValues[i][j]; 
-//			}
-//		}
-//		return pvals;
-//	}
-//
-//	private FloatMatrix getFValues(){
-//		FloatMatrix pvals = new FloatMatrix(numGenes, 1);
-//		for (int j=0; j<mapping.length; j++){
-//			pvals.A[j][0] = fValues[j]; 
-//		}
-//		
-//		return pvals;
-//	}
-//	
-//	private FloatMatrix getAdjPValues() {
-//		FloatMatrix adjpvals = new FloatMatrix(numGenes, adjPvalues.length);
-//		for (int i=0; i<adjPvalues.length; i++){
-//			for (int j=0; j<mapping.length; j++){
-//				adjpvals.A[j][i] = adjPvalues[i][j]; 
-//			}
-//		}
-//		return adjpvals;
-//	}
-//
-//	private FloatMatrix getLogFoldChanges() {
-//		FloatMatrix lfcs = new FloatMatrix(numGenes, lfc.length);
-//		
-//		for (int i=0; i<lfc.length; i++){
-//			for (int j=0; j<mapping.length; j++){
-//				lfcs.A[j][i] = lfc[i][j]; 
-//			}
-//		}
-//		return lfcs;
-//	}
-//
-//	private FloatMatrix getLogOdds() {
-//		FloatMatrix lodds = new FloatMatrix(numGenes, logOdds.length);
-//		//System.out.println("numGenes " + numGenes);
-//		//System.out.println("mapping.length " + mapping.length);
-//
-//		for (int i=0; i<logOdds.length; i++){
-//			for (int j=0; j<mapping.length; j++){
-//				lodds.A[j][i] = logOdds[i][j]; 
-//			}
-//		}
-//		return lodds;
-//	}
-//
-//	private FloatMatrix getTStatistic() {
-//		FloatMatrix tstat = new FloatMatrix(numGenes, t.length);
-//		for (int i=0; i<t.length; i++){
-//			for (int j=0; j<mapping.length; j++){
-//				tstat.A[j][i] = t[i][j]; 
-//			}
-//		}
-//		return tstat;
-//	}
-
 	private float getMean(float[] group) {
 		float sum = 0;
 		int n = 0;
@@ -507,9 +408,7 @@ public class ATTRACT extends AbstractAlgorithm{
 	 * @throws AbortException 
 	 */
 	public void runRAlg() throws AbortException {
-		progress++;
-		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue(10);
+		event.setDescription("Creating R Engine...");
 		fireValueChanged(event);
 
 		Rengine re;
@@ -528,6 +427,8 @@ public class ATTRACT extends AbstractAlgorithm{
 			//return;
 		}
 
+		event.setDescription("Loading packages...");
+		fireValueChanged(event);
 		try {
 			RHook.testPackage("attract");
 			RHook.log("Starting R Algorithim");
@@ -541,49 +442,11 @@ public class ATTRACT extends AbstractAlgorithm{
 			RHook.evalR(rCmd);
 			rCmd = "library("+chipTypeName+")";
 			RHook.evalR(rCmd);
-			
-			
-			
-//			ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/R2.11/win/attract/annotationSupported.txt
-//			rCmd = "library(Biobase)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(limma)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(DBI)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(RSQLite)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(AnnotationDbi)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(KEGG.db)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(XML)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(GSEABase)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(genefilter)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(xtable)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(Category)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(GO.db)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(RBGL)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(annotate)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(GOstats)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(graph)";
-//			RHook.evalR(rCmd);
-//			rCmd = "library(cluster)";
-//			RHook.evalR(rCmd);
+					
 
+			event.setDescription("Generating script and running Attract module...");
+			fireValueChanged(event);
 			
-			int numProbes = expMatrix.getRowDimension();
-			int numSamples = expMatrix.getColumnDimension();
-	
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			//if(fileLoc.contains("\\"));
 			fileLoc = fileLoc.replace("\\", "/");
@@ -681,55 +544,91 @@ public class ATTRACT extends AbstractAlgorithm{
 				resultColumns[i+4] = sampleNames[i];
 			}
 			
-			keggGenesArrays = new int[keggGroupCount][]; 
+			keggGenesSynArrays = new int[keggGroupCount][]; 
+			keggGenesCorArrays = new int[keggGroupCount][]; 
+			
+
+			fireValueChanged(event);
+			rCmd = "sink('myfile.txt', append=FALSE, split=FALSE)";
+			RHook.evalR(rCmd);
 			for (int keggIndex=0; keggIndex<keggGroupCount; keggIndex++){
-				rCmd = "riboSyn"+keggIndex+"<-findSynexprs('"+keggIDs[keggIndex]+"', attract_out, removeTheseGenes)";
+				int percent = (int) (((float)keggIndex*100f)/((float)keggGroupCount));
+				event.setDescription("Gathering results... ("+percent+"%)");
+				fireValueChanged(event);
+				
 				x = null;
-				x = RHook.evalR(rCmd);
-//				if (x==null||x.asStringArray()==null||x.asStringArray()[0].contains("Insufficient")){
-//					
-//					System.out.println("error- "+x);
-//					System.out.println(x==null);
-//					if (x!=null)
-//						System.out.println(x.toString().contains("[NULL"));
-//					if (x!=null&&x.asStringArray()!=null)
-//						System.out.println(x.asStringArray()[0]);
-//					
-//				}
-				rCmd = "riboCor"+keggIndex+"<-findCorrPartners(riboSyn"+keggIndex+", eset, removeTheseGenes)";
-				RHook.evalR(rCmd);
-				rCmd = "length(riboSyn"+keggIndex+"@groups)";
-				RHook.evalR(rCmd);
-				rCmd = "asMatrix"+keggIndex+"<-t(as.matrix(unlist(riboSyn"+keggIndex+"@groups[[1]]), nrow=length((riboSyn"+keggIndex+"@groups[[1]])), ncol=length(unlist(riboSyn"+keggIndex+"@groups[[1]])), byrow=true))";
-				RHook.evalR(rCmd);
-				rCmd = "asVector"+keggIndex+"<-as.vector(asMatrix"+keggIndex+")";
+				rCmd = "synExpression"+keggIndex+"<-findSynexprs('"+keggIDs[keggIndex]+"', attract_out, removeTheseGenes)";
 				RHook.evalR(rCmd);
 				
-				rCmd = "riboSyn"+keggIndex+"@profiles";
+				rCmd = "length(synExpression"+keggIndex+")";
 				x = RHook.evalR(rCmd);
-				double[][] synMatrix;
-				if (x!=null&&x.asMatrix()!=null){
-					synMatrix = x.asMatrix();
-					for (int i=0; i<synMatrix[0].length; i++)
-						synResultMatrix[i+4][keggIndex]=synMatrix[0][i];
-				}
-				rCmd = "riboCor"+keggIndex+"@profiles";
-				x = RHook.evalR(rCmd);
-				double[][] corMatrix;
-				if (x!=null&&x.asMatrix()!=null){
-					corMatrix = x.asMatrix();
-					for (int i=0; i<corMatrix[0].length; i++)
-						corResultMatrix[i+4][keggIndex]=corMatrix[0][i];					
-				}
-				//generating result data
-				rCmd = "asVector"+keggIndex;
-				x = RHook.evalR(rCmd);
-				String[] passGenes;
-				if (x!=null)
-					passGenes = x.asStringArray();
+				int length; 
+				if (x==null)
+					length = 0;
 				else
-					passGenes = new String[0];
-				keggGenesArrays[keggIndex] = new int[passGenes.length]; //member genes	
+					length = x.asInt();
+
+				String[] passSynGenes = null;
+				String[] passCorGenes = null;
+				if (length!=0){
+					rCmd = "corPartners"+keggIndex+"<-findCorrPartners(synExpression"+keggIndex+", eset, removeTheseGenes)";
+					RHook.evalR(rCmd);
+					rCmd = "length(corPartners"+keggIndex+")";
+					x = RHook.evalR(rCmd);
+					int lengthCor; 
+					if (x==null)
+						lengthCor = 0;
+					else
+						lengthCor = x.asInt();
+					rCmd = "length(synExpression"+keggIndex+"@groups)";
+					x = RHook.evalR(rCmd);
+					if (x!=null)
+						System.out.println("length(synExpression"+keggIndex+"@groups) = "+x.asInt());
+					rCmd = "asMatrixSyn"+keggIndex+"<-t(as.matrix(unlist(synExpression"+keggIndex+"@groups[[1]]), nrow=length((synExpression"+keggIndex+"@groups[[1]])), ncol=length(unlist(synExpression"+keggIndex+"@groups[[1]])), byrow=true))";
+					RHook.evalR(rCmd);
+					rCmd = "asVectorSyn"+keggIndex+"<-as.vector(asMatrixSyn"+keggIndex+")";
+					RHook.evalR(rCmd);		
+					rCmd = "asMatrixCor"+keggIndex+"<-t(as.matrix(unlist(corPartners"+keggIndex+"@groups[[1]]), nrow=length((corPartners"+keggIndex+"@groups[[1]])), ncol=length(unlist(corPartners"+keggIndex+"@groups[[1]])), byrow=true))";
+					RHook.evalR(rCmd);
+					rCmd = "asVectorCor"+keggIndex+"<-as.vector(asMatrixCor"+keggIndex+")";
+					RHook.evalR(rCmd);	
+					rCmd = "synExpression"+keggIndex+"@profiles";
+					x = RHook.evalR(rCmd);				
+					try{
+						double[][] synMatrix;
+						if (x!=null&&x.asMatrix()!=null){
+							synMatrix = x.asMatrix();
+							for (int i=0; i<synMatrix[0].length; i++)
+								synResultMatrix[i+4][keggIndex]=synMatrix[0][i];
+						}
+						rCmd = "corPartners"+keggIndex+"@profiles";
+						x = RHook.evalR(rCmd);
+						double[][] corMatrix;
+						if (x!=null&&x.asMatrix()!=null){
+							corMatrix = x.asMatrix();
+							for (int i=0; i<corMatrix[0].length; i++)
+								corResultMatrix[i+4][keggIndex]=corMatrix[0][i];					
+						}				
+						//generating result data
+						rCmd = "asVectorSyn"+keggIndex;
+						x = RHook.evalR(rCmd);
+						passSynGenes = x.asStringArray();
+						rCmd = "asVectorCor"+keggIndex;
+						x = RHook.evalR(rCmd);
+						passCorGenes = x.asStringArray();
+					} catch (Exception e){
+						System.out.println("Error in kegg pathway #"+keggIndex);
+					}
+				} 
+
+				if (passSynGenes==null){ //none or not enough genes
+					passSynGenes = new String[0];
+				}
+				if (passCorGenes==null){ //none or not enough genes
+					passCorGenes = new String[0];
+				}
+				keggGenesSynArrays[keggIndex] = new int[passSynGenes.length]; //member genes	
+				keggGenesCorArrays[keggIndex] = new int[passCorGenes.length]; //member genes	
 				String[]probeIDclone = probeIDs.clone();
 				sortedMapping = new float[probeIDclone.length];
 				for (int i=0; i<sortedMapping.length; i++){
@@ -737,16 +636,28 @@ public class ATTRACT extends AbstractAlgorithm{
 				}
 				ExperimentUtil.sort3(probeIDclone, sortedMapping);
 				
-				for (int i=0; i<keggGenesArrays[keggIndex].length; i++){
+				for (int i=0; i<keggGenesSynArrays[keggIndex].length; i++){
 					try{
-						keggGenesArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passGenes[i])];
+						keggGenesSynArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passSynGenes[i])];
 					} catch (Exception e){
-						System.out.println("gene not found in Probes: "+passGenes[i]+", "+i);
+						System.out.println("gene not found in Probes: "+passSynGenes[i]+", "+i);
+						e.printStackTrace();
+					}
+				}
+				for (int i=0; i<keggGenesCorArrays[keggIndex].length; i++){
+					try{
+						keggGenesCorArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passCorGenes[i])];
+					} catch (Exception e){
+						System.out.println("gene not found in Probes: "+passCorGenes[i]+", "+i);
 						e.printStackTrace();
 					}
 				}
 			}		
-			
+
+			event.setDescription("Generating viewers...");
+			fireValueChanged(event);
+			rCmd = "sink()";
+			RHook.evalR(rCmd);
 			
 			RHook.endRSession();
 //			removeTmps(filePath);
@@ -790,104 +701,9 @@ public class ATTRACT extends AbstractAlgorithm{
 		return fileLoc;
 	}
 
-	private String getStudyDesign(){
-		switch (dataDesign){
-		case 1:
-			return getOneClassDesign();
-		case 2:
-			return getTwoClassDesign();
-		case 3:
-			return getMultiClassDesign();
-		case 4:
-			return getTwoFactorDesign();
-		case 5:
-			return getTimeCourseDesign();
-		default: return "";
-		}
-	}
-
-	private String getOneClassDesign(){
-		String str = "design <- c(";
-		for (int i=0; i<groupAssignments.length; i++){
-			str = str + Integer.toString(groupAssignments[i]);
-			if (i<groupAssignments.length-1)
-				str = str  + ", ";
-		}
-		str = str + ")";
-		return str;
-	}
-
-	private String getTwoClassDesign(){
-		String grp1 = "";
-		String grp2 = "";
-		for (int i=0; i<groupAssignments.length; i++){
-			if (groupAssignments[i]==1){
-				grp1 = grp1 + "1";
-				grp2 = grp2 + "0";
-			} else if (groupAssignments[i]==2){
-				grp1 = grp1 + "1";
-				grp2 = grp2 + "1";
-			} else {
-				grp1 = grp1 + "0";
-				grp2 = grp2 + "0";
-			}
-			if (i<groupAssignments.length-1){
-				grp1 = grp1 + ", ";
-				grp2 = grp2 + ", ";
-			}
-		}
-		String str = "design <- cbind(Grp1=c(" + grp1 + "),Grp2=c(" + grp2 + "))";
-		return str;
-	}
-
-	private String getMultiClassDesign(){
-		String[] grpArray = new String[numGroups];
-		for (int i=0; i<numGroups; i++){
-			grpArray[i] = "";
-		}
-		for (int i=0; i<groupAssignments.length; i++){
-			for (int j=0; j<numGroups; j++){
-				if (groupAssignments[i]==j+1)
-					grpArray[j] = grpArray[j] + "1";
-				else
-					grpArray[j] = grpArray[j] + "0";
-			}
-
-			if (i<groupAssignments.length-1){
-				for (int j=0; j<numGroups; j++){
-					grpArray[j] = grpArray[j] + ", ";
-				}
-			}
-		}
-		String str = "design <- cbind(";
-		for (int i=0; i<numGroups; i++){
-			str = str + "Grp"+(i+1)+"=c("+grpArray[i]+")";
-			if (i<numGroups-1){
-				str = str + ", ";
-			}
-		}
-		str = str +")";
-		return str;
-	}
-
-	private String getTwoFactorDesign(){
-		String str = "design <- model.matrix(~0 + TS)";
-
-		return str;		
-	}
-
-	private String getTimeCourseDesign(){
-		String str = "design <- model.matrix(~0 + TS)";
-
-		return str;		
-	}
-
 
 	public void updateProgressBar(){
 
-		progress++;
-		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue((100*progress)/(progress+7));
 	}
 
 	private void removeTmps(String fileName) {
