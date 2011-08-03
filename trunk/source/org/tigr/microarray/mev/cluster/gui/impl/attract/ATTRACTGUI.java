@@ -40,6 +40,7 @@ import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.helpers.BoxChartViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.CentroidUserObject;
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
@@ -93,6 +94,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 	private String chipName;
 	private IFramework framework;
 	private String[] resultColumns;
+	private String[] groupNames;
     
     /** Creates new ATTRACTGUI */
     public ATTRACTGUI() {
@@ -140,14 +142,10 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         
         alpha = ATTRACTDialog.getAlpha();
         dataDesign = ATTRACTDialog.getExperimentalDesign();
-    	//System.out.println("dataDesigngui " +dataDesign);
         numGroups = ATTRACTDialog.getNumGroups();
-        numFactorAGroups = ATTRACTDialog.getNumFactorAGroups();
-        numFactorBGroups = ATTRACTDialog.getNumFactorBGroups();
         chipName = ATTRACTDialog.getChipName();
+        groupNames = ATTRACTDialog.getGroupNames();
         
-        factorAName = ATTRACTDialog.getFactorAName();
-        factorBName = ATTRACTDialog.getFactorBName();
         groupAssignments=ATTRACTDialog.getGroupAssignments();
         if (groupAssignments == null)
         	return null;
@@ -204,10 +202,6 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             data.addParam("dataDesign", String.valueOf(dataDesign));
             data.addParam("numGroups", String.valueOf(numGroups));
             data.addParam("alpha", String.valueOf(alpha));
-            data.addParam("numAGroups",String.valueOf(numFactorAGroups));
-            data.addParam("numBGroups",String.valueOf(numFactorBGroups));
-            data.addParam("nameA",String.valueOf(factorAName));
-            data.addParam("nameB",String.valueOf(factorBName));
             data.addParam("chipName", chipName);
             
             data.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
@@ -322,8 +316,6 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     }
     
     private int getTotalInteractions(int groups){
-    	if (dataDesign==4||dataDesign==5)
-    		return 3;
     	if (groups <= 1)
     		return 0;
     	else
@@ -365,6 +357,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     		addNoResultsNode(root);
     	} else {
 	        addExpressionImages(root, keggSynArrays, title);
+    		addExpressionCharts(root,keggSynArrays, title);
 	//      addHierarchicalTrees(root, result_cluster, info);
 	        addCentroidViews(root, keggSynArrays, title);
 	        addTableViews(root, keggSynArrays, title);        
@@ -386,6 +379,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     		addNoResultsNode(root);
     	} else {
 	        addExpressionImages(root, keggCorArrays, title);
+	        addExpressionCharts(root, keggCorArrays, title);
 	//      addHierarchicalTrees(root, result_cluster, info);
 	        addCentroidViews(root, keggCorArrays, title);
 	        addTableViews(root, keggCorArrays, title);  
@@ -395,6 +389,46 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         addNotEnoughGenesFolder(root, keggCorArrays);
         addGeneralInfo(root, info);
     }
+	private void addExpressionCharts(DefaultMutableTreeNode root, int[][] keggArrays, String title) {	
+		ArrayList<Integer>[] groups = new ArrayList[numGroups];
+
+		for (int i=0; i<groups.length; i++){
+			groups[i] = new ArrayList();
+		}
+		for (int i=0; i<groupAssignments.length; i++){
+			groups[groupAssignments[i]-1].add(i);
+		}
+		int[][] sampleGroups = new int[numGroups][];
+		for (int i=0; i<sampleGroups.length; i++){
+			sampleGroups[i] = new int[groups[i].size()];
+			for (int j=0; j<sampleGroups[i].length; j++){
+				sampleGroups[i][j] = groups[i].get(j);
+			}
+		}
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Expression Charts");
+        for (int i=0; i<keggArrays.length; i++) {
+        	if (keggArrays[i].length>0){
+        		IViewer echartViewer = new BoxChartViewer(framework, sampleGroups, keggArrays[i], this.getNodeTitle(i), groupNames);
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), echartViewer, new Integer(i))));
+        	}
+        }
+        root.add(node);	       
+		
+	}
+
+    /**
+     * Adds nodes to display clusters data.
+     */
+    protected void addExpressionImages(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(title+ " Expression Images");
+        IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, keggArrays, null, null, null, null, null, null, null, null, null);
+        for (int i=0; i<keggArrays.length; i++) {
+        	if (keggArrays[i].length>0)
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), expViewer, new Integer(i))));
+        }
+        root.add(node);
+    }
+    
 	private void addNoResultsNode(DefaultMutableTreeNode root) {
 		root.add(new DefaultMutableTreeNode("No Results Found"));		
 	}
@@ -431,18 +465,6 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         root.add(node);
     }
     
-    /**
-     * Adds nodes to display clusters data.
-     */
-    protected void addExpressionImages(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(title+ " Expression Images");
-        IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, keggArrays, null, null, null, null, null, null, null, null, null);
-        for (int i=0; i<keggArrays.length; i++) {
-        	if (keggArrays[i].length>0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), expViewer, new Integer(i))));
-        }
-        root.add(node);
-    }
     
     /**
      * Adds nodes to display hierarchical trees.
@@ -493,8 +515,8 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
      * Adds node with cluster information.
      */
     protected void addClusterInfo(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Cluster Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results (#,%)", new ATTRACTInfoViewer(keggArrays, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, synResultMatrix[1]))));
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Pathway Information");
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results", new ATTRACTInfoViewer(keggArrays, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, synResultMatrix[1]))));
         root.add(node);
     }
     
@@ -538,7 +560,6 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode groupAssignmentInfo = new DefaultMutableTreeNode("Group assignments ");
         DefaultMutableTreeNode notInGroups = new DefaultMutableTreeNode("Not in groups");
         DefaultMutableTreeNode[] groups = new DefaultMutableTreeNode[numGroups];
-        //System.out.println("ng "+numGroups);
         for (int i = 0; i < numGroups; i++) {
             groups[i] = new DefaultMutableTreeNode("Group " + (i+1));
             

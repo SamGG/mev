@@ -25,6 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -117,7 +119,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         this.okButton.setEnabled(false);
           
         mPanel = new MultiClassPanel();
-
+        showGroupNameTextFields();
         
         buildConstraints(constraints, 0, 0, 1, 1, 100, 80);
         gridbag.setConstraints(mPanel, constraints);
@@ -277,20 +279,12 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         GridBagLayout gridbag;
         JPanel dummyPanel;
         ExperimentsSelectionPanel sampleSelectionPanel;
-        ExperimentsSelectionPanel FactorAESP;
-        ExperimentsSelectionPanel FactorBESP;
-        ExperimentsSelectionPanel ConditionESP;
-        ExperimentsSelectionPanel TimePointESP;
         JTabbedPane tabbedmulg;
-        ClusterSelector groupsCS,factorACS,factorBCS,conditionCS,timepointCS;
+        ClusterSelector groupsCS;
         JLabel infoLabel;
         JLabel infoLabel2;
         int numGroups=-1;
-        int factorAlevels=-1;
-        int factorBlevels=-1;
         float alpha;
-        String factorAName;
-        String factorBName;
 		public String chipName;
         //Vector exptNames;
         
@@ -361,6 +355,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             
             gridbag.setConstraints(dummyPanel, constraints);
             this.add(dummyPanel);
+            
         }
         private void goBack(){
     		infoLabel.setVisible(true);
@@ -371,12 +366,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
 //            ngPanel.oneClass.setEnabled(true);
             ngPanel.twoClass.setEnabled(true);
             ngPanel.multiClass.setEnabled(true);
-            ngPanel.factorialDesign.setEnabled(true);
-            ngPanel.timeCourse.setEnabled(true);
-            ngPanel.factorALevel.setEnabled(true);
-            ngPanel.factorBLevel.setEnabled(true);
-            ngPanel.factorAName.setEnabled(true);
-            ngPanel.factorBName.setEnabled(true);
             step2Button.setText("Continue...");
             step2 = false;
             tabbedmulg.setVisible(false);
@@ -395,21 +384,11 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             	alpha = Float.parseFloat(ngPanel.alphaField.getText());
             	chipName = ngPanel.chipNameBox.getSelectedItem().toString();
             	numGroups = 0;
-            	if (getExperimentalDesign()==1)
-            		numGroups = 1;
             	if (getExperimentalDesign()==2)
             		numGroups = 2;
             	if (getExperimentalDesign()==3)
             		numGroups = Integer.parseInt(ngPanel.numGroupsField.getText());
-            	if (getExperimentalDesign()==4){
-            		factorAlevels = Integer.parseInt(ngPanel.factorALevel.getText());
-            		factorBlevels = Integer.parseInt(ngPanel.factorBLevel.getText());
-            		factorAName = ngPanel.factorAName.getText();
-            		factorBName = ngPanel.factorBName.getText();
-            	}
-            	if (getExperimentalDesign()==5)
-            		numGroups = Integer.parseInt(ngPanel.numGroupsField.getText());
-
+            
             }catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(null, "Error reading parameter input.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -418,16 +397,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             	JOptionPane.showMessageDialog(null, "Please enter an alpha value between 0 and 1.", "Error", JOptionPane.ERROR_MESSAGE);
             	return;
             }
-            if (numGroups<2&&getExperimentalDesign()!=4&&getExperimentalDesign()!=1){ //excludes factorial and one-class design when checking for enough timepoints
-            	JOptionPane.showMessageDialog(null, "The number of groups must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (getExperimentalDesign()==4&&(factorAName.contains(" ")||factorBName.contains(" "))){
-            	JOptionPane.showMessageDialog(null, "Factor names may not contain spaces.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if (getExperimentalDesign()==4&&(factorAlevels<2||factorBlevels<2)){ //checks factorial design group amounts
-            	JOptionPane.showMessageDialog(null, "The number of groups in each factor must be greater than 1.", "Error", JOptionPane.ERROR_MESSAGE);
+            if (numGroups<2||numGroups>8){ 
+            	JOptionPane.showMessageDialog(null, "The number of groups must be greater than 1 and less than 9.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             JPanel selectionPanel = new JPanel();
@@ -443,76 +414,25 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             GridBagConstraints c = new GridBagConstraints();
             c.gridwidth=2;
             clusterSelectorPanel.add(clusterInstructions, c);
-        	if (getExperimentalDesign()==4){
-        		FactorAESP = new ExperimentsSelectionPanel(exptNames, factorAlevels, ngPanel.getExperimentDesign(), factorAName, false);
-        		FactorBESP = new ExperimentsSelectionPanel(exptNames, factorBlevels, ngPanel.getExperimentDesign(), factorBName, false);
-                selectionPanel.add(FactorAESP, cnstr);
-        		cnstr.gridx = 1;
-        		selectionPanel.add(FactorBESP, cnstr);
-        		cnstr.gridy++;
-        		cnstr.gridx--;
-        		cnstr.gridwidth=2;
-        		cnstr.weighty = 0;
-        		selectionPanel.add(createSaveLoadPanel(), cnstr);
-
-                
-                factorACS= new ClusterSelector(repository, factorAlevels, "Level");
-                factorBCS= new ClusterSelector(repository, factorBlevels, "Level");
-                if (repository!=null){
-                	factorACS.setClusterType(factorAName);
-                	factorBCS.setClusterType(factorBName);
-        		}
-
-                buildConstraints(c, 0, 1, 1, 1, 1, 1);
-                c.fill = GridBagConstraints.BOTH;
-            	clusterSelectorPanel.add(factorACS, c);
-                c.gridx = 1;
-                clusterSelectorPanel.add(factorBCS, c);
-        	}else if (getExperimentalDesign()==5){
-        		ConditionESP = new ExperimentsSelectionPanel(exptNames, 2, ngPanel.getExperimentDesign(), "Condition", false);
-        		TimePointESP = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Time", false);
-                selectionPanel.add(ConditionESP, cnstr);
-        		cnstr.gridx = 1;
-        		selectionPanel.add(TimePointESP, cnstr);
-        		cnstr.gridy++;
-        		cnstr.gridx--;
-        		cnstr.gridwidth=2;
-        		cnstr.weighty = 0;
-        		selectionPanel.add(createSaveLoadPanel(), cnstr);
-
-                
-                conditionCS= new ClusterSelector(repository, 2, "Condition");
-                timepointCS= new ClusterSelector(repository, numGroups, "Time-Point");
-                if (repository!=null){
-                	conditionCS.setClusterType("Condition");
-                	timepointCS.setClusterType("Time-Point");
-        		}
-
-                buildConstraints(c, 0, 1, 1, 1, 1, 1);
-                c.fill = GridBagConstraints.BOTH;
-            	clusterSelectorPanel.add(conditionCS, c);
-                c.gridx = 1;
-                clusterSelectorPanel.add(timepointCS, c);
-        	}else{
-        		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group", true);
-        		selectionPanel.add(sampleSelectionPanel, cnstr);
-        		cnstr.gridy++;
-        		cnstr.weighty = 0;
-        		selectionPanel.add(createSaveLoadPanel(), cnstr);
-        		
-        		if(getExperimentalDesign()==5){//ever occur?
-        			groupsCS= new ClusterSelector(repository, numGroups, "Timepoint");
-	            	groupsCS.setClusterType("Timepoint");
-        		}else{
-        			groupsCS= new ClusterSelector(repository, numGroups, "Class");
-        			groupsCS.setClusterType("Class");
-        		}
-	            	
-	            buildConstraints(c, 0, 1, 1, 1, 1, 1);
-	            c.fill = GridBagConstraints.BOTH;
-	            c.gridx = 1;
-	            clusterSelectorPanel.add(groupsCS, c);
-        	}
+    		sampleSelectionPanel = new ExperimentsSelectionPanel(exptNames, numGroups, ngPanel.getExperimentDesign(), "Group", true);
+    		selectionPanel.add(sampleSelectionPanel, cnstr);
+    		cnstr.gridy++;
+    		cnstr.weighty = 0;
+    		selectionPanel.add(createSaveLoadPanel(), cnstr);
+    		
+    		if(getExperimentalDesign()==5){//ever occur?
+    			groupsCS= new ClusterSelector(repository, numGroups, "Timepoint");
+            	groupsCS.setClusterType("Timepoint");
+    		}else{
+    			groupsCS= new ClusterSelector(repository, numGroups, "Class");
+    			groupsCS.setClusterType("Class");
+    		}
+            	
+            buildConstraints(c, 0, 1, 1, 1, 1, 1);
+            c.fill = GridBagConstraints.BOTH;
+            c.gridx = 1;
+            clusterSelectorPanel.add(groupsCS, c);
+        	
 
             MultiClassPanel.this.remove(dummyPanel);
             tabbedmulg = new JTabbedPane();
@@ -531,15 +451,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             ngPanel.numGroupsField.setEnabled(false);
             ngPanel.alphaField.setEnabled(false);
             ngPanel.chipNameBox.setEnabled(false);
-//            ngPanel.oneClass.setEnabled(false);
             ngPanel.twoClass.setEnabled(false);
             ngPanel.multiClass.setEnabled(false);
-            ngPanel.factorialDesign.setEnabled(false);
-            ngPanel.timeCourse.setEnabled(false);
-            ngPanel.factorALevel.setEnabled(false);
-            ngPanel.factorBLevel.setEnabled(false);
-            ngPanel.factorAName.setEnabled(false);
-            ngPanel.factorBName.setEnabled(false);
             step2Button.setText("<<< Go Back");
             infoLabel.setVisible(false);
             infoLabel2.setVisible(false);
@@ -547,12 +460,13 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         }
         class DesignPanel extends JPanel {
 			private static final long serialVersionUID = 1L;
-			JTextField factorAName, factorBName, factorALevel, factorBLevel, numGroupsField, alphaField;
+			JTextField numGroupsField, alphaField;
 			JComboBox chipNameBox;
 			JLabel numGroupsLabel;
-            JPanel factorPanel;
             boolean okPressed = false;
-            JRadioButton twoClass, multiClass, factorialDesign, timeCourse;
+            JRadioButton twoClass, multiClass;
+			private JLabel[] groupNameLabel;
+			private JTextField[] groupNameField;
             public DesignPanel() {
                 setBackground(Color.white);
                 GridBagLayout gridbag = new GridBagLayout();
@@ -568,25 +482,15 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 
                 twoClass=new JRadioButton("Two Class", true);
                 multiClass=new JRadioButton("Multi-Class", false);
-                factorialDesign=new JRadioButton("Two-Factor", false);
-                timeCourse=new JRadioButton("Time Course", false);
                 twoClass.setBackground(Color.white);
                 twoClass.setBorder(null);
                 multiClass.setBackground(Color.white);
                 multiClass.setBorder(null);
-                factorialDesign.setBackground(Color.white);
-                factorialDesign.setBorder(null);
-                timeCourse.setBackground(Color.white);
-                timeCourse.setBorder(null);
                 ButtonGroup dataType = new ButtonGroup();
                 dataType.add(twoClass);
                 dataType.add(multiClass);
-                dataType.add(factorialDesign);
-                dataType.add(timeCourse);
                 twoClass.addActionListener(new RadioButtonListener());
                 multiClass.addActionListener(new RadioButtonListener());
-                factorialDesign.addActionListener(new RadioButtonListener());
-                timeCourse.addActionListener(new RadioButtonListener());
                 buildConstraints(constraints, 1, 0, 1, 1, 30, 100);
                 constraints.anchor = GridBagConstraints.WEST;
                 gridbag.setConstraints(twoClass, constraints);
@@ -610,61 +514,22 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 buildConstraints(constraints, 1, 5, 1, 1, 30, 0);
                 gridbag.setConstraints(numGroupsField, constraints);
                 this.add(numGroupsField);
+                numGroupsField.addKeyListener(new KeyListener() {
+					public void keyPressed(KeyEvent e) {
+						showGroupNameTextFields();
+					}
 
-                
-                factorPanel =  new JPanel();
-                factorPanel.setBackground(Color.white);
-                GridBagLayout gridbag2 = new GridBagLayout();
-                factorPanel.setLayout(gridbag2);
-                JLabel factorALabel = new JLabel("Factor A Name: ");
-                buildConstraints(constraints, 0, 0, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorALabel, constraints);
-                factorPanel.add(factorALabel);
+					public void keyReleased(KeyEvent e) {
+						showGroupNameTextFields();
+						
+					}
 
-                JLabel factorBLabel = new JLabel("Factor B Name: ");
-                buildConstraints(constraints, 0, 1, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorBLabel, constraints);
-                factorPanel.add(factorBLabel);
-                
-                factorAName = new JTextField("FactorA", 7);
-                factorAName.setMinimumSize(new Dimension(50,20));
-                buildConstraints(constraints, 1, 0, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorAName, constraints);
-                factorPanel.add(factorAName);
+					public void keyTyped(KeyEvent e) {
+						showGroupNameTextFields();
+						
+					}
+                });
 
-                factorBName = new JTextField("FactorB", 7);
-                factorBName.setMinimumSize(new Dimension(50,20));
-                buildConstraints(constraints, 1, 1, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorBName, constraints);
-                factorPanel.add(factorBName);
-
-                JLabel levelALabel = new JLabel("    Number of Levels: ");
-                buildConstraints(constraints, 2, 0, 1, 1, 30, 0);
-                gridbag2.setConstraints(levelALabel, constraints);
-                factorPanel.add(levelALabel);
-
-                JLabel levelBLabel = new JLabel("    Number of Levels: ");
-                buildConstraints(constraints, 2, 1, 1, 1, 30, 0);
-                gridbag2.setConstraints(levelBLabel, constraints);
-                factorPanel.add(levelBLabel);
-
-                factorALevel = new JTextField("2", 7);
-                factorALevel.setMinimumSize(new Dimension(50,20));
-                buildConstraints(constraints, 3, 0, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorALevel, constraints);
-                factorPanel.add(factorALevel);
-
-                factorBLevel = new JTextField("2", 7);
-                factorBLevel.setMinimumSize(new Dimension(50,20));
-                buildConstraints(constraints, 3, 1, 1, 1, 30, 0);
-                gridbag2.setConstraints(factorBLevel, constraints);
-                factorPanel.add(factorBLevel);
-
-                buildConstraints(constraints, 0, 5, 2, 1, 30, 0, GridBagConstraints.CENTER);
-                constraints.ipady = 20;
-                gridbag.setConstraints(factorPanel, constraints);
-                factorPanel.setVisible(false);
-                this.add(factorPanel);
                 constraints.ipady = 0;
                 
                 JLabel alphaLabel = new JLabel("Limma significance Level: Alpha = ");
@@ -685,6 +550,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 constraints.anchor = GridBagConstraints.EAST;
                 gridbag.setConstraints(chipNameLabel, constraints);
                 this.add(chipNameLabel);
+                
 
 				ArrayList<String> bioCAnnotations = new ArrayList<String>();
                 try {
@@ -725,6 +591,25 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 buildConstraints(constraints, 1, 7, 1, 1, 30, 0);
                 gridbag.setConstraints(chipNameBox, constraints);
                 this.add(chipNameBox);
+
+                groupNameLabel = new JLabel[8];
+                groupNameField = new JTextField[8];
+                for (int i=0; i<8; i++){
+                    groupNameLabel[i] = new JLabel("Group "+(i+1)+" Name: ");
+                    buildConstraints(constraints, 0, 8+i, 1, 1, 30, 100);
+                    constraints.anchor = GridBagConstraints.EAST;
+                    gridbag.setConstraints(groupNameLabel[i], constraints);
+                    this.add(groupNameLabel[i]);
+                    groupNameLabel[i].setVisible(false);
+                    
+                    groupNameField[i] = new JTextField("Group "+(i+1), 7);
+                    groupNameField[i].setMinimumSize(new Dimension(50,20));
+                    constraints.anchor = GridBagConstraints.WEST;
+                    buildConstraints(constraints, 1, 8+i, 1, 1, 30, 0);
+                    gridbag.setConstraints(groupNameField[i], constraints);
+                    this.add(groupNameField[i]);
+                    groupNameField[i].setVisible(false);
+                }
 
             }
             
@@ -788,10 +673,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     				pw.print("Design:\t");
     				pw.println(ngPanel.getExperimentDesign());
     				int groupMax;
-    				if (ngPanel.getExperimentDesign()!=4)
-    					groupMax=this.numGroups;
-    				else
-    					groupMax = Math.max(this.factorAlevels,this.factorBlevels);
+					groupMax=this.numGroups;
     				for (int i=0; i<groupMax; i++){
         				pw.print("Group "+(i+1)+" Label:\t");
     					pw.println("Group "+(i+1));
@@ -802,53 +684,15 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     				pw.println("Sample Index\tSample Name\tGroup Assignment");
 
     				
-    				if (ngPanel.getExperimentDesign()<4){
-    					int[] groupAssgn=getGroupAssignments();
-        				for(int sample = 0; sample < exptNames.size(); sample++) {
-        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
-        					pw.print(exptNames.get(sample)+"\t");
-        					if (groupAssgn[sample]!=0)
-        						pw.println("Group "+(groupAssgn[sample]));
-        					else
-        						pw.println("Exclude");
-        					
-        				}
-        			}else{
-        					
-        				for(int sample = 0; sample < exptNames.size(); sample++) {
-        					pw.print(String.valueOf(sample+1)+"\t"); //sample index
-        					pw.print(exptNames.get(sample)+"\t");
-        					int a = 0;
-        		        	int b = 0;
-            				if (ngPanel.getExperimentDesign()==4){
-	        		            for (int j = 0; j < mPanel.FactorAESP.assignmentRBs.length; j++) {
-	        		                if (mPanel.FactorAESP.assignmentRBs[j][sample].isSelected()) {
-	        		                    a = j+1;
-	        		                    break;
-	        		                }
-	        		            }
-	        		            for (int j = 0; j < mPanel.FactorBESP.assignmentRBs.length; j++) {
-	        		                if (mPanel.FactorBESP.assignmentRBs[j][sample].isSelected()) {
-	        		                    b = j+1;
-	        		                    break;
-	        		                }
-	        		            }
-        					}else{
-	        		            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
-	        		                if (mPanel.ConditionESP.assignmentRBs[j][sample].isSelected()) {
-	        		                    b = j+1;
-	        		                    break;
-	        		                }
-	        		            }
-	        		            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
-	        		                if (mPanel.TimePointESP.assignmentRBs[j][sample].isSelected()) {
-	        		                    a = j+1;
-	        		                    break;
-	        		                }
-	        		            }        						
-        					}
-    						pw.println((a==0?"Exclude":("Group "+(a)))+"\t"+(b==0?"Exclude":"Group "+(b)));
-        				}
+					int[] groupAssgn=getGroupAssignments();
+    				for(int sample = 0; sample < exptNames.size(); sample++) {
+    					pw.print(String.valueOf(sample+1)+"\t"); //sample index
+    					pw.print(exptNames.get(sample)+"\t");
+    					if (groupAssgn[sample]!=0)
+    						pw.println("Group "+(groupAssgn[sample]));
+    					else
+    						pw.println("Exclude");
+    					
     				}
     				pw.flush();
     				pw.close();			
@@ -896,23 +740,11 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                     expLabels[i] = new JLabel(s1);
                     chooseTime[i] = new ButtonGroup();
                     chooseCondition[i] = new ButtonGroup();
-                    if (design==1){
-	                    assignmentRBs[0][i] = new JRadioButton("Include ", false);
-	                    chooseTime[i].add(assignmentRBs[0][i]);
-	                    assignmentRBs[0][i].setSelected(true);
-                    }else if (design==5){
-                    	for (int j = 0; j < numGroups; j++) {
-		                    assignmentRBs[j][i] = new JRadioButton(title+" " + (j) + "     ", true);
-		                    chooseTime[i].add(assignmentRBs[j][i]);
-		                }
-                    }else{
-		                for (int j = 0; j < numGroups; j++) {
-		                    assignmentRBs[j][i] = new JRadioButton("Group " + (j+1) + "     ", true);
-		                    chooseTime[i].add(assignmentRBs[j][i]);
-		                }
-                    }
-                    
-                    
+                    String[] groupNames = getGroupNames();
+	                for (int j = 0; j < numGroups; j++) {
+	                    assignmentRBs[j][i] = new JRadioButton(groupNames[j] + "     ", true);
+	                    chooseTime[i].add(assignmentRBs[j][i]);
+	                }
                     //set current panel
                     currPanel = i / 512;
                     
@@ -928,11 +760,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                     
                     buildConstraints(constraints, (numGroups + 1+twoCondRoom), i%512, 1, 1, 100, 100);
                     gridbag.setConstraints(notInTimeGroupRadioButtons[i], constraints);
-                    
-                    
-//                    panels[currPanel].add(notInTimeGroupRadioButtons[i]);                    
-                    
-                    
                 }
                 
                 int maxLabelWidth = 0;
@@ -983,9 +810,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 buildConstraints(constraints, 0, 0, 1, 1, 100, 90,GridBagConstraints.CENTER,GridBagConstraints.BOTH);
                 gridbag2.setConstraints(scroll, constraints);
                 this.add(scroll);
-                
-                
-          
             }
             /**
              *  resets all group assignments
@@ -995,7 +819,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 	notInTimeGroupRadioButtons[i].setSelected(true);
                 }
             }
-        	
         }
 
     	/**
@@ -1041,8 +864,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         			
         			//factor names
         			Vector<String> groupNames = new Vector<String>();
-//        			Vector<String> factorNames = new Vector<String>();
-        			
         			
         			Vector<Integer> sampleIndices = new Vector<Integer>();
         			Vector<String> sampleNames = new Vector<String>();
@@ -1052,7 +873,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         			//parse the data in to these structures
         			String [] lineArray;
         			int design=0;
-        			//String status = "OK";
         			for(int row = 0; row < data.size(); row++) {
         				line = (String)(data.get(row));
 
@@ -1089,14 +909,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
 	        					}
         						continue;
         					}
-//        					if (design==4){
-//        						factorNames.add(getFactorAName());
-//        						factorNames.add(getFactorBName());
-//        					}
-//        					if (design==5){
-//        						factorNames.add("Condition 1");
-//        						factorNames.add("Condition 2");
-//        					}
         						
 
         					//non-comment line, non-header line and not a group label line
@@ -1138,8 +950,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         			int fileSampleIndex = 0;
         			int groupIndex = 0;
         			String groupName;
-        			String condName;
-        			int condIndex = 0;
         			
         			for(int sample = 0; sample < exptNames.size(); sample++) {
         				boolean doIndex = false;
@@ -1161,44 +971,13 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         				
         				groupName = (String)(groupAssignments.get(fileSampleIndex));
         				groupIndex = groupNames.indexOf(groupName);
-    					if (design==4||design==5){
-	        				condName = (String)(group2Assignments.get(fileSampleIndex));
-	        				condIndex = groupNames.indexOf(condName);
-        				}
         				
         				//set state
-//        				try{
-//        					exptTimeRadioButtons[groupIndex][sample].setSelected(true);
-//        				}catch (Exception e){
-//        					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
-//        				}
-//        				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
-//	        				if(condIndex == 1)
-//	        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
-//	        				else
-//	        					exptConditionRadioButtons[0][sample].setSelected(true);
-//        				}
-        				//set state
         				try{
-                        	if (getExperimentalDesign()==4){
-                        		mPanel.FactorBESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.FactorAESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else if (getExperimentalDesign()==5){
-                        		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
-                        		mPanel.TimePointESP.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	} else {
-                        		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
-                        	}
+                    		mPanel.sampleSelectionPanel.assignmentRBs[groupIndex][sample].setSelected(true);
+                        	
         				}catch (Exception e){
-                        	if (getExperimentalDesign()==4){
-                        		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        		mPanel.FactorBESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	} else if (getExperimentalDesign()==5){
-                        		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	} else {
-                        		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
-                        	}
+                    		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);                        	
         				}
         			}
         			
@@ -1219,42 +998,13 @@ public class ATTRACTInitBox extends AlgorithmDialog {
 					optionst, optionst[0])==1)
 				return;
 
-			String condName;
-			int condIndex = 0;
     		for(int sample = 0; sample < exptNames.size(); sample++) {
-    			if (cond==2){
-    				condName = (String)(condAssignments.get(sample));
-    				condIndex = groupNames.indexOf(condName);
-				}
     			try{
-                	if (getExperimentalDesign()==4){
-                		mPanel.FactorAESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                		mPanel.FactorBESP.assignmentRBs[condIndex][sample].setSelected(true);
-                	} else if (getExperimentalDesign()==5){
-                		mPanel.TimePointESP.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                		mPanel.ConditionESP.assignmentRBs[condIndex][sample].setSelected(true);
-                	} else {
-                		mPanel.sampleSelectionPanel.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-                	}
-//    				exptTimeRadioButtons[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
-//    				if (cond==2&&(ngPanel.getExperimentDesign()==2)){
-//        				if(condIndex == 1)
-//        					exptConditionRadioButtons[condIndex][sample].setSelected(true);
-//        				else
-//        					exptConditionRadioButtons[0][sample].setSelected(true);
-//    				}
+            		mPanel.sampleSelectionPanel.assignmentRBs[groupNames.indexOf(groupAssignments.get(sample))][sample].setSelected(true);
+                	
     			}catch(Exception e){
-                	if (getExperimentalDesign()==4){
-                		mPanel.FactorAESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                		mPanel.FactorBESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	} else if (getExperimentalDesign()==5){
-                		mPanel.TimePointESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                		mPanel.ConditionESP.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	} else {
-                		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
-                	}
-//					notInTimeGroupRadioButtons[sample].setSelected(true);  //set to last state... excluded
-    			}
+            		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[sample].setSelected(true);
+      			}
     		}
     	}
         private JPanel createSaveLoadPanel(){
@@ -1279,15 +1029,8 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             resetButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     for (int i = 0; i < finNum; i++) {
-                    	if (getExperimentalDesign()==4){
-                    		mPanel.FactorAESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    		mPanel.FactorBESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	} else if (getExperimentalDesign()==5){
-                    		mPanel.TimePointESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    		mPanel.ConditionESP.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	} else {
-                    		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].setSelected(true);
-                    	}
+                		mPanel.sampleSelectionPanel.notInTimeGroupRadioButtons[i].setSelected(true);
+                    	
                     }
                 }
             });
@@ -1347,25 +1090,24 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         		mPanel.ngPanel.numGroupsLabel.setText("Number of Groups: ");
         		mPanel.ngPanel.numGroupsField.setVisible(true);
         		mPanel.ngPanel.numGroupsLabel.setVisible(true);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
-        	}else if (getExperimentalDesign()==4){
+        	} else{
         		mPanel.ngPanel.numGroupsField.setVisible(false);
         		mPanel.ngPanel.numGroupsLabel.setVisible(false);
-        		mPanel.ngPanel.factorPanel.setVisible(true);
-        		
-        	}else if (getExperimentalDesign()==5){
-        		mPanel.ngPanel.numGroupsLabel.setText("Number of Timepoints: ");
-        		mPanel.ngPanel.numGroupsField.setVisible(true);
-        		mPanel.ngPanel.numGroupsLabel.setVisible(true);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
-        		
-        	}else{
-        		mPanel.ngPanel.numGroupsField.setVisible(false);
-        		mPanel.ngPanel.numGroupsLabel.setVisible(false);
-        		mPanel.ngPanel.factorPanel.setVisible(false);
         	}
+        	showGroupNameTextFields();
         }
     	
+    }
+    private void showGroupNameTextFields(){
+    	int numGroups = this.getNumGroups();
+    	for (int i=0; i<8; i++){
+    		mPanel.ngPanel.groupNameLabel[i].setVisible(false);
+    		mPanel.ngPanel.groupNameField[i].setVisible(false);
+    	}
+    	for (int i=0; i<numGroups; i++){
+    		mPanel.ngPanel.groupNameLabel[i].setVisible(true);
+    		mPanel.ngPanel.groupNameField[i].setVisible(true);
+    	}
     }
     public class EventListener extends WindowAdapter implements ActionListener{
         
@@ -1401,19 +1143,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
      */
     private boolean isParamSufficient(){
     	switch (getExperimentalDesign()){
-	    	case 1:{
-	    		int inc = 0;
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]==1)
-	    				inc++;
-	    		}
-	    		if (inc < 2){
-	    			JOptionPane.showMessageDialog(null, "Please select at least 2 samples.", "Error", JOptionPane.WARNING_MESSAGE);
-	        		return false;
-	    		}
-	    		return true;
-	    	}
 	    	case 2:{
 	    		int[] inc = new int[2];
 	    		int[] grpAssign = getGroupAssignments();
@@ -1442,38 +1171,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
 	    		}
 	    		return true;
 	    	}	
-	    	case 4:{
-	    		int[] inc = new int[getNumGroups()];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each factor combination.\n" +
-	        					"Samples must be assigned to each possible combination of "+ getFactorAName()+" vs. "+getFactorBName()+".", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
-	    	case 5:{
-	    		int[] inc = new int[getNumGroups()*2];
-	    		int[] grpAssign = getGroupAssignments();
-	    		for (int i=0; i<grpAssign.length; i++){
-	    			if (grpAssign[i]!=0)
-	    				inc[grpAssign[i]-1]++;
-	    		}
-	    		for (int i=0; i<inc.length; i++){
-	        		if (inc[i] < 2){
-	        			JOptionPane.showMessageDialog(null, "Please select at least 2 samples for each timepoint and condition combination.\n" +
-	        					"Samples must be assigned to each possible combination of timepoints and conditions.", "Error", JOptionPane.WARNING_MESSAGE);
-	            		return false;
-	        		}
-	    		}
-	    		return true;
-	    	}	
     	}
     	return false;
     }
@@ -1481,10 +1178,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     public int[] getGroupAssignments() {
     	if (getExperimentalDesign()<4)
     		return getSimpleGroupAssignments();
-    	if (getExperimentalDesign()==4)
-    		return getFactorGroupAssignments();
-    	if (getExperimentalDesign()==5)
-    		return getTimeCourseGroupAssignments();
         return null;
     }  
 
@@ -1537,185 +1230,6 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         }
         return groupAssignments;
     }
-    private int[] getTimeCourseGroupAssignments() {
-    	if (getSelectionDesign()==ATTRACTInitBox.CLUSTER_SELECTION)
-    		return getClusterSelectorTimeCourseAssignments();
-    	int[]timeCourseGroupAssignments = new int[exptNames.size()];
-
-        for (int i = 0; i < exptNames.size(); i++) {
-        	if (mPanel.ConditionESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.TimePointESP.notInTimeGroupRadioButtons[i].isSelected()){
-        		timeCourseGroupAssignments[i]=0;
-        		continue;
-        	}
-        	int a = 0;
-        	int b = 0;
-            for (int j = 0; j < mPanel.ConditionESP.assignmentRBs.length; j++) {
-                if (mPanel.ConditionESP.assignmentRBs[j][i].isSelected()) {
-                    a = j;
-                    break;
-                }
-            }
-            for (int j = 0; j < mPanel.TimePointESP.assignmentRBs.length; j++) {
-                if (mPanel.TimePointESP.assignmentRBs[j][i].isSelected()) {
-                    b = j;
-                    break;
-                }
-            }
-            timeCourseGroupAssignments[i]=a*getNumGroups()+b+1;
-        }
-    	return timeCourseGroupAssignments;
-    }
-    
-    private int[] getClusterSelectorTimeCourseAssignments() {
-    	boolean doubleAssigned;
-    	int[][]groupAssignments = new int[2][exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[mPanel.numGroups];
-    	for (int i=0; i<mPanel.numGroups; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.timepointCS.getGroupSamples("Time-Point "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[0][i] = 0;
-    		for (int j = 0;j<mPanel.numGroups;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[0][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	arraylistArray = new ArrayList[2];
-    	for (int i=0; i<2; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.conditionCS.getGroupSamples("Condition "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[1][i] = 0;
-    		for (int j = 0;j<2;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[1][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	int[] groupAssignments2 = new int[exptNames.size()];
-    	for (int i=0; i<groupAssignments2.length; i++){
-    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
-    			groupAssignments2[i]=0;
-    		else
-    			groupAssignments2[i] = (groupAssignments[1][i]-1)*mPanel.numGroups+(groupAssignments[0][i]-1)+1;
-    	}
-    	return groupAssignments2;
-	}
-
-
-	private int[] getFactorGroupAssignments() {
-    	if (getSelectionDesign()==ATTRACTInitBox.CLUSTER_SELECTION)
-    		return getClusterSelectorFactorAssignments();
-    	int[]factorGroupAssignments = new int[exptNames.size()];
-
-        for (int i = 0; i < exptNames.size(); i++) {
-        	if (mPanel.FactorAESP.notInTimeGroupRadioButtons[i].isSelected()||mPanel.FactorBESP.notInTimeGroupRadioButtons[i].isSelected()){
-        		factorGroupAssignments[i]=0;
-        		continue;
-        	}
-        	int a = 0;
-        	int b = 0;
-            for (int j = 0; j < mPanel.FactorAESP.assignmentRBs.length; j++) {
-                if (mPanel.FactorAESP.assignmentRBs[j][i].isSelected()) {
-                    a = j;
-                    break;
-                }
-            }
-            for (int j = 0; j < mPanel.FactorBESP.assignmentRBs.length; j++) {
-                if (mPanel.FactorBESP.assignmentRBs[j][i].isSelected()) {
-                    b = j;
-                    break;
-                }
-            }
-            factorGroupAssignments[i]=a*this.getNumFactorBGroups()+b+1;
-        }
-    	return factorGroupAssignments;
-    }
-    private int[] getClusterSelectorFactorAssignments() {
-    	boolean doubleAssigned;
-    	int[][]groupAssignments = new int[2][exptNames.size()];
-    	ArrayList[] arraylistArray = new ArrayList[getNumFactorBGroups()];
-    	for (int i=0; i<getNumFactorBGroups(); i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.factorACS.getGroupSamples("Level "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[0][i] = 0;
-    		for (int j = 0;j<getNumFactorBGroups();j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[0][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	arraylistArray = new ArrayList[2];
-    	for (int i=0; i<2; i++){
-    		int j = i+1;
-    		arraylistArray[i] = mPanel.factorBCS.getGroupSamples("Level "+j);
-    	}
-    	for (int i = 0; i < exptNames.size(); i++) {
-    		doubleAssigned = false;
-    		groupAssignments[1][i] = 0;
-    		for (int j = 0;j<2;j++){
-	    		if (arraylistArray[j].contains(i)){
-	    			if (doubleAssigned){
-	    		        Object[] optionst = { "OK" };
-	    				JOptionPane.showOptionDialog(null, 
-	    						"The clusters you have chosen have overlapping samples. \n Each group must contain unique samples.", 
-	    						"Multiple Ownership Error", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-	    						optionst, optionst[0]);
-	    				return null;
-
-	    			}
-	    			groupAssignments[1][i] = j+1;
-	    			doubleAssigned = true;
-	    		}
-    		}
-        }
-    	int[] groupAssignments2 = new int[exptNames.size()];
-    	for (int i=0; i<groupAssignments2.length; i++){
-    		if (groupAssignments[0][i]==0||groupAssignments[1][i]==0)
-    			groupAssignments2[i]=0;
-    		else
-    			groupAssignments2[i] = (groupAssignments[0][i]-1)*this.getNumFactorBGroups()+(groupAssignments[1][i]-1)+1;
-    	}
-    	return groupAssignments2;
-	}
 
 
 	public int[][] getGroupMatrix(){
@@ -1746,16 +1260,10 @@ public class ATTRACTInitBox extends AlgorithmDialog {
      */
     public int getExperimentalDesign() {
     	int design = -1;
-//    	if (mPanel.ngPanel.oneClass.isSelected())
-//    		design = 1;
     	if (mPanel.ngPanel.twoClass.isSelected())
     		design = 2;
     	if (mPanel.ngPanel.multiClass.isSelected())
     		design = 3;
-    	if (mPanel.ngPanel.factorialDesign.isSelected())
-    		design = 4;
-    	if (mPanel.ngPanel.timeCourse.isSelected())
-    		design = 5;
     	return design;
     }
     
@@ -1769,22 +1277,29 @@ public class ATTRACTInitBox extends AlgorithmDialog {
         return design;
     }
 
+    public String[] getGroupNames() {
+    	String[] ret = new String[getNumGroups()];
+    	for (int i=0; i<ret.length; i++){
+    		ret[i] = mPanel.ngPanel.groupNameField[i].getText();
+    	}
+    	return ret;
+    }
     public int getNumGroups() {
-    	if (getExperimentalDesign()==4)
-    		return getNumFactorAGroups()*getNumFactorBGroups();
-        return mPanel.numGroups;
-    }
-    public int getNumFactorAGroups() {
-        return mPanel.factorAlevels;
-    }
-    public int getNumFactorBGroups() {
-        return mPanel.factorBlevels;
-    }
-    public String getFactorAName() {
-        return mPanel.factorAName;
-    }
-    public String getFactorBName() {
-        return mPanel.factorBName;
+    	int numGroups = -1;
+    	if (getExperimentalDesign()==2){
+    		numGroups = 2;
+    	}else{
+    		try{
+    			numGroups =Integer.parseInt(mPanel.ngPanel.numGroupsField.getText());
+    			if (numGroups>8||numGroups<2){
+                	JOptionPane.showMessageDialog(null, "The number of groups must be greater than 1 and less than 9.", "Error", JOptionPane.ERROR_MESSAGE);
+                	numGroups =-1;
+    			}
+    		} catch (Exception e){
+    			JOptionPane.showMessageDialog(null, "Error reading parameter input.", "Error", JOptionPane.ERROR_MESSAGE);
+    		}
+    	}
+        return numGroups;
     }
     public String getChipName() {
         return mPanel.chipName;
@@ -1801,8 +1316,11 @@ public class ATTRACTInitBox extends AlgorithmDialog {
             dummyVect.add("Expt " + i);
         }
         String annot = "hgu133a";
-//        ATTRACTInitBox oBox = new ATTRACTInitBox(dummyFrame, true, dummyVect, annot);
-//        oBox.setVisible(true);
+        ATTRACTInitBox oBox = new ATTRACTInitBox(dummyFrame, true, dummyVect, null, annot);
+        oBox.setVisible(true);
+        for (int i=0; i<oBox.getGroupNames().length; i++){
+        	System.out.println(oBox.getGroupNames()[i]);
+        }
         System.exit(0);
     }
 }
