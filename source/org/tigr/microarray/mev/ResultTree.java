@@ -458,6 +458,9 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** Expression Image Icon
          */
         private Icon expressionImageIcon = GUIFactory.getIcon("ExpressionImageResult.gif");
+        /** Expression Image Icon
+         */
+        private Icon expressionChartIcon = GUIFactory.getIcon("ExpressionChartResult.gif");
         /** Centroid Graph Icon
          */
         private Icon centroidGraphIcon = GUIFactory.getIcon("CentroidResult.gif");
@@ -667,6 +670,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                 //check for special Icons
                 if(text.indexOf("Expression Image") != -1){
                     setIcon(expressionImageIcon);
+                } else if(text.indexOf("Expression Chart") != -1){
+                    setIcon(expressionChartIcon);
                 } else if(text.indexOf("Set ") != -1){
                     //default
                 } else if(text.indexOf("Included Gene Sets") != -1||text.indexOf("Excluded Gene Sets") != -1||text.indexOf("Probe to Gene Mapping") != -1){
@@ -782,6 +787,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     //assign icon
                     if(parentText.indexOf("Expression Image") != -1){
                         setIcon(expressionImageIcon);
+                    } else if(parentText.indexOf("Expression Chart") != -1){
+                        setIcon(expressionChartIcon);
                     } else if(parentText.indexOf("Centroid") != -1){
                         setIcon(centroidGraphIcon);
                     } else if(parentText.indexOf("Expression Graph") != -1){
@@ -820,6 +827,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(pwfIcon);
                     } else if(text.equals("Expression Image")){
                         setIcon(expressionImageIcon);
+                    } else if(text.equals("Expression Chart")){
+                        setIcon(expressionChartIcon);
                     } else if(text.equals("Expression Graph")){
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Cophenetic Correlation Graph")){
@@ -906,6 +915,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                     else if(grandParentText != null){
                         if(grandParentText.indexOf("Expression Image") != -1){
                             setIcon(expressionImageIcon);
+                        } else if(grandParentText.indexOf("Expression Chart") != -1){
+                            setIcon(expressionChartIcon);
                         } else if(grandParentText.indexOf("Table Views") != -1){
                             setIcon(tableIcon);
                         } else if(grandParentText.indexOf("Centroid") != -1){
