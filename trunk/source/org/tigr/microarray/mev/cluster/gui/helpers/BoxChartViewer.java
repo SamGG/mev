@@ -57,6 +57,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	private int[][] clusters;
 	private String[] clusterNames;
 	private Color[] clusterColors;
+	private int[] geneIndices;
 	private Experiment experiment;
     private IFramework framework;
 	private int exptID = 0;
@@ -116,6 +117,10 @@ public class BoxChartViewer extends JPanel implements IViewer {
     public static final String BROADCAST_MATRIX_GAGGLE_CMD = "broadcast-matrix-to-gaggle";
     public static final String BROADCAST_NAMELIST_GAGGLE_CMD = "broadcast-namelist-to-gaggle";
 	private static final String AGG_GENE_CLUSTER_CMD = "aggregate-gene-cluster";
+	private String sn = "";
+	private boolean inAnalysis;
+	private String geneClusterLabel;
+	private String[] sampleClusterNames;
 	
 	/**
 	 * Constructs a <code>Box/Bar Chart Viewer</code> for insertion into ClusterTable
@@ -123,6 +128,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	 * @param experiment the data of an experiment.
 	 */
 	public BoxChartViewer(IFramework fm, Cluster[] clusterArray) {
+		inAnalysis = false;
 	    framework= fm;
         this.experiment = framework.getData().getExperiment();
 		setClusters(clusterArray);
@@ -132,6 +138,67 @@ public class BoxChartViewer extends JPanel implements IViewer {
     	init();
     }
 	
+	/**
+	 * Constructs a <code>Box/Bar Chart Viewer</code> for use in analyses
+	 *
+	 * @param experiment the data of an experiment.
+	 */
+	public BoxChartViewer(IFramework fm, int[][] sampleArray, int[] geneArray, String geneClusterLabel, String[] sampleClusterNames) {
+		this.sampleClusterNames = sampleClusterNames;
+		inAnalysis = true;
+	    framework= fm;
+	    this.geneClusterLabel = geneClusterLabel;
+        this.experiment = framework.getData().getExperiment();
+		setClusters(sampleArray);
+		geneIndices = geneArray;
+        populateGeneListComboBoxes();
+        generateSettingsComponents();
+        createComponentLayout();         
+    	init();
+    }
+	
+	private void setClusters(int[][] sampleArray) {
+		if (sampleArray==null||sampleArray.length==0)
+			sampleArray = new int[1][];
+		clusterCount = sampleArray.length;
+		clusterNames = new String[clusterCount];
+		clusterColors = new Color[clusterCount];
+		clusters = new int[clusterCount][];
+		for (int i=0; i<clusterCount; i++){
+			if (sampleArray[i]==null){
+				int numSamps = experiment.getNumberOfSamples();
+				clusters[i] = new int[numSamps];
+				for (int j=0; j<numSamps; j++){
+					clusters[i][j] = j;
+				}
+				clusterColors[i] = Color.white;
+				clusterNames[i] = "All Samples";
+			} else {
+				clusters[i] = sampleArray[i];
+				clusterColors[i] = createClusterColor(i);
+				if (sampleClusterNames==null||sampleClusterNames[i].length()<1){
+					clusterNames[i] = "(Group "+(i+1)+")";
+				} else {
+					clusterNames[i] = sampleClusterNames[i];
+				}
+			}
+		}		
+	}
+
+	private Color createClusterColor(int i) {
+		if (i==0)
+			return Color.green;
+		if (i==1)
+			return Color.blue;
+		if (i==2)
+			return Color.red;
+		if (i==3)
+			return Color.yellow;
+		if (i==4)
+			return Color.orange;
+		return new Color((int)Math.random()*255,(int)Math.random()*255,(int)Math.random()*255);
+	}
+
 	private void init(){
         Listener listener = new Listener();
         this.popup = createJPopupMenu(listener);
@@ -150,21 +217,23 @@ public class BoxChartViewer extends JPanel implements IViewer {
         header.add(new JLabel("  Chart Type: "),gbc);
         gbc.gridx++;
         header.add(chartTypeCB,gbc);
-        gbc.gridx++;
-        header.add(new JLabel("  Gene Range: "),gbc);
-        gbc.gridx++;
-        header.add(geneOrClusterCB,gbc);
-        gbc.gridx++;
-        header.add(annotLabel,gbc);
-        gbc.gridx++;
-        header.add(geneAnnotationCB,gbc);
-        gbc.gridx++;
-        header.add(geneClusterCB,gbc);
-        gbc.gridx++;
-        header.add(geneIDlabel,gbc);
-        gbc.gridx++;
-        header.add(geneCB,gbc);
-        gbc.gridx++;
+        if (!inAnalysis){//cluster manager functions
+	        header.add(new JLabel("  Gene Range: "),gbc);
+	        gbc.gridx++;
+	        gbc.gridx++;
+	        header.add(geneOrClusterCB,gbc);
+	        gbc.gridx++;
+	        header.add(annotLabel,gbc);
+	        gbc.gridx++;
+	        header.add(geneAnnotationCB,gbc);
+	        gbc.gridx++;
+	        header.add(geneClusterCB,gbc);
+	        gbc.gridx++;
+	        header.add(geneIDlabel,gbc);
+	        gbc.gridx++;
+	        header.add(geneCB,gbc);
+        }
+        gbc.gridx++;        
         header.add(aggregateCheckBox,gbc);
         gbc.gridx = 0;		
 	}
@@ -213,7 +282,7 @@ public class BoxChartViewer extends JPanel implements IViewer {
 			}        	
         });
         aggregateCheckBox = new JCheckBox("Aggregate Gene Cluster");
-        aggregateCheckBox.setSelected(false);
+    	aggregateCheckBox.setSelected(inAnalysis);//sets to be selected by default within analysis results, unselected in cluster manager
         aggregateCheckBox.setBackground(Color.white);
         aggregateCheckBox.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -226,12 +295,18 @@ public class BoxChartViewer extends JPanel implements IViewer {
 	        	repaint();				
 			}        	
         });
-        aggregateCheckBox.setVisible(false);
-
+    	aggregateGeneCluster = aggregateCheckBox.isSelected();
         geneIDlabel = new JLabel("  Gene ID: ");
         annotLabel = new JLabel("  Annotation Field: ");
         isBoxPlot = chartTypeCB.getSelectedIndex()==0;
-        isSingleGene = geneOrClusterCB.getSelectedIndex()==0;
+        if (inAnalysis){
+            aggregateCheckBox.setVisible(true);
+            isSingleGene = false;
+        } else{
+        	aggregateCheckBox.setVisible(false);
+            isSingleGene = geneOrClusterCB.getSelectedIndex()==0;
+        }
+
 	}
 	
 	private void populateGeneListComboBoxes() {
@@ -245,7 +320,9 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		}
 		geneClusterCB.setVisible(false);
 		geneClusterCB.addActionListener(new ActionListener(){
+
 			public void actionPerformed(ActionEvent e) {
+
 				repaint();				
 			}        	
         });
@@ -324,22 +401,25 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		Cluster cluster = null;
 		if (ismultigene){
 			try{
-				int begin = this.geneClusterCB.getSelectedItem().toString().indexOf(":");
-				int end = this.geneClusterCB.getSelectedItem().toString().indexOf(",");
-				String sn = this.geneClusterCB.getSelectedItem().toString().substring(begin+2,end);
-				cluster = framework.getClusterRepository(0).getCluster(Integer.parseInt(sn));
+				if (!inAnalysis){
+					int begin = geneClusterCB.getSelectedItem().toString().indexOf(":");
+					int end = geneClusterCB.getSelectedItem().toString().indexOf(",");
+					sn = geneClusterCB.getSelectedItem().toString().substring(begin+2,end);
+					cluster = framework.getClusterRepository(0).getCluster(Integer.parseInt(sn));
+					geneIndices = cluster.getIndices();
+				}
 			} catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Gene Cluster Problem");
 				return;
 			}
-			if (cluster==null||cluster.getSize()<1)
+			if (geneIndices==null||geneIndices.length<1)
 				return;
 
 			if (aggregateGeneCluster)
 				multigeneCount = 1;
 			else
-				multigeneCount = cluster.getSize();
+				multigeneCount = geneIndices.length;
 		}
 		int chartTop = chartTopHeight;
 
@@ -368,11 +448,14 @@ public class BoxChartViewer extends JPanel implements IViewer {
 		for (int multigeneIndex=indexBegin; multigeneIndex < indexEnd; multigeneIndex++){
 			if (ismultigene){
 				if (aggregateGeneCluster){					
-					getChartData(cluster.getIndices(), multigeneIndex);
-					chartTitles[multigeneIndex] = cluster.getClusterLabel();
+					getChartData(geneIndices, multigeneIndex);
+					if (inAnalysis)
+						chartTitles[multigeneIndex] = geneClusterLabel;
+					else
+						chartTitles[multigeneIndex] = cluster.getClusterLabel();
 				} else {
-					getChartData(cluster.getIndices()[multigeneIndex], multigeneIndex);
-					chartTitles[multigeneIndex] = framework.getData().getElementAnnotation(cluster.getIndices()[multigeneIndex], framework.getData().getFieldNames()[0])[0];
+					getChartData(geneIndices[multigeneIndex], multigeneIndex);
+					chartTitles[multigeneIndex] = framework.getData().getElementAnnotation(geneIndices[multigeneIndex], framework.getData().getFieldNames()[0])[0];
 				}
 			} else {
 				getChartData(geneCB.getSelectedIndex(), multigeneIndex);
