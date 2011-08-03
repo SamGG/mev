@@ -71,7 +71,7 @@ public class ATTRACTInfoViewer extends ViewerAdapter {
 	GridBagConstraints gbc = new GridBagConstraints();
 	gbc.fill = GridBagConstraints.HORIZONTAL;
 	gbc.insets = new Insets(10, 0, 10, 0);
-	panel.add(new JLabel("<html><body bgcolor='#FFFFFF'><font face='serif' size='5' color='#000080'><b>Cluster Information</b></font></body></html>"), gbc);
+	panel.add(new JLabel("<html><body bgcolor='#FFFFFF'><font face='serif' size='5' color='#000080'><b>Pathway Information</b></font></body></html>"), gbc);
 	return panel;
     }
     

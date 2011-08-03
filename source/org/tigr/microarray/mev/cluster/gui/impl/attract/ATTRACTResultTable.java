@@ -25,7 +25,6 @@ import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
-import org.tigr.microarray.mev.cluster.gui.helpers.TableViewer.DefaultViewerTableModel;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
 import org.tigr.util.QSort;
 
@@ -58,6 +57,7 @@ public class ATTRACTResultTable implements IViewer {
 	private static final String TABLE_VIEW_COMMAND = "table-view-command";
 	private static final String LAUNCH_CENTROID_GRAPH_COMMAND = "launch-centroid-graph-command";
 	private static final String LAUNCH_EXPRESSION_IMAGE_COMMAND = "launch-expression-image-command";
+	private static final String LAUNCH_EXPRESSION_CHART_COMMAND = "launch-expression-chart-command";
     public static final String BROADCAST_MATRIX_GENOME_BROWSER_CMD = "broadcast-matrix-to-genome-browser";
     
     public static final int INTEGER_TYPE = 10;
@@ -93,7 +93,7 @@ public class ATTRACTResultTable implements IViewer {
         	sortedIndices[i]=i;
         }
         if (title.contains("Correlated"))
-        	nodeOffset = 6;
+        	nodeOffset = 7;
         this.columnTitles = auxTitles;
         this.clusterModel = new ClusterTableModel();
         this.clusterTable = new JTable(clusterModel);
@@ -602,6 +602,11 @@ public class ATTRACTResultTable implements IViewer {
         menuItem.setActionCommand(LAUNCH_EXPRESSION_IMAGE_COMMAND);
         menuItem.addActionListener(listener);
         launchMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Expression Chart");
+        menuItem.setActionCommand(LAUNCH_EXPRESSION_CHART_COMMAND);
+        menuItem.addActionListener(listener);
+        launchMenu.add(menuItem);
         
         menuItem = new JMenuItem("Centroid Graph");
         menuItem.setActionCommand(LAUNCH_CENTROID_GRAPH_COMMAND);
@@ -642,12 +647,14 @@ public class ATTRACTResultTable implements IViewer {
 
         if(viewerType.equals("expression image")){        	
             node = (DefaultMutableTreeNode)(rootNode.getChildAt(1+nodeOffset));
-        } else if(viewerType.equals("centroid graph")){
+        } else if(viewerType.equals("expression chart")){
             node = (DefaultMutableTreeNode)(rootNode.getChildAt(2+nodeOffset));
-        } else if(viewerType.equals("expression graph")){
+        } else if(viewerType.equals("centroid graph")){
             node = (DefaultMutableTreeNode)(rootNode.getChildAt(3+nodeOffset));
-        } else if(viewerType.equals("table view")){
+        } else if(viewerType.equals("expression graph")){
             node = (DefaultMutableTreeNode)(rootNode.getChildAt(4+nodeOffset));
+        } else if(viewerType.equals("table view")){
+            node = (DefaultMutableTreeNode)(rootNode.getChildAt(5+nodeOffset));
         }
     	 if(framework != null){
     		 for (int i=0; i<node.getChildCount(); i++){
@@ -669,7 +676,8 @@ public class ATTRACTResultTable implements IViewer {
     	    		 }
     			 }
     		 }
-    	 }      
+    	 }   
+    	 System.out.println("node '"+nodeTitle+"' not found.");
     }
     
     /** Saves the pvalues table to file
@@ -761,12 +769,14 @@ public class ATTRACTResultTable implements IViewer {
 			  clusterTable.selectAll();
 		} else if(command.equals(LAUNCH_EXPRESSION_IMAGE_COMMAND)){
 		      onOpenViewer("expression image");
+		} else if(command.equals(LAUNCH_EXPRESSION_CHART_COMMAND)){
+		      onOpenViewer("expression chart");
 		} else if(command.equals(LAUNCH_CENTROID_GRAPH_COMMAND)){
 		      onOpenViewer("centroid graph");
 		} else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
 		      onOpenViewer("expression graph");
-		} else if(command.equals(LAUNCH_EXPRESSION_GRAPH_COMMAND)){
-		      onOpenViewer("table viewer");
+		} else if(command.equals(TABLE_VIEW_COMMAND)){
+		      onOpenViewer("table view");
 		} else if(command.equals(SAVE_TABLE_COMMAND)){
             onSaveTable();
 		}
