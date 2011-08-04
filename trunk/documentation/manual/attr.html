@@ -15,16 +15,16 @@
 <h5>What is Attract?</h5>
 	<p>The Attract algorithm identifies the core gene expression modules that are differentially activated between cell types or different sample groups, and elucidates the set of expression profiles which describe the range of transcriptional behavior within each module. </h5>
 	<p>The algorithm assists in understanding expression changes that are specific to cell types or cell fate transitions. A mammalian organism is made up of over 200 types of specialized cells. Each cell type carries out a specific task integral to maintaining homeostasis of the organism. Cell types can vary by morphology, structure, lifespan, functional ability and much more. Different cell or tissue types acquire their diversity by driving differentially coordinated expression patterns through interacting gene networks. The attractor hypothesis proposed by Stuart Kauffman describes how cell fate transitions between cell types occur through coordinated changes in genome-wide gene expression. </p>
-	<p>The Attract algorithm starts by using a GSEA step to identify the set of core pathway modules driving the cell types-specific expression changes. For each of these modules, the algorithm then constructs synexpression groups, which consist of genes with correlated expression profiles. The algorithm is also able to extrapolate out to identify genes with similar expression profiles which may not be currently annotated in current pathway databases like KEGG. </p>
+	<p>The Attract algorithm starts by using downloaded bioconductor chip annotation to identify the set of core pathway modules driving the cell types-specific expression changes. For each of these modules, the algorithm then constructs synexpression groups, which consist of genes with correlated expression profiles. The algorithm is also extrapolates out to identify genes with similar expression profiles which may not be currently annotated in current pathway databases like KEGG. </p>
 	<h5>When should Attract be used</h5>
 
 	<p>The Attract algorithm can be used for any expression data set where replicate samples (at least three) have been collected for various cell types or experimental groups such as a panel of drug treatments or a time course experiment. The algorithm is not well-suited for data generated under an experimental design that has only one experimental or covariate group, e.g. samples from 100 identical cell lines with no perturbations.</p>
 <h5>Brief Description of the algorithm</h5>
 <p>The Attract algorithm can be roughly divided in to four steps:</p>
 <dl><ol>
-<dt>1. Find core attractor state pathway modules in your data using GSEA.</dt>
-<dt>2. Remove flat or uninformative genes (i.e. genes that do not show expression changes across the different factor levels).  </dt>
-<dt>3. Find Synexpression  groups. (A synexpression group contains genes that share similar expression profiles across factor levels)</dt>
+<dt>1. Find core attractor state pathway modules.</dt>
+<dt>2. Remove genes that do not show expression changes across the different groups using the R Package LIMMA </dt>
+<dt>3. Find Synexpression  groups. (A synexpression group contains genes that share similar expression profiles across groups)</dt>
 	<dd>--	Use the informativeness metric to compute clusters (synexpression groups) in each geneset. </dd>
 <dt>4. For every synexpression group in a geneset,  find genes in the expression data which have correlated expression profiles.</dt>
 </ol></dl> 
