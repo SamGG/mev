@@ -658,7 +658,7 @@ public class ATTRACTResultTable implements IViewer {
         }
     	 if(framework != null){
     		 for (int i=0; i<node.getChildCount(); i++){
-    			 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(i)).toString())){
+    			 if ((((DefaultMutableTreeNode)node.getChildAt(i)).toString()).contains(nodeTitle)){
     				 framework.setTreeNode((DefaultMutableTreeNode)node.getChildAt(i));
     				 return;
     			 }
@@ -669,7 +669,7 @@ public class ATTRACTResultTable implements IViewer {
     			 if ("Not Enough Significant Genes".equals(((DefaultMutableTreeNode)rootNode.getChildAt(i)).toString())){
     				 node = (DefaultMutableTreeNode)rootNode.getChildAt(i);
     	    		 for (int j=0; j<node.getChildCount(); j++){
-    	    			 if (nodeTitle.equals(((DefaultMutableTreeNode)node.getChildAt(j)).toString())){
+    	    			 if ((((DefaultMutableTreeNode)node.getChildAt(j)).toString()).contains(nodeTitle)){
     	    				 framework.setTreeNode((DefaultMutableTreeNode)node.getChildAt(j));
     	    				 return;
     	    			 }

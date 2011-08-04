@@ -90,11 +90,13 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     protected ArrayList<String> geneLabels;
     protected ArrayList<String> sampleLabels;
 	private Object[][] synResultMatrix;
-	private Object[][] corResultMatrix;
+//	private Object[][] corResultMatrix;
 	private String chipName;
 	private IFramework framework;
 	private String[] resultColumns;
 	private String[] groupNames;
+	private String[] nodeTitlesSyn;
+	private String[] nodeTitlesCor;
     
     /** Creates new ATTRACTGUI */
     public ATTRACTGUI() {
@@ -229,8 +231,10 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             this.means = result.getMatrix("clusters_means");
             this.variances = result.getMatrix("clusters_variances");
             this.synResultMatrix = result.getObjectMatrix("synResultMatrix");
-            this.corResultMatrix = result.getObjectMatrix("corResultMatrix");
+//            this.corResultMatrix = result.getObjectMatrix("corResultMatrix");
             this.resultColumns = result.getStringArray("resultColumns");
+            this.nodeTitlesSyn = result.getStringArray("nodeTitlesSyn");
+            this.nodeTitlesCor = result.getStringArray("nodeTitlesCor");
             
             this.keggSynArrays = result.getIntMatrix("keggSynArrays");
             this.keggCorArrays = result.getIntMatrix("keggCorArrays");
@@ -325,9 +329,13 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     public static void main(String[] args){
     	
     }
-    protected String getNodeTitle(int ind){
-    	
-        return (String)synResultMatrix[1][ind];
+    protected String getNodeTitle(int ind, boolean syn){
+    	if (syn)    		
+    		return nodeTitlesSyn[ind];
+    	else
+    		return nodeTitlesCor[ind];
+    		
+//        return (String)synResultMatrix[1][ind];
     }
     /**
      * Creates a result tree to be inserted into the framework analysis node.
@@ -356,16 +364,14 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     	if (!resultsFound){
     		addNoResultsNode(root);
     	} else {
-	        addExpressionImages(root, keggSynArrays, title);
-    		addExpressionCharts(root,keggSynArrays, title);
-	//      addHierarchicalTrees(root, result_cluster, info);
-	        addCentroidViews(root, keggSynArrays, title);
-	        addTableViews(root, keggSynArrays, title);        
-	//      addNotEnoughGenesFolder(root, keggSynArrays);  //Maybe don't need?
-	        addClusterInfo(root, keggSynArrays, title);
+	        addExpressionImages(root, keggSynArrays, title, true);
+    		addExpressionCharts(root,keggSynArrays, title, true);
+	        addCentroidViews(root, keggSynArrays, title, true);
+	        addTableViews(root, keggSynArrays, title, true);        
+	        addClusterInfo(root, keggSynArrays, title, true);
     	}
         title = "Correlated Partners";
-    	addGeneSetInfo(root, corResultMatrix, title);
+//    	addGeneSetInfo(root, corResultMatrix, title);
     	resultsFound = false;
      	if (keggCorArrays!=null){
  	    	for (int i=0; i<keggCorArrays.length; i++){
@@ -378,18 +384,17 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     	if (!resultsFound){
     		addNoResultsNode(root);
     	} else {
-	        addExpressionImages(root, keggCorArrays, title);
-	        addExpressionCharts(root, keggCorArrays, title);
-	//      addHierarchicalTrees(root, result_cluster, info);
-	        addCentroidViews(root, keggCorArrays, title);
-	        addTableViews(root, keggCorArrays, title);  
-	        addClusterInfo(root, keggCorArrays, title);
+	        addExpressionImages(root, keggCorArrays, title, false);
+	        addExpressionCharts(root, keggCorArrays, title, false);
+	        addCentroidViews(root, keggCorArrays, title, false);
+	        addTableViews(root, keggCorArrays, title, false);  
+	        addClusterInfo(root, keggCorArrays, title, false);
     	}
         
-        addNotEnoughGenesFolder(root, keggCorArrays);
+        addNotEnoughGenesFolder(root, keggCorArrays, true);
         addGeneralInfo(root, info);
     }
-	private void addExpressionCharts(DefaultMutableTreeNode root, int[][] keggArrays, String title) {	
+	private void addExpressionCharts(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {	
 		ArrayList<Integer>[] groups = new ArrayList[numGroups];
 
 		for (int i=0; i<groups.length; i++){
@@ -408,8 +413,8 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Expression Charts");
         for (int i=0; i<keggArrays.length; i++) {
         	if (keggArrays[i].length>0){
-        		IViewer echartViewer = new BoxChartViewer(framework, sampleGroups, keggArrays[i], this.getNodeTitle(i), groupNames);
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), echartViewer, new Integer(i))));
+        		IViewer echartViewer = new BoxChartViewer(framework, sampleGroups, keggArrays[i], this.getNodeTitle(i, syn), groupNames);
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), echartViewer, new Integer(i))));
         	}
         }
         root.add(node);	       
@@ -419,12 +424,12 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display clusters data.
      */
-    protected void addExpressionImages(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
+    protected void addExpressionImages(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(title+ " Expression Images");
         IViewer expViewer = new ATTRACTExperimentViewer(this.experiment, keggArrays, null, null, null, null, null, null, null, null, null);
         for (int i=0; i<keggArrays.length; i++) {
         	if (keggArrays[i].length>0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), expViewer, new Integer(i))));
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), expViewer, new Integer(i))));
         }
         root.add(node);
     }
@@ -433,11 +438,11 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 		root.add(new DefaultMutableTreeNode("No Results Found"));		
 	}
 
-	private void addNotEnoughGenesFolder(DefaultMutableTreeNode root, int[][] keggArrays) {
+	private void addNotEnoughGenesFolder(DefaultMutableTreeNode root, int[][] keggArrays, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Not Enough Significant Genes");
         for (int i=0; i<keggArrays.length; i++) {
         	if (keggArrays[i].length==0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), null, new Integer(i))));
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), null, new Integer(i))));
         }
         root.add(node);		
 	}
@@ -455,12 +460,12 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 	      
 			
 	}
-    protected void addTableViews(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
+    protected void addTableViews(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Table Views");
         IViewer tabViewer = new ClusterTableViewer(this.experiment, keggArrays, this.data, this.auxTitles, this.auxData);
         for (int i=0; i<keggArrays.length; i++) {
         	if (keggArrays[i].length>0)
-        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), tabViewer, new Integer(i))));
+        		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), tabViewer, new Integer(i))));
         }
         root.add(node);
     }
@@ -514,7 +519,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds node with cluster information.
      */
-    protected void addClusterInfo(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
+    protected void addClusterInfo(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Pathway Information");
         node.add(new DefaultMutableTreeNode(new LeafInfo("Results", new ATTRACTInfoViewer(keggArrays, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, synResultMatrix[1]))));
         root.add(node);
@@ -523,7 +528,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
     /**
      * Adds nodes to display centroid charts.
      */
-    protected void addCentroidViews(DefaultMutableTreeNode root, int[][] keggArrays, String title) {
+    protected void addCentroidViews(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {
         DefaultMutableTreeNode centroidNode = new DefaultMutableTreeNode(title + " Centroid Graphs");
         DefaultMutableTreeNode expressionNode = new DefaultMutableTreeNode(title + " Expression Graphs");
         ATTRACTCentroidViewer centroidViewer = new ATTRACTCentroidViewer(this.experiment, keggArrays, null, null, null, null, null, null, null, null, null);
@@ -531,8 +536,8 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
         centroidViewer.setVariances(this.variances.A);
         for (int i=0; i<keggArrays.length; i++) {
         	if (keggArrays[i].length>0){
-        		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
-        		expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
+        		centroidNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
+        		expressionNode.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), centroidViewer, new CentroidUserObject(i, CentroidUserObject.VALUES_MODE))));
         	}
         }
         root.add(centroidNode);
