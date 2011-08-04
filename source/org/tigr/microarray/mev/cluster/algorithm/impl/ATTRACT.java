@@ -530,7 +530,8 @@ public class ATTRACT extends AbstractAlgorithm{
 			for (int i=0; i<keggGroupCount; i++){
 				synResultMatrix[2][i] = keggPValues[i];
 				synResultMatrix[3][i] = keggNumGenes[i];	
-				synResultMatrix[3][i] = 0;	
+				synResultMatrix[4][i] = 0;		
+				synResultMatrix[5][i] = 0;	
 				
 			}
 
@@ -620,7 +621,7 @@ public class ATTRACT extends AbstractAlgorithm{
 							passSynGenes[groupIndex] = x.asStringArray();
 						} catch (Exception e){
 							passSynGenes[groupIndex] = new String[0];
-							System.out.println("error in pathway "+(groupIndex+1));
+							System.out.println("error in pathway "+(keggIndex+1));
 						}
 					}
 					for (int groupIndex = 0; groupIndex<lengthCor; groupIndex++){
@@ -634,7 +635,7 @@ public class ATTRACT extends AbstractAlgorithm{
 							passCorGenes[groupIndex] = x.asStringArray();
 						} catch (Exception e){
 							passCorGenes[groupIndex] = new String[0];
-							System.out.println("error in pathway "+(groupIndex+1));
+							System.out.println("error in pathway "+(keggIndex+1));
 						}
 					}
 					
