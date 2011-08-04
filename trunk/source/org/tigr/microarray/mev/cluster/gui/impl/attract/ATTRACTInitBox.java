@@ -516,7 +516,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
                 this.add(numGroupsField);
                 numGroupsField.addKeyListener(new KeyListener() {
 					public void keyPressed(KeyEvent e) {
-						showGroupNameTextFields();
+//						showGroupNameTextFields();
 					}
 
 					public void keyReleased(KeyEvent e) {
@@ -525,7 +525,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
 					}
 
 					public void keyTyped(KeyEvent e) {
-						showGroupNameTextFields();
+//						showGroupNameTextFields();
 						
 					}
                 });
@@ -1285,7 +1285,7 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     	return ret;
     }
     public int getNumGroups() {
-    	int numGroups = -1;
+    	int numGroups = 0;
     	if (getExperimentalDesign()==2){
     		numGroups = 2;
     	}else{

@@ -32,6 +32,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
@@ -58,12 +59,15 @@ public class ATTRACT extends AbstractAlgorithm{
 	private String[] sampleNames;
 	private String[] probeIDs;
 	private Object[][] synResultMatrix;
-	private Object[][] corResultMatrix;
+//	private Object[][] corResultMatrix;
 	float[] sortedMapping;
 
 	int validN;
 	private String chipTypeName;
 	private String[] resultColumns;
+	private int resultMatrixColumns;
+	private String[] nodeTitlesSyn;
+	private String[] nodeTitlesCor;
 
 	/**
 	 * This method should interrupt the calculation.
@@ -151,8 +155,10 @@ public class ATTRACT extends AbstractAlgorithm{
 		result.addCluster("cluster", result_cluster);
 		result.addParam("number-of-clusters", "1"); 
 		result.addObjectMatrix("synResultMatrix", synResultMatrix);
-		result.addObjectMatrix("corResultMatrix", corResultMatrix);
+//		result.addObjectMatrix("corResultMatrix", corResultMatrix);
 		result.addStringArray("resultColumns", resultColumns);
+		result.addStringArray("nodeTitlesSyn", nodeTitlesSyn);
+		result.addStringArray("nodeTitlesCor", nodeTitlesCor);
 		result.addMatrix("clusters_means", getMeans(keggGenesSynArrays));
 		result.addMatrix("clusters_variances", getVariances(keggGenesSynArrays, getMeans(keggGenesSynArrays))); 
 		result.addMatrix("geneGroupMeansMatrix", getAllGeneGroupMeans());
@@ -510,47 +516,66 @@ public class ATTRACT extends AbstractAlgorithm{
 			x = RHook.evalR(rCmd);
 			double[] keggNumGenes = x.asDoubleArray();
 			
-			synResultMatrix = new Object[4+sampleNames.length][];
+			resultMatrixColumns = 6;
+			synResultMatrix = new Object[resultMatrixColumns+sampleNames.length][];
 			synResultMatrix[0] = keggIDs;
 			synResultMatrix[1] = keggNames;
 			synResultMatrix[2] = new Object[keggGroupCount];
 			synResultMatrix[3] = new Object[keggGroupCount];
-			for (int i=4; i<synResultMatrix.length; i++){
+			synResultMatrix[4] = new Object[keggGroupCount];
+			synResultMatrix[5] = new Object[keggGroupCount];
+			for (int i=resultMatrixColumns; i<synResultMatrix.length; i++){
 				synResultMatrix[i] = new Object[keggGroupCount];
 			}
 			for (int i=0; i<keggGroupCount; i++){
 				synResultMatrix[2][i] = keggPValues[i];
-				synResultMatrix[3][i] = keggNumGenes[i];				             
+				synResultMatrix[3][i] = keggNumGenes[i];	
+				synResultMatrix[3][i] = 0;	
+				
 			}
 
-			corResultMatrix = new Object[4+sampleNames.length][];
-			corResultMatrix[0] = keggIDs;
-			corResultMatrix[1] = keggNames;
-			corResultMatrix[2] = new Object[keggGroupCount];
-			corResultMatrix[3] = new Object[keggGroupCount];
-			for (int i=4; i<corResultMatrix.length; i++){
-				corResultMatrix[i] = new Object[keggGroupCount];
-			}
-			for (int i=0; i<keggGroupCount; i++){
-				corResultMatrix[2][i] = keggPValues[i];
-				corResultMatrix[3][i] = keggNumGenes[i];				             
-			}
-			resultColumns = new String[4+sampleNames.length];
+//			corResultMatrix = new Object[resultMatrixColumns+sampleNames.length][];
+//			corResultMatrix[0] = keggIDs;
+//			corResultMatrix[1] = keggNames;
+//			corResultMatrix[2] = new Object[keggGroupCount];
+//			corResultMatrix[3] = new Object[keggGroupCount];
+//			corResultMatrix[4] = new Object[keggGroupCount];
+//			corResultMatrix[5] = new Object[keggGroupCount];
+//			for (int i=4; i<corResultMatrix.length; i++){
+//				corResultMatrix[i] = new Object[keggGroupCount];
+//			}
+//			for (int i=0; i<keggGroupCount; i++){
+//				corResultMatrix[2][i] = keggPValues[i];
+//				corResultMatrix[3][i] = keggNumGenes[i];				             
+//			}
+			resultColumns = new String[resultMatrixColumns+sampleNames.length];
 			resultColumns[0] = "KEGG ID";
 			resultColumns[1] = "KEGG Name";
 			resultColumns[2] = "Adjusted p-value";
 			resultColumns[3] = "Number of detected genes";
+			resultColumns[4] = "Number of Synexpression groups";
+			resultColumns[5] = "Number of Correlated Partners groups";
 			for (int i=0; i<sampleNames.length; i++){
-				resultColumns[i+4] = sampleNames[i];
+				resultColumns[i+resultMatrixColumns] = sampleNames[i];
 			}
-			
-			keggGenesSynArrays = new int[keggGroupCount][]; 
-			keggGenesCorArrays = new int[keggGroupCount][]; 
-			
+						
 
 			fireValueChanged(event);
 			rCmd = "sink('myfile.txt', append=FALSE, split=FALSE)";
 			RHook.evalR(rCmd);
+
+			String[]probeIDclone = probeIDs.clone();
+			sortedMapping = new float[probeIDclone.length];
+			for (int i=0; i<sortedMapping.length; i++){
+				sortedMapping[i]=i;
+			}
+			ExperimentUtil.sort3(probeIDclone, sortedMapping);
+
+			ArrayList<int[]> keggGenesSynArraysList = new ArrayList<int[]>();
+			ArrayList<String> nodeTitlesSynList = new ArrayList<String>();
+			ArrayList<int[]> keggGenesCorArraysList = new ArrayList<int[]>();
+			ArrayList<String> nodeTitlesCorList = new ArrayList<String>();
+			
 			for (int keggIndex=0; keggIndex<keggGroupCount; keggIndex++){
 				int percent = (int) (((float)keggIndex*100f)/((float)keggGroupCount));
 				event.setDescription("Gathering results... ("+percent+"%)");
@@ -562,15 +587,15 @@ public class ATTRACT extends AbstractAlgorithm{
 				
 				rCmd = "length(synExpression"+keggIndex+")";
 				x = RHook.evalR(rCmd);
-				int length; 
+				int lengthSyn; 
 				if (x==null)
-					length = 0;
+					lengthSyn = 0;
 				else
-					length = x.asInt();
+					lengthSyn = x.asInt();
 
-				String[] passSynGenes = null;
-				String[] passCorGenes = null;
-				if (length!=0){
+				String[][] passSynGenes = null;
+				String[][] passCorGenes = null;
+				if (lengthSyn!=0){
 					rCmd = "corPartners"+keggIndex+"<-findCorrPartners(synExpression"+keggIndex+", eset, removeTheseGenes)";
 					RHook.evalR(rCmd);
 					rCmd = "length(corPartners"+keggIndex+")";
@@ -580,18 +605,39 @@ public class ATTRACT extends AbstractAlgorithm{
 						lengthCor = 0;
 					else
 						lengthCor = x.asInt();
-					rCmd = "length(synExpression"+keggIndex+"@groups)";
-					x = RHook.evalR(rCmd);
-					if (x!=null)
-						System.out.println("length(synExpression"+keggIndex+"@groups) = "+x.asInt());
-					rCmd = "asMatrixSyn"+keggIndex+"<-t(as.matrix(unlist(synExpression"+keggIndex+"@groups[[1]]), nrow=length((synExpression"+keggIndex+"@groups[[1]])), ncol=length(unlist(synExpression"+keggIndex+"@groups[[1]])), byrow=true))";
-					RHook.evalR(rCmd);
-					rCmd = "asVectorSyn"+keggIndex+"<-as.vector(asMatrixSyn"+keggIndex+")";
-					RHook.evalR(rCmd);		
-					rCmd = "asMatrixCor"+keggIndex+"<-t(as.matrix(unlist(corPartners"+keggIndex+"@groups[[1]]), nrow=length((corPartners"+keggIndex+"@groups[[1]])), ncol=length(unlist(corPartners"+keggIndex+"@groups[[1]])), byrow=true))";
-					RHook.evalR(rCmd);
-					rCmd = "asVectorCor"+keggIndex+"<-as.vector(asMatrixCor"+keggIndex+")";
-					RHook.evalR(rCmd);	
+					synResultMatrix[4][keggIndex] = lengthSyn;
+					synResultMatrix[5][keggIndex] = lengthCor;
+					passSynGenes = new String[lengthSyn][];
+					passCorGenes = new String[lengthCor][];
+					for (int groupIndex = 0; groupIndex<lengthSyn; groupIndex++){
+						rCmd = "asMatrixSyn"+keggIndex+"<-t(as.matrix(unlist(synExpression"+keggIndex+"@groups[["+(groupIndex+1)+"]]), nrow=length((synExpression"+keggIndex+"@groups[[1]])), ncol=length(unlist(synExpression"+keggIndex+"@groups[[1]])), byrow=true))";
+						RHook.evalR(rCmd);
+						rCmd = "asVectorSyn"+keggIndex+"<-as.vector(asMatrixSyn"+keggIndex+")";
+						RHook.evalR(rCmd);		
+						rCmd = "asVectorSyn"+keggIndex;
+						x = RHook.evalR(rCmd);
+						try{
+							passSynGenes[groupIndex] = x.asStringArray();
+						} catch (Exception e){
+							passSynGenes[groupIndex] = new String[0];
+							System.out.println("error in pathway "+(groupIndex+1));
+						}
+					}
+					for (int groupIndex = 0; groupIndex<lengthCor; groupIndex++){
+						rCmd = "asMatrixCor"+keggIndex+"<-t(as.matrix(unlist(corPartners"+keggIndex+"@groups[["+(groupIndex+1)+"]]), nrow=length((corPartners"+keggIndex+"@groups[[1]])), ncol=length(unlist(corPartners"+keggIndex+"@groups[[1]])), byrow=true))";
+						RHook.evalR(rCmd);
+						rCmd = "asVectorCor"+keggIndex+"<-as.vector(asMatrixCor"+keggIndex+")";
+						RHook.evalR(rCmd);	
+						rCmd = "asVectorCor"+keggIndex;
+						x = RHook.evalR(rCmd);
+						try{
+							passCorGenes[groupIndex] = x.asStringArray();
+						} catch (Exception e){
+							passCorGenes[groupIndex] = new String[0];
+							System.out.println("error in pathway "+(groupIndex+1));
+						}
+					}
+					
 					rCmd = "synExpression"+keggIndex+"@profiles";
 					x = RHook.evalR(rCmd);				
 					try{
@@ -599,61 +645,81 @@ public class ATTRACT extends AbstractAlgorithm{
 						if (x!=null&&x.asMatrix()!=null){
 							synMatrix = x.asMatrix();
 							for (int i=0; i<synMatrix[0].length; i++)
-								synResultMatrix[i+4][keggIndex]=synMatrix[0][i];
+								synResultMatrix[i+resultMatrixColumns][keggIndex]=synMatrix[0][i];
 						}
 						rCmd = "corPartners"+keggIndex+"@profiles";
 						x = RHook.evalR(rCmd);
-						double[][] corMatrix;
-						if (x!=null&&x.asMatrix()!=null){
-							corMatrix = x.asMatrix();
-							for (int i=0; i<corMatrix[0].length; i++)
-								corResultMatrix[i+4][keggIndex]=corMatrix[0][i];					
-						}				
-						//generating result data
-						rCmd = "asVectorSyn"+keggIndex;
-						x = RHook.evalR(rCmd);
-						passSynGenes = x.asStringArray();
-						rCmd = "asVectorCor"+keggIndex;
-						x = RHook.evalR(rCmd);
-						passCorGenes = x.asStringArray();
+//						double[][] corMatrix;
+//						if (x!=null&&x.asMatrix()!=null){
+//							corMatrix = x.asMatrix();
+//							for (int i=0; i<corMatrix[0].length; i++)
+//								corResultMatrix[i+resultMatrixColumns][keggIndex]=corMatrix[0][i];					
+//						}				
 					} catch (Exception e){
 						System.out.println("Error in kegg pathway #"+keggIndex);
 					}
 				} 
-
-				if (passSynGenes==null){ //none or not enough genes
-					passSynGenes = new String[0];
-				}
-				if (passCorGenes==null){ //none or not enough genes
-					passCorGenes = new String[0];
-				}
-				keggGenesSynArrays[keggIndex] = new int[passSynGenes.length]; //member genes	
-				keggGenesCorArrays[keggIndex] = new int[passCorGenes.length]; //member genes	
-				String[]probeIDclone = probeIDs.clone();
-				sortedMapping = new float[probeIDclone.length];
-				for (int i=0; i<sortedMapping.length; i++){
-					sortedMapping[i]=i;
-				}
-				ExperimentUtil.sort3(probeIDclone, sortedMapping);
 				
-				for (int i=0; i<keggGenesSynArrays[keggIndex].length; i++){
-					try{
-						keggGenesSynArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passSynGenes[i])];
-					} catch (Exception e){
-						System.out.println("gene not found in Probes: "+passSynGenes[i]+", "+i);
-						e.printStackTrace();
-					}
+				if (passSynGenes==null){ //none or not enough genes
+					passSynGenes = new String[0][0];
 				}
-				for (int i=0; i<keggGenesCorArrays[keggIndex].length; i++){
-					try{
-						keggGenesCorArrays[keggIndex][i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passCorGenes[i])];
-					} catch (Exception e){
-						System.out.println("gene not found in Probes: "+passCorGenes[i]+", "+i);
-						e.printStackTrace();
-					}
+				
+
+				if (passCorGenes==null){ //none or not enough genes
+					passCorGenes = new String[0][0];
 				}
+
+
+				for (int groupIndex=0; groupIndex<passSynGenes.length; groupIndex++){
+					int[] genesInGroup = new int[passSynGenes[groupIndex].length]; //member genes
+					for (int i=0; i<genesInGroup.length; i++){
+						try{
+							genesInGroup[i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passSynGenes[groupIndex][i])];
+						} catch (Exception e){
+							System.out.println("gene not found in Probes: "+passSynGenes[groupIndex][i]+", "+i);
+							e.printStackTrace();
+						}
+					}
+					keggGenesSynArraysList.add(genesInGroup);
+					nodeTitlesSynList.add(((String) synResultMatrix[1][keggIndex] + ", (Group "+(groupIndex+1)+")"));
+				}	
+								
+				
+				for (int groupIndex=0; groupIndex<passCorGenes.length; groupIndex++){
+					int[] genesInGroup = new int[passCorGenes[groupIndex].length]; //member genes
+					for (int i=0; i<genesInGroup.length; i++){
+						try{
+							genesInGroup[i] = (int)sortedMapping[Arrays.binarySearch(probeIDclone, passCorGenes[groupIndex][i])];
+						} catch (Exception e){
+							System.out.println("gene not found in Probes: "+passCorGenes[groupIndex][i]+", "+i);
+							e.printStackTrace();
+						}
+					}
+					keggGenesCorArraysList.add(genesInGroup);
+					nodeTitlesCorList.add(((String) synResultMatrix[1][keggIndex] + ", (Group "+(groupIndex+1)+")"));
+				}	
 			}		
 
+			keggGenesSynArrays = new int[keggGenesSynArraysList.size()][];
+			nodeTitlesSyn = new String[keggGenesSynArrays.length];
+			for (int i=0; i<keggGenesSynArrays.length; i++){
+				keggGenesSynArrays[i] = new int[keggGenesSynArraysList.get(i).length];
+				for (int j=0; j<keggGenesSynArrays[i].length; j++){
+					keggGenesSynArrays[i][j] = keggGenesSynArraysList.get(i)[j];
+				}
+				nodeTitlesSyn[i] = nodeTitlesSynList.get(i);				
+			}
+
+			keggGenesCorArrays = new int[keggGenesCorArraysList.size()][];
+			nodeTitlesCor = new String[keggGenesCorArrays.length];
+			for (int i=0; i<keggGenesCorArrays.length; i++){
+				keggGenesCorArrays[i] = new int[keggGenesCorArraysList.get(i).length];
+				for (int j=0; j<keggGenesCorArrays[i].length; j++){
+					keggGenesCorArrays[i][j] = keggGenesCorArraysList.get(i)[j];
+				}
+				nodeTitlesCor[i] = nodeTitlesCorList.get(i);
+			}
+			
 			event.setDescription("Generating viewers...");
 			fireValueChanged(event);
 			rCmd = "sink()";
