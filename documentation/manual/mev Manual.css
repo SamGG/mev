@@ -46,8 +46,9 @@ div.screenshots span.caption {
 div.leftsidecorrection {
 	float: left;
 }
-
-#Here's an example of how to select the links in the navigation bar for individual formatting. 
+div.navigation-bar {
+	clear: both;
+}
 div.navigation-bar a.prev {
 	color: red;
 	font-style: bold;
