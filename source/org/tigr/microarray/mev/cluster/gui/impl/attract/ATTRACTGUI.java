@@ -440,11 +440,15 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
 
 	private void addNotEnoughGenesFolder(DefaultMutableTreeNode root, int[][] keggArrays, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("Not Enough Significant Genes");
+        boolean pathwaysExist = false;
         for (int i=0; i<keggArrays.length; i++) {
-        	if (keggArrays[i].length==0)
+        	if (keggArrays[i].length==0){
         		node.add(new DefaultMutableTreeNode(new LeafInfo(this.getNodeTitle(i, syn), null, new Integer(i))));
+        		pathwaysExist = true;
+        	}
         }
-        root.add(node);		
+        if (pathwaysExist)
+        	root.add(node);		
 	}
 
 	private void addGeneSetInfo(DefaultMutableTreeNode root, Object[][] matrix, String title) {
@@ -521,7 +525,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
      */
     protected void addClusterInfo(DefaultMutableTreeNode root, int[][] keggArrays, String title, boolean syn) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(title + " Pathway Information");
-        node.add(new DefaultMutableTreeNode(new LeafInfo("Results", new ATTRACTInfoViewer(keggArrays, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, synResultMatrix[1]))));
+        node.add(new DefaultMutableTreeNode(new LeafInfo("Results", new ATTRACTInfoViewer(keggArrays, this.experiment.getNumberOfGenes(), this.dataDesign, this.numGroups, (syn?nodeTitlesSyn:nodeTitlesCor)))));
         root.add(node);
     }
     

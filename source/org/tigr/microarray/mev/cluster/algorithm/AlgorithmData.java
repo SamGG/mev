@@ -21,6 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.tigr.microarray.mev.cluster.Cluster;
 import org.tigr.util.FloatMatrix;
 
@@ -39,6 +41,7 @@ public class AlgorithmData implements Serializable {
     protected HashMap intArrays;
     protected HashMap stringArrays;
     protected HashMap objectMatrices;
+    protected HashMap resultNode;
     protected AlgorithmParameters parameters;
     protected HashMap clusters;
     protected HashMap resultMap;  //resultMap used in TEASE
@@ -68,6 +71,7 @@ public class AlgorithmData implements Serializable {
         intMatrices = new HashMap();
         intArrays  = new HashMap();
         stringArrays = new HashMap();
+        resultNode = new HashMap();
         objectMatrices = new HashMap();
         parameters = new AlgorithmParameters();
         clusters = new HashMap();
@@ -80,6 +84,7 @@ public class AlgorithmData implements Serializable {
         this.intMatrices = data.intMatrices;
         this.intArrays  = data.intArrays;
         this.stringArrays = data.stringArrays;
+        this.resultNode = data.resultNode;
         this.objectMatrices = data.objectMatrices;
         this.parameters = data.parameters;
         this.clusters = data.clusters;
@@ -263,6 +268,23 @@ public class AlgorithmData implements Serializable {
      */
     public void addStringArray(String name, String [] stringArray) {
         stringArrays.put(name, stringArray);
+    }
+    /**
+     * Gets a matrix of int values by its name.
+     *
+     * @param name the name of matrix.
+     */
+    public DefaultMutableTreeNode getResultNode(String name) {
+        return(DefaultMutableTreeNode)resultNode.get(name);
+    }
+    /**
+     * Adds a matrix of int values by its name
+     *
+     * @param name the name of the matrix.
+     * @param intArray the array to be added.
+     */
+    public void addResultNode(String name, DefaultMutableTreeNode resultDefNode) {
+    	resultNode.put(name, resultDefNode);
     }
     /**
      * Gets a matrix of int values by its name.

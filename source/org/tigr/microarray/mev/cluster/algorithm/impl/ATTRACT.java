@@ -562,7 +562,11 @@ public class ATTRACT extends AbstractAlgorithm{
 						
 
 			fireValueChanged(event);
-			rCmd = "sink('myfile.txt', append=FALSE, split=FALSE)";
+			rCmd = "zz <- file('all.Rout', open='wt')";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz)";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz, type='message')";
 			RHook.evalR(rCmd);
 
 			String[]probeIDclone = probeIDs.clone();
@@ -586,7 +590,7 @@ public class ATTRACT extends AbstractAlgorithm{
 				rCmd = "synExpression"+keggIndex+"<-findSynexprs('"+keggIDs[keggIndex]+"', attract_out, removeTheseGenes)";
 				RHook.evalR(rCmd);
 				
-				rCmd = "length(synExpression"+keggIndex+")";
+				rCmd = "length(synExpression"+keggIndex+"@groups)";
 				x = RHook.evalR(rCmd);
 				int lengthSyn; 
 				if (x==null)
@@ -599,7 +603,7 @@ public class ATTRACT extends AbstractAlgorithm{
 				if (lengthSyn!=0){
 					rCmd = "corPartners"+keggIndex+"<-findCorrPartners(synExpression"+keggIndex+", eset, removeTheseGenes)";
 					RHook.evalR(rCmd);
-					rCmd = "length(corPartners"+keggIndex+")";
+					rCmd = "length(corPartners"+keggIndex+"@groups)";
 					x = RHook.evalR(rCmd);
 					int lengthCor; 
 					if (x==null)
