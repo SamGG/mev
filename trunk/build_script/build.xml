@@ -71,6 +71,7 @@
 	<property name="ATTRACT" value="y"/>
     <property name="BETR" value="y"/>
 	<property name="LIMMA" value="y"/>
+	<property name="CLVALID" value="y"/>
 	<property name="GOSEQ" value="y"/>
 	<property name="SURV" value="y"/>
 	<property name="GLOBANC" value="y"/>
@@ -125,7 +126,7 @@
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="algorithm-modules"
-depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
+depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,CLVALID,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,LEM,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -147,7 +148,7 @@ depends="build-base,HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST
                   have it's target within the list in the 'depends' attribute below. 
     -->   
     <target name="modules-only"
-depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
+depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TFA,NONPAR,GSEA,ATTRACT,BETR,LIMMA,CLVALID,GOSEQ,SURV,GLOBANC,RP,NMF,SVM,USC,KNNC,DAM,GDM,PCA,COA,TRN,EASE,BN,LM,MINET,EDGER,DESEQ,DEGSEQ">
     </target>
 
 
@@ -370,6 +371,8 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
                 <pathelement location="${lib.dir}/jsch-0.1.39.jar"/>
                 <pathelement location="${tigr.dir}/microarray/file"/>
 				<pathelement location="${lib.dir}/weka.jar" />
+            	<pathelement location="${lib.dir}/jfreechart-1.0.13.jar"/>
+            	<pathelement location="${lib.dir}/jcommon-1.0.16.jar"/>
 				<pathelement location="${lib.dir}/goose.jar" />
             	<pathelement location="${lib.dir}/magetab-parser.jar" />
             	
@@ -1305,6 +1308,42 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
       </propertyfile>
 	</target>
 
+	<target name="CLVALID" depends="CLVALID-GUI" if="CLVALID">
+        <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
+            <include name="CLVALID.java"/>
+            <classpath>
+                <pathelement location="${lib.dir}/JSciCore.jar"/>
+
+                <!-- jars to support module compilation -->
+                <pathelement location="${lib.dir}/mev-util.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-gui-support.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-impl.jar"/>
+                <pathelement location="${lib.dir}/mev-algorithm-support.jar"/>
+                <pathelement location="${lib.dir}/mev-base.jar"/>   
+            	<pathelement location="${lib.dir}/JRI.jar"/>
+            </classpath>
+	  </javac>
+	  <propertyfile file="${alg.properties.file}">
+            <entry key="CLVALID" value="org.tigr.microarray.mev.cluster.algorithm.impl.CLVALID"/>
+      </propertyfile>
+	</target>
+	
+	<target name="CLVALID-GUI">
+        <javac debug="${debug}" target="${java.target.version}" srcdir="${gui.impl.dir}/clvalid" destdir="${dest.dir}">
+            <classpath refid="module.build.class.path"/>
+	    </javac>
+	  <propertyfile file="${gui.properties.file}">
+		<entry key="gui.names" value="CLVALID:" operation="+"/>
+            <entry key="CLVALID.name" value="CLVALID"/>
+            <entry key="CLVALID.class" value="org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDGUI"/>
+	  	<entry key="CLVALID.category" value="${CLUSTERING}"/> 
+	  	<entry key="CLVALID.smallIcon" value="analysis16.gif"/>
+            <entry key="CLVALID.largeIcon" value="CLVALID.gif"/>
+            <entry key="CLVALID.tooltip" value="Cluster Validation"/>
+      </propertyfile>
+	</target>
+	
 	<target name="GOSEQ" depends="GOSEQ-GUI" if="GOSEQ">
         <javac debug="${debug}" target="${java.target.version}" sourcepath="" srcdir="${alg.impl.dir}" destdir="${dest.dir}">
             <include name="GOSEQ.java"/>

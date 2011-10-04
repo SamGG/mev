@@ -21,6 +21,9 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -32,8 +35,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
@@ -54,6 +59,9 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     private DistanceMetricPanel metricPanel;
     private String globalMetricName;
     private boolean globalAbsoluteDistance;
+
+	private ClusterValidationPanel validationPanel;
+
     
     public HCLInitDialog(Frame parent) {
         this(parent, " ", false, false);
@@ -148,22 +156,19 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         group.add(CLC);
         group.add(SLC);
         
+        validationPanel = new ClusterValidationPanel("Validation");
+        validationPanel.getLowClusterRange().addComponentListener(new ComponentListener(){
+			public void componentMoved(ComponentEvent e) {}
+			public void componentResized(ComponentEvent e) {}
+			public void componentShown(ComponentEvent e) {
+				pack();
+			}        	
+			public void componentHidden(ComponentEvent e) {
+				pack();				
+			}
+        });
         
-//        JPanel parameters = new JPanel(new GridLayout(0, 2, 10, 10));
-  //          ParameterPanel parameters = new ParameterPanel();
-//        parameters.setLayout(new GridLayout(0, 2, 10, 10));
-  //      parameters.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    //    parameters.setBackground(Color.white);
- //       parameters.setForeground(Color.black);
-   //     parameters.add(ALC);
-     //   parameters.add(genes_box);
-   //     parameters.add(CLC);
-    //    parameters.add(cluster_box);
-      //  parameters.add(SLC);
-        
-        
-    //    ParameterPanel parameterPanel = new ParameterPanel();
-      //  parameterPanel.add(parameters);
+
         
         JPanel parameterPanel = new JPanel(new GridBagLayout());
         parameterPanel.setBackground(Color.white);
@@ -173,8 +178,10 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         if(showDistancePanel) {
             parameterPanel.add(metricPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(validationPanel, new GridBagConstraints(0,4,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         } else {
             parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(validationPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         }
         addContent(parameterPanel);
         setActionListeners(listener);
@@ -321,5 +328,33 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     
     protected void disposeDialog() {
     }
+
+	public boolean isValidate() {
+		return this.validationPanel.getUseValidationBox().isSelected();
+	}
+
+	public boolean isInternalV() {
+		return this.validationPanel.getInternalValidationBox().isSelected();
+	}
+
+	public boolean isStabilityV() {
+		return this.validationPanel.getStabilityValidationBox().isSelected();
+	}
+
+	public boolean isBiologicalV() {
+		return this.validationPanel.getBiologicalValidationBox().isSelected();
+	}
+
+	public int getLowClusterRange() {
+		return Integer.parseInt(this.validationPanel.getLowClusterRange().getText());
+	}
+
+	public int getHighClusterRange() {
+		return Integer.parseInt(this.validationPanel.getHighClusterRange().getText());
+	}
+
+	public String[] getMethodsArray() {
+		return this.validationPanel.getMethodsArray();
+	}
     
 }

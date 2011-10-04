@@ -14,6 +14,7 @@
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
+import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -22,8 +23,11 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.FloatMatrix;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class HCL extends AbstractAlgorithm {
     
@@ -35,6 +39,7 @@ public class HCL extends AbstractAlgorithm {
     private int Assigned;
     private int OptProgress;
     private float[][] nmfSimMat;
+	private FloatMatrix expMatrix;
     
     public HCL() {}
     
@@ -48,404 +53,408 @@ public class HCL extends AbstractAlgorithm {
     	return execute(data);
     }
     public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
+		
+		expMatrix = data.getMatrix("experiment");
+		if (expMatrix == null) {
+		    throw new AlgorithmException("Input data is absent.");
+		}
+		AlgorithmParameters map = data.getParams();
+		
+		int function = map.getInt("hcl-distance-function", EUCLIDEAN);
+		float factor; // = map.getFloat("distance-factor", 1.0f);
+		boolean absolute = map.getBoolean("hcl-distance-absolute", false);
+		boolean genes = map.getBoolean("calculate-genes", true);
+		boolean optimizeOrdering = map.getBoolean("optimize-sample-ordering", false);
+		if (genes) optimizeOrdering = map.getBoolean("optimize-gene-ordering", false);
+		int method = map.getInt("method-linkage", 0);
 	
-	FloatMatrix expMatrix = data.getMatrix("experiment");
-	if (expMatrix == null) {
-	    throw new AlgorithmException("Input data is absent.");
-	}
-	AlgorithmParameters map = data.getParams();
+	    boolean isValidate = map.getBoolean("validate");
+	    boolean isInternalV = map.getBoolean("internal-validation");
+	    boolean isStabilityV = map.getBoolean("stability-validation");
+	    boolean isBiologicalV = map.getBoolean("biological-validation");
+	    int lowClusterValidityRange = map.getInt("cluster-range-low");
+	    int highClusterValidityRange = map.getInt("cluster-range-high");
+		
+		//============= Init ====================
+		
+		int n;
+		if (genes) {
+		    n = expMatrix.getRowDimension();
+		} else {
+		    n = expMatrix.getColumnDimension();
+		}
+		
+		int two_n = 2*n;
+		Assigned = n;
+		parentless = n;
+		TreeHeight = 0;
+		double MaxCorrelation = 0;
+		
+		float[] Height = new float[two_n];
+		int[] Parent = new int[two_n];
+		int[] Child1 = new int[two_n];
+		int[] Child2 = new int[two_n];
+		int[] NodeHeight = new int[two_n];
+		int[] NodeOrder  = new int[n];
+		int[] NumberOfChildren = new int[two_n];
+		int[][] LeavesUnder = new int[two_n][];
+		
+		
+		for (int i=0; i<two_n; ++i) {
+		    Height[i] = 0.0f;
+		    Parent[i] = -1;
+		    Child1[i] = -1;
+		    Child2[i] = -1;
+		    NodeHeight[i] = 0;
+		}
+		
+		for (int i=0; i<n; ++i) {
+		    NodeOrder[i]=-1;
+		    NumberOfChildren[i]=1;
+		}
+		//======== Init =========
+		int memoryAssess =  ExperimentUtil.javaHCLMemoryAssess(n, optimizeOrdering);
+		if (memoryAssess == 0)
+			stop = false;
+		if (memoryAssess == 1)
+			stop = true;
+		if (memoryAssess == 2){
+			stop = true;
+			HelpWindow.launchBrowser(new JFrame(), "Java Out of Memory Error");
+		}
+		float[][] SimilarityMatrix = new float[n][];
+		if (optimizeOrdering&&!stop)
+			SimilarityMatrix = new float[n][n];
+		float[] Min = new float[n];
+		int[] MinIndex = new int[n];
+		final int UNITS = 200;
+		
+		AlgorithmEvent event = null;
+		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, UNITS, "Creating similarity matrix");
+		// set progress limit
+		fireValueChanged(event);
+		event.setId(AlgorithmEvent.PROGRESS_VALUE);
+		event.setIntValue(0);
+		// set zero position
+		fireValueChanged(event);
+		int i;
+		int CurrentProgress = 0;
+		int OldCurrentProgress = 0;
+		double Factor=UNITS/(double)n;
 	
-	int function = map.getInt("hcl-distance-function", EUCLIDEAN);
-	float factor; // = map.getFloat("distance-factor", 1.0f);
-	boolean absolute = map.getBoolean("hcl-distance-absolute", false);
-	boolean genes = map.getBoolean("calculate-genes", true);
-	boolean optimizeOrdering = map.getBoolean("optimize-sample-ordering", false);
-	if (genes) optimizeOrdering = map.getBoolean("optimize-gene-ordering", false);
-	int method = map.getInt("method-linkage", 0);
-	
-	//============= Init ====================
-	
-	int n;
-	if (genes) {
-	    n = expMatrix.getRowDimension();
-	} else {
-	    n = expMatrix.getColumnDimension();
-	}
-	
-	int two_n = 2*n;
-	Assigned = n;
-	parentless = n;
-	TreeHeight = 0;
-	double MaxCorrelation = 0;
-	
-	float[] Height = new float[two_n];
-	int[] Parent = new int[two_n];
-	int[] Child1 = new int[two_n];
-	int[] Child2 = new int[two_n];
-	int[] NodeHeight = new int[two_n];
-	int[] NodeOrder  = new int[n];
-	int[] NumberOfChildren = new int[two_n];
-	int[][] LeavesUnder = new int[two_n][];
-	
-	
-	for (int i=0; i<two_n; ++i) {
-	    Height[i] = 0.0f;
-	    Parent[i] = -1;
-	    Child1[i] = -1;
-	    Child2[i] = -1;
-	    NodeHeight[i] = 0;
-	}
-	
-	for (int i=0; i<n; ++i) {
-	    NodeOrder[i]=-1;
-	    NumberOfChildren[i]=1;
-	}
-	//======== Init =========
-	int memoryAssess =  ExperimentUtil.javaHCLMemoryAssess(n, optimizeOrdering);
-	if (memoryAssess == 0)
-		stop = false;
-	if (memoryAssess == 1)
-		stop = true;
-	if (memoryAssess == 2){
-		stop = true;
-		HelpWindow.launchBrowser(new JFrame(), "Java Out of Memory Error");
-	}
-	float[][] SimilarityMatrix = new float[n][];
-	if (optimizeOrdering&&!stop)
-		SimilarityMatrix = new float[n][n];
-	float[] Min = new float[n];
-	int[] MinIndex = new int[n];
-	final int UNITS = 200;
-	
-	AlgorithmEvent event = null;
-	event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, UNITS, "Creating similarity matrix");
-	// set progress limit
-	fireValueChanged(event);
-	event.setId(AlgorithmEvent.PROGRESS_VALUE);
-	event.setIntValue(0);
-	// set zero position
-	fireValueChanged(event);
-	int i;
-	int CurrentProgress = 0;
-	int OldCurrentProgress = 0;
-	double Factor=UNITS/(double)n;
-      /*  if ((function==PEARSON)           ||
-	    (function==PEARSONUNCENTERED) ||
-	    (function==PEARSONSQARED)     ||
-	    (function==COSINE)            ||
-	    (function==COVARIANCE)        ||
-	    (function==DOTPRODUCT)        ||
-	    (function==SPEARMANRANK)      ||
-	    (function==KENDALLSTAU)) {
-	    factor = -1.0f;
-	} else {
-	    factor = 1.0f;
-	}
-       */
-	if (!nmf){
-		factor = (float)1.0;  //factor is used as an optional scaling factor
-		for (i=1; i<n; ++i) {
-		    CurrentProgress=(int)(i*Factor);
+		if (!nmf){
+			factor = (float)1.0;  //factor is used as an optional scaling factor
+			for (i=1; i<n; ++i) {
+			    CurrentProgress=(int)(i*Factor);
+			    if (CurrentProgress>OldCurrentProgress) {
+				event.setIntValue(CurrentProgress);
+				fireValueChanged(event);
+				OldCurrentProgress=CurrentProgress;
+			    }
+			    if (!optimizeOrdering)
+			    	SimilarityMatrix[i] = new float[i];
+		
+			    Min[i] = Float.POSITIVE_INFINITY;
+			    for (int j=0; j<i; ++j) {
+					if (stop) {
+					    throw new AbortException();
+					}
+					
+					if (genes) {
+					    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
+					    System.out.print(SimilarityMatrix[i][j]+"\t");
+					} else {
+					    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
+					    System.out.print(SimilarityMatrix[i][j]+"\t");
+					}
+						if (optimizeOrdering){
+							SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
+							//squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
+						}
+					if (SimilarityMatrix[i][j] < Min[i]) {
+					    Min[i] = SimilarityMatrix[i][j];
+					    MinIndex[i] = j;
+					}
+			    }
+			}
+		} else {
+			SimilarityMatrix = nmfSimMat;
+			for (i=1; i<n; ++i) {
+			    for (int j=0; j<i; ++j) {
+					if (SimilarityMatrix[i][j] < Min[i]) {
+					    Min[i] = SimilarityMatrix[i][j];
+					    MinIndex[i] = j;
+					}
+			    }
+			}
+		}
+		
+		//========================================
+		
+		if (stop) {
+		    throw new AbortException();
+		}
+		
+		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, UNITS, "Calculating tree");
+		// set progress limit
+		fireValueChanged(event);
+		event.setId(AlgorithmEvent.PROGRESS_VALUE);
+		event.setIntValue(0);
+		// set zero position
+		fireValueChanged(event);
+		
+		long CalculatedNodes=0;
+		CurrentProgress=0;
+		OldCurrentProgress=0;
+		Factor=UNITS/(double)n;
+		int j,k,p;
+		int NodeCounter = 0;
+		double MaxDistance=0;
+		double MinDistance=Double.POSITIVE_INFINITY;
+		MaxCorrelation=Double.POSITIVE_INFINITY;
+		double MinCorrelation=Double.POSITIVE_INFINITY;
+		int owner[] = new int[n];
+		for (i=0; i<n; i++)
+		    owner[i] = i;
+		
+		while (parentless > 1) { 				//main loop runs until every node except the root node is assigned a parent node.
+		    if (stop) {
+			throw new AbortException();
+		    }
+		    CurrentProgress=(int)((CalculatedNodes+1)*Factor);
 		    if (CurrentProgress>OldCurrentProgress) {
 			event.setIntValue(CurrentProgress);
 			fireValueChanged(event);
 			OldCurrentProgress=CurrentProgress;
 		    }
-		    if (!optimizeOrdering)
-		    	SimilarityMatrix[i] = new float[i];
-	
-		    Min[i] = Float.POSITIVE_INFINITY;
-		    for (int j=0; j<i; ++j) {
-				if (stop) {
-				    throw new AbortException();
-				}
-				
-				if (genes) {
-				    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
-				    System.out.print(SimilarityMatrix[i][j]+"\t");
-				} else {
-				    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
-				    System.out.print(SimilarityMatrix[i][j]+"\t");
-				}
-					if (optimizeOrdering){
-						SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
-						//squareMatrix[j][i] = SimilarityMatrix[i][j]; //triangular Similarity Matrix
-					}
-				if (SimilarityMatrix[i][j] < Min[i]) {
-				    Min[i] = SimilarityMatrix[i][j];
-				    MinIndex[i] = j;
+		    CalculatedNodes++;
+		    double close_d = Double.POSITIVE_INFINITY;              // first find the closest pair
+		    double test_d = Double.POSITIVE_INFINITY;
+		    int test_i = -2;
+		    int test_j = -2;
+		    int close_i = -2, close_j = -2;
+		    for (i=1; i<n; ++i) {  							//finds closest remaining elements
+				if (owner[i] != -1) {  						//overlooks elements already counted
+				    if (Min[i] < test_d) {
+						test_d = Min[i];
+						test_i = i;
+						test_j = MinIndex[i];
+				    }
 				}
 		    }
-		}
-	} else {
-		SimilarityMatrix = nmfSimMat;
-		for (i=1; i<n; ++i) {
-		    for (int j=0; j<i; ++j) {
-				if (SimilarityMatrix[i][j] < Min[i]) {
-				    Min[i] = SimilarityMatrix[i][j];
-				    MinIndex[i] = j;
-				}
-		    }
-		}
-	}
-	
-	//========================================
-	
-	if (stop) {
-	    throw new AbortException();
-	}
-	
-	event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, UNITS, "Calculating tree");
-	// set progress limit
-	fireValueChanged(event);
-	event.setId(AlgorithmEvent.PROGRESS_VALUE);
-	event.setIntValue(0);
-	// set zero position
-	fireValueChanged(event);
-	
-	long CalculatedNodes=0;
-	CurrentProgress=0;
-	OldCurrentProgress=0;
-	Factor=UNITS/(double)n;
-	int j,k,p;
-	int testcount = 0;
-	int Counter;
-	int NodeCounter = 0;
-	double MaxDistance=0;
-	double MinDistance=Double.POSITIVE_INFINITY;
-	MaxCorrelation=Double.POSITIVE_INFINITY;
-	double MinCorrelation=Double.POSITIVE_INFINITY;
-	int owner[] = new int[n];
-	for (i=0; i<n; i++)
-	    owner[i] = i;
-	
-	while (parentless > 1) { 				//main loop runs until every node except the root node is assigned a parent node.
-	    if (stop) {
-		throw new AbortException();
-	    }
-	    CurrentProgress=(int)((CalculatedNodes+1)*Factor);
-	    if (CurrentProgress>OldCurrentProgress) {
-		event.setIntValue(CurrentProgress);
-		fireValueChanged(event);
-		OldCurrentProgress=CurrentProgress;
-	    }
-	    CalculatedNodes++;
-	    double close_d = Double.POSITIVE_INFINITY;              // first find the closest pair
-	    double test_d = Double.POSITIVE_INFINITY;
-	    double TestMin = Double.POSITIVE_INFINITY;
-	    int test_i = -2;
-	    int test_j = -2;
-	    int close_i = -2, close_j = -2;
-	    for (i=1; i<n; ++i) {  							//finds closest remaining elements
-			if (owner[i] != -1) {  						//overlooks elements already counted
-			    if (Min[i] < test_d) {
-					test_d = Min[i];
-					test_i = i;
-					test_j = MinIndex[i];
-			    }
+		    i = close_i; // lexa: ???
+		    j = close_j; // lexa: ???
+		    i = test_i;
+		    j = test_j;
+	            
+	                        //JCB 
+	          //  if(i >= n || j >= n || i < 0 || j < 0)
+	              //  break;
+	            
+		    close_d = test_d;
+		    double height_k = close_d;                              //was close_d/2.0 ????????
+		    if ((Math.abs(close_d)>0) && (Math.abs(close_d)<MinDistance))
+			MinDistance=Math.abs(close_d);
+		    //       if ((close_d>0) && (close_d<MinDistance)) MinDistance=close_d;
+		    if ((close_d!=1) && (close_d<MaxCorrelation))
+			MaxCorrelation=close_d;
+		    if ((close_d>MaxCorrelation) && (close_d<MinCorrelation))
+			MinCorrelation=close_d;
+		    if (close_d>MaxDistance)
+			MaxDistance=close_d;
+		    try {
+			//System.out.println(" owner["+i+"]="+owner[i]);
+			if (owner[i]>=n && Height[owner[i]]>height_k) {        // Gene1 already assignd to a node, was >= ?!
+			    k = owner[i];
+			    AssertParentage(Parent,NumberOfChildren, Child1, Child2,owner[j],k);
+			} else if (owner[j]>=n && Height[owner[j]]>height_k) { // Gene2 already assignd to node was >= ?!
+			    k = owner[j];
+			    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[i],k);
+			} else {
+			    k = NewNode(Height, height_k);
+			    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[i],k);
+			    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[j],k);
 			}
-	    }
-	    i = close_i; // lexa: ???
-	    j = close_j; // lexa: ???
-	    i = test_i;
-	    j = test_j;
-            
-                        //JCB 
-          //  if(i >= n || j >= n || i < 0 || j < 0)
-              //  break;
-            
-	    close_d = test_d;
-	    double height_k = close_d;                              //was close_d/2.0 ????????
-	    if ((Math.abs(close_d)>0) && (Math.abs(close_d)<MinDistance))
-		MinDistance=Math.abs(close_d);
-	    //       if ((close_d>0) && (close_d<MinDistance)) MinDistance=close_d;
-	    if ((close_d!=1) && (close_d<MaxCorrelation))
-		MaxCorrelation=close_d;
-	    if ((close_d>MaxCorrelation) && (close_d<MinCorrelation))
-		MinCorrelation=close_d;
-	    if (close_d>MaxDistance)
-		MaxDistance=close_d;
-	    try {
-		//System.out.println(" owner["+i+"]="+owner[i]);
-		if (owner[i]>=n && Height[owner[i]]>height_k) {        // Gene1 already assignd to a node, was >= ?!
-		    k = owner[i];
-		    AssertParentage(Parent,NumberOfChildren, Child1, Child2,owner[j],k);
-		} else if (owner[j]>=n && Height[owner[j]]>height_k) { // Gene2 already assignd to node was >= ?!
-		    k = owner[j];
-		    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[i],k);
-		} else {
-		    k = NewNode(Height, height_k);
-		    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[i],k);
-		    AssertParentage(Parent,NumberOfChildren,Child1, Child2,owner[j],k);
-		}
-		
-		
-		
-		
-		NodeOrder[NodeCounter]=k;
-		NodeHeight[k]=Math.max(NodeHeight[Child1[k]]+1,NodeHeight[Child2[k]]+1);
-	    } catch (Exception e) {
-		e.printStackTrace();
-		fireValueChanged(new AlgorithmEvent(this, AlgorithmEvent.WARNING, 0, "Error: "+e.toString()+" - Height("+String.valueOf(height_k)+","+")"));
-		k=0;
-	    }
-
-	    NodeCounter++;
-	    owner[i] = k;    //node k replaces child node or leaf
-	    owner[j] = -1;  //eliminates j from search
-	    if (method == -1) {       // minimum method
-		for (p=0; p<j; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.min(SimilarityMatrix[i][p],SimilarityMatrix[j][p]);
-		for (p=j+1; p<i; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.min(SimilarityMatrix[i][p],SimilarityMatrix[p][j]);
-		for (p=i+1; p<n; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)Math.min(SimilarityMatrix[p][i],SimilarityMatrix[p][j]);
-	    } else if (method == +1) {   // maximum method
-		for (p=0; p<j; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.max(SimilarityMatrix[i][p],SimilarityMatrix[j][p]);
-		for (p=j+1; p<i; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.max(SimilarityMatrix[i][p],SimilarityMatrix[p][j]);
-		for (p=i+1; p<n; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)Math.max(SimilarityMatrix[p][i],SimilarityMatrix[p][j]);
-	    } else if (method == 2) {             // average method
-		//                int schrott=NumberOfChildren[owner[j]]+NumberOfChildren[owner[i]];
-		//            System.out.println(NumberOfChildren[owner[i]]);
-		for (p=0; p<j; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p]*NumberOfChildren[owner[i]] +
-		    SimilarityMatrix[j][p]*NumberOfChildren[owner[j]])/
-		    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
-		for (p=j+1; p<i; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p]*NumberOfChildren[owner[i]] +
-		    SimilarityMatrix[p][j]*NumberOfChildren[owner[j]])/
-		    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
-		for (p=i+1; p<n; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)((SimilarityMatrix[p][i]*NumberOfChildren[owner[i]] +
-		    SimilarityMatrix[p][j]*NumberOfChildren[owner[j]])/
-		    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
-	    } else if (method == 0) {             // average method
-		for (p=0; p<j; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p] + SimilarityMatrix[j][p])/2.0);
-		for (p=j+1; p<i; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p] + SimilarityMatrix[p][j])/2.0);
-		for (p=i+1; p<n; ++p)
-		    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)((SimilarityMatrix[p][i] + SimilarityMatrix[p][j])/2.0);
-	    }
-	    for (p=j; p<n; p++) {
-		if (owner[p]!=-1) {
-		    if ((MinIndex[p]==j) || (MinIndex[p]==i)) {
-			Min[p]=Float.POSITIVE_INFINITY;
-			for (int l=0; l<p; l++) {
-			    if (owner[l] != -1) {
-				if (SimilarityMatrix[p][l]<Min[p]) {
-				    Min[p]= SimilarityMatrix[p][l];
-				    MinIndex[p]=l;
+			
+			
+			
+			
+			NodeOrder[NodeCounter]=k;
+			NodeHeight[k]=Math.max(NodeHeight[Child1[k]]+1,NodeHeight[Child2[k]]+1);
+		    } catch (Exception e) {
+			e.printStackTrace();
+			fireValueChanged(new AlgorithmEvent(this, AlgorithmEvent.WARNING, 0, "Error: "+e.toString()+" - Height("+String.valueOf(height_k)+","+")"));
+			k=0;
+		    }
+	
+		    NodeCounter++;
+		    owner[i] = k;    //node k replaces child node or leaf
+		    owner[j] = -1;  //eliminates j from search
+		    if (method == -1) {       // minimum method
+			for (p=0; p<j; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.min(SimilarityMatrix[i][p],SimilarityMatrix[j][p]);
+			for (p=j+1; p<i; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.min(SimilarityMatrix[i][p],SimilarityMatrix[p][j]);
+			for (p=i+1; p<n; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)Math.min(SimilarityMatrix[p][i],SimilarityMatrix[p][j]);
+		    } else if (method == +1) {   // maximum method
+			for (p=0; p<j; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.max(SimilarityMatrix[i][p],SimilarityMatrix[j][p]);
+			for (p=j+1; p<i; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)Math.max(SimilarityMatrix[i][p],SimilarityMatrix[p][j]);
+			for (p=i+1; p<n; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)Math.max(SimilarityMatrix[p][i],SimilarityMatrix[p][j]);
+		    } else if (method == 2) {             // average method
+			//                int schrott=NumberOfChildren[owner[j]]+NumberOfChildren[owner[i]];
+			//            System.out.println(NumberOfChildren[owner[i]]);
+			for (p=0; p<j; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p]*NumberOfChildren[owner[i]] +
+			    SimilarityMatrix[j][p]*NumberOfChildren[owner[j]])/
+			    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
+			for (p=j+1; p<i; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p]*NumberOfChildren[owner[i]] +
+			    SimilarityMatrix[p][j]*NumberOfChildren[owner[j]])/
+			    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
+			for (p=i+1; p<n; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)((SimilarityMatrix[p][i]*NumberOfChildren[owner[i]] +
+			    SimilarityMatrix[p][j]*NumberOfChildren[owner[j]])/
+			    (2.0*Math.min(NumberOfChildren[owner[i]],NumberOfChildren[owner[j]])));
+		    } else if (method == 0) {             // average method
+			for (p=0; p<j; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p] + SimilarityMatrix[j][p])/2.0);
+			for (p=j+1; p<i; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[i][p] = (float)((SimilarityMatrix[i][p] + SimilarityMatrix[p][j])/2.0);
+			for (p=i+1; p<n; ++p)
+			    if (owner[p] != -1) SimilarityMatrix[p][i] = (float)((SimilarityMatrix[p][i] + SimilarityMatrix[p][j])/2.0);
+		    }
+		    for (p=j; p<n; p++) {
+				if (owner[p]!=-1) {
+				    if ((MinIndex[p]==j) || (MinIndex[p]==i)) {
+						Min[p]=Float.POSITIVE_INFINITY;
+						for (int l=0; l<p; l++) {
+						    if (owner[l] != -1) {
+								if (SimilarityMatrix[p][l]<Min[p]) {
+								    Min[p]= SimilarityMatrix[p][l];
+								    MinIndex[p]=l;
+								}
+						    }
+						}
+				    }
 				}
-			    }
-			}
 		    }
 		}
-	    }
-	}
-	if (optimizeOrdering&&(n>1)){
-		//optimizes leaf ordering once the tree construction has finished.
-	 	for (int leavesInit = n; leavesInit<2*n-1; leavesInit++){
-	    	LeavesUnder[leavesInit]= new int[NumberOfChildren[leavesInit]];
-	    }
-	    for (int leavesInit = 0; leavesInit<n; leavesInit++){
-	    	LeavesUnder[leavesInit]= new int[1];
-	    	LeavesUnder[leavesInit][0]= leavesInit;
-	    }
-		MakeLeavesUnderMatrix(2*n-2, Child1, Child2, n, LeavesUnder, NumberOfChildren);
-
-		float[][] OptimalSum = new float[n][n];
-		float match;
-		float bestMatch = Float.POSITIVE_INFINITY;
-		int bestU=0;
-		int bestW=0;
-		OptProgress = 0;
-		AlgorithmEvent optevent = null;
-		optevent = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, n*n/2, "Optimizing Leaf Order");
-		fireValueChanged(optevent);
-		optevent.setId(AlgorithmEvent.PROGRESS_VALUE);
-		optevent.setIntValue(0);
-		fireValueChanged(optevent);
-		
-		/* Creates a matrix containing the optimal sums of similarities of all leaves between a given
-		 * two leaves that have been fixed to be a maximum distance apart.
-			 */
-	   	for (int reset=0; reset<n; reset++){ //Child arrays are changed so that the Child[i]=i for all leaves
-			Child1[reset]=reset;
-			Child2[reset]=reset;
-		}
-		MakeOptimalSumMatrix(Child1, Child2, NumberOfChildren, LeavesUnder, OptimalSum, SimilarityMatrix, n, (2*n-2), optevent);
-	   	for (int reset=0; reset<n; reset++){ //Child arrays are reset to their original values for leaves
-			Child1[reset]=-1;
-			Child2[reset]=-1;
-		}
-
-		//uses OptimalSum matrix to find leaves generating the best possible sum of similarities
-		if (!stop) {
-			for (int u = 0; u < NumberOfChildren[Child1[two_n - 2]];u++){
-				for (int w = 0; w < NumberOfChildren[Child2[two_n - 2]];w++){
-					match = OptimalSum[LeavesUnder[Child1[two_n - 2]][u]][LeavesUnder[Child2[two_n - 2]][w]];
-					if (match < bestMatch) 
-					{	bestMatch = match;
-						bestU = LeavesUnder[Child1[two_n - 2]][u];
-						bestW = LeavesUnder[Child2[two_n - 2]][w];
+		if (optimizeOrdering&&(n>1)){
+			//optimizes leaf ordering once the tree construction has finished.
+		 	for (int leavesInit = n; leavesInit<2*n-1; leavesInit++){
+		    	LeavesUnder[leavesInit]= new int[NumberOfChildren[leavesInit]];
+		    }
+		    for (int leavesInit = 0; leavesInit<n; leavesInit++){
+		    	LeavesUnder[leavesInit]= new int[1];
+		    	LeavesUnder[leavesInit][0]= leavesInit;
+		    }
+			MakeLeavesUnderMatrix(2*n-2, Child1, Child2, n, LeavesUnder, NumberOfChildren);
+	
+			float[][] OptimalSum = new float[n][n];
+			float match;
+			float bestMatch = Float.POSITIVE_INFINITY;
+			int bestU=0;
+			int bestW=0;
+			OptProgress = 0;
+			AlgorithmEvent optevent = null;
+			optevent = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, n*n/2, "Optimizing Leaf Order");
+			fireValueChanged(optevent);
+			optevent.setId(AlgorithmEvent.PROGRESS_VALUE);
+			optevent.setIntValue(0);
+			fireValueChanged(optevent);
+			
+			/* Creates a matrix containing the optimal sums of similarities of all leaves between a given
+			 * two leaves that have been fixed to be a maximum distance apart.
+				 */
+		   	for (int reset=0; reset<n; reset++){ //Child arrays are changed so that the Child[i]=i for all leaves
+				Child1[reset]=reset;
+				Child2[reset]=reset;
+			}
+			MakeOptimalSumMatrix(Child1, Child2, NumberOfChildren, LeavesUnder, OptimalSum, SimilarityMatrix, n, (2*n-2), optevent);
+		   	for (int reset=0; reset<n; reset++){ //Child arrays are reset to their original values for leaves
+				Child1[reset]=-1;
+				Child2[reset]=-1;
+			}
+	
+			//uses OptimalSum matrix to find leaves generating the best possible sum of similarities
+			if (!stop) {
+				for (int u = 0; u < NumberOfChildren[Child1[two_n - 2]];u++){
+					for (int w = 0; w < NumberOfChildren[Child2[two_n - 2]];w++){
+						match = OptimalSum[LeavesUnder[Child1[two_n - 2]][u]][LeavesUnder[Child2[two_n - 2]][w]];
+						if (match < bestMatch) 
+						{	bestMatch = match;
+							bestU = LeavesUnder[Child1[two_n - 2]][u];
+							bestW = LeavesUnder[Child2[two_n - 2]][w];
+						}
 					}
 				}
+	
+				//recursive method determines optimal ordering and rotates nodes appropriately
+				OptimizeLeafOrder(two_n - 2, NumberOfChildren, LeavesUnder, Child1, Child2, OptimalSum, bestU, bestW, n);	
 			}
-
-			//recursive method determines optimal ordering and rotates nodes appropriately
-			OptimizeLeafOrder(two_n - 2, NumberOfChildren, LeavesUnder, Child1, Child2, OptimalSum, bestU, bestW, n);	
 		}
-	}
-	//========================================
-	AlgorithmData result = new AlgorithmData();
-	//FloatMatrix similarity_matrix = new FloatMatrix(0, 0);
-	//similarity_matrix.A = SimilarityMatrix;
-	//result.addMatrix("similarity-matrix", similarity_matrix);
-	//result.addIntArray("parent-array", Parent);
-	result.addIntArray("child-1-array", Child1);
-	result.addIntArray("child-2-array", Child2);
-	result.addIntArray("node-order", NodeOrder);
-	//result.addIntArray("node-height", NodeHeight);
-	result.addMatrix("height", new FloatMatrix(Height, Height.length));
-	//result.addIntArray("number-of-children", NumberOfChildren);
-      //  if(!genes)
-      //      for(int q = 0; q < Height.length; q++){
-    //            System.out.println("H"+q+" = "+Height[q]);
-                
-      //      }
-	result.addParam("function", String.valueOf(function));
-
-	return result;
+		//========================================
+		AlgorithmData result = new AlgorithmData();
+		if (isValidate)
+			result.addResultNode("validation-node", performValidation(data, isInternalV,isStabilityV,isBiologicalV,lowClusterValidityRange,highClusterValidityRange));
+		if (result.getResultNode("validation-node")==null)
+			System.out.println("result node is null");
+		else
+			System.out.println("result node is not null");
+			
+		result.addIntArray("child-1-array", Child1);
+		result.addIntArray("child-2-array", Child2);
+		result.addIntArray("node-order", NodeOrder);
+		result.addMatrix("height", new FloatMatrix(Height, Height.length));
+		result.addParam("function", String.valueOf(function));
+	
+		return result;
     }
     
-    public void AssertParentage(int[] Parent, int[] NumberOfChildren, int[] Child1, int[] Child2, int child, int paren) {
-	try {
-		/* AssertParentage takes an unassigned leaf or node (Parent[child] ==-1) and assigns it to a higher node by fixing the
-		 * Parent and Child arrays to reflect the relationship.
-		 */
-	    if (Parent[child] == -1) {
-		Parent[child] = paren;
-		--parentless; // global
-		Child2[paren]=Child1[paren];
-		//         sib[child] = child1[paren];
-		Child1[paren] = child;
-		NumberOfChildren[paren]+=NumberOfChildren[child];
-	    }
-	} catch (Exception e) {
-	    fireValueChanged(new AlgorithmEvent(this, AlgorithmEvent.WARNING, 0, "Error: "+e.toString()+" - AssertParentage("+String.valueOf(child)+","+String.valueOf(paren)+")"));
+	private DefaultMutableTreeNode performValidation(AlgorithmData data, boolean isInternalV, boolean isStabilityV,boolean isBiologicalV, int lowClusterValidityRange,int highClusterValidityRange) {
+
+		AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Validating Clusters");
+		event.setId(AlgorithmEvent.PROGRESS_VALUE);
+		event.setIntValue(50);
+		fireValueChanged(event);
+		try {
+			CLVALID clv = new CLVALID();
+			return clv.execute(data).getResultNode("validation-node");
+		} catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Error running CLValid");
+		}
+		return null;
 	}
+
+	/** AssertParentage takes an unassigned leaf or node (Parent[child] ==-1) and assigns it to a higher node by fixing the
+	 * Parent and Child arrays to reflect the relationship.
+	 */
+    public void AssertParentage(int[] Parent, int[] NumberOfChildren, int[] Child1, int[] Child2, int child, int paren) {
+		try {
+		    if (Parent[child] == -1) {
+			Parent[child] = paren;
+			--parentless; // global
+			Child2[paren]=Child1[paren];
+			//         sib[child] = child1[paren];
+			Child1[paren] = child;
+			NumberOfChildren[paren]+=NumberOfChildren[child];
+		    }
+		} catch (Exception e) {
+		    fireValueChanged(new AlgorithmEvent(this, AlgorithmEvent.WARNING, 0, "Error: "+e.toString()+" - AssertParentage("+String.valueOf(child)+","+String.valueOf(paren)+")"));
+		}
     }
     
     public int NewNode(float[] Height, double h) {
-    	// NewNode creates a node (Assigned) and assigns it an integer value >=n.   	 
-	Height[Assigned] = (float)h;
-	if (h > TreeHeight) TreeHeight = h; // global
-	++parentless; // global
-	return Assigned++; // global
+	    	// NewNode creates a node (Assigned) and assigns it an integer value >=n.   	 
+		Height[Assigned] = (float)h;
+		if (h > TreeHeight) TreeHeight = h; // global
+		++parentless; // global
+		return Assigned++; // global
     }
     
     public void MakeLeavesUnderMatrix(int node, int[] Child1, int[] Child2, int n, int[][] LeavesUnder, int[] NumberOfChildren){
