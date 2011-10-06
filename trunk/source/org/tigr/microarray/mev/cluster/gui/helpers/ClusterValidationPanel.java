@@ -7,20 +7,28 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+
 public class ClusterValidationPanel extends JPanel{
 
+	private static final long serialVersionUID = 1L;
 	private JCheckBox useValidationBox;
 	public JCheckBox getUseValidationBox() {
 		return useValidationBox;
@@ -48,6 +56,12 @@ public class ClusterValidationPanel extends JPanel{
 	}
 	public JTextField getLowClusterRange() {
 		return lowClusterRange;
+	}
+	public JPanel getLinkageMethodPanel() {
+		return this.linkageMethodPanel;
+	}
+	public JPanel getAnnotationTypePanel() {
+		return this.annotationTypePanel;
 	}
 	public void setLowClusterRange(JTextField lowClusterRange) {
 		this.lowClusterRange = lowClusterRange;
@@ -87,6 +101,22 @@ public class ClusterValidationPanel extends JPanel{
 		}
 		return ret;
 	}
+
+	private String[] getMeasuresArray() {
+		String[] ret;
+		ArrayList<String> al = new ArrayList<String>();
+		if (internalValidationBox.isSelected())
+			al.add("internal");
+		if (stabilityValidationBox.isSelected())
+			al.add("stability");
+		if (biologicalValidationBox.isSelected())
+			al.add("biological");
+		ret = new String[al.size()];
+		for (int i=0; i<ret.length; i++){
+			ret[i] = al.get(i);
+		}
+		return ret;
+	}
 	private JCheckBox internalValidationBox;
 	private JCheckBox stabilityValidationBox;
 	private JCheckBox biologicalValidationBox;
@@ -111,8 +141,15 @@ public class ClusterValidationPanel extends JPanel{
 	private JComboBox distanceMetricCB;
 	private JPanel distanceMetricPanel;
 	private JComboBox linkageMetricCB;
+	private JRadioButton bioCAnnotationRB;
+	private JRadioButton localAnnotationRB;
+	private JPanel annotationTypePanel;
+	private Listener listener;
+	private JPanel annotationPanel;
+	private JComboBox chipNameBox;
 	public ClusterValidationPanel(String title){
 		super();
+		listener = new Listener();
 		this.setBackground(Color.white);
         Font font = new Font("Dialog", Font.BOLD, 12);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));        
@@ -127,7 +164,6 @@ public class ClusterValidationPanel extends JPanel{
         dashLabel = new JLabel(" - ");
         highClusterRange = new JTextField("6",7);
         hierarchicalMethodBox = new JCheckBox("HCL");
-        hierarchicalMethodBox.addActionListener(new LinkageListener());
         kmeansMethodBox = new JCheckBox("K-Means");
         dianaMethodBox = new JCheckBox("DIANA");
         fannyMethodBox = new JCheckBox("FANNY");
@@ -137,7 +173,6 @@ public class ClusterValidationPanel extends JPanel{
         pamMethodBox = new JCheckBox("PAM");
         claraMethodBox = new JCheckBox("CLARA");
         agnesMethodBox = new JCheckBox("AGNES");
-        agnesMethodBox.addActionListener(new LinkageListener());
         maxItems = new JTextField("",7);
         methodPanel = new JPanel();
         methodPanel.add(hierarchicalMethodBox);
@@ -155,9 +190,25 @@ public class ClusterValidationPanel extends JPanel{
         distanceMetricPanel.add(new JLabel("Distance Metric: "));
         distanceMetricPanel.add(distanceMetricCB);
         linkageMetricCB = new JComboBox(new String[]{"ward", "single", "complete","average"});
+        linkageMetricCB.setSelectedItem("average");
         linkageMethodPanel = new JPanel();
         linkageMethodPanel.add(new JLabel("Linkage Metric: "));
         linkageMethodPanel.add(linkageMetricCB);
+        annotationTypePanel = new JPanel();
+        bioCAnnotationRB = new JRadioButton("Bioconductor Annotation");
+        bioCAnnotationRB.setSelected(true);
+        localAnnotationRB = new JRadioButton("Local Annotation");
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(bioCAnnotationRB);
+        bg.add(localAnnotationRB);
+        annotationTypePanel.add(bioCAnnotationRB);
+        annotationTypePanel.add(localAnnotationRB);
+
+        chipNameBox = new JComboBox(getBioCAnnotationsArray());
+        chipNameBox.setSelectedItem("hgu133plus2.db");
+        annotationPanel = new JPanel();
+        annotationPanel.add(new JLabel("Chip Name: "));
+        annotationPanel.add(chipNameBox);
         
         boolean startVis = false;
         internalValidationBox.setVisible(startVis);
@@ -170,6 +221,8 @@ public class ClusterValidationPanel extends JPanel{
         methodPanel.setVisible(startVis);
         distanceMetricPanel.setVisible(startVis);
         linkageMethodPanel.setVisible(startVis);
+        annotationTypePanel.setVisible(startVis);
+        annotationPanel.setVisible(startVis);
         
         useValidationBox.setBackground(Color.white);
         internalValidationBox.setBackground(Color.white);
@@ -182,47 +235,101 @@ public class ClusterValidationPanel extends JPanel{
         methodPanel.setBackground(Color.white);
         distanceMetricPanel.setBackground(Color.white);
         linkageMethodPanel.setBackground(Color.white);
+        annotationTypePanel.setBackground(Color.white);
+        bioCAnnotationRB.setBackground(Color.white);
+        localAnnotationRB.setBackground(Color.white);
+        annotationPanel.setBackground(Color.white);
         
-        useValidationBox.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				boolean vis = useValidationBox.isSelected();
-				internalValidationBox.setVisible(vis);
-		        stabilityValidationBox.setVisible(vis);
-		        biologicalValidationBox.setVisible(vis);
-		        clusterRange.setVisible(vis);
-		        lowClusterRange.setVisible(vis);
-		        dashLabel.setVisible(vis);
-		        highClusterRange.setVisible(vis);
-		        methodPanel.setVisible(vis);
-		        distanceMetricPanel.setVisible(vis);
-		        validate();
-		        updateUI();
-			}        	
-        });
-
+        useValidationBox.addActionListener(listener);
+        agnesMethodBox.addActionListener(listener);
+        hierarchicalMethodBox.addActionListener(listener);
+        bioCAnnotationRB.addActionListener(listener);
+        localAnnotationRB.addActionListener(listener);
+        biologicalValidationBox.addActionListener(listener);
+        
         this.add(useValidationBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(internalValidationBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(stabilityValidationBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(biologicalValidationBox, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(annotationTypePanel, new GridBagConstraints(0,4,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
+        this.add(annotationPanel, new GridBagConstraints(0,5,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
+        this.add(methodPanel, new GridBagConstraints(0,6,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(distanceMetricPanel, new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(linkageMethodPanel, new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(clusterRange, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(lowClusterRange, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(dashLabel, new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(highClusterRange, new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(methodPanel, new GridBagConstraints(0,4,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(distanceMetricPanel, new GridBagConstraints(0,5,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(linkageMethodPanel, new GridBagConstraints(0,6,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
 		
+	}
+	private String[] getBioCAnnotationsArray() {
+		ArrayList<String> bioCAnnotations = new ArrayList<String>();
+	    try {
+			String urlString = "ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/R2.11/win/attract/annotationSupported.txt";
+			String fullURL = urlString;
+			URL url = new URL(fullURL); // Interpret, connect to URL
+	
+			URLConnection url_conn = url.openConnection();
+			url_conn.setDoInput(true);
+			url_conn.setUseCaches(true);
+	
+			BufferedReader inp = new BufferedReader( // Setup buffered input stream
+					new InputStreamReader(url_conn.getInputStream()));
+			String s = inp.readLine();
+			while (s != null) {						
+				bioCAnnotations.add(s);
+				s = inp.readLine();
+			}
+		} catch (Exception e){
+			System.out.println("Error reading supported Bioconductor annotations");
+		}
+		String[] bioCAnnotationsArray = new String[bioCAnnotations.size()];
+		for (int i=0; i<bioCAnnotationsArray.length; i++){
+			bioCAnnotationsArray[i]=bioCAnnotations.get(i);
+		}
+		return bioCAnnotationsArray;
 	}
 	public static void main(String[] args){
 		JDialog jd = new JDialog();
 		jd.add(new ClusterValidationPanel("asdasda"));
+		jd.setSize(800, 600);
 		jd.setVisible(true);
 	}
-	private class LinkageListener implements ActionListener{
+	private class Listener implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
-			linkageMethodPanel.setVisible(hierarchicalMethodBox.isSelected()||agnesMethodBox.isSelected());
+			boolean vis = useValidationBox.isSelected();
+			internalValidationBox.setVisible(vis);
+	        stabilityValidationBox.setVisible(vis);
+	        biologicalValidationBox.setVisible(vis);
+	        clusterRange.setVisible(vis);
+	        lowClusterRange.setVisible(vis);
+	        dashLabel.setVisible(vis);
+	        highClusterRange.setVisible(vis);
+	        methodPanel.setVisible(vis);
+	        distanceMetricPanel.setVisible(vis);
+	        annotationTypePanel.setVisible(vis&&biologicalValidationBox.isSelected());
+	        annotationPanel.setVisible(vis&&biologicalValidationBox.isSelected()&&bioCAnnotationRB.isSelected());
+			linkageMethodPanel.setVisible(vis&&hierarchicalMethodBox.isSelected()||agnesMethodBox.isSelected());
+	        validate();
+	        updateUI();
 		}
 		
+	}
+	public String getLinkageMethod() {
+		return this.linkageMetricCB.getSelectedItem().toString();
+	}
+	public String getValidationDistanceMetric() {
+		return this.distanceMetricCB.getSelectedItem().toString();
+	}
+	public String getBioCAnnotationString() {
+		return this.chipNameBox.getSelectedItem().toString();
+	}
+	public boolean isValidationPanelValid(){
+		if (!this.useValidationBox.isSelected())
+			return true;
+		if(getMethodsArray().length==0||getMeasuresArray().length==0)
+			return false;
+		return true;
 	}
 }

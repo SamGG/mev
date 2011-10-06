@@ -37,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
@@ -157,17 +159,21 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         group.add(SLC);
         
         validationPanel = new ClusterValidationPanel("Validation");
-        validationPanel.getLowClusterRange().addComponentListener(new ComponentListener(){
-			public void componentMoved(ComponentEvent e) {}
-			public void componentResized(ComponentEvent e) {}
-			public void componentShown(ComponentEvent e) {
-				pack();
-			}        	
-			public void componentHidden(ComponentEvent e) {
-				pack();				
+        validationPanel.addAncestorListener(new AncestorListener(){
+
+			public void ancestorAdded(AncestorEvent event) {
+				pack();	
 			}
+
+			public void ancestorMoved(AncestorEvent event) {
+				pack();					
+			}
+
+			public void ancestorRemoved(AncestorEvent event) {
+				pack();					
+			}
+        	
         });
-        
 
         
         JPanel parameterPanel = new JPanel(new GridBagLayout());
@@ -275,6 +281,10 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("ok-command")) {
+            	if (!validationPanel.isValidationPanelValid()){
+                    JOptionPane.showMessageDialog(null, "Validation Parameters are insufficient.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+            	}
                 result = JOptionPane.OK_OPTION;
                 dispose();
             } else if (command.equals("cancel-command")) {
@@ -355,6 +365,15 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
 
 	public String[] getMethodsArray() {
 		return this.validationPanel.getMethodsArray();
+	}
+	public String getValidationDistanceMetric() {
+		return this.validationPanel.getValidationDistanceMetric();
+	}
+	public String getValidationLinkageMethod() {
+		return this.validationPanel.getLinkageMethod();
+	}
+	public String getBioCAnnotationString() {
+		return this.validationPanel.getBioCAnnotationString();
 	}
     
 }

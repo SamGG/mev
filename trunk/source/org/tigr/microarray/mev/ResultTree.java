@@ -17,23 +17,18 @@ import java.beans.*;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
-import org.tigr.graph.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
@@ -42,7 +37,6 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterTableViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentClusterViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.GUIFactory;
-import org.tigr.util.FloatMatrix;
 
 /**
  *
@@ -529,7 +523,10 @@ public class ResultTree extends JTree implements java.io.Serializable {
         /** Geneset Membership Plot icon
          */
         private Icon geneSetMembershipPlotIcon = GUIFactory.getIcon("genesetmembership.gif");
-        
+
+        /** clvalid Icon
+         */
+        private Icon clvalidIcon = GUIFactory.getIcon("clvalid_result_tree.gif");
         
         
         /** PCA 3D icon
@@ -621,9 +618,6 @@ public class ResultTree extends JTree implements java.io.Serializable {
          */
         private DefaultMutableTreeNode  grandParent;
         
-        /** node label
-         */
-        private JLabel label;
         
         /** Creats a new NodeRenderer.
          */
@@ -833,6 +827,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Cophenetic Correlation Graph")){
                         setIcon(expressionGraphIcon);
+                    } else if(text.equals("Optimal Cluster Scores")){
+                        setIcon(clusterInfoIcon);
                     } else if(text.indexOf("H Factor")!=-1||text.indexOf("W Factor")!=-1){
                         setIcon(expressionGraphIcon);
                     } else if(text.equals("Centroid Graph")){
@@ -908,11 +904,7 @@ public class ResultTree extends JTree implements java.io.Serializable {
                         setIcon(ampDelIcon);
                     } else if(text.indexOf("Included Gene Sets") != -1||text.indexOf("Excluded Gene Sets") != -1||text.indexOf("Probe to Gene Mapping") != -1){
                     	setIcon(tableIcon);
-                    } /* CGH Icons */
-                    //add new icons here for leaf icons
-                    
-                    
-                    else if(grandParentText != null){
+                    } else if(grandParentText != null){
                         if(grandParentText.indexOf("Expression Image") != -1){
                             setIcon(expressionImageIcon);
                         } else if(grandParentText.indexOf("Expression Chart") != -1){
@@ -923,6 +915,8 @@ public class ResultTree extends JTree implements java.io.Serializable {
                             setIcon(centroidGraphIcon);
                         } else if(grandParentText.indexOf("Expression Graph") != -1){
                             setIcon(expressionGraphIcon);
+                        } else if(grandParentText.indexOf("Cluster Validation") != -1){
+                            setIcon(clvalidIcon);
                         }
                     }
                 }

@@ -27,11 +27,14 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.GraphViewer;
+import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDInfoViewer;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -41,7 +44,7 @@ public class CLVALID extends AbstractAlgorithm{
 	private boolean stop = false;
 	private int[][] clusterArrays;
 
-	private int numGenes, numExps, iteration;
+	private int iteration;
 
 	private AlgorithmEvent event;
 
@@ -56,7 +59,10 @@ public class CLVALID extends AbstractAlgorithm{
 	private double[] measuresStab;
 	private double[] measuresBio;
 	private String[] methodsArray;
-	//private clvalidLogger logger;
+	private String linkageMethod;
+	private String distanceMetric;
+	private String bioCAnnotation;
+	private HashMap optimalScoresIntern;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -80,16 +86,10 @@ public class CLVALID extends AbstractAlgorithm{
 		isBiologicalV = map.getBoolean("biological-validation");
 		lowClusterRange = map.getInt("cluster-range-low");
 		highClusterRange = map.getInt("cluster-range-high");
+		linkageMethod = map.getString("validation-linkage");
+		distanceMetric = map.getString("validation-distance");
+		bioCAnnotation = map.getString("bioC-annotation");
 		
-//        data.addParam("validate", String.valueOf(dialog.isValidate()));
-//        data.addParam("internal-validation", String.valueOf(dialog.isInternalV()));
-//        data.addParam("stability-validation", String.valueOf(dialog.isStabilityV()));
-//        data.addParam("biological-validation", String.valueOf(dialog.isBiologicalV()));
-//        data.addParam("cluster-range-low", String.valueOf(dialog.getLowClusterRange()));
-//        data.addParam("cluster-range-high", String.valueOf(dialog.getHighClusterRange()));
-
-		numGenes= expMatrix.getRowDimension();
-		numExps = expMatrix.getColumnDimension();
 		progress=0;
 		event = null;
 		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating...");
@@ -133,13 +133,14 @@ public class CLVALID extends AbstractAlgorithm{
 	private DefaultMutableTreeNode createResultNode() {
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Cluster Validation");
 		int numClusters = this.highClusterRange-this.lowClusterRange+1;
-		int numMeasures = 3;
+		int numMeasures;
 		int numMethods = methodsArray.length;
 		if (this.isInternalV){
-			numMeasures = 3;//standard for Internal Validation
-			String[] measures = new String[]{"Connectivity","Silhouette Width","Dunn Index"};
-			double[][][] dataMatrices = createDataMatrices(measuresIntern, numClusters, numMeasures, numMethods);
 			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Internal Validation");
+			String[] measures = new String[]{"Connectivity","Silhouette Width","Dunn Index"};
+			ivNode.add(new DefaultMutableTreeNode(new LeafInfo("Optimal Cluster Scores", new CLVALIDInfoViewer(optimalScoresIntern, measures)))); 
+			numMeasures = measures.length;
+			double[][][] dataMatrices = createDataMatrices(measuresIntern, numClusters, numMeasures, numMethods);
 			for (int i=0; i<measures.length; i++){
 				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i], 
 	            		new GraphViewer("Internal Validation", 
@@ -147,36 +148,47 @@ public class CLVALID extends AbstractAlgorithm{
 	            				methodsArray, 
 	            				"Number of Clusters",
 	            				"Cluster ", 
-	            				"Connectivity", 
+	            				measures[i], 
 	            				"",
 	            				lowClusterRange))));
 			}
 			node.add(ivNode);
     	}
     	if (this.isStabilityV){
-			numMeasures = 4;//standard for Stabilization Validation
+			String[] measures = new String[]{"Avg. Proportion Non-Overlap","Avg. Distance","Avg. Distance Between Means","Figure of Merit"};
+			numMeasures = measures.length;
 			double[][][] dataMatrices = createDataMatrices(measuresStab, numClusters, numMeasures, numMethods);
-        	node.add(new DefaultMutableTreeNode(new LeafInfo("Stability Validation", 
+			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Stability Validation");
+			for (int i=0; i<measures.length; i++){
+				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i],  
             		new GraphViewer("Stability Validation", 
-            				dataMatrices[0], 
+            				dataMatrices[i], 
             				methodsArray, 
             				"Number of Clusters",
             				"Cluster ", 
-            				"Connectivity", 
+            				measures[i], 
             				"",
             				lowClusterRange))));
+			}
+			node.add(ivNode);
     	}
     	if (this.isBiologicalV){
+			String[] measures = new String[]{"Biological Homogeneity Index","Biological Stability Index"};
+			numMeasures = measures.length;
 			double[][][] dataMatrices = createDataMatrices(measuresBio, numClusters, numMeasures, numMethods);
-        	node.add(new DefaultMutableTreeNode(new LeafInfo("Biological Validation", 
+			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Biological Validation");
+			for (int i=0; i<measures.length; i++){
+				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i],			
             		new GraphViewer("Biological Validation", 
-            				dataMatrices[0], 
+            				dataMatrices[i], 
             				methodsArray, 
             				"Number of Clusters",
             				"Cluster ", 
-            				"Connectivity", 
+            				measures[i], 
             				"",
             				lowClusterRange))));
+			}
+			node.add(ivNode);
     	}
 		return node;
 	}
@@ -202,6 +214,7 @@ public class CLVALID extends AbstractAlgorithm{
 	 * Function to create R session in memory and execute CLVALID
 	 * @throws AbortException 
 	 */
+	@SuppressWarnings("unchecked")
 	public void runRAlg() throws AbortException {
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -229,24 +242,42 @@ public class CLVALID extends AbstractAlgorithm{
 			
 			String rCmd = "library(clValid)";
 			RHook.evalR(rCmd);
-	
+
+			rCmd = "zz <- file('all.Rout', open='wt')";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz)";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz, type='message')";
+			RHook.evalR(rCmd);
+			
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			fileLoc = fileLoc.replace("\\", "/");
 			String filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
 			RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
 			String methodsString = getMethodsString();
 			if (isInternalV){
-		        rCmd = "intern <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+"),  validation='internal')";
+		        rCmd = "intern <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
+		        	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='internal')";
 				RHook.evalR(rCmd);
 				rCmd = "summary(intern)";
 				RHook.evalR(rCmd);
-				rCmd = "optimalScores(intern)";
-				RHook.evalR(rCmd);
 				rCmd = "intern@measures";
 				measuresIntern = RHook.evalR(rCmd).asDoubleArray();
+				
+				optimalScoresIntern = new HashMap();
+				rCmd = "as.matrix(optimalScores(intern)[1])";
+				optimalScoresIntern.put("scores", RHook.evalR(rCmd).asDoubleArray());	
+				rCmd = "as.matrix(optimalScores(intern)[2])";
+				optimalScoresIntern.put("method", RHook.evalR(rCmd).asStringArray());
+				rCmd = "as.matrix(optimalScores(intern)[3])";
+				optimalScoresIntern.put("clusters", RHook.evalR(rCmd).asStringArray());	
+				optimalScoresIntern.put("numMeasures", 3);
+				
+				System.out.println("optimalScoresIntern " + optimalScoresIntern);
 			}
 			if (isStabilityV){
-				rCmd = "stab <- clValid(y, 2:6, clMethods=c('hierarchical','kmeans','pam'),validation='stability')";
+				rCmd = "stab <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
+					"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='stability')";
 				RHook.evalR(rCmd);
 				rCmd = "optimalScores(stab)";
 				RHook.evalR(rCmd);
@@ -254,16 +285,24 @@ public class CLVALID extends AbstractAlgorithm{
 				measuresStab = RHook.evalR(rCmd).asDoubleArray();
 			}
 			if (isBiologicalV){
-				String annotation = "hgu133plus2.db";
-				rCmd = "if(require('Biobase') && require('annotate') && require('GO.db') && require('"+annotation+"')) {" +
-						"bio2 <- clValid(y, 2:6, clMethods=c('hierarchical','kmeans','pam')," +
-						"validation='biological',annotation='moe430a.db',GOcategory='all')}";
+
+				rCmd = "source('http://www.bioconductor.org/biocLite.R')";
+				RHook.evalR(rCmd);
+				rCmd = "biocLite('"+bioCAnnotation+"')";
+				RHook.evalR(rCmd);
+				rCmd = "library("+bioCAnnotation+")";
+				RHook.evalR(rCmd);
+				rCmd = "if(require('Biobase') && require('annotate') && require('GO.db') && require('"+bioCAnnotation+"')) {" +
+						"bio2 <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
+						"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"', validation='biological', annotation='"+bioCAnnotation+"',GOcategory='all')}";
 				RHook.evalR(rCmd);
 				rCmd = "optimalScores(bio2)";
 				RHook.evalR(rCmd);
 				rCmd = "bio2@measures";
 				measuresBio = RHook.evalR(rCmd).asDoubleArray();
 			}
+
+			rCmd = "sink()";
 			RHook.endRSession();
 //			removeTmps(filePath);
 		} catch (Exception e) {
