@@ -18,8 +18,11 @@ package org.tigr.microarray.mev.cluster.algorithm.impl;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.tigr.microarray.mev.cluster.algorithm.Algorithm;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.util.FloatMatrix;
 
 public class ExperimentUtil {
@@ -1162,6 +1165,8 @@ public class ExperimentUtil {
 			    }
 			}
 	    }
+
+
 
     
     /**

@@ -14,7 +14,6 @@
 
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-import org.tigr.microarray.mev.annotation.AnnotationFieldConstants;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -24,10 +23,8 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 import org.tigr.util.FloatMatrix;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class HCL extends AbstractAlgorithm {
     
@@ -67,13 +64,6 @@ public class HCL extends AbstractAlgorithm {
 		boolean optimizeOrdering = map.getBoolean("optimize-sample-ordering", false);
 		if (genes) optimizeOrdering = map.getBoolean("optimize-gene-ordering", false);
 		int method = map.getInt("method-linkage", 0);
-	
-	    boolean isValidate = map.getBoolean("validate");
-	    boolean isInternalV = map.getBoolean("internal-validation");
-	    boolean isStabilityV = map.getBoolean("stability-validation");
-	    boolean isBiologicalV = map.getBoolean("biological-validation");
-	    int lowClusterValidityRange = map.getInt("cluster-range-low");
-	    int highClusterValidityRange = map.getInt("cluster-range-high");
 		
 		//============= Init ====================
 		
@@ -162,10 +152,8 @@ public class HCL extends AbstractAlgorithm {
 					
 					if (genes) {
 					    SimilarityMatrix[i][j] = ExperimentUtil.geneDistance(expMatrix, null, i, j, function, factor, absolute);//ExpMatrix.GeneDistance(i,j,null);
-					    System.out.print(SimilarityMatrix[i][j]+"\t");
 					} else {
 					    SimilarityMatrix[i][j] = ExperimentUtil.distance(expMatrix, i, j, function, factor, absolute); //ExpMatrix.ExperimentDistance(i,j);
-					    System.out.print(SimilarityMatrix[i][j]+"\t");
 					}
 						if (optimizeOrdering){
 							SimilarityMatrix[j][i] = SimilarityMatrix[i][j]; //square matrix created from  
@@ -399,12 +387,6 @@ public class HCL extends AbstractAlgorithm {
 		}
 		//========================================
 		AlgorithmData result = new AlgorithmData();
-		if (isValidate)
-			result.addResultNode("validation-node", performValidation(data, isInternalV,isStabilityV,isBiologicalV,lowClusterValidityRange,highClusterValidityRange));
-		if (result.getResultNode("validation-node")==null)
-			System.out.println("result node is null");
-		else
-			System.out.println("result node is not null");
 			
 		result.addIntArray("child-1-array", Child1);
 		result.addIntArray("child-2-array", Child2);
@@ -415,22 +397,7 @@ public class HCL extends AbstractAlgorithm {
 		return result;
     }
     
-	private DefaultMutableTreeNode performValidation(AlgorithmData data, boolean isInternalV, boolean isStabilityV,boolean isBiologicalV, int lowClusterValidityRange,int highClusterValidityRange) {
-
-		AlgorithmEvent event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Validating Clusters");
-		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue(50);
-		fireValueChanged(event);
-		try {
-			CLVALID clv = new CLVALID();
-			return clv.execute(data).getResultNode("validation-node");
-		} catch(Exception e){
-			e.printStackTrace();
-			System.out.println("Error running CLValid");
-		}
-		return null;
-	}
-
+	
 	/** AssertParentage takes an unassigned leaf or node (Parent[child] ==-1) and assigns it to a higher node by fixing the
 	 * Parent and Child arrays to reflect the relationship.
 	 */

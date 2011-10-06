@@ -16,7 +16,6 @@ package org.tigr.microarray.mev.cluster.gui.impl.hcl;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,14 +28,14 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
+import org.tigr.microarray.mev.cluster.algorithm.impl.CLVALID;
+import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
-import org.tigr.microarray.mev.cluster.gui.IData;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.helpers.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
@@ -48,18 +47,11 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
     private Progress progress;
     private boolean isSampOrdered = false;
     private boolean isGeneOrdered = false;
-	private IData data;
-	private boolean isClusterValidation;
+	private boolean isClusterValidation = false;
     /**
      * Inits the algorithm parameters, runs calculation and returns
      * a result to be inserted into the framework analysis node.
      */
-	private boolean isInternalV;
-	private boolean isStabilityV;
-	private boolean isBiologicalV;
-	private int lowClusterRange;
-	private Object highClusterRangedialog;
-	private String[] methodsArray;
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         
         IDistanceMenu menu = framework.getDistanceMenu();
@@ -75,19 +67,11 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         int method = dialog.getMethod();
         function = dialog.getDistanceMetric();       
         isClusterValidation = dialog.isValidate();
-        isInternalV = dialog.isInternalV();
-        isStabilityV = dialog.isStabilityV();
-        isBiologicalV = dialog.isBiologicalV();
-        lowClusterRange = dialog.getLowClusterRange();
-        highClusterRangedialog = dialog.getHighClusterRange();
-        methodsArray = dialog.getMethodsArray();
-        
         Listener listener = new Listener();
         
         try {
             Experiment experiment = framework.getData().getExperiment();
             AlgorithmFactory factory = framework.getAlgorithmFactory();    
-//            this.data = framework.getData();
             int number_of_samples = experiment.getNumberOfSamples();
             
             int [] columnIndices = experiment.getColumnIndicesCopy(); 
@@ -110,7 +94,6 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             AlgorithmData data = new AlgorithmData();
             data.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
             data.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
-            data.addStringArray("methodsArray", dialog.getMethodsArray());
             data.addMatrix("experiment", experiment.getMatrix());
 
             data.addParam("hcl-distance-function", String.valueOf(function));
@@ -118,12 +101,6 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             data.addParam("hcl-distance-absolute", String.valueOf(dialog.getAbsoluteSelection()));
             data.addParam("method-linkage", String.valueOf(method));
 
-            data.addParam("validate", String.valueOf(dialog.isValidate()));
-            data.addParam("internal-validation", String.valueOf(dialog.isInternalV()));
-            data.addParam("stability-validation", String.valueOf(dialog.isStabilityV()));
-            data.addParam("biological-validation", String.valueOf(dialog.isBiologicalV()));
-            data.addParam("cluster-range-low", String.valueOf(dialog.getLowClusterRange()));
-            data.addParam("cluster-range-high", String.valueOf(dialog.getHighClusterRange()));
             
             
             this.progress = new Progress(framework.getFrame(), "", listener);
@@ -154,13 +131,40 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
                 samples_result = algorithm.execute(data);
                 validate(samples_result);
             }
+
+            AlgorithmData validationData = new AlgorithmData();
+            if (isClusterValidation){
+            	progress.setIndeterminate(true);
+            	progress.setIndeterminantString("This process may take awhile...");
+            	progress.setDescription("Performing Cluster Validation");
+            	progress.setTitle("Hierarchical Clustering");
+				validationData.addStringArray("methodsArray", dialog.getMethodsArray());
+				validationData.addMatrix("experiment", experiment.getMatrix());
+				validationData.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
+				validationData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
+	            validationData.addParam("validate", String.valueOf(dialog.isValidate()));
+	            validationData.addParam("internal-validation", String.valueOf(dialog.isInternalV()));
+	            validationData.addParam("stability-validation", String.valueOf(dialog.isStabilityV()));
+	            validationData.addParam("biological-validation", String.valueOf(dialog.isBiologicalV()));
+	            validationData.addParam("cluster-range-low", String.valueOf(dialog.getLowClusterRange()));
+	            validationData.addParam("cluster-range-high", String.valueOf(dialog.getHighClusterRange()));
+	            validationData.addParam("validation-linkage", String.valueOf(dialog.getValidationLinkageMethod()));
+	            validationData.addParam("validation-distance", String.valueOf(dialog.getValidationDistanceMetric()));
+	            validationData.addParam("bioC-annotation", String.valueOf(dialog.getBioCAnnotationString()));
+				validationData.addResultNode("validation-node", performValidation(validationData));
+            }
+    		if (validationData.getResultNode("validation-node")==null)
+    			System.out.println("result node is null");
+    		else
+    			System.out.println("result node is not null");
             long time = System.currentTimeMillis() - start;
             
             GeneralInfo info = new GeneralInfo();
             info.time = time;
             info.method = method;
             info.function = menu.getFunctionName(function);
-            return createResultTree(experiment, genes_result, samples_result, info);
+            DefaultMutableTreeNode resultNode = createResultTree(experiment, genes_result, samples_result, validationData, info);
+            return resultNode;
             
         } finally {
             if (algorithm != null) {
@@ -272,7 +276,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             info.time = time;
             info.method = params.getInt("method-linkage");
             info.function = framework.getDistanceMenu().getFunctionName(params.getInt("distance-function"));
-            return createResultTree(experiment, genes_result, samples_result, info);
+            return createResultTree(experiment, genes_result, samples_result, null, info);
             
         } finally {
             if (algorithm != null) {
@@ -283,8 +287,17 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             }
         }
     }
-    
-    
+	public static DefaultMutableTreeNode performValidation(AlgorithmData data) throws AlgorithmException {
+		try {
+			CLVALID clv = new CLVALID();
+			return clv.execute(data).getResultNode("validation-node");
+		} catch(Exception e){
+			e.printStackTrace();
+			System.out.println("Error running clValid");
+            throw new AlgorithmException("Error running Cluster Validation");
+		}
+	}
+
     /**
      * Checking the result of hcl algorithm calculation.
      * @throws AlgorithmException, if the result is incorrect.
@@ -306,8 +319,9 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
     
     /**
      * Creates a result tree.
+     * @param validationData 
      */
-    private DefaultMutableTreeNode createResultTree(Experiment experiment, AlgorithmData genes_result, AlgorithmData samples_result, GeneralInfo info) {
+    private DefaultMutableTreeNode createResultTree(Experiment experiment, AlgorithmData genes_result, AlgorithmData samples_result, AlgorithmData validationData, GeneralInfo info) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("HCL");
         root.add(new DefaultMutableTreeNode(new LeafInfo("HCL Tree", createHCLViewer(experiment, genes_result, samples_result, root))));
         if(genes_result != null)
@@ -316,7 +330,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             root.add(new DefaultMutableTreeNode(new LeafInfo("Sample Node Height Plot", new HCLNodeHeightGraph(getHCLTreeData(samples_result), false))));
         addGeneralInfo(root, info);
         if (isClusterValidation){
-        	root.add(genes_result.getResultNode("validation-node"));
+        	root.add(validationData.getResultNode("validation-node"));
         }
         return root;
     }
