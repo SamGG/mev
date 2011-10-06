@@ -12,7 +12,7 @@
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.clvalid;
+package org.tigr.microarray.mev.cluster.gui.impl.limma;
 
 import java.awt.Frame;
 import java.beans.Expression;
@@ -37,13 +37,13 @@ import org.tigr.microarray.mev.cluster.gui.helpers.ExpressionFileView;
  * @author  dschlauch
  * @version 
  */
-public class CLVALIDCentroidViewer extends CentroidViewer {
+public class LIMMACentroidViewer extends CentroidViewer {
     
     private Vector rawPValues, adjPValues, fValues, dfNumValues, dfDenomValues, ssGroups, ssError;
     private float[][] geneGroupMeans, geneGroupSDs;
     
     /** Creates new BETRCentroidViewer */
-    public CLVALIDCentroidViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    public LIMMACentroidViewer(Experiment experiment, int[][] clusters, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
         super(experiment, clusters);
    
     }
@@ -51,7 +51,7 @@ public class CLVALIDCentroidViewer extends CentroidViewer {
     /**
      * @inheritDoc
      */
-    public CLVALIDCentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
+    public LIMMACentroidViewer(Experiment e, int[][] clusters, float[][] variances, float[][] means, float[][] codes, float[][] geneGroupMeans, float[][] geneGroupSDs, Vector rawPValues, Vector adjPValues, Vector fValues, Vector ssGroups, Vector ssError, Vector dfNumValues, Vector dfDenomValues) {
     	super(e, clusters, variances, means, codes);
     }    
     /**
@@ -59,7 +59,7 @@ public class CLVALIDCentroidViewer extends CentroidViewer {
      * @param e
      * @param clusters
      */
-    public CLVALIDCentroidViewer(Experiment e, ClusterWrapper clusters) {
+    public LIMMACentroidViewer(Experiment e, ClusterWrapper clusters) {
     	super(e, clusters.getClusters());
     }
 
