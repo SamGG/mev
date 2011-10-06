@@ -11,7 +11,7 @@
  * $Author: dschlauch $
  * $State: Exp $
  */
-package org.tigr.microarray.mev.cluster.gui.impl.clvalid;
+package org.tigr.microarray.mev.cluster.gui.impl.limma;
 
 
 import java.awt.Color;
@@ -32,21 +32,21 @@ import org.tigr.microarray.mev.cluster.gui.impl.ViewerAdapter;
  * @author  dschlauch
  * @version 
  */
-public class CLVALIDInfoViewer extends ViewerAdapter {
+public class LIMMAInfoViewer extends ViewerAdapter {
     
     private JComponent header;
     private JTextArea  content;
     private int dataDesign;
     private int numGroups;
     /** Creates new BETRInfoViewer */
-    public CLVALIDInfoViewer(int[][] clusters, int genes, int dd, int numGroups) {
+    public LIMMAInfoViewer(int[][] clusters, int genes, int dd, int numGroups) {
 		this.numGroups = numGroups;
 		this.dataDesign = dd;
 		header  = createHeader();
 		content = createContent(clusters, genes);
 		setMaxWidth(content, header);        
     }
-    public CLVALIDInfoViewer(JTextArea content, JComponent header){
+    public LIMMAInfoViewer(JTextArea content, JComponent header){
     	this.header = header;
     	this.content = content;
     	setMaxWidth(content, header);        

@@ -12,7 +12,7 @@
  * $State: Exp $
  */
 
-package org.tigr.microarray.mev.cluster.gui.impl.clvalid;
+package org.tigr.microarray.mev.cluster.gui.impl.limma;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -67,7 +67,7 @@ import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
  * @author  dschlauch
  * @version 
  */
-public class CLVALIDInitBox extends AlgorithmDialog {
+public class LIMMAInitBox extends AlgorithmDialog {
 
     /**
 	 * 
@@ -91,15 +91,10 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     HCLoptionPanel hclOpsPanel;
     ClusterRepository repository;
     JButton step2Button = new JButton("Continue...");
-
-    /** Creates new CLVALIDInitBox */
-    public CLVALIDInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
-    	this (parentFrame, modality, exptNames, repository, true);
-    }
     
-    /** Creates new CLVALIDInitBox */
-    public CLVALIDInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository, boolean isDataAppropriate) {
-        super(parentFrame, "CLVALID Initialization", modality);
+    /** Creates new LIMMAInitBox */
+    public LIMMAInitBox(JFrame parentFrame, boolean modality, Vector<String> exptNames, ClusterRepository repository) {
+        super(parentFrame, "LIMMA Initialization", modality);
         this.exptNames = exptNames;  
         this.repository = repository;
         
@@ -329,7 +324,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
             gridbag.setConstraints(step2Button, constraints);
             topPanel.add(step2Button);
 
-            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "CLVALID Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
+            topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "LIMMA Parameters",TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, Color.black));
             buildConstraints(constraints, 0, 0,1,1,100,10);
             gridbag.setConstraints(topPanel, constraints);
             this.add(topPanel);
@@ -342,7 +337,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
             gridbag.setConstraints(infoLabel, constraints);
             
             this.add(infoLabel, constraints);
-            infoLabel2 = new JLabel("Please select the type of CLVALID analysis to be run, then click 'Continue'.");
+            infoLabel2 = new JLabel("Please select the type of LIMMA analysis to be run, then click 'Continue'.");
             buildConstraints(constraints, 0, 2, 1, 1, 100, 5,GridBagConstraints.CENTER);
             gridbag.setConstraints(infoLabel2, constraints);
             
@@ -749,7 +744,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     				//save group names..?
     				
     				pw.print("Module:\t");
-    				pw.println("CLVALID");
+    				pw.println("LIMMA");
     				pw.print("Design:\t");
     				pw.println(ngPanel.getExperimentDesign());
     				int groupMax;
@@ -1027,7 +1022,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
         					
         					//check what module saved the file
         					if(lineArray[0].startsWith("Module:")) {
-        						if (!lineArray[1].equals("CLVALID")){
+        						if (!lineArray[1].equals("LIMMA")){
         							Object[] optionst = { "Continue", "Cancel" };
         							if (JOptionPane.showOptionDialog(null, 
         		    						"The saved file was saved using a different module, "+lineArray[1]+". \n Would you like MeV to try to load it anyway?", 
@@ -1338,7 +1333,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
             if(command.equals("ok-command")){
             	if (!okReady)
             		return;
-            	if ((getSelectionDesign()==CLVALIDInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
+            	if ((getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)&&(repository.isEmpty())){
             		JOptionPane.showMessageDialog(null, "Cluster Repository is Empty.", "Error", JOptionPane.WARNING_MESSAGE);
             		return;
             	}
@@ -1353,7 +1348,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-            	HelpWindow.launchBrowser(CLVALIDInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
+            	HelpWindow.launchBrowser(LIMMAInitBox.this, "Linear Models for Microarray Data- Initialization Dialog");
             }
         }
     }
@@ -1484,7 +1479,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     }
     
     private int[] getSimpleGroupAssignments() {
-    	if (getSelectionDesign()==CLVALIDInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorGroupAssignments();
         int[] groupAssignments = new int[exptNames.size()];
         for (int i = 0; i < exptNames.size(); i++) {
@@ -1502,7 +1497,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
         return groupAssignments;
     }
     private int[] getTimeCourseGroupAssignments() {
-    	if (getSelectionDesign()==CLVALIDInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorTimeCourseAssignments();
     	int[]timeCourseGroupAssignments = new int[exptNames.size()];
 
@@ -1593,7 +1588,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
 
 
 	private int[] getFactorGroupAssignments() {
-    	if (getSelectionDesign()==CLVALIDInitBox.CLUSTER_SELECTION)
+    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION)
     		return getClusterSelectorFactorAssignments();
     	int[]factorGroupAssignments = new int[exptNames.size()];
 
@@ -1684,7 +1679,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
 
 	public int[][] getGroupMatrix(){
     	int[] timeAssignments;
-//    	if (getSelectionDesign()==CLVALIDInitBox.CLUSTER_SELECTION){
+//    	if (getSelectionDesign()==LIMMAInitBox.CLUSTER_SELECTION){
 //    		timeAssignments = getClusterGroupAssignments();
 //    	}else{
     		timeAssignments = getGroupAssignments();
@@ -1730,9 +1725,9 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     public int getSelectionDesign() {
         int design = -1;
         if (mPanel.tabbedmulg.getSelectedIndex() == 0) {
-        	design = CLVALIDInitBox.BUTTON_SELECTION;
+        	design = LIMMAInitBox.BUTTON_SELECTION;
         } else {
-        	design = CLVALIDInitBox.CLUSTER_SELECTION;
+        	design = LIMMAInitBox.CLUSTER_SELECTION;
         }
         return design;
     }
@@ -1798,7 +1793,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
             dummyVect.add("Expt " + i);
         }
         
-        CLVALIDInitBox oBox = new CLVALIDInitBox(dummyFrame, true, dummyVect, null);
+        LIMMAInitBox oBox = new LIMMAInitBox(dummyFrame, true, dummyVect, null);
         oBox.setVisible(true);
 //        int[] k = oBox.getGroupAssignments();
 //        for (int i=0; i<k.length; i++){
