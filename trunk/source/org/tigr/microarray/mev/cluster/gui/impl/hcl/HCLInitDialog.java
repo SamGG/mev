@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,9 +48,15 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.ParameterPanel;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
-public class HCLInitDialog extends AlgorithmDialog {//JDialog {
-    
-    private int result;
+/**
+ * 
+ * @author 
+ *
+ */
+public class HCLInitDialog extends AlgorithmDialog {
+	private static final long serialVersionUID = 1L;
+
+	private int result;
     
     private JCheckBox genes_box;
     private JCheckBox cluster_box;
@@ -64,10 +71,6 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
 
 	private ClusterValidationPanel validationPanel;
 
-    
-    public HCLInitDialog(Frame parent) {
-        this(parent, " ", false, false);
-    }
     
     /**
      * Constructs the dialog.
@@ -158,23 +161,7 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
         group.add(CLC);
         group.add(SLC);
         
-        validationPanel = new ClusterValidationPanel("Validation");
-        validationPanel.addAncestorListener(new AncestorListener(){
-
-			public void ancestorAdded(AncestorEvent event) {
-				pack();	
-			}
-
-			public void ancestorMoved(AncestorEvent event) {
-				pack();					
-			}
-
-			public void ancestorRemoved(AncestorEvent event) {
-				pack();					
-			}
-        	
-        });
-
+        validationPanel = new ClusterValidationPanel(this,"Validation");
         
         JPanel parameterPanel = new JPanel(new GridBagLayout());
         parameterPanel.setBackground(Color.white);
@@ -323,57 +310,17 @@ public class HCLInitDialog extends AlgorithmDialog {//JDialog {
     }
     
    public static void main(String[] args) {
-        javax.swing.JFrame frame = new javax.swing.JFrame("Test");
-        while (true) {
-            HCLInitDialog dialog = new HCLInitDialog(frame, "Euclidean Distance", false, true);
-            if (dialog.showModal() != JOptionPane.OK_OPTION) {
-                System.exit(0);
-            }
-            System.out.println("===============================");
-            System.out.println(dialog.isClusterGenes());
-            System.out.println(dialog.isClusterExperiments());
-            System.out.println(dialog.getMethod());
-        }
+        JFrame frame = new JFrame("Test");
+        HCLInitDialog dialog = new HCLInitDialog(frame, "Euclidean Distance", false, true);
+        dialog.setVisible(true);
+        System.exit(0);
     }
     
     protected void disposeDialog() {
     }
 
-	public boolean isValidate() {
-		return this.validationPanel.getUseValidationBox().isSelected();
-	}
-
-	public boolean isInternalV() {
-		return this.validationPanel.getInternalValidationBox().isSelected();
-	}
-
-	public boolean isStabilityV() {
-		return this.validationPanel.getStabilityValidationBox().isSelected();
-	}
-
-	public boolean isBiologicalV() {
-		return this.validationPanel.getBiologicalValidationBox().isSelected();
-	}
-
-	public int getLowClusterRange() {
-		return Integer.parseInt(this.validationPanel.getLowClusterRange().getText());
-	}
-
-	public int getHighClusterRange() {
-		return Integer.parseInt(this.validationPanel.getHighClusterRange().getText());
-	}
-
-	public String[] getMethodsArray() {
-		return this.validationPanel.getMethodsArray();
-	}
-	public String getValidationDistanceMetric() {
-		return this.validationPanel.getValidationDistanceMetric();
-	}
-	public String getValidationLinkageMethod() {
-		return this.validationPanel.getLinkageMethod();
-	}
-	public String getBioCAnnotationString() {
-		return this.validationPanel.getBioCAnnotationString();
+	public ClusterValidationPanel getValidationPanel(){
+		return this.validationPanel;
 	}
     
 }

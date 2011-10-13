@@ -36,6 +36,7 @@ import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
+import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
@@ -66,7 +67,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         }
         int method = dialog.getMethod();
         function = dialog.getDistanceMetric();       
-        isClusterValidation = dialog.isValidate();
+        isClusterValidation = dialog.getValidationPanel().isValidate();
         Listener listener = new Listener();
         
         try {
@@ -81,11 +82,8 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             for (int i = 0; i < number_of_samples; i++) {
                 sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); 
             }
-            
-            //Use probe index as the gene labels in R
             for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
             	geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.PROBE_ID)[0]);
-            	
             }
             
             
@@ -138,20 +136,12 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             	progress.setIndeterminantString("This process may take awhile...");
             	progress.setDescription("Performing Cluster Validation");
             	progress.setTitle("Hierarchical Clustering");
-				validationData.addStringArray("methodsArray", dialog.getMethodsArray());
+            	
 				validationData.addMatrix("experiment", experiment.getMatrix());
 				validationData.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
-				validationData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));
-	            validationData.addParam("validate", String.valueOf(dialog.isValidate()));
-	            validationData.addParam("internal-validation", String.valueOf(dialog.isInternalV()));
-	            validationData.addParam("stability-validation", String.valueOf(dialog.isStabilityV()));
-	            validationData.addParam("biological-validation", String.valueOf(dialog.isBiologicalV()));
-	            validationData.addParam("cluster-range-low", String.valueOf(dialog.getLowClusterRange()));
-	            validationData.addParam("cluster-range-high", String.valueOf(dialog.getHighClusterRange()));
-	            validationData.addParam("validation-linkage", String.valueOf(dialog.getValidationLinkageMethod()));
-	            validationData.addParam("validation-distance", String.valueOf(dialog.getValidationDistanceMetric()));
-	            validationData.addParam("bioC-annotation", String.valueOf(dialog.getBioCAnnotationString()));
-				validationData.addResultNode("validation-node", performValidation(validationData));
+				validationData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));				
+				dialog.getValidationPanel().addValidationParameters(validationData);            
+				performValidation(validationData);
             }
     		if (validationData.getResultNode("validation-node")==null)
     			System.out.println("result node is null");
@@ -287,10 +277,10 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             }
         }
     }
-	public static DefaultMutableTreeNode performValidation(AlgorithmData data) throws AlgorithmException {
+	public DefaultMutableTreeNode performValidation(AlgorithmData data) throws AlgorithmException {
 		try {
-			CLVALID clv = new CLVALID();
-			return clv.execute(data).getResultNode("validation-node");
+			CLVALIDGUI clv = new CLVALIDGUI();
+			return clv.execute(data);
 		} catch(Exception e){
 			e.printStackTrace();
 			System.out.println("Error running clValid");

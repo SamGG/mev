@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -17,19 +18,45 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDInitBox;
+import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 
 
 public class ClusterValidationPanel extends JPanel{
 
 	private static final long serialVersionUID = 1L;
 	private JCheckBox useValidationBox;
+
+	public boolean isValidate() {
+		return getUseValidationBox().isSelected();
+	}
+	public boolean isInternalV() {
+		return getInternalValidationBox().isSelected();
+	}
+	public boolean isStabilityV() {
+		return getStabilityValidationBox().isSelected();
+	}
+	public boolean isBiologicalV() {
+		return getBiologicalValidationBox().isSelected();
+	}
+	public String getValidationLinkageMethod() {
+		return getLinkageMethod();
+	}
+    
+	
 	public JCheckBox getUseValidationBox() {
 		return useValidationBox;
 	}
@@ -54,8 +81,8 @@ public class ClusterValidationPanel extends JPanel{
 	public void setBiologicalValidationBox(JCheckBox biologicalValidationBox) {
 		this.biologicalValidationBox = biologicalValidationBox;
 	}
-	public JTextField getLowClusterRange() {
-		return lowClusterRange;
+	public int getLowClusterRange() {
+		return Integer.parseInt(lowClusterRange.getText());
 	}
 	public JPanel getLinkageMethodPanel() {
 		return this.linkageMethodPanel;
@@ -66,8 +93,8 @@ public class ClusterValidationPanel extends JPanel{
 	public void setLowClusterRange(JTextField lowClusterRange) {
 		this.lowClusterRange = lowClusterRange;
 	}
-	public JTextField getHighClusterRange() {
-		return highClusterRange;
+	public int getHighClusterRange() {
+		return Integer.parseInt(highClusterRange.getText());
 	}
 	public void setHighClusterRange(JTextField highClusterRange) {
 		this.highClusterRange = highClusterRange;
@@ -147,15 +174,44 @@ public class ClusterValidationPanel extends JPanel{
 	private Listener listener;
 	private JPanel annotationPanel;
 	private JComboBox chipNameBox;
-	public ClusterValidationPanel(String title){
+	private AlgorithmDialog parentDialog;
+	private boolean standaloneModule;
+	
+	/** 
+	 * Constructor for use in other clustering modules
+	 */
+	public ClusterValidationPanel(AlgorithmDialog parent, String title){
+		this(parent, title, false);
+	}
+	/**
+	 * Constructor for use in standalone module
+	 * @param parent
+	 * @param title
+	 * @param standaloneModule
+	 */
+	public ClusterValidationPanel(AlgorithmDialog parent, String title, boolean standaloneModule) {
 		super();
-		listener = new Listener();
+		this.standaloneModule = standaloneModule;
+		this.parentDialog = parent;
+		listener = new Listener();   
+		this.addAncestorListener(new AncestorListener(){
+			public void ancestorAdded(AncestorEvent event) {
+				parentDialog.pack();	
+			}
+			public void ancestorMoved(AncestorEvent event) {
+				parentDialog.pack();	
+			}
+			public void ancestorRemoved(AncestorEvent event) {
+				parentDialog.pack();	
+			}        	
+        });
 		this.setBackground(Color.white);
         Font font = new Font("Dialog", Font.BOLD, 12);
         this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, font, Color.black));        
         this.setLayout(new GridBagLayout());
         
         useValidationBox = new JCheckBox("Use Validation (Requires MeV+R)");
+        useValidationBox.setSelected(standaloneModule);
         internalValidationBox = new JCheckBox("Internal Validation");
         stabilityValidationBox = new JCheckBox("Stability Validation");
         biologicalValidationBox = new JCheckBox("Biological Validation");
@@ -247,7 +303,8 @@ public class ClusterValidationPanel extends JPanel{
         localAnnotationRB.addActionListener(listener);
         biologicalValidationBox.addActionListener(listener);
         
-        this.add(useValidationBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        if (!standaloneModule)
+        	this.add(useValidationBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(internalValidationBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(stabilityValidationBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(biologicalValidationBox, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
@@ -260,6 +317,7 @@ public class ClusterValidationPanel extends JPanel{
         this.add(lowClusterRange, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(dashLabel, new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         this.add(highClusterRange, new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        resetVisibleComponents();
 		
 	}
 	private String[] getBioCAnnotationsArray() {
@@ -290,30 +348,32 @@ public class ClusterValidationPanel extends JPanel{
 		return bioCAnnotationsArray;
 	}
 	public static void main(String[] args){
-		JDialog jd = new JDialog();
-		jd.add(new ClusterValidationPanel("asdasda"));
-		jd.setSize(800, 600);
-		jd.setVisible(true);
+		JFrame jf = new JFrame();
+		jf.add(new ClusterValidationPanel(null,"asdasda"));
+		jf.setSize(800, 600);
+		jf.setVisible(true);
 	}
 	private class Listener implements ActionListener{
-
 		public void actionPerformed(ActionEvent e) {
-			boolean vis = useValidationBox.isSelected();
-			internalValidationBox.setVisible(vis);
-	        stabilityValidationBox.setVisible(vis);
-	        biologicalValidationBox.setVisible(vis);
-	        clusterRange.setVisible(vis);
-	        lowClusterRange.setVisible(vis);
-	        dashLabel.setVisible(vis);
-	        highClusterRange.setVisible(vis);
-	        methodPanel.setVisible(vis);
-	        distanceMetricPanel.setVisible(vis);
-	        annotationTypePanel.setVisible(vis&&biologicalValidationBox.isSelected());
-	        annotationPanel.setVisible(vis&&biologicalValidationBox.isSelected()&&bioCAnnotationRB.isSelected());
-			linkageMethodPanel.setVisible(vis&&hierarchicalMethodBox.isSelected()||agnesMethodBox.isSelected());
-	        validate();
-	        updateUI();
-		}
+			resetVisibleComponents();
+		}		
+	}
+	private void resetVisibleComponents(){
+		boolean vis = useValidationBox.isSelected();
+		internalValidationBox.setVisible(vis);
+        stabilityValidationBox.setVisible(vis);
+        biologicalValidationBox.setVisible(vis);
+        clusterRange.setVisible(vis);
+        lowClusterRange.setVisible(vis);
+        dashLabel.setVisible(vis);
+        highClusterRange.setVisible(vis);
+        methodPanel.setVisible(vis);
+        distanceMetricPanel.setVisible(vis);
+        annotationTypePanel.setVisible(vis&&biologicalValidationBox.isSelected());
+        annotationPanel.setVisible(vis&&biologicalValidationBox.isSelected()&&bioCAnnotationRB.isSelected());
+		linkageMethodPanel.setVisible(vis&&hierarchicalMethodBox.isSelected()||agnesMethodBox.isSelected());
+        validate();
+        updateUI();
 		
 	}
 	public String getLinkageMethod() {
@@ -331,5 +391,17 @@ public class ClusterValidationPanel extends JPanel{
 		if(getMethodsArray().length==0||getMeasuresArray().length==0)
 			return false;
 		return true;
+	}
+	public void addValidationParameters(AlgorithmData validationData) {
+		validationData.addStringArray("methodsArray", getMethodsArray());
+        validationData.addParam("validate", String.valueOf(isValidate()));
+        validationData.addParam("internal-validation", String.valueOf(isInternalV()));
+        validationData.addParam("stability-validation", String.valueOf(isStabilityV()));
+        validationData.addParam("biological-validation", String.valueOf(isBiologicalV()));
+        validationData.addParam("cluster-range-low", String.valueOf(getLowClusterRange()));
+        validationData.addParam("cluster-range-high", String.valueOf(getHighClusterRange()));
+        validationData.addParam("validation-linkage", String.valueOf(getValidationLinkageMethod()));
+        validationData.addParam("validation-distance", String.valueOf(getValidationDistanceMetric()));
+        validationData.addParam("bioC-annotation", String.valueOf(getBioCAnnotationString()));		
 	}
 }
