@@ -11,14 +11,9 @@
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
 
-
-import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.tigr.rhook.RHook;
 import org.tigr.util.FloatMatrix;
-import org.tigr.microarray.mev.cluster.Cluster;
-import org.tigr.microarray.mev.cluster.Node;
-import org.tigr.microarray.mev.cluster.NodeList;
 import org.tigr.microarray.mev.cluster.algorithm.AbortException;
 import org.tigr.microarray.mev.cluster.algorithm.AbstractAlgorithm;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
@@ -27,6 +22,7 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.GraphViewer;
+import org.tigr.microarray.mev.cluster.gui.helpers.ResultDataTable;
 import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDInfoViewer;
 
 import java.io.BufferedWriter;
@@ -42,9 +38,6 @@ public class CLVALID extends AbstractAlgorithm{
 	private int progress;
 	private FloatMatrix expMatrix;
 	private boolean stop = false;
-	private int[][] clusterArrays;
-
-	private int iteration;
 
 	private AlgorithmEvent event;
 
@@ -63,6 +56,8 @@ public class CLVALID extends AbstractAlgorithm{
 	private String distanceMetric;
 	private String bioCAnnotation;
 	private HashMap optimalScoresIntern;
+	private HashMap optimalScoresStab;
+	private HashMap optimalScoresBio;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -100,32 +95,12 @@ public class CLVALID extends AbstractAlgorithm{
 		fireValueChanged(event);
 
 		runRAlg();
-		if (stop) {
+		if (stop) 
 			throw new AbortException();
-		}
+		
 
-		AlgorithmData result = new AlgorithmData();
-		Cluster result_cluster = new Cluster();
-		NodeList nodeList = result_cluster.getNodeList();
-		int[] features;        
-		if (clusterArrays!=null){
-			for (int i=0; i<clusterArrays.length; i++) {
-				if (stop) {
-					throw new AbortException();
-				}
-				features = clusterArrays[i];
-				Node node = new Node(features);
-				nodeList.addNode(node);
-			}
-		}
-
-		// prepare the result
-		result.addIntMatrix("sigGenesArrays", clusterArrays);
-		result.addParam("iterations", String.valueOf(iteration-1));
-		result.addCluster("cluster", result_cluster);
-		result.addResultNode("validation-node", createResultNode());
-
-		return result;   
+		data.addResultNode("validation-node", createResultNode());
+		return data;   
 	}
 
 
@@ -138,9 +113,9 @@ public class CLVALID extends AbstractAlgorithm{
 		if (this.isInternalV){
 			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Internal Validation");
 			String[] measures = new String[]{"Connectivity","Silhouette Width","Dunn Index"};
-			ivNode.add(new DefaultMutableTreeNode(new LeafInfo("Optimal Cluster Scores", new CLVALIDInfoViewer(optimalScoresIntern, measures)))); 
 			numMeasures = measures.length;
 			double[][][] dataMatrices = createDataMatrices(measuresIntern, numClusters, numMeasures, numMethods);
+			ivNode.add(new DefaultMutableTreeNode(new LeafInfo("Optimal Cluster Scores", new ResultDataTable(optimalScoresIntern, measures)))); 
 			for (int i=0; i<measures.length; i++){
 				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i], 
 	            		new GraphViewer("Internal Validation", 
@@ -155,10 +130,11 @@ public class CLVALID extends AbstractAlgorithm{
 			node.add(ivNode);
     	}
     	if (this.isStabilityV){
+			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Stability Validation");
 			String[] measures = new String[]{"Avg. Proportion Non-Overlap","Avg. Distance","Avg. Distance Between Means","Figure of Merit"};
 			numMeasures = measures.length;
 			double[][][] dataMatrices = createDataMatrices(measuresStab, numClusters, numMeasures, numMethods);
-			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Stability Validation");
+			ivNode.add(new DefaultMutableTreeNode(new LeafInfo("Optimal Cluster Scores", new ResultDataTable(optimalScoresStab, measures)))); 
 			for (int i=0; i<measures.length; i++){
 				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i],  
             		new GraphViewer("Stability Validation", 
@@ -173,10 +149,11 @@ public class CLVALID extends AbstractAlgorithm{
 			node.add(ivNode);
     	}
     	if (this.isBiologicalV){
+			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Biological Validation");
 			String[] measures = new String[]{"Biological Homogeneity Index","Biological Stability Index"};
 			numMeasures = measures.length;
 			double[][][] dataMatrices = createDataMatrices(measuresBio, numClusters, numMeasures, numMethods);
-			DefaultMutableTreeNode ivNode = new DefaultMutableTreeNode("Biological Validation");
+			ivNode.add(new DefaultMutableTreeNode(new LeafInfo("Optimal Cluster Scores", new ResultDataTable(optimalScoresBio, measures)))); 
 			for (int i=0; i<measures.length; i++){
 				ivNode.add(new DefaultMutableTreeNode(new LeafInfo(measures[i],			
             		new GraphViewer("Biological Validation", 
@@ -220,7 +197,6 @@ public class CLVALID extends AbstractAlgorithm{
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue(10);
 		fireValueChanged(event);
-
 		Rengine re;
 		try {
 			re = RHook.startRSession();
@@ -272,8 +248,6 @@ public class CLVALID extends AbstractAlgorithm{
 				rCmd = "as.matrix(optimalScores(intern)[3])";
 				optimalScoresIntern.put("clusters", RHook.evalR(rCmd).asStringArray());	
 				optimalScoresIntern.put("numMeasures", 3);
-				
-				System.out.println("optimalScoresIntern " + optimalScoresIntern);
 			}
 			if (isStabilityV){
 				rCmd = "stab <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
@@ -283,6 +257,15 @@ public class CLVALID extends AbstractAlgorithm{
 				RHook.evalR(rCmd);
 				rCmd = "stab@measures";
 				measuresStab = RHook.evalR(rCmd).asDoubleArray();
+
+				optimalScoresStab = new HashMap();
+				rCmd = "as.matrix(optimalScores(stab)[1])";
+				optimalScoresStab.put("scores", RHook.evalR(rCmd).asDoubleArray());	
+				rCmd = "as.matrix(optimalScores(stab)[2])";
+				optimalScoresStab.put("method", RHook.evalR(rCmd).asStringArray());
+				rCmd = "as.matrix(optimalScores(stab)[3])";
+				optimalScoresStab.put("clusters", RHook.evalR(rCmd).asStringArray());	
+				optimalScoresStab.put("numMeasures", 4);
 			}
 			if (isBiologicalV){
 
@@ -300,6 +283,15 @@ public class CLVALID extends AbstractAlgorithm{
 				RHook.evalR(rCmd);
 				rCmd = "bio2@measures";
 				measuresBio = RHook.evalR(rCmd).asDoubleArray();
+
+				optimalScoresBio = new HashMap();
+				rCmd = "as.matrix(optimalScores(bio2)[1])";
+				optimalScoresBio.put("scores", RHook.evalR(rCmd).asDoubleArray());	
+				rCmd = "as.matrix(optimalScores(bio2)[2])";
+				optimalScoresBio.put("method", RHook.evalR(rCmd).asStringArray());
+				rCmd = "as.matrix(optimalScores(bio2)[3])";
+				optimalScoresBio.put("clusters", RHook.evalR(rCmd).asStringArray());	
+				optimalScoresBio.put("numMeasures", 2);
 			}
 
 			rCmd = "sink()";
@@ -356,7 +348,6 @@ public class CLVALID extends AbstractAlgorithm{
 	}
 
 	public void updateProgressBar(){
-
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
 		event.setIntValue((100*progress)/(progress+7));
