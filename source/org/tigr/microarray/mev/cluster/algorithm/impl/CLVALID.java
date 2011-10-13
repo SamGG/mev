@@ -214,6 +214,7 @@ public class CLVALID extends AbstractAlgorithm{
 		}
 
 		try {
+			RHook.testPackage("clvalid");
 			RHook.log("Starting R Algorithim");
 			
 			String rCmd = "library(clValid)";
