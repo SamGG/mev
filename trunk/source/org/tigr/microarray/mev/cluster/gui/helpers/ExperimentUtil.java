@@ -30,8 +30,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.tigr.microarray.mev.TMEV;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
+import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IData;
+import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDGUI;
 import org.tigr.util.BrowserLauncher;
 import org.tigr.util.StringSplitter;
 
@@ -380,7 +383,16 @@ public class ExperimentUtil {
         out.flush();
         out.close();
     }
-    
+
+	public static void performValidation(AlgorithmData data) throws AlgorithmException {
+		try {
+			CLVALIDGUI clv = new CLVALIDGUI();
+			clv.execute(data);
+		} catch(Exception e){
+			e.printStackTrace();
+            throw new AlgorithmException("Error running Cluster Validation");
+		}
+	}
     
     /**
      * Saves values from specified rows in IData with specified auxilary header titles and data.
