@@ -28,17 +28,15 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmException;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmFactory;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmListener;
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
-import org.tigr.microarray.mev.cluster.algorithm.impl.CLVALID;
-import org.tigr.microarray.mev.cluster.algorithm.impl.ExperimentUtil;
 import org.tigr.microarray.mev.cluster.gui.Experiment;
 import org.tigr.microarray.mev.cluster.gui.IClusterGUI;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
 import org.tigr.microarray.mev.cluster.gui.IFramework;
 import org.tigr.microarray.mev.cluster.gui.IViewer;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
-import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDGUI;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.Progress;
+import org.tigr.microarray.mev.cluster.gui.helpers.ExperimentUtil;
 import org.tigr.microarray.mev.script.scriptGUI.IScriptGUI;
 import org.tigr.util.FloatMatrix;
 
@@ -141,7 +139,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
 				validationData.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
 				validationData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));				
 				dialog.getValidationPanel().addValidationParameters(validationData);            
-				performValidation(validationData);
+				ExperimentUtil.performValidation(validationData);
             }
     		if (validationData.getResultNode("validation-node")==null)
     			System.out.println("result node is null");
@@ -277,16 +275,6 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             }
         }
     }
-	public DefaultMutableTreeNode performValidation(AlgorithmData data) throws AlgorithmException {
-		try {
-			CLVALIDGUI clv = new CLVALIDGUI();
-			return clv.execute(data);
-		} catch(Exception e){
-			e.printStackTrace();
-			System.out.println("Error running clValid");
-            throw new AlgorithmException("Error running Cluster Validation");
-		}
-	}
 
     /**
      * Checking the result of hcl algorithm calculation.

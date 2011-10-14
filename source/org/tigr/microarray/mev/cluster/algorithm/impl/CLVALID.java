@@ -6,7 +6,6 @@
  *******************************************************************************/
 /**
  * @author  dschlauch
- * @author  raktim
  * @version
  */
 package org.tigr.microarray.mev.cluster.algorithm.impl;
@@ -23,7 +22,6 @@ import org.tigr.microarray.mev.cluster.algorithm.AlgorithmParameters;
 import org.tigr.microarray.mev.cluster.gui.LeafInfo;
 import org.tigr.microarray.mev.cluster.gui.helpers.GraphViewer;
 import org.tigr.microarray.mev.cluster.gui.helpers.ResultDataTable;
-import org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDInfoViewer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -41,23 +39,15 @@ public class CLVALID extends AbstractAlgorithm{
 
 	private AlgorithmEvent event;
 
-	private String[] geneNames;
-	private String[] sampleNames;
-	private boolean isInternalV;
-	private boolean isStabilityV;
-	private boolean isBiologicalV;
-	private int lowClusterRange;
-	private int highClusterRange;
-	private double[] measuresIntern;
-	private double[] measuresStab;
-	private double[] measuresBio;
+	private String[] geneNames,sampleNames;
+	private boolean isInternalV,isStabilityV,isBiologicalV;
+	private int lowClusterRange,highClusterRange;
+	private double[] measuresIntern,measuresStab,measuresBio;
 	private String[] methodsArray;
-	private String linkageMethod;
-	private String distanceMetric;
-	private String bioCAnnotation;
-	private HashMap optimalScoresIntern;
-	private HashMap optimalScoresStab;
-	private HashMap optimalScoresBio;
+	private String linkageMethod,distanceMetric,bioCAnnotation;
+	private HashMap<String, Object> optimalScoresIntern = new HashMap<String, Object>();
+	private HashMap<String, Object> optimalScoresStab = new HashMap<String, Object>();
+	private HashMap<String, Object> optimalScoresBio = new HashMap<String, Object>();
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -71,11 +61,11 @@ public class CLVALID extends AbstractAlgorithm{
 	 * @param data the data to be calculated.
 	 */
 	public AlgorithmData execute(AlgorithmData data) throws AlgorithmException {
-		AlgorithmParameters map = data.getParams();
 		expMatrix = data.getMatrix("experiment");
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
 		methodsArray = data.getStringArray("methodsArray");
+		AlgorithmParameters map = data.getParams();
 		isInternalV = map.getBoolean("internal-validation");
 		isStabilityV = map.getBoolean("stability-validation");
 		isBiologicalV = map.getBoolean("biological-validation");
@@ -96,8 +86,7 @@ public class CLVALID extends AbstractAlgorithm{
 
 		runRAlg();
 		if (stop) 
-			throw new AbortException();
-		
+			throw new AbortException();		
 
 		data.addResultNode("validation-node", createResultNode());
 		return data;   
@@ -191,7 +180,6 @@ public class CLVALID extends AbstractAlgorithm{
 	 * Function to create R session in memory and execute CLVALID
 	 * @throws AbortException 
 	 */
-	@SuppressWarnings("unchecked")
 	public void runRAlg() throws AbortException {
 		progress++;
 		event.setId(AlgorithmEvent.PROGRESS_VALUE);
@@ -202,15 +190,11 @@ public class CLVALID extends AbstractAlgorithm{
 			re = RHook.startRSession();
 			if(re == null) {
 				JOptionPane.showMessageDialog(null, "Error creating R Engine",  "REngine", JOptionPane.ERROR_MESSAGE);
-				//logger.writeln("Could not get REngine");
 				throw new AbortException();
-				//return;
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
-			//logger.writeln("Could not get REngine");
 			throw new AbortException();
-			//return;
 		}
 
 		try {
@@ -220,80 +204,25 @@ public class CLVALID extends AbstractAlgorithm{
 			String rCmd = "library(clValid)";
 			RHook.evalR(rCmd);
 
-			rCmd = "zz <- file('all.Rout', open='wt')";
-			RHook.evalR(rCmd);
-			rCmd = "sink(zz)";
-			RHook.evalR(rCmd);
-			rCmd = "sink(zz, type='message')";
-			RHook.evalR(rCmd);
+//			rCmd = "zz <- file('all.Rout', open='wt')";
+//			RHook.evalR(rCmd);
+//			rCmd = "sink(zz)";
+//			RHook.evalR(rCmd);
+//			rCmd = "sink(zz, type='message')";
+//			RHook.evalR(rCmd);
 			
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			fileLoc = fileLoc.replace("\\", "/");
 			String filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
 			RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
 			String methodsString = getMethodsString();
-			if (isInternalV){
-		        rCmd = "intern <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
-		        	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='internal')";
-				RHook.evalR(rCmd);
-				rCmd = "summary(intern)";
-				RHook.evalR(rCmd);
-				rCmd = "intern@measures";
-				measuresIntern = RHook.evalR(rCmd).asDoubleArray();
-				
-				optimalScoresIntern = new HashMap();
-				rCmd = "as.matrix(optimalScores(intern)[1])";
-				optimalScoresIntern.put("scores", RHook.evalR(rCmd).asDoubleArray());	
-				rCmd = "as.matrix(optimalScores(intern)[2])";
-				optimalScoresIntern.put("method", RHook.evalR(rCmd).asStringArray());
-				rCmd = "as.matrix(optimalScores(intern)[3])";
-				optimalScoresIntern.put("clusters", RHook.evalR(rCmd).asStringArray());	
-				optimalScoresIntern.put("numMeasures", 3);
-			}
-			if (isStabilityV){
-				rCmd = "stab <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
-					"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='stability')";
-				RHook.evalR(rCmd);
-				rCmd = "optimalScores(stab)";
-				RHook.evalR(rCmd);
-				rCmd = "stab@measures";
-				measuresStab = RHook.evalR(rCmd).asDoubleArray();
-
-				optimalScoresStab = new HashMap();
-				rCmd = "as.matrix(optimalScores(stab)[1])";
-				optimalScoresStab.put("scores", RHook.evalR(rCmd).asDoubleArray());	
-				rCmd = "as.matrix(optimalScores(stab)[2])";
-				optimalScoresStab.put("method", RHook.evalR(rCmd).asStringArray());
-				rCmd = "as.matrix(optimalScores(stab)[3])";
-				optimalScoresStab.put("clusters", RHook.evalR(rCmd).asStringArray());	
-				optimalScoresStab.put("numMeasures", 4);
-			}
-			if (isBiologicalV){
-
-				rCmd = "source('http://www.bioconductor.org/biocLite.R')";
-				RHook.evalR(rCmd);
-				rCmd = "biocLite('"+bioCAnnotation+"')";
-				RHook.evalR(rCmd);
-				rCmd = "library("+bioCAnnotation+")";
-				RHook.evalR(rCmd);
-				rCmd = "if(require('Biobase') && require('annotate') && require('GO.db') && require('"+bioCAnnotation+"')) {" +
-						"bio2 <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
-						"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"', validation='biological', annotation='"+bioCAnnotation+"',GOcategory='all')}";
-				RHook.evalR(rCmd);
-				rCmd = "optimalScores(bio2)";
-				RHook.evalR(rCmd);
-				rCmd = "bio2@measures";
-				measuresBio = RHook.evalR(rCmd).asDoubleArray();
-
-				optimalScoresBio = new HashMap();
-				rCmd = "as.matrix(optimalScores(bio2)[1])";
-				optimalScoresBio.put("scores", RHook.evalR(rCmd).asDoubleArray());	
-				rCmd = "as.matrix(optimalScores(bio2)[2])";
-				optimalScoresBio.put("method", RHook.evalR(rCmd).asStringArray());
-				rCmd = "as.matrix(optimalScores(bio2)[3])";
-				optimalScoresBio.put("clusters", RHook.evalR(rCmd).asStringArray());	
-				optimalScoresBio.put("numMeasures", 2);
-			}
+			if (isInternalV)
+				measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern);
+			if (isStabilityV)
+				measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab);			
+			if (isBiologicalV)
+				runRScriptBioValidationStep(methodsString);
+			
 
 			rCmd = "sink()";
 			RHook.endRSession();
@@ -312,6 +241,52 @@ public class CLVALID extends AbstractAlgorithm{
 		}
 	}
 
+	private void runRScriptBioValidationStep(String methodsString) throws Exception {
+		String rCmd = "source('http://www.bioconductor.org/biocLite.R')";
+		RHook.evalR(rCmd);
+		rCmd = "biocLite('"+bioCAnnotation+"')";
+		RHook.evalR(rCmd);
+		rCmd = "library("+bioCAnnotation+")";
+		RHook.evalR(rCmd);
+		rCmd = "if(require('Biobase') && require('annotate') && require('GO.db') && require('"+bioCAnnotation+"')) {" +
+				"bio2 <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
+				"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"', validation='biological', annotation='"+bioCAnnotation+"',GOcategory='all')}";
+		RHook.evalR(rCmd);
+		rCmd = "optimalScores(bio2)";
+		RHook.evalR(rCmd);
+		rCmd = "bio2@measures";
+		measuresBio = RHook.evalR(rCmd).asDoubleArray();
+
+		optimalScoresBio = new HashMap<String, Object>();
+		rCmd = "as.matrix(optimalScores(bio2)[1])";
+		optimalScoresBio.put("scores", RHook.evalR(rCmd).asDoubleArray());	
+		rCmd = "as.matrix(optimalScores(bio2)[2])";
+		optimalScoresBio.put("method", RHook.evalR(rCmd).asStringArray());
+		rCmd = "as.matrix(optimalScores(bio2)[3])";
+		optimalScoresBio.put("clusters", RHook.evalR(rCmd).asStringArray());	
+		optimalScoresBio.put("numMeasures", 2);
+		
+	}
+	private double[] runRScriptValidationStep(String methodsString, HashMap<String, Object> optimalScores, String validationType, double[] measuresIntern) throws Exception{
+
+        String rCmd = "results <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
+        	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='"+validationType+"')";
+		RHook.evalR(rCmd);
+		rCmd = "summary(results)";
+		RHook.evalR(rCmd);
+		rCmd = "results@measures";
+		measuresIntern = RHook.evalR(rCmd).asDoubleArray();
+		System.out.println("measuresIntern1 = "+measuresIntern.length);
+		
+		rCmd = "as.matrix(optimalScores(results)[1])";
+		optimalScores.put("scores", RHook.evalR(rCmd).asDoubleArray());	
+		rCmd = "as.matrix(optimalScores(results)[2])";
+		optimalScores.put("method", RHook.evalR(rCmd).asStringArray());
+		rCmd = "as.matrix(optimalScores(results)[3])";
+		optimalScores.put("clusters", RHook.evalR(rCmd).asStringArray());	
+		optimalScores.put("numMeasures", 3);
+		return measuresIntern;
+	}
 	private String getMethodsString() {
 		String methodsString = "";
 		for (int i=0; i<methodsArray.length; i++){
