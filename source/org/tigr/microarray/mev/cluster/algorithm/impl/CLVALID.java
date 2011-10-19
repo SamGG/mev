@@ -40,7 +40,7 @@ public class CLVALID extends AbstractAlgorithm{
 	private AlgorithmEvent event;
 
 	private String[] geneNames,sampleNames;
-	private boolean isInternalV,isStabilityV,isBiologicalV;
+	private boolean isInternalV,isStabilityV,isBiologicalV,isClusterGenes,isClusterSamples;
 	private int lowClusterRange,highClusterRange;
 	private double[] measuresIntern,measuresStab,measuresBio;
 	private String[] methodsArray;
@@ -66,6 +66,8 @@ public class CLVALID extends AbstractAlgorithm{
 		sampleNames = data.getStringArray("sampleLabels");
 		methodsArray = data.getStringArray("methodsArray");
 		AlgorithmParameters map = data.getParams();
+		isClusterGenes = map.getBoolean("cluster-genes");
+		isClusterSamples = map.getBoolean("cluster-samples");
 		isInternalV = map.getBoolean("internal-validation");
 		isStabilityV = map.getBoolean("stability-validation");
 		isBiologicalV = map.getBoolean("biological-validation");
@@ -80,8 +82,14 @@ public class CLVALID extends AbstractAlgorithm{
 		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating...");
 		// set progress limit
 		fireValueChanged(event);
-		event.setId(AlgorithmEvent.PROGRESS_VALUE);
-		event.setIntValue(0);
+		event.setId(AlgorithmEvent.MONITOR_VALUE);
+		event.setDescription("description");
+		fireValueChanged(event);
+		event.setId(AlgorithmEvent.SET_VALUE);
+		event.setDescription("description");
+		fireValueChanged(event);
+		event.setId(AlgorithmEvent.WARNING);
+		event.setDescription("description");
 		fireValueChanged(event);
 
 		runRAlg();
@@ -204,25 +212,32 @@ public class CLVALID extends AbstractAlgorithm{
 			String rCmd = "library(clValid)";
 			RHook.evalR(rCmd);
 
-//			rCmd = "zz <- file('all.Rout', open='wt')";
-//			RHook.evalR(rCmd);
-//			rCmd = "sink(zz)";
-//			RHook.evalR(rCmd);
-//			rCmd = "sink(zz, type='message')";
-//			RHook.evalR(rCmd);
+			rCmd = "zz <- file('all.Rout', open='wt')";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz)";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz, type='message')";
+			RHook.evalR(rCmd);
 			
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			fileLoc = fileLoc.replace("\\", "/");
-			String filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
-			RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
+			
+			String filePath;
+			if (isClusterGenes){
+				filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
+				RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
+			} else {
+				filePath = writeMatrixToFile(fileLoc, expMatrix.transpose(), sampleNames);
+				RHook.createRDataMatrixFromFile("y", filePath, true, geneNames);
+			}
+				
 			String methodsString = getMethodsString();
 			if (isInternalV)
 				measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern);
 			if (isStabilityV)
 				measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab);			
 			if (isBiologicalV)
-				runRScriptBioValidationStep(methodsString);
-			
+				runRScriptBioValidationStep(methodsString);			
 
 			rCmd = "sink()";
 			RHook.endRSession();

@@ -307,9 +307,9 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
         if(samples_result != null)
             root.add(new DefaultMutableTreeNode(new LeafInfo("Sample Node Height Plot", new HCLNodeHeightGraph(getHCLTreeData(samples_result), false))));
         addGeneralInfo(root, info);
-        if (isClusterValidation){
+        if (isClusterValidation)
         	root.add(validationData.getResultNode("validation-node"));
-        }
+        
         return root;
     }
     
