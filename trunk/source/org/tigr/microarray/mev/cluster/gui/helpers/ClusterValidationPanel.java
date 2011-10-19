@@ -55,8 +55,13 @@ public class ClusterValidationPanel extends JPanel{
 	public String getValidationLinkageMethod() {
 		return getLinkageMethod();
 	}
-    
-	
+	public boolean isClusterGenes(){
+		return clusterGenesCheckBox.isSelected();
+	}
+	public boolean isClusterSamples(){
+		return clusterSamplesCheckBox.isSelected();
+	}
+    	
 	public JCheckBox getUseValidationBox() {
 		return useValidationBox;
 	}
@@ -176,6 +181,8 @@ public class ClusterValidationPanel extends JPanel{
 	private JComboBox chipNameBox;
 	private AlgorithmDialog parentDialog;
 	private boolean standaloneModule;
+	private JRadioButton clusterGenesCheckBox;
+	private JRadioButton clusterSamplesCheckBox;
 	
 	/** 
 	 * Constructor for use in other clustering modules
@@ -212,6 +219,12 @@ public class ClusterValidationPanel extends JPanel{
         
         useValidationBox = new JCheckBox("Use Validation (Requires MeV+R)");
         useValidationBox.setSelected(standaloneModule);
+        clusterGenesCheckBox = new JRadioButton("Cluster Genes");
+        clusterSamplesCheckBox = new JRadioButton("Cluster Samples");
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(clusterGenesCheckBox);
+        bg.add(clusterSamplesCheckBox);
+        clusterGenesCheckBox.setSelected(true);
         internalValidationBox = new JCheckBox("Internal Validation");
         stabilityValidationBox = new JCheckBox("Stability Validation");
         biologicalValidationBox = new JCheckBox("Biological Validation");
@@ -254,9 +267,9 @@ public class ClusterValidationPanel extends JPanel{
         bioCAnnotationRB = new JRadioButton("Bioconductor Annotation");
         bioCAnnotationRB.setSelected(true);
         localAnnotationRB = new JRadioButton("Local Annotation");
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(bioCAnnotationRB);
-        bg.add(localAnnotationRB);
+        ButtonGroup bg1 = new ButtonGroup();
+        bg1.add(bioCAnnotationRB);
+        bg1.add(localAnnotationRB);
         annotationTypePanel.add(bioCAnnotationRB);
         annotationTypePanel.add(localAnnotationRB);
 
@@ -267,6 +280,8 @@ public class ClusterValidationPanel extends JPanel{
         annotationPanel.add(chipNameBox);
         
         boolean startVis = false;
+        clusterGenesCheckBox.setVisible(startVis);
+        clusterSamplesCheckBox.setVisible(startVis);
         internalValidationBox.setVisible(startVis);
         stabilityValidationBox.setVisible(startVis);
         biologicalValidationBox.setVisible(startVis);
@@ -281,6 +296,8 @@ public class ClusterValidationPanel extends JPanel{
         annotationPanel.setVisible(startVis);
         
         useValidationBox.setBackground(Color.white);
+        clusterGenesCheckBox.setBackground(Color.white);
+        clusterSamplesCheckBox.setBackground(Color.white);
         internalValidationBox.setBackground(Color.white);
         stabilityValidationBox.setBackground(Color.white);
         biologicalValidationBox.setBackground(Color.white);
@@ -305,18 +322,20 @@ public class ClusterValidationPanel extends JPanel{
         
         if (!standaloneModule)
         	this.add(useValidationBox, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(internalValidationBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(stabilityValidationBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(biologicalValidationBox, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(annotationTypePanel, new GridBagConstraints(0,4,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
-        this.add(annotationPanel, new GridBagConstraints(0,5,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
-        this.add(methodPanel, new GridBagConstraints(0,6,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(distanceMetricPanel, new GridBagConstraints(0,7,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(linkageMethodPanel, new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(clusterRange, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(lowClusterRange, new GridBagConstraints(2,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(dashLabel, new GridBagConstraints(3,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        this.add(highClusterRange, new GridBagConstraints(4,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(clusterGenesCheckBox, new GridBagConstraints(0,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(clusterSamplesCheckBox, new GridBagConstraints(1,1,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(internalValidationBox, new GridBagConstraints(0,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(stabilityValidationBox, new GridBagConstraints(0,3,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(biologicalValidationBox, new GridBagConstraints(0,4,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(annotationTypePanel, new GridBagConstraints(0,5,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
+        this.add(annotationPanel, new GridBagConstraints(0,6,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
+        this.add(methodPanel, new GridBagConstraints(0,7,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(distanceMetricPanel, new GridBagConstraints(0,8,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(linkageMethodPanel, new GridBagConstraints(0,9,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(clusterRange, new GridBagConstraints(1,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(lowClusterRange, new GridBagConstraints(2,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(dashLabel, new GridBagConstraints(3,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        this.add(highClusterRange, new GridBagConstraints(4,2,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         resetVisibleComponents();
 		
 	}
@@ -360,6 +379,8 @@ public class ClusterValidationPanel extends JPanel{
 	}
 	private void resetVisibleComponents(){
 		boolean vis = useValidationBox.isSelected();
+		clusterGenesCheckBox.setVisible(vis);
+		clusterSamplesCheckBox.setVisible(vis);
 		internalValidationBox.setVisible(vis);
         stabilityValidationBox.setVisible(vis);
         biologicalValidationBox.setVisible(vis);
@@ -395,6 +416,8 @@ public class ClusterValidationPanel extends JPanel{
 	public void addValidationParameters(AlgorithmData validationData) {
 		validationData.addStringArray("methodsArray", getMethodsArray());
         validationData.addParam("validate", String.valueOf(isValidate()));
+        validationData.addParam("cluster-genes", String.valueOf(isClusterGenes()));
+        validationData.addParam("cluster-samples", String.valueOf(isClusterSamples()));
         validationData.addParam("internal-validation", String.valueOf(isInternalV()));
         validationData.addParam("stability-validation", String.valueOf(isStabilityV()));
         validationData.addParam("biological-validation", String.valueOf(isBiologicalV()));
