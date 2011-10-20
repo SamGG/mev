@@ -223,21 +223,24 @@ public class CLVALID extends AbstractAlgorithm{
 			fileLoc = fileLoc.replace("\\", "/");
 			
 			String filePath;
+			int numRows;
 			if (isClusterGenes){
 				filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
 				RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
+				numRows = geneNames.length;
 			} else {
 				filePath = writeMatrixToFile(fileLoc, expMatrix.transpose(), sampleNames);
 				RHook.createRDataMatrixFromFile("y", filePath, true, geneNames);
+				numRows = sampleNames.length;
 			}
 				
 			String methodsString = getMethodsString();
 			if (isInternalV)
-				measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern);
+				measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern, numRows);
 			if (isStabilityV)
-				measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab);			
+				measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab, numRows);			
 			if (isBiologicalV)
-				runRScriptBioValidationStep(methodsString);			
+				runRScriptBioValidationStep(methodsString,numRows);			
 
 			rCmd = "sink()";
 			RHook.endRSession();
@@ -256,7 +259,7 @@ public class CLVALID extends AbstractAlgorithm{
 		}
 	}
 
-	private void runRScriptBioValidationStep(String methodsString) throws Exception {
+	private void runRScriptBioValidationStep(String methodsString, int numRows) throws Exception {
 		String rCmd = "source('http://www.bioconductor.org/biocLite.R')";
 		RHook.evalR(rCmd);
 		rCmd = "biocLite('"+bioCAnnotation+"')";
@@ -265,7 +268,7 @@ public class CLVALID extends AbstractAlgorithm{
 		RHook.evalR(rCmd);
 		rCmd = "if(require('Biobase') && require('annotate') && require('GO.db') && require('"+bioCAnnotation+"')) {" +
 				"bio2 <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
-				"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"', validation='biological', annotation='"+bioCAnnotation+"',GOcategory='all')}";
+				"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"', validation='biological', annotation='"+bioCAnnotation+"',GOcategory='all', maxitems="+numRows+")}";
 		RHook.evalR(rCmd);
 		rCmd = "optimalScores(bio2)";
 		RHook.evalR(rCmd);
@@ -282,10 +285,10 @@ public class CLVALID extends AbstractAlgorithm{
 		optimalScoresBio.put("numMeasures", 2);
 		
 	}
-	private double[] runRScriptValidationStep(String methodsString, HashMap<String, Object> optimalScores, String validationType, double[] measuresIntern) throws Exception{
+	private double[] runRScriptValidationStep(String methodsString, HashMap<String, Object> optimalScores, String validationType, double[] measuresIntern, int numRows) throws Exception{
 
         String rCmd = "results <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
-        	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='"+validationType+"')";
+        	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='"+validationType+"', maxitems="+numRows+")";
 		RHook.evalR(rCmd);
 		rCmd = "summary(results)";
 		RHook.evalR(rCmd);
