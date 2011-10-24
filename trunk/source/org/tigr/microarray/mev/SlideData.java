@@ -352,7 +352,12 @@ public class SlideData implements ISlideData, ISlideMetaData {
 		    String thisFieldName = temp[i].getName();
 		    for(int j=0; j<allSlideDataElements.size(); j++) {
 			    anno = ((ISlideDataElement)allSlideDataElements.get(j)).getElementAnnotation();
-			    if(anno != null && !anno.getAttribute(thisFieldName)[0].equals(ChipAnnotationFieldConstants.NOT_AVAILABLE)) {
+			    if(anno != null && 
+			    		(
+			    			anno.getAttribute(thisFieldName).length <= 0 ||	
+			    			!anno.getAttribute(thisFieldName)[0].equals(ChipAnnotationFieldConstants.NOT_AVAILABLE)
+			    		)
+			    	) {
 				    filledFields.put(thisFieldName, "");
 				    break;
 			    }
