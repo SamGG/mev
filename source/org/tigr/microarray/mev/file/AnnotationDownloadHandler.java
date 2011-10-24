@@ -62,7 +62,7 @@ public class AnnotationDownloadHandler {
 	JComboBox organismListBox;
 	JComboBox arrayListBox;
 	JCheckBox proceedLoadingAnnotation;
-	JRadioButton autoDownload, loadFromFile;
+	JRadioButton autoDownload, loadFromFile, bioconductor;
 	JTextField annFileLocation = new JTextField("No file selected");
 	JButton browseAnnFileButton;
 	JLabel statusLabel;
@@ -108,6 +108,8 @@ public class AnnotationDownloadHandler {
 						autoDownload.setBackground(bg);
 					if(loadFromFile != null)
 						loadFromFile.setBackground(bg);
+					if(bioconductor != null)
+						bioconductor.setBackground(bg);
 					if(proceedLoadingAnnotation != null)
 						proceedLoadingAnnotation.setBackground(bg);
 					if(annFileLocation != null)
@@ -128,15 +130,18 @@ public class AnnotationDownloadHandler {
 		
 		autoDownload = new JRadioButton("Automatically download");
 		loadFromFile = new JRadioButton("Load from local file");
+		bioconductor = new JRadioButton("Download from Bioconductor");
 			
 		annFileLocation.setEditable(false);
 		browseAnnFileButton = new JButton("Choose File");
 		statusLabel = new JLabel("Please select a species name and array name.");
 		bg.add(autoDownload);
 		bg.add(loadFromFile);
+		bg.add(bioconductor);
 
 		autoDownload.addActionListener(new EventListener());
 		loadFromFile.addActionListener(new EventListener());
+		bioconductor.addActionListener(new EventListener());
 		browseAnnFileButton.addActionListener(new EventListener());
 		proceedLoadingAnnotation.addActionListener(new EventListener());
 		
@@ -336,6 +341,10 @@ public class AnnotationDownloadHandler {
 				if(loadFromFile.isSelected()) {
 					onSelectBrowseFile();
 				}
+			} else if (source.equals(bioconductor)) {
+				if(bioconductor.isSelected()) {
+					onSelectBioconductor();
+				}
 			} else if (source.equals(proceedLoadingAnnotation)) {
 				onToggleProceed();
 			} else if (source.equals(organismListBox)) {
@@ -361,6 +370,16 @@ public class AnnotationDownloadHandler {
 		browseAnnFileButton.setEnabled(true);
 		organismListBox.setEnabled(false);
 		arrayListBox.setEnabled(false);
+		if(annotationSelected)
+			proceedLoadingAnnotation.setSelected(true);
+		updateLabel();
+	}
+	private void onSelectBioconductor() {
+		annFileLocation.setEnabled(false);
+		browseAnnFileButton.setEnabled(false);
+		organismListBox.setEnabled(true);
+		arrayListBox.setEnabled(true);
+		checkForAnnotationFile();
 		if(annotationSelected)
 			proceedLoadingAnnotation.setSelected(true);
 		updateLabel();
@@ -420,6 +439,8 @@ public class AnnotationDownloadHandler {
 		autoDownload.setEnabled(isEnabled);
 		loadFromFile.setSelected(false);
 		loadFromFile.setEnabled(isEnabled);
+		bioconductor.setSelected(false);
+		bioconductor.setEnabled(isEnabled);
 		organismListBox.setEnabled(isEnabled);
 		arrayListBox.setEnabled(isEnabled);
 		proceedLoadingAnnotation.setSelected(isEnabled);
