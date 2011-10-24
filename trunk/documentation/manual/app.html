@@ -6,7 +6,11 @@
 		</head>
 		</style>
 		<body>
-<div class="navigation-bar"><a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a></div>
+<div class="navigation-bar">
+	<a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | 
+	<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+	<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a>
+</div>
 	<h3>Appendix: File Format Descriptions</h3>
 	<a name="tav"><h4>TAV Files</h4></a>
 						<div class="screenshots">
@@ -19,22 +23,21 @@
 		<p>The original TAV (TIGR ArrayViewer) file type was an eight-column, tab-delimited text format developed at TIGR for the purposes of storing the intensity values of the spots on a single slide.  It is written out by the program TIGR Spotfinder and contains one row for each spot.  The first six columns of the file contain positional data for the spots and are followed by two columns of intensity data.</p>
 		<p>These eight columns are required by MeV for display and analysis of experimental data.  Optional columns can contain flags, annotation, Genbank numbers, etc.  It is the variability of .tav files caused by these optional columns that make Preferences files necessary. Optional columns can be used to sort the spots in the <span class="widget2">Main View</span>, by choosing the appropriate column from the <span class="widget2">Sort</span> menu.  </p>
 	<p>A flag is simply a letter code corresponding to a description of the spot:</p>
-	<ul>
 	<ul type="circle">
-<div class="screenshots">
-		<a href="app2.jpg">
+		<div class="screenshots">
+			<a href="app2.jpg">
 					<img src="app2.jpg">
-				</a>
-				<br/>
-				<span class="caption">A TAV file with several extra fields</span>
-				</div>
+			</a>
+			<br/>
+			<span class="caption">A TAV file with several extra fields</span>
+		</div>
 		<li>A–0 non-saturated pixels in the spot</li>
 		<li>B–0-50 non-saturated pixels in the spot</li>
 		<li>C–50 or more non-saturated pixels in the spot</li>
 		<li>X–spot is rejected, due to spot shape and intensity relative to background</li>
 		<li>Y–background is higher than spot intensity</li>
 		<li>Z–spot not detected by Spotfinder.</li>
-		</ul>
+	</ul>
 	<a name="tdms"><h4>Tab Delimited, Multiple Sample Files (TDMS files)</h4></a>
 		<div class="screenshots">
 		<a href="app3.jpg">
@@ -390,7 +393,12 @@ Index	Name	Group Assignment<br/></p>
 <p><span class="widget1">SVM:</span>A “load file” feature has been added to the dialog box and is accessible from the “File” drop-down menu.
 All “excluded” samples from outside saved files are added to the “Neutral” group.</p>
 <p><span class="widget1">USC:</span>If a file is loaded with a different number of groups, MeV is able (at the user’s request) to replace the group label names with the saved names and add or subtract groups to match the saved file’s information.</p>
-<div class="navigation-bar"><a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | <a  class="toc" href="TableofContents.html">Table of Contents</a>|<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a></div>
+
+	<div class="navigation-bar">
+		<a  class="prev" href="compare.html">Previous-Comparative Genomic Hybridization Viewer</a> | 
+		<a  class="toc" href="TableofContents.html">Table of Contents</a> | 
+		<a  class="next" href="app2.html">Next: Appendix-Preferences Files</a>
+	</div>
 </body>
 </html>
 
