@@ -58,12 +58,11 @@ packagenamelist <- c(
 biocLite("BSgenome.Hsapiens.UCSC.hg19")
 
 
+	biocLite(packagename)
+	prefix=strsplit(packagename, ".", fixed=TRUE)[[1]][1]
 
 
 testBNFiles <- function(packagename) {
-	biocLite(packagename)
-	do.call("library", as.list(packagename))
-	prefix=strsplit(packagename, ".", fixed=TRUE)[[1]][1]
 	
 	accessionNumbers <- as.list(get(paste(prefix, "ACCNUM", sep="")))
 	chrloc <- as.list(get(paste(prefix, "CHRLOC", sep="")))
@@ -87,40 +86,58 @@ testBNFiles <- function(packagename) {
 		names(accessionNumbers), 
 		accessionNumbers
 	)
+	
+	#TODO write this
 	writeBNPPIFile(
 		filename=paste(BNFoldername, "/all_ppi.txt", sep=""), 
 		names(accessionNumbers), 
 		accessionNumbers
 	)
 	
-	#TODO create gonameforthisid from GO.db package
-	gomapping <- paste(goTable$go_id, "(", gonameforthisid, ")", sep="")
+	gomapping <- sapply(goTable$go_id, function(x) {
+				Term(gotermmapping[[which(allgoids == x)]])
+			}
+		)
+	combinedGOAccAndTerms <- sapply(gotermmapping, function(x) {
+				paste(GOID(x), "(", Term(x), ")", sep="")
+			}
+		)
+	resgoterms <- sapply(names(accessionNumbers), function(x) {
+				matchingAccs <- goTable$go_id[which(goTable$probe_id == x)]
+				paste(combinedGOAccAndTerms[which(names(combinedGOAccAndTerms) %in% matchingAccs)], collapse=" ")
+			}
+		)
 	
 	writeBNGOFile(
 		filename=paste(BNFoldername, "/gbGO.txt", sep=""), 
 		accessionNumbers, 
 		gomapping
 	)
+	symbolAndName <- paste(symbol, genename, sep="; ")
+
+	synonyms <- sapply(names(accessionNumbers), function(x) {
+				paste(symbol[which(names(symbol) == x)], collapse=" ")
+			}
+		)
 	
+	#TODO 
+	#test
 	writeBNResFile(
 		filename = paste(BNFoldername, "/res.txt", sep=""), 
 		probeids = names(accessionNumbers),
-		cloneids = rep("", times=length(accessionNumbers))
 		genbank = accessionNumbers,
 		unigene = unigene,
-		entrez = entrez
-		symbolAndName = symbol, #do something with symbols - add name?
-		synonyms = something,#find synonyms?
-		humantc = NULL,
-		humangc = NULL,
-		refseq = refseq,
-		tcpubmed = NULL, 
-		gomaps = gomapping, 
-		location = formattedLocation,
-		geneticMarker = NULL,
-		
+		entrez = entrez,
+		symbolAndName = symbolAndName, # "Symbol; name"
+		synonyms = synonyms, #get synonym symbols, space-separate
+		refseq = refseq, #space-separated
+		gomaps = resgoterms,  
+		chrlocstart=chrloc,
+		chrlocend=chrlocend, 
+		chr=chr
 	)
 	
+	#TODO write this file function
 	writeBNSymartsGeneDbFile(
 		filename=paste(BNFoldername, "/symArtsGeneDb.txt", sep=""), 
 		symbol, 
