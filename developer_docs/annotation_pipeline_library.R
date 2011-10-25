@@ -474,25 +474,6 @@ writeBNfiles <- function() {
 #	All belong in BN zipfile
 }
 
-writeBNAccessionFile <- function(filename, accessions, genbanks) {
-	tryCatch (
-		{
-			outcon <- file(filename, open="w")		
-			writeLines(prefix, con=outcon, sep="\n")		
-			writeLines("Probe ID\tGenbank Acc", con=outcon, sep="\n")
-			writeLines(paste(accessions, genbanks, sep="\t"), con=outcon, sep="\n")
-		}, 
-		error = function(e) {
-			print(e) 
-			return(FALSE)
-		},
-		finally = {
-			close(outcon)
-		}
-	)
-	return(TRUE)
-}
-
 writeBNGOFile <- function(filename, genbanks, golists) {
 	tryCatch (
 		{
@@ -564,3 +545,72 @@ writeBNSymartsPubmedFile <- function(filename, symbols, pubmedids) {
 }
 
 
+writeBNAccessionFile <- function(filename, accessions, genbanks) {
+	tryCatch (
+		{
+			outcon <- file(filename, open="w")		
+			writeLines(prefix, con=outcon, sep="\n")		
+			writeLines("Probe ID\tGenbank Acc", con=outcon, sep="\n")
+			writeLines(paste(accessions, genbanks, sep="\t"), con=outcon, sep="\n")
+		}, 
+		error = function(e) {
+			print(e) 
+			return(FALSE)
+		},
+		finally = {
+			close(outcon)
+		}
+	)
+	return(TRUE)
+}
+
+writeBNResFile <- function(filename, probeids, genbank, unigene, entrez, symbolAndName, synonyms, refseq, gomaps, chrlocstart, chrlocend, chr) {
+	tryCatch (
+		{
+			outcon <- file(filename, open="w")	
+			writeLines(prefix, con=outcon, sep="\n")		
+			writeLines("Probe ID\tClone Name\tGenbank Acc\tUniGene ID\tEntrezGene ID\tGene Symbol & Name\tGene Synonyms\tHuman TC\tHuman GC\tRefSeq Acc\tTC PubMed Ref\tGO\tTGI Annotation\tPhy Map\tGenetic Marker\tMouse ortholog\tRat ortholog\tZebrafish ortholog\tXenopus ortholog\tCattle ortholog\tElegans ortholog\tYeast ortholog\tDog ortholog\tChicken ortholog", con=outcon, sep="\n")	
+			for(i in 1:length(probeids)) {
+				writeLines(
+					paste(
+						probeids[i], 
+						"", 	#cloneids
+						genbank[i], 
+						unigene[i], 
+						entrez[i], 
+						symbolAndName[i], 
+						synonyms[i],  
+						"",  
+						"",   #Human GC
+						paste(refseq[[i]], collapse=" "),
+						"",		#TCPubmed 
+						gomaps[i], 
+						"",   #TC annotation
+						paste("chr", chr[i], " (", chrlocstart[i], "-", chrlocend[i], ")", sep=""),
+						"", 
+						"",  
+						"",  
+						"",  
+						"",  
+						"",  
+						"",   
+						"",   
+						"",   
+						"", 
+						sep="\t"
+					), 
+					con=outcon, 
+					sep="\n"
+				)
+			}
+		}, 
+		error = function(e) {
+			print(e) 
+			return(FALSE)
+		},
+		finally = {
+			close(outcon)
+		}
+	)
+	return(TRUE)
+}

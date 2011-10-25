@@ -47,7 +47,7 @@ if [ -a ${CurrDIR}/lib/libjri.so ]
          if [ $? -ne 0 ]
          then
            echo "ERROR generating jri library...Aborting"
-           exit 1;;
+           exit 1;
          fi
 fi
 
