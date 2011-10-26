@@ -60,7 +60,7 @@ public class PipelinedAnnotationsFileDefinition extends ISupportFileDefinition {
 
 	@Override
 	public String getUniqueName() {
-		return "resourcerer_supported_annotations.txt";
+		return "bioconductor_annotations.txt";
 	}
 
 	@Override
