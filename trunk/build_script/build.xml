@@ -1339,7 +1339,7 @@ depends="HCL,TEASE,ST,SOTA,RN,KMC,KMCS,CAST,FOM,QTC,GSH,SOM,PTM,TTEST,SAM,OWA,TF
             <entry key="CLVALID.class" value="org.tigr.microarray.mev.cluster.gui.impl.clvalid.CLVALIDGUI"/>
 	  	<entry key="CLVALID.category" value="${CLUSTERING}"/> 
 	  	<entry key="CLVALID.smallIcon" value="analysis16.gif"/>
-            <entry key="CLVALID.largeIcon" value="CLVALID.gif"/>
+	  	<entry key="CLVALID.largeIcon" value="clvalid.gif"/>
             <entry key="CLVALID.tooltip" value="Cluster Validation"/>
       </propertyfile>
 	</target>

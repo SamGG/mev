@@ -41,7 +41,8 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationPanel;
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationGenerator;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DistanceMetricPanel;
@@ -69,13 +70,17 @@ public class HCLInitDialog extends AlgorithmDialog {
     private String globalMetricName;
     private boolean globalAbsoluteDistance;
 
-	private ClusterValidationPanel validationPanel;
+	private ClusterValidationGenerator validationGenerator;
 
-    
+
     /**
      * Constructs the dialog.
      */
     public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel) {
+    	this(parent, globalMetricName, globalAbsoluteDistance, showDistancePanel, null);
+    }
+    
+    public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel, ClusterRepository repository) {
         super(parent, "HCL: Hierarchical Clustering", true);
         setResizable(false);
         
@@ -161,7 +166,7 @@ public class HCLInitDialog extends AlgorithmDialog {
         group.add(CLC);
         group.add(SLC);
         
-        validationPanel = new ClusterValidationPanel(this,"Validation");
+        validationGenerator = new ClusterValidationGenerator(this, repository, "Validation");
         
         JPanel parameterPanel = new JPanel(new GridBagLayout());
         parameterPanel.setBackground(Color.white);
@@ -171,10 +176,10 @@ public class HCLInitDialog extends AlgorithmDialog {
         if(showDistancePanel) {
             parameterPanel.add(metricPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
             parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,3,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-            parameterPanel.add(validationPanel, new GridBagConstraints(0,4,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(validationGenerator.getClusterValidationPanel(), new GridBagConstraints(0,4,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         } else {
             parameterPanel.add(linkageMethodPanel, new GridBagConstraints(0,1,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-            parameterPanel.add(validationPanel, new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+            parameterPanel.add(validationGenerator.getClusterValidationPanel(), new GridBagConstraints(0,2,1,1,1,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
         }
         addContent(parameterPanel);
         setActionListeners(listener);
@@ -268,10 +273,8 @@ public class HCLInitDialog extends AlgorithmDialog {
         public void actionPerformed(ActionEvent e) {
             String command = e.getActionCommand();
             if (command.equals("ok-command")) {
-            	if (!validationPanel.isValidationPanelValid()){
-                    JOptionPane.showMessageDialog(null, "Validation Parameters are insufficient.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-            	}
+            	if (!validationGenerator.validateParameters())
+                    return;            	
                 result = JOptionPane.OK_OPTION;
                 dispose();
             } else if (command.equals("cancel-command")) {
@@ -311,7 +314,7 @@ public class HCLInitDialog extends AlgorithmDialog {
     
    public static void main(String[] args) {
         JFrame frame = new JFrame("Test");
-        HCLInitDialog dialog = new HCLInitDialog(frame, "Euclidean Distance", false, true);
+        HCLInitDialog dialog = new HCLInitDialog(frame, "Euclidean Distance", false, true, null);
         dialog.setVisible(true);
         System.exit(0);
     }
@@ -319,8 +322,8 @@ public class HCLInitDialog extends AlgorithmDialog {
     protected void disposeDialog() {
     }
 
-	public ClusterValidationPanel getValidationPanel(){
-		return this.validationPanel;
+	public ClusterValidationGenerator getValidationPanel(){
+		return this.validationGenerator;
 	}
     
 }
