@@ -67,7 +67,7 @@ public class CLVALIDGUI implements IClusterGUI, IScriptGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         
-        CLVALIDInitBox dialog = new CLVALIDInitBox(framework.getFrame());
+        CLVALIDInitBox dialog = new CLVALIDInitBox(framework.getFrame(), framework.getClusterRepository(0));
         dialog.setVisible(true);        
         if (!dialog.isOkPressed()) return null;
 
@@ -96,23 +96,24 @@ public class CLVALIDGUI implements IClusterGUI, IScriptGUI {
 			validationData.addMatrix("experiment", experiment.getMatrix());
 			validationData.addStringArray("geneLabels", geneLabels.toArray(new String[geneLabels.size()]));
 			validationData.addStringArray("sampleLabels", sampleLabels.toArray(new String[sampleLabels.size()]));			
-			dialog.getValidationPanel().addValidationParameters(validationData);            
+			dialog.getValidationGenerator().addValidationParameters(validationData);            
 			performValidation(validationData);
 
             long time = System.currentTimeMillis()-start;
             progress.dispose();
             GeneralInfo info = new GeneralInfo();
             info.time = time;
-            info.lowRange = dialog.getValidationPanel().getLowClusterRange();
-            info.highRange = dialog.getValidationPanel().getHighClusterRange();
-            info.linkageMethod = dialog.getValidationPanel().getValidationLinkageMethod();
-            info.distanceMetric = dialog.getValidationPanel().getValidationDistanceMetric();
-            info.internal = dialog.getValidationPanel().isInternalV();
-            info.stability = dialog.getValidationPanel().isStabilityV();
-            info.biological = dialog.getValidationPanel().isBiologicalV();
-            info.bioconductorAnnotation = dialog.getValidationPanel().getBioCAnnotationString();
-            info.isClusterGenes = dialog.getValidationPanel().isClusterGenes();
-			info.methodsArray = dialog.getValidationPanel().getMethodsArray();
+            info.lowRange = dialog.getValidationGenerator().getLowClusterRange();
+            info.highRange = dialog.getValidationGenerator().getHighClusterRange();
+            info.linkageMethod = dialog.getValidationGenerator().getValidationLinkageMethod();
+            info.distanceMetric = dialog.getValidationGenerator().getValidationDistanceMetric();
+            info.internal = dialog.getValidationGenerator().isInternalV();
+            info.stability = dialog.getValidationGenerator().isStabilityV();
+            info.biological = dialog.getValidationGenerator().isBiologicalV();
+            info.bioconductorAnnotation = dialog.getValidationGenerator().getBioCAnnotationString();
+            info.isClusterGenes = dialog.getValidationGenerator().isClusterGenes();
+            info.clusterID = dialog.getValidationGenerator().getClusterID();
+			info.methodsArray = dialog.getValidationGenerator().getMethodsArray();
             return createResultTree(validationData.getResultNode("validation-node"), info);
 		} catch (Exception e){
 			e.printStackTrace();
@@ -195,8 +196,8 @@ public class CLVALIDGUI implements IClusterGUI, IScriptGUI {
      */
     private void addGeneralInfo(DefaultMutableTreeNode root, GeneralInfo info) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode("General Information");
-    	node.add(new DefaultMutableTreeNode("Clustering by "+ (info.isClusterGenes ? "genes":"samples")));
         node.add(new DefaultMutableTreeNode("Time: "+String.valueOf(info.time-1)+" ms"));
+    	node.add(new DefaultMutableTreeNode("Clustering by "+ (info.isClusterGenes ? "genes":"samples")));
         if (info.internal)
         	node.add(new DefaultMutableTreeNode("Internal Validation"));
         if (info.stability)
@@ -214,12 +215,14 @@ public class CLVALIDGUI implements IClusterGUI, IScriptGUI {
         	methods = methods + info.methodsArray[i]+", ";
         methods = methods.substring(0, methods.length()-2);
     	node.add(new DefaultMutableTreeNode("Clustering Methods: "+methods));
+    	node.add(new DefaultMutableTreeNode("Cluster: "+info.clusterID));
         	
         root.add(node);
     }
     
 
     private class GeneralInfo {
+		public String clusterID;
 		public boolean isClusterGenes;
 		public String bioconductorAnnotation;
 		public boolean biological;

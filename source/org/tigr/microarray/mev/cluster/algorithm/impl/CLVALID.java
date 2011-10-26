@@ -40,7 +40,7 @@ public class CLVALID extends AbstractAlgorithm{
 	private AlgorithmEvent event;
 
 	private String[] geneNames,sampleNames;
-	private boolean isInternalV,isStabilityV,isBiologicalV,isClusterGenes,isClusterSamples;
+	private boolean isInternalV,isStabilityV,isBiologicalV,isClusterGenes;
 	private int lowClusterRange,highClusterRange;
 	private double[] measuresIntern,measuresStab,measuresBio;
 	private String[] methodsArray;
@@ -48,6 +48,7 @@ public class CLVALID extends AbstractAlgorithm{
 	private HashMap<String, Object> optimalScoresIntern = new HashMap<String, Object>();
 	private HashMap<String, Object> optimalScoresStab = new HashMap<String, Object>();
 	private HashMap<String, Object> optimalScoresBio = new HashMap<String, Object>();
+	private int[] subCluster;
 	/**
 	 * This method should interrupt the calculation.
 	 */
@@ -65,9 +66,9 @@ public class CLVALID extends AbstractAlgorithm{
 		geneNames = data.getStringArray("geneLabels");
 		sampleNames = data.getStringArray("sampleLabels");
 		methodsArray = data.getStringArray("methodsArray");
+		subCluster = data.getIntArray("subCluster");
 		AlgorithmParameters map = data.getParams();
 		isClusterGenes = map.getBoolean("cluster-genes");
-		isClusterSamples = map.getBoolean("cluster-samples");
 		isInternalV = map.getBoolean("internal-validation");
 		isStabilityV = map.getBoolean("stability-validation");
 		isBiologicalV = map.getBoolean("biological-validation");
@@ -224,12 +225,13 @@ public class CLVALID extends AbstractAlgorithm{
 			
 			String filePath;
 			int numRows;
+			System.out.println(subCluster);
 			if (isClusterGenes){
-				filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames);
+				filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames, subCluster);
 				RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
 				numRows = geneNames.length;
 			} else {
-				filePath = writeMatrixToFile(fileLoc, expMatrix.transpose(), sampleNames);
+				filePath = writeMatrixToFile(fileLoc, expMatrix.transpose(), sampleNames, subCluster);
 				RHook.createRDataMatrixFromFile("y", filePath, true, geneNames);
 				numRows = sampleNames.length;
 			}
@@ -315,24 +317,37 @@ public class CLVALID extends AbstractAlgorithm{
 		System.out.println("methods string = "+ methodsString);
 		return methodsString;
 	}
-	private String writeMatrixToFile(String fileLoc, FloatMatrix fm, String[] rowNames) {
+	private String writeMatrixToFile(String fileLoc, FloatMatrix fm, String[] rowNames, int[] subCluster) {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileLoc));
-
+			
 			int row = fm.getRowDimension();
 			int col = fm.getColumnDimension();
 			String srtVector = "";
-
-			for(int iRow = 0; iRow < row; iRow++) {
-				srtVector = rowNames[iRow] + "\t";
-				for(int jCol = 0; jCol < col; jCol++) {
-					if(jCol == col-1)
-						srtVector += fm.get(iRow, jCol) + "\n";
-					else 
-						srtVector += fm.get(iRow, jCol) + "\t";
+			if (subCluster==null){
+				for(int iRow = 0; iRow < row; iRow++) {
+					srtVector = rowNames[iRow] + "\t";
+					for(int jCol = 0; jCol < col; jCol++) {
+						if(jCol == col-1)
+							srtVector += fm.get(iRow, jCol) + "\n";
+						else 
+							srtVector += fm.get(iRow, jCol) + "\t";
+					}
+					out.write(srtVector);
+					srtVector = "";
 				}
-				out.write(srtVector);
-				srtVector = "";
+			} else {
+				for(int iRow = 0; iRow < subCluster.length; iRow++) {
+					srtVector = rowNames[subCluster[iRow]] + "\t";
+					for(int jCol = 0; jCol < col; jCol++) {
+						if(jCol == col-1)
+							srtVector += fm.get(subCluster[iRow], jCol) + "\n";
+						else 
+							srtVector += fm.get(subCluster[iRow], jCol) + "\t";
+					}
+					out.write(srtVector);
+					srtVector = "";
+				}
 			}
 			out.close();
 		} catch(IOException e) {

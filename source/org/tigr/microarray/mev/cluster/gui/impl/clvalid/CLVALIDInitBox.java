@@ -28,9 +28,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.DialogListener;
-import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationPanel;
+import org.tigr.microarray.mev.cluster.gui.helpers.ClusterValidationGenerator;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindow;
 
 /**
@@ -41,19 +42,19 @@ import org.tigr.microarray.mev.cluster.gui.impl.dialogs.dialogHelpUtil.HelpWindo
 public class CLVALIDInitBox extends AlgorithmDialog {
 	private static final long serialVersionUID = 1L;
 	private boolean okPressed = false;
-	private ClusterValidationPanel validationPanel;
-    public CLVALIDInitBox(Frame parent) {
+	private ClusterValidationGenerator validationPanel;
+    public CLVALIDInitBox(Frame parent, ClusterRepository repository) {
     	super(parent, "CLVALID Initialization", true);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
         Listener listener = new Listener();
         addWindowListener(listener);  
-        validationPanel = new ClusterValidationPanel(this, "Validation", true);
+        validationPanel = new ClusterValidationGenerator(this, "Validation", repository, true);
         JPanel jp = new JPanel(new GridBagLayout());
         JPanel dummyPanel = new JPanel();//this is needed for resizing for some reason.  Panel won't properly resize without.
         dummyPanel.setBackground(Color.white);
         jp.add(dummyPanel, new GridBagConstraints(0,0,1,1,.1,.1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
-        jp.add(validationPanel, new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
+        jp.add(validationPanel.getClusterValidationPanel(), new GridBagConstraints(0,1,1,1,1,1,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,0,0), 0,0));
     	addContent(jp);
         setActionListeners(listener);
         this.pack();
@@ -64,10 +65,8 @@ public class CLVALIDInitBox extends AlgorithmDialog {
 		public void actionPerformed(ActionEvent ae) {
             String command = ae.getActionCommand();
             if(command.equals("ok-command")){
-            	if (!validationPanel.isValidationPanelValid()){
-                    JOptionPane.showMessageDialog(null, "Validation Parameters are insufficient.", "Error", JOptionPane.ERROR_MESSAGE);
+            	if (!validationPanel.validateParameters())
                     return;
-            	}
                 okPressed = true;
             	dispose();
             } else if (command.equals("reset-command")) {
@@ -87,7 +86,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         dummyFrame.setSize(300,600);
-        CLVALIDInitBox oBox = new CLVALIDInitBox(dummyFrame);
+        CLVALIDInitBox oBox = new CLVALIDInitBox(dummyFrame, null);
         oBox.setVisible(true);
         System.exit(0);
     }
@@ -95,7 +94,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
 	public boolean isOkPressed() {
 		return okPressed;
 	}
-	public ClusterValidationPanel getValidationPanel(){
+	public ClusterValidationGenerator getValidationGenerator(){
 		return this.validationPanel;
 	}
 }

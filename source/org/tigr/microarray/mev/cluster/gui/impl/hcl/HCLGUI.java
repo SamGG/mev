@@ -59,7 +59,7 @@ public class HCLGUI implements IClusterGUI, IScriptGUI {
             function = Algorithm.PEARSON;
         }        
         
-        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true);
+        HCLInitDialog dialog = new HCLInitDialog(framework.getFrame(), menu.getFunctionName(function), menu.isAbsoluteDistance(), true, framework.getClusterRepository(0));
         if (dialog.showModal() != JOptionPane.OK_OPTION) {
             return null;
         }
