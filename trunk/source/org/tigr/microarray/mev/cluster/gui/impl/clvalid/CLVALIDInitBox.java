@@ -25,7 +25,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
@@ -43,13 +42,13 @@ public class CLVALIDInitBox extends AlgorithmDialog {
 	private static final long serialVersionUID = 1L;
 	private boolean okPressed = false;
 	private ClusterValidationGenerator validationPanel;
-    public CLVALIDInitBox(Frame parent, ClusterRepository repository) {
+    public CLVALIDInitBox(Frame parent, ClusterRepository repository, String bioCAnnotation) {
     	super(parent, "CLVALID Initialization", true);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
         Listener listener = new Listener();
         addWindowListener(listener);  
-        validationPanel = new ClusterValidationGenerator(this, "Validation", repository, true);
+        validationPanel = new ClusterValidationGenerator(this, "Validation", repository, bioCAnnotation, true);
         JPanel jp = new JPanel(new GridBagLayout());
         JPanel dummyPanel = new JPanel();//this is needed for resizing for some reason.  Panel won't properly resize without.
         dummyPanel.setBackground(Color.white);
@@ -86,7 +85,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     public static void main(String[] args) {
         JFrame dummyFrame = new JFrame();
         dummyFrame.setSize(300,600);
-        CLVALIDInitBox oBox = new CLVALIDInitBox(dummyFrame, null);
+        CLVALIDInitBox oBox = new CLVALIDInitBox(dummyFrame, null, "hgu133a");
         oBox.setVisible(true);
         System.exit(0);
     }

@@ -77,10 +77,17 @@ public class HCLInitDialog extends AlgorithmDialog {
      * Constructs the dialog.
      */
     public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel) {
-    	this(parent, globalMetricName, globalAbsoluteDistance, showDistancePanel, null);
+    	this(parent, globalMetricName, globalAbsoluteDistance, showDistancePanel, null, null);
     }
     
-    public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel, ClusterRepository repository) {
+    /**
+     * Constructs the dialog.
+     */
+    public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel, String bioCAnnotation) {
+    	this(parent, globalMetricName, globalAbsoluteDistance, showDistancePanel, null, bioCAnnotation);
+    }
+    
+    public HCLInitDialog(Frame parent, String globalMetricName, boolean globalAbsoluteDistance, boolean showDistancePanel, ClusterRepository repository, String bioCAnnotation) {
         super(parent, "HCL: Hierarchical Clustering", true);
         setResizable(false);
         
@@ -166,7 +173,7 @@ public class HCLInitDialog extends AlgorithmDialog {
         group.add(CLC);
         group.add(SLC);
         
-        validationGenerator = new ClusterValidationGenerator(this, repository, "Validation");
+        validationGenerator = new ClusterValidationGenerator(this, repository, bioCAnnotation,"Validation");
         
         JPanel parameterPanel = new JPanel(new GridBagLayout());
         parameterPanel.setBackground(Color.white);

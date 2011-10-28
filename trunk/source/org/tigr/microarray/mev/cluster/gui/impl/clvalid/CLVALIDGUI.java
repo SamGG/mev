@@ -67,7 +67,7 @@ public class CLVALIDGUI implements IClusterGUI, IScriptGUI {
      */
     public DefaultMutableTreeNode execute(IFramework framework) throws AlgorithmException {
         
-        CLVALIDInitBox dialog = new CLVALIDInitBox(framework.getFrame(), framework.getClusterRepository(0));
+        CLVALIDInitBox dialog = new CLVALIDInitBox(framework.getFrame(), framework.getClusterRepository(0), framework.getData().getChipAnnotation().getChipType());
         dialog.setVisible(true);        
         if (!dialog.isOkPressed()) return null;
 
