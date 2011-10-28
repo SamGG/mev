@@ -13,8 +13,6 @@ loadLibrary <- function(libname) {
 createAllAnnotationFiles <- function(prefix, packagename, arrayname=NULL) {
 	tryCatch({
 	
-		
-		
 		#get data from package
 		organism <- {
 			tryCatch(
@@ -42,10 +40,12 @@ createAllAnnotationFiles <- function(prefix, packagename, arrayname=NULL) {
 		if(
 			file.exists(paste(organism, "/", archivename, sep="")) && 
 			file.exists(paste(organism, "/", easezipfilename, sep=""))) {
-			print(paste(archivename, "and", easezipfilename, "already exist. Not re-creating."))
+			print(paste(archivename, "and", easezipfilename, "already exist in directory", getwd(), ". Not re-creating."))
+
 			return(TRUE)
 		} else {
 			print(paste(archivename, "or", easezipfilename, "do not exist. Creating."))
+
 		}
 		
 		accessionNumbers <- as.list(get(paste(prefix, "ACCNUM", sep="")))
@@ -116,11 +116,6 @@ createAllAnnotationFiles <- function(prefix, packagename, arrayname=NULL) {
 		unlink(annfilename)
 		setwd("..")
 	   
-		#Make BN directory and files
-#		dir.create(paste(prefix, "_BN", sep=""))
-		#writeBNfiles(location=paste(organism, "/", prefix, "_BN/", sep=""))
-#		writeBNAccessionFile(filename=paste(BNFoldername, "/affyID_accession.txt", sep=""), names(accessionNumbers), accessionNumbers)
-
 		
 		#EASE FILES
 		#Make EASE file structure
@@ -613,4 +608,118 @@ writeBNResFile <- function(filename, probeids, genbank, unigene, entrez, symbolA
 		}
 	)
 	return(TRUE)
+}
+
+createBNFiles <- function(prefix, BNFoldername) {
+	
+	accessionNumbers <- as.list(get(paste(prefix, "ACCNUM", sep="")))
+	chrloc <- as.list(get(paste(prefix, "CHRLOC", sep="")))
+	chrlocend <- as.list(get(paste(prefix, "CHRLOCEND", sep="")))
+	chr <- as.list(get(paste(prefix, "CHR", sep="")))
+	refseq <- as.list(get(paste(prefix, "REFSEQ", sep="")))
+	entrez <- as.list(get(paste(prefix, "ENTREZID", sep="")))
+	unigene <- as.list(get(paste(prefix, "UNIGENE", sep="")))
+	symbol <- as.list(get(paste(prefix, "SYMBOL", sep="")))
+	genename <- as.list(get(paste(prefix, "GENENAME", sep=""))) 
+	goTable <- toTable(get(paste(prefix, "GO2PROBE", sep="")))
+	arrayKeggMapping <- toTable(get(paste(prefix, "PATH", sep="")))
+
+	pmids <- as.list(get(paste(prefix, "PMID", sep=""))) 
+
+	
+	BNFoldername <- paste(prefix, "_BN", sep="")
+	if(!file.exists(BNFoldername)) {
+		dir.create(BNFoldername)
+	}
+	writeBNAccessionFile(
+		filename=paste(BNFoldername, "/affyID_accession.txt", sep=""), 
+		names(accessionNumbers), 
+		accessionNumbers
+	)
+	
+	#TODO write this
+#	writeBNPPIFile(
+#		filename=paste(BNFoldername, "/all_ppi.txt", sep=""), 
+#		names(accessionNumbers), 
+#		accessionNumbers
+#	)
+	
+	gomapping <- sapply(goTable$go_id, function(x) {
+				Term(gotermmapping[[which(allgoids == x)]])
+			}
+		)
+	combinedGOAccAndTerms <- sapply(gotermmapping, function(x) {
+				paste(GOID(x), "(", Term(x), ")", sep="")
+			}
+		)
+	resgoterms <- sapply(names(accessionNumbers), function(x) {
+				matchingAccs <- goTable$go_id[which(goTable$probe_id == x)]
+				paste(combinedGOAccAndTerms[which(names(combinedGOAccAndTerms) %in% matchingAccs)], collapse=" ")
+			}
+		)
+	
+	writeBNGOFile(
+		filename=paste(BNFoldername, "/gbGO.txt", sep=""), 
+		accessionNumbers, 
+		gomapping
+	)
+	symbolAndName <- paste(symbol, genename, sep="; ")
+
+	synonyms <- sapply(names(accessionNumbers), function(x) {
+				paste(symbol[which(names(symbol) == x)], collapse=" ")
+			}
+		)
+	
+	#TODO 
+	#test
+	writeBNResFile(
+		filename = paste(BNFoldername, "/res.txt", sep=""), 
+		probeids = names(accessionNumbers),
+		genbank = accessionNumbers,
+		unigene = unigene,
+		entrez = entrez,
+		symbolAndName = symbolAndName, # "Symbol; name"
+		synonyms = synonyms, #get synonym symbols, space-separate
+		refseq = refseq, #space-separated
+		gomaps = resgoterms,  
+		chrlocstart=chrloc,
+		chrlocend=chrlocend, 
+		chr=chr
+	)
+	
+	#TODO write this file function
+#	writeBNSymartsGeneDbFile(
+#		filename=paste(BNFoldername, "/symArtsGeneDb.txt", sep=""), 
+#		symbol, 
+#		someid?
+#	)
+
+	#TODO Emailed Raktim and ask about inconsistency in PMID lists. 
+	#Waiting on reply 9/22/11.
+	pmidlists <- lapply(names(symbol), function(x) {pmids[[which(names(pmids) == x)]]})
+	names(pmidlists) <- names(symbol)
+	test <- lapply(
+				unique(symbol), 
+				function(x) {
+					c(
+						pmidlists[
+							which(
+								names(pmidlists) %in% 
+								names(symbol[which(symbol == x)])
+							)
+						], 
+						recursive=TRUE
+					)
+				}
+			)
+	names(test) <- unique(symbol)
+	test2 <- lapply(symbol, function(x) {pmids[which(symbol == x)]})
+	which(symbol == "AAAS")
+	length(symbol)
+	length(unique(symbol))
+	writeBNSymartsPubmedFile(
+		filename=paste(BNFoldername, "/symArtsPubmed.txt", sep=""), 
+		names(test), 
+		pubmedids=lapply(test, paste, collapse=",") 
+	)
 }
