@@ -16,7 +16,9 @@ packagenamelist <- readLines(con="annotationSupported.txt")
 
 outcon <- file("annotation_script.log", open="w")
 successList <- file("supported_arrays.txt", open="w")
-for(packagename in packagenamelist[grep(".db$", packagenamelist, perl=TRUE)]) {
+bnsuccesslist <- file("supported_arrays_bn.txt", open="w")
+for(packagename in packagenamelist) {
+#for(packagename in packagenamelist[grep(".db$", packagenamelist, perl=TRUE)]) {
 	success <- FALSE
 	tryCatch(
 		{
@@ -28,7 +30,7 @@ for(packagename in packagenamelist[grep(".db$", packagenamelist, perl=TRUE)]) {
 				packagename=packagename, 
 			)
 		#zip EASE dir
-		print("doing ease stuff")
+		print(paste("Making EASE files for package", packagename))
 			if(success != TRUE) {
 				writeLines(paste("Failed to produce annotation for", packagename), con=outcon)
 				#clean up possibly-broken files
@@ -46,6 +48,37 @@ for(packagename in packagenamelist[grep(".db$", packagenamelist, perl=TRUE)]) {
 			print(e)
 		}
 	)
+	
+	print(paste("Making BN files for package", packagename))
+	#Make BN directory and files
+	BNFoldername <- paste(prefix, "_BN", sep="")
+	BNZipfilename <- paste(BNFoldername, ".zip", sep="")
+	
+	if(!file.exists(paste(organism, "/", BNZipfilename, sep=""))) {
+		print(paste("no file", getwd(), BNZipfilename, ". Creating."))
+		tryCatch({
+			setwd(organism)
+			createBNFiles(prefix=prefix, BNFoldername=BNFoldername)
+			capture.output(
+				system(paste("7za a -r",  paste("\"", BNZipfilename, "\"", sep=""), paste("\"", BNFoldername, "\"", sep="")))
+			)
+			unlink(BNFoldername, recursive = TRUE)
+			setwd("..")
+			writeLines(
+					paste("Animal", organism, prefix, sep="\t"), 
+					con=bnsuccesslist
+				)
+		},
+		error=function(e) {
+			print(e)
+			print(paste("failed to produce BN files for package", packagename))
+		})
+	} else {
+		print(paste(BNZipfilename, "exists. Skipping."))
+	}
 }
 close(successList)
 close(outcon)
+close(bnsuccesslist)
+
+
