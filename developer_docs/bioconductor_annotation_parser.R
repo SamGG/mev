@@ -1,6 +1,6 @@
 #Get list of files from #ftp://occams.dfci.harvard.edu/pub/bio/MeV_Etc/R_MeV_Support_devel/R2.11/win/attract/annotationSupported.txt
 setwd("C:/Users/eleanora/workspace/annotation/")
-source("../mev_bioconductor_annotation/annotation_pipeline_library.R")
+source("../mev_quickfix/developer_docs/annotation_pipeline_library.R")
 source('http://bioconductor.org/biocLite.R')
 
 #Need KEGG database to do KEGG pathway mapping files. 
@@ -19,12 +19,13 @@ successList <- file("supported_arrays.txt", open="w")
 bnsuccesslist <- file("supported_arrays_bn.txt", open="w")
 for(packagename in packagenamelist) {
 #for(packagename in packagenamelist[grep(".db$", packagenamelist, perl=TRUE)]) {
+	print(paste("starting in directory", getwd()))
 	success <- FALSE
 	tryCatch(
 		{
 			#Maybe I can just change this to biocLite(packagename)
 			loadLibrary(packagename)
-			prefix <- strsplit(packagename, ".", fixed=TRUE)[[1]][1]
+			prefix <- strsplit(packagename, ".db", fixed=TRUE)[[1]][1]
 			success <- createAllAnnotationFiles(
 				prefix=prefix, 
 				packagename=packagename, 
@@ -55,7 +56,7 @@ for(packagename in packagenamelist) {
 	BNZipfilename <- paste(BNFoldername, ".zip", sep="")
 	
 	if(!file.exists(paste(organism, "/", BNZipfilename, sep=""))) {
-		print(paste("no file", getwd(), BNZipfilename, ". Creating."))
+		print(paste("no file ", getwd(), "/", organism, "/", BNZipfilename, ". Creating.", sep=""))
 		tryCatch({
 			setwd(organism)
 			createBNFiles(prefix=prefix, BNFoldername=BNFoldername)
@@ -72,10 +73,13 @@ for(packagename in packagenamelist) {
 		error=function(e) {
 			print(e)
 			print(paste("failed to produce BN files for package", packagename))
+			setwd("..")
 		})
 	} else {
 		print(paste(BNZipfilename, "exists. Skipping."))
 	}
+	
+	print(paste("finishing in directory", getwd()))
 }
 close(successList)
 close(outcon)
