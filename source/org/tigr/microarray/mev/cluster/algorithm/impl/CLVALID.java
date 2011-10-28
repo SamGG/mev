@@ -79,7 +79,6 @@ public class CLVALID extends AbstractAlgorithm{
 		bioCAnnotation = map.getString("bioC-annotation");
 		
 		progress=0;
-		event = null;
 		event = new AlgorithmEvent(this, AlgorithmEvent.SET_UNITS, 100, "Calculating...");
 		// set progress limit
 		fireValueChanged(event);
@@ -237,16 +236,21 @@ public class CLVALID extends AbstractAlgorithm{
 			}
 				
 			String methodsString = getMethodsString();
-			if (isInternalV)
-				measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern, numRows);
-			if (isStabilityV)
-				measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab, numRows);			
-			if (isBiologicalV)
-				runRScriptBioValidationStep(methodsString,numRows);			
-
+			try{
+				if (isInternalV)
+					measuresIntern = runRScriptValidationStep(methodsString, optimalScoresIntern, "internal", measuresIntern, numRows);
+				if (isStabilityV)
+					measuresStab = runRScriptValidationStep(methodsString, optimalScoresStab, "stability", measuresStab, numRows);			
+				if (isBiologicalV)
+					runRScriptBioValidationStep(methodsString,numRows);			
+			} catch (Exception e){
+				if (numRows>9999)
+					JOptionPane.showMessageDialog(null, "Error running CLVALID.\nTry reducing the size of your dataset or running the analysis with a smaller cluster.","REngine", JOptionPane.ERROR_MESSAGE);
+				throw new AbortException();
+			}
 			rCmd = "sink()";
 			RHook.endRSession();
-//			removeTmps(filePath);
+			removeTmps(filePath);
 		} catch (Exception e) {
 			RHook.log(e);
 			try {

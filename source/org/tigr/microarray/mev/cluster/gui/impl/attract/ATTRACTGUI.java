@@ -131,9 +131,7 @@ public class ATTRACTGUI implements IClusterGUI, IScriptGUI {
             sampleLabels.add(framework.getData().getFullSampleName(columnIndices[i])); //Raktim
         }
         
-        //Raktim Use probe index as the gene labels in R
         for (int i = 0; i < experiment.getNumberOfGenes(); i++) {
-        	//geneLabels.add(framework.getData().getElementAnnotation(i, AnnotationFieldConstants.PROBE_ID)[0]); //Raktim
         	geneLabels.add(String.valueOf(i));
         }
         String initialChipType = framework.getData().getChipAnnotation().getChipType();

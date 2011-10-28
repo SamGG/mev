@@ -576,11 +576,10 @@ public class ATTRACTInitBox extends AlgorithmDialog {
     			int defaultIndex = -1;
     			for (int i=0; i<bioCAnnotationsArray.length; i++){
     				bioCAnnotationsArray[i]=bioCAnnotations.get(i);
-    				if(bioCAnnotationsArray[i].contains(initialChipType)){
+    				if(bioCAnnotationsArray[i].equals(initialChipType)||bioCAnnotationsArray[i].equals(initialChipType+".db")){
     					defaultIndex = i;
     				}
     			}
-                
                 chipNameBox = new JComboBox(bioCAnnotationsArray);
                 if (defaultIndex==-1||initialChipType.equals(ChipAnnotationFieldConstants.NOT_AVAILABLE))
                 	chipNameBox.setSelectedItem("hgu133plus2.db");
