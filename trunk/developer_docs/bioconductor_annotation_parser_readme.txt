@@ -36,7 +36,8 @@ So, can I call biocLite again, or does that screw it up?
 
 			
 packagenamelist <- c(
-	"hgu133a.db"
+	"hgu133a.db",
+	"org.At.tair.db"
 )
 packagenamelist <- c(
 	"human1mduov3bCrlmm",
