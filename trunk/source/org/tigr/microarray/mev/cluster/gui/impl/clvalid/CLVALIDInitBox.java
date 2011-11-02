@@ -45,7 +45,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
     public CLVALIDInitBox(Frame parent, ClusterRepository repository, String bioCAnnotation) {
     	super(parent, "CLVALID Initialization", true);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/2);
+        setLocation((screenSize.width - getSize().width)/2, (screenSize.height - getSize().height)/4);
         Listener listener = new Listener();
         addWindowListener(listener);  
         validationPanel = new ClusterValidationGenerator(this, "Validation", repository, bioCAnnotation, true);
