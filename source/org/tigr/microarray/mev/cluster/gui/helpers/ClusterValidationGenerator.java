@@ -3,6 +3,7 @@ package org.tigr.microarray.mev.cluster.gui.helpers;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -45,22 +47,22 @@ public class ClusterValidationGenerator{
 		agnesMethodBox,clusterClusterBox;
 	private JTextField lowClusterRange,highClusterRange;
 	private JPanel methodPanel,linkageMethodPanel,distanceMetricPanel,annotationTypePanel,validationTypePanel,clusterRangePanel,mainValidationPanel,annotationPanel;
-	private JComboBox distanceMetricCB,linkageMetricCB;
+	private JComboBox distanceMetricCB,linkageMetricCB,chipNameBox;
 	private JRadioButton bioCAnnotationRB,localAnnotationRB,clusterGenesCheckBox,clusterSamplesCheckBox;
 	private Listener listener;
-	private JComboBox chipNameBox,clusterComboBox;
 	private AlgorithmDialog parentDialog;
 	private ClusterRepository repository;
 	private boolean standaloneModule;
 	private String bioCAnnotation, title;
+	private ClusterBrowser clusterBrowser;
+	private JScrollPane clusterBrowerScrollPane;
 	
 	/** 
 	 * Constructor for use in other clustering modules
 	 */
 	public ClusterValidationGenerator(AlgorithmDialog parent, ClusterRepository repository, String bioCAnnotation, String title){
 		this(parent, title, repository, bioCAnnotation, false);
-	}
-	
+	}	
 	
 	/**
 	 * Constructor for use in standalone module
@@ -102,7 +104,7 @@ public class ClusterValidationGenerator{
         mainValidationPanel.add(clusterGenesCheckBox, new GridBagConstraints(0,++y,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         mainValidationPanel.add(clusterSamplesCheckBox, new GridBagConstraints(1,y,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         mainValidationPanel.add(clusterClusterBox, new GridBagConstraints(0,++y,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
-        mainValidationPanel.add(clusterComboBox, new GridBagConstraints(1,y,1,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
+        mainValidationPanel.add(clusterBrowerScrollPane, new GridBagConstraints(0,++y,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         mainValidationPanel.add(clusterRangePanel, new GridBagConstraints(0,++y,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         mainValidationPanel.add(validationTypePanel, new GridBagConstraints(0,++y,6,1,0,0,GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0,0,5,0), 0,0));
         mainValidationPanel.add(annotationTypePanel, new GridBagConstraints(0,++y,5,1,0,0,GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0,0,5,0), 0,0));
@@ -152,7 +154,10 @@ public class ClusterValidationGenerator{
 	    bg.add(clusterSamplesCheckBox);
 	    clusterGenesCheckBox.setSelected(true);
 	    clusterClusterBox = new JCheckBox("Perform Analysis on MeV Cluster");
-	    clusterComboBox = new JComboBox();
+	    clusterBrowser = new ClusterBrowser(repository);
+	    clusterBrowerScrollPane = new JScrollPane(clusterBrowser);
+	    clusterBrowerScrollPane.setMaximumSize(new Dimension(clusterBrowerScrollPane.getWidth(),240));
+	    clusterBrowerScrollPane.setPreferredSize(new Dimension(clusterBrowerScrollPane.getWidth(),240));
 	    internalValidationBox = new JCheckBox("Internal Validation");
 	    stabilityValidationBox = new JCheckBox("Stability Validation");
 	    biologicalValidationBox = new JCheckBox("Biological Validation");
@@ -217,15 +222,8 @@ public class ClusterValidationGenerator{
 	    annotationPanel.add(new JLabel("Chip Name: "));
 	    annotationPanel.add(chipNameBox);
 	    if (repository==null||repository.isEmpty()){
-	    	clusterComboBox.addItem("No stored clusters");
 	    	clusterClusterBox.setEnabled(false);
 	    } else {
-	    	for (int i=0; i<repository.size(); i++){
-				if (repository.getCluster(i+1)==null)
-					break;
-				Cluster cluster = repository.getCluster(i+1);
-				clusterComboBox.addItem("Cluster #: "+cluster.getSerialNumber()+", "+cluster.getClusterLabel());
-	    	}
 	    }		
 	}
 	private void addListeners() {
@@ -319,8 +317,8 @@ public class ClusterValidationGenerator{
         clusterRangePanel.setVisible(vis);
         methodPanel.setVisible(vis);
         validationTypePanel.setVisible(vis);
-        distanceMetricPanel.setVisible(vis);
-		clusterComboBox.setVisible(vis&&clusterClusterBox.isSelected()&&clusterGenesCheckBox.isSelected()&&repository!=null);            	
+        distanceMetricPanel.setVisible(vis);    
+        clusterBrowerScrollPane.setVisible(vis&&clusterClusterBox.isSelected()&&clusterGenesCheckBox.isSelected()&&repository!=null);          	
         annotationTypePanel.setVisible(vis&&biologicalValidationBox.isSelected());
         annotationPanel.setVisible(vis&&biologicalValidationBox.isSelected()&&bioCAnnotationRB.isSelected());
 		linkageMethodPanel.setVisible(vis&&hierarchicalMethodBox.isSelected()||agnesMethodBox.isSelected());
@@ -342,18 +340,37 @@ public class ClusterValidationGenerator{
 	 */
 	public boolean validateParameters(){
 		boolean pass = true;
+		String clusteringMethodMessage = "";
+		String validTypeMessage = "";
+		String numberFormatMessage = "";
 		if (!this.useValidationBox.isSelected())
 			return true;
 		if(getMethodsArray().length==0){
 			methodPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Clustering Method(s)", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.red));        
+			clusteringMethodMessage = "*Please select at least one clustering method.";
 			pass = false;
 		}
 		if(getMeasuresArray().length==0){
 			validationTypePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Validation Type(s)", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.red));        
-        	pass = false;
+			validTypeMessage = "*Please select at least one validation type.";
+			pass = false;
+		}
+		try{
+			if(		Integer.parseInt(this.lowClusterRange.getText())<2||
+					Integer.parseInt(this.highClusterRange.getText())>6||
+					Integer.parseInt(this.highClusterRange.getText()) - Integer.parseInt(this.lowClusterRange.getText())<0){
+				numberFormatMessage = "*Please enter a cluster range between 2 and 6, inclusive.";	
+				pass = false;		
+				clusterRangePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Cluster Range", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.red));        
+	
+			}
+		}catch(Exception e){
+			clusterRangePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Cluster Range", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new Font("Dialog", Font.BOLD, 12), Color.red));        
+			pass = false;
+			numberFormatMessage = "*Please enter a cluster range using integers only.";
 		}
 		if (!pass)
-            JOptionPane.showMessageDialog(null, "Validation parameters are insufficient.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Validation parameters are insufficient.\n"+validTypeMessage+"\n"+clusteringMethodMessage+"\n"+numberFormatMessage, "Error", JOptionPane.ERROR_MESSAGE);
 		return pass;
 	}
 	public void addValidationParameters(AlgorithmData validationData) {
@@ -375,7 +392,7 @@ public class ClusterValidationGenerator{
 		if (!this.clusterClusterBox.isSelected())
 			return null;
 		try{
-			return repository.getCluster(clusterComboBox.getSelectedIndex()+1).getIndices();
+			return clusterBrowser.getSelectedCluster().getIndices();
 		} catch (Exception e){		
 			return null;
 		}
@@ -413,7 +430,7 @@ public class ClusterValidationGenerator{
 		if (!this.clusterClusterBox.isSelected())
 			return "All genes";
 		else
-			return (String) clusterComboBox.getSelectedItem();
+			return clusterBrowser.getSelectedCluster().getClusterLabel();
 	}
 	public boolean isValidate() {
 		return useValidationBox.isSelected();
