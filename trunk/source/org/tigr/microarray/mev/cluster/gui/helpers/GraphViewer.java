@@ -13,6 +13,8 @@
  */
 package org.tigr.microarray.mev.cluster.gui.helpers;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.image.BufferedImage;
 import java.beans.Expression;
@@ -26,6 +28,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataset;
@@ -56,6 +60,17 @@ public class GraphViewer extends JPanel implements IViewer {
 			
 	    JFreeChart chart1 = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, dataset, org.jfree.chart.plot.PlotOrientation.VERTICAL,
 	    		true, false, false);
+	    chart1.getXYPlot().setBackgroundPaint(Color.white);
+	    ((NumberAxis)(chart1.getXYPlot().getDomainAxis())).setTickUnit(new NumberTickUnit(1));
+
+
+	    for (int i=0; i<seriesNames.length; i++){
+		    chart1.getXYPlot().getRenderer().setSeriesStroke(
+		            i, new BasicStroke(
+		                    4.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND,
+		                    1.0f
+		                ));
+	    }
 		chartPanel = new ChartPanel(chart1);
 	
 	}

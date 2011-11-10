@@ -33,7 +33,6 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import org.tigr.microarray.mev.cluster.algorithm.AlgorithmData;
-import org.tigr.microarray.mev.cluster.clusterUtil.Cluster;
 import org.tigr.microarray.mev.cluster.clusterUtil.ClusterRepository;
 import org.tigr.microarray.mev.cluster.gui.impl.dialogs.AlgorithmDialog;
 
@@ -189,11 +188,11 @@ public class ClusterValidationGenerator{
 	    methodPanel = new JPanel();
 	    methodPanel.add(hierarchicalMethodBox);
 	    methodPanel.add(kmeansMethodBox);
+	    methodPanel.add(somMethodBox);
+	    methodPanel.add(sotaMethodBox);
 	    methodPanel.add(dianaMethodBox);
 	    methodPanel.add(fannyMethodBox);
-	    methodPanel.add(somMethodBox);
 	    methodPanel.add(modelMethodBox);
-	    methodPanel.add(sotaMethodBox);
 	    methodPanel.add(pamMethodBox);
 	    methodPanel.add(claraMethodBox);
 	    methodPanel.add(agnesMethodBox);
@@ -404,12 +403,12 @@ public class ClusterValidationGenerator{
 			al.add("hierarchical");
 		if (kmeansMethodBox.isSelected())
 			al.add("kmeans");
+		if (somMethodBox.isSelected())
+			al.add("som");
 		if (dianaMethodBox.isSelected())
 			al.add("diana");
 		if (fannyMethodBox.isSelected())
 			al.add("fanny");
-		if (somMethodBox.isSelected())
-			al.add("som");
 		if (modelMethodBox.isSelected())
 			al.add("model");
 		if (sotaMethodBox.isSelected())

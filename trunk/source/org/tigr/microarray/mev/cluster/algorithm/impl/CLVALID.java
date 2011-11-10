@@ -212,12 +212,12 @@ public class CLVALID extends AbstractAlgorithm{
 			String rCmd = "library(clValid)";
 			RHook.evalR(rCmd);
 
-			rCmd = "zz <- file('all.Rout', open='wt')";
-			RHook.evalR(rCmd);
-			rCmd = "sink(zz)";
-			RHook.evalR(rCmd);
-			rCmd = "sink(zz, type='message')";
-			RHook.evalR(rCmd);
+//			rCmd = "zz <- file('all.Rout', open='wt')";
+//			RHook.evalR(rCmd);
+//			rCmd = "sink(zz)";
+//			RHook.evalR(rCmd);
+//			rCmd = "sink(zz, type='message')";
+//			RHook.evalR(rCmd);
 			
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			fileLoc = fileLoc.replace("\\", "/");
@@ -295,7 +295,12 @@ public class CLVALID extends AbstractAlgorithm{
 
         String rCmd = "results <- clValid(y, "+lowClusterRange+":"+highClusterRange+", clMethods=c("+methodsString+
         	"), metric = '"+distanceMetric+"', method = '"+linkageMethod+"',  validation='"+validationType+"', maxitems="+numRows+")";
-		RHook.evalR(rCmd);
+        String tryCatchBlock = "        tryCatch({"+
+        rCmd+
+        "}, error=function(e) {" +
+        "   print(e)" +
+        "	}) ";
+		RHook.evalR(tryCatchBlock);
 		rCmd = "summary(results)";
 		RHook.evalR(rCmd);
 		rCmd = "results@measures";
