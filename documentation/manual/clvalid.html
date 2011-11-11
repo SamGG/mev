@@ -13,14 +13,14 @@
 	CLVALID uses the R package "clValid" to compare the relative properties of 10 different clustering methods across a several different numbers of clusters.
 	This module aims to help choose a method that is most compact, well-separated, connected, and stable.  
 	It also makes use of bioconductor annotation packages to biologically validate the results.  	<div class="screenshots ">
-		<a href="clvalid1.jpg">
-					<img src="clvalid1.jpg">
+		<a href="clvalidinit.jpg">
+					<img src="clvalidinit.jpg">
 				</a>
 				<br/>
 				<span class="caption">CLVALID initialization dialog box</span>
 				</div>-The user must first choose whether the clustering validation is to occur over samples or genes.  Please note that large datasets (typically over 10,000 genes) may result in memory issues. <br><br>
 				If clustering a dataset with a large number of genes, you may instead choose to run the analysis on a smaller subset of your genes.  
-				To do this, you must first create an MeV cluster using the Cluster Manager or other method.  
+				To do this, you must first create an MeV cluster using the Cluster Manager or other method.  <br><br>
 				-Once created, the "Perform Analysis on MeV Cluster" checkbox will be enabled.  Click this and select the desired cluster using the Cluster Browser.<br><br>
 				-Next, select the number of clusters involved in your analysis.  The maximum cluster range is 2-6 clusters.<br><br>
 				-Next, choose at least ONE type of validation.  See below for a summary of validation types.  If you are running biological validation, your data must contain an annotation field for "PROBE_ID" and you must select the appropriate Bioconductor annotation package from the drop-down menu.<br><br>
@@ -30,15 +30,23 @@
 				</p>
 <a name="para"><h4>Parameters</h4></a>
 <div class="screenshots ">
-		<a href="anova1.jpg">
-					<img src="anova1.jpg">
+		<a href="clvalidres.jpg">
+					<img src="clvalidres.jpg">
 				</a>
 				<br/>
-				<span class="caption">One-way ANOVA: F-Ratio Information viewer</span>
+				<span class="caption">CLVALID Internal Validation Result</span>
 				</div>
-<p><em>Hierarchical Clustering </em></p>	
-			<p>This check box selects whether to perform hierarchical clustering on the elements in each cluster created</p>
-<p>In addition to the standard viewers, this module outputs gene-specific statistics under the “F-Ratio Information” tab, as shown below. These tables can be saved as tab-delimited text files by right-clicking on them. All the columns in the tables can be sorted in ascending or descending order. Clicking on a column header re-orders the rows in ascending order of the values in the selected column. Holding down the SHIFT key while clicking on the column header will re-order the rows in the descending order of that column. Holding down the CTRL key while clicking anywhere on the header will restore the original ordering.</p>
+<p><em><b>Validation Measures </b></em></p>	
+<b>Internal Validation:</b> This validation evaluates the quality of the clustering based solely on the dataset and the clustering partition.  
+This assessment is demonstrated by the measures Connectivity, Silhouette Width and Dunn Index, which were chosen to elucidate the compactness, 
+connectedness and separation of the cluster partitions.<br><br>
+<b>Stability Validation:</b> This validation uses an iterative approach of removing one column (or row, if by genes) from the dataset and comparing the results.  
+Measures of stability include Average Proportion of Non-Overlap (APN), Average Distance (AD), Average Distance between Means(ADM) and Figure of Merit(FOM).<br><br>
+<b>Biological Validation:</b> This validation uses a bioconductor annotation package to find clusters with biological meaning.  Measures include the Biological Homogeneity Index(BHI) and
+Biological Stability Index(BSI).<br>
+(For more detailed information on validation options and available measures, see <a href="http://cran.r-project.org/web/packages/clValid/vignettes/clValid.pdf">the R package vignette</a>.)
+<h4>Results</h4>
+
 <div class="navigation-bar"><a class="prev" href="sam.html">Previous: SAM-Significance Analysis of Microarrays</a> | <a class="toc" href="TableofContents.html">Table of Contents</a>|<a class="next" href="anova2.html">Next: TFA-Two-factor ANOVA</a></div>
 </body>
 </html>				

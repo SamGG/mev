@@ -353,6 +353,10 @@ public class HelpWindow extends JDialog {
             return "anova.html";
         if(key.equals("Bayesian Estimation of Temporal Regulation- Initialization Dialog"))  //
             return "betr.html";
+        if(key.equals("Cluster Validation - Initialization Dialog"))		//
+            return "clvalid.html";
+        if(key.equals("CLVALID - Initialization Dialog"))		//
+            return "clvalid.html";
         if(key.equals("Non-negative Matrix Factorization- Initialization Dialog"))		//
             return "nmf.html";
         if(key.equals("Rank Products- Initialization Dialog"))							//

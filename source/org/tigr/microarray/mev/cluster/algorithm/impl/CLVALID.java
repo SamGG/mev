@@ -248,9 +248,9 @@ public class CLVALID extends AbstractAlgorithm{
 					JOptionPane.showMessageDialog(null, "Error running CLVALID.\nTry reducing the size of your dataset or running the analysis with a smaller cluster.","REngine", JOptionPane.ERROR_MESSAGE);
 				throw new AbortException();
 			}
-			rCmd = "sink()";
+//			rCmd = "sink()";
 			RHook.endRSession();
-			removeTmps(filePath);
+//			removeTmps(filePath);
 		} catch (Exception e) {
 			RHook.log(e);
 			try {
