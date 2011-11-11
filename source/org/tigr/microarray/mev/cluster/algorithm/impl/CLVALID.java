@@ -212,12 +212,12 @@ public class CLVALID extends AbstractAlgorithm{
 			String rCmd = "library(clValid)";
 			RHook.evalR(rCmd);
 
-//			rCmd = "zz <- file('all.Rout', open='wt')";
-//			RHook.evalR(rCmd);
-//			rCmd = "sink(zz)";
-//			RHook.evalR(rCmd);
-//			rCmd = "sink(zz, type='message')";
-//			RHook.evalR(rCmd);
+			rCmd = "zz <- file('all.Rout', open='wt')";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz)";
+			RHook.evalR(rCmd);
+			rCmd = "sink(zz, type='message')";
+			RHook.evalR(rCmd);
 			
 			String fileLoc = System.getProperty("user.dir")+System.getProperty("file.separator")+"tmpfile.txt";
 			fileLoc = fileLoc.replace("\\", "/");
@@ -248,9 +248,9 @@ public class CLVALID extends AbstractAlgorithm{
 					JOptionPane.showMessageDialog(null, "Error running CLVALID.\nTry reducing the size of your dataset or running the analysis with a smaller cluster.","REngine", JOptionPane.ERROR_MESSAGE);
 				throw new AbortException();
 			}
-//			rCmd = "sink()";
+			rCmd = "sink()";
 			RHook.endRSession();
-//			removeTmps(filePath);
+			removeTmps(filePath);
 		} catch (Exception e) {
 			RHook.log(e);
 			try {
