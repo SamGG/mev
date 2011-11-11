@@ -74,7 +74,7 @@ public class CLVALIDInitBox extends AlgorithmDialog {
                 okPressed = false;
                 dispose();
             } else if (command.equals("info-command")){
-            	HelpWindow.launchBrowser(CLVALIDInitBox.this, "Cluster Validation- Initialization Dialog");
+            	HelpWindow.launchBrowser(CLVALIDInitBox.this, "Cluster Validation - Initialization Dialog");
             }
         }
 
