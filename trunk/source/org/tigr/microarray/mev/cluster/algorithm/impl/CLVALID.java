@@ -168,10 +168,8 @@ public class CLVALID extends AbstractAlgorithm{
 	}
 	private double[][][] createDataMatrices(double[] measures, int numClusters, int numMeasures, int numMethods) {
 		//validate
-		if (measures.length!=numClusters*numMeasures*numMethods){
-			System.out.println("measures.length = "+measures.length+", numClusters = "+numClusters +", numMeasures = "+numMeasures+", numClusterings = "+numMethods);
+		if (measures.length!=numClusters*numMeasures*numMethods)
 			return null;
-		}
 		int index = 0;
 		double[][][] res = new double[numMeasures][numMethods][numClusters];
 		for (int i=0; i<numMethods; i++){
@@ -201,7 +199,6 @@ public class CLVALID extends AbstractAlgorithm{
 				throw new AbortException();
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
 			throw new AbortException();
 		}
 
@@ -224,7 +221,6 @@ public class CLVALID extends AbstractAlgorithm{
 			
 			String filePath;
 			int numRows;
-			System.out.println(subCluster);
 			if (isClusterGenes){
 				filePath = writeMatrixToFile(fileLoc, expMatrix, geneNames, subCluster);
 				RHook.createRDataMatrixFromFile("y", filePath, true, sampleNames);
@@ -255,12 +251,9 @@ public class CLVALID extends AbstractAlgorithm{
 			RHook.log(e);
 			try {
 				RHook.endRSession();
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(null, e.getMessage(), "REngine", JOptionPane.ERROR_MESSAGE);
-				//throw new AlgorithmException(e);
 				throw new AbortException();
 			} catch (Exception e1) {
-				e1.printStackTrace();
+				throw new AbortException();
 			}
 		}
 	}
@@ -305,7 +298,6 @@ public class CLVALID extends AbstractAlgorithm{
 		RHook.evalR(rCmd);
 		rCmd = "results@measures";
 		measuresIntern = RHook.evalR(rCmd).asDoubleArray();
-		System.out.println("measuresIntern1 = "+measuresIntern.length);
 		
 		rCmd = "as.matrix(optimalScores(results)[1])";
 		optimalScores.put("scores", RHook.evalR(rCmd).asDoubleArray());	
@@ -323,7 +315,6 @@ public class CLVALID extends AbstractAlgorithm{
 		}
 		if (methodsString.length()>0)
 			methodsString = methodsString.substring(0, methodsString.length()-1);
-		System.out.println("methods string = "+ methodsString);
 		return methodsString;
 	}
 	private String writeMatrixToFile(String fileLoc, FloatMatrix fm, String[] rowNames, int[] subCluster) {
