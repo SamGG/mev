@@ -22,7 +22,7 @@ source("")
 C:\Progra~1\R\R-2.11.1-x64\bin\R.exe CMD BATCH bioconductor_annotation_parser.R
 
 Or run C:\Progra~1\R\R-2.11.1-x64\bin\R.exe and command 
-source("../mev_bioconductor_annotation/bioconductor_annotation_parser.R")
+source("../mev_quickfix/developer_docs/bioconductor_annotation_parser.R")
 
 packagename <- "zebrafish.db"
 prefix <- strsplit(packagename, ".", fixed=TRUE)[[1]][1]
@@ -59,3 +59,33 @@ biocLite("BSgenome.Hsapiens.UCSC.hg19")
 
 
 createBNFiles("hgu133plus2.db")
+
+
+
+
+fixBNfiles
+setwd("C:/Users/eleanora/workspace/annotation/")
+orgfolderlist <- list.files(path = ".")
+for(orgfolder in orgfolderlist) {
+	print(orgfolder)
+	tryCatch(
+		{	
+			setwd(orgfolder)
+			BNfilelist <- list.files(path=".", pattern = "_BN.zip")
+			for(thisBNfile in BNfilelist) {
+				BNFoldername <- strsplit(thisBNfile, ".zip")[[1]]
+				system(paste("7za x",  thisBNfile))
+				file.copy(
+					paste(BNFoldername, "/symArtsPubmed.txt", sep=""), 
+					paste(BNFoldername, "/symArtsGeneDb.txt", sep="")
+				)
+				unlink(thisBNfile)
+				system(paste("7za a -r",  paste(BNFoldername,".zip", sep=""), BNFoldername))
+				unlink(BNFoldername, recursive=TRUE)
+			}
+			setwd("..")
+		}, error=function(e) {
+			print(paste("couldn't cd to folder", orgfolder))
+		})
+}
+

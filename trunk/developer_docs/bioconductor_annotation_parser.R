@@ -77,6 +77,10 @@ for(packagename in packagenamelist) {
 		})
 	} else {
 		print(paste(BNZipfilename, "exists. Skipping."))
+		writeLines(
+					paste("Animal", organism, prefix, sep="\t"), 
+					con=bnsuccesslist
+				)
 	}
 	
 	print(paste("finishing in directory", getwd()))
