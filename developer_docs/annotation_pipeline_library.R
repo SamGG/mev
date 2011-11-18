@@ -687,15 +687,7 @@ createBNFiles <- function(prefix, BNFoldername) {
 		chr=chr
 	)
 	
-	#TODO write this file function
-#	writeBNSymartsGeneDbFile(
-#		filename=paste(BNFoldername, "/symArtsGeneDb.txt", sep=""), 
-#		symbol, 
-#		someid?
-#	)
 
-	#TODO Emailed Raktim and ask about inconsistency in PMID lists. 
-	#Waiting on reply 9/22/11.
 	pmidlists <- lapply(names(symbol), function(x) {pmids[[which(names(pmids) == x)]]})
 	names(pmidlists) <- names(symbol)
 	test <- lapply(
@@ -713,13 +705,11 @@ createBNFiles <- function(prefix, BNFoldername) {
 				}
 			)
 	names(test) <- unique(symbol)
-	test2 <- lapply(symbol, function(x) {pmids[which(symbol == x)]})
-	which(symbol == "AAAS")
-	length(symbol)
-	length(unique(symbol))
+
 	writeBNSymartsPubmedFile(
 		filename=paste(BNFoldername, "/symArtsPubmed.txt", sep=""), 
 		names(test), 
 		pubmedids=lapply(test, paste, collapse=",") 
 	)
+	file.copy(paste(BNFoldername, "/symArtsPubmed.txt", sep=""), paste(BNFoldername, "/symArtsGeneDb.txt", sep=""))
 }
