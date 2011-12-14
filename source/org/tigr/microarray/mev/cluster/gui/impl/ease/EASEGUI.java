@@ -602,7 +602,9 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 				
 				
 				//FOr each significant nEASE result in the summary table, Make an expression viewer.
-				for(int i=0; i<tv.data.length; i++) {
+				//This block of code makes for a nice display, but is still buggy. Displays EASE results instead of nEASE. 
+				//get it fixed, and it will be great. 
+/*				for(int i=0; i<tv.data.length; i++) {
 					String thisNeaseTerm = tv.data[i][3].toString();
 					String thisEaseTerm = tv.data[i][14].toString();
 					int nestedEaseIndex;
@@ -621,6 +623,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 						    nestedEaseNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(termIndex))));
 						    nestedEaseNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", graphViewer, new CentroidUserObject(termIndex, CentroidUserObject.VARIANCES_MODE))));
 						    nestedEaseNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Graph", graphViewer, new CentroidUserObject(termIndex, CentroidUserObject.VALUES_MODE))));
+	//					addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
 						addGeneralInfo(nestedEaseNode, thisNeaseResult);
 
 						nestedEaseRoot.add(nestedEaseNode);
@@ -628,6 +631,23 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
 					}
 				}
 
+				}
+				*/
+				for (int i = 0; i < nEaseCount; i++) {
+					DefaultMutableTreeNode nestedEaseNode = new DefaultMutableTreeNode("nEASE run: " + nestedEaseTerms[i]);
+					EaseAlgorithmData thisNeaseResult = result.getNEASEResults(new Integer(i));
+					String[][] thisEaseResultData = (String[][]) thisNeaseResult.getResultMatrix();//getObjectMatrix("result-matrix");
+					if (thisEaseResultData != null && thisEaseResultData.length != 0) {
+						int[][] theseClusters = thisNeaseResult.getClusterMatrix();//getIntMatrix("cluster-matrix");
+						addTableViewer(nestedEaseNode, thisNeaseResult, theseClusters);
+						addExpressionViewers(nestedEaseNode, thisNeaseResult, theseClusters);
+						addGeneralInfo(nestedEaseNode, thisNeaseResult);
+						//addGOTree(nestedEaseNode, (String[][])thisNeaseResult.getObjectMatrix("result-matrix"), thisNeaseResult.getStringArray("header-names"));
+
+						nestedEaseRoot.add(nestedEaseNode);
+					} else {
+						nestedEaseRoot.add(createEmptyResultNode(thisNeaseResult, nestedEaseTerms[i]));
+					}
 				}
 				root.add(nestedEaseRoot);
 			}
@@ -705,7 +725,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
         	accindex=0;
         }
         for (int i=0; i<theseclusters.length; i++) {
-        	if(new Float(thisResultMatrix[i][thisResultMatrix[i].length-1].toString()) <= 0.1f) {
+//        	if(new Float(thisResultMatrix[i][thisResultMatrix[i].length-1].toString()) <= 0.1f) {
             clusterNode = new DefaultMutableTreeNode("Term "+String.valueOf(i+1) + ": " + thisResultMatrix[i][accindex+2]);
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Expression Image", expViewer, new Integer(i))));
             clusterNode.add(new DefaultMutableTreeNode(new LeafInfo("Centroid Graph", graphViewer, new CentroidUserObject(i, CentroidUserObject.VARIANCES_MODE))));
@@ -716,7 +736,7 @@ public class EASEGUI implements IClusterGUI, IScriptGUI {
             clusterNode.add(new DefaultMutableTreeNode("Number of Genes: "+theseclusters[i].length));
             
             node.add(clusterNode);
-        	}
+//        	}
         }
         root.add(node);
     }
