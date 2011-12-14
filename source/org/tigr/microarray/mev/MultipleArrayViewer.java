@@ -1865,8 +1865,15 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
             height += header.getHeight();
         }
         // BufferedImage image = (BufferedImage)java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(256,1);
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);  //need to use this type for image creation
-        
+        BufferedImage image = null;
+        try{
+        	image = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);  //need to use this type for image creation
+        } catch (Error e){        	
+        	e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Can not save image!\n Image size is "+width+"x"+height, e.toString(), JOptionPane.ERROR_MESSAGE);
+            System.out.println("Image saving failed...");
+            throw e;
+        }
         Graphics2D g = image.createGraphics();
         g.setColor(Color.white);
         g.fillRect(0, 0, image.getWidth(), image.getHeight());
@@ -4013,6 +4020,7 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
         if(features.length > 0)
             addHistory(features[0].getSize()+" genes loaded.");
         toolbar.enableRNASeq(data.getDataType()==IData.DATA_TYPE_RNASEQ);
+        menubar.enableRNASeq(data.getDataType()==IData.DATA_TYPE_RNASEQ);
         initMainViewAndClusterManager();
     }
     
