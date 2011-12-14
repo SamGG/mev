@@ -16,12 +16,10 @@ package org.tigr.microarray.mev;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -41,11 +39,11 @@ import org.tigr.microarray.mev.cluster.gui.ICGHCloneValueMenu;
 import org.tigr.microarray.mev.cluster.gui.ICGHDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDisplayMenu;
 import org.tigr.microarray.mev.cluster.gui.IDistanceMenu;
-import org.tigr.microarray.util.awt.AccessibleColorPalette;
 
 public class MultipleArrayMenubar extends JMenuBar {
     
-    private DisplayMenu displayMenu = new DisplayMenu();
+	private static final long serialVersionUID = 1L;
+	private DisplayMenu displayMenu = new DisplayMenu();
     private DistanceMenu distanceMenu = new DistanceMenu();
     private JMenu normalizationMenu;
     private JMenu labelMenu;
@@ -79,6 +77,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     private ActionManager actionManager;
 	private String userFont = "monospaced";
 	private int userFontSize = 0;
+	private JMenu analysisMenu;
 
 
     /**
@@ -213,7 +212,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         distanceMenu.add(createJCheckBoxMenuItem("Absolute distance", ActionManager.ABSOLUTE_DISTANCE_CMD, listener, false));
         add(distanceMenu);
         
-        JMenu analysisMenu = new JMenu("Analysis");
+        analysisMenu = new JMenu("Analysis");
         // add analysis menu here
         addAnalysisMenu(analysisMenu, manager);
         add(analysisMenu);
@@ -596,60 +595,10 @@ public class MultipleArrayMenubar extends JMenuBar {
     	for(int i=0; i<temp.size();i++)
     		temp2[i] = (String)temp.get(i);
     	
-    	
-    	
-    	
    		return temp2;
     }
   
-    
-   
-    /**
-     * Raktim - Added for Pilot Demo only
-     * @param fieldNames
-     * @param annoFields
-     */
-    public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
-        JRadioButtonMenuItem item;
-       //ButtonGroup bg = new ButtonGroup();
-        DefaultAction action;
-        String thisFieldName;
-    	String prefix = "Label by ";
-        for(int i = 0; i < fieldNames.length; i++){
-        	thisFieldName = fieldNames[i];
-        	if(thisFieldName.startsWith(prefix)) {
-        		thisFieldName = thisFieldName.substring(prefix.length()).trim();
-        	}        		
-        	action = new DefaultAction(actionManager, "Label by " + thisFieldName, ActionManager.DISPLAY_LABEL_CMD);
-            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
-            item = new JRadioButtonMenuItem(action);
-            labelGroup.add(item);
-            if(i == 0)
-                item.setSelected(true);
-            this.labelMenu.add(item);
-        }
-        String thisAnnoField;
-        if(annoFields != null) {
-	        for(int i = 0; i < annoFields.length; i++){
-	        	thisAnnoField = annoFields[i];
-	        	if(thisAnnoField.startsWith(prefix)) {
-	        		thisAnnoField = thisAnnoField.substring(prefix.length()).trim();
-	        	}
-	        	action = new DefaultAction(actionManager, "Label by "+thisAnnoField, ActionManager.DISPLAY_LABEL_CMD);
-	            action.putValue(ActionManager.PARAMETER, String.valueOf(i + fieldNames.length));
-	            item = new JRadioButtonMenuItem(action);
-	            labelGroup.add(item);
-	            this.labelMenu.add(item);
-	        }
-        }
-    }
-    
-
-    
-    
-    
-    
-    public void addExperimentLabelMenuItems(Vector fieldNames){
+    public void addExperimentLabelMenuItems(Vector<String> fieldNames){
         JRadioButtonMenuItem item;
         DefaultAction action;
         for(int i = 0; i < fieldNames.size(); i++){
@@ -745,16 +694,6 @@ public class MultipleArrayMenubar extends JMenuBar {
     }
     
     
-    //Added by Sarita
-//    public void replaceLabelMenuItems(String [] fieldNames, String[]annoFields){
-//        //remove all menu items
-//        this.labelMenu.removeAll();
-//        labelGroup=new ButtonGroup();
-//       this.addLabelMenuItems(fieldNames, annoFields);
-//    }
-    
-    
-    
     public void addAffyFilterMenuItems(){
         filterMenu.addSeparator();
         filterMenu.add(createJMenuItem("Set Detection Filter", ActionManager.SET_DETECTION_FILTER_CMD, listener));
@@ -773,20 +712,7 @@ public class MultipleArrayMenubar extends JMenuBar {
         this.set_affyNormAddded(true);
     }
     
-    /**
-     * Adds sort menu items.
-     */
-    private void addSortMenuItems(JMenu menu, ActionManager manager, ButtonGroup buttonGroup) {
-        int index = 0;
-        JRadioButtonMenuItem item;
-        Action action;
-        while ((action = manager.getAction(ActionManager.SORT_LABEL_ACTION+String.valueOf(index)))!=null) {
-            item = new JRadioButtonMenuItem(action);
-            buttonGroup.add(item);
-            menu.add(item);
-            index++;
-        }
-    }
+
     
     public void addSortMenuItems(String [] fieldNames){
 
@@ -801,7 +727,7 @@ public class MultipleArrayMenubar extends JMenuBar {
      * Adds analysis menu items.
      */
     private void addAnalysisMenu(JMenu menu, ActionManager manager) {
-        String []category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
+        String[] category={"Clustering","Statistics","Classification","Data Reduction","Meta Analysis","Visualization","Miscellaneous"};
         for(int i=0;i<category.length;i++){
         		menu.add(createJMenuItem(category[i],manager));
         	}
@@ -844,7 +770,7 @@ public class MultipleArrayMenubar extends JMenuBar {
     	while ((action = manager.getAction(ActionManager.ANALYSIS_ACTION+String.valueOf(index)))!=null) {
     		if((action.getValue(ActionManager.CATEGORY)).equals(category))
     			item.add(createJMenuItem(action));
-        index++;
+    		index++;
     	}
         return item;
     }
@@ -1193,8 +1119,6 @@ public class MultipleArrayMenubar extends JMenuBar {
         BufferedImage currentNegativeColorImage = negGreenColorImage;
         BufferedImage currentPositiveColorImage = posRedColorImage;
         
-        //Added by Sarita
-        AccessibleColorPalette color=new AccessibleColorPalette();
        
         
         public int getPaletteStyle() {
@@ -1369,6 +1293,41 @@ public class MultipleArrayMenubar extends JMenuBar {
 
         
 
+    }
+
+    public void addLabelMenuItems(String [] fieldNames, String[] annoFields){
+        JRadioButtonMenuItem item;
+       //ButtonGroup bg = new ButtonGroup();
+        DefaultAction action;
+        String thisFieldName;
+    	String prefix = "Label by ";
+        for(int i = 0; i < fieldNames.length; i++){
+        	thisFieldName = fieldNames[i];
+        	if(thisFieldName.startsWith(prefix)) {
+        		thisFieldName = thisFieldName.substring(prefix.length()).trim();
+        	}        		
+        	action = new DefaultAction(actionManager, "Label by " + thisFieldName, ActionManager.DISPLAY_LABEL_CMD);
+            action.putValue(ActionManager.PARAMETER, String.valueOf(i));
+            item = new JRadioButtonMenuItem(action);
+            labelGroup.add(item);
+            if(i == 0)
+                item.setSelected(true);
+            this.labelMenu.add(item);
+        }
+        String thisAnnoField;
+        if(annoFields != null) {
+	        for(int i = 0; i < annoFields.length; i++){
+	        	thisAnnoField = annoFields[i];
+	        	if(thisAnnoField.startsWith(prefix)) {
+	        		thisAnnoField = thisAnnoField.substring(prefix.length()).trim();
+	        	}
+	        	action = new DefaultAction(actionManager, "Label by "+thisAnnoField, ActionManager.DISPLAY_LABEL_CMD);
+	            action.putValue(ActionManager.PARAMETER, String.valueOf(i + fieldNames.length));
+	            item = new JRadioButtonMenuItem(action);
+	            labelGroup.add(item);
+	            this.labelMenu.add(item);
+	        }
+        }
     }
     
     /**
@@ -1923,5 +1882,30 @@ public class MultipleArrayMenubar extends JMenuBar {
 
 	public void setNewFontSize(int size) {
 		userFontSize  = size;
+	}
+
+	public void enableRNASeq(boolean isRNASeq) {
+		int menuCount = analysisMenu.getItemCount();
+		for (int i=0; i<menuCount; i++){
+			JMenu jm = (JMenu) analysisMenu.getItem(i);
+			int itemCount = jm.getItemCount();
+			for (int j=0; j<itemCount; j++){
+				JMenuItem item = jm.getItem(j);
+				if (isRNASeq){
+					if(item.getText().equalsIgnoreCase("BN"))
+						item.setEnabled(false); //Bayesiean Networks
+					if(item.getText().equalsIgnoreCase("LM"))
+						item.setEnabled(false); //Literature Mining
+				} else {
+					//RNASeq modules...
+					if(item.getText().equalsIgnoreCase("EDGER"))
+						item.setEnabled(false);
+					if(item.getText().equalsIgnoreCase("DESEQ"))
+						item.setEnabled(false);
+					if(item.getText().equalsIgnoreCase("DEGSEQ"))
+						item.setEnabled(false);
+				}
+			}
+		}		
 	}
 }
