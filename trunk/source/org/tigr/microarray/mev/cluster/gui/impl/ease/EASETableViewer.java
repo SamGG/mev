@@ -273,34 +273,31 @@ public class EASETableViewer extends TableViewer implements Serializable {
         //This is the node marked "Expression Viewers"
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)easeRoot.getChildAt(1);
         
-    	//Jump to nEASE result node
+    	//Jump to nEASE sub-result for term that matches summary results
         if(isEaseConsolidatedResult) {
-        	
         	int fileindex = 1;
-        	int easetermindex = 14;
-        	int neasetermindex = 3;
-        	String easeterm = (String) this.table.getValueAt(index, easetermindex);
-        	String neaseterm = (String) this.table.getValueAt(index, neasetermindex);
+        	int termindex = 14;
+        	String term = (String) this.table.getValueAt(index, fileindex) + ": " + (String) this.table.getValueAt(index, termindex);
         	int neaseindex = 0;
-        	for(int i=2; i<easeRoot.getChildCount(); i++) {
-	       		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(easeterm) &&
-       				((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().startsWith(neaseterm)
-        		) {
+        	for(int i=1; i<easeRoot.getChildCount(); i++) {
+        		if(((DefaultMutableTreeNode)easeRoot.getChildAt(i)).getUserObject().toString().endsWith(term)) {
         			neaseindex = i;
         			break;
         		}
         	}
 
-        	node = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
-        } else {
+        	DefaultMutableTreeNode neasenode = (DefaultMutableTreeNode)easeRoot.getChildAt(neaseindex);
+        	node = (DefaultMutableTreeNode)neasenode.getChildAt(1);//Expression Viewers folder within nease result number neaseindex	
+        }
+        
         index = new Integer((String)this.table.getValueAt(index, 0)) -1;
+        
         if(node.getChildCount() < index) {
             return;
         }
+        
         //index marks which of the expression folders to go to (Term 1: extracellular region, for example)
         node = (DefaultMutableTreeNode)(node.getChildAt(index));
-        }
-        
         if(viewerType.equals("expression image")){
             node = (DefaultMutableTreeNode)(node.getChildAt(0));
         } else if(viewerType.equals("centroid graph")){
@@ -427,7 +424,6 @@ public class EASETableViewer extends TableViewer implements Serializable {
      */
     public Expression getExpression(PrintWriter pw, String filename){
     	writeData(pw);
-    	  //TODO Use Result data persistenceDelegate and store data. 
     	return new Expression(this, this.getClass(), "new", 
     			new Object[]{this.headerNames, this.easeRoot, this.experiment, ClusterWrapper.wrapClusters(this.clusters), this.haveAccessionNumbers, this.clusterAnalysis, this.isEaseConsolidatedResult, filename});
     }  
