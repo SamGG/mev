@@ -4125,12 +4125,6 @@ public class MultipleArrayViewer extends ArrayViewer implements Printable {
     }
     
     /**
-     *  Dan's Time Saver</code>.
-     */
-    private void loadDataOnStart(String path){
-        new SuperExpressionFileLoader(this, true, path);    
-    }
-    /**
      * Returns specfied the cluster repository, possibly null
      */
     protected ClusterRepository getClusterRepository(int clusterType){
