@@ -191,19 +191,6 @@ public class SuperExpressionFileLoader {
 		initializeFileLoaders();
 		initializeGUI();
 	}
-	//Dan's TimeSaver
-	public SuperExpressionFileLoader(MultipleArrayViewer viewer, boolean tf, String path) {
-		this.viewer = viewer;
-		this.defaultArrayName = TMEV.getSettingForOption(TMEV.LAST_LOADED_ARRAY);
-		this.defaultSpeciesName = TMEV.getSettingForOption(TMEV.LAST_LOADED_SPECIES);
-		hasAnnotationList = initializeAnnotationInfo();
-		loader = new Loader();
-		initializeFileLoaders();
-		initializeGUI();
-		((StanfordFileLoader)fileLoaders[0]).dansTimeSaver(path);
-		onLoad();
-		
-	}
 	public SuperExpressionFileLoader() {
 		loader = new Loader();
 		initializeFileLoaders();
@@ -251,7 +238,7 @@ public class SuperExpressionFileLoader {
 	protected void initializeFileLoaders() {
 		int defaultSelection = 0;
 
-		fileLoaders = new ExpressionFileLoader[17];
+		fileLoaders = new ExpressionFileLoader[18];
 		fileLoaders[0] = new StanfordFileLoader(this);
 
 		fileLoaders[1] = null;
@@ -270,6 +257,7 @@ public class SuperExpressionFileLoader {
 		fileLoaders[14] = null;
 		fileLoaders[15] = null;
 		fileLoaders[16] = null;
+		fileLoaders[17] = null;
 		
 		selectedFileLoader = fileLoaders[defaultSelection];
 
@@ -283,7 +271,7 @@ public class SuperExpressionFileLoader {
 	}
 
 	public void menuItem(JMenu jItem, final String st) {
-		menuItem = new JMenuItem[8];
+		menuItem = new JMenuItem[9];
 		menuItem[0] = new JMenuItem("Tab Delimited, Multiple Sample Files");
 
 		menuItem[0].addActionListener(new ActionListener() {
@@ -488,8 +476,24 @@ public class SuperExpressionFileLoader {
 		});
 		jItem.add(menuItem[6]);
 		// End Raktim
+
+		menuItem[7] = new JMenuItem("Download TCGA Data");
+
+		menuItem[7].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (st == "File Format Hint") {
+					//HelpWindowDialog hwd = new HelpWindowDialog(mainFrame, HelpWindowDialog.createText("TCGA"));
+					helpWindow("TCGA Data Downloader");
+				} else {
+					changeSelectedFileFilterAndLoader(17);
+
+				}
+			}
+		});
+		jItem.add(menuItem[7]);
 		
-		menuItem[7] = new JMenu("Other Format Files");
+		
+		menuItem[8] = new JMenu("Other Format Files");
 
 		subMenuItem = new JMenuItem[2];
 		subMenuItem[0] = new JMenuItem("GenePix Format Files");
@@ -502,7 +506,7 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[7].add(subMenuItem[0]);
+		menuItem[8].add(subMenuItem[0]);
 
 		subMenuItem[1] = new JMenuItem("Agilent Files");
 		subMenuItem[1].addActionListener(new ActionListener() {
@@ -514,9 +518,9 @@ public class SuperExpressionFileLoader {
 				}
 			}
 		});
-		menuItem[7].add(subMenuItem[1]);
+		menuItem[8].add(subMenuItem[1]);
 
-		jItem.add(menuItem[7]);
+		jItem.add(menuItem[8]);
 
 	}
 
@@ -697,6 +701,10 @@ public class SuperExpressionFileLoader {
 			loader = new RNASeqFileLoader(this);
 			break;
 		// End Raktim
+		case TCGA_DOWNLOAD:
+			loader = new TCGADownloader(this);
+			System.out.println("TCGADownloader used");
+			break;
 		default:
 			loader = new StanfordFileLoader(this);
 			break;

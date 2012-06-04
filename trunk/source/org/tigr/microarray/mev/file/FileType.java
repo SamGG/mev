@@ -23,8 +23,9 @@ public enum FileType {
   	GEO_GDS					("geo-gds", 			14,	false,	GEO_GDSFileLoader.class,			"GEO GDS Format Files"), 
   	MAGETAB					("mage-tab", 			15,	false,	MAGETABFileLoader.class,			"MAGE-TAB Format Files"),
   	// Raktim for RNASeq
-  	RNASEQ					("rnaseq", 				16,	false,	RNASeqFileLoader.class,				"Tab Delimited, Multiple Files for DGE/RPKM data"),;
+  	RNASEQ					("rnaseq", 				16,	false,	RNASeqFileLoader.class,				"Tab Delimited, Multiple Files for DGE/RPKM data"),
   	// End Raktim
+  	TCGA_DOWNLOAD			("tcga-download", 		17,	false,	TCGADownloader.class,				"Tab Delimited, Multiple Files for TCGA data"),;
  	
   	private String commandArg;
   	private int loaderIndex;
