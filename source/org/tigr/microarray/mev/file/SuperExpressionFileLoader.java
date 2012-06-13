@@ -703,7 +703,6 @@ public class SuperExpressionFileLoader {
 		// End Raktim
 		case TCGA_DOWNLOAD:
 			loader = new TCGADownloader(this);
-			System.out.println("TCGADownloader used");
 			break;
 		default:
 			loader = new StanfordFileLoader(this);
@@ -816,6 +815,8 @@ public class SuperExpressionFileLoader {
 	}
 
 	private void updateDataPath(String dataPath) {//, String annotationPath) {
+		System.out.println("dataPath = "+dataPath);
+		System.out.println("new File(dataPath).getParent() = "+new File(dataPath).getParent());
 		if(dataPath != null) {
 			
 			DATA_PATH = dataPath;
@@ -866,7 +867,7 @@ public class SuperExpressionFileLoader {
 				dataType = selectedFileLoader.getDataType();
 				selectedFileLoader.dispose();
 //				updateDataPath(selectedFileLoader.getFilePath(), selectedFileLoader.getAnnotationFilePath());
-				updateDataPath(selectedFileLoader.getFilePath());//, selectedFileLoader.getAnnotationFilePath());
+//				updateDataPath(selectedFileLoader.getFilePath());//, selectedFileLoader.getAnnotationFilePath());
 				if (data != null) {
 					viewer.fireDataLoaded(toISlideDataArray(data), chipAnnotation, dataType);
 				} else {

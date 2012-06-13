@@ -147,12 +147,6 @@ public class StanfordFileLoader extends ExpressionFileLoader {
 	 *  taking log2(cy5/cy3).
 	 */
 
-	/**Dan time saver.
-	 * Loads a hard-coded dataset.
-	 */
-	public void dansTimeSaver(String path){
-		processStanfordFile(new File(path));
-	}
 	
     public Vector<ISlideData> loadStanfordExpressionFile(File f, int rowcoord, int colcoord) throws IOException {
     	int preSpotRows, preExperimentColumns;

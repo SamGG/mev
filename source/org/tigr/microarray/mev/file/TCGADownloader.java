@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
@@ -32,9 +33,11 @@ import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -77,6 +80,9 @@ public class TCGADownloader extends ExpressionFileLoader {
 	ExpressionFileTableCellRenderer myCellRenderer;
 	protected String[] moreFields = new String[] {};
 
+	private JRadioButton dataTypeSFRB;
+	private JRadioButton dataTypeRNARB;	
+	JCheckBox selectAllCB;
 	private ISlideData[] slideDataArray = null;
 	private ISlideDataElement sde;
 
@@ -362,58 +368,137 @@ public class TCGADownloader extends ExpressionFileLoader {
 		String currentLine = null;
 		String fileName = "tcgaDownload_"+System.currentTimeMillis()+".txt";
 		tcgaDownloadFile = new File(fileName);
+		try {
+			tcgaDownloadFile.createNewFile();
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
+		FileWriter fstream = null;
+		try {
+			fstream = new FileWriter(fileName);
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 
 
-
+		tcgaDP.setFileName(fileName);
+		System.out.println("this.getFilePath() = "+this.getFilePath());
+		int numFiles = tcgaDP.filesList.getSelectedIndices().length;
 		DefaultTableModel model = new DefaultTableModel() {
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
 
-		ArrayList<ArrayList<String>> allData = new ArrayList<ArrayList<String>>();
-		for (int i=0; i<tcgaDP.filesList.getSelectedIndices().length; i++){
-			dlProgress.setDescription("Download Progress: "+(i+1)+" of "+tcgaDP.filesList.getSelectedIndices().length);
-			try{	
-				allData.add(new ArrayList<String>());
-				URL url = new URL(tcgaURL+tcgaDP.filesList.getSelectedValues()[i]); 	
-				tcgaDP.setFileName(tcgaURL+tcgaDP.filesList.getSelectedValues()[i]);
-				URLConnection url_conn = url.openConnection();
-				url_conn.setDoInput(true);
-				url_conn.setUseCaches(true);
-		
-				reader = new BufferedReader( new InputStreamReader(url_conn.getInputStream()));
-				while ((currentLine = reader.readLine()) != null) {
-					allData.get(i).add(currentLine);
+		if (dataTypeSFRB.isSelected()){
+			ArrayList<ArrayList<String>> allData = new ArrayList<ArrayList<String>>();
+			for (int i=0; i<tcgaDP.filesList.getSelectedIndices().length; i++){
+				dlProgress.setDescription("Download Progress: "+(i+1)+" of "+tcgaDP.filesList.getSelectedIndices().length);
+				try{	
+					allData.add(new ArrayList<String>());
+					URL url = new URL(tcgaURL+tcgaDP.filesList.getSelectedValues()[i]); 	
+					URLConnection url_conn = url.openConnection();
+					url_conn.setDoInput(true);
+					url_conn.setUseCaches(true);
+			
+					reader = new BufferedReader( new InputStreamReader(url_conn.getInputStream()));
+					while ((currentLine = reader.readLine()) != null) {
+						if (i==0)
+							allData.get(i).add(currentLine);
+						else
+							allData.get(i).add(currentLine.split("\t")[1]);
+					}
+				}catch (Exception e){
+					System.out.println("error parsing file: "+tcgaURL+tcgaDP.filesList.getSelectedValues()[i]);
 				}
-			}catch (Exception e){
+			}
+	
+			try {
+				out = new BufferedWriter(fstream);
+				for (int i=0; i<allData.get(0).size(); i++){
+					dlProgress.setDescription("Processing Data: "+(i+1)+" of "+allData.get(0).size());			
+					String line = "";
+	
+					try{
+						for (int j=0; j<allData.size(); j++){
+							line += ((j==0?"":"\t")+allData.get(j).get(i));
+						}
+					} catch (Exception e){
+						
+					}
+					out.write(line+"\n");
+				}
+				out.close();
+				
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-
-		try {
-			tcgaDownloadFile.createNewFile();
-			FileWriter fstream = new FileWriter(fileName);
-			out = new BufferedWriter(fstream);
-			for (int i=0; i<allData.get(0).size(); i++){
-				dlProgress.setDescription("Processing Data: "+(i+1)+" of "+allData.get(0).size());			
-				String line = allData.get(0).get(i).split("\t")[0];
-
-				try{
-				for (int j=0; j<allData.size(); j++){
-					line += ("\t"+allData.get(j).get(i).split("\t")[1]);
-				}
-				} catch (Exception e){
-					
-				}
-				out.write(line+"\n");
-			}
-			out.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
+		if (dataTypeRNARB.isSelected()){
+			try {
+				out = new BufferedWriter(fstream);
+				BufferedReader[] readerArr = new BufferedReader[numFiles];
+				for (int i=0; i<numFiles; i++){
+					dlProgress.setDescription("Download Progress: "+(i+1)+" of "+numFiles);
+					try{	
+						URL url = new URL(tcgaURL+tcgaDP.filesList.getSelectedValues()[i]); 	
+						URLConnection url_conn = url.openConnection();
+						url_conn.setDoInput(true);
+						url_conn.setUseCaches(true);
 		
+						readerArr[i] = new BufferedReader( new InputStreamReader(url_conn.getInputStream()));
+					} catch (Exception e){
+						System.out.println("error parsing file: ");
+						e.printStackTrace();
+					}
+				}
+				out.write("Tracking ID\t");
+				out.write("locus\t");
+				out.write("nearest_ref_id\t");
+				out.write("class_code\t");
+				out.write("transcript_length");
+				for (int i=0; i<numFiles; i++){
+					String sampleName = (String) tcgaDP.filesList.getSelectedValues()[i];
+					if (sampleName.length()>50)
+						sampleName = sampleName.substring(0, 49)+"...";
+					readerArr[i].readLine();
+					out.write("\t"+sampleName);	
+					out.write("\t"+sampleName);			
+				}
+				out.write("\n");
+				boolean notPageEnd = true;
+				int index = 0;
+				while (notPageEnd ){
+					dlProgress.setDescription("Processing row: "+index);
+					for (int i=0; i<numFiles; i++){
+						currentLine = readerArr[i].readLine();
+						if (currentLine==null){
+							notPageEnd = false;
+							break;
+						}
+						String[] curLine = currentLine.split("\t");
+						if (i==0){
+							out.write("ID_"+index+"\t");
+							out.write(curLine[0]+"\t");
+							out.write("\t");
+							out.write("\t");
+							out.write("\t");
+						}
+						out.write(curLine[3]+"\t");
+						out.write(curLine[1]);	
+						if (i!=numFiles-1)
+							out.write("\t");
+					}		
+					out.write("\n");			
+					index++;
+				}		
+				out.close();
+				
+					
+				} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 		try {
 			StringSplitter ss = new StringSplitter('\t');
 			reader = new BufferedReader(new FileReader(tcgaDownloadFile));
@@ -518,7 +603,7 @@ public class TCGADownloader extends ExpressionFileLoader {
 		private JComboBox[] tcgaLevelBoxes;
 
 		private DefaultListModel dlm;
-		
+
 		public TCGADownloaderPanel() {
 			super();
 			
@@ -579,12 +664,36 @@ public class TCGADownloader extends ExpressionFileLoader {
 			}
 			tcgaLevelBoxes[0].setEnabled(true);                               
 			
+			dataTypeSFRB = new JRadioButton("TDMS File");
+			dataTypeRNARB = new JRadioButton("RNASeq");
+			ButtonGroup bg = new ButtonGroup();
+			bg.add(dataTypeSFRB);
+			bg.add(dataTypeRNARB);
+			dataTypeSFRB.setSelected(true);
+			
 			downloadButton = new JButton("Download from TCGA");
 			downloadButton.addActionListener(eventListener);
 			downloadButton.setEnabled(false);
 			dlm  = new DefaultListModel();
 			dlm.addElement("No files found");
 			filesList = new JList(dlm);
+			selectAllCB = new JCheckBox("Select All");
+			selectAllCB.setEnabled(false);
+			selectAllCB.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					if (selectAllCB.isSelected()){
+						int[] indices = new int[dlm.size()];
+						for (int i=0; i<indices.length; i++){
+							indices[i] = i;
+						}
+						filesList.setSelectedIndices(indices);
+						downloadButton.setEnabled(true);
+					} else {
+						downloadButton.setEnabled(false);
+						filesList.clearSelection();
+					}
+				}				
+			});
 			filesList.setEnabled(false);
 			filesList.addMouseListener(new MouseListener(){
 				public void mouseClicked(MouseEvent e) {
@@ -604,14 +713,17 @@ public class TCGADownloader extends ExpressionFileLoader {
 			});
 			filesList.setSelectionMode(DefaultListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			JScrollPane fileScroll = new JScrollPane(filesList);
-			
+
+			gba.add(fileSelectionPanel, dataTypeSFRB, 1, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, dataTypeRNARB, 2, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			for (int i=0; i<tcgaLevelBoxes.length; i++){
-				gba.add(fileSelectionPanel, tcgaLevelLabels[i], 0, i, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);	
-				gba.add(fileSelectionPanel, tcgaLevelBoxes[i], 1, i, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);				
+				gba.add(fileSelectionPanel, tcgaLevelLabels[i], 0, i+1, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);	
+				gba.add(fileSelectionPanel, tcgaLevelBoxes[i], 1, i+1, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);				
 			}
 			gba.add(fileSelectionPanel, filesFoundLabel, 2, 0, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(fileSelectionPanel, fileScroll, 2, 1, 1, 6, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
-			gba.add(fileSelectionPanel, downloadButton, 2, tcgaLevelLabels.length, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, fileScroll, 2, 1, 1, 6, GridBagConstraints.HORIZONTAL, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);			
+			gba.add(fileSelectionPanel, selectAllCB, 2, tcgaLevelBoxes.length, 1, 1, GridBagConstraints.HORIZONTAL, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
+			gba.add(fileSelectionPanel, downloadButton, 2, tcgaLevelLabels.length+1, 1, 1, 0, 0, GBA.B, GBA.C, new Insets(2, 2, 2, 2), 0, 0);
 			
 			expressionTable = new JTable();
     		myCellRenderer = new ExpressionFileTableCellRenderer();
@@ -701,14 +813,22 @@ public class TCGADownloader extends ExpressionFileLoader {
 			        dlProgress.setTitle("Downloading data from TCGA");
 			        dlProgress.setIndeterminate(true);
 			        dlProgress.setIndeterminantString("Please wait...");
-			        dlProgress.show();	
+			        dlProgress.setModal(true);
 					Runnable runnable = new Runnable() {
 						public void run() {
-							processTCGAFile(downloadFileURL);			
+							processTCGAFile(downloadFileURL);	
+
+							if (dataTypeRNARB.isSelected()){
+								System.out.println("RNASeq selected");
+								superLoader.changeSelectedFileFilterAndLoader(16);
+								((RNASeqFileLoader)superLoader.selectedFileLoader).setTCGADataFile(tcgaDownloadFile.getName());
+								TMEV.storeProperty("tcga-path", "tcga path to archive");	
+							}
 						}
 					};
 					Thread thread = new Thread(runnable);
 					thread.start();
+			        dlProgress.show();	
 				} else if (source == twoColorArray) {
 					dataType = IData.DATA_TYPE_RATIO_ONLY;
 					setDataType(dataType);
@@ -743,6 +863,7 @@ public class TCGADownloader extends ExpressionFileLoader {
 						if (i<tcgaLevelBoxes.length-1){
 							tcgaLevelBoxes[i+1].setEnabled(true);
 							filesList.setEnabled(false);
+							selectAllCB.setEnabled(false);
 							tcgaLevelBoxes[i+1].removeAllItems();
 							setNextCBLevel(i, urlBuild);
 								
@@ -760,6 +881,7 @@ public class TCGADownloader extends ExpressionFileLoader {
 		private void fillFilesFound(String urlBuild) {
 			try{	
 				filesList.setEnabled(true);
+				selectAllCB.setEnabled(true);
 				URL url = new URL(urlBuild); 	
 				URLConnection url_conn = url.openConnection();
 				url_conn.setDoInput(true);
@@ -777,6 +899,11 @@ public class TCGADownloader extends ExpressionFileLoader {
 						break;
 					String item = currentLine.substring(currentLine.indexOf(">"), currentLine.length());
 					item = item.substring(1, item.indexOf("<"));
+					//remove non-expression files
+					if (dataTypeRNARB.isSelected()&&!item.contains("exon"))
+						continue;
+					if (!dataTypeRNARB.isSelected()&&(item.contains("DESCRIPTION.txt")||item.contains("MANIFEST.txt")||item.contains("README_DCC.txt")))
+						continue;
 					dlm.addElement(item);
 				}
 				
@@ -805,11 +932,17 @@ public class TCGADownloader extends ExpressionFileLoader {
 					String item = currentLine.substring(currentLine.indexOf(">"), currentLine.length());
 					item = item.substring(1, item.indexOf("<"));
 					if(i+1==6){//filter archive for level 2
-						if (item.contains("Level_2") && !item.contains("tar.gz"))
+						if ((item.contains("Level_2")||(item.contains("Level_3")&&dataTypeRNARB.isSelected())) && !item.contains("tar.gz"))
 							tcgaLevelBoxes[i+1].addItem(item);
 					} else {
 						tcgaLevelBoxes[i+1].addItem(item);
 					}
+				}
+				System.out.println("tcgaLevelBoxes[i+1].getItemCount() "+tcgaLevelBoxes[i+1].getItemCount());
+				if (tcgaLevelBoxes[i+1].getItemCount()<2){
+					tcgaLevelBoxes[i+1].removeAllItems();
+					tcgaLevelBoxes[i+1].addItem("No samples found in directory.");
+					tcgaLevelBoxes[i+1].setEnabled(false);
 				}
 				
 			}catch (Exception e){
@@ -817,7 +950,67 @@ public class TCGADownloader extends ExpressionFileLoader {
 			}
 		}
 	}
-
+	public static void main(String[] args){
+		FileWriter fstream;
+		try {
+			fstream = new FileWriter("C://Users//Dan//Desktop//rnaseqfileGen.txt");
+			BufferedWriter out = new BufferedWriter(fstream);
+			BufferedReader[] reader = new BufferedReader[22];
+			for (int i=0; i<22; i++){
+				System.out.println("file number "+(i+1));
+				try{	
+					URL url = new URL("https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/tumor/brca/cgcc/unc.edu/illuminahiseq_rnaseqv2/rnaseqv2/unc.edu_BRCA.IlluminaHiSeq_RNASeqV2.Level_3.1.0.0/unc.edu.0042b857-502f-4d8e-baac-845c1a9bb64b.1154126.exon_quantification.txt"); 	
+					URLConnection url_conn = url.openConnection();
+					url_conn.setDoInput(true);
+					url_conn.setUseCaches(true);
+	
+					reader[i] = new BufferedReader( new InputStreamReader(url_conn.getInputStream()));
+				} catch (Exception e){
+					System.out.println("error parsing file: ");
+					e.printStackTrace();
+				}
+			}
+			out.write("Tracking ID\t");
+			out.write("locus\t");
+			out.write("nearest_ref_id\t");
+			out.write("class_code\t");
+			out.write("transcript_length\t");
+			for (int i=0; i<22; i++){
+				reader[i].readLine();
+				out.write("TCGA RNASeq Sample "+i+"\t"+"TCGA RNASeq Sample"+i+"\t");				
+			}
+			out.write("\n");
+			boolean notPageEnd = true;
+			while (notPageEnd ){
+				for (int i=0; i<22; i++){
+					String currentLine;
+					int index = 0;
+					currentLine = reader[i].readLine();
+					if (currentLine==null){
+						notPageEnd = false;
+						break;
+					}
+					String[] curLine = currentLine.split("\t");
+					if (i==0){
+						out.write("RowID_"+index+"\t");
+						out.write(curLine[0]+"\t");
+						out.write("\t");
+						out.write("\t");
+						out.write("\t");
+					}
+					out.write(curLine[3]+"\t");
+					out.write(curLine[1]+"\t");				
+					index++;
+				}		
+				out.write("\n");	
+			}		
+			out.close();
+			
+				
+			} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	@Override
 	public void setAnnotationFilePath(String filePath) {
