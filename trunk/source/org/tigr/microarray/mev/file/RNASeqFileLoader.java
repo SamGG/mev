@@ -196,12 +196,6 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 	 *  taking log2(cy5/cy3).
 	 */
 
-	/**Dan time saver.
-	 * Loads a hard-coded dataset.
-	 */
-	public void dansTimeSaver(String path){
-		processStanfordFile(new File(path));
-	}
 
 	public Vector<ISlideData> loadStanfordExpressionFile(File f, int rowcoord, int colcoord) throws IOException {
 		int preSpotRows, preExperimentColumns;
@@ -1626,6 +1620,18 @@ public class RNASeqFileLoader extends ExpressionFileLoader {
 		reader.close();
 		if(expected_col_name.equals("OK")) return true;
 		return false;
+	}
+
+	public void setTCGADataFile(String string) {
+		sflp.fileNameTextField.setText(string);
+		File selectedFile = new File(string);
+		sflp.dataTypeCombo.setSelectedItem("RPKM & Count");
+		sflp.speciesCombo.setSelectedItem("Human");
+		sflp.genomeCombo.setSelectedItem("RefSeq");
+		sflp.bldCombo.setSelectedItem("hg19");
+		processStanfordFile(selectedFile);
+		
+		
 	}
 
 }
